@@ -22,7 +22,7 @@ export function UserMenu({ initials, direction = "down", size = "md" }: UserMenu
   const [mo, setMo] = useState(false)
   const [dangXuat, setDangXuat] = useState(false)
   const [doiMatKhau, setDoiMatKhau] = useState(false)
-  const buttonRef = useRef<HTMLButtonElement>(null)
+  const buttonRef = useRef<HTMLDivElement>(null)
   const { roleUx, userName, userEmail, orgName, can, platformCapabilities } = useSession()
   const { t } = useI18n()
 
@@ -55,10 +55,17 @@ export function UserMenu({ initials, direction = "down", size = "md" }: UserMenu
 
   return (
     <div className="relative">
-      <button
+      <div
         ref={buttonRef}
-        type="button"
+        role="button"
+        tabIndex={0}
         onClick={() => setMo((v) => !v)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault()
+            setMo((v) => !v)
+          }
+        }}
         aria-label="Menu tài khoản"
         aria-expanded={mo}
         className={cn(
@@ -67,16 +74,19 @@ export function UserMenu({ initials, direction = "down", size = "md" }: UserMenu
         )}
       >
         {initials}
-      </button>
+      </div>
 
       {mo && (
         <>
           {/* Lớp phủ để bấm ra ngoài là đóng menu */}
-          <button
-            type="button"
+          <div
+            role="button"
             aria-label="Đóng menu"
             tabIndex={-1}
             onClick={() => setMo(false)}
+            onKeyDown={(e) => {
+              if (e.key === "Escape") setMo(false)
+            }}
             className="fixed inset-0 z-40 bg-transparent cursor-default border-0"
           />
 
@@ -99,11 +109,19 @@ export function UserMenu({ initials, direction = "down", size = "md" }: UserMenu
 
             {/* Lối tắt vào Console Vận hành dành riêng cho Super Admin / Operator */}
             {isSuperUser && (
-              <button
-                type="button"
+              <div
+                role="button"
+                tabIndex={0}
                 onClick={() => {
                   setMo(false)
                   router.push("/van-hanh" as never)
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault()
+                    setMo(false)
+                    router.push("/van-hanh" as never)
+                  }
                 }}
                 className="flex w-full items-center gap-2 border-b border-border bg-primary/5 px-3.5 py-2.5 text-left text-body-sm font-semibold text-primary hover:bg-primary/10 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary cursor-pointer"
               >
@@ -114,15 +132,23 @@ export function UserMenu({ initials, direction = "down", size = "md" }: UserMenu
                     Quản trị SaaS nền tảng
                   </span>
                 </span>
-              </button>
+              </div>
             )}
 
             {/* Vai trải nghiệm hiện tại + danh mục 14 vai (đặc tả 03b §3) */}
-            <button
-              type="button"
+            <div
+              role="button"
+              tabIndex={0}
               onClick={() => {
                 setMo(false)
                 router.push("/vai-tro" as never)
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault()
+                  setMo(false)
+                  router.push("/vai-tro" as never)
+                }
               }}
               className="flex w-full items-center gap-2 border-b border-border px-3.5 py-2.5 text-left text-body-sm font-semibold text-text hover:bg-surface-alt transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary cursor-pointer"
             >
@@ -135,15 +161,23 @@ export function UserMenu({ initials, direction = "down", size = "md" }: UserMenu
                   </span>
                 )}
               </span>
-            </button>
+            </div>
 
             {/* Mở UI Studio (Theme & Style Switcher) — chỉ cho dev hoặc platform operator (ADR-011 D-UI-01) */}
             {(process.env.NODE_ENV !== "production" || (platformCapabilities && platformCapabilities.length > 0)) && (
-              <button
-                type="button"
+              <div
+                role="button"
+                tabIndex={0}
                 onClick={() => {
                   setMo(false)
                   window.dispatchEvent(new CustomEvent("open-ui-studio"))
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault()
+                    setMo(false)
+                    window.dispatchEvent(new CustomEvent("open-ui-studio"))
+                  }
                 }}
                 className="flex w-full items-center gap-2 border-b border-border px-3.5 py-2.5 text-left text-body-sm font-semibold text-text hover:bg-surface-alt transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary cursor-pointer"
               >
@@ -156,33 +190,53 @@ export function UserMenu({ initials, direction = "down", size = "md" }: UserMenu
                     Đổi Theme, Font, Mật độ
                   </span>
                 </span>
-              </button>
+              </div>
             )}
 
             {can("A2") && (
-              <button
-                type="button"
+              <div
+                role="button"
+                tabIndex={0}
                 onClick={() => {
                   setMo(false)
                   setDoiMatKhau(true)
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault()
+                    setMo(false)
+                    setDoiMatKhau(true)
+                  }
                 }}
                 className="flex w-full items-center gap-2 border-b border-border px-3.5 py-2.5 text-left text-body-sm font-semibold text-text hover:bg-surface-alt transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary cursor-pointer"
               >
                 <KeyRound size={16} strokeWidth={1.8} aria-hidden="true" />
                 <span>Đổi mật khẩu</span>
-              </button>
+              </div>
             )}
 
             {/* Nút đăng xuất */}
-            <button
-              type="button"
-              onClick={handleLogout}
-              disabled={dangXuat}
-              className="flex w-full items-center gap-2 px-3.5 py-2.5 text-left text-body-sm font-semibold text-danger hover:bg-danger-bg transition-colors disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary cursor-pointer"
+            <div
+              role="button"
+              tabIndex={0}
+              onClick={() => {
+                if (!dangXuat) handleLogout()
+              }}
+              onKeyDown={(e) => {
+                if (!dangXuat && (e.key === "Enter" || e.key === " ")) {
+                  e.preventDefault()
+                  handleLogout()
+                }
+              }}
+              aria-disabled={dangXuat}
+              className={cn(
+                "flex w-full items-center gap-2 px-3.5 py-2.5 text-left text-body-sm font-semibold text-danger hover:bg-danger-bg transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary cursor-pointer",
+                dangXuat && "opacity-50 cursor-not-allowed"
+              )}
             >
               <LogOut size={16} strokeWidth={1.8} aria-hidden="true" />
               <span>{dangXuat ? "Đang đăng xuất…" : t("layout.userMenu.logout")}</span>
-            </button>
+            </div>
           </div>
         </>
       )}

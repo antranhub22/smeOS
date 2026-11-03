@@ -142,11 +142,19 @@ export function DesktopNavItem({
 
   return (
     <NavTooltip label={item.label} collapsed={collapsed}>
-      <button
-        type="button"
+      <div
+        role="button"
+        tabIndex={0}
         onClick={onClick}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault()
+            onClick?.()
+          }
+        }}
         aria-current={active ? "page" : undefined}
         className={cn(
+          "cursor-pointer",
           itemBaseClass(isSubItem, collapsed),
           active
             ? "bg-selected text-primary font-semibold border border-transparent"
@@ -183,7 +191,7 @@ export function DesktopNavItem({
         ) : (
           <span className="ml-3 flex-1 truncate">{item.label}</span>
         )}
-      </button>
+      </div>
     </NavTooltip>
   )
 }

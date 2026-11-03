@@ -13,6 +13,7 @@
 
 import { useState, useEffect, useCallback, useRef, useMemo, useSyncExternalStore } from "react"
 import { Plus, X, Pin, RotateCcw, ChevronDown } from "@/components/ui/icons"
+import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { useI18n } from "@/lib/i18n"
 import { NAV_ICONS as ICONS } from "./nav-icons"
@@ -204,10 +205,17 @@ export function ToolkitShortcutsGroup({
   return (
     <div className="space-y-0.5">
       {/* Header nhóm — collapsible */}
-      <button
-        type="button"
+      <div
+        role="button"
+        tabIndex={0}
         aria-expanded={expanded}
         onClick={() => onToggleGroup(groupKey, expanded)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault()
+            onToggleGroup(groupKey, expanded)
+          }
+        }}
         className={cn(
           "group flex w-full items-center justify-between gap-1.5 rounded-lg px-2 py-1 text-left select-none cursor-pointer",
           "text-caption font-bold uppercase tracking-wider text-text-muted hover:text-text hover:bg-surface-alt/50 transition-colors duration-150",
@@ -223,7 +231,7 @@ export function ToolkitShortcutsGroup({
             expanded ? "rotate-0" : "-rotate-90"
           )}
         />
-      </button>
+      </div>
 
       {expanded && (
         <div className="space-y-0.5">
@@ -257,8 +265,10 @@ export function ToolkitShortcutsGroup({
                 onClick={() => onNavigate(entry.href)}
               />
               {/* Nút bỏ pin — hiện khi hover */}
-              <button
+              <Button
                 type="button"
+                variant="ghost"
+                size="icon"
                 aria-label={`Bỏ pin "${entry.label}"`}
                 onClick={(e) => {
                   e.stopPropagation()
@@ -271,21 +281,28 @@ export function ToolkitShortcutsGroup({
                 )}
               >
                 <X size={11} />
-              </button>
+              </Button>
             </div>
           ))}
 
           {/* 4. Nút thêm shortcut */}
           {shortcutEntries.length < MAX_SHORTCUTS && (
             <div className="relative" ref={pickerRef}>
-              <button
-                type="button"
+              <div
+                role="button"
+                tabIndex={0}
                 id="btn-add-toolkit-shortcut"
                 aria-label="Thêm lối tắt công cụ"
                 aria-expanded={pickerOpen}
                 onClick={() => setPickerOpen((v) => !v)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault()
+                    setPickerOpen((v) => !v)
+                  }
+                }}
                 className={cn(
-                  "flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-meta text-left",
+                  "flex w-full cursor-pointer items-center gap-2 rounded-lg px-2.5 py-1.5 text-meta text-left",
                   "border border-dashed border-border/60 hover:border-primary/40",
                   "text-text-muted hover:text-primary hover:bg-primary/5 transition-all duration-150",
                   pickerOpen && "border-primary/40 text-primary bg-primary/5"
@@ -296,7 +313,7 @@ export function ToolkitShortcutsGroup({
                 <span className="ml-auto text-caption text-text-muted/60">
                   {shortcutEntries.length}/{MAX_SHORTCUTS}
                 </span>
-              </button>
+              </div>
 
               {/* Picker dropdown */}
               {pickerOpen && (
@@ -314,14 +331,16 @@ export function ToolkitShortcutsGroup({
 
           {/* Khi đã đủ MAX: chỉ hiện nút reset nếu đã tùy chỉnh */}
           {mounted && shortcutEntries.length >= MAX_SHORTCUTS && hasCustomShortcuts(orgId) && (
-            <button
+            <Button
               type="button"
+              variant="ghost"
+              size="sm"
               onClick={handleReset}
               className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1 text-caption text-text-muted hover:text-text hover:bg-surface-alt/50 transition-colors"
             >
               <RotateCcw size={11} aria-hidden />
               <span>Đặt lại mặc định</span>
-            </button>
+            </Button>
           )}
         </div>
       )}

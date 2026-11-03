@@ -37,10 +37,17 @@ export function UiStudioDrawer() {
     <>
       {/* Floating Toggle Button */}
       <div className="fixed bottom-24 right-6 z-40">
-        <button
-          type="button"
+        <div
+          role="button"
+          tabIndex={0}
           onClick={() => setIsOpen((prev) => !prev)}
-          className="group relative flex items-center gap-2 px-3 py-2.5 rounded-full bg-surface border border-border shadow-md hover:shadow-lg transition-all duration-200 hover:scale-105 text-text"
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault()
+              setIsOpen((prev) => !prev)
+            }
+          }}
+          className="group relative flex items-center gap-2 px-3 py-2.5 rounded-full bg-surface border border-border shadow-md hover:shadow-lg transition-all duration-200 hover:scale-105 text-text cursor-pointer"
           title="Tùy biến Giao diện & UI Presets"
           aria-label="Mở bảng điều khiển giao diện"
         >
@@ -53,7 +60,7 @@ export function UiStudioDrawer() {
           <span className="text-caption uppercase font-mono px-1.5 py-0.5 rounded-full bg-primary-subtle text-primary border border-primary/20">
             {currentPreset.name.split(" ")[0]}
           </span>
-        </button>
+        </div>
       </div>
 
       {/* Drawer Overlay */}
@@ -108,11 +115,18 @@ export function UiStudioDrawer() {
                       const isSelected = config.density === item.id
                       const Icon = item.icon
                       return (
-                        <button
+                        <div
                           key={item.id}
-                          type="button"
+                          role="button"
+                          tabIndex={0}
                           onClick={() => setDensity(item.id)}
-                          className={`p-2.5 rounded-xl border text-center transition-all flex flex-col items-center gap-1 ${
+                          onKeyDown={(e) => {
+                            if (e.key === "Enter" || e.key === " ") {
+                              e.preventDefault()
+                              setDensity(item.id)
+                            }
+                          }}
+                          className={`p-2.5 rounded-xl border text-center transition-all flex flex-col items-center gap-1 cursor-pointer ${
                             isSelected
                               ? "border-primary bg-primary-subtle text-primary font-bold shadow-xs"
                               : "border-border bg-surface text-text-muted hover:border-border-strong hover:text-text"
@@ -121,7 +135,7 @@ export function UiStudioDrawer() {
                           <Icon className="w-3.5 h-3.5" />
                           <span className="text-caption font-semibold leading-tight">{item.label}</span>
                           <span className="text-caption text-text-muted leading-tight">{item.desc}</span>
-                        </button>
+                        </div>
                       )
                     })}
                   </div>

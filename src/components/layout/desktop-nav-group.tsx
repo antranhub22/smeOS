@@ -121,9 +121,16 @@ export function DesktopNavGroup({
         {reportEntries.length > 0 && (
           <div className="pt-0.5">
             {/* Báo cáo accordion */}
-            <button
-              type="button"
+            <div
+              role="button"
+              tabIndex={0}
               onClick={() => onToggleReports(!reportsOpen)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault()
+                  onToggleReports(!reportsOpen)
+                }
+              }}
               aria-expanded={reportsOpen}
               className={cn(
                 "group relative flex h-9 w-full items-center justify-between rounded-lg px-2.5 text-meta font-medium transition-all text-left cursor-pointer",
@@ -152,7 +159,7 @@ export function DesktopNavGroup({
                   reportsOpen ? "rotate-0" : "-rotate-90"
                 )}
               />
-            </button>
+            </div>
 
             {reportsOpen && (
               <div className="ml-3.5 mt-0.5 space-y-0.5 border-l border-border pl-2">
@@ -177,10 +184,17 @@ export function DesktopNavGroup({
   // ── Nhóm thông thường — collapsible ─────────────────────────
   return (
     <div className="space-y-0.5">
-      <button
-        type="button"
+      <div
+        role="button"
+        tabIndex={0}
         aria-expanded={expanded}
         onClick={() => onToggleGroup(group.key, expanded)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault()
+            onToggleGroup(group.key, expanded)
+          }
+        }}
         className={cn(
           "group flex w-full items-center justify-between gap-1.5 rounded-lg px-2 py-1 text-left select-none cursor-pointer",
           "text-caption font-bold uppercase tracking-wider text-text-muted hover:text-text hover:bg-surface-alt/50 transition-colors duration-150",
@@ -193,7 +207,7 @@ export function DesktopNavGroup({
           aria-hidden
           className={cn("shrink-0 transition-transform duration-200 text-text-muted group-hover:text-text", expanded ? "rotate-0" : "-rotate-90")}
         />
-      </button>
+      </div>
 
       {expanded && (
         <div className="space-y-0.5">

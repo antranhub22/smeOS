@@ -13,6 +13,7 @@
 import { useState, useCallback } from "react"
 import { useRouter } from "next/navigation"
 import { ChevronDown, FlaskConical, X } from "@/components/ui/icons"
+import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { DEV_ROLE_PRESETS, type DevRoleOverride } from "@/lib/dev-role-override"
 
@@ -71,57 +72,68 @@ export function DevRoleOverrideBanner({ activeRoleKey, isDev }: Props) {
         <div
           role="dialog"
           aria-label="Chọn vai dev"
-          className="flex w-64 flex-col overflow-hidden rounded-xl border border-sand-300 bg-sand-50 shadow-xl"
+          className="flex w-64 flex-col overflow-hidden rounded-xl border border-border bg-surface shadow-xl"
         >
           {/* Header */}
-          <div className="flex items-center justify-between border-b border-sand-200 px-3 py-2">
-            <span className="flex items-center gap-1.5 text-caption font-bold uppercase tracking-widest text-sand-700">
+          <div className="flex items-center justify-between border-b border-border px-3 py-2">
+            <span className="flex items-center gap-1.5 text-caption font-bold uppercase tracking-widest text-text">
               <FlaskConical size={12} aria-hidden />
               Dev Role Override
             </span>
-            <button
+            <Button
               type="button"
+              variant="ghost"
+              size="icon"
               onClick={() => setOpen(false)}
-              className="rounded p-0.5 text-sand-600 hover:bg-sand-100"
+              className="h-6 w-6 rounded p-0.5 text-text-muted hover:bg-surface-alt"
               aria-label="Đóng"
             >
               <X size={13} />
-            </button>
+            </Button>
           </div>
 
           {/* Presets */}
-          <ul className="divide-y divide-sand-100">
+          <ul className="divide-y divide-border">
             {DEV_ROLE_PRESETS.map((preset) => {
               const isActive = activeRoleKey === preset.roleKey
               const isLoading = loading === preset.roleKey
               return (
                 <li key={preset.roleKey}>
-                  <button
-                    type="button"
-                    onClick={() => applyOverride(preset)}
-                    disabled={isLoading}
+                  <div
+                    role="button"
+                    tabIndex={isLoading ? -1 : 0}
+                    onClick={() => {
+                      if (!isLoading) applyOverride(preset)
+                    }}
+                    onKeyDown={(e) => {
+                      if (!isLoading && (e.key === "Enter" || e.key === " ")) {
+                        e.preventDefault()
+                        applyOverride(preset)
+                      }
+                    }}
+                    aria-disabled={isLoading}
                     className={cn(
-                      "flex w-full items-center gap-2 px-3 py-2 text-left text-meta transition-colors",
+                      "flex w-full items-center gap-2 px-3 py-2 text-left text-meta transition-colors cursor-pointer",
                       isActive
-                        ? "bg-sand-200 font-bold text-sand-900"
-                        : "text-sand-800 hover:bg-sand-100",
-                      isLoading && "opacity-50"
+                        ? "bg-surface-alt font-bold text-text"
+                        : "text-text hover:bg-surface-alt",
+                      isLoading && "opacity-50 cursor-not-allowed"
                     )}
                   >
                     <span
                       className={cn(
                         "inline-block h-2 w-2 flex-shrink-0 rounded-full",
-                        isActive ? "bg-sand-600" : "bg-sand-300"
+                        isActive ? "bg-primary" : "bg-border"
                       )}
                       aria-hidden
                     />
                     <span className="flex-1">{preset.label}</span>
                     {isActive && (
-                      <span className="rounded bg-sand-600 px-1 py-0.5 text-caption font-bold text-white">
+                      <span className="rounded bg-primary px-1 py-0.5 text-caption font-bold text-white">
                         ACTIVE
                       </span>
                     )}
-                  </button>
+                  </div>
                 </li>
               )
             })}
@@ -129,27 +141,36 @@ export function DevRoleOverrideBanner({ activeRoleKey, isDev }: Props) {
 
           {/* Clear override */}
           {activeRoleKey && (
-            <div className="border-t border-sand-200 p-2">
-              <button
+            <div className="border-t border-border p-2">
+              <Button
                 type="button"
+                variant="ghost"
+                size="sm"
                 onClick={() => applyOverride(null)}
                 disabled={loading === "clear"}
-                className="w-full rounded-lg px-3 py-1.5 text-center text-caption font-semibold text-sand-700 hover:bg-sand-100"
+                className="w-full rounded-lg px-3 py-1.5 text-center text-caption font-semibold text-text hover:bg-surface-alt"
               >
                 {loading === "clear" ? "Đang xoá…" : "✕ Xoá override — dùng session thật"}
-              </button>
+              </Button>
             </div>
           )}
         </div>
       )}
 
       {/* Toggle button */}
-      <button
-        type="button"
+      <div
+        role="button"
+        tabIndex={0}
         onClick={() => setOpen((v) => !v)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault()
+            setOpen((v) => !v)
+          }
+        }}
         className={cn(
-          "flex items-center gap-1.5 rounded-full border border-sand-400 bg-sand-100 px-3 py-1.5 text-caption font-bold text-sand-800 shadow-md transition-all hover:bg-sand-200",
-          open && "bg-sand-200"
+          "flex items-center gap-1.5 rounded-full border border-border bg-surface-alt px-3 py-1.5 text-caption font-bold text-text shadow-md transition-all hover:bg-surface cursor-pointer",
+          open && "bg-surface"
         )}
         aria-expanded={open}
         aria-haspopup="dialog"
@@ -161,7 +182,7 @@ export function DevRoleOverrideBanner({ activeRoleKey, isDev }: Props) {
           aria-hidden
           className={cn("transition-transform", open && "rotate-180")}
         />
-      </button>
+      </div>
     </div>
   )
 }

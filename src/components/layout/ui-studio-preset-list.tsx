@@ -21,10 +21,17 @@ export function UiStudioPresetList({
         const isSelected = selectedPresetId === preset.id
 
         return (
-          <button
+          <div
             key={preset.id}
-            type="button"
+            role="button"
+            tabIndex={0}
             onClick={() => onSelectPreset(preset.id as UiPresetId)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault()
+                onSelectPreset(preset.id as UiPresetId)
+              }
+            }}
             className={`w-full text-left p-3.5 rounded-2xl cursor-pointer transition-all border ${
               isSelected
                 ? "border-primary ring-1 ring-primary bg-primary-subtle/30"
@@ -94,7 +101,7 @@ export function UiStudioPresetList({
                 R: {preset.radius.button}
               </span>
             </div>
-          </button>
+          </div>
         )
       })}
     </div>

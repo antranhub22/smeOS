@@ -11,6 +11,7 @@
 
 import { useState, useRef, useEffect, useCallback } from "react"
 import { Monitor, ChevronDown, Check, FlaskConical } from "@/components/ui/icons"
+import { Button } from "@/components/ui/button"
 import { useSession } from "@/lib/session"
 import { cn } from "@/lib/utils"
 import { DEV_ROLE_PRESETS, type DevRoleOverride } from "@/lib/dev-role-override"
@@ -18,63 +19,63 @@ import { DEV_ROLE_PRESETS, type DevRoleOverride } from "@/lib/dev-role-override"
 const HOMEPAGE_LABEL: Record<string, { label: string; color: string }> = {
   PLATFORM_JOURNEY_HOME: {
     label: "Platform Home",
-    color: "bg-purple-50 text-purple-700 border-purple-200/90",
+    color: "bg-primary/10 text-primary border-primary/20",
   },
   INDUSTRY_JOURNEY_HOME: {
     label: "Industry Home",
-    color: "bg-indigo-50 text-indigo-700 border-indigo-200/90",
+    color: "bg-info-bg text-info border-border",
   },
   TOOLKIT_HOME: {
     label: "🧰 Toolkit Hub",
-    color: "bg-amber-50 text-amber-700 border-amber-200/90",
+    color: "bg-warning-bg text-warning border-warning-border",
   },
   NETWORK_JOURNEY_HOME: {
     label: "Network Home",
-    color: "bg-sky-50 text-sky-700 border-sky-200/90",
+    color: "bg-accent/10 text-accent border-accent/20",
   },
   CONTROL_TOWER: {
     label: "Control Tower",
-    color: "bg-sky-50 text-sky-700 border-sky-200/90",
+    color: "bg-accent/10 text-accent border-accent/20",
   },
   FLOWER_NETWORK_COMMAND_CENTER: {
     label: "Flower Network",
-    color: "bg-pink-50 text-pink-700 border-pink-200/90",
+    color: "bg-accent/10 text-accent border-accent/20",
   },
   STORE_JOURNEY_HOME: {
     label: "Store Home",
-    color: "bg-emerald-50 text-emerald-700 border-emerald-200/90",
+    color: "bg-success-bg text-success border-success-border",
   },
   STORE_GROWTH_CENTER: {
     label: "Growth Center",
-    color: "bg-emerald-50 text-emerald-700 border-emerald-200/90",
+    color: "bg-success-bg text-success border-success-border",
   },
   STORE_COMMAND_CENTER: {
     label: "Command Center",
-    color: "bg-emerald-50 text-emerald-700 border-emerald-200/90",
+    color: "bg-success-bg text-success border-success-border",
   },
   CONTROL_CENTER: {
     label: "Command Center",
-    color: "bg-emerald-50 text-emerald-700 border-emerald-200/90",
+    color: "bg-success-bg text-success border-success-border",
   },
   SALES_WORKSPACE: {
     label: "Sales Workspace",
-    color: "bg-orange-50 text-orange-700 border-orange-200/90",
+    color: "bg-warning-bg text-warning border-warning-border",
   },
   PRODUCT_WORKSPACE: {
     label: "Product Workspace",
-    color: "bg-indigo-50 text-indigo-700 border-indigo-200/90",
+    color: "bg-info-bg text-info border-border",
   },
   CREATIVE_WORKSPACE: {
     label: "Creative Workspace",
-    color: "bg-fuchsia-50 text-fuchsia-700 border-fuchsia-200/90",
+    color: "bg-primary/10 text-primary border-primary/20",
   },
   CRM_WORKSPACE: {
     label: "CRM Workspace",
-    color: "bg-teal-50 text-teal-700 border-teal-200/90",
+    color: "bg-success-bg text-success border-success-border",
   },
   CUSTOMER_SERVICE_WORKSPACE: {
     label: "CS Workspace",
-    color: "bg-cyan-50 text-cyan-700 border-cyan-200/90",
+    color: "bg-info-bg text-info border-border",
   },
 }
 
@@ -174,16 +175,23 @@ export function SuperadminHomepageBadge({ isDev = false }: Props) {
 
   return (
     <div ref={panelRef} className="relative inline-flex items-center">
-      <button
-        type="button"
+      <div
+        role="button"
+        tabIndex={0}
         onClick={() => setOpen((v) => !v)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault()
+            setOpen((v) => !v)
+          }
+        }}
         aria-expanded={open}
         aria-haspopup="listbox"
         aria-label={`Homepage: ${config.label}. Click để đổi vai`}
-        className="flex items-center"
+        className="flex items-center cursor-pointer"
       >
         {badgeContent}
-      </button>
+      </div>
 
       {open && (
         <div
@@ -206,15 +214,25 @@ export function SuperadminHomepageBadge({ isDev = false }: Props) {
               const isLoading = loading === preset.roleKey
               return (
                 <li key={preset.roleKey} role="option" aria-selected={isActive}>
-                  <button
-                    onClick={() => applyOverride(preset)}
-                    disabled={isLoading}
+                  <div
+                    role="button"
+                    tabIndex={isLoading ? -1 : 0}
+                    onClick={() => {
+                      if (!isLoading) applyOverride(preset)
+                    }}
+                    onKeyDown={(e) => {
+                      if (!isLoading && (e.key === "Enter" || e.key === " ")) {
+                        e.preventDefault()
+                        applyOverride(preset)
+                      }
+                    }}
+                    aria-disabled={isLoading}
                     className={cn(
-                      "flex w-full items-center gap-2 px-3 py-2 text-left text-xs transition-colors",
+                      "flex w-full items-center gap-2 px-3 py-2 text-left text-caption transition-colors cursor-pointer",
                       isActive
                         ? "bg-primary/10 font-bold text-primary"
                         : "text-text hover:bg-surface-alt",
-                      isLoading && "opacity-50"
+                      isLoading && "opacity-50 cursor-not-allowed"
                     )}
                   >
                     {isActive ? (
@@ -226,7 +244,7 @@ export function SuperadminHomepageBadge({ isDev = false }: Props) {
                     {isLoading && (
                       <span className="text-caption text-primary animate-pulse motion-reduce:animate-none">Đang nạp…</span>
                     )}
-                  </button>
+                  </div>
                 </li>
               )
             })}
@@ -234,13 +252,16 @@ export function SuperadminHomepageBadge({ isDev = false }: Props) {
 
           {/* Clear override */}
           <div className="border-t border-border p-2 bg-surface-alt/50">
-            <button
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
               onClick={() => applyOverride(null)}
               disabled={loading === "clear"}
               className="w-full rounded-lg px-3 py-1.5 text-center text-caption font-semibold text-text-muted hover:bg-surface-alt hover:text-text transition-colors"
             >
               {loading === "clear" ? "Đang xoá…" : "↩ Xoá override — dùng session thật"}
-            </button>
+            </Button>
           </div>
         </div>
       )}

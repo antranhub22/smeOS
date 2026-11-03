@@ -10,6 +10,7 @@
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { Bot, LogOut } from "@/components/ui/icons"
+import { Button } from "@/components/ui/button"
 import { useSession } from "@/lib/session"
 import { useI18n } from "@/lib/i18n"
 import { cn } from "@/lib/utils"
@@ -44,21 +45,28 @@ export function DesktopNavFooter({ collapsed = false }: DesktopNavFooterProps) {
     return (
       <div className="flex flex-col items-center gap-1.5 border-t border-border px-1.5 py-3">
         {/* Copilot icon */}
-        <button
-          type="button"
+        <div
+          role="button"
+          tabIndex={0}
           title="smeOS Copilot (⌘K)"
           aria-label="Mở smeOS Copilot"
           onClick={() =>
             window.dispatchEvent(new KeyboardEvent("keydown", { key: "k", metaKey: true }))
           }
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault()
+              window.dispatchEvent(new KeyboardEvent("keydown", { key: "k", metaKey: true }))
+            }
+          }}
           className={cn(
-            "group flex h-9 w-9 items-center justify-center rounded-xl",
+            "group flex h-9 w-9 items-center justify-center rounded-xl cursor-pointer",
             "bg-primary text-white shadow-sm",
             "hover:bg-primary-dark transition-colors duration-150"
           )}
         >
           <Bot size={16} aria-hidden />
-        </button>
+        </div>
 
         {/* Avatar + logout */}
         <div className="relative">
@@ -72,13 +80,20 @@ export function DesktopNavFooter({ collapsed = false }: DesktopNavFooterProps) {
   return (
     <div className="flex flex-col gap-2 border-t border-border p-3">
       {/* Copilot shortcut button */}
-      <button
-        type="button"
+      <div
+        role="button"
+        tabIndex={0}
         onClick={() =>
           window.dispatchEvent(new KeyboardEvent("keydown", { key: "k", metaKey: true }))
         }
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault()
+            window.dispatchEvent(new KeyboardEvent("keydown", { key: "k", metaKey: true }))
+          }
+        }}
         className={cn(
-          "group flex w-full items-center justify-between rounded-xl border border-border",
+          "group flex w-full items-center justify-between rounded-xl border border-border cursor-pointer",
           "bg-surface-alt p-2.5 text-left transition-all duration-150",
           "hover:border-primary/30 hover:bg-primary-muted hover:shadow-xs"
         )}
@@ -100,7 +115,7 @@ export function DesktopNavFooter({ collapsed = false }: DesktopNavFooterProps) {
         <kbd className="rounded-md border border-border bg-surface px-1.5 py-0.5 text-caption font-mono text-text-muted">
           ⌘K
         </kbd>
-      </button>
+      </div>
 
       {/* User card */}
       <div
@@ -126,8 +141,10 @@ export function DesktopNavFooter({ collapsed = false }: DesktopNavFooterProps) {
           </div>
         </div>
 
-        <button
+        <Button
           type="button"
+          variant="ghost"
+          size="icon"
           onClick={handleQuickLogout}
           disabled={loggingOut}
           title={t("layout.userMenu.logout")}
@@ -139,7 +156,7 @@ export function DesktopNavFooter({ collapsed = false }: DesktopNavFooterProps) {
           )}
         >
           <LogOut size={15} aria-hidden />
-        </button>
+        </Button>
       </div>
     </div>
   )
