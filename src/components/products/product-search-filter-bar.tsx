@@ -186,7 +186,7 @@ export function ProductSearchFilterBar({
                 onChange((prev) => ({ ...prev, occasion: occ }))
               }}
               aria-label="Chọn dịp phù hợp"
-              className="h-8 border-none bg-transparent text-caption font-semibold pr-1"
+              className="h-8 border-none bg-transparent py-0 pl-1 pr-8 text-caption font-semibold leading-none"
             >
               {OCCASIONS.map((o) => (
                 <option key={o.id} value={o.id}>
@@ -204,7 +204,7 @@ export function ProductSearchFilterBar({
               value={filters.priceRange}
               onChange={(e) => handlePriceChange(e.target.value as PriceRangeId)}
               aria-label="Chọn mức giá"
-              className="h-8 border-none bg-transparent text-caption font-semibold pr-1"
+              className="h-8 border-none bg-transparent py-0 pl-1 pr-8 text-caption font-semibold leading-none"
             >
               {PRICE_RANGES.map((p) => (
                 <option key={p.id} value={p.id}>
@@ -225,7 +225,7 @@ export function ProductSearchFilterBar({
                 onChange((prev) => ({ ...prev, sortBy: s }))
               }}
               aria-label="Sắp xếp sản phẩm"
-              className="h-8 border-none bg-transparent text-caption font-semibold pr-1"
+              className="h-8 border-none bg-transparent py-0 pl-1 pr-8 text-caption font-semibold leading-none"
             >
               {SORT_OPTIONS.map((s) => (
                 <option key={s.id} value={s.id}>
