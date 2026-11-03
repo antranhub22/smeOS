@@ -4,8 +4,10 @@ import {
   Store,
   Award,
   User,
+  Trash2,
 } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
+import { useConfirmDialog } from "@/components/ui/confirm-dialog"
 import type { PartnerStoreMarketplaceEntity } from "@/modules/platform/domain/partner-marketplace.types"
 import Link from "next/link"
 import { MarketplacePhotosTab } from "./marketplace-photos-tab"
@@ -19,17 +21,37 @@ interface MarketplaceProfileModalProps {
   onClose: () => void
   /** Link chia sẻ công khai: ẩn nút dẫn vào console. */
   readOnly?: boolean
+  /** Chỉ truyền khi người xem có quyền xoá (superadmin, `N18`). Trả câu lỗi hoặc null khi xoá xong. */
+  onDelete?: (store: PartnerStoreMarketplaceEntity) => Promise<string | null>
 }
 
-export function MarketplaceProfileModal({ store, onClose, readOnly = false }: MarketplaceProfileModalProps) {
+export function MarketplaceProfileModal({ store, onClose, readOnly = false, onDelete }: MarketplaceProfileModalProps) {
+  const [confirm, confirmDialog] = useConfirmDialog()
+  const [deleteError, setDeleteError] = useState<string | null>(null)
+  const [confirming, setConfirming] = useState(false)
+
+  async function requestDelete() {
+    if (!store || !onDelete) return
+    setConfirming(true)
+    const yes = await confirm({
+      title: `Xoá hồ sơ ${store.identity.shopName}?`,
+      consequence: "Hồ sơ biến mất khỏi chợ đối tác và mọi link chia sẻ, không khôi phục được. Muốn có lại phải nhập lại từ tệp hoặc Sheet.",
+      confirmLabel: "Xoá hồ sơ",
+      tone: "danger",
+    })
+    setConfirming(false)
+    if (!yes) return
+    setDeleteError(await onDelete(store))
+  }
   const [activeTab, setActiveTab] = useState<"overview" | "craft" | "facility" | "photos" | "score">("overview")
 
   useEffect(() => {
-    if (!store) return
+    // Đang mở hộp xác nhận xoá: Esc chỉ đóng hộp xác nhận
+    if (!store || confirming) return
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose()
     window.addEventListener("keydown", onKey)
     return () => window.removeEventListener("keydown", onKey)
-  }, [store, onClose])
+  }, [store, onClose, confirming])
 
   if (!store) return null
 
@@ -138,10 +160,22 @@ export function MarketplaceProfileModal({ store, onClose, readOnly = false }: Ma
         </div>
 
         {/* Modal Footer Actions */}
-        <div className="flex items-center justify-between border-t border-border bg-surface-alt/40 p-4">
-          <Button variant="outline" size="sm" onClick={onClose}>
-            Đóng lại
-          </Button>
+        {deleteError && (
+          <p role="alert" className="border-t border-danger-border bg-danger-bg px-4 py-2 text-sm text-danger-text">
+            {deleteError}
+          </p>
+        )}
+        <div className="flex flex-wrap items-center justify-between gap-2 border-t border-border bg-surface-alt/40 p-4">
+          <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm" onClick={onClose}>
+              Đóng lại
+            </Button>
+            {!readOnly && onDelete && (
+              <Button variant="danger" size="sm" className="gap-1.5" onClick={() => void requestDelete()}>
+                <Trash2 className="h-4 w-4" /> Xoá hồ sơ
+              </Button>
+            )}
+          </div>
 
           {!readOnly && (
             <div className="flex items-center gap-2">
@@ -153,6 +187,8 @@ export function MarketplaceProfileModal({ store, onClose, readOnly = false }: Ma
             </div>
           )}
         </div>
+        {/* Trong khung hồ sơ (đã chặn lan sự kiện) — bấm trong hộp xác nhận không đóng hồ sơ */}
+        {confirmDialog}
       </div>
     </div>
   )

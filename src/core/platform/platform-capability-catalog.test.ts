@@ -8,10 +8,15 @@ import {
 } from "./platform-capability-catalog"
 
 describe("platform-capability-catalog", () => {
-  it("có đúng mười bốn mã (N1..N8, N12..N17), không nhiều hơn không ít hơn", () => {
+  it("có đúng mười lăm mã (N1..N8, N12..N18), không nhiều hơn không ít hơn", () => {
     expect(ALL_PLATFORM_CAPABILITY_CODES).toEqual([
-      "N1", "N12", "N13", "N14", "N15", "N16", "N17", "N2", "N3", "N4", "N5", "N6", "N7", "N8",
+      "N1", "N12", "N13", "N14", "N15", "N16", "N17", "N18", "N2", "N3", "N4", "N5", "N6", "N7", "N8",
     ])
+  })
+
+  it("N18 là mã xoá hồ sơ chợ đối tác, tách khỏi N17 (PO 03/11/2026: chỉ superadmin)", () => {
+    expect(platformCapability("N18").name).toBe("platform.marketplace.delete")
+    expect(platformCapability("N17").name).toBe("platform.marketplace.manage")
   })
 
   it("N16 là mã khoá tích hợp theo tầng nền tảng/ngành (Trung tâm Tích hợp GĐ3)", () => {
