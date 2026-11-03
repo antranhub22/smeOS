@@ -22,4 +22,6 @@ export interface IPartnerMarketplaceRepository {
   listPhotoPending(limit: number): Promise<{ items: MarketplacePhotoState[]; remaining: number }>
   /** `photoSourceIds`: Drive id ĐÃ có trong kho (song song `photoKeys`). Luôn cập nhật `updated_at`. */
   setPhotos(id: string, photoKeys: string[], photoSourceIds: string[]): Promise<void>
+  /** Xoá một hồ sơ; không có → null. Trả tên và khoá ảnh của hồ sơ vừa xoá (để ghi nhật ký). */
+  deleteById(id: string): Promise<{ shopName: string; source: string; photoKeys: string[] } | null>
 }

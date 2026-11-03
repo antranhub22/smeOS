@@ -14,6 +14,7 @@ import { GoogleWorkspaceError, getGoogleWorkspaceClient, type GoogleWorkspaceCli
 import { filterMarketplaceStores, type ListMarketplaceStoresFilter, type ListMarketplaceStoresResult } from "../domain/partner-marketplace-filter"
 import { maskMarketplaceStore } from "../domain/partner-marketplace-mask"
 import { MAX_PHOTOS_PER_STORE, driveThumbnailUrl, rowsToProfiles } from "../domain/partner-marketplace-row-mapper"
+import { detectColumnMapping, validateColumnMapping, type ColumnMapping } from "../domain/partner-marketplace-column-match"
 import type { IPartnerMarketplaceRepository, MarketplaceImportSource } from "../domain/repositories/partner-marketplace-repository.interface"
 import { downloadStorePhotos, partnerPhotoKeyPrefix } from "./partner-marketplace-photos"
 
@@ -93,9 +94,10 @@ async function importRows(
   pctx: PlatformContext,
   rows: string[][],
   source: MarketplaceImportSource,
-  deps: Pick<MarketplaceDeps, "repo" | "audit">
+  deps: Pick<MarketplaceDeps, "repo" | "audit">,
+  mapping?: ColumnMapping
 ): Promise<ImportSummary> {
-  const { profiles, skipped } = rowsToProfiles(rows)
+  const { profiles, skipped } = rowsToProfiles(rows, mapping)
   if (profiles.length === 0) throw unprocessable("Không có dòng khảo sát nào có tên cửa hàng")
   const result = await deps.repo.upsertMany(profiles, source)
   await deps.audit(pctx, {
@@ -123,17 +125,64 @@ export async function syncMarketplaceFromSheet(pctx: PlatformContext, deps: Mark
 
 export const MAX_EXCEL_BYTES = 10 * 1024 * 1024
 
-export async function importMarketplaceExcel(
-  pctx: PlatformContext,
-  file: { name: string; bytes: Uint8Array },
-  deps: Pick<MarketplaceDeps, "repo" | "audit"> = defaultDeps()
-): Promise<ImportSummary> {
-  requirePlatformCapability(pctx, "N17")
+/** Đọc và kiểm tệp nhập; lỗi → 422 với câu dễ hiểu. */
+function readExcelRows(file: { name: string; bytes: Uint8Array }): string[][] {
   if (!/\.(xlsx|xls|csv)$/i.test(file.name)) throw unprocessable("Chỉ nhận tệp .xlsx, .xls hoặc .csv")
   if (file.bytes.length === 0 || file.bytes.length > MAX_EXCEL_BYTES) throw unprocessable("Tệp trống hoặc vượt quá 10 MB")
   const rows = parseMarketplaceWorkbook(file.bytes)
   if (!rows || rows.length < 2) throw unprocessable("Không đọc được tệp, hoặc tệp chỉ có dòng tiêu đề")
-  return importRows(pctx, rows, "EXCEL", deps)
+  return rows
+}
+
+const columnCountOf = (rows: readonly (readonly unknown[])[]) => rows.reduce((max, r) => Math.max(max, r.length), 0)
+
+export type ExcelImportPreview = {
+  /** Tiêu đề từng cột trong tệp (cột trống tiêu đề → chuỗi rỗng). */
+  headers: string[]
+  /** Giá trị mẫu đầu tiên không trống của mỗi cột — đã rút gọn, che số điện thoại. */
+  samples: string[]
+  /** Số dòng dữ liệu (không tính tiêu đề). */
+  rowCount: number
+} & ReturnType<typeof detectColumnMapping>
+
+const SAMPLE_MAX_CHARS = 80
+
+/** Che dãy số dài (SĐT, số tài khoản) trong giá trị mẫu, giữ 3 số cuối. */
+function maskSample(value: string): string {
+  const short = value.length > SAMPLE_MAX_CHARS ? `${value.slice(0, SAMPLE_MAX_CHARS)}…` : value
+  return short.replace(/\d[\d .-]{5,}\d/g, (m) => `•••${m.replace(/\D/g, "").slice(-3)}`)
+}
+
+/** Bước 1 của nhập tệp: đọc tiêu đề, tự ghép cột theo tên để người nhập xem lại và sửa. */
+export async function previewMarketplaceExcel(
+  pctx: PlatformContext,
+  file: { name: string; bytes: Uint8Array }
+): Promise<ExcelImportPreview> {
+  requirePlatformCapability(pctx, "N17")
+  const rows = readExcelRows(file)
+  const count = columnCountOf(rows)
+  const headers = Array.from({ length: count }, (_, i) => String(rows[0]?.[i] ?? "").trim())
+  const data = rows.slice(1).filter((r) => r.some((cell) => String(cell ?? "").trim()))
+  const samples = headers.map((_, i) => maskSample(data.map((r) => String(r[i] ?? "").trim()).find(Boolean) ?? ""))
+  return { headers, samples, rowCount: data.length, ...detectColumnMapping(headers) }
+}
+
+/**
+ * Bước 2: nhập theo bảng ghép cột người nhập đã duyệt. Không gửi bảng ghép → tự ghép
+ * theo tên tiêu đề như bước xem trước. Thiếu cột Tên cửa hàng → 422, không ghi gì.
+ */
+export async function importMarketplaceExcel(
+  pctx: PlatformContext,
+  file: { name: string; bytes: Uint8Array },
+  deps: Pick<MarketplaceDeps, "repo" | "audit"> = defaultDeps(),
+  mapping?: ColumnMapping
+): Promise<ImportSummary> {
+  requirePlatformCapability(pctx, "N17")
+  const rows = readExcelRows(file)
+  const columns = mapping ?? detectColumnMapping(rows[0]!.map((h) => String(h ?? ""))).mapping
+  const problem = validateColumnMapping(columns, columnCountOf(rows))
+  if (problem) throw unprocessable(problem)
+  return importRows(pctx, rows, "EXCEL", deps, columns)
 }
 
 /** Số cửa hàng xử lý mỗi lần bấm — giữ request trong giới hạn thời gian. */
