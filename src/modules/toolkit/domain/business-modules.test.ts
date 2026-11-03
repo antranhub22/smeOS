@@ -78,8 +78,14 @@ describe("6 Business Modules & Store Operations (PO 01/11/2026)", () => {
       }
     }
 
-    // Module print không có công cụ DONE và chưa có asset READY ở PR-0 -> phải bị ẩn ở production
-    expect(prodModules.some((m) => m.key === "print")).toBe(false)
+    // Từ PR-6, 10 ấn phẩm nối workspace /in-an nên module print hiện ở production —
+    // chỉ với asset Sẵn, không kèm công cụ nào chưa DONE.
+    const print = prodModules.find((m) => m.key === "print")
+    expect(print?.tools).toEqual([])
+    expect(print?.assets.length).toBe(10)
+    for (const a of print?.assets ?? []) {
+      expect(a.customHref).toMatch(/^\/in-an\?asset=/)
+    }
 
     // Store operations ở production chỉ hiện công cụ DONE
     const prodStoreOps = getStoreOperationsSection(false)
