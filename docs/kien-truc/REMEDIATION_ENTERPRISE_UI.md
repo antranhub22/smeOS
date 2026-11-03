@@ -34,8 +34,8 @@ Nhánh đạt chuẩn bàn giao khi đồng thời thoả:
 
 ## 4. Đợt T0 — Đồng bộ nền
 
-- [ ] **T0-1** Merge `origin/main` (6 commit: cổng dev 3200, `CONTEXT.md`) vào nhánh thực thi. Thử merge không xung đột. Chạy toàn bộ cổng, ghi kết quả làm mốc ở mục 9.
-- [ ] **T0-2** (D6) Đồng bộ `package-lock.json` với `package.json` sau khi gỡ `lucide-react`, `@radix-ui/react-select`, `@radix-ui/react-separator`, `@radix-ui/react-tooltip`. Kiểm: `npm ci` chạy sạch, không còn 4 gói trong `packages[""]`.
+- [x] **T0-1** Merge `origin/main` (6 commit: cổng dev 3200, `CONTEXT.md`) vào nhánh thực thi. Thử merge không xung đột. Chạy toàn bộ cổng, ghi kết quả làm mốc ở mục 9.
+- [x] **T0-2** (D6) Đồng bộ `package-lock.json` với `package.json` sau khi gỡ `lucide-react`, `@radix-ui/react-select`, `@radix-ui/react-separator`, `@radix-ui/react-tooltip`. Kiểm: `npm ci` chạy sạch, không còn 4 gói trong `packages[""]`.
 
 ## 5. Đợt P0 — Bảo mật dữ liệu (chặn bàn giao)
 
@@ -95,13 +95,37 @@ Nhánh đạt chuẩn bàn giao khi đồng thời thoả:
 
 | Việc | Trạng thái | Commit | Cổng đã chạy | Ghi chú |
 |---|---|---|---|---|
-| T0-1 | Chưa làm | | | |
-| T0-2 | Chưa làm | | | |
-| P0-1 … P0-4 | Chưa làm | | | |
-| P1-1 … P1-11 | Chưa làm | | | |
-| P2-1 … P2-4 | Chưa làm | | | P2-4 chờ tên pháp nhân |
-| P3-1 … P3-7 | Chưa làm | | | |
-| Z-1 … Z-3 | Chưa làm | | | |
+| T0-1 | Xong | `72e4b0f5` | Thử merge không xung đột mã; gộp tay 1 xung đột registry | Cổng toàn bộ chạy ở cuối đợt P0 |
+| T0-2 | Xong | (commit `chore(deps)` ngay sau `72e4b0f5`) | `npm ls --package-lock-only --all` sạch | Lockfile chỉ xoá 77 mục thuộc cây phụ thuộc của 4 gói đã gỡ; không gói nào thêm hoặc đổi phiên bản |
+| P0-1 | Chưa làm | | |  |
+| P0-2 | Chưa làm | | |  |
+| P0-3 | Chưa làm | | |  |
+| P0-4 | Chưa làm | | |  |
+| P1-1 | Chưa làm | | |  |
+| P1-2 | Chưa làm | | |  |
+| P1-3 | Chưa làm | | |  |
+| P1-4 | Chưa làm | | |  |
+| P1-5 | Chưa làm | | |  |
+| P1-6 | Chưa làm | | |  |
+| P1-7 | Chưa làm | | |  |
+| P1-8 | Chưa làm | | |  |
+| P1-9 | Chưa làm | | |  |
+| P1-10 | Chưa làm | | |  |
+| P1-11 | Chưa làm | | |  |
+| P2-1 | Chưa làm | | |  |
+| P2-2 | Chưa làm | | |  |
+| P2-3 | Chưa làm | | |  |
+| P2-4 | Chưa làm | | | Chờ tên pháp nhân |
+| P3-1 | Chưa làm | | |  |
+| P3-2 | Chưa làm | | |  |
+| P3-3 | Chưa làm | | |  |
+| P3-4 | Chưa làm | | |  |
+| P3-5 | Chưa làm | | |  |
+| P3-6 | Chưa làm | | |  |
+| P3-7 | Chưa làm | | |  |
+| Z-1 | Chưa làm | | |  |
+| Z-2 | Chưa làm | | |  |
+| Z-3 | Chưa làm | | |  |
 
 ## 10. Rủi ro và kiểm soát
 
