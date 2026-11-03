@@ -132,7 +132,7 @@ export function CrmWorkspace() {
       {/* Header */}
       <header className="flex flex-shrink-0 items-center justify-between border-b border-border bg-surface px-4 py-4">
         <div>
-          <div className="text-xs text-text-muted">{roleUx?.label ?? "Chăm sóc khách hàng (CRM)"}</div>
+          <div className="text-caption text-text-muted">{roleUx?.label ?? "Chăm sóc khách hàng (CRM)"}</div>
           <h2 className="text-title font-extrabold text-primary">{orgName}</h2>
         </div>
         <UserMenu initials={userInitials} />
@@ -180,25 +180,25 @@ export function CrmWorkspace() {
         {/* Khối P1: Thống kê nhanh vòng đời CRM */}
         <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
           <Card className="flex flex-col gap-1 p-3.5">
-            <span className="text-xs text-text-muted">Tổng khách hàng</span>
-            <span className="text-title font-extrabold text-foreground">
+            <span className="text-caption text-text-muted">Tổng khách hàng</span>
+            <span className="text-title font-extrabold text-text">
               {!daTai ? "—" : totalCustomers}
             </span>
           </Card>
           <Card className="flex flex-col gap-1 p-3.5">
-            <span className="text-xs text-text-muted">Dịp sắp tới (14 ngày)</span>
+            <span className="text-caption text-text-muted">Dịp sắp tới (14 ngày)</span>
             <span className="text-title font-extrabold text-primary">
               {!daTai ? "—" : reminders?.length ?? 0}
             </span>
           </Card>
           <Card className="flex flex-col gap-1 p-3.5">
-            <span className="text-xs text-text-muted">Nguy cơ rời bỏ</span>
+            <span className="text-caption text-text-muted">Nguy cơ rời bỏ</span>
             <span className="text-title font-extrabold text-warning">
               {!daTai ? "—" : atRiskCustomers.length}
             </span>
           </Card>
           <Card className="flex flex-col gap-1 p-3.5">
-            <span className="text-xs text-text-muted">Cần kích hoạt lại</span>
+            <span className="text-caption text-text-muted">Cần kích hoạt lại</span>
             <span className="text-title font-extrabold text-danger">
               {!daTai ? "—" : dormantCustomers.length}
             </span>
@@ -220,7 +220,7 @@ export function CrmWorkspace() {
                 size="sm"
                 variant="outline"
                 onClick={() => router.push("/khach-hang" as Route)}
-                className="text-xs"
+                className="text-caption"
               >
                 Xem tất cả
                 <ChevronRight size={14} aria-hidden="true" />
@@ -238,16 +238,23 @@ export function CrmWorkspace() {
               <ul className="flex flex-col divide-y divide-border">
                 {reminders.slice(0, 6).map((r) => (
                   <li key={`${r.customerId}-${r.occasionName}-${r.targetDate}`}>
-                    <button
-                      type="button"
+                    <div
+                      role="button"
+                      tabIndex={0}
                       onClick={() => router.push("/khach-hang" as Route)}
-                      className="flex min-h-12 w-full items-center justify-between gap-3 rounded-lg px-2 py-2 text-left hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-primary"
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          e.preventDefault()
+                          router.push("/khach-hang" as Route)
+                        }
+                      }}
+                      className="flex cursor-pointer min-h-12 w-full items-center justify-between gap-3 rounded-lg px-2 py-2 text-left hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-primary"
                     >
                       <div className="min-w-0 flex-1">
-                        <div className="truncate text-body font-semibold text-foreground">
+                        <div className="truncate text-body font-semibold text-text">
                           {r.customerName}
                         </div>
-                        <div className="text-xs text-text-muted">
+                        <div className="text-caption text-text-muted">
                           {r.occasionName}
                           {r.recipientName && r.recipientName !== r.customerName
                             ? ` · tặng ${r.recipientName}`
@@ -264,7 +271,7 @@ export function CrmWorkspace() {
                       >
                         {nhanNgayConLai(r.daysLeft)}
                       </span>
-                    </button>
+                    </div>
                   </li>
                 ))}
               </ul>
@@ -284,7 +291,7 @@ export function CrmWorkspace() {
                 size="sm"
                 variant="outline"
                 onClick={() => router.push("/khach-hang" as Route)}
-                className="text-xs"
+                className="text-caption"
               >
                 Mở danh sách
                 <ChevronRight size={14} aria-hidden="true" />
@@ -304,28 +311,35 @@ export function CrmWorkspace() {
                   const badge = nhanVongDoi(stage)
                   return (
                     <li key={customer.id}>
-                      <button
-                        type="button"
+                      <div
+                        role="button"
+                        tabIndex={0}
                         onClick={() => router.push("/khach-hang" as Route)}
-                        className="flex min-h-12 w-full items-center justify-between gap-3 rounded-lg px-2 py-2 text-left hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-primary"
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter" || e.key === " ") {
+                            e.preventDefault()
+                            router.push("/khach-hang" as Route)
+                          }
+                        }}
+                        className="flex cursor-pointer min-h-12 w-full items-center justify-between gap-3 rounded-lg px-2 py-2 text-left hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-primary"
                       >
                         <div className="min-w-0 flex-1">
                           <div className="flex items-center gap-2">
-                            <span className="truncate text-body font-semibold text-foreground">
+                            <span className="truncate text-body font-semibold text-text">
                               {customer.name}
                             </span>
                             <span className="rounded bg-surface-alt px-1.5 py-0.5 text-caption font-bold text-text-muted">
                               {customer.metrics.tier}
                             </span>
                           </div>
-                          <div className="text-xs text-text-muted">
+                          <div className="text-caption text-text-muted">
                             SĐT: {customer.phone} · Đã mua: {customer.metrics.orderCount} đơn · Chi tiêu: {formatCurrency(customer.metrics.totalSpentVnd)}
                           </div>
                         </div>
                         <span className={`rounded-full px-2 py-0.5 text-caption font-bold ${badge.cls}`}>
                           {badge.label}
                         </span>
-                      </button>
+                      </div>
                     </li>
                   )
                 })}

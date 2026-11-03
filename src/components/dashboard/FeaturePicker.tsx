@@ -32,6 +32,8 @@ import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Separator } from "@/components/ui/separator";
+import { Dialog } from "@/components/ui/dialog";
+import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
 import { useSession } from "@/lib/session";
 import {
@@ -209,7 +211,7 @@ export function FeaturePicker({
             <div>
               <h2 className="text-title font-extrabold">Chọn tính năng AI cho sản phẩm</h2>
               <p className="text-meta text-text-muted mt-0.5">
-                {productName} — Tick từng tính năng, hệ thống sẽ tạo job riêng cho mỗi module
+                {productName} — Tick từng tính năng, hệ thống sẽ tạo tác vụ riêng cho mỗi module
               </p>
             </div>
             <div className="flex items-center gap-2">
@@ -343,11 +345,18 @@ function CreditEstimateBadge({
                     warning === "warning" ? "text-warning" : "text-primary";
 
   return (
-    <button
-      type="button"
+    <div
+      role="button"
+      tabIndex={0}
       onClick={onClick}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onClick();
+        }
+      }}
       className={cn(
-        "flex items-center gap-1.5 rounded-xl px-3 py-1.5 transition-colors hover:opacity-80",
+        "flex cursor-pointer items-center gap-1.5 rounded-xl px-3 py-1.5 transition-colors hover:opacity-80",
         bgClass,
         textClass
       )}
@@ -357,7 +366,7 @@ function CreditEstimateBadge({
       <span className="font-bold text-meta">{formatCredits(totalCredits)}</span>
       <span className="text-caption opacity-70">/ {formatCredits(userBalance)}</span>
       <Info size={12} strokeWidth={1.8} className="ml-0.5" />
-    </button>
+    </div>
   );
 }
 
@@ -373,57 +382,52 @@ function CreditDetailsPanel({
   onClose: () => void;
 }) {
   return (
-    <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-4">
-      <div
-              role="button"
-              tabIndex={0} className="absolute inset-0 bg-black/50" onClick={onClose} />
-      <div className="relative w-full max-w-md bg-surface rounded-2xl border border-border overflow-hidden shadow-2xl animate-slide-up">
-        <div className="flex items-center justify-between border-b border-border px-4 py-3">
-          <h3 className="font-bold text-title-sm">Chi tiết ước tính Credit</h3>
-          <button
-              aria-label="Ẩn thông tin" onClick={onClose} className="flex h-8 w-8 items-center justify-center rounded-full hover:bg-surface-alt">
-            <EyeOff size={16} strokeWidth={2} />
-          </button>
-        </div>
-        <div className="max-h-[60vh] overflow-y-auto p-4">
-          <div className="flex flex-col gap-2">
-            {breakdown.map((item, i) => (
-              <div key={item.featureKey} className="flex items-start justify-between gap-2 p-2.5 rounded-xl bg-surface-alt">
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-1.5">
-                    <span className="font-medium text-meta truncate">{item.featureLabel}</span>
-                    <Badge tone="neutral" className="text-caption">
-                      {item.confidence === "high" ? "🟢" : item.confidence === "medium" ? "🟡" : "🔴"}
-                    </Badge>
-                  </div>
-                  {item.breakdown && (
-                    <p className="mt-0.5 text-caption text-text-muted truncate">{item.breakdown}</p>
-                  )}
+    <Dialog
+      open
+      onOpenChange={(open) => {
+        if (!open) onClose();
+      }}
+      title="Chi tiết ước tính Credit"
+      size="sm"
+    >
+      <div className="max-h-[60vh] overflow-y-auto p-4">
+        <div className="flex flex-col gap-2">
+          {breakdown.map((item) => (
+            <div key={item.featureKey} className="flex items-start justify-between gap-2 p-2.5 rounded-xl bg-surface-alt">
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-1.5">
+                  <span className="font-medium text-meta truncate">{item.featureLabel}</span>
+                  <Badge tone="neutral" className="text-caption">
+                    {item.confidence === "high" ? "🟢" : item.confidence === "medium" ? "🟡" : "🔴"}
+                  </Badge>
                 </div>
-                <span className="font-bold text-body-sm text-primary whitespace-nowrap">
-                  {formatCredits(item.estimatedCredits)}
-                </span>
+                {item.breakdown && (
+                  <p className="mt-0.5 text-caption text-text-muted truncate">{item.breakdown}</p>
+                )}
               </div>
-            ))}
-            <Separator className="my-2" />
-            <div className="flex items-center justify-between text-body font-bold">
-              <span>Tổng cộng</span>
-              <span className="text-primary">{formatCredits(totalCredits)}</span>
-            </div>
-            <div className="flex items-center justify-between text-meta text-text-muted">
-              <span>Số dư hiện tại</span>
-              <span>{formatCredits(userBalance)}</span>
-            </div>
-            <div className="flex items-center justify-between text-meta font-medium">
-              <span>Còn lại sau khi chạy</span>
-              <span className={totalCredits > userBalance ? "text-danger" : "text-secondary-text"}>
-                {formatCredits(Math.max(0, userBalance - totalCredits))}
+              <span className="font-bold text-body-sm text-primary whitespace-nowrap">
+                {formatCredits(item.estimatedCredits)}
               </span>
             </div>
+          ))}
+          <Separator className="my-2" />
+          <div className="flex items-center justify-between text-body font-bold">
+            <span>Tổng cộng</span>
+            <span className="text-primary">{formatCredits(totalCredits)}</span>
+          </div>
+          <div className="flex items-center justify-between text-meta text-text-muted">
+            <span>Số dư hiện tại</span>
+            <span>{formatCredits(userBalance)}</span>
+          </div>
+          <div className="flex items-center justify-between text-meta font-medium">
+            <span>Còn lại sau khi chạy</span>
+            <span className={totalCredits > userBalance ? "text-danger" : "text-secondary-text"}>
+              {formatCredits(Math.max(0, userBalance - totalCredits))}
+            </span>
           </div>
         </div>
       </div>
-    </div>
+    </Dialog>
   );
 }
 
@@ -614,12 +618,11 @@ function FeatureCard({
             feature.status === "coming_soon" && "border-dashed"
           )}>
             <div className="flex items-start gap-2.5">
-              <input
-                type="checkbox"
+              <Checkbox
                 checked={isSelected}
-                onChange={() => enabled && onToggle(feature)}
+                onCheckedChange={() => enabled && onToggle(feature)}
                 disabled={!enabled}
-                className="mt-0.5 flex-shrink-0 h-4.5 w-4.5 rounded border-[1.5px] border-border bg-surface text-primary focus:ring-2 focus:ring-primary/20"
+                className="mt-0.5"
               />
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-1.5">

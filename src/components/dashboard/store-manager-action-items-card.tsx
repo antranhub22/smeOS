@@ -28,10 +28,17 @@ export function DongCanThiep({
   nguyCap,
 }: DongCanThiepProps) {
   return (
-    <button
-      type="button"
+    <div
+      role="button"
+      tabIndex={0}
       onClick={onClick}
-      className="flex min-h-11 w-full items-center justify-between gap-3 rounded-lg px-1 text-left hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-primary"
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault()
+          onClick?.()
+        }
+      }}
+      className="flex min-h-11 w-full items-center justify-between gap-3 rounded-lg px-1 text-left hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-primary cursor-pointer"
     >
       <span className="flex items-center gap-2.5">
         <Icon size={17} strokeWidth={1.9} className={nguyCap ? "text-danger" : "text-text-muted"} />
@@ -41,7 +48,7 @@ export function DongCanThiep({
         {giaTri}
         <ChevronRight size={15} aria-hidden="true" />
       </span>
-    </button>
+    </div>
   )
 }
 

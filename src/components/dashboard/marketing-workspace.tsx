@@ -111,7 +111,7 @@ export function MarketingWorkspace() {
       {/* Header */}
       <header className="flex flex-shrink-0 items-center justify-between border-b border-border bg-surface px-4 py-4">
         <div>
-          <div className="text-xs text-text-muted">{roleUx?.label ?? "Marketing"}</div>
+          <div className="text-caption text-text-muted">{roleUx?.label ?? "Marketing"}</div>
           <h2 className="text-title font-extrabold text-primary">{orgName}</h2>
         </div>
         <UserMenu initials={userInitials} />
@@ -159,25 +159,25 @@ export function MarketingWorkspace() {
         {/* Khối P1: Thống kê nhanh tiếp thị */}
         <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
           <Card className="flex flex-col gap-1 p-3.5">
-            <span className="text-xs text-text-muted">Đã lên lịch</span>
-            <span className="text-title font-extrabold text-foreground">
+            <span className="text-caption text-text-muted">Đã lên lịch</span>
+            <span className="text-title font-extrabold text-text">
               {!daTai ? "—" : scheduledPosts.length}
             </span>
           </Card>
           <Card className="flex flex-col gap-1 p-3.5">
-            <span className="text-xs text-text-muted">Cần xử lý / Lỗi</span>
+            <span className="text-caption text-text-muted">Cần xử lý / Lỗi</span>
             <span className="text-title font-extrabold text-danger">
               {!daTai ? "—" : failedPosts.length}
             </span>
           </Card>
           <Card className="flex flex-col gap-1 p-3.5">
-            <span className="text-xs text-text-muted">Đã phát hành</span>
+            <span className="text-caption text-text-muted">Đã phát hành</span>
             <span className="text-title font-extrabold text-success">
               {!daTai ? "—" : publishedCount}
             </span>
           </Card>
           <Card className="flex flex-col gap-1 p-3.5">
-            <span className="text-xs text-text-muted">Cơ hội xu hướng</span>
+            <span className="text-caption text-text-muted">Cơ hội xu hướng</span>
             <span className="text-title font-extrabold text-primary">
               {!daTai ? "—" : opportunities?.length ?? 0}
             </span>
@@ -199,7 +199,7 @@ export function MarketingWorkspace() {
                 size="sm"
                 variant="outline"
                 onClick={() => router.push("/lich-dang" as Route)}
-                className="text-xs"
+                className="text-caption"
               >
                 Mở lịch đăng
                 <ChevronRight size={14} aria-hidden="true" />
@@ -217,16 +217,23 @@ export function MarketingWorkspace() {
               <ul className="flex flex-col divide-y divide-border">
                 {(failedPosts.length > 0 ? failedPosts : scheduledPosts).slice(0, 5).map((p) => (
                   <li key={p.id}>
-                    <button
-                      type="button"
+                    <div
+                      role="button"
+                      tabIndex={0}
                       onClick={() => router.push("/lich-dang" as Route)}
-                      className="flex min-h-12 w-full items-center justify-between gap-3 rounded-lg px-2 py-2 text-left hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-primary"
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          e.preventDefault()
+                          router.push("/lich-dang" as Route)
+                        }
+                      }}
+                      className="flex cursor-pointer min-h-12 w-full items-center justify-between gap-3 rounded-lg px-2 py-2 text-left hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-primary"
                     >
                       <div className="min-w-0 flex-1">
-                        <div className="truncate text-body font-semibold text-foreground">
+                        <div className="truncate text-body font-semibold text-text">
                           {p.title || p.content?.slice(0, 45) || "Bài viết chưa đặt tiêu đề"}
                         </div>
-                        <div className="text-xs text-text-muted">
+                        <div className="text-caption text-text-muted">
                           {p.platform || "Đa kênh"} {p.error_message ? `· Lỗi: ${p.error_message}` : ""}
                         </div>
                       </div>
@@ -239,7 +246,7 @@ export function MarketingWorkspace() {
                       >
                         {p.status === "FAILED" ? "Thất bại" : "Chờ đăng"}
                       </span>
-                    </button>
+                    </div>
                   </li>
                 ))}
               </ul>
@@ -257,7 +264,7 @@ export function MarketingWorkspace() {
                 size="sm"
                 variant="outline"
                 onClick={() => router.push("/market-intelligence" as Route)}
-                className="text-xs"
+                className="text-caption"
               >
                 Khám phá thêm
                 <ChevronRight size={14} aria-hidden="true" />
@@ -275,16 +282,23 @@ export function MarketingWorkspace() {
               <ul className="flex flex-col divide-y divide-border">
                 {opportunities.slice(0, 5).map((opp) => (
                   <li key={opp.id}>
-                    <button
-                      type="button"
+                    <div
+                      role="button"
+                      tabIndex={0}
                       onClick={() => router.push("/creative-studio" as Route)}
-                      className="flex min-h-12 w-full items-center justify-between gap-3 rounded-lg px-2 py-2 text-left hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-primary"
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          e.preventDefault()
+                          router.push("/creative-studio" as Route)
+                        }
+                      }}
+                      className="flex cursor-pointer min-h-12 w-full items-center justify-between gap-3 rounded-lg px-2 py-2 text-left hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-primary"
                     >
                       <div className="min-w-0 flex-1">
-                        <div className="truncate text-body font-semibold text-foreground">
+                        <div className="truncate text-body font-semibold text-text">
                           {opp.title}
                         </div>
-                        <div className="text-xs text-text-muted">
+                        <div className="text-caption text-text-muted">
                           {opp.dominantTopic || "Sản phẩm & Quà tặng"} {opp.suggestedAngle ? `· ${opp.suggestedAngle}` : ""}
                         </div>
                       </div>
@@ -293,7 +307,7 @@ export function MarketingWorkspace() {
                           {opp.trendScore} điểm
                         </span>
                       )}
-                    </button>
+                    </div>
                   </li>
                 ))}
               </ul>
@@ -305,61 +319,89 @@ export function MarketingWorkspace() {
         <Card className="flex flex-col gap-3 p-4">
           <h2 className="text-title-sm font-bold">Bộ công cụ sáng tạo tiếp thị</h2>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            <button
-              type="button"
+            <div
+              role="button"
+              tabIndex={0}
               onClick={() => router.push("/creative-studio" as Route)}
-              className="flex items-center gap-3 rounded-lg border border-border bg-surface p-3 text-left hover:border-primary/50 focus-visible:outline-2 focus-visible:outline-primary"
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault()
+                  router.push("/creative-studio" as Route)
+                }
+              }}
+              className="flex cursor-pointer items-center gap-3 rounded-lg border border-border bg-surface p-3 text-left hover:border-primary/50 focus-visible:outline-2 focus-visible:outline-primary"
             >
               <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
                 <Sparkles size={20} aria-hidden="true" />
               </div>
               <div className="min-w-0 flex-1">
-                <div className="text-body font-bold text-foreground">Creative Studio</div>
-                <div className="text-xs text-text-muted">14 chặng sáng tạo khép kín</div>
+                <div className="text-body font-bold text-text">Creative Studio</div>
+                <div className="text-caption text-text-muted">14 chặng sáng tạo khép kín</div>
               </div>
-            </button>
+            </div>
 
-            <button
-              type="button"
+            <div
+              role="button"
+              tabIndex={0}
               onClick={() => router.push("/noi-dung" as Route)}
-              className="flex items-center gap-3 rounded-lg border border-border bg-surface p-3 text-left hover:border-primary/50 focus-visible:outline-2 focus-visible:outline-primary"
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault()
+                  router.push("/noi-dung" as Route)
+                }
+              }}
+              className="flex cursor-pointer items-center gap-3 rounded-lg border border-border bg-surface p-3 text-left hover:border-primary/50 focus-visible:outline-2 focus-visible:outline-primary"
             >
               <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent/10 text-accent">
                 <PenTool size={20} aria-hidden="true" />
               </div>
               <div className="min-w-0 flex-1">
-                <div className="text-body font-bold text-foreground">Content Engine</div>
-                <div className="text-xs text-text-muted">Soạn bài viết đa kênh tự động</div>
+                <div className="text-body font-bold text-text">Content Engine</div>
+                <div className="text-caption text-text-muted">Soạn bài viết đa kênh tự động</div>
               </div>
-            </button>
+            </div>
 
-            <button
-              type="button"
+            <div
+              role="button"
+              tabIndex={0}
               onClick={() => router.push("/video" as Route)}
-              className="flex items-center gap-3 rounded-lg border border-border bg-surface p-3 text-left hover:border-primary/50 focus-visible:outline-2 focus-visible:outline-primary"
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault()
+                  router.push("/video" as Route)
+                }
+              }}
+              className="flex cursor-pointer items-center gap-3 rounded-lg border border-border bg-surface p-3 text-left hover:border-primary/50 focus-visible:outline-2 focus-visible:outline-primary"
             >
               <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-warning-bg text-warning">
                 <Video size={20} aria-hidden="true" />
               </div>
               <div className="min-w-0 flex-1">
-                <div className="text-body font-bold text-foreground">Video Studio</div>
-                <div className="text-xs text-text-muted">Dựng video ngắn & kịch bản</div>
+                <div className="text-body font-bold text-text">Video Studio</div>
+                <div className="text-caption text-text-muted">Dựng video ngắn & kịch bản</div>
               </div>
-            </button>
+            </div>
 
-            <button
-              type="button"
+            <div
+              role="button"
+              tabIndex={0}
               onClick={() => router.push("/lich-dang" as Route)}
-              className="flex items-center gap-3 rounded-lg border border-border bg-surface p-3 text-left hover:border-primary/50 focus-visible:outline-2 focus-visible:outline-primary"
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault()
+                  router.push("/lich-dang" as Route)
+                }
+              }}
+              className="flex cursor-pointer items-center gap-3 rounded-lg border border-border bg-surface p-3 text-left hover:border-primary/50 focus-visible:outline-2 focus-visible:outline-primary"
             >
               <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-success-bg text-success">
                 <Share2 size={20} aria-hidden="true" />
               </div>
               <div className="min-w-0 flex-1">
-                <div className="text-body font-bold text-foreground">Lịch đăng & Tự động</div>
-                <div className="text-xs text-text-muted">Lên lịch mạng xã hội đa kênh</div>
+                <div className="text-body font-bold text-text">Lịch đăng & Tự động</div>
+                <div className="text-caption text-text-muted">Lên lịch mạng xã hội đa kênh</div>
               </div>
-            </button>
+            </div>
           </div>
         </Card>
       </main>

@@ -3,6 +3,7 @@
 import React from "react"
 import { useRouter } from "next/navigation"
 import { ArrowUpRight, Sparkles } from "@/components/ui/icons"
+import { Button } from "@/components/ui/button"
 import { InfoTip } from "@/components/ui/info-tip"
 import {
   type AssetTypeDefinition,
@@ -104,14 +105,15 @@ export function AssetTypeCard({ asset, tool, isDev }: AssetTypeCardProps) {
         </span>
 
         {isReady && href ? (
-          <button
+          <Button
             type="button"
+            size="sm"
             onClick={handleCreate}
-            className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-primary text-primary-fg text-caption font-bold shadow-xs hover:bg-primary-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring transition-colors cursor-pointer"
+            className="inline-flex items-center gap-1 text-caption font-bold"
           >
             Tạo
             <ArrowUpRight className="w-3.5 h-3.5" aria-hidden="true" />
-          </button>
+          </Button>
         ) : (
           <span className="text-caption text-text-muted italic">
             {readiness === "EXTEND" ? "Đang mở rộng" : "Sắp ra mắt"}

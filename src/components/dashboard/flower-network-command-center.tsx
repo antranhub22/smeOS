@@ -242,10 +242,17 @@ export function FlowerNetworkCommandCenter() {
           <Card className="p-5">
             <h3 className="mb-3 text-title-sm font-bold text-text">Hành động Điều hành Cấp cao</h3>
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-              <button
-                type="button"
+              <div
+                role="button"
+                tabIndex={0}
                 onClick={() => router.push("/dieu-phoi" as never)}
-                className="flex items-start gap-3 rounded-2xl border border-border/80 bg-surface p-4 text-left shadow-xs transition hover:border-primary/50 hover:shadow-sm"
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault()
+                    router.push("/dieu-phoi" as never)
+                  }
+                }}
+                className="flex items-start gap-3 rounded-2xl border border-border/80 bg-surface p-4 text-left shadow-xs transition hover:border-primary/50 hover:shadow-sm cursor-pointer"
               >
                 <div className="rounded-xl bg-primary/10 p-2 text-primary">
                   <ShieldAlert className="h-5 w-5" />
@@ -256,12 +263,19 @@ export function FlowerNetworkCommandCenter() {
                     Xử lý nhanh các đơn bị trễ xưởng, sản phẩm chưa đạt chuẩn hoặc phát sinh khiếu nại
                   </div>
                 </div>
-              </button>
+              </div>
 
-              <button
-                type="button"
+              <div
+                role="button"
+                tabIndex={0}
                 onClick={() => router.push("/don-hang")}
-                className="flex items-start gap-3 rounded-2xl border border-border/80 bg-surface p-4 text-left shadow-xs transition hover:border-primary/50 hover:shadow-sm"
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault()
+                    router.push("/don-hang")
+                  }
+                }}
+                className="flex items-start gap-3 rounded-2xl border border-border/80 bg-surface p-4 text-left shadow-xs transition hover:border-primary/50 hover:shadow-sm cursor-pointer"
               >
                 <div className="rounded-xl bg-primary/10 p-2 text-primary">
                   <Truck className="h-5 w-5" />
@@ -272,7 +286,7 @@ export function FlowerNetworkCommandCenter() {
                     Chỉ định chi nhánh đối tác hoặc điều chuyển tuyến phân bổ cho đơn ưu tiên
                   </div>
                 </div>
-              </button>
+              </div>
             </div>
           </Card>
         </div>

@@ -76,13 +76,20 @@ export function ToolCard({ tool, isDev, tone = "plum" }: ToolCardProps) {
 
       <h3 className={`text-body-sm sm:text-title-sm font-bold leading-snug ${isClickable ? "text-text group-hover:text-primary" : "text-text-muted"}`}>
         {isClickable ? (
-          <button
-            type="button"
+          <div
+            role="button"
+            tabIndex={0}
             onClick={handleClick}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault()
+                handleClick()
+              }
+            }}
             className="after:absolute after:inset-0 after:rounded-2xl after:content-[''] focus-visible:outline-none focus-visible:after:ring-2 focus-visible:after:ring-ring cursor-pointer transition-colors"
           >
             {shortName}
-          </button>
+          </div>
         ) : (
           shortName
         )}

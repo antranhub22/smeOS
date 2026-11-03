@@ -3,6 +3,7 @@
 import React from "react"
 import Link from "next/navigation"
 import { ArrowLeft, Folder, Sparkles, Wrench } from "@/components/ui/icons"
+import { Button } from "@/components/ui/button"
 import { IconTile } from "@/components/ui/app-icon"
 import { InfoTip } from "@/components/ui/info-tip"
 import type { BusinessModule } from "@/modules/toolkit/domain/business-modules"
@@ -26,14 +27,16 @@ export function ModuleDetail({ module, isDev, onBack }: ModuleDetailProps) {
     <section className="space-y-8">
       <div className="flex items-center justify-between gap-4">
         {onBack ? (
-          <button
+          <Button
             type="button"
+            variant="ghost"
+            size="sm"
             onClick={onBack}
-            className="inline-flex items-center gap-1.5 min-h-8 px-2 -ml-2 rounded-lg text-body-sm font-medium text-text-muted hover:text-primary hover:bg-surface-alt transition-colors cursor-pointer"
+            className="inline-flex items-center gap-1.5 -ml-2 text-body-sm font-medium text-text-muted hover:text-primary"
           >
             <ArrowLeft className="w-4 h-4" aria-hidden="true" />
             Tất cả các mục
-          </button>
+          </Button>
         ) : (
           <div />
         )}

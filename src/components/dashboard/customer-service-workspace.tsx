@@ -207,11 +207,18 @@ export function CustomerServiceWorkspace() {
           {daTai && !loi && activeConvs.length > 0 && (
             <div className="flex flex-col gap-2">
               {activeConvs.slice(0, 5).map((conv) => (
-                <button
+                <div
                   key={conv.id}
-                  type="button"
+                  role="button"
+                  tabIndex={0}
                   aria-label={`Mở hội thoại với ${conv.customer_name ?? "khách"}`}
                   onClick={() => router.push(`/hoi-thoai?id=${conv.id}` as Route)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault()
+                      router.push(`/hoi-thoai?id=${conv.id}` as Route)
+                    }
+                  }}
                   className="w-full text-left"
                 >
                   <Card className="flex items-center gap-3 p-3 hover:border-primary/40 transition-colors cursor-pointer">
@@ -238,7 +245,7 @@ export function CustomerServiceWorkspace() {
                     </div>
                     <ChevronRight size={14} className="flex-shrink-0 text-text-muted" />
                   </Card>
-                </button>
+                </div>
               ))}
             </div>
           )}

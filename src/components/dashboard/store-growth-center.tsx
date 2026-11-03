@@ -198,10 +198,17 @@ export function StoreGrowthCenter() {
           <Card className="p-5">
             <h2 className="mb-4 text-title-sm font-bold text-text">Đòn bẩy Tăng trưởng Doanh số</h2>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <button
-                type="button"
+              <div
+                role="button"
+                tabIndex={0}
                 onClick={() => router.push("/market-intelligence" as never)}
-                className="flex items-start gap-3.5 rounded-lg border border-border bg-surface-alt p-4 text-left transition hover:border-primary/50"
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault()
+                    router.push("/market-intelligence" as never)
+                  }
+                }}
+                className="flex items-start gap-3.5 rounded-lg border border-border bg-surface-alt p-4 text-left transition hover:border-primary/50 cursor-pointer"
               >
                 <div className="rounded-md bg-primary/10 p-2 text-primary">
                   <TrendingUp className="h-5 w-5" />
@@ -212,12 +219,19 @@ export function StoreGrowthCenter() {
                     Bắt trend hoa hot, cơ hội nội dung & mẫu video tuần này
                   </div>
                 </div>
-              </button>
+              </div>
 
-              <button
-                type="button"
+              <div
+                role="button"
+                tabIndex={0}
                 onClick={() => router.push("/creative-studio" as never)}
-                className="flex items-start gap-3.5 rounded-lg border border-border bg-surface-alt p-4 text-left transition hover:border-primary/50"
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault()
+                    router.push("/creative-studio" as never)
+                  }
+                }}
+                className="flex items-start gap-3.5 rounded-lg border border-border bg-surface-alt p-4 text-left transition hover:border-primary/50 cursor-pointer"
               >
                 <div className="rounded-md bg-primary/10 p-2 text-primary">
                   <Sparkles className="h-5 w-5" />
@@ -228,7 +242,7 @@ export function StoreGrowthCenter() {
                     Biến ảnh thô thành bộ ảnh marketing & video triệu view
                   </div>
                 </div>
-              </button>
+              </div>
             </div>
           </Card>
 

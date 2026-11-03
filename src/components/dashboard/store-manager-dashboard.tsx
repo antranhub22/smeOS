@@ -140,7 +140,7 @@ export function StoreManagerDashboard() {
     <div className="flex h-full flex-col overflow-hidden">
       <header className="flex flex-shrink-0 items-center justify-between border-b border-border bg-surface px-4 py-4">
         <div>
-          <div className="text-xs text-text-muted">{roleUx?.label ?? "Điều hành"}</div>
+          <div className="text-caption text-text-muted">{roleUx?.label ?? "Điều hành"}</div>
           <h2 className="text-title font-extrabold text-primary">{orgName}</h2>
         </div>
         <UserMenu initials={userInitials} />
@@ -166,15 +166,15 @@ export function StoreManagerDashboard() {
             onScrollToJobs={scrollToJobCard}
           />
 
-          {/* P1 — Job đang chạy và job lỗi */}
+          {/* P1 — Tác vụ đang chạy và tác vụ lỗi */}
           <Card id="khoi-job" tabIndex={-1} className="flex flex-col gap-3.5 p-4 focus:outline-none focus:ring-2 focus:ring-primary/40">
-            <h2 className="text-title-sm font-bold">Job đang chạy và job lỗi</h2>
+            <h2 className="text-title-sm font-bold">Tác vụ đang chạy và tác vụ lỗi</h2>
             {!daTai ? (
               <SkeletonBlock lines={2} />
             ) : jobs === null ? (
-              <p className="text-body-sm text-text-muted">Bạn không có quyền xem job.</p>
+              <p className="text-body-sm text-text-muted">Bạn không có quyền xem tác vụ.</p>
             ) : dangChay.length === 0 && loiJobs.length === 0 ? (
-              <p className="text-body-sm text-text-muted">Không có job nào đang chạy hoặc bị lỗi.</p>
+              <p className="text-body-sm text-text-muted">Không có tác vụ nào đang chạy hoặc bị lỗi.</p>
             ) : (
               <>
                 {loiJobs.map((job) => (
@@ -184,10 +184,10 @@ export function StoreManagerDashboard() {
                     </div>
                     <div className="min-w-0 flex-1">
                       <div className="text-body font-semibold">{tenTinhNang(job.feature)}</div>
-                      <div className="truncate text-xs text-danger">{job.error ?? "Job thất bại"}</div>
+                      <div className="truncate text-caption text-danger">{job.error ?? "Tác vụ thất bại"}</div>
                     </div>
                     <Button variant="outline" size="sm" disabled={dangChayLai === job.id} onClick={() => chayLai(job.id)}>
-                      {dangChayLai === job.id ? "Đang chạy lại…" : "Chạy lại job"}
+                      {dangChayLai === job.id ? "Đang chạy lại…" : "Chạy lại tác vụ"}
                     </Button>
                   </div>
                 ))}
@@ -198,11 +198,11 @@ export function StoreManagerDashboard() {
                   <div key={job.id} className="flex flex-col gap-1">
                     <div className="flex items-center justify-between">
                       <div className="text-body font-semibold">{tenTinhNang(job.feature)}</div>
-                      <div className="text-xs font-bold text-secondary-text">
+                      <div className="text-caption font-bold text-secondary-text">
                         {job.status === "PROCESSING" ? "Đang chạy" : "Đang chờ"}
                       </div>
                     </div>
-                    {job.stage && <div className="text-xs text-text-muted">{job.stage}</div>}
+                    {job.stage && <div className="text-caption text-text-muted">{job.stage}</div>}
                   </div>
                 ))}
               </>
@@ -211,22 +211,36 @@ export function StoreManagerDashboard() {
 
           {/* P2 — Lối tắt */}
           <nav aria-label="Lối tắt" className="grid grid-cols-2 gap-2.5">
-            <button
-              type="button"
+            <div
+              role="button"
+              tabIndex={0}
               onClick={() => router.push("/market-intelligence" as never)}
-              className="flex min-h-11 items-center gap-2 rounded-xl border border-border bg-surface px-3 py-2.5 text-left text-body-sm font-semibold hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-primary"
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault()
+                  router.push("/market-intelligence" as never)
+                }
+              }}
+              className="flex cursor-pointer min-h-11 items-center gap-2 rounded-xl border border-border bg-surface px-3 py-2.5 text-left text-body-sm font-semibold hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-primary"
             >
               <TrendingUp size={16} className="text-text-muted" aria-hidden="true" />
               Nghiên cứu thị trường
-            </button>
-            <button
-              type="button"
+            </div>
+            <div
+              role="button"
+              tabIndex={0}
               onClick={() => router.push("/bo-may" as never)}
-              className="flex min-h-11 items-center gap-2 rounded-xl border border-border bg-surface px-3 py-2.5 text-left text-body-sm font-semibold hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-primary"
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault()
+                  router.push("/bo-may" as never)
+                }
+              }}
+              className="flex cursor-pointer min-h-11 items-center gap-2 rounded-xl border border-border bg-surface px-3 py-2.5 text-left text-body-sm font-semibold hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-primary"
             >
               <Cpu size={16} className="text-text-muted" aria-hidden="true" />
               Bộ máy phân tích ảnh
-            </button>
+            </div>
           </nav>
         </div>
 
@@ -237,13 +251,20 @@ export function StoreManagerDashboard() {
             <Card className="flex flex-col gap-3 p-4">
               <div className="flex items-center justify-between">
                 <h2 className="text-title-sm font-bold">Sản phẩm mới</h2>
-                <button
-                  type="button"
+                <div
+                  role="button"
+                  tabIndex={0}
                   onClick={() => router.push("/san-pham" as never)}
-                  className="text-xs font-semibold text-primary hover:underline"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault()
+                      router.push("/san-pham" as never)
+                    }
+                  }}
+                  className="cursor-pointer text-caption font-semibold text-primary hover:underline focus-visible:outline-2 focus-visible:outline-primary"
                 >
                   Xem tất cả →
-                </button>
+                </div>
               </div>
               {!daTai || products === null ? (
                 <SkeletonBlock lines={3} />
@@ -261,7 +282,7 @@ export function StoreManagerDashboard() {
                     </div>
                     <div className="min-w-0 flex-1">
                       <div className="truncate text-body font-semibold">{p.name}</div>
-                      <div className="truncate text-xs text-text-muted">
+                      <div className="truncate text-caption text-text-muted">
                         {p.code}
                         {p.category ? ` · ${p.category}` : ""} · {NHAN_TRANG_THAI_SAN_PHAM[p.status]}
                       </div>
@@ -299,8 +320,8 @@ export function StoreManagerDashboard() {
                     <div className="flex flex-wrap gap-4">
                       {usage.by_feature.map((f) => (
                         <div key={f.feature}>
-                          <div className="text-xs text-text-muted">{tenTinhNang(f.feature)}</div>
-                          <div className="text-sm font-bold">{f.cost_credit} credit</div>
+                          <div className="text-caption text-text-muted">{tenTinhNang(f.feature)}</div>
+                          <div className="text-body-sm font-bold">{f.cost_credit} credit</div>
                         </div>
                       ))}
                     </div>
