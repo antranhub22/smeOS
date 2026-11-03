@@ -36,7 +36,7 @@ export function BrochureClaimGate({ sendCode }: { sendCode: string }) {
         </>
       ) : (
         <>
-          <Loader2 className="animate-spin motion-reduce:animate-none text-primary" size={28} aria-hidden="true" />
+          <Loader2 className="animate-spin text-primary" size={28} aria-hidden="true" />
           <p className="text-body text-text-muted">Đang mở bộ sưu tập…</p>
         </>
       )}

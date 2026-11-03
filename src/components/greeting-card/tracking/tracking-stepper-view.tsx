@@ -79,7 +79,7 @@ export function TrackingStepperView({
                       : isCurrent && stuck
                       ? "bg-danger text-white ring-4 ring-danger/20 shadow-sm"
                       : isCurrent
-                      ? "bg-primary text-white ring-4 ring-primary/20 shadow-sm animate-pulse motion-reduce:animate-none"
+                      ? "bg-primary text-white ring-4 ring-primary/20 shadow-sm animate-pulse"
                       : "bg-surface border border-border text-text-muted hover:border-primary/50"
                   }`}
                 >

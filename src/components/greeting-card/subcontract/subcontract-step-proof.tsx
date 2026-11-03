@@ -297,7 +297,7 @@ export function SubcontractStepProof({
             >
               {submitting ? (
                 <>
-                  <Loader2 size={16} className="animate-spin motion-reduce:animate-none" /> Đang tải lên...
+                  <Loader2 size={16} className="animate-spin" /> Đang tải lên...
                 </>
               ) : (
                 <>

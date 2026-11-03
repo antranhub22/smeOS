@@ -88,7 +88,7 @@ export function CoordinatorKanbanCard({
   } else if (tier === "URGENT") {
     tierBorder = "border-warning/70 bg-warning-bg/15 shadow-sm"
     tierBadge = (
-      <span className="rounded-md bg-warning-bg px-1.5 py-0.5 text-caption font-extrabold text-warning shrink-0 animate-pulse motion-reduce:animate-none">
+      <span className="rounded-md bg-warning-bg px-1.5 py-0.5 text-caption font-extrabold text-warning shrink-0 animate-pulse">
         Sắp đến hạn
       </span>
     )

@@ -86,7 +86,7 @@ function ProofVerificationCard({
           {!analysis && (
             // Chưa có kết quả AI (đang xử lý ngầm — thường chỉ vài giây sau khi khách tải lên)
             <p className="text-caption text-text-muted flex items-center gap-1">
-              <Clock size={11} className="animate-spin motion-reduce:animate-none shrink-0" />
+              <Clock size={11} className="animate-spin shrink-0" />
               <span>Đang đọc dữ liệu biên lai...</span>
             </p>
           )}

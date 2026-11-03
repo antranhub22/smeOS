@@ -3,7 +3,6 @@
 import React, { useState } from "react"
 import { Check, Copy, Link2, Loader2 } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
-import { useConfirmDialog } from "@/components/ui/confirm-dialog"
 import { apiSend, useApi } from "@/components/greeting-card/greeting-api"
 
 interface IntegrationStatus {
@@ -20,23 +19,11 @@ export function BrochureBankSyncSettings() {
   const [busy, setBusy] = useState(false)
   const [copied, setCopied] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
-  const [confirm, confirmDialog] = useConfirmDialog()
   const payment = status.data?.data.payment
   const webhookUrl = typeof window === "undefined" || !payment ? "" : `${window.location.origin}${payment.webhookPath}`
 
   async function run(method: "POST" | "DELETE") {
-    if (
-      method === "POST" &&
-      payment?.enabled &&
-      !(await confirm({
-        title: "Tạo khoá mới?",
-        consequence: "Khoá cũ trên SePay sẽ hết hiệu lực ngay lập tức. Bạn cần cập nhật khoá mới vào cấu hình SePay.",
-        confirmLabel: "Tạo khoá mới",
-        tone: "danger",
-      }))
-    ) {
-      return
-    }
+    if (method === "POST" && payment?.enabled && !window.confirm("Tạo khoá mới? Khoá cũ trên SePay sẽ hết hiệu lực ngay.")) return
     setBusy(true)
     setError(null)
     try {
@@ -98,11 +85,10 @@ export function BrochureBankSyncSettings() {
           <Button type="button" variant="outline" size="sm" disabled={busy} onClick={() => void run("DELETE")}>Tắt</Button>
         )}
         <Button type="button" size="sm" disabled={busy || !payment} onClick={() => void run("POST")} className="gap-1.5">
-          {busy && <Loader2 size={14} className="animate-spin motion-reduce:animate-none" />}
+          {busy && <Loader2 size={14} className="animate-spin" />}
           {payment?.enabled ? "Tạo khoá mới" : "Bật đối soát tự động"}
         </Button>
       </div>
-      {confirmDialog}
     </section>
   )
 }

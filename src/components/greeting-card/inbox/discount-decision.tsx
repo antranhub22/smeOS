@@ -76,7 +76,7 @@ export function DiscountDecision({ requestId, baseTotalVnd, requestedVnd, percen
       <button type="button" onClick={() => void submit()}
         disabled={(choice === "OTHER" && !(Number(otherPercent) >= 1)) || (choice === "REJECT" && note.trim().length < 3)}
         className={`inline-flex h-11 items-center justify-center gap-2 rounded-xl px-4 text-body-sm font-bold text-white disabled:opacity-40 ${choice === "REJECT" ? "bg-danger" : "bg-success"}`}>
-        {busy && <Loader2 size={16} className="animate-spin motion-reduce:animate-none" aria-hidden="true" />}
+        {busy && <Loader2 size={16} className="animate-spin" aria-hidden="true" />}
         {choice === "REJECT" ? "Xác nhận không duyệt" : "Xác nhận duyệt"}
       </button>
     </fieldset>

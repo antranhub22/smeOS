@@ -1,7 +1,6 @@
 "use client"
 
 import React from "react"
-import { Disclosure } from "@/components/ui/disclosure"
 import { orderPaymentSummary } from "@/modules/greeting-card/domain/payment-summary"
 import { vnd, type AdminOrder } from "./admin-order-types"
 
@@ -26,10 +25,10 @@ export function AdminPaymentPlanCell({ order, shopDepositPercent }: { order: Adm
     <div className="text-right">
       <div className={balance > 0 ? "font-bold text-warning" : "font-bold text-success"}>{vnd(order.paid_vnd)}</div>
       {balance > 0 && order.status !== "CANCELLED" && <div className="text-caption text-text-muted">còn {vnd(balance)}</div>}
-      <Disclosure
-        label={`${s.policyLabel}${s.paymentCode ? ` · ${s.paymentCode}` : ""}`}
-        className="mt-1 text-caption text-left"
-      >
+      <details className="mt-1 text-caption text-left">
+        <summary className="cursor-pointer text-primary text-right">
+          {s.policyLabel}{s.paymentCode ? ` · ${s.paymentCode}` : ""}
+        </summary>
         <dl className="mt-1 flex flex-col gap-0.5 rounded-lg border border-border bg-surface p-2 min-w-52">
           <Line label="Cách thu" value={`${s.policyLabel} (${SOURCE_LABEL[s.source]}${s.campaignName ? `: ${s.campaignName}` : ""})`} />
           <Line label="Mã thanh toán" value={s.paymentCode ?? "Không dùng"} />
@@ -52,7 +51,7 @@ export function AdminPaymentPlanCell({ order, shopDepositPercent }: { order: Adm
             ))
           )}
         </dl>
-      </Disclosure>
+      </details>
     </div>
   )
 }

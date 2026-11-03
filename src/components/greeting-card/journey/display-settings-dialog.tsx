@@ -94,7 +94,7 @@ export function DisplaySettingsDialog({ open, onOpenChange, templateId, settings
             Hủy
           </Button>
           <Button size="sm" onClick={() => void handleSave()} disabled={saving}>
-            {saving && <Loader2 size={16} className="mr-1.5 animate-spin motion-reduce:animate-none" aria-hidden="true" />}
+            {saving && <Loader2 size={16} className="mr-1.5 animate-spin" aria-hidden="true" />}
             Lưu cài đặt
           </Button>
         </div>

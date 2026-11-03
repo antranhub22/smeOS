@@ -46,7 +46,7 @@ export function SalesFunnelStats() {
       ) : isLoading || !funnel ? (
         <div className="p-4 flex flex-col gap-2" aria-busy="true">
           {[0, 1, 2].map((i) => (
-            <div key={i} className="h-8 rounded-lg bg-surface-muted animate-pulse motion-reduce:animate-none" />
+            <div key={i} className="h-8 rounded-lg bg-surface-muted animate-pulse" />
           ))}
         </div>
       ) : funnel.rows.length === 0 ? (

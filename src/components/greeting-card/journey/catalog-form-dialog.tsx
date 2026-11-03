@@ -68,7 +68,7 @@ export function CatalogFormDialog(props: CatalogFormDialogProps) {
             Hủy
           </Button>
           <Button type="submit" form="catalog-form" size="sm" disabled={!canSubmit}>
-            {saving && <Loader2 size={16} className="mr-1.5 animate-spin motion-reduce:animate-none" aria-hidden="true" />}
+            {saving && <Loader2 size={16} className="mr-1.5 animate-spin" aria-hidden="true" />}
             {mode === "create" ? "Tạo và chọn" : "Tạo link"}
           </Button>
         </div>

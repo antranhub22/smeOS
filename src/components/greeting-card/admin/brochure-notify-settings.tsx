@@ -3,7 +3,6 @@
 import React, { useState } from "react"
 import { BellRing, Loader2, Save, Send } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
-import { Disclosure } from "@/components/ui/disclosure"
 import { apiSend, useApi } from "@/components/greeting-card/greeting-api"
 import { NOTIFY_EVENTS, NOTIFY_EVENT_LABELS, type NotifyChannel } from "@/modules/greeting-card/domain/customer-notifications"
 import { ZnsTemplateGuide } from "./zns-template-guide"
@@ -125,7 +124,8 @@ export function BrochureNotifySettings() {
       {ch === "ZNS" && <ZnsTemplateGuide />}
 
       {ch === "ZNS" && (
-        <Disclosure label="Mã mẫu tin ZNS theo mốc" className="p-3 text-body-sm">
+        <details className="text-body-sm">
+          <summary className="cursor-pointer font-bold">Mã mẫu tin ZNS theo mốc</summary>
           <p className="text-caption text-text-muted my-2">
             Mẫu cần các tham số: order_code, customer_name, shop_name, status, amount, tracking_url. Bỏ trống = không gửi mốc đó.
           </p>
@@ -137,7 +137,7 @@ export function BrochureNotifySettings() {
               </label>
             ))}
           </div>
-        </Disclosure>
+        </details>
       )}
 
       {message && (
@@ -161,7 +161,7 @@ export function BrochureNotifySettings() {
           </>
         )}
         <Button type="button" size="sm" disabled={busy || !saved} onClick={() => void save()} className="gap-1.5">
-          {busy ? <Loader2 size={14} className="animate-spin motion-reduce:animate-none" /> : <Save size={14} />} Lưu
+          {busy ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} />} Lưu
         </Button>
       </div>
     </section>

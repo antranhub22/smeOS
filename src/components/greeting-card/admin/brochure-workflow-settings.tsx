@@ -94,7 +94,7 @@ export function BrochureWorkflowSettings() {
   }
 
   if (!policy) {
-    return <div className="h-44 rounded-2xl bg-surface-muted animate-pulse motion-reduce:animate-none" aria-busy="true" />
+    return <div className="h-44 rounded-2xl bg-surface-muted animate-pulse" aria-busy="true" />
   }
 
   const PRESETS: Array<{ id: WorkflowPreset; title: string; subtitle: string; desc: string; icon: React.ReactNode }> = [
@@ -320,7 +320,7 @@ export function BrochureWorkflowSettings() {
           {message?.text ?? "Các thay đổi sẽ áp dụng ngay lập tức cho toàn bộ tài khoản trong tiệm."}
         </p>
         <Button type="submit" size="sm" disabled={saving || !draft} className="gap-1.5 shrink-0">
-          {saving ? <Loader2 size={14} className="animate-spin motion-reduce:animate-none" /> : <Save size={14} />}
+          {saving ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} />}
           <span>Lưu ma trận</span>
         </Button>
       </div>

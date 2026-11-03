@@ -234,7 +234,7 @@ function SaleKanbanCard({
               {item.customerName}
             </span>
             {isUrgent ? (
-              <span className="rounded-md bg-danger-bg px-1.5 py-0.5 text-caption font-extrabold text-danger shrink-0 animate-pulse motion-reduce:animate-none">
+              <span className="rounded-md bg-danger-bg px-1.5 py-0.5 text-caption font-extrabold text-danger shrink-0 animate-pulse">
                 HỎA TỐC
               </span>
             ) : tier === "OVERDUE" ? (
@@ -242,7 +242,7 @@ function SaleKanbanCard({
                 Quá hạn
               </span>
             ) : tier === "URGENT" ? (
-              <span className="rounded-md bg-warning-bg px-1.5 py-0.5 text-caption font-extrabold text-warning shrink-0 animate-pulse motion-reduce:animate-none">
+              <span className="rounded-md bg-warning-bg px-1.5 py-0.5 text-caption font-extrabold text-warning shrink-0 animate-pulse">
                 Sắp đến hạn
               </span>
             ) : null}

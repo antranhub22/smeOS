@@ -132,7 +132,7 @@ export function CatalogCard({
               className="p-1.5 rounded-lg border border-border hover:bg-danger-bg hover:border-danger/40 hover:text-danger transition-colors text-text-muted"
             >
               {deleting ? (
-                <Loader2 size={14} className="animate-spin motion-reduce:animate-none" />
+                <Loader2 size={14} className="animate-spin" />
               ) : (
                 <Trash2 size={14} />
               )}
@@ -149,7 +149,7 @@ export function CatalogCard({
               className="p-1.5 rounded-lg border border-success/40 bg-success-bg text-success hover:bg-success hover:text-white transition-colors"
             >
               {restoring ? (
-                <Loader2 size={14} className="animate-spin motion-reduce:animate-none" />
+                <Loader2 size={14} className="animate-spin" />
               ) : (
                 <RotateCcw size={14} />
               )}

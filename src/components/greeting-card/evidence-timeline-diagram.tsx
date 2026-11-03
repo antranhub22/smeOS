@@ -159,7 +159,7 @@ export function EvidenceTimelineDiagram({
 
       {isLoading ? (
         <div className="flex items-center justify-center py-6 text-caption text-text-muted">
-          <Clock size={16} className="mr-2 animate-spin motion-reduce:animate-none text-primary" />
+          <Clock size={16} className="mr-2 animate-spin text-primary" />
           Đang nạp dữ liệu lịch sử đối soát...
         </div>
       ) : events.length === 0 ? (

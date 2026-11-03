@@ -8,7 +8,6 @@ import type { SortField, TrackingViewItem } from "@/modules/greeting-card/domain
 import { LIST_COLUMNS, getIndustryListColumns, type ListColumn, type TrackingViewState } from "./tracking-view-state"
 import { SlaBadge, ViewState, codeOf, vnd, StaffNametagGroup } from "./tracking-bits"
 import { useSession } from "@/lib/session"
-import { Disclosure } from "@/components/ui/disclosure"
 
 const SORTABLE: Partial<Record<ListColumn, SortField>> = { customer: "customerName", step: "step", age: "age", sla: "urgency", total: "totalVnd", delivery: "deliveryDate" }
 
@@ -42,7 +41,8 @@ export function ListView({ qs, state, onChange, onOpen, onDetail, view = "list" 
   return (
     <div className="flex flex-col gap-3">
       {view === "list" && (
-        <Disclosure label="Cột hiển thị" className="p-3 text-body-sm">
+        <details className="text-body-sm">
+          <summary className="cursor-pointer font-semibold text-text-muted">Cột hiển thị</summary>
           <div className="mt-2 flex flex-wrap gap-3">
             {listColumns.map((c) => (
               <label key={c.id} className="flex items-center gap-1.5">
@@ -52,7 +52,7 @@ export function ListView({ qs, state, onChange, onOpen, onDetail, view = "list" 
               </label>
             ))}
           </div>
-        </Disclosure>
+        </details>
       )}
       <ViewState loading={list.isLoading} error={list.error} empty={!list.isLoading && list.items.length === 0}>
         <div className="overflow-x-auto rounded-2xl border border-border bg-surface">

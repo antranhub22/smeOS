@@ -82,12 +82,12 @@ export function BranchPortalBoard() {
             <Store size={22} />
           </div>
           <div>
-            <h2 className="text-xl font-extrabold text-foreground">Đơn gia công</h2>
+            <h1 className="text-xl font-extrabold text-foreground">Đơn gia công</h1>
             <p className="text-caption text-text-muted">{branch ? branch.name : "Đơn được mời và đơn đang làm của chi nhánh"}</p>
           </div>
         </div>
         <Button type="button" variant="outline" size="sm" onClick={() => mutate()} disabled={isValidating} className="flex items-center gap-1.5">
-          <RefreshCw size={14} className={isValidating ? "animate-spin motion-reduce:animate-none" : ""} />
+          <RefreshCw size={14} className={isValidating ? "animate-spin" : ""} />
           <span>Làm mới</span>
         </Button>
       </div>

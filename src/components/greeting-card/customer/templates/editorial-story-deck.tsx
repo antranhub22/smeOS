@@ -27,7 +27,7 @@ export function EditorialStoryDeck({ products, catalogName, onSelectProduct }: E
       <div className="mx-auto w-full max-w-[480px] pb-12">
         <header className="px-6 pb-8 pt-10 text-center">
           <p className="text-caption font-semibold uppercase tracking-[0.3em] text-primary">Câu chuyện bộ sưu tập</p>
-          <h2 className="mt-3 font-serif text-display-lg font-medium leading-[1.05] tracking-tight">{catalogName}</h2>
+          <h1 className="mt-3 font-serif text-display-lg font-medium leading-[1.05] tracking-tight">{catalogName}</h1>
           <p className="mt-3 text-body-sm text-text-muted">{products.length} sản phẩm, mỗi mẫu một lời nhắn</p>
           <span aria-hidden="true" className="mx-auto mt-6 block h-10 w-px bg-border" />
         </header>

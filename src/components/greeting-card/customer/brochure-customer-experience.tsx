@@ -2,7 +2,6 @@
 
 import { ReorderButton } from "./reorder-button"
 import { ShopContactBar } from "./shop-contact-bar"
-import { Disclosure } from "@/components/ui/disclosure"
 import { useOrderFamily } from "./use-order-family"
 import { OrderHistorySheet } from "./order-history-sheet"
 import { showOrderHistory } from "@/modules/greeting-card/domain/order-family"
@@ -267,11 +266,12 @@ export function BrochureCustomerExperience({ initialData, preview = false }: Bro
         )}
 
         {step === "ORDER_FORM" && snapshot && products.find((p) => p.id === snapshot.id)?.priceMode === "RANGE" && (
-          <Disclosure label="Muốn phiên bản theo ý bạn? Nhắn cửa hàng" className="mx-auto mt-3 w-full max-w-md p-3 text-body-sm">
+          <details className="mx-auto mt-3 w-full max-w-md rounded-xl border border-border bg-surface px-3 py-2">
+            <summary className="cursor-pointer text-body-sm font-semibold text-foreground">Muốn phiên bản theo ý bạn? Nhắn cửa hàng</summary>
             <div className="mt-2">
               <ProductContactActions shop={shop} inquiryUrl={inquiryUrl} product={{ id: snapshot.id, name: snapshot.name }} />
             </div>
-          </Disclosure>
+          </details>
         )}
 
         {step === "ORDER_FORM" && snapshot && (

@@ -59,7 +59,7 @@ export function SlaBadge({ item, compact = false }: { item: TrackingViewItem; co
 
 export function ViewState({ loading, error, empty, children }: { loading: boolean; error: unknown; empty: boolean; children: React.ReactNode }) {
   if (error) return <p role="alert" className="rounded-xl bg-danger-bg p-4 text-body-sm text-danger">{(error as Error).message}</p>
-  if (loading) return <div className="flex flex-col gap-3" aria-busy="true">{[0, 1, 2].map((i) => <div key={i} className="h-16 animate-pulse motion-reduce:animate-none rounded-xl bg-surface-muted" />)}</div>
+  if (loading) return <div className="flex flex-col gap-3" aria-busy="true">{[0, 1, 2].map((i) => <div key={i} className="h-16 animate-pulse rounded-xl bg-surface-muted" />)}</div>
   if (empty) return <p className="rounded-2xl border border-border bg-surface p-8 text-center text-body-sm text-text-muted">Không có đơn hoặc link nào khớp bộ lọc.</p>
   return <>{children}</>
 }

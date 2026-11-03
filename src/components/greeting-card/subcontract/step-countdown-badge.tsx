@@ -28,7 +28,7 @@ export function StepCountdownBadge({
       className={cn(
         "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-caption font-bold transition-all",
         isOverdue
-          ? "bg-danger-bg text-danger border border-danger/30 animate-pulse motion-reduce:animate-none"
+          ? "bg-danger-bg text-danger border border-danger/30 animate-pulse"
           : isUrgent
           ? "bg-warning-bg text-warning border border-warning/30"
           : "bg-surface-muted text-text-muted border border-border",

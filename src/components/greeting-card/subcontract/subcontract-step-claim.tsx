@@ -15,7 +15,6 @@ import {
   ChevronDown,
 } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
-import { useConfirmDialog } from "@/components/ui/confirm-dialog"
 import { cn } from "@/lib/utils"
 import {
   formatGraceCountdown,
@@ -65,7 +64,6 @@ export function SubcontractStepClaim({
   const [imageError, setImageError] = useState(false)
   const [loading, setLoading] = useState(false)
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
-  const [confirm, confirmDialog] = useConfirmDialog()
 
   async function handleClaim() {
     setLoading(true)
@@ -80,14 +78,7 @@ export function SubcontractStepClaim({
   }
 
   async function handleCancel() {
-    if (
-      !(await confirm({
-        title: "Hủy tiếp nhận đơn này?",
-        consequence: "Đơn hàng sẽ được chuyển lại vào danh sách để nhường cho chi nhánh khác nhận.",
-        confirmLabel: "Hủy nhận đơn",
-        tone: "danger",
-      }))
-    ) {
+    if (!window.confirm("Bạn có chắc chắn muốn hủy nhận đơn này để nhường cho chi nhánh khác?")) {
       return
     }
     setLoading(true)
@@ -335,7 +326,6 @@ export function SubcontractStepClaim({
           </div>
         )}
       </div>
-      {confirmDialog}
     </section>
   )
 }

@@ -3,7 +3,6 @@
 import React, { useState } from "react"
 import { AlertTriangle, CheckCircle2, Coins, RotateCcw, Save } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
-import { useConfirmDialog } from "@/components/ui/confirm-dialog"
 import { apiSend, useApi } from "@/components/greeting-card/greeting-api"
 import {
   CRAFT_FEE_METHODS,
@@ -59,14 +58,13 @@ export function CraftFeeSettings() {
   const [draft, setDraft] = useState<CraftFeePolicy | null>(null)
   const [saving, setSaving] = useState(false)
   const [message, setMessage] = useState<{ ok: boolean; text: string } | null>(null)
-  const [confirm, confirmDialog] = useConfirmDialog()
 
   const settings = org.data?.settings ?? {}
   const { spec, industryHasCraftFee } = craftFeeSpecOf(settings)
   const policy = draft ?? (org.data ? craftFeePolicyOf(settings) : null)
 
   if (org.data && !industryHasCraftFee) return null
-  if (!policy) return <div className="h-44 rounded-2xl bg-surface-muted animate-pulse motion-reduce:animate-none" aria-busy="true" />
+  if (!policy) return <div className="h-44 rounded-2xl bg-surface-muted animate-pulse" aria-busy="true" />
 
   const set = <K extends keyof CraftFeePolicy>(key: K, value: CraftFeePolicy[K]) => {
     setDraft({ ...policy, [key]: value })
@@ -103,24 +101,7 @@ export function CraftFeeSettings() {
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            className="h-9 text-caption"
-            onClick={async () => {
-              if (
-                await confirm({
-                  title: "Khôi phục cách tính mặc định?",
-                  consequence: "Cách tính phí sẽ được đặt lại theo tiêu chuẩn mặc định của ngành.",
-                  confirmLabel: "Khôi phục",
-                  tone: "default",
-                })
-              ) {
-                setDraft(defaultCraftFeePolicy(spec))
-              }
-            }}
-          >
+          <Button type="button" variant="outline" size="sm" className="h-9 text-caption" onClick={() => window.confirm("Khôi phục cách tính mặc định?") && setDraft(defaultCraftFeePolicy(spec))}>
             <RotateCcw size={14} className="mr-1" /> Mặc định
           </Button>
           <Button type="submit" variant="primary" size="sm" disabled={saving || !draft} className="h-9 font-bold">
@@ -209,7 +190,6 @@ export function CraftFeeSettings() {
       </Group>
 
       <CraftFeePreview policy={policy} feeLabel={spec.feeLabel} />
-      {confirmDialog}
     </form>
   )
 }

@@ -38,7 +38,7 @@ export function AuxPage({ eyebrow, title, subtitle, children, bottom, className 
       <div className={cn("mx-auto w-full max-w-[480px] px-4 pt-6", bottom ? "pb-28" : "pb-10")}>
         <header className="mb-5">
           {eyebrow && <p className="text-caption font-semibold uppercase tracking-[0.18em] text-primary">{eyebrow}</p>}
-          <h2 className="mt-1 font-serif text-display font-medium leading-tight tracking-tight">{title}</h2>
+          <h1 className="mt-1 font-serif text-display font-medium leading-tight tracking-tight">{title}</h1>
           {subtitle && <p className="mt-1.5 text-body-sm text-text-muted">{subtitle}</p>}
         </header>
         {children}

@@ -147,7 +147,7 @@ export function BrochureHolidaySettings() {
           {message?.text ?? "Tết âm lịch đổi ngày mỗi năm: thêm từng ngày cụ thể, bỏ chọn “Lặp lại hằng năm”."}
         </p>
         <Button type="submit" size="sm" disabled={saving || !draft} className="gap-1.5 shrink-0">
-          {saving ? <Loader2 size={14} className="animate-spin motion-reduce:animate-none" /> : <Save size={14} />}
+          {saving ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} />}
           <span>Lưu ngày lễ</span>
         </Button>
       </div>

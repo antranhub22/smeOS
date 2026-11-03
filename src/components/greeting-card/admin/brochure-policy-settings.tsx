@@ -58,7 +58,7 @@ export function BrochurePolicySettings() {
         <h3 className="text-title-sm font-extrabold text-foreground">Chính sách thu tiền</h3>
       </div>
       {!policy ? (
-        <div className="h-40 rounded-2xl bg-surface-muted animate-pulse motion-reduce:animate-none" aria-busy="true" />
+        <div className="h-40 rounded-2xl bg-surface-muted animate-pulse" aria-busy="true" />
       ) : (
         <div className="flex flex-col gap-4">
           <div className="flex flex-wrap items-center justify-between gap-3 p-3.5 rounded-xl border border-border bg-surface-muted/40">
@@ -88,7 +88,7 @@ export function BrochurePolicySettings() {
           {message?.text ?? "Mã QR của khách tự hiện đúng số tiền cọc hoặc phần còn lại."}
         </p>
         <Button type="submit" size="sm" disabled={saving || !draft} className="gap-1.5 shrink-0">
-          {saving ? <Loader2 size={14} className="animate-spin motion-reduce:animate-none" /> : <Save size={14} />}
+          {saving ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} />}
           <span>Lưu chính sách</span>
         </Button>
       </div>
