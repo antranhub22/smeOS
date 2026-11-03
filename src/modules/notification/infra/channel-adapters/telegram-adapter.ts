@@ -51,7 +51,7 @@ export class TelegramNotificationAdapter implements INotificationChannelAdapter 
       if (payload.deepLink) {
         const fullUrl = payload.deepLink.startsWith("http")
           ? payload.deepLink
-          : `${process.env.NEXTAUTH_URL ?? "http://localhost:3100"}${payload.deepLink}`
+          : `${process.env.NEXTAUTH_URL ?? "http://localhost:3200"}${payload.deepLink}`
         inlineButtons.push({
           text: "👉 Xem chi tiết",
           url: normalizeButtonUrl(fullUrl),

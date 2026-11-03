@@ -21,6 +21,7 @@ Full rulebook (anti-patterns A1–A12, security, performance, Journey-First UX, 
 
 ## Before coding
 
+- Product context, tiers, glossary: `CONTEXT.md`.
 - Domain skills in `.claude/skills/` load automatically by task (api, ui, ai, worker, db schema, testing, creative studio). Read every skill that applies.
 - Find the SSOT for the area in `docs/00-DOCUMENTATION-REGISTRY.yaml` **with `grep`**; for current state read only §4–6 of `docs/kien-truc/TRANG_THAI.md` and grep the rest. Never read either file whole (≈12k and ≈90k tokens).
 - Read the real code and its tests before changing them; a ticked checklist or a doc is not evidence.
@@ -70,4 +71,4 @@ Also: a new business rule or bug fix ships with a test; a new unguarded route mu
 
 ## Commands
 
-Setup `docker compose up -d && npm i && npx prisma generate && npm run db:deploy && npm run db:seed` · dev `npm run dev` (port 3100) · web + workers `npm run dev:core` · workers `npm run worker:media|worker:vision|worker:video`.
+Setup `docker compose up -d && npm i && npx prisma generate && npm run db:deploy && npm run db:seed` · dev `npm run dev` (port 3200) · web + workers `npm run dev:core` · workers `npm run worker:media|worker:vision|worker:video`.

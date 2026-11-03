@@ -1,7 +1,7 @@
 // npm run ux:audit -- <kịch bản | /đường-dẫn>
 //   kịch bản: tên tệp trong scripts/ux-audit/scenarios/ (vd. the-chao) — đi qua mọi trạng thái của trang
 //   /đường-dẫn: chỉ chụp trạng thái mở trang (điểm khởi đầu khi chưa có kịch bản — hãy viết kịch bản đủ trạng thái)
-// Cần: dev server chạy với DATABASE_URL trỏ database *_test (UX_AUDIT_BASE_URL, mặc định http://localhost:3100).
+// Cần: dev server chạy với DATABASE_URL trỏ database *_test (UX_AUDIT_BASE_URL, mặc định http://localhost:3200).
 import { writeFileSync } from "node:fs"
 import { login, open, shot, OUT } from "./lib.mjs"
 

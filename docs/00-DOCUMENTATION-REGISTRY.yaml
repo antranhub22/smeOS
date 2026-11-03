@@ -2,7 +2,7 @@ version: "1.0"
 governance:
   constitution: "docs/00-DOCUMENTATION-CONSTITUTION.md"
   updated_at: "2026-10-22T08:00:00+07:00"
-  total_documents: 75
+  total_documents: 87
 
 documents:
   # =========================================================================
@@ -34,6 +34,20 @@ documents:
     ssot: true
     owner: "Engineering Lead"
     dependencies: ["docs/kien-truc/FLORAOS_SAAS_TARGET_ARCHITECTURE_V2.md"]
+    supersedes: []
+
+  - id: "DOC-01-CONTEXT"
+    path: "CONTEXT.md"
+    title: "Bối cảnh sản phẩm smeOS"
+    domain: "Master Strategy"
+    layer: "Level 2"
+    purpose: "Bản đồ nghiệp vụ một trang cho agent và người mới: sản phẩm, mô hình 4 tầng, khối nghiệp vụ, thuật ngữ, chỉ mục nguồn chi tiết. Không phải SSOT — mâu thuẫn thì tin nguồn được trỏ tới và mã"
+    status: "SUPPORTING"
+    authority: "Level 2"
+    canonical: false
+    ssot: false
+    owner: "Product Owner"
+    dependencies: ["docs/kien-truc/FLORAOS_SAAS_TARGET_ARCHITECTURE_V2.md", "docs/kien-truc/TRANG_THAI.md"]
     supersedes: []
 
   - id: "DOC-01-QUYET-DINH-RS"
