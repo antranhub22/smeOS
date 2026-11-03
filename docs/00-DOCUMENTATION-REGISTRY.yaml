@@ -36,6 +36,20 @@ documents:
     dependencies: ["docs/kien-truc/FLORAOS_SAAS_TARGET_ARCHITECTURE_V2.md"]
     supersedes: []
 
+  - id: "DOC-01-CONTEXT"
+    path: "CONTEXT.md"
+    title: "Bối cảnh sản phẩm smeOS"
+    domain: "Master Strategy"
+    layer: "Level 2"
+    purpose: "Bản đồ nghiệp vụ một trang cho agent và người mới: sản phẩm, mô hình 4 tầng, khối nghiệp vụ, thuật ngữ, chỉ mục nguồn chi tiết. Không phải SSOT — mâu thuẫn thì tin nguồn được trỏ tới và mã"
+    status: "SUPPORTING"
+    authority: "Level 2"
+    canonical: false
+    ssot: false
+    owner: "Product Owner"
+    dependencies: ["docs/kien-truc/FLORAOS_SAAS_TARGET_ARCHITECTURE_V2.md", "docs/kien-truc/TRANG_THAI.md"]
+    supersedes: []
+
   - id: "DOC-01-QUYET-DINH-RS"
     path: "docs/kien-truc/QUYET_DINH_RS_18_09.md"
     title: "Biên bản Phán quyết Kiến trúc RS-1 đến RS-11 (18/09)"

@@ -71,4 +71,4 @@ Also: a new business rule or bug fix ships with a test; a new unguarded route mu
 
 ## Commands
 
-Setup `docker compose up -d && npm i && npx prisma generate && npm run db:deploy && npm run db:seed` · dev `npm run dev` (port 3100) · web + workers `npm run dev:core` · workers `npm run worker:media|worker:vision|worker:video`.
+Setup `docker compose up -d && npm i && npx prisma generate && npm run db:deploy && npm run db:seed` · dev `npm run dev` (port 3200) · web + workers `npm run dev:core` · workers `npm run worker:media|worker:vision|worker:video`.
