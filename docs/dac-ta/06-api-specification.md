@@ -1159,7 +1159,7 @@ Kế hoạch: `docs/kien-truc/Nâng cấp tasks/SMEOS_Marketing_Sales_Center/03_
 | GET | `/customer-segments/:id/customers` | `M4` hoặc `Q1` | Khách thoả điều kiện nhóm, phân trang |
 | GET | `/customer-interactions` | `Q1` | Nhật ký tương tác toàn tổ chức; lọc `customer_id`, `channel`, `direction` |
 | GET | `/customers/:id/interactions` | `Q1` | |
-| POST | `/customers/:id/interactions` | `M4` hoặc `Q1` | Ghi tương tác thủ công (Zalo, gọi, SMS…); khách của tổ chức khác → 404 |
+| POST | `/customers/:id/interactions` | `M4` hoặc `Q1` | Ghi tương tác thủ công (Zalo, gọi, SMS…); khách của tổ chức khác → 404. Sale chỉ có `Q1` được ghi tương tác với khách mình chăm sóc — thao tác hằng ngày của sale (PO 03/11/2026) |
 
 ### 30.4 In ấn
 
