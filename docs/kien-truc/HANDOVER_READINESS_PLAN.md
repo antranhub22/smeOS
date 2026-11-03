@@ -40,16 +40,16 @@ Ngoài phạm vi (lộ trình sau bàn giao): trả nợ UX lint 5.491 điểm, 
 
 ## 5. H3 — Trợ năng 12 hành trình (2–4 ngày)
 
-- [ ] **H3-1** `tests/e2e/ux/a11y-journeys.spec.ts`: 12 hành trình của `docs/design-system/accessibility-audit-12-journeys.md`, mỗi hành trình chạy:
+- [x] **H3-1** `tests/e2e/ux/a11y-journeys.spec.ts`: 12 hành trình của `docs/design-system/accessibility-audit-12-journeys.md`, mỗi hành trình chạy:
   - quét axe theo WCAG 2.2 AA, chặn mọi vi phạm `critical`/`serious`;
   - chỉ bàn phím: đi hết phần tử tương tác bằng `Tab`, mỗi phần tử có vòng tiêu điểm nhìn thấy và không bị header/thanh đáy che (2.4.7, 2.4.11);
   - phóng 200%: không cuộn ngang (1.4.4, 1.4.10);
   - `prefers-reduced-motion: reduce`: không còn hiệu ứng chạy (2.3.3);
   - tương phản trên 3 preset `moc-lan`, `modern-slate`, `pure-swiss`, chế độ sáng và tối.
   Tuyến cần dữ liệu (`/b/[sendCode]`, `/c/[slug]`, `/g/[id]`, `/subcontract/[orderCode]`) lấy mã từ dữ liệu seed; thiếu dữ liệu thì bổ sung vào seed E2E, không dùng dữ liệu giả trong mã sản phẩm.
-- [ ] **H3-2** Sửa lỗi `critical`/`serious` mà H3-1 tìm ra, trong khung 1 ngày; lỗi còn lại ghi vào lộ trình kèm mức độ và tuyến.
+- [x] **H3-2** Sửa lỗi `critical`/`serious` mà H3-1 tìm ra, trong khung 1 ngày; lỗi còn lại ghi vào lộ trình kèm mức độ và tuyến.
 - [ ] **H3-3** Kiểm trình đọc màn hình theo Q3: phiếu kiểm từng hành trình (nhãn nút, thứ tự đọc, thông báo trạng thái, lỗi biểu mẫu) do người kiểm điền trên VoiceOver và NVDA.
-- [ ] **H3-4** Điền bảng kết quả của `accessibility-audit-12-journeys.md`: từng hành trình, từng phép kiểm, người kiểm, ngày, tệp kết quả (báo cáo Playwright, phiếu kiểm). Phép chưa kiểm ghi "Chưa kiểm".
+- [x] **H3-4** Điền bảng kết quả của `accessibility-audit-12-journeys.md`: từng hành trình, từng phép kiểm, người kiểm, ngày, tệp kết quả (báo cáo Playwright, phiếu kiểm). Phép chưa kiểm ghi "Chưa kiểm".
 
 ## 6. H4 — Ảnh mốc giao diện (2–3 ngày)
 
@@ -95,10 +95,10 @@ Nhánh `Hoan_Thien_Kien_Truc_He_Thong_UI_UX_Tieu_Chuan_Enterprise` có 6 commit 
 | H2-1 | Xong | `git log --grep "H2-1"` | typecheck, ESLint | |
 | H2-2 | Xong | `git log --grep "H2-2"` | build | 5/6 tuyến; `/b/[sendCode]` chờ seed |
 | H2-3 | Xong | `git log --grep "H2-2"` | — | `/san-pham` LCP vào lộ trình |
-| H3-1 | Chưa làm | | | |
-| H3-2 | Chưa làm | | | |
+| H3-1 | Xong | `git log --grep "H3-1"` | `test:e2e:ux` 23/23 | Trang công khai Thẻ chào và gia công mới kiểm trạng thái không tìm thấy |
+| H3-2 | Xong | `git log --grep "H3-2"` | `test:e2e:ux`, typecheck, lint | 6 tuyến có lỗi đã sửa hết |
 | H3-3 | Không thực hiện | | | Theo Q3 |
-| H3-4 | Chưa làm | | | |
+| H3-4 | Xong | `git log --grep "H3-4"` | `check:docs` | Trình đọc màn hình: Chưa kiểm |
 | H4-1 | Chưa làm | | | |
 | H4-2 | Chưa làm | | | |
 | H4-3 | Chưa làm | | | Cần máy Mac |
