@@ -79,7 +79,7 @@ Nhánh đạt chuẩn bàn giao khi đồng thời thoả:
 ## 8. Đợt P3 — Chất lượng
 
 - [x] **P3-1** (C1) `get-segment-customers.use-case.ts`: bỏ trần 500 khách; duyệt toàn bộ khách theo trang có giới hạn số vòng, hoặc đẩy điều kiện lọc xuống truy vấn. Test: tổ chức 1.200 khách cho kết quả đúng.
-- [ ] **P3-2** (C2) Xuất PDF in ấn: giới hạn kích thước `imageDataUrl`, kiểm MIME bằng bộ kiểm nội dung tải lên hiện có, ghi tệp qua `StorageProvider`, trả URL ký thay cho base64.
+- [x] **P3-2** (C2) Xuất PDF in ấn: giới hạn kích thước `imageDataUrl`, kiểm định dạng và nội dung bằng bộ kiểm tệp tải lên hiện có (`checkUploadContent`). PDF vẫn trả trực tiếp cho người tải; lưu bản PDF vào kho qua `StorageProvider` kèm URL ký là việc riêng vì cần đăng ký nguồn ghi kho mới (skill `storage`).
 - [ ] **P3-3** (D1) Tách `print-workflow.tsx` (434), `kpi-definitions.ts` (356), `chain-dispatch-settings.tsx` (358), `store-policies-editor.tsx` (353) về ≤ 350 dòng; 9 tệp vốn đã quá ngưỡng trở về ≤ số dòng trên `main`.
 - [x] **P3-4** (D2) Kiểm giá trị enum từ query string bằng zod ở các route mới → 400 thay vì 500.
 - [x] **P3-5** (D3) Thay so khớp chuỗi `err.message.includes(...)` bằng lỗi có kiểu (`notFound()`) ở `crm/use-cases/*`, `print/use-cases/*` và route tương ứng.
@@ -120,7 +120,7 @@ Nhánh đạt chuẩn bàn giao khi đồng thời thoả:
 | P2-3 | Xong | xem `git log --grep "P2-3"` | Không còn đường dẫn trùng hoa/thường; check:docs ✓ | 6 tệp nội bộ chuyển sang docs/audit/; gỡ 7 tệp tài liệu khách ALG và Avi Florist theo quyết định PO 03/11/2026 — lấy lại được từ commit 26c0b29a; lịch sử git vẫn chứa các tệp này; sửa 3 liên kết file:///Users/… trong floraos-core-system-wide-audit.md |
 | P2-4 | Chưa làm | | | Chờ tên pháp nhân |
 | P3-1 | Xong | xem `git log --grep "P3-1"` | crm 44/44; typecheck | Duyệt khách theo trang 500, tối đa 200 trang (100.000 khách) — vòng lặp có giới hạn; điều kiện nhóm đánh giá trên chỉ số tính sẵn của khách nên chưa đẩy xuống truy vấn. Ca thử 1.200 khách đỏ trên bản cũ |
-| P3-2 | Chưa làm | | |  |
+| P3-2 | Xong | xem `git log --grep "P3-2"` | print 13/13; tenant print 3/3; architecture tests | Data URL chỉ PNG/JPEG, magic bytes + ≤ 20 MB qua checkUploadContent, route giới hạn 28 triệu ký tự; jsPDF nhận đúng định dạng (trước luôn khai PNG); client hiện không gửi imageDataUrl. Lưu PDF vào kho tách thành việc riêng |
 | P3-3 | Chưa làm | | |  |
 | P3-4 | Xong | xem `git log --grep "P3-4"` | typecheck; eslint 0 cảnh báo; unit 22 tệp 121/121 | Helper enumParam() (src/core/http/query-params.ts) cho 12 tham số ở 8 route; giá trị ngoài danh sách → 400 kèm danh sách cho phép; lược đồ zod POST campaigns/asset-usages dùng chung hằng số. Ghi nhận ngoài phạm vi: kiểu domain UsageDestination có LIBRARY, enum DB có OTHER |
 | P3-5 | Xong | xem `git log --grep "P3-5"` | unit crm+print 52/52; tenant 6/6; typecheck | 3 use-case ném notFound(); 3 route bỏ khối try/catch dò chuỗi; 2 ca thử tenant kiểm code NOT_FOUND thay cho nội dung chuỗi |

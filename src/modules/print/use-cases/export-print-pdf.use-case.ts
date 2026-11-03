@@ -1,8 +1,30 @@
 import { jsPDF } from "jspdf"
-import { notFound } from "@/core/http/errors"
+import { notFound, validationFailed } from "@/core/http/errors"
 import type { TenantContext } from "@/core/tenancy/tenant-context"
 import type { IPrintRenditionRepository } from "../domain/repositories/print-rendition-repository.interface"
 import { getPrintRenditionRepository } from "../infra/print-rendition-repository"
+import { checkUploadContent } from "@/modules/assets/domain/upload-content-rules"
+
+const DATA_URL_PATTERN = /^data:image\/(png|jpeg);base64,([A-Za-z0-9+/=]+)$/
+
+/**
+ * Ảnh ấn phẩm gửi kèm dạng data URL: chỉ PNG/JPEG, nội dung khớp định dạng khai báo
+ * (magic bytes) và ≤ 20 MB — cùng luật kiểm tệp tải lên của kho tư liệu.
+ */
+function decodePrintImage(dataUrl: string): { format: "PNG" | "JPEG"; dataUrl: string } {
+  const m = DATA_URL_PATTERN.exec(dataUrl)
+  if (!m) {
+    throw validationFailed({ imageDataUrl: "Ảnh ấn phẩm phải là PNG hoặc JPEG dạng data URL" })
+  }
+  const ext = m[1] === "png" ? "png" : "jpg"
+  const check = checkUploadContent(`print.${ext}`, new Uint8Array(Buffer.from(m[2] ?? "", "base64")))
+  if (!check.ok) {
+    throw validationFailed({
+      imageDataUrl: check.reason === "too_large" ? "Ảnh ấn phẩm vượt quá 20 MB" : "Nội dung ảnh không khớp định dạng PNG/JPEG",
+    })
+  }
+  return { format: ext === "png" ? "PNG" : "JPEG", dataUrl }
+}
 
 export interface ExportPrintPdfOptions {
   title?: string | undefined
@@ -30,6 +52,7 @@ export async function exportPrintPdfUseCase(
   if (!rendition) {
     throw notFound()
   }
+  const image = options?.imageDataUrl ? decodePrintImage(options.imageDataUrl) : null
 
   const bleedMm = rendition.bleedMm
   const includeBleed = options?.includeBleedMarks ?? true
@@ -45,10 +68,8 @@ export async function exportPrintPdfUseCase(
   })
 
   // Nếu có ảnh ấn phẩm
-  if (options?.imageDataUrl) {
-    const imgX = includeBleed ? 0 : 0
-    const imgY = includeBleed ? 0 : 0
-    doc.addImage(options.imageDataUrl, "PNG", imgX, imgY, totalWidth, totalHeight)
+  if (image) {
+    doc.addImage(image.dataUrl, image.format, 0, 0, totalWidth, totalHeight)
   } else {
     // Vẽ khung mẫu chuẩn in ấn
     doc.setFillColor(255, 255, 255)

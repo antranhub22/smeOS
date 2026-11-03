@@ -11,7 +11,8 @@ const exportOptionsSchema = z.object({
   subtitle: z.string().trim().optional(),
   storeName: z.string().trim().optional(),
   includeBleedMarks: z.boolean().default(true),
-  imageDataUrl: z.string().optional(),
+  // ≤ 20 MB ảnh sau giải mã base64 (4/3) cộng tiền tố data URL; kiểm nội dung ở use-case.
+  imageDataUrl: z.string().max(28_000_000).optional(),
 })
 
 export const POST = handle(async (request, context) => {
