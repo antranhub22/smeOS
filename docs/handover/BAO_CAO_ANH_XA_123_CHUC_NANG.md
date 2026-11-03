@@ -223,3 +223,17 @@ Tỷ lệ: Hoàn thiện 56,1% · Dang dở 39,0% · Chưa hoàn thành 4,9%.
 | 10.6 | Admin nạp / hoàn / tặng credit khuyến mãi | Dang dở | Nạp qua script `scripts/nap-credit.ts:86` → `org/infra/organization-repository.ts:117-130` | Màn hình Console nạp, hoàn, tặng credit (`src/components/platform/vietqr-topup-modal.tsx` không gọi API) |
 | 10.7 | Quản lý & thu phí thuê bao SaaS | Dang dở | Gói định nghĩa tĩnh `src/modules/platform/domain/vietqr-billing.ts:31-64`; quyền theo gói `src/core/entitlements/entitlement-service.ts:9-130`; `vietqr-billing.test.ts`, `entitlement-service.test.ts` | Gán gói cho tổ chức, theo dõi kỳ gia hạn tháng/năm, thu phí |
 | 10.8 | Cấu hình trỏ tên miền riêng (Custom Domain) | Chưa hoàn thành | Không có mã xử lý tên miền riêng (`src/proxy.ts` không đọc host) | Toàn bộ chức năng |
+
+## 4. Kết quả chạy test
+
+Các test được dẫn làm bằng chứng ở mục 3 đều thuộc các bộ test dưới đây. Mã nguồn được kiểm tra trùng với `main` tại `07f3a088`.
+
+| Bộ test | Lệnh | Nơi chạy | Kết quả |
+|---|---|---|---|
+| Unit | `npm test` | Máy kiểm tra, Postgres 16 cục bộ | 640/640 file, 3894/3894 test đạt |
+| Unit, cách ly tổ chức, cách ly nền tảng, typecheck, lint, build | job `web` (`npm test`, `npm run test:tenant`, `npm run test:platform`, `npm run build`) | GitHub Actions, commit `efa4166c` | Đạt |
+| Worker Python | job `worker` | GitHub Actions | Đạt |
+| E2E giao diện | job `e2e-ux` | GitHub Actions | Đạt |
+| Bảo mật | job `security`, CodeQL (`analyze`) | GitHub Actions | Đạt |
+
+Không có test nào bị bỏ qua hay tắt để có kết quả trên.
