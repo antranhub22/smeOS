@@ -3,24 +3,16 @@
 import React, { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
-import {
-  FileDown,
-  Printer,
-  Sparkles,
-  Check,
-  CheckCircle2,
-  ArrowRight,
-  ArrowLeft,
-} from "@/components/ui/icons"
+import { ArrowLeft, ArrowRight, Printer } from "@/components/ui/icons"
 import {
   getPrintPreset,
   type PrintPresetCode,
   type PreflightReport,
 } from "@/modules/print/domain/print-preset"
-import { formatNumber } from "@/lib/i18n/formatters"
 import { PresetSelector, PRINT_MATERIALS } from "./preset-selector"
 import { PreflightChecklist } from "./preflight-checklist"
 import { PrintPreviewCanvas } from "./print-preview-canvas"
+import { PrintExportSuccess, PrintStepper } from "./print-workflow-parts"
 
 export interface PrintWorkflowProps {
   initialPresetCode?: PrintPresetCode | undefined
@@ -167,53 +159,16 @@ export function PrintWorkflow({
   return (
     <div className="space-y-6">
       {/* 4-Step Stepper Progress Bar */}
-      <div className="p-4 rounded-2xl bg-surface border border-border shadow-xs">
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-          {[
+      <PrintStepper
+        currentStep={currentStep}
+        onSelect={setCurrentStep}
+        steps={[
             { step: 1, label: "Khổ in & Chất liệu", sub: preset.name },
             { step: 2, label: "Nội dung ấn phẩm", sub: title.slice(0, 18) + "..." },
             { step: 3, label: "Kiểm tra quy cách", sub: preflightReport?.passed ? "Đạt chuẩn" : "Preflight" },
             { step: 4, label: "Xuất file in PDF", sub: "300 DPI kèm lề xén" },
-          ].map((s) => {
-            const isCompleted = currentStep > s.step
-            const isCurrent = currentStep === s.step
-            return (
-              <button
-                key={s.step}
-                type="button"
-                onClick={() => setCurrentStep(s.step as 1 | 2 | 3 | 4)}
-                className={`p-2.5 rounded-xl text-left border transition-all ${
-                  isCurrent
-                    ? "border-primary bg-selected/20 shadow-2xs"
-                    : isCompleted
-                    ? "border-success/30 bg-success/5 hover:border-success/50"
-                    : "border-border bg-surface-alt/40 opacity-70"
-                }`}
-              >
-                <div className="flex items-center gap-2">
-                  <span
-                    className={`w-5 h-5 rounded-full flex items-center justify-center text-caption font-bold shrink-0 ${
-                      isCompleted
-                        ? "bg-success text-white"
-                        : isCurrent
-                        ? "bg-primary text-white"
-                        : "bg-surface-alt text-text-muted"
-                    }`}
-                  >
-                    {isCompleted ? <Check className="w-3 h-3" /> : s.step}
-                  </span>
-                  <div className="min-w-0">
-                    <p className="text-caption font-bold text-text truncate">
-                      {s.label}
-                    </p>
-                    <p className="text-caption text-text-muted truncate">{s.sub}</p>
-                  </div>
-                </div>
-              </button>
-            )
-          })}
-        </div>
-      </div>
+          ]}
+      />
 
       {/* Bước 1: Khổ in & Chất liệu */}
       {currentStep === 1 && (
@@ -376,59 +331,13 @@ export function PrintWorkflow({
 
       {/* Bước 4: Thành công & Tải về */}
       {currentStep === 4 && (
-        <div className="p-8 rounded-2xl bg-surface border border-border shadow-xs text-center max-w-2xl mx-auto space-y-6">
-          <div className="w-16 h-16 rounded-full bg-success/10 text-success flex items-center justify-center mx-auto">
-            <CheckCircle2 className="w-8 h-8" />
-          </div>
-
-          <div className="space-y-2">
-            <h3 className="text-title-sm font-bold text-text">
-              Bản in PDF chất lượng cao đã sẵn sàng!
-            </h3>
-            <p className="text-caption text-text-muted leading-relaxed">
-              File đã tự động tải về thiết bị của bạn. Bản in đạt chuẩn 300 DPI với tràn lề +{preset.bleedMm}mm và đường xén sắc nét, sẵn sàng gửi thẳng xưởng in.
-            </p>
-          </div>
-
-          <div className="p-4 rounded-xl bg-surface-alt border border-border text-left space-y-2 text-caption">
-            <div className="flex justify-between">
-              <span className="text-text-muted">Khổ in:</span>
-              <strong className="text-text">{preset.name} ({preset.widthMm} × {preset.heightMm} mm)</strong>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-text-muted">Chất liệu đề xuất:</span>
-              <strong className="text-text">{materialObj?.name}</strong>
-            </div>
-            <div className="flex justify-between">
-              <span className="text-text-muted">Số lượng dự kiến:</span>
-              <strong className="text-text">{formatNumber(quantity)} bản</strong>
-            </div>
-          </div>
-
-          <div className="flex flex-wrap items-center justify-center gap-3 pt-2">
-            {lastPdfBase64 && (
-              <Button
-                variant="outline"
-                onClick={() => downloadPdf(lastPdfBase64)}
-                className="flex items-center gap-2"
-              >
-                <FileDown className="w-4 h-4" />
-                <span>Tải lại file PDF</span>
-              </Button>
-            )}
-
-            <Button
-              variant="secondary"
-              onClick={() => {
-                setCurrentStep(1)
-              }}
-              className="flex items-center gap-2"
-            >
-              <Sparkles className="w-4 h-4" />
-              <span>Tạo thêm bản in khác</span>
-            </Button>
-          </div>
-        </div>
+        <PrintExportSuccess
+          preset={preset}
+          materialName={materialObj?.name}
+          quantity={quantity}
+          onDownloadAgain={lastPdfBase64 ? () => downloadPdf(lastPdfBase64) : undefined}
+          onStartOver={() => setCurrentStep(1)}
+        />
       )}
     </div>
   )
