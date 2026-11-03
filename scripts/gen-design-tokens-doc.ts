@@ -146,8 +146,8 @@ ${categories.map((c) => `- [${c.title}](#${c.title.toLowerCase().replace(/[^a-z0
     md += `|---|---|---|\n`
 
     for (const t of cat.tokens) {
-      const escapedVal = t.value.replace(/\|/g, "\\|")
-      const note = t.comment ? t.comment.replace(/\|/g, "\\|") : "—"
+      const escapedVal = t.value.replace(/\\/g, "\\\\").replace(/\|/g, "\\|")
+      const note = t.comment ? t.comment.replace(/\\/g, "\\\\").replace(/\|/g, "\\|") : "—"
       md += `| \`${t.name}\` | \`${escapedVal}\` | ${note} |\n`
     }
 

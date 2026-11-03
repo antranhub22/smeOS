@@ -20,10 +20,10 @@ export type RuleFunction = (sourceFile: ts.SourceFile, context: RuleContext) => 
 
 // R1 Pattern (ADR-011 D-UI-01 & F1-10: bắt cả 12 thang màu alias và chuỗi lớp trong object literal/cva)
 const RAW_COLOR_REGEX =
-  /^(?:[a-zA-Z0-9:-]+:)*(?:bg|text|border|from|to|via|ring|fill|stroke|outline|divide|shadow)-(?:red|rose|pink|fuchsia|purple|violet|indigo|blue|sky|cyan|teal|emerald|green|lime|yellow|amber|orange|slate|gray|zinc|neutral|stone|cool|blush|alert|mint|sand|orchid|ocean|azure|navy|petal|aqua|lagoon)-\d{2,3}(?:\/\d+)?$/
+  /^(?:[a-zA-Z0-9-]+:)*(?:bg|text|border|from|to|via|ring|fill|stroke|outline|divide|shadow)-(?:red|rose|pink|fuchsia|purple|violet|indigo|blue|sky|cyan|teal|emerald|green|lime|yellow|amber|orange|slate|gray|zinc|neutral|stone|cool|blush|alert|mint|sand|orchid|ocean|azure|navy|petal|aqua|lagoon)-\d{2,3}(?:\/\d+)?$/
 
 // R2 Pattern
-const ARBITRARY_TEXT_SIZE_REGEX = /^(?:[a-zA-Z0-9:-]+:)*text-\[\d+(?:\.\d+)?px\]$/
+const ARBITRARY_TEXT_SIZE_REGEX = /^(?:[a-zA-Z0-9-]+:)*text-\[\d+(?:\.\d+)?px\]$/
 
 // R3 Pattern
 const HEX_COLOR_REGEX = /#[0-9a-fA-F]{3,8}\b/g

@@ -82,7 +82,7 @@ function collectClassStrings(sourceFile: ts.SourceFile): { text: string; node: t
 
 // R17 Pattern — Token shadcn cũ
 const LEGACY_SHADCN_TOKEN_REGEX =
-  /^(?:[a-zA-Z0-9:-]+:)*(?:bg-background|text-foreground|text-muted-foreground|border-input|bg-card|text-card-foreground|bg-popover|text-popover-foreground|bg-muted|border-muted)$/
+  /^(?:[a-zA-Z0-9-]+:)*(?:bg-background|text-foreground|text-muted-foreground|border-input|bg-card|text-card-foreground|bg-popover|text-popover-foreground|bg-muted|border-muted)$/
 
 /** R17 — Token shadcn cũ → token ngữ nghĩa */
 export const checkR17: RuleFunction = (sourceFile, context) => {
@@ -200,7 +200,7 @@ export const checkR20: RuleFunction = (sourceFile, context) => {
 
 // R21 Pattern — Cỡ chữ Tailwind mặc định
 const TAILWIND_DEFAULT_TEXT_SIZE_REGEX =
-  /^(?:[a-zA-Z0-9:-]+:)*text-(?:xs|sm|base|lg|xl|2xl|3xl|4xl|5xl)$/
+  /^(?:[a-zA-Z0-9-]+:)*text-(?:xs|sm|base|lg|xl|2xl|3xl|4xl|5xl)$/
 
 /** R21 — Cỡ chữ Tailwind mặc định → thang typography hệ thống */
 export const checkR21: RuleFunction = (sourceFile, context) => {
@@ -228,7 +228,7 @@ export const checkR21: RuleFunction = (sourceFile, context) => {
 }
 
 // R22 Pattern — Token không tồn tại
-const NONEXISTENT_TOKEN_REGEX = /^(?:[a-zA-Z0-9:-]+:)*(?:bg|text|border)-(?:primary-fg-broken|surface-broken)$/
+const NONEXISTENT_TOKEN_REGEX = /^(?:[a-zA-Z0-9-]+:)*(?:bg|text|border)-(?:primary-fg-broken|surface-broken)$/
 
 /** R22 — Lớp token không tồn tại */
 export const checkR22: RuleFunction = (sourceFile, context) => {
@@ -256,7 +256,7 @@ export const checkR22: RuleFunction = (sourceFile, context) => {
 }
 
 // R23 Pattern — animate-* thiếu motion-reduce
-const ANIMATE_REGEX = /^(?:[a-zA-Z0-9:-]+:)*animate-(?:spin|pulse|bounce|ping)$/
+const ANIMATE_REGEX = /^(?:[a-zA-Z0-9-]+:)*animate-(?:spin|pulse|bounce|ping)$/
 
 /** R23 — animate-* không kèm motion-reduce: */
 export const checkR23: RuleFunction = (sourceFile, context) => {

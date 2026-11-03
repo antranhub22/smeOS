@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { Upload, Image as ImageIcon, Sparkles, Check, Flower2, Library, Loader2, X } from "@/components/ui/icons";
 import { useI18n } from "@/lib/i18n/context";
+import { safeImageSrc } from "@/lib/safe-image-src"
 
 interface ProductUploadCardProps {
   selectedImage: string;
@@ -322,7 +323,7 @@ export function ProductUploadCard({
           <div className="relative aspect-square w-full rounded-xl overflow-hidden bg-white border border-cool-200">
             {selectedImage ? (
               <img
-                src={selectedImage}
+                src={safeImageSrc(selectedImage)}
                 alt="Selected"
                 className="h-full w-full object-cover"
               />

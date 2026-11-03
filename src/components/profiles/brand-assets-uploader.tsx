@@ -12,6 +12,7 @@ import { PhotoUploadGuidance, LOGO_GUIDANCE } from "./photo-upload-guidance"
 import { uploadBrandAsset, resolveAssetViewUrl } from "./upload-brand-asset"
 import { BrandStorefrontSection } from "./brand-storefront-section"
 import { BrandVideoQrSection } from "./brand-video-qr-section"
+import { safeImageSrc } from "@/lib/safe-image-src"
 
 export interface BrandAssetsData {
   storefront_photos?: string[]
@@ -123,7 +124,7 @@ export function BrandAssetsUploader({
             <div className="relative flex h-20 w-20 shrink-0 items-center justify-center rounded-xl border border-border bg-surface overflow-hidden shadow-xs">
               {logoPreview ? (
                 <img
-                  src={logoPreview}
+                  src={safeImageSrc(logoPreview)}
                   alt="Logo thương hiệu"
                   className="h-full w-full object-contain p-1.5"
                 />

@@ -426,7 +426,7 @@ export default function TaiAnhPage() {
   // --- Load analysis ---
   const loadAnalysis = async (id: string) => {
     try {
-      const res = await apiFetchWithAuth(`/api/v1/vision/analyses/${id}`)
+      const res = await apiFetchWithAuth(`/api/v1/vision/analyses/${encodeURIComponent(id)}`)
       if (!res.ok || !res.data) {
         setErrorMsg(res.message ?? "Không tải được kết quả phân tích")
         return
@@ -456,7 +456,7 @@ export default function TaiAnhPage() {
   // --- Poll job status & load result ---
   const pollJob = async (jobId: string): Promise<boolean> => {
     try {
-      const res = await apiFetchWithAuth(`/api/v1/jobs/${jobId}`)
+      const res = await apiFetchWithAuth(`/api/v1/jobs/${encodeURIComponent(jobId)}`)
       if (!res.ok || !res.data) return false
       const data = res.data as {
         job: {
@@ -1037,7 +1037,7 @@ export default function TaiAnhPage() {
       if (editedFields) {
         Object.assign(payloadEdited, editedFields)
       }
-      const res = await apiFetch(`/api/v1/vision/analyses/${analysisId}`, {
+      const res = await apiFetch(`/api/v1/vision/analyses/${encodeURIComponent(analysisId)}`, {
         method: "PATCH",
         body: JSON.stringify({ edited: payloadEdited }),
       })
@@ -1064,7 +1064,7 @@ export default function TaiAnhPage() {
       return
     }
     try {
-      const res = await apiFetch(`/api/v1/vision/analyses/${analysisId}/reject`, {
+      const res = await apiFetch(`/api/v1/vision/analyses/${encodeURIComponent(analysisId)}/reject`, {
         method: "POST",
         body: JSON.stringify({ ly_do: null }),
       })
@@ -1101,7 +1101,7 @@ export default function TaiAnhPage() {
     setApprovingAnalysis(true)
     setErrorMsg(null)
     try {
-      const res = await apiFetch(`/api/v1/vision/analyses/${analysisId}/approve`, {
+      const res = await apiFetch(`/api/v1/vision/analyses/${encodeURIComponent(analysisId)}/approve`, {
         method: "POST",
         body: JSON.stringify({ create_product: createProduct }),
       })

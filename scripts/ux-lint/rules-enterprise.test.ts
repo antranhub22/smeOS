@@ -166,3 +166,19 @@ describe("UX Lint Enterprise Rules (R17–R23)", () => {
   })
 })
 
+
+// CodeQL js/redos (PR #107): tiền tố biến thể "(?:[a-zA-Z0-9:-]+:)*" cho phép nhiều cách khớp chuỗi "-:"
+// lặp lại → thời gian khớp tăng theo hàm mũ. Tiền tố mới không chứa ':' trong một đoạn.
+describe("Luật màu/token — không backtracking theo hàm mũ (CodeQL js/redos)", () => {
+  it("R1 và R17 xử lý lớp có chuỗi '-:' lặp lại dài trong thời gian ngắn", async () => {
+    const { checkR1 } = await import("./rules")
+    const evil = "a" + "-:".repeat(40) + "!"
+    const { sourceFile, context } = createTsxSource(`export const X = () => <div className="${evil} bg-muted hover:bg-red-500" />`)
+    const started = Date.now()
+    const r1 = checkR1(sourceFile, context)
+    const r17 = checkR17(sourceFile, context)
+    expect(Date.now() - started).toBeLessThan(500)
+    expect(r1.map((v) => v.rule)).toEqual(["R1"])
+    expect(r17.map((v) => v.rule)).toEqual(["R17"])
+  })
+})
