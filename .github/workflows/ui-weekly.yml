@@ -52,9 +52,14 @@ jobs:
       - name: Seed database
         run: npx prisma db seed
 
-      - name: Setup test database
+      # Cùng bước với ci.yml: `db:test:setup` gọi `docker compose`, không chạy được
+      # trên runner; `|| true` từng che lỗi đó nên DB test rỗng mà job vẫn chạy tiếp.
+      - name: Dựng database floraos_test
+        env:
+          PGPASSWORD: floraos
         run: |
-          npm run db:test:setup || true
+          psql -h localhost -U floraos -d postgres -c 'CREATE DATABASE floraos_test'
+          DATABASE_URL=postgresql://floraos:floraos@localhost:5432/floraos_test npx prisma db push
 
       - name: Install Playwright browsers
         run: npx playwright install --with-deps chromium
