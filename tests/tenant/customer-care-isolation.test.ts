@@ -111,7 +111,7 @@ describe("Marketing & Sales Center — Cách ly tenant cho Chăm sóc khách hà
         channel: "PHONE",
         summary: "B gọi trộm khách của A",
       })
-    ).rejects.toThrow("Không tìm thấy khách hàng trong cửa hàng")
+    ).rejects.toMatchObject({ code: "NOT_FOUND" })
   })
 })
 

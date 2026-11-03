@@ -1,4 +1,4 @@
-import { notFound, validationFailed } from "@/core/http/errors"
+import { validationFailed } from "@/core/http/errors"
 import { handle, jsonResponse } from "@/core/http/response"
 import { hasCapability, requireCapability } from "@/core/rbac/capabilities"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
@@ -24,26 +24,19 @@ export const GET = handle(async (request, context) => {
     throw validationFailed({ offset: "offset phải là số nguyên không âm" })
   }
 
-  try {
-    const result = await getSegmentCustomersUseCase(ctx, {
-      segmentId: id,
-      search,
-      limit,
-      offset,
-    })
+  const result = await getSegmentCustomersUseCase(ctx, {
+    segmentId: id,
+    search,
+    limit,
+    offset,
+  })
 
-    return jsonResponse({
-      data: result.items,
-      segment_name: result.segmentName,
-      total_matched: result.totalMatched,
-      limit,
-      offset,
-    })
-  } catch (err: unknown) {
-    if (err instanceof Error && err.message.includes("Không tìm thấy nhóm khách hàng")) {
-      throw notFound()
-    }
-    throw err
-  }
+  return jsonResponse({
+    data: result.items,
+    segment_name: result.segmentName,
+    total_matched: result.totalMatched,
+    limit,
+    offset,
+  })
 })
 

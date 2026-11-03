@@ -1,4 +1,4 @@
-import { notFound, validationFailed } from "@/core/http/errors"
+import { validationFailed } from "@/core/http/errors"
 import { handle, jsonResponse } from "@/core/http/response"
 import { hasCapability, requireCapability } from "@/core/rbac/capabilities"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
@@ -72,14 +72,7 @@ export const POST = handle(async (request, context) => {
     throw validationFailed(details)
   }
 
-  try {
-    const interaction = await recordCustomerInteractionUseCase(ctx, parsed.data)
-    return jsonResponse({ data: interaction }, { status: 201 })
-  } catch (err: unknown) {
-    if (err instanceof Error && err.message.includes("Không tìm thấy khách hàng")) {
-      throw notFound()
-    }
-    throw err
-  }
+  const interaction = await recordCustomerInteractionUseCase(ctx, parsed.data)
+  return jsonResponse({ data: interaction }, { status: 201 })
 })
 

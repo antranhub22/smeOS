@@ -1,3 +1,4 @@
+import { notFound } from "@/core/http/errors"
 import type { TenantContext } from "@/core/tenancy/tenant-context"
 import type { CustomerMasterIndex } from "../domain/customer-master-index"
 import {
@@ -33,7 +34,7 @@ export async function getSegmentCustomersUseCase(
 }> {
   const segment = await segmentRepo.findById(ctx, params.segmentId)
   if (!segment) {
-    throw new Error("Không tìm thấy nhóm khách hàng")
+    throw notFound()
   }
 
   // Lấy toàn bộ danh sách khách hàng của tenant để đánh giá (hoặc theo bộ lọc tìm kiếm)

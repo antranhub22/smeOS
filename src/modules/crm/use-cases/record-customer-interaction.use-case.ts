@@ -1,4 +1,5 @@
 import { z } from "zod"
+import { notFound } from "@/core/http/errors"
 import type { TenantContext } from "@/core/tenancy/tenant-context"
 import type { CustomerInteraction } from "../domain/customer-segment"
 import {
@@ -32,7 +33,7 @@ export async function recordCustomerInteractionUseCase(
 
   const customer = await customerRepo.getById(ctx, input.customerId)
   if (!customer) {
-    throw new Error("Không tìm thấy khách hàng trong cửa hàng")
+    throw notFound()
   }
 
   return interactionRepo.create(ctx, {

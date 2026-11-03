@@ -1,4 +1,5 @@
 import { jsPDF } from "jspdf"
+import { notFound } from "@/core/http/errors"
 import type { TenantContext } from "@/core/tenancy/tenant-context"
 import type { IPrintRenditionRepository } from "../domain/repositories/print-rendition-repository.interface"
 import { getPrintRenditionRepository } from "../infra/print-rendition-repository"
@@ -27,7 +28,7 @@ export async function exportPrintPdfUseCase(
 ): Promise<ExportPrintPdfResult> {
   const rendition = await repo.findById(ctx, renditionId)
   if (!rendition) {
-    throw new Error("Không tìm thấy bản in quy cách")
+    throw notFound()
   }
 
   const bleedMm = rendition.bleedMm

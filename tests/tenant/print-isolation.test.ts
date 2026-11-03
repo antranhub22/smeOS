@@ -68,7 +68,7 @@ describe("Marketing & Sales Center — Cách ly tenant cho Ấn phẩm & In ấn
       exportPrintPdfUseCase(b.ctx, renditionA.id, {
         title: "B cố xuất lậu PDF của A",
       })
-    ).rejects.toThrow("Không tìm thấy bản in quy cách")
+    ).rejects.toMatchObject({ code: "NOT_FOUND" })
 
     // A xuất PDF hợp lệ
     const exportA = await exportPrintPdfUseCase(a.ctx, renditionA.id, {

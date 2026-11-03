@@ -1,5 +1,5 @@
 import { z } from "zod"
-import { notFound, validationFailed } from "@/core/http/errors"
+import { validationFailed } from "@/core/http/errors"
 import { handle, jsonResponse } from "@/core/http/response"
 import { requireCapability } from "@/core/rbac/capabilities"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
@@ -30,22 +30,15 @@ export const POST = handle(async (request, context) => {
     throw validationFailed(details)
   }
 
-  try {
-    const result = await exportPrintPdfUseCase(ctx, id, {
-      title: parsed.data.title ?? undefined,
-      subtitle: parsed.data.subtitle ?? undefined,
-      storeName: parsed.data.storeName ?? undefined,
-      includeBleedMarks: parsed.data.includeBleedMarks,
-      imageDataUrl: parsed.data.imageDataUrl ?? undefined,
-    })
+  const result = await exportPrintPdfUseCase(ctx, id, {
+    title: parsed.data.title ?? undefined,
+    subtitle: parsed.data.subtitle ?? undefined,
+    storeName: parsed.data.storeName ?? undefined,
+    includeBleedMarks: parsed.data.includeBleedMarks,
+    imageDataUrl: parsed.data.imageDataUrl ?? undefined,
+  })
 
-    await recordDataExport(ctx, "print_renditions", { rendition_id: id })
+  await recordDataExport(ctx, "print_renditions", { rendition_id: id })
 
-    return jsonResponse({ data: result })
-  } catch (err: unknown) {
-    if (err instanceof Error && err.message.includes("Không tìm thấy")) {
-      throw notFound()
-    }
-    throw err
-  }
+  return jsonResponse({ data: result })
 })
