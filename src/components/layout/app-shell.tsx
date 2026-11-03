@@ -9,6 +9,7 @@ import { SessionTakeoverWatcher } from "@/components/layout/session-takeover-wat
 import { LiveRegionProvider } from "@/components/ui/live-region"
 import { FloatingLayerProvider } from "@/components/layout/floating-layer"
 import { ToolLockGuard } from "@/components/layout/tool-lock-guard"
+import { UiStudioAvailabilityProvider } from "@/components/layout/ui-studio-availability"
 import { UiStudioDrawer } from "@/components/layout/ui-studio-drawer"
 import { FloraOSGlobalCopilot } from "@/components/chat/floraos-global-copilot"
 import { useUiSystem } from "@/lib/ui-system/ui-provider"
@@ -41,36 +42,39 @@ export function AppShell({
 
   return (
     <LiveRegionProvider>
-      <FloatingLayerProvider>
-        <a
-          href="#noi-dung-chinh"
-          className="sr-only focus:not-sr-only focus:absolute focus:top-3 focus:left-3 focus:z-50 focus:rounded-[var(--radius-button)] focus:bg-primary focus:px-4 focus:py-2.5 focus:text-body-sm focus:font-bold focus:text-white focus:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
-        >
-          Bỏ qua tới nội dung chính
-        </a>
-        <div
-          data-theme={activePreset}
-          data-density={activeDensity}
-          style={theme.brandStyle}
-          className="mx-auto flex min-h-dvh w-full flex-col md:flex-row"
-        >
-          <MobileNavDrawer>
-            <DesktopNav isDev={isDev} />
-            <main
-              id="noi-dung-chinh"
-              tabIndex={-1}
-              className="min-h-0 min-w-0 flex-1 focus:outline-none pb-[calc(4.5rem+env(safe-area-inset-bottom))] md:pb-0"
-            >
-              {content}
-            </main>
-          </MobileNavDrawer>
-          <BottomNav />
-        </div>
-        {withImageZoom && <GlobalImageZoom />}
-        <SessionTakeoverWatcher />
-        {withCopilot && <FloraOSGlobalCopilot />}
-        {isDev && withUiStudio && <UiStudioDrawer />}
-      </FloatingLayerProvider>
+      <UiStudioAvailabilityProvider value={withUiStudio}>
+        <FloatingLayerProvider>
+          <a
+            href="#noi-dung-chinh"
+            className="sr-only focus:not-sr-only focus:absolute focus:top-3 focus:left-3 focus:z-50 focus:rounded-[var(--radius-button)] focus:bg-primary focus:px-4 focus:py-2.5 focus:text-body-sm focus:font-bold focus:text-white focus:shadow-lg focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+          >
+            Bỏ qua tới nội dung chính
+          </a>
+          <div
+            data-theme={activePreset}
+            data-density={activeDensity}
+            style={theme.brandStyle}
+            className="mx-auto flex min-h-dvh w-full flex-col md:flex-row"
+          >
+            <MobileNavDrawer>
+              <DesktopNav isDev={isDev} />
+              <main
+                id="noi-dung-chinh"
+                tabIndex={-1}
+                className="min-h-0 min-w-0 flex-1 focus:outline-none pb-[calc(4.5rem+env(safe-area-inset-bottom))] md:pb-0"
+              >
+                {content}
+              </main>
+            </MobileNavDrawer>
+            <BottomNav />
+          </div>
+          {withImageZoom && <GlobalImageZoom />}
+          <SessionTakeoverWatcher />
+          {withCopilot && <FloraOSGlobalCopilot />}
+          {/* Layout quyết định theo ADR-011 D-UI-01: (app) chỉ ngoài production, (platform) luôn có */}
+          {withUiStudio && <UiStudioDrawer />}
+        </FloatingLayerProvider>
+      </UiStudioAvailabilityProvider>
     </LiveRegionProvider>
   )
 }

@@ -10,6 +10,7 @@ import { useSession } from "@/lib/session"
 import { useI18n } from "@/lib/i18n"
 import { cn } from "@/lib/utils"
 import { ChangePasswordDialog } from "./change-password-dialog"
+import { useUiStudioAvailable } from "./ui-studio-availability"
 
 export interface UserMenuProps {
   initials: string
@@ -24,6 +25,7 @@ export function UserMenu({ initials, direction = "down", size = "md" }: UserMenu
   const [doiMatKhau, setDoiMatKhau] = useState(false)
   const buttonRef = useRef<HTMLButtonElement>(null)
   const { roleUx, userName, userEmail, orgName, can, platformCapabilities } = useSession()
+  const uiStudioAvailable = useUiStudioAvailable()
   const { t } = useI18n()
 
   useEffect(() => {
@@ -137,8 +139,8 @@ export function UserMenu({ initials, direction = "down", size = "md" }: UserMenu
               </span>
             </button>
 
-            {/* Mở UI Studio (Theme & Style Switcher) — chỉ cho dev hoặc platform operator (ADR-011 D-UI-01) */}
-            {(process.env.NODE_ENV !== "production" || (platformCapabilities && platformCapabilities.length > 0)) && (
+            {/* Mở UI Studio — chỉ khi shell hiện tại có gắn ngăn UI Studio (ADR-011 D-UI-01) */}
+            {uiStudioAvailable && (
               <button
                 type="button"
                 onClick={() => {

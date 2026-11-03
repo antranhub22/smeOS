@@ -91,4 +91,20 @@ describe("AppShell (S3-01)", () => {
     expect(html).toContain('data-testid="copilot"')
     expect(html).toContain('data-testid="image-zoom"')
   })
+
+  // ADR-011 D-UI-01: layout quyết định — (platform) gắn UI Studio cả ở production, (app) thì không.
+  it("gắn UI Studio theo withUiStudio, kể cả khi không phải môi trường dev", () => {
+    const withStudio = renderToStaticMarkup(
+      <AppShell theme={dummyTheme} isDev={false} withUiStudio>
+        <div />
+      </AppShell>
+    )
+    const withoutStudio = renderToStaticMarkup(
+      <AppShell theme={dummyTheme} isDev withUiStudio={false}>
+        <div />
+      </AppShell>
+    )
+    expect(withStudio).toContain('data-testid="ui-studio"')
+    expect(withoutStudio).not.toContain('data-testid="ui-studio"')
+  })
 })
