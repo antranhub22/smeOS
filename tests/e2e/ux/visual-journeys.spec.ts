@@ -31,6 +31,10 @@ const FIXED_TIME = new Date("2026-11-04T09:00:00+07:00")
 async function settle(page: Page, path: string) {
   await page.goto(path, { waitUntil: "networkidle", timeout: 90_000 })
   await page.evaluate(() => document.fonts.ready)
+  // Máy CI chậm hơn: chờ hết khung chờ (SkeletonBlock, role="status" chứa animate-pulse) trước khi chụp.
+  await page
+    .waitForFunction(() => !document.querySelector('[role="status"] .animate-pulse, [aria-busy="true"]'), undefined, { timeout: 15_000 })
+    .catch(() => undefined)
   await page.waitForTimeout(300)
 }
 
