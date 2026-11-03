@@ -3,13 +3,13 @@
 // Duyệt tài khoản tự đăng ký (`N13`, PO 22/10/2026). Xem đặc tả 06 mục 21.
 
 import { useCallback, useEffect, useState } from "react"
-import { InfoTip } from "@/components/ui/info-tip"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { SkeletonBlock } from "@/components/ui/skeleton"
 import { useConfirmDialog } from "@/components/ui/confirm-dialog"
 import { useI18n } from "@/lib/i18n"
 import { formatDateTime } from "@/lib/i18n/formatters"
+import { PageHeader } from "@/components/ui/page-header"
 
 type PendingRegistration = {
   userId: string
@@ -84,15 +84,14 @@ export default function DuyetDangKyPage() {
 
   return (
     <Card className="overflow-x-auto p-4 rounded-2xl shadow-xs">
-      <div className="flex items-center justify-between mb-3 border-b border-border pb-2">
-        <div className="flex items-center gap-2">
-          <h2 className="text-body font-bold text-text">Duyệt đăng ký</h2>
-          <InfoTip label="Duyệt đăng ký">
-            Tài khoản tự đăng ký hoặc dùng thử chỉ đăng nhập được sau khi bạn duyệt.
-          </InfoTip>
-        </div>
-        <span className="rounded bg-surface-alt px-2 py-0.5 text-caption text-text-muted">{items?.length ?? 0} đang chờ</span>
-      </div>
+      <PageHeader
+        className="mb-3 border-b border-border pb-2"
+        title="Duyệt đăng ký"
+        tip="Tài khoản tự đăng ký hoặc dùng thử chỉ đăng nhập được sau khi bạn duyệt."
+        actions={
+          <span className="rounded bg-surface-alt px-2 py-0.5 text-caption text-text-muted">{items?.length ?? 0} đang chờ</span>
+        }
+      />
 
       {loi && <p className="mb-3 text-body-sm text-danger">{loi}</p>}
 

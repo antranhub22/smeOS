@@ -4,7 +4,6 @@
 // Đọc: phiên nền tảng · Ghi: `N12`, có nhật ký kiểm toán. Xem đặc tả 06.
 
 import { useEffect, useState } from "react"
-import { InfoTip } from "@/components/ui/info-tip"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { NativeSelect } from "@/components/ui/select"
@@ -13,6 +12,7 @@ import { InlineError } from "@/components/ui/inline-error"
 import { SkeletonBlock } from "@/components/ui/skeleton"
 import { useConfirmDialog } from "@/components/ui/confirm-dialog"
 import type { UxRolloutFlagKey, UxRolloutFlags, UxRolloutMode } from "@/modules/platform/domain/ux-rollout-flags"
+import { PageHeader } from "@/components/ui/page-header"
 
 const FLAG_LABEL: Record<UxRolloutFlagKey, string> = {
   ux_pd_anh_san_pham: "Tạo ảnh sản phẩm chuyên nghiệp",
@@ -114,15 +114,14 @@ export default function CauHinhNenTangPage() {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex flex-wrap items-center justify-between gap-2 px-4 pt-2 sm:px-0">
-        <div className="flex items-center gap-2">
-          <h2 className="text-body font-bold text-text">Cấu hình nền tảng</h2>
-          <InfoTip label="Cấu hình nền tảng">
-            Bật giao diện chuẩn mới cho từng công cụ, theo từng tổ chức. Tắt có hiệu lực trong khoảng 30 giây.
-          </InfoTip>
-        </div>
-        <span className="rounded bg-surface-alt px-2 py-0.5 text-caption text-text-muted">Phạm vi: Toàn hệ thống</span>
-      </div>
+      <PageHeader
+        className="px-4 pt-2 sm:px-0"
+        title="Cấu hình nền tảng"
+        tip="Bật giao diện chuẩn mới cho từng công cụ, theo từng tổ chức. Tắt có hiệu lực trong khoảng 30 giây."
+        actions={
+          <span className="rounded bg-surface-alt px-2 py-0.5 text-caption text-text-muted">Phạm vi: Toàn hệ thống</span>
+        }
+      />
 
       {keys.map((key) => {
         const rule = flags[key]

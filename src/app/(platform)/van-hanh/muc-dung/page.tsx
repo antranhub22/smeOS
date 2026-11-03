@@ -13,13 +13,13 @@ import {
   ArrowUpRight,
   Filter,
 } from "@/components/ui/icons"
-import { InfoTip } from "@/components/ui/info-tip"
 import { StatTile } from "@/components/ui/stat-tile"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { NativeSelect } from "@/components/ui/select"
 import { SkeletonBlock } from "@/components/ui/skeleton"
 import { formatNumber } from "@/lib/i18n/formatters"
+import { PageHeader } from "@/components/ui/page-header"
 
 type PlatformUsageRow = {
   organizationId: string
@@ -98,17 +98,16 @@ export default function MucDungPage() {
   return (
     <div className="space-y-6">
       {/* 1. Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-2 border-b border-border">
-        <div className="flex items-center gap-2">
-          <h2 className="text-title font-bold text-text">Mức dùng & Chi phí</h2>
-          <InfoTip label="Mức dùng & Chi phí">
-            Theo dõi lưu lượng gọi AI, Credit tiêu thụ và kiểm soát hạn mức theo từng tổ chức.
-          </InfoTip>
-        </div>
-        <span className="self-start sm:self-auto rounded-lg bg-surface-alt px-3 py-1 text-caption font-semibold text-text-muted border border-border">
-          Phạm vi: SuperAdmin Nền tảng
-        </span>
-      </div>
+      <PageHeader
+        className="pb-2 border-b border-border"
+        title="Mức dùng & Chi phí"
+        tip="Theo dõi lưu lượng gọi AI, Credit tiêu thụ và kiểm soát hạn mức theo từng tổ chức."
+        actions={
+          <span className="self-start sm:self-auto rounded-lg bg-surface-alt px-3 py-1 text-caption font-semibold text-text-muted border border-border">
+            Phạm vi: SuperAdmin Nền tảng
+          </span>
+        }
+      />
 
       {/* 2. Thẻ KPI */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">

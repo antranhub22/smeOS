@@ -7,7 +7,6 @@
 
 import { useCallback, useEffect, useState } from "react"
 import { CheckCircle2, XCircle, RefreshCw, InboxIcon } from "@/components/ui/icons"
-import { InfoTip } from "@/components/ui/info-tip"
 import {
   ApprovalCard,
   TYPE_META,
@@ -18,6 +17,7 @@ import {
 import { SkeletonBlock } from "@/components/ui/skeleton"
 import { Button } from "@/components/ui/button"
 import { useConfirmDialog } from "@/components/ui/confirm-dialog"
+import { PageHeader } from "@/components/ui/page-header"
 
 export default function PheQuyetPage() {
   const [items, setItems] = useState<PendingApprovalItem[] | null>(null)
@@ -121,25 +121,23 @@ export default function PheQuyetPage() {
   return (
     <div className="space-y-5 max-w-3xl mx-auto">
       {/* Header */}
-      <div className="flex items-start justify-between gap-3">
-        <div className="flex items-center gap-2">
-          <h2 className="text-title font-bold text-text">Yêu cầu phê duyệt</h2>
-          <InfoTip label="Yêu cầu phê duyệt">
-            Tổng hợp các yêu cầu đang chờ Admin xem xét: mở khoá quốc tế, đổi mô hình cửa hàng, nâng hạn mức AI.
-          </InfoTip>
-        </div>
-        <Button
-          type="button"
-          variant="outline"
-          size="sm"
-          id="refresh-pending-approvals"
-          onClick={() => void tai()}
-          className="h-auto py-1.5 px-3 text-caption font-semibold"
-        >
-          <RefreshCw size={13} aria-hidden />
-          Tải lại
-        </Button>
-      </div>
+      <PageHeader
+        title="Yêu cầu phê duyệt"
+        tip="Tổng hợp các yêu cầu đang chờ Admin xem xét: mở khoá quốc tế, đổi mô hình cửa hàng, nâng hạn mức AI."
+        actions={
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            id="refresh-pending-approvals"
+            onClick={() => void tai()}
+            className="h-auto py-1.5 px-3 text-caption font-semibold"
+          >
+            <RefreshCw size={13} aria-hidden />
+            Tải lại
+          </Button>
+        }
+      />
 
       {/* Toast notification */}
       {toast && (

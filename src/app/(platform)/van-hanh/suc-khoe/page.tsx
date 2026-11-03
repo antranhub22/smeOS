@@ -8,11 +8,11 @@
 import { useEffect, useState } from "react"
 import Link from "next/link"
 import { AlertTriangle, Server } from "@/components/ui/icons"
-import { InfoTip } from "@/components/ui/info-tip"
 import { Card } from "@/components/ui/card"
 import { SkeletonBlock } from "@/components/ui/skeleton"
 import { formatDateTime } from "@/lib/i18n/formatters"
 import { tenTinhNang } from "@/lib/feature-labels"
+import { PageHeader } from "@/components/ui/page-header"
 
 type PlatformSystemHealth = {
   jobCountsByStatus: Record<string, number>
@@ -53,15 +53,13 @@ export default function SucKhoeHeThongPage() {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <h2 className="text-body font-bold text-text">Sức khoẻ hệ thống</h2>
-          <InfoTip label="Sức khoẻ hệ thống">
-            Tình trạng các bộ xử lý nền, hàng đợi tác vụ AI và cảnh báo tác vụ tồn đọng.
-          </InfoTip>
-        </div>
-        <span className="rounded bg-surface-alt px-2 py-0.5 text-caption text-text-muted">Phạm vi: Toàn hạ tầng</span>
-      </div>
+      <PageHeader
+        title="Sức khoẻ hệ thống"
+        tip="Tình trạng các bộ xử lý nền, hàng đợi tác vụ AI và cảnh báo tác vụ tồn đọng."
+        actions={
+          <span className="rounded bg-surface-alt px-2 py-0.5 text-caption text-text-muted">Phạm vi: Toàn hạ tầng</span>
+        }
+      />
 
       <Card className="p-4 rounded-2xl shadow-xs">
         <p className="mb-3 flex items-center gap-2 text-body-sm font-semibold">

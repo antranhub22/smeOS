@@ -4,11 +4,11 @@
 
 import { useEffect, useState } from "react"
 import Link from "next/link"
-import { InfoTip } from "@/components/ui/info-tip"
 import { Card } from "@/components/ui/card"
 import { SkeletonBlock } from "@/components/ui/skeleton"
 import { useI18n } from "@/lib/i18n"
 import { formatDate } from "@/lib/i18n/formatters"
+import { PageHeader } from "@/components/ui/page-header"
 
 type PlatformOrganizationSummary = {
   id: string
@@ -47,15 +47,14 @@ export default function DanhSachToChucPage() {
 
   return (
     <Card className="overflow-x-auto p-4 rounded-2xl shadow-xs">
-      <div className="flex items-center justify-between mb-3 border-b border-border pb-2">
-        <div className="flex items-center gap-2">
-          <h2 className="text-body font-bold text-text">Tổ chức</h2>
-          <InfoTip label="Tổ chức">
-            Danh sách tất cả doanh nghiệp, chuỗi và cửa hàng đăng ký trên toàn nền tảng.
-          </InfoTip>
-        </div>
-        <span className="rounded bg-surface-alt px-2 py-0.5 text-caption text-text-muted">{dict.platform.organizations.scopeSystem}</span>
-      </div>
+      <PageHeader
+        className="mb-3 border-b border-border pb-2"
+        title="Tổ chức"
+        tip="Danh sách tất cả doanh nghiệp, chuỗi và cửa hàng đăng ký trên toàn nền tảng."
+        actions={
+          <span className="rounded bg-surface-alt px-2 py-0.5 text-caption text-text-muted">{dict.platform.organizations.scopeSystem}</span>
+        }
+      />
       <table className="w-full text-left text-caption">
         <thead>
           <tr className="border-b border-border text-text-muted">

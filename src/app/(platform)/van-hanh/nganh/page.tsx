@@ -1,7 +1,6 @@
 "use client"
 
 import { useCallback, useEffect, useMemo, useState } from "react"
-import { InfoTip } from "@/components/ui/info-tip"
 import { ShieldAlert, CheckCircle2 } from "@/components/ui/icons"
 import { Badge } from "@/components/ui/badge"
 import { MatrixToolbar } from "./_components/matrix-toolbar"
@@ -9,6 +8,7 @@ import { MatrixGrid } from "./_components/matrix-grid"
 import { MatrixDiffModal } from "./_components/matrix-diff-modal"
 import { useI18n } from "@/lib/i18n"
 import type { NavMatrixApiResponse, MatrixDiffItem } from "./_lib/types"
+import { PageHeader } from "@/components/ui/page-header"
 
 export default function NganhNavMatrixPage() {
   const { t, dict } = useI18n()
@@ -185,22 +185,17 @@ export default function NganhNavMatrixPage() {
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
-        <div>
-          <div className="flex items-center gap-2">
-            <h2 className="text-title font-bold text-text">Ma trận ngành</h2>
-            <Badge tone="accent">Platform Admin</Badge>
-            <InfoTip label="Ma trận ngành">
-              Thiết lập danh sách menu/tab hiển thị trên sidebar cho từng ngành. Các tổ chức trong ngành sẽ tự động nhận cấu hình này và không thể can thiệp.
-            </InfoTip>
+      <PageHeader
+        title="Ma trận ngành"
+        badge={<Badge tone="accent">Platform Admin</Badge>}
+        tip="Thiết lập danh sách menu/tab hiển thị trên sidebar cho từng ngành. Các tổ chức trong ngành sẽ tự động nhận cấu hình này và không thể can thiệp."
+        actions={
+          <div className="flex items-center gap-2 text-caption text-text-muted">
+            <ShieldAlert className="h-4 w-4 text-primary" />
+            <span>Mức nền tảng — Có hiệu lực ngay</span>
           </div>
-        </div>
-
-        <div className="flex items-center gap-2 text-caption text-text-muted">
-          <ShieldAlert className="h-4 w-4 text-primary" />
-          <span>Mức nền tảng — Có hiệu lực ngay</span>
-        </div>
-      </div>
+        }
+      />
 
       {toastMessage && (
         <div className="flex items-center gap-2 rounded-lg border border-success/30 bg-success-bg p-3 text-body-sm text-primary">
