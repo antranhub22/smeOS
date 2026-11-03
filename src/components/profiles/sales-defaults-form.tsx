@@ -11,6 +11,7 @@ import {
   Palette,
   Building2,
 } from "@/components/ui/icons"
+import { Button } from "@/components/ui/button"
 import type { BrandProfileDetail } from "@/modules/profiles/use-cases/get-brand-profile"
 import type { UpsertBrandProfileInput } from "@/modules/profiles/domain/repositories/brand-profile-repository.interface"
 import {
@@ -154,11 +155,18 @@ export function SalesDefaultsForm({
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           {FLORIST_STRATEGY_PRESETS.map((preset) => (
-            <button
+            <div
               key={preset.id}
-              type="button"
+              role="button"
+              tabIndex={0}
               onClick={() => applyPreset(preset.id)}
-              className="rounded-xl border border-border bg-surface-alt/60 p-4 text-left transition-all hover:border-primary hover:bg-surface focus:outline-none"
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault()
+                  applyPreset(preset.id)
+                }
+              }}
+              className="rounded-xl border border-border bg-surface-alt/60 p-4 text-left transition-all hover:border-primary hover:bg-surface focus:outline-none cursor-pointer"
             >
               <div className="flex items-center gap-2 mb-1.5">
                 {preset.id === "preset-artisan-boutique" && <Palette size={16} className="text-primary" />}
@@ -167,7 +175,7 @@ export function SalesDefaultsForm({
                 <span className="text-body-sm font-bold text-text">{preset.name}</span>
               </div>
               <p className="text-caption text-text-muted leading-relaxed">{preset.tagline}</p>
-            </button>
+            </div>
           ))}
         </div>
       </div>
@@ -195,11 +203,19 @@ export function SalesDefaultsForm({
           {FLORIST_FREE_GIFTS_CATALOG.map((item) => {
             const isChecked = gifts.includes(item.label)
             return (
-              <button
+              <div
                 key={item.id}
-                type="button"
+                role="checkbox"
+                aria-checked={isChecked}
+                tabIndex={0}
                 onClick={() => toggleGift(item.label)}
-                className={`flex items-start gap-3 rounded-xl border p-3.5 text-left transition-all ${
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault()
+                    toggleGift(item.label)
+                  }
+                }}
+                className={`flex items-start gap-3 rounded-xl border p-3.5 text-left transition-all cursor-pointer ${
                   isChecked
                     ? "border-primary bg-primary/5 shadow-xs"
                     : "border-border bg-surface-alt/40 hover:border-primary/50"
@@ -216,7 +232,7 @@ export function SalesDefaultsForm({
                   <div className="text-body-sm font-bold text-text">{item.label}</div>
                   <div className="text-caption text-text-muted mt-0.5 leading-snug">{item.description}</div>
                 </div>
-              </button>
+              </div>
             )
           })}
         </div>
@@ -246,15 +262,22 @@ export function SalesDefaultsForm({
                 className="inline-flex items-center gap-1.5 rounded-lg border border-primary/30 bg-primary/10 px-3 py-1 text-caption font-semibold text-primary"
               >
                 <span>{gift}</span>
-                <button
-                  type="button"
+                <span
+                  role="button"
+                  tabIndex={0}
                   aria-label={`Xóa quà tặng ${gift}`}
                   title="Xóa mục này"
                   onClick={() => handleRemoveGift(idx)}
-                  className="hover:text-danger transition-colors ml-0.5"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault()
+                      handleRemoveGift(idx)
+                    }
+                  }}
+                  className="hover:text-danger transition-colors ml-0.5 cursor-pointer inline-flex items-center"
                 >
                   <Trash2 size={13} />
-                </button>
+                </span>
               </span>
             ))}
           </div>
@@ -284,11 +307,19 @@ export function SalesDefaultsForm({
           {FLORIST_GUARANTEES_CATALOG.map((item) => {
             const isChecked = guarantees.includes(item.label)
             return (
-              <button
+              <div
                 key={item.id}
-                type="button"
+                role="checkbox"
+                aria-checked={isChecked}
+                tabIndex={0}
                 onClick={() => toggleGuarantee(item.label)}
-                className={`flex items-start gap-3 rounded-xl border p-3.5 text-left transition-all ${
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" || e.key === " ") {
+                    e.preventDefault()
+                    toggleGuarantee(item.label)
+                  }
+                }}
+                className={`flex items-start gap-3 rounded-xl border p-3.5 text-left transition-all cursor-pointer ${
                   isChecked
                     ? "border-primary bg-primary/5 shadow-xs"
                     : "border-border bg-surface-alt/40 hover:border-primary/50"
@@ -305,7 +336,7 @@ export function SalesDefaultsForm({
                   <div className="text-body-sm font-bold text-text">{item.label}</div>
                   <div className="text-caption text-text-muted mt-0.5 leading-snug">{item.description}</div>
                 </div>
-              </button>
+              </div>
             )
           })}
         </div>
@@ -335,15 +366,22 @@ export function SalesDefaultsForm({
                 className="inline-flex items-center gap-1.5 rounded-lg border border-primary/30 bg-primary/10 px-3 py-1 text-caption font-semibold text-primary"
               >
                 <span>{guar}</span>
-                <button
-                  type="button"
+                <span
+                  role="button"
+                  tabIndex={0}
                   aria-label={`Xóa cam kết ${guar}`}
                   title="Xóa mục này"
                   onClick={() => handleRemoveGuarantee(idx)}
-                  className="hover:text-danger transition-colors ml-0.5"
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault()
+                      handleRemoveGuarantee(idx)
+                    }
+                  }}
+                  className="hover:text-danger transition-colors ml-0.5 cursor-pointer inline-flex items-center"
                 >
                   <Trash2 size={13} />
-                </button>
+                </span>
               </span>
             ))}
           </div>
@@ -352,7 +390,7 @@ export function SalesDefaultsForm({
 
       {/* 4. NÚT LƯU */}
       <div className="flex justify-end pt-2">
-        <button
+        <Button
           type="submit"
           disabled={saving}
           className="inline-flex items-center gap-2 rounded-xl bg-primary px-6 py-2.5 text-body-sm font-bold text-white shadow-xs transition-opacity hover:opacity-95 disabled:opacity-50"
@@ -370,7 +408,7 @@ export function SalesDefaultsForm({
               <span>Lưu chính sách & cam kết</span>
             </>
           )}
-        </button>
+        </Button>
       </div>
     </form>
   )

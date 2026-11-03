@@ -2,6 +2,15 @@
 
 import React, { useState, useEffect } from "react"
 import { Type, Sparkles, ShieldAlert, Check, MessageSquareQuote, CheckCircle2 } from "@/components/ui/icons"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from "@/components/ui/select"
 import type { BrandProfileDetail } from "@/modules/profiles/use-cases/get-brand-profile"
 import type { UpsertBrandProfileInput } from "@/modules/profiles/domain/repositories/brand-profile-repository.interface"
 import { isValidHexColor } from "@/modules/profiles/domain/profile-rules"
@@ -196,34 +205,36 @@ export function BrandProfileForm({ initialData, onSave, saving }: BrandProfileFo
             <label className="block text-caption font-semibold text-text mb-1.5">
               Phông chữ tiêu đề (Heading Font)
             </label>
-            <select
-              value={fontHeading}
-              onChange={(e) => setFontHeading(e.target.value)}
-              className="w-full rounded-xl border border-border bg-surface px-3.5 py-2.5 text-body-sm text-text transition-all focus:border-primary focus:outline-none"
-            >
-              {FONT_OPTIONS.map((opt) => (
-                <option key={opt.value} value={opt.value}>
-                  {opt.label}
-                </option>
-              ))}
-            </select>
+            <Select value={fontHeading} onValueChange={setFontHeading}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Chọn phông chữ tiêu đề" />
+              </SelectTrigger>
+              <SelectContent>
+                {FONT_OPTIONS.map((opt) => (
+                  <SelectItem key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
           <div>
             <label className="block text-caption font-semibold text-text mb-1.5">
               Phông chữ nội dung (Body Font)
             </label>
-            <select
-              value={fontBody}
-              onChange={(e) => setFontBody(e.target.value)}
-              className="w-full rounded-xl border border-border bg-surface px-3.5 py-2.5 text-body-sm text-text transition-all focus:border-primary focus:outline-none"
-            >
-              {FONT_OPTIONS.map((opt) => (
-                <option key={opt.value} value={opt.value}>
-                  {opt.label}
-                </option>
-              ))}
-            </select>
+            <Select value={fontBody} onValueChange={setFontBody}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Chọn phông chữ nội dung" />
+              </SelectTrigger>
+              <SelectContent>
+                {FONT_OPTIONS.map((opt) => (
+                  <SelectItem key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
         </div>
       </div>
@@ -246,17 +257,18 @@ export function BrandProfileForm({ initialData, onSave, saving }: BrandProfileFo
             <label className="block text-body-sm font-bold text-text mb-1.5">
               Định vị Tông giọng Trợ lý AI (Tone of Voice)
             </label>
-            <select
-              value={toneOfVoice}
-              onChange={(e) => setToneOfVoice(e.target.value)}
-              className="w-full rounded-xl border border-border bg-surface px-3.5 py-2.5 text-body-sm text-text transition-all focus:border-primary focus:outline-none"
-            >
-              {FLORIST_TONE_OPTIONS.map((opt) => (
-                <option key={opt.value} value={opt.value}>
-                  {opt.label} — {opt.tagline}
-                </option>
-              ))}
-            </select>
+            <Select value={toneOfVoice} onValueChange={setToneOfVoice}>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder="Chọn tông giọng" />
+              </SelectTrigger>
+              <SelectContent>
+                {FLORIST_TONE_OPTIONS.map((opt) => (
+                  <SelectItem key={opt.value} value={opt.value}>
+                    {opt.label} — {opt.tagline}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
 
             {/* Trích dẫn mẫu câu thoại minh họa */}
             {currentTone && (
@@ -276,7 +288,7 @@ export function BrandProfileForm({ initialData, onSave, saving }: BrandProfileFo
             <label className="block text-caption font-semibold text-text mb-1.5">
               Bộ Hashtags mặc định (phân cách bằng dấu phẩy)
             </label>
-            <input
+            <Input
               type="text"
               value={hashtagsText}
               onChange={(e) => setHashtagsText(e.target.value)}
@@ -315,11 +327,18 @@ export function BrandProfileForm({ initialData, onSave, saving }: BrandProfileFo
                 const isSelected = grp.words.every((w) => wordsList.includes(w))
 
                 return (
-                  <button
+                  <div
                     key={grp.id}
-                    type="button"
+                    role="button"
+                    tabIndex={0}
                     onClick={() => handleToggleForbiddenGroup(grp.words)}
-                    className={`rounded-xl border p-3 text-left transition-all ${
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault()
+                        handleToggleForbiddenGroup(grp.words)
+                      }
+                    }}
+                    className={`rounded-xl border p-3 text-left transition-all cursor-pointer ${
                       isSelected
                         ? "border-warning bg-warning/10"
                         : "border-border bg-surface-alt/40 hover:border-warning/50"
@@ -338,12 +357,12 @@ export function BrandProfileForm({ initialData, onSave, saving }: BrandProfileFo
                     <div className="text-caption text-text-muted leading-tight">
                       {grp.words.slice(0, 3).join(", ")}...
                     </div>
-                  </button>
+                  </div>
                 )
               })}
             </div>
 
-            <input
+            <Input
               type="text"
               value={forbiddenWords}
               onChange={(e) => setForbiddenWords(e.target.value)}
@@ -359,7 +378,7 @@ export function BrandProfileForm({ initialData, onSave, saving }: BrandProfileFo
 
       {/* Nút lưu ở chân form */}
       <div className="flex justify-end pt-2">
-        <button
+        <Button
           type="submit"
           disabled={saving}
           className="inline-flex items-center gap-2 rounded-xl bg-primary px-6 py-2.5 text-body-sm font-bold text-white shadow-xs transition-opacity hover:opacity-95 disabled:opacity-50"
@@ -377,7 +396,7 @@ export function BrandProfileForm({ initialData, onSave, saving }: BrandProfileFo
               <span>Lưu nhận diện thương hiệu</span>
             </>
           )}
-        </button>
+        </Button>
       </div>
     </form>
   )

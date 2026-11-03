@@ -70,7 +70,7 @@ export function LoadMockDataButton({ currentIndustry, onApplied }: LoadMockDataB
         size="sm"
         disabled={loading}
         onClick={handleApply}
-        className="text-xs font-bold gap-1.5 border-dashed border-primary/40 hover:bg-primary/5 text-primary"
+        className="text-caption font-bold gap-1.5 border-dashed border-primary/40 hover:bg-primary/5 text-primary"
         title="Nạp dữ liệu mẫu theo ngành (Logo, Hồ sơ, Sản phẩm)"
       >
         <Database size={13} className={loading ? "animate-spin motion-reduce:animate-none" : ""} />
