@@ -150,7 +150,7 @@ export function BranchImportPanel() {
       {/* Hướng dẫn + Tải Template */}
       <div className="p-4 rounded-2xl border border-primary/20 bg-primary/5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div>
-          <h3 className="text-body font-extrabold text-foreground flex items-center gap-2">
+          <h3 className="text-body font-extrabold text-text flex items-center gap-2">
             <Store size={18} className="text-primary" />
             Nhập Danh Sách Cửa Hàng Chuỗi từ Excel
           </h3>
@@ -173,11 +173,11 @@ export function BranchImportPanel() {
       {/* Lưu ý quan trọng về Telegram DM */}
       <div className="p-4 rounded-xl border border-warning-border bg-warning-bg/40 flex items-start gap-3">
         <Bot size={18} className="text-warning shrink-0 mt-0.5" />
-        <div className="text-caption text-foreground leading-relaxed">
+        <div className="text-caption text-text leading-relaxed">
           <strong className="block text-body-sm font-bold mb-1 text-warning">
             📱 Về cột "Telegram ID riêng / Nhóm"
           </strong>
-          <ul className="space-y-1 text-foreground/80">
+          <ul className="space-y-1 text-text-muted">
             <li>
               <strong>Liên kết trước:</strong> chi nhánh nhắn <strong>mã liên kết của cửa hàng</strong> (xem ở Cài đặt → Kết nối Telegram) cho bot điều phối, hoặc thêm bot vào nhóm của chi nhánh rồi nhắn mã đó trong nhóm.
             </li>
@@ -201,7 +201,7 @@ export function BranchImportPanel() {
             <Upload size={24} className="text-primary" />
           </div>
           <div className="text-center">
-            <p className="text-body-sm font-bold text-foreground">
+            <p className="text-body-sm font-bold text-text">
               {fileName || "Kéo thả hoặc bấm để chọn file Excel"}
             </p>
             <p className="text-caption text-text-muted">
@@ -244,13 +244,13 @@ export function BranchImportPanel() {
             <CheckCircle2 size={18} />
             Đã nhập thành công!
           </div>
-          <div className="text-caption text-foreground/80 grid grid-cols-2 sm:grid-cols-3 gap-2">
+          <div className="text-caption text-text-muted grid grid-cols-2 sm:grid-cols-3 gap-2">
             <div className="p-2 rounded-lg bg-surface border border-border text-center">
               <div className="text-body font-black text-primary">{result.created}</div>
               <div className="text-caption-sm text-text-muted">Cửa hàng mới</div>
             </div>
             <div className="p-2 rounded-lg bg-surface border border-border text-center">
-              <div className="text-body font-black text-foreground">{result.updated}</div>
+              <div className="text-body font-black text-text">{result.updated}</div>
               <div className="text-caption-sm text-text-muted">Cập nhật</div>
             </div>
             <div className="p-2 rounded-lg bg-surface border border-border text-center">
@@ -277,7 +277,7 @@ export function BranchImportPanel() {
           {/* Summary */}
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
-              <span className="text-body-sm font-bold text-foreground">
+              <span className="text-body-sm font-bold text-text">
                 Xem trước: {parsedRows.length} cửa hàng
               </span>
               <span className="px-2 py-0.5 rounded-full text-caption-sm font-bold bg-success-bg text-success border border-success-border">
@@ -321,7 +321,7 @@ export function BranchImportPanel() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <span className="text-body-sm font-bold text-foreground">{row.branchName}</span>
+                    <span className="text-body-sm font-bold text-text">{row.branchName}</span>
                     <code className="text-caption-sm font-mono text-text-muted">[{row.branchId}]</code>
                     {row.status === "ERROR" && (
                       <span className="text-caption-sm text-danger font-semibold">⚠ {row.errorMessage}</span>

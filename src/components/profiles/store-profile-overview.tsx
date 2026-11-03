@@ -78,7 +78,7 @@ export function StoreProfileOverview() {
 
       <section aria-labelledby="ho-so-tien-do" className="p-5 rounded-2xl border border-border bg-surface">
         <div className="flex items-center justify-between gap-4 mb-2">
-          <h2 id="ho-so-tien-do" className="text-base font-bold text-text">Mức hoàn thiện</h2>
+          <h2 id="ho-so-tien-do" className="text-body font-bold text-text">Mức hoàn thiện</h2>
           <span className="text-body-sm font-bold text-text">{result.percent}%</span>
         </div>
         <Progress value={result.percent} className="h-2" barClassName={result.percent === 100 ? "bg-success" : "bg-primary"} />

@@ -14,6 +14,8 @@
 import { useState, useRef, useEffect, useMemo, useCallback } from "react"
 import { usePathname, useRouter } from "next/navigation"
 import { Search, X, ChevronDown, BarChart3 } from "@/components/ui/icons"
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
 import { useSession } from "@/lib/session"
 import { isRouteLocked } from "@/lib/feature-lock"
 import { cn, stripVietnamese } from "@/lib/utils"
@@ -235,8 +237,8 @@ export function DesktopNav({
       {!collapsed && (
         <div className="border-b border-border px-3 py-2">
           <div className="relative flex items-center">
-            <Search size={14} className="absolute left-2.5 text-text-muted pointer-events-none" aria-hidden />
-            <input
+            <Search size={14} className="absolute left-2.5 text-text-muted pointer-events-none z-10" aria-hidden />
+            <Input
               ref={searchInputRef}
               type="search"
               value={searchQuery}
@@ -252,14 +254,16 @@ export function DesktopNav({
               )}
             />
             {searchQuery ? (
-              <button
+              <Button
                 type="button"
+                variant="ghost"
+                size="icon"
                 onClick={() => setSearchQuery("")}
-                className="absolute right-2 text-text-muted hover:text-text transition-colors"
+                className="absolute right-2 h-5 w-5 text-text-muted hover:text-text transition-colors"
                 aria-label="Xóa tìm kiếm"
               >
                 <X size={13} />
-              </button>
+              </Button>
             ) : (
               <kbd className="absolute right-2 rounded border border-border bg-surface px-1 py-0.5 text-caption font-mono text-text-muted leading-none pointer-events-none">
                 /

@@ -1,5 +1,7 @@
 "use client"
 
+import { NativeSelect } from "@/components/ui/select"
+
 type Props = {
   value: string
   onChange: (scope: string) => void
@@ -13,11 +15,11 @@ type Props = {
 export function LibraryScopeSelect({ value, onChange, branches }: Props) {
   return (
     <label className="flex w-full flex-col gap-1 sm:w-auto sm:flex-row sm:items-center sm:gap-2">
-      <span className="text-xs font-bold text-text-muted">Phạm vi</span>
-      <select
+      <span className="text-caption font-bold text-text-muted">Phạm vi</span>
+      <NativeSelect
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full rounded-xl border border-border bg-surface-alt px-3 py-2 text-body-sm outline-none focus:border-primary sm:w-56"
+        className="w-full sm:w-56"
       >
         <option value="all">Toàn chuỗi</option>
         <option value="hq">Trụ sở</option>
@@ -26,7 +28,7 @@ export function LibraryScopeSelect({ value, onChange, branches }: Props) {
             {b.name}
           </option>
         ))}
-      </select>
+      </NativeSelect>
     </label>
   )
 }

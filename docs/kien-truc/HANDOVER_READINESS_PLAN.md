@@ -63,6 +63,16 @@ Ngoài phạm vi (lộ trình sau bàn giao): trả nợ UX lint 5.491 điểm, 
 - [ ] **H5-2** Cập nhật `13_RE_AUDIT_ENTERPRISE_REPORT.md` (miền F, G; chỉ số K7–K9), `12_PERFORMANCE_REPORT.md`, `TRANG_THAI.md` §6.
 - [ ] **H5-3** Dựng gói bàn giao cuối theo H1-2 từ `main` sau khi PR hợp nhất; bàn giao kèm SHA-256 và danh sách phần còn trong lộ trình.
 
+## 7a. Tích hợp đợt giảm nợ UI của nhánh Enterprise (04/11/2026)
+
+Nhánh `Hoan_Thien_Kien_Truc_He_Thong_UI_UX_Tieu_Chuan_Enterprise` có 6 commit giảm nợ UI (`45479a96` … `4e9f9876`, 362 tệp) dựng trên nền trước PR #107. Đợt này đưa phần đúng vào `main` qua nhánh thực thi:
+
+- [x] **I-1** Hợp nhất, giải 20 xung đột giữ các bản sửa của PR #107 (`PageHeader`/`ToolHero`, `<h1>` trang công khai, UI Studio chỉ khi shell có gắn, tuyến báo giá `bg/[token]`).
+- [x] **I-2** Không nhận thay đổi ở vùng PO khoá khi chưa có biên bản duyệt: 53 tệp Catalog, 1 tệp Thẻ chào (`subcontract/[orderCode]`), `FeatureGuidanceCard` (K1).
+- [x] **I-3** 191 chỗ `<div role="button|menuitem…" tabIndex onKeyDown>` trả về `<button type="button">` (giữ `disabled` khi `tabIndex` có điều kiện); 6 tệp đổi radio thành nút bấm: 5 tệp giữ bản `main`, `campaign-create-modal.tsx` dùng `RadioGroup`. R18 bắt cả phần tử gắn `role` điều khiển (test trong `rules-enterprise.test.ts`); `AGENT_RULES.md` §14 #20.
+- [x] **I-4** 8 tệp > 350 dòng bị phình giữ bản `main`. Baseline UX lint 5.491 → 3.945 (gồm 45 điểm R18 mới bắt trên mã có sẵn).
+- [ ] **I-5** Còn lại: 5 vùng kéo-thả ảnh dùng `div role="button"` chứa ô chọn tệp ẩn (`auto-generate-panel`, `photo-upload-panel`, `industry-select-section`, `optimization-mode-selector`, `schedule-post-item-card`) — xử lý cùng lộ trình nợ UX.
+
 ## 8. Lịch thực hiện
 
 | Ngày | Việc |

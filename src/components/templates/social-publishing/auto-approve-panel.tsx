@@ -3,6 +3,7 @@
 import React from "react"
 import { AlertTriangle } from "@/components/ui/icons"
 import { Card } from "@/components/ui/card"
+import { Switch } from "@/components/ui/switch"
 
 export interface AutoApprovePanelProps {
   autoApprove: boolean
@@ -27,21 +28,11 @@ export function AutoApprovePanel({ autoApprove, onToggle }: AutoApprovePanelProp
               Tắt theo mặc định — chỉ ai có quyền Điều hành mới thấy và cấu hình được.
             </div>
           </div>
-          <button
-            type="button"
-            role="switch"
-            aria-checked={autoApprove}
-            onClick={onToggle}
-            className={`relative h-7 w-12 rounded-full transition-colors cursor-pointer ${
-              autoApprove ? "bg-primary" : "bg-border"
-            }`}
-          >
-            <span
-              className={`absolute left-0.5 top-0.5 h-6 w-6 rounded-full bg-white transition-transform shadow-xs ${
-                autoApprove ? "translate-x-5" : ""
-              }`}
-            />
-          </button>
+          <Switch
+            checked={autoApprove}
+            onCheckedChange={onToggle}
+            aria-label="Công tắc tự duyệt xuất bản"
+          />
         </div>
       </Card>
 

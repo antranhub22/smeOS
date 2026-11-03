@@ -27,7 +27,7 @@ export function GovernanceEditor({ items, busyKey, onChange }: GovernanceEditorP
           <div>
             <p className="font-semibold text-text">{item.label}</p>
             {item.lockedByUpper && (
-              <p className="text-sm text-warning-text">
+              <p className="text-body-sm text-warning-text">
                 Cấp {TIER_LABEL[item.lockedByUpper] ?? "trên"} đã đặt: {MODE_LABEL[item.upperMode]}
               </p>
             )}

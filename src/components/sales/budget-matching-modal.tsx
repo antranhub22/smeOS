@@ -5,6 +5,7 @@ import { Search, Sparkles, Copy, Check, TrendingUp, Filter } from "@/components/
 import { Dialog } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import { Input } from "@/components/ui/input"
 import { usePriceBudgets } from "@/components/catalog/use-price-budgets"
 import { useI18n } from "@/lib/i18n"
 import {
@@ -152,7 +153,7 @@ export function BudgetMatchingModal({
                     setMinPrice(qb.min)
                     setMaxPrice(qb.max ?? qb.min * 2)
                   }}
-                  className={`px-2 py-0.5 rounded text-caption font-medium transition border ${
+                  className={`px-2 py-0.5 rounded text-caption font-medium transition border cursor-pointer ${
                     minPrice === qb.min && maxPrice === (qb.max ?? qb.min * 2)
                       ? "border-primary bg-primary/10 text-primary font-bold"
                       : "border-border bg-surface text-muted hover:border-primary/30"
@@ -167,42 +168,42 @@ export function BudgetMatchingModal({
           <div className="grid grid-cols-2 md:grid-cols-4 gap-2.5">
             <div>
               <label className="block text-caption text-muted mb-1 font-medium">Ngân sách tối thiểu</label>
-              <input
+              <Input
                 type="number"
                 step={50000}
                 value={minPrice}
                 onChange={(e) => setMinPrice(Number(e.target.value))}
-                className="w-full h-8 px-2 rounded-md border border-border bg-surface text-body-sm text-text"
+                className="w-full h-8"
               />
             </div>
             <div>
               <label className="block text-caption text-muted mb-1 font-medium">Ngân sách tối đa</label>
-              <input
+              <Input
                 type="number"
                 step={50000}
                 value={maxPrice}
                 onChange={(e) => setMaxPrice(Number(e.target.value))}
-                className="w-full h-8 px-2 rounded-md border border-border bg-surface text-body-sm text-text"
+                className="w-full h-8"
               />
             </div>
             <div>
               <label className="block text-caption text-muted mb-1 font-medium">Dịp tặng hoa</label>
-              <input
+              <Input
                 type="text"
                 value={occasion}
                 onChange={(e) => setOccasion(e.target.value)}
                 placeholder="vd: Sinh nhật, Kỷ niệm..."
-                className="w-full h-8 px-2 rounded-md border border-border bg-surface text-body-sm text-text"
+                className="w-full h-8"
               />
             </div>
             <div>
               <label className="block text-caption text-muted mb-1 font-medium">Người nhận</label>
-              <input
+              <Input
                 type="text"
                 value={recipient}
                 onChange={(e) => setRecipient(e.target.value)}
                 placeholder="vd: Bạn gái, Mẹ, Sếp..."
-                className="w-full h-8 px-2 rounded-md border border-border bg-surface text-body-sm text-text"
+                className="w-full h-8"
               />
             </div>
           </div>
@@ -241,7 +242,7 @@ export function BudgetMatchingModal({
                   <Button
                     variant="outline"
                     size="sm"
-                    className="flex-1 text-xs gap-1"
+                    className="flex-1 text-caption gap-1"
                     onClick={() => handleCopyPitch(item)}
                   >
                     {copiedPitchId === item.product.id ? <Check size={12} className="text-success" /> : <Copy size={12} />}
@@ -251,7 +252,7 @@ export function BudgetMatchingModal({
                     <Button
                       variant="ghost"
                       size="sm"
-                      className="text-xs text-primary"
+                      className="text-caption text-primary"
                       onClick={() => {
                         onSelectProduct(item.product)
                         onOpenChange(false)
@@ -287,7 +288,7 @@ export function BudgetMatchingModal({
                   <Button
                     variant="outline"
                     size="sm"
-                    className="w-full text-xs gap-1 mt-1"
+                    className="w-full text-caption gap-1 mt-1"
                     onClick={() => handleCopyPitch(item)}
                   >
                     {copiedPitchId === item.product.id ? <Check size={12} className="text-success" /> : <Copy size={12} />}

@@ -198,7 +198,7 @@ export function StoreGrowthCenter() {
               <button
                 type="button"
                 onClick={() => router.push("/market-intelligence" as never)}
-                className="flex items-start gap-3.5 rounded-lg border border-border bg-surface-alt p-4 text-left transition hover:border-primary/50"
+                className="flex items-start gap-3.5 rounded-lg border border-border bg-surface-alt p-4 text-left transition hover:border-primary/50 cursor-pointer"
               >
                 <div className="rounded-md bg-primary/10 p-2 text-primary">
                   <TrendingUp className="h-5 w-5" />
@@ -214,7 +214,7 @@ export function StoreGrowthCenter() {
               <button
                 type="button"
                 onClick={() => router.push("/creative-studio" as never)}
-                className="flex items-start gap-3.5 rounded-lg border border-border bg-surface-alt p-4 text-left transition hover:border-primary/50"
+                className="flex items-start gap-3.5 rounded-lg border border-border bg-surface-alt p-4 text-left transition hover:border-primary/50 cursor-pointer"
               >
                 <div className="rounded-md bg-primary/10 p-2 text-primary">
                   <Sparkles className="h-5 w-5" />

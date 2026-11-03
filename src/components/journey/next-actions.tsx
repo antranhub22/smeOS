@@ -43,10 +43,10 @@ export function NextActions({
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 pt-2">
         {actions.map((act) => (
           <button
-            key={act.id}
             type="button"
+            key={act.id}
             onClick={act.onClick}
-            className={`flex flex-col text-left p-3.5 rounded-lg border transition-all cursor-pointer ${
+            className={`flex flex-col text-left p-3.5 rounded-lg border transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary ${
               act.isPrimary
                 ? "bg-selected text-primary border-primary hover:bg-surface-alt font-semibold"
                 : "bg-surface border-border text-text hover:bg-surface-alt hover:border-primary/40"

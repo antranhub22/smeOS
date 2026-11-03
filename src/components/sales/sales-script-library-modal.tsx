@@ -14,6 +14,7 @@ import {
 import { Dialog } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
 import {
   FLORIST_SALES_SCRIPTS,
   renderSalesScript,
@@ -119,13 +120,13 @@ export function SalesScriptLibraryModal({
           <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
             {CATEGORY_TABS.map((tab) => (
               <button
-                key={tab.id}
                 type="button"
+                key={tab.id}
                 onClick={() => setSelectedCategory(tab.id)}
-                className={`whitespace-nowrap rounded-lg px-2.5 py-1 text-caption font-semibold transition-colors ${
+                className={`whitespace-nowrap rounded-lg px-2.5 py-1 text-caption font-semibold transition-colors cursor-pointer ${
                   selectedCategory === tab.id
                     ? "bg-primary text-white"
-                    : "bg-surface-alt text-text-muted hover:text-text hover:bg-muted"
+                    : "bg-surface-alt text-text-muted hover:text-text hover:bg-surface-alt"
                 }`}
               >
                 {tab.label}
@@ -134,13 +135,13 @@ export function SalesScriptLibraryModal({
           </div>
 
           <div className="relative min-w-[200px]">
-            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-text-muted" />
-            <input
+            <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-text-muted z-10" />
+            <Input
               type="text"
               placeholder="Tìm kịch bản..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full rounded-lg border border-border bg-surface pl-8 pr-3 py-1.5 text-caption text-text placeholder:text-text-muted outline-none focus:border-primary"
+              className="w-full pl-8"
             />
           </div>
         </div>
@@ -153,10 +154,10 @@ export function SalesScriptLibraryModal({
               const isSelected = activeScript?.id === script.id
               return (
                 <button
-                  key={script.id}
                   type="button"
+                  key={script.id}
                   onClick={() => setSelectedScriptId(script.id)}
-                  className={`flex flex-col text-left p-3 rounded-xl border transition-all ${
+                  className={`flex flex-col text-left p-3 rounded-xl border transition-all cursor-pointer ${
                     isSelected
                       ? "border-primary bg-selected/40 shadow-xs"
                       : "border-border bg-surface hover:bg-surface-alt"
@@ -198,7 +199,7 @@ export function SalesScriptLibraryModal({
                       {activeScript.summary}
                     </p>
                   </div>
-                  <span className="rounded-md bg-muted px-2 py-0.5 text-caption font-semibold text-text-muted shrink-0">
+                  <span className="rounded-md bg-surface-alt px-2 py-0.5 text-caption font-semibold text-text-muted shrink-0">
                     Sẵn sàng gửi
                   </span>
                 </div>

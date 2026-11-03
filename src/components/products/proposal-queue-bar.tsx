@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react"
 import Link from "next/link"
 import { ClipboardCheck } from "@/components/ui/icons"
+import { Button } from "@/components/ui/button"
 
 const COUNT_LIMIT = 100
 
@@ -38,13 +39,15 @@ export function ProposalQueueBar({ active, onToggle }: { active: boolean; onTogg
       <span className="flex-1 font-medium">
         {active ? "Đang xem các mẫu nhân viên đề xuất chờ duyệt" : `${label} mẫu nhân viên đề xuất đang chờ bạn duyệt`}
       </span>
-      <button
+      <Button
         type="button"
+        variant="outline"
+        size="sm"
         onClick={onToggle}
-        className="h-9 rounded-xl border border-warning/40 bg-surface px-3 font-bold text-text hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-primary"
+        className="h-9 border-warning/40 font-bold"
       >
         {active ? "Xem tất cả mẫu" : "Xem mẫu chờ duyệt"}
-      </button>
+      </Button>
       {changes.length > 0 && (
         <p className="w-full text-caption text-text">
           {changes.length} đề xuất sửa mẫu chính thức chờ duyệt:{" "}

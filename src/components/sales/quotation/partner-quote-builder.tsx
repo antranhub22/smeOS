@@ -6,6 +6,7 @@ import { Check, Copy, ExternalLink, Layers } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { Input } from "@/components/ui/input"
 import { InlineError } from "@/components/ui/inline-error"
 import { formatCurrency } from "@/lib/i18n/formatters"
 import { QUOTATION_STATUS_LABELS } from "@/modules/sales/domain/quotation"
@@ -87,8 +88,8 @@ export function PartnerQuoteBuilder({
         <div className="flex gap-2 overflow-x-auto pb-1">
           {products.slice(0, 5).map((p) => (
             <button
-              key={p.id}
               type="button"
+              key={p.id}
               onClick={() => {
                 setPartnerItemName(p.title)
                 setPartnerPrice(String(Math.round(p.price * 0.75)))
@@ -133,12 +134,12 @@ export function PartnerQuoteBuilder({
             <label htmlFor="partner-item-name" className="text-caption font-semibold text-text">
               Tên {sampleProductLabel} cần gia công
             </label>
-            <input
+            <Input
               id="partner-item-name"
               type="text"
               value={partnerItemName}
               onChange={(e) => setPartnerItemName(e.target.value)}
-              className="w-full px-3 py-2 rounded-lg border border-border bg-surface text-body-sm text-text focus:outline-hidden focus:ring-1 focus:ring-primary"
+              className="w-full"
             />
           </div>
 
@@ -146,12 +147,12 @@ export function PartnerQuoteBuilder({
             <label htmlFor="partner-price" className="text-caption font-semibold text-text">
               Giá trả cho đối tác (VNĐ)
             </label>
-            <input
+            <Input
               id="partner-price"
               type="number"
               value={partnerPrice}
               onChange={(e) => setPartnerPrice(e.target.value)}
-              className="w-full px-3 py-2 rounded-lg border border-border bg-surface text-body-sm text-text focus:outline-hidden focus:ring-1 focus:ring-primary"
+              className="w-full"
             />
           </div>
 
@@ -159,12 +160,12 @@ export function PartnerQuoteBuilder({
             <label htmlFor="delivery-fee" className="text-caption font-semibold text-text">
               Phí giao nhận hỗ trợ (VNĐ)
             </label>
-            <input
+            <Input
               id="delivery-fee"
               type="number"
               value={deliveryFee}
               onChange={(e) => setDeliveryFee(e.target.value)}
-              className="w-full px-3 py-2 rounded-lg border border-border bg-surface text-body-sm text-text focus:outline-hidden focus:ring-1 focus:ring-primary"
+              className="w-full"
             />
           </div>
 
@@ -172,12 +173,12 @@ export function PartnerQuoteBuilder({
             <label htmlFor="deadline-time" className="text-caption font-semibold text-text">
               Hạn chót hoàn thành
             </label>
-            <input
+            <Input
               id="deadline-time"
               type="text"
               value={deadlineTime}
               onChange={(e) => setDeadlineTime(e.target.value)}
-              className="w-full px-3 py-2 rounded-lg border border-border bg-surface text-body-sm text-text focus:outline-hidden focus:ring-1 focus:ring-primary"
+              className="w-full"
             />
           </div>
         </div>

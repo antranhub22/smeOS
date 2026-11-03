@@ -107,17 +107,19 @@ function ExportOrdersButtonInner({
   return (
     <div ref={dropdownRef} className="relative">
       {iconOnly ? (
-        <button
+        <Button
           id="export-orders-btn"
           type="button"
+          variant="outline"
+          size="sm"
           aria-label={label}
           title={label}
           aria-expanded={open}
           onClick={() => setOpen((v) => !v)}
-          className="inline-flex h-11 w-11 items-center justify-center rounded-xl border border-border bg-surface-alt text-text-muted hover:bg-surface hover:text-foreground active:bg-surface active:text-primary transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+          className="inline-flex h-11 w-11 p-0 items-center justify-center rounded-xl border border-border bg-surface-alt text-text-muted hover:bg-surface hover:text-text active:bg-surface active:text-primary transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
         >
           <Download className="h-4 w-4" />
-        </button>
+        </Button>
       ) : (
         <Button
           id="export-orders-btn"

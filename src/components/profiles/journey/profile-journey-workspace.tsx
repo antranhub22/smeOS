@@ -13,6 +13,7 @@ import {
   ChevronRight,
   ExternalLink,
 } from "@/components/ui/icons"
+import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import type { BusinessProfileDetail } from "@/modules/profiles/use-cases/get-business-profile"
 import type { BrandProfileDetail } from "@/modules/profiles/use-cases/get-brand-profile"
@@ -79,14 +80,16 @@ export function ProfileJourneyWorkspace({
           </div>
 
           {/* Công tắc chuyển đổi Chế độ Chuyên gia */}
-          <button
+          <Button
             type="button"
+            variant="outline"
+            size="sm"
             onClick={onToggleExpertMode}
             className="inline-flex items-center gap-2 rounded-xl border border-border bg-surface-alt px-3.5 py-2 text-caption font-semibold text-text hover:border-primary transition-colors shrink-0"
           >
             {isExpertMode ? <Layers size={14} className="text-primary" /> : <SlidersHorizontal size={14} />}
             <span>{isExpertMode ? "Trở về Chế độ Hành trình" : "Mở Chế độ Chuyên gia (5 Tabs)"}</span>
-          </button>
+          </Button>
         </div>
 
         {/* Thanh tiến trình (Progress Bar) */}
@@ -156,14 +159,15 @@ export function ProfileJourneyWorkspace({
             </div>
 
             <div className="pt-4 mt-4 border-t border-border/60">
-              <button
+              <Button
                 type="button"
+                variant="outline"
                 onClick={() => onSelectTab("business")}
                 className="w-full inline-flex items-center justify-between rounded-xl bg-surface-alt px-3.5 py-2 text-body-sm font-bold text-text hover:bg-primary hover:text-white transition-all"
               >
                 <span>{hasBasicInfo ? "Kiểm tra / Sửa đổi" : "Bắt đầu ngay (2 phút)"}</span>
                 <ChevronRight size={16} />
-              </button>
+              </Button>
             </div>
           </div>
 
@@ -190,20 +194,24 @@ export function ProfileJourneyWorkspace({
             </div>
 
             <div className="pt-4 mt-4 border-t border-border/60 flex gap-2">
-              <button
+              <Button
                 type="button"
+                variant="outline"
+                size="sm"
                 onClick={() => onSelectTab("brand")}
                 className="flex-1 inline-flex items-center justify-center rounded-xl bg-surface-alt px-3 py-2 text-caption font-bold text-text hover:bg-primary hover:text-white transition-all"
               >
                 <span>Màu sắc thương hiệu</span>
-              </button>
-              <button
+              </Button>
+              <Button
                 type="button"
+                variant="outline"
+                size="sm"
                 onClick={() => onSelectTab("assets")}
                 className="flex-1 inline-flex items-center justify-center rounded-xl bg-primary/10 text-primary border border-primary/20 px-3 py-2 text-caption font-bold hover:bg-primary hover:text-white transition-all"
               >
                 <span>Logo và khung ảnh</span>
-              </button>
+              </Button>
             </div>
           </div>
 
@@ -230,20 +238,24 @@ export function ProfileJourneyWorkspace({
             </div>
 
             <div className="pt-4 mt-4 border-t border-border/60 flex gap-2">
-              <button
+              <Button
                 type="button"
+                variant="outline"
+                size="sm"
                 onClick={() => onSelectTab("sales")}
                 className="flex-1 inline-flex items-center justify-center rounded-xl bg-surface-alt px-3 py-2 text-caption font-bold text-text hover:bg-primary hover:text-white transition-all"
               >
                 <span>Chính sách và cam kết</span>
-              </button>
-              <button
+              </Button>
+              <Button
                 type="button"
+                variant="outline"
+                size="sm"
                 onClick={() => onSelectTab("occasions")}
                 className="flex-1 inline-flex items-center justify-center rounded-xl bg-surface-alt px-3 py-2 text-caption font-bold text-text hover:bg-primary hover:text-white transition-all"
               >
                 <span>Dịp lễ và lời chào</span>
-              </button>
+              </Button>
             </div>
           </div>
         </div>

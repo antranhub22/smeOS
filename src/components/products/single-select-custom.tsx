@@ -2,6 +2,8 @@
 
 import React, { useState, useRef, useEffect } from "react"
 import { ChevronDown, Check, Plus } from "@/components/ui/icons"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 
 interface SingleSelectCustomProps {
   options: string[]
@@ -87,19 +89,21 @@ export function SingleSelectCustom({
             {allOptions.map((opt) => {
               const selected = value === opt
               return (
-                <button
+                <Button
                   key={opt}
                   type="button"
+                  variant="ghost"
+                  size="sm"
                   role="option"
                   aria-selected={selected}
                   onClick={() => handleSelect(opt)}
-                  className={`flex w-full items-center justify-between px-3 py-2 text-body-sm text-left transition-colors ${
-                    selected ? "bg-primary/10 font-medium text-primary" : "hover:bg-surface-alt text-text"
+                  className={`flex w-full items-center justify-between px-3 py-2 text-body-sm text-left transition-colors h-auto rounded-none ${
+                    selected ? "bg-primary/10 font-medium text-primary hover:bg-primary/15" : "hover:bg-surface-alt text-text"
                   }`}
                 >
                   <span className="truncate">{opt}</span>
                   {selected && <Check size={14} className="text-primary flex-shrink-0" />}
-                </button>
+                </Button>
               )
             })}
           </div>
@@ -107,7 +111,7 @@ export function SingleSelectCustom({
           {/* Ô nhập tuỳ chỉnh khi không có trong danh sách */}
           <div className="border-t border-border p-2 bg-surface-alt/40">
             <div className="flex items-center gap-1.5">
-              <input
+              <Input
                 type="text"
                 value={customInput}
                 onChange={(e) => setCustomInput(e.target.value)}
@@ -118,17 +122,18 @@ export function SingleSelectCustom({
                   }
                 }}
                 placeholder={customPlaceholder}
-                className="h-8 flex-1 rounded-lg border border-border bg-surface px-2.5 text-caption outline-none focus:border-primary"
+                className="h-8 flex-1 text-caption"
               />
-              <button
+              <Button
                 type="button"
+                size="sm"
                 onClick={handleAddCustom}
                 disabled={!customInput.trim()}
-                className="flex h-8 items-center gap-1 rounded-lg bg-primary px-2.5 text-caption font-medium text-white transition-opacity disabled:opacity-40"
+                className="h-8 gap-1 px-2.5 text-caption font-medium"
               >
                 <Plus size={12} />
                 <span>Thêm</span>
-              </button>
+              </Button>
             </div>
           </div>
         </div>

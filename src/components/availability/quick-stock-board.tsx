@@ -3,6 +3,7 @@
 import { useState } from "react"
 import Link from "next/link"
 import { Search, ExternalLink, CheckCircle2, AlertTriangle, XCircle } from "@/components/ui/icons"
+import { Input } from "@/components/ui/input"
 import type { AvailabilityBoardProduct } from "@/modules/availability/use-cases/get-availability-board"
 
 export interface QuickStockBoardProps {
@@ -24,23 +25,23 @@ export function QuickStockBoard({ products }: QuickStockBoardProps) {
       {/* Search Header */}
       <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-border bg-surface p-4 shadow-xs">
         <div className="relative flex-1 min-w-[240px]">
-          <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" />
-          <input
+          <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted z-10" />
+          <Input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="Tìm theo tên sản phẩm hoặc mã..."
-            className="w-full rounded-xl border border-border bg-surface-alt pl-9 pr-4 py-2 text-xs text-text placeholder:text-text-muted focus:border-primary focus:outline-none"
+            className="w-full pl-9 pr-4 text-caption"
           />
         </div>
-        <div className="text-xs font-medium text-text-muted">
+        <div className="text-caption font-medium text-text-muted">
           Tổng cộng: <span className="font-bold text-text">{filtered.length}</span> sản phẩm
         </div>
       </div>
 
       {/* Product List */}
       <div className="overflow-x-auto rounded-2xl border border-border bg-surface shadow-xs">
-        <table className="w-full border-collapse text-left text-xs">
+        <table className="w-full border-collapse text-left text-caption">
           <thead>
             <tr className="border-b border-border bg-surface-alt font-bold text-text">
               <th className="p-3">Sản phẩm</th>

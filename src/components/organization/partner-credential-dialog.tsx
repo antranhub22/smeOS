@@ -65,7 +65,7 @@ export function PartnerCredentialDetails({
   onCopy: () => void
 }) {
   return (
-    <dl className="space-y-3 text-sm">
+    <dl className="space-y-3 text-body-sm">
       <div>
         <dt className="text-text-muted">Cửa hàng</dt>
         <dd className="font-medium text-text">{credential.storeName}</dd>

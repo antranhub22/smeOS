@@ -13,6 +13,7 @@ import {
 import { Dialog } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { NativeSelect } from "@/components/ui/select"
 import type { PartnerView } from "@/modules/coordinator/use-cases/manage-partners"
 import { PartnerCard } from "./partner-card"
 import { PartnerCreateForm } from "./partner-create-form"
@@ -128,7 +129,7 @@ export function PartnerManagementModal({
       <div className="text-caption text-text-muted">
         Tổng số: <strong className="text-text">{partners.length}</strong> xưởng trong mạng lưới
       </div>
-      <Button variant="outline" size="sm" onClick={onClose} className="text-xs">
+      <Button variant="outline" size="sm" onClick={onClose} className="text-caption">
         Đóng
       </Button>
     </div>
@@ -165,7 +166,7 @@ export function PartnerManagementModal({
               variant={isAddingNew ? "secondary" : "outline"}
               size="sm"
               onClick={() => setIsAddingNew(!isAddingNew)}
-              className="text-xs gap-1.5"
+              className="text-caption gap-1.5"
             >
               {isAddingNew ? <X size={14} /> : <Plus size={14} />}
               {isAddingNew ? "Thu gọn form" : "Thêm xưởng đối tác"}
@@ -176,7 +177,7 @@ export function PartnerManagementModal({
               size="sm"
               onClick={fetchPartners}
               disabled={loading}
-              className="text-xs gap-1 text-text-muted hover:text-text"
+              className="text-caption gap-1 text-text-muted hover:text-text"
             >
               <RefreshCw size={13} className={loading ? "animate-spin motion-reduce:animate-none" : ""} />
               Làm mới
@@ -184,16 +185,16 @@ export function PartnerManagementModal({
           </div>
 
           <div className="flex items-center gap-2">
-            <select
+            <NativeSelect
               value={tierFilter}
               onChange={(e) => setTierFilter(e.target.value)}
-              className="h-8 rounded-md border border-border bg-surface px-2.5 text-caption font-semibold text-text"
+              className="h-8 text-caption font-semibold"
             >
               <option value="ALL">Mọi cấp bậc</option>
               <option value="STANDARD">Tiêu chuẩn</option>
               <option value="PREFERRED">Ưu tiên</option>
               <option value="VIP">VIP Đặc biệt</option>
-            </select>
+            </NativeSelect>
           </div>
         </div>
 
@@ -213,7 +214,7 @@ export function PartnerManagementModal({
             placeholder="Tìm theo tên xưởng, mã đối tác, quận/huyện hoặc số điện thoại..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="pl-9 h-8 text-xs"
+            className="pl-9 h-8 text-caption"
           />
         </div>
 

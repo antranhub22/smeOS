@@ -1,6 +1,7 @@
 "use client"
 
 import { ArrowLeft } from "@/components/ui/icons"
+import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 
 export function FlowTopBar({
@@ -17,16 +18,18 @@ export function FlowTopBar({
   return (
     <div className="flex flex-shrink-0 flex-col border-b border-border bg-surface">
       <div className="flex items-center gap-2.5 p-2.5">
-        <button
+        <Button
           type="button"
+          variant="ghost"
+          size="icon"
           onClick={onBack}
           disabled={!onBack}
           className="flex h-9 w-9 items-center justify-center rounded-full text-text hover:bg-surface-alt disabled:opacity-0"
           aria-label="Quay lại"
         >
           <ArrowLeft size={19} strokeWidth={2} />
-        </button>
-        <div className="text-base font-bold">{title}</div>
+        </Button>
+        <div className="text-body font-bold">{title}</div>
       </div>
       <div className="flex gap-1.5 px-[18px] pb-3">
         {Array.from({ length: totalSteps }).map((_, i) => (

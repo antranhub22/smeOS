@@ -3,6 +3,8 @@
 import React, { useState } from "react"
 import { Copy, Check, Sparkles, Gift, Heart, ShieldCheck } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
 import {
   CARE_CARD_TEMPLATES,
   getCareCardTemplate,
@@ -87,10 +89,10 @@ export function CareCardDesigner({
               const isSelected = selectedCode === code
               return (
                 <button
-                  key={code}
                   type="button"
+                  key={code}
                   onClick={() => handleSwitchTemplate(code)}
-                  className={`p-3 rounded-xl border text-left transition-all ${
+                  className={`cursor-pointer p-3 rounded-xl border text-left transition-all focus:outline-none focus:ring-2 focus:ring-primary ${
                     isSelected
                       ? "border-primary bg-primary/5 text-primary ring-2 ring-primary/20 shadow-xs"
                       : "border-border hover:border-border-hover bg-surface-alt/40 text-text"
@@ -119,12 +121,11 @@ export function CareCardDesigner({
             <label className="block text-caption font-medium text-text-muted mb-1">
               Người nhận
             </label>
-            <input
+            <Input
               type="text"
               value={content.recipientName}
               onChange={(e) => setContent({ ...content, recipientName: e.target.value })}
               placeholder="VD: Chị Minh Anh, Anh Hoàng..."
-              className="w-full px-3.5 py-2 rounded-xl border border-border bg-surface text-text text-body-sm focus:outline-hidden focus:ring-2 focus:ring-primary/20 focus:border-primary"
             />
           </div>
 
@@ -132,11 +133,10 @@ export function CareCardDesigner({
             <label className="block text-caption font-medium text-text-muted mb-1">
               Tiêu đề thiệp
             </label>
-            <input
+            <Input
               type="text"
               value={content.headline}
               onChange={(e) => setContent({ ...content, headline: e.target.value })}
-              className="w-full px-3.5 py-2 rounded-xl border border-border bg-surface text-text text-body-sm focus:outline-hidden focus:ring-2 focus:ring-primary/20 focus:border-primary"
             />
           </div>
 
@@ -144,11 +144,10 @@ export function CareCardDesigner({
             <label className="block text-caption font-medium text-text-muted mb-1">
               Nội dung lời nhắn
             </label>
-            <textarea
+            <Textarea
               rows={4}
               value={content.messageBody}
               onChange={(e) => setContent({ ...content, messageBody: e.target.value })}
-              className="w-full px-3.5 py-2 rounded-xl border border-border bg-surface text-text text-body-sm focus:outline-hidden focus:ring-2 focus:ring-primary/20 focus:border-primary"
             />
           </div>
 
@@ -158,24 +157,23 @@ export function CareCardDesigner({
                 <label className="block text-caption font-medium text-text-muted mb-1">
                   Mã quà tặng
                 </label>
-                <input
+                <Input
                   type="text"
                   value={content.voucherCode || ""}
                   onChange={(e) => setContent({ ...content, voucherCode: e.target.value })}
                   placeholder="VD: QUATANG10"
-                  className="w-full px-3 py-1.5 rounded-lg border border-border bg-surface text-text text-body-sm font-mono"
+                  className="font-mono"
                 />
               </div>
               <div>
                 <label className="block text-caption font-medium text-text-muted mb-1">
                   Trị giá ưu đãi
                 </label>
-                <input
+                <Input
                   type="text"
                   value={content.voucherValue || ""}
                   onChange={(e) => setContent({ ...content, voucherValue: e.target.value })}
                   placeholder="VD: 50.000 đ hoặc 10%"
-                  className="w-full px-3 py-1.5 rounded-lg border border-border bg-surface text-text text-body-sm"
                 />
               </div>
             </div>
@@ -185,11 +183,10 @@ export function CareCardDesigner({
             <label className="block text-caption font-medium text-text-muted mb-1">
               Chữ ký tiệm
             </label>
-            <input
+            <Input
               type="text"
               value={content.signature}
               onChange={(e) => setContent({ ...content, signature: e.target.value })}
-              className="w-full px-3.5 py-2 rounded-xl border border-border bg-surface text-text text-body-sm focus:outline-hidden focus:ring-2 focus:ring-primary/20 focus:border-primary"
             />
           </div>
         </div>

@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Sparkles, SlidersHorizontal, Layers, CheckCircle2, ArrowRight } from "@/components/ui/icons"
+import { Button } from "@/components/ui/button"
 import { INDUSTRY_JOURNEYS } from "@/modules/journey/domain/journey-catalog"
 import type { JourneyDefinition } from "@/modules/journey/domain/journey-model"
 import { createJourneyState } from "@/modules/journey/domain/journey-state"
@@ -81,14 +82,16 @@ export function IndustryJourneyHome() {
               Bạn đang ở Chế độ chuyên gia (Bảng điều hành Hệ sinh thái Đa Ngành)
             </span>
           </div>
-          <button
+          <Button
             type="button"
+            variant="outline"
+            size="sm"
             onClick={() => handleToggleExpertMode(false)}
-            className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-surface border border-border hover:bg-surface-alt text-caption font-bold text-primary transition-colors cursor-pointer"
+            className="inline-flex items-center gap-1.5 text-caption font-bold text-primary"
           >
             <Sparkles className="w-3.5 h-3.5" aria-hidden="true" />
             <span>Chuyển sang Chế độ hành trình tác vụ</span>
-          </button>
+          </Button>
         </div>
         <IndustryEcosystemBoard />
       </div>
@@ -130,8 +133,8 @@ export function IndustryJourneyHome() {
             const isSelected = key === selectedIndustryKey
             return (
               <button
-                key={key}
                 type="button"
+                key={key}
                 onClick={() => setSelectedIndustryKey(key)}
                 className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-caption font-bold transition-all shrink-0 cursor-pointer ${
                   isSelected
@@ -160,14 +163,16 @@ export function IndustryJourneyHome() {
             </div>
           </div>
           <div className="flex items-center gap-2 shrink-0">
-            <button
+            <Button
               type="button"
+              variant="outline"
+              size="sm"
               onClick={() => router.push("/van-hanh/nganh" as never)}
-              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-surface border border-border hover:bg-surface-alt font-bold text-primary transition-colors cursor-pointer text-caption"
+              className="inline-flex items-center gap-1 font-bold text-primary text-caption"
             >
               <span>Xem ma trận ngành</span>
               <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
-            </button>
+            </Button>
           </div>
         </div>
       </div>

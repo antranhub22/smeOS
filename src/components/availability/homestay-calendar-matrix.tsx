@@ -2,6 +2,7 @@
 
 import { useState } from "react"
 import { Plus, Trash2, Calendar, User, Wrench, ChevronLeft, ChevronRight } from "@/components/ui/icons"
+import { Button } from "@/components/ui/button"
 import type { AvailabilityBoardProduct } from "@/modules/availability/use-cases/get-availability-board"
 import type { ProductBookingRecord } from "@/modules/availability/domain/availability-mode"
 import { ManualBlockModal } from "./manual-block-modal"
@@ -103,32 +104,36 @@ export function HomestayCalendarMatrix({
       {/* Header Toolbar */}
       <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-border bg-surface p-4 shadow-xs">
         <div className="flex items-center gap-2">
-          <button
+          <Button
             type="button"
+            variant="outline"
+            size="sm"
             onClick={handlePrevMonth}
             aria-label="Tháng trước"
-            className="flex h-9 w-9 items-center justify-center rounded-xl border border-border text-text-muted hover:bg-surface-alt hover:text-text transition-colors"
+            className="h-9 w-9 p-0"
           >
             <ChevronLeft size={16} />
-          </button>
+          </Button>
           <div className="flex items-center gap-2 px-2">
             <Calendar size={18} className="text-primary" />
-            <span className="text-base font-bold text-text">
+            <span className="text-title-sm font-bold text-text">
               Tháng {currentMonth.split("-")[1]}/{currentMonth.split("-")[0]}
             </span>
           </div>
-          <button
+          <Button
             type="button"
+            variant="outline"
+            size="sm"
             onClick={handleNextMonth}
             aria-label="Tháng sau"
-            className="flex h-9 w-9 items-center justify-center rounded-xl border border-border text-text-muted hover:bg-surface-alt hover:text-text transition-colors"
+            className="h-9 w-9 p-0"
           >
             <ChevronRight size={16} />
-          </button>
+          </Button>
         </div>
 
         <div className="flex items-center gap-2">
-          <div className="flex items-center gap-3 text-xs text-text-muted mr-2">
+          <div className="flex items-center gap-3 text-caption text-text-muted mr-2">
             <span className="inline-flex items-center gap-1.5">
               <span className="h-3 w-3 rounded-sm bg-primary/20 border border-primary/40" />
               Khách đặt
@@ -143,20 +148,21 @@ export function HomestayCalendarMatrix({
             </span>
           </div>
 
-          <button
+          <Button
             type="button"
+            variant="primary"
             onClick={() => openBlockModal()}
-            className="inline-flex items-center gap-1.5 rounded-xl bg-primary px-3.5 py-2 text-xs font-bold text-white shadow-xs hover:opacity-95 transition-all"
+            className="gap-1.5"
           >
             <Plus size={14} />
             <span>Khóa ngày phòng</span>
-          </button>
+          </Button>
         </div>
       </div>
 
       {/* Matrix Table */}
       <div className="overflow-x-auto rounded-2xl border border-border bg-surface shadow-xs">
-        <table className="w-full border-collapse text-left text-xs">
+        <table className="w-full border-collapse text-left text-caption">
           <thead>
             <tr className="border-b border-border bg-surface-alt">
               <th className="sticky left-0 z-10 min-w-[180px] bg-surface-alt p-3 font-bold text-text">
@@ -174,7 +180,7 @@ export function HomestayCalendarMatrix({
                     }`}
                   >
                     <div className="text-caption text-text-muted uppercase">{dayOfWeek}</div>
-                    <div className="text-xs font-semibold">{dayNum}</div>
+                    <div className="text-caption font-semibold">{dayNum}</div>
                   </th>
                 )
               })}
@@ -192,7 +198,7 @@ export function HomestayCalendarMatrix({
                 return (
                   <tr key={prod.id} className="border-b border-border hover:bg-surface-alt/40 transition-colors">
                     <td className="sticky left-0 z-10 bg-surface p-3 border-r border-border font-medium">
-                      <div className="truncate font-semibold text-text text-sm">{prod.name}</div>
+                      <div className="truncate font-semibold text-text text-body-sm">{prod.name}</div>
                       <div className="text-caption text-text-muted">Mã: {prod.code}</div>
                     </td>
                     {safeDays.map((day) => {
@@ -218,7 +224,7 @@ export function HomestayCalendarMatrix({
                                   ? `Đã khóa: ${booking.note || "Bảo trì"} (Bấm để xem chi tiết)`
                                   : `Đơn: ${booking.orderCode || "Online"} - Khách: ${booking.customerName || "Khách lẻ"} (Bấm để xem chi tiết)`
                               }
-                              className={`group relative flex w-full flex-col items-center justify-center rounded-lg p-1 text-caption font-bold hover:opacity-85 transition-opacity ${
+                              className={`group relative flex w-full flex-col items-center justify-center rounded-lg p-1 text-caption font-bold hover:opacity-85 transition-opacity cursor-pointer ${
                                 isBlocked ? "text-warning hover:bg-warning/20" : "text-primary hover:bg-primary/20"
                               }`}
                             >
@@ -247,7 +253,7 @@ export function HomestayCalendarMatrix({
                             type="button"
                             onClick={() => openBlockModal(prod.id, day)}
                             title={`Bấm để khóa ngày ${day}`}
-                            className="flex h-7 w-full items-center justify-center opacity-0 group-hover:opacity-100 text-text-muted hover:text-primary transition-opacity"
+                            className="flex h-7 w-full items-center justify-center opacity-0 group-hover:opacity-100 text-text-muted hover:text-primary transition-opacity cursor-pointer"
                           >
                             <Plus size={12} />
                           </button>

@@ -8,6 +8,8 @@ import { AlertCircle, ExternalLink, FileText, Music, Search, Share2, Trash2 } fr
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { NativeSelect } from "@/components/ui/select"
 import { ProductThumb } from "@/components/products/product-thumb"
 import { SkeletonBlock } from "@/components/ui/skeleton"
 import { formatDate } from "@/lib/i18n/formatters"
@@ -108,52 +110,52 @@ export function LibraryTab({ type, scope, showBranch, refreshKey, onTrash }: Pro
   return (
     <div className="flex flex-col gap-4">
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-        <label className="relative flex-1">
+        <div className="relative flex-1">
           <span className="sr-only">Tìm {label}</span>
-          <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" aria-hidden />
-          <input
+          <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted z-10 pointer-events-none" aria-hidden />
+          <Input
             type="search"
             value={q}
             onChange={(e) => setQ(e.target.value)}
             placeholder={`Tìm ${label} theo tên`}
-            className="w-full rounded-xl border border-border bg-surface-alt py-2 pl-9 pr-3.5 text-body-sm outline-none transition-colors focus:border-primary"
+            className="pl-9"
           />
-        </label>
-        <label className="sm:w-44">
+        </div>
+        <div className="sm:w-44">
           <span className="sr-only">Thời gian tạo</span>
-          <select
+          <NativeSelect
             value={sinceDays}
             onChange={(e) => setSinceDays(e.target.value)}
-            className="w-full rounded-xl border border-border bg-surface-alt px-3 py-2 text-body-sm outline-none focus:border-primary"
+            className="w-full"
           >
             {SINCE_OPTIONS.map((o) => (
               <option key={o.value} value={o.value}>
                 {o.label}
               </option>
             ))}
-          </select>
-        </label>
-        <label className="sm:w-44">
+          </NativeSelect>
+        </div>
+        <div className="sm:w-44">
           <span className="sr-only">Nghiệp vụ</span>
-          <select
+          <NativeSelect
             value={selectedModule}
             onChange={(e) => setSelectedModule(e.target.value)}
-            className="w-full rounded-xl border border-border bg-surface-alt px-3 py-2 text-body-sm outline-none focus:border-primary"
+            className="w-full"
           >
             {MODULE_OPTIONS.map((o) => (
               <option key={o.value} value={o.value}>
                 {o.label}
               </option>
             ))}
-          </select>
-        </label>
+          </NativeSelect>
+        </div>
       </div>
 
       {error && (
-        <div role="alert" className="flex items-center gap-2 rounded-xl border border-danger/30 bg-danger-bg p-3.5 text-xs text-danger">
+        <div role="alert" className="flex items-center gap-2 rounded-xl border border-danger/30 bg-danger-bg p-3.5 text-caption text-danger">
           <AlertCircle size={15} />
           {error}
-          <Button variant="outline" size="sm" className="ml-auto text-xs" onClick={() => void load(null)}>
+          <Button variant="outline" size="sm" className="ml-auto text-caption" onClick={() => void load(null)}>
             Thử lại
           </Button>
         </div>
@@ -162,8 +164,8 @@ export function LibraryTab({ type, scope, showBranch, refreshKey, onTrash }: Pro
       {!loading && !error && filteredItems.length === 0 && (
         <Card className="border-dashed bg-surface-alt p-8 text-center">
           <FileText size={32} className="mx-auto mb-2 text-text-muted opacity-50" aria-hidden />
-          <div className="text-sm font-bold text-text">Chưa có {label} nào</div>
-          <p className="mx-auto mt-1 max-w-sm text-xs text-text-muted">Mục bạn tạo trong công cụ sẽ tự xuất hiện ở đây.</p>
+          <div className="text-title-sm font-bold text-text">Chưa có {label} nào</div>
+          <p className="mx-auto mt-1 max-w-sm text-caption text-text-muted">Mục bạn tạo trong công cụ sẽ tự xuất hiện ở đây.</p>
         </Card>
       )}
 
@@ -205,30 +207,34 @@ export function LibraryTab({ type, scope, showBranch, refreshKey, onTrash }: Pro
                 <div className="flex items-center gap-1.5">
                   <Link
                     href={item.open_href as Route}
-                    className="flex h-7 flex-1 items-center justify-center gap-1 rounded-lg border border-border text-xs font-semibold text-text hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-primary"
+                    className="flex h-7 flex-1 items-center justify-center gap-1 rounded-lg border border-border text-caption font-semibold text-text hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-primary"
                   >
                     <ExternalLink size={12} aria-hidden />
                     Mở
                   </Link>
-                  <button
+                  <Button
                     type="button"
+                    variant="outline"
+                    size="sm"
                     onClick={() => setSelectedUsageItem(item)}
-                    className="flex h-7 px-2 items-center justify-center gap-1 rounded-lg border border-border text-xs font-semibold text-text hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-primary"
+                    className="h-7 px-2 text-caption font-semibold"
                     title="Cấu hình nơi sử dụng và theo dõi hiệu quả"
                   >
                     <Share2 size={12} aria-hidden />
                     Dùng
-                  </button>
+                  </Button>
                   {onTrash && (
-                    <button
+                    <Button
                       type="button"
+                      variant="outline"
+                      size="sm"
                       onClick={() => onTrash(item)}
                       aria-label={`Chuyển ${name} vào thùng rác`}
                       title="Chuyển vào thùng rác 30 ngày (Chỉ Điều hành)"
-                      className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-border text-text-muted hover:bg-danger-bg hover:text-danger"
+                      className="h-7 w-7 p-0 shrink-0 text-text-muted hover:bg-danger-bg hover:text-danger hover:border-danger/30"
                     >
                       <Trash2 size={13} aria-hidden />
-                    </button>
+                    </Button>
                   )}
                 </div>
               </div>
@@ -239,7 +245,7 @@ export function LibraryTab({ type, scope, showBranch, refreshKey, onTrash }: Pro
 
       {loading && <SkeletonBlock lines={3} label="Đang tải danh sách" />}
       {cursor && !loading && (
-        <Button variant="outline" size="sm" className="mx-auto text-xs" onClick={() => void load(cursor)}>
+        <Button variant="outline" size="sm" className="mx-auto text-caption" onClick={() => void load(cursor)}>
           Xem thêm
         </Button>
       )}

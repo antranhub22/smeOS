@@ -4,6 +4,7 @@ import { useState } from "react"
 import { AlertCircle, Loader2 } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { Dialog } from "@/components/ui/dialog"
+import { Textarea } from "@/components/ui/textarea"
 import { useI18n } from "@/lib/i18n"
 
 interface OrderCancelDialogProps {
@@ -71,7 +72,7 @@ export function OrderCancelDialog({
         <p className="text-caption text-text-muted">
           {dict.orders.actions.cancelWarning}
         </p>
-        <textarea
+        <Textarea
           rows={3}
           className="w-full rounded-md border border-border bg-surface p-2.5 text-caption focus:outline-none focus:ring-1 focus:ring-primary"
           placeholder={dict.orders.actions.cancelReasonPlaceholder}

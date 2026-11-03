@@ -31,7 +31,7 @@ export function DongCanThiep({
     <button
       type="button"
       onClick={onClick}
-      className="flex min-h-11 w-full items-center justify-between gap-3 rounded-lg px-1 text-left hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-primary"
+      className="flex min-h-11 w-full items-center justify-between gap-3 rounded-lg px-1 text-left hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-primary cursor-pointer"
     >
       <span className="flex items-center gap-2.5">
         <Icon size={17} strokeWidth={1.9} className={nguyCap ? "text-danger" : "text-text-muted"} />

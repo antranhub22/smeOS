@@ -2,6 +2,7 @@
 
 import React from "react"
 import { CheckCircle2, XCircle } from "@/components/ui/icons"
+import { Button } from "@/components/ui/button"
 
 interface PolicyRowProps {
   icon: React.ReactNode
@@ -35,7 +36,7 @@ export function PolicyRow({
           <span className="mt-0.5 shrink-0">{icon}</span>
           <div>
             <div className="flex items-center gap-2">
-              <span className="font-bold text-foreground">{title}</span>
+              <span className="font-bold text-text">{title}</span>
               {badge && (
                 <span className="inline-flex items-center px-2 py-0.5 rounded-full text-caption font-bold bg-primary/15 text-primary">
                   {badge}
@@ -47,8 +48,10 @@ export function PolicyRow({
         </div>
       </td>
       <td className="py-3.5 px-3 text-center align-middle">
-        <button
+        <Button
           type="button"
+          size="sm"
+          variant="outline"
           disabled={disabled}
           onClick={() => onToggle(true)}
           className={`inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl text-caption font-bold border transition-colors ${
@@ -59,22 +62,24 @@ export function PolicyRow({
         >
           <CheckCircle2 size={13} />
           <span>BẬT</span>
-        </button>
+        </Button>
       </td>
       <td className="py-3.5 px-3 text-center align-middle">
-        <button
+        <Button
           type="button"
+          size="sm"
+          variant="outline"
           disabled={disabled}
           onClick={() => onToggle(false)}
           className={`inline-flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-xl text-caption font-bold border transition-colors ${
             !isOn
-              ? "bg-surface-muted border-border text-foreground shadow-xs"
+              ? "bg-surface-muted border-border text-text shadow-xs"
               : "bg-surface border-border text-text-muted hover:bg-surface-muted"
           }`}
         >
           <XCircle size={13} />
           <span>TẮT</span>
-        </button>
+        </Button>
       </td>
       <td className="py-3.5 px-4 align-middle">
         {extraControl ? (

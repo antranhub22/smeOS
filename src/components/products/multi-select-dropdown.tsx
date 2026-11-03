@@ -2,6 +2,8 @@
 
 import React, { useState, useRef, useEffect } from "react"
 import { ChevronDown, X, Check, Plus } from "@/components/ui/icons"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 
 interface MultiSelectDropdownProps {
   options: string[]
@@ -96,14 +98,16 @@ export function MultiSelectDropdown({
                 className="inline-flex items-center gap-0.5 rounded-md bg-primary/10 px-1.5 py-0.5 text-caption font-medium text-primary"
               >
                 {opt}
-                <button
+                <Button
                   type="button"
+                  variant="ghost"
+                  size="icon"
                   onClick={(e) => removeChip(opt, e)}
                   aria-label={`Bỏ chọn ${opt}`}
-                  className="hover:text-danger transition-colors focus-visible:outline-none"
+                  className="h-4 w-4 p-0 hover:bg-transparent hover:text-danger"
                 >
                   <X size={10} />
-                </button>
+                </Button>
               </span>
             ))
           )}
@@ -121,14 +125,16 @@ export function MultiSelectDropdown({
             {allOptions.map((opt) => {
               const checked = selected.includes(opt)
               return (
-                <button
+                <Button
                   key={opt}
                   type="button"
+                  variant="ghost"
+                  size="sm"
                   role="option"
                   aria-selected={checked}
                   onClick={() => toggle(opt)}
-                  className={`flex w-full items-center gap-2.5 px-3 py-2 text-body-sm text-left transition-colors ${
-                    checked ? "bg-primary/5" : "hover:bg-surface-alt"
+                  className={`flex w-full items-center justify-start gap-2.5 px-3 py-2 text-body-sm text-left transition-colors h-auto rounded-none font-normal ${
+                    checked ? "bg-primary/5 hover:bg-primary/10" : "hover:bg-surface-alt"
                   }`}
                 >
                   <span
@@ -141,7 +147,7 @@ export function MultiSelectDropdown({
                   <span className={checked ? "font-medium text-primary" : "text-text"}>
                     {opt}
                   </span>
-                </button>
+                </Button>
               )
             })}
           </div>
@@ -149,7 +155,7 @@ export function MultiSelectDropdown({
           {/* Ô nhập tuỳ chỉnh khi không có trong danh sách */}
           <div className="border-t border-border p-2 bg-surface-alt/40">
             <div className="flex items-center gap-1.5">
-              <input
+              <Input
                 type="text"
                 value={customInput}
                 onChange={(e) => setCustomInput(e.target.value)}
@@ -160,29 +166,32 @@ export function MultiSelectDropdown({
                   }
                 }}
                 placeholder={customPlaceholder}
-                className="h-8 flex-1 rounded-lg border border-border bg-surface px-2.5 text-caption outline-none focus:border-primary"
+                className="h-8 flex-1 text-caption"
               />
-              <button
+              <Button
                 type="button"
+                size="sm"
                 onClick={handleAddCustom}
                 disabled={!customInput.trim()}
-                className="flex h-8 items-center gap-1 rounded-lg bg-primary px-2.5 text-caption font-medium text-white transition-opacity disabled:opacity-40"
+                className="h-8 gap-1 px-2.5 text-caption font-medium"
               >
                 <Plus size={12} />
                 <span>Thêm</span>
-              </button>
+              </Button>
             </div>
           </div>
 
           {selected.length > 0 && (
             <div className="border-t border-border px-3 py-1.5 bg-surface">
-              <button
+              <Button
                 type="button"
+                variant="ghost"
+                size="sm"
                 onClick={() => { onChange(""); setOpen(false) }}
-                className="w-full text-caption text-text-muted hover:text-danger transition-colors"
+                className="w-full text-caption text-text-muted hover:text-danger h-auto p-1 font-normal hover:bg-transparent"
               >
                 Xoá tất cả lựa chọn ({selected.length})
-              </button>
+              </Button>
             </div>
           )}
         </div>

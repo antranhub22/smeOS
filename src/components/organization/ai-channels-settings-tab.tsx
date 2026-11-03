@@ -20,14 +20,14 @@ export function AiChannelsSettingsTab() {
           <div className="h-9 w-9 rounded-xl bg-accent/10 text-accent flex items-center justify-center mb-3">
             <Cpu size={18} />
           </div>
-          <h3 className="text-sm font-bold text-text">Thiết Lập Trợ Lý AI</h3>
-          <p className="text-xs text-text-muted mt-1 leading-relaxed">
+          <h3 className="text-body-sm font-bold text-text">Thiết Lập Trợ Lý AI</h3>
+          <p className="text-caption text-text-muted mt-1 leading-relaxed">
             Quản lý các đề xuất của AI (Proposal Mode), bảo vệ dữ liệu cá nhân và cài đặt giới hạn chi phí.
           </p>
         </div>
         <Link
           href={"/cai-dat-ai" as Route}
-          className="mt-4 px-3.5 py-2 rounded-xl bg-background border border-border text-xs font-bold text-text text-center hover:bg-surface-alt transition-colors"
+          className="mt-4 px-3.5 py-2 rounded-xl bg-surface-alt border border-border text-caption font-bold text-text text-center hover:bg-surface transition-colors"
         >
           Mở Cấu Hình AI
         </Link>
@@ -38,14 +38,14 @@ export function AiChannelsSettingsTab() {
           <div className="h-9 w-9 rounded-xl bg-primary/10 text-primary flex items-center justify-center mb-3">
             <Share2 size={18} />
           </div>
-          <h3 className="text-sm font-bold text-text">Kết Nối Mạng Xã Hội</h3>
-          <p className="text-xs text-text-muted mt-1 leading-relaxed">
+          <h3 className="text-body-sm font-bold text-text">Kết Nối Mạng Xã Hội</h3>
+          <p className="text-caption text-text-muted mt-1 leading-relaxed">
             Đồng bộ tự động sản phẩm và bài đăng lên Facebook, Instagram, TikTok và Zalo OA.
           </p>
         </div>
         <Link
           href={"/ket-noi" as Route}
-          className="mt-4 px-3.5 py-2 rounded-xl bg-background border border-border text-xs font-bold text-text text-center hover:bg-surface-alt transition-colors"
+          className="mt-4 px-3.5 py-2 rounded-xl bg-surface-alt border border-border text-caption font-bold text-text text-center hover:bg-surface transition-colors"
         >
           Kết Nối Kênh
         </Link>

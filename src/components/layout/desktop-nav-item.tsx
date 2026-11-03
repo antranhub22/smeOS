@@ -147,6 +147,7 @@ export function DesktopNavItem({
         onClick={onClick}
         aria-current={active ? "page" : undefined}
         className={cn(
+          "cursor-pointer",
           itemBaseClass(isSubItem, collapsed),
           active
             ? "bg-selected text-primary font-semibold border border-transparent"

@@ -13,6 +13,7 @@
 
 import { useState, useEffect, useCallback, useRef, useMemo, useSyncExternalStore } from "react"
 import { Plus, X, Pin, RotateCcw, ChevronDown } from "@/components/ui/icons"
+import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { useI18n } from "@/lib/i18n"
 import { NAV_ICONS as ICONS } from "./nav-icons"
@@ -257,8 +258,10 @@ export function ToolkitShortcutsGroup({
                 onClick={() => onNavigate(entry.href)}
               />
               {/* Nút bỏ pin — hiện khi hover */}
-              <button
+              <Button
                 type="button"
+                variant="ghost"
+                size="icon"
                 aria-label={`Bỏ pin "${entry.label}"`}
                 onClick={(e) => {
                   e.stopPropagation()
@@ -271,7 +274,7 @@ export function ToolkitShortcutsGroup({
                 )}
               >
                 <X size={11} />
-              </button>
+              </Button>
             </div>
           ))}
 
@@ -285,7 +288,7 @@ export function ToolkitShortcutsGroup({
                 aria-expanded={pickerOpen}
                 onClick={() => setPickerOpen((v) => !v)}
                 className={cn(
-                  "flex w-full items-center gap-2 rounded-lg px-2.5 py-1.5 text-meta text-left",
+                  "flex w-full cursor-pointer items-center gap-2 rounded-lg px-2.5 py-1.5 text-meta text-left",
                   "border border-dashed border-border/60 hover:border-primary/40",
                   "text-text-muted hover:text-primary hover:bg-primary/5 transition-all duration-150",
                   pickerOpen && "border-primary/40 text-primary bg-primary/5"
@@ -314,14 +317,16 @@ export function ToolkitShortcutsGroup({
 
           {/* Khi đã đủ MAX: chỉ hiện nút reset nếu đã tùy chỉnh */}
           {mounted && shortcutEntries.length >= MAX_SHORTCUTS && hasCustomShortcuts(orgId) && (
-            <button
+            <Button
               type="button"
+              variant="ghost"
+              size="sm"
               onClick={handleReset}
               className="flex w-full items-center gap-2 rounded-lg px-2.5 py-1 text-caption text-text-muted hover:text-text hover:bg-surface-alt/50 transition-colors"
             >
               <RotateCcw size={11} aria-hidden />
               <span>Đặt lại mặc định</span>
-            </button>
+            </Button>
           )}
         </div>
       )}

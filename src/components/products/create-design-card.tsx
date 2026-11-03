@@ -4,6 +4,7 @@ import { InfoTip } from "@/components/ui/info-tip"
 import React from "react"
 import { Layers, ShieldCheck } from "@/components/ui/icons"
 import { Card } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
 import { getDesignFieldsConfig } from "./create-product-types"
 import { MultiSelectDropdown } from "./multi-select-dropdown"
 import { SingleSelectCustom } from "./single-select-custom"
@@ -117,12 +118,12 @@ export function CreateDesignCard({
             />
           ) : (
             // free-text fallback
-            <input
+            <Input
               type="text"
               value={container}
               onChange={(e) => setContainer(e.target.value)}
               placeholder={cfg.containerPlaceholder}
-              className="h-10 w-full rounded-xl border border-border bg-surface px-3 text-body-sm outline-none focus:border-primary focus-visible:outline-2 focus-visible:outline-primary"
+              className="h-10 text-body-sm"
             />
           )}
         </div>
@@ -132,12 +133,12 @@ export function CreateDesignCard({
           <label className="block text-caption font-semibold text-text">
             Tông màu chủ đạo
           </label>
-          <input
+          <Input
             type="text"
             value={primaryColor}
             onChange={(e) => setPrimaryColor(e.target.value)}
             placeholder="Đỏ, Pastel, Trắng kem..."
-            className="h-10 w-full rounded-xl border border-border bg-surface px-3 text-body-sm outline-none focus:border-primary focus-visible:outline-2 focus-visible:outline-primary"
+            className="h-10 text-body-sm"
           />
         </div>
       </div>

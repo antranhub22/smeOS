@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Checkbox } from "@/components/ui/checkbox"
 import { Disclosure } from "@/components/ui/disclosure"
 import { InlineError } from "@/components/ui/inline-error"
 import { useSession } from "@/lib/session"
@@ -73,21 +75,21 @@ export function DeliverBeforePaySettingsPanel() {
             void save()
           }}
         >
-          <label className="flex items-center gap-2 text-body-sm text-text sm:col-span-2">
-            <input type="checkbox" className="h-4 w-4 accent-primary" checked={draft.allowSelfDecide} onChange={(e) => setDraft({ ...draft, allowSelfDecide: e.target.checked })} />
+          <label className="flex items-center gap-2 text-body-sm text-text sm:col-span-2 cursor-pointer">
+            <Checkbox checked={draft.allowSelfDecide} onCheckedChange={(checked) => setDraft({ ...draft, allowSelfDecide: Boolean(checked) })} />
             Cho Sale tự quyết trong hạn mức
           </label>
           <label className="space-y-1 text-body-sm text-text">
             <span>Tổng đơn tối đa ({formatCurrency(draft.selfDecideMaxVnd)})</span>
-            <input inputMode="numeric" className={field} value={draft.selfDecideMaxVnd} onChange={(e) => setDraft({ ...draft, selfDecideMaxVnd: num(e.target.value) })} />
+            <Input inputMode="numeric" className={field} value={draft.selfDecideMaxVnd} onChange={(e) => setDraft({ ...draft, selfDecideMaxVnd: num(e.target.value) })} />
           </label>
           <label className="space-y-1 text-body-sm text-text">
             <span>Khách đã có ít nhất (đơn hoàn tất)</span>
-            <input inputMode="numeric" className={field} value={draft.minCompletedOrders} onChange={(e) => setDraft({ ...draft, minCompletedOrders: num(e.target.value) })} />
+            <Input inputMode="numeric" className={field} value={draft.minCompletedOrders} onChange={(e) => setDraft({ ...draft, minCompletedOrders: num(e.target.value) })} />
           </label>
           <label className="space-y-1 text-body-sm text-text">
             <span>Hạn thu sau khi duyệt (ngày)</span>
-            <input inputMode="numeric" className={field} value={draft.collectDueDays} onChange={(e) => setDraft({ ...draft, collectDueDays: num(e.target.value) })} />
+            <Input inputMode="numeric" className={field} value={draft.collectDueDays} onChange={(e) => setDraft({ ...draft, collectDueDays: num(e.target.value) })} />
           </label>
           <div className="flex items-end gap-3">
             <Button type="submit" size="sm" variant="secondary" disabled={saving}>Lưu</Button>

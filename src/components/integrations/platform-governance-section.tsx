@@ -53,7 +53,7 @@ export function PlatformGovernanceSection() {
   return (
     <section aria-label="Khoá tích hợp theo tầng" className="space-y-3">
       <h2 className="text-title font-bold text-text">Khoá tích hợp theo tầng</h2>
-      <p className="text-sm text-text-muted">
+      <p className="text-body-sm text-text-muted">
         Thiết lập cho toàn nền tảng áp lên mọi ngành, chuỗi và cửa hàng; thiết lập của một ngành áp cho các tổ chức thuộc ngành đó.
       </p>
       <div className="flex flex-wrap gap-2" role="group" aria-label="Phạm vi áp dụng">

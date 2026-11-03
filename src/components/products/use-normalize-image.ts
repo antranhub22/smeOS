@@ -3,7 +3,7 @@
 import { useState, useRef, useCallback } from "react"
 import type { IndustryPluginContract } from "@/modules/organization/domain/industry-plugin-contract"
 
-export type NormalizeStatus = "idle" | "uploading" | "processing" | "done" | "error"
+export type NormalizeStatus = "idle" | "uploading" | "processing" | "succeeded" | "error"
 
 export interface NormalizeResult {
   jobId: string
@@ -99,7 +99,7 @@ export function useNormalizeImage({
             data.result_url ??
             null
           setResultUrl(url)
-          setStatus("done")
+          setStatus("succeeded")
           return
         }
 

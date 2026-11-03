@@ -2,6 +2,7 @@
 
 import React from "react"
 import { Eye, Download, Printer, Loader2, Sparkles } from "@/components/ui/icons"
+import { Button } from "@/components/ui/button"
 import {
   BANNER_FORMATS,
   type BannerAspectRatio,
@@ -57,7 +58,7 @@ export function MultiSizeGrid({
             >
               <div className="flex items-center justify-between pb-3 border-b border-border">
                 <div className="flex items-center gap-2">
-                  <span className="text-xs font-bold text-text">
+                  <span className="text-caption font-bold text-text">
                     {spec.name}
                   </span>
                   {spec.isPrintable && (
@@ -90,9 +91,9 @@ export function MultiSizeGrid({
                 </div>
 
                 {isGenerating && (
-                  <div className="absolute inset-0 bg-background/80 backdrop-blur-sm flex flex-col items-center justify-center gap-2 z-20 animate-in fade-in-50">
+                  <div className="absolute inset-0 bg-surface/80 backdrop-blur-sm flex flex-col items-center justify-center gap-2 z-20 animate-in fade-in-50">
                     <Loader2 className="h-6 w-6 text-primary animate-spin motion-reduce:animate-none" />
-                    <span className="text-xs font-bold text-text flex items-center gap-1">
+                    <span className="text-caption font-bold text-text flex items-center gap-1">
                       <Sparkles className="h-3.5 w-3.5 text-primary" /> Đang cập nhật {spec.name}...
                     </span>
                   </div>
@@ -100,24 +101,28 @@ export function MultiSizeGrid({
               </div>
 
               <div className="flex items-center justify-between pt-3 mt-3 border-t border-border gap-2">
-                <button
+                <Button
                   type="button"
+                  variant="outline"
+                  size="sm"
                   onClick={() => onOpenSingleModal(spec.id)}
-                  className="inline-flex items-center gap-1 text-xs font-medium text-text-muted hover:text-text px-2.5 py-1 rounded-lg border border-border hover:bg-surface-alt transition-colors"
+                  className="gap-1 text-caption"
                 >
                   <Eye className="h-3.5 w-3.5" />
                   <span>Phóng to</span>
-                </button>
+                </Button>
 
-                <button
+                <Button
                   type="button"
+                  variant="secondary"
+                  size="sm"
                   disabled={isDownloading || isGenerating}
                   onClick={() => onDownloadFormat(spec.id)}
-                  className="inline-flex items-center gap-1.5 text-xs font-semibold px-3 py-1 rounded-lg bg-primary text-primary-foreground hover:opacity-90 disabled:opacity-50 transition-opacity"
+                  className="gap-1.5 text-caption"
                 >
                   <Download className="h-3.5 w-3.5" />
                   <span>{isDownloading ? "Đang xuất..." : "Tải ảnh"}</span>
-                </button>
+                </Button>
               </div>
             </div>
           )

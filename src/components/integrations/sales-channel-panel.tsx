@@ -5,6 +5,7 @@ import Link from "next/link"
 import type { Route } from "next"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
+import { Checkbox } from "@/components/ui/checkbox"
 import { InlineError } from "@/components/ui/inline-error"
 import { EmptyState } from "@/components/ui/empty-state"
 import { SkeletonBlock } from "@/components/ui/skeleton"
@@ -123,9 +124,9 @@ export function SalesChannelPanel({ connectionId, channelLabel, askConfirm }: { 
             const listing = listingOf.get(p.id)
             const label = listing ? LISTING_LABEL[listing.status] : null
             return (
-              <li key={p.id} className="flex flex-wrap items-center justify-between gap-2 p-3 text-sm">
+              <li key={p.id} className="flex flex-wrap items-center justify-between gap-2 p-3 text-body-sm">
                 <label className="flex min-w-0 items-center gap-3">
-                  <input type="checkbox" className="h-5 w-5" checked={selected.has(p.id)} onChange={() => toggle(p.id)} aria-label={`Chọn ${p.name}`} />
+                  <Checkbox checked={selected.has(p.id)} onCheckedChange={() => toggle(p.id)} aria-label={`Chọn ${p.name}`} />
                   <span className="min-w-0">
                     <span className="block truncate font-semibold text-text">{p.name}</span>
                     <span className="block text-text-muted">Mã {p.code}</span>
@@ -143,11 +144,11 @@ export function SalesChannelPanel({ connectionId, channelLabel, askConfirm }: { 
       <div className="space-y-2">
         <h3 className="text-title-sm font-bold text-text">Đơn nhận từ kênh</h3>
         {orders.length === 0 ? (
-          <p className="text-sm text-text-muted">Chưa có đơn nào từ kênh này.</p>
+          <p className="text-body-sm text-text-muted">Chưa có đơn nào từ kênh này.</p>
         ) : (
           <ul className="divide-y divide-border rounded-xl border border-border">
             {orders.map((o) => (
-              <li key={o.externalOrderId} className="flex flex-wrap items-center justify-between gap-2 p-3 text-sm">
+              <li key={o.externalOrderId} className="flex flex-wrap items-center justify-between gap-2 p-3 text-body-sm">
                 <span className="text-text">Mã trên kênh {o.externalOrderId} · {formatDateTime(o.createdAt)}</span>
                 {o.status === "IMPORTED" ? (
                   <Link href={"/don-hang" as Route} className="font-semibold text-primary underline">

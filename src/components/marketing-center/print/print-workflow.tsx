@@ -2,6 +2,8 @@
 
 import React, { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
 import { Badge } from "@/components/ui/badge"
 import { ArrowLeft, ArrowRight, Printer } from "@/components/ui/icons"
 import {
@@ -183,14 +185,15 @@ export function PrintWorkflow({
           />
 
           <div className="pt-4 border-t border-border flex justify-end">
-            <button
+            <Button
               type="button"
+              variant="outline"
               onClick={() => setCurrentStep(2)}
-              className="px-4 py-2 rounded-xl bg-primary text-white text-caption font-semibold hover:bg-primary/90 transition-colors flex items-center gap-2"
+              className="flex items-center gap-2 border-primary text-primary hover:bg-primary/5"
             >
               <span>Tiếp tục: Soạn nội dung</span>
               <ArrowRight className="w-4 h-4" />
-            </button>
+            </Button>
           </div>
         </div>
       )}
@@ -205,35 +208,31 @@ export function PrintWorkflow({
 
             <div className="space-y-1.5">
               <label className="text-caption font-bold text-text">Tiêu đề chính</label>
-              <input
-                type="text"
+              <Input
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 maxLength={80}
-                className="w-full px-3 py-2 rounded-xl border border-border bg-surface text-caption text-text focus:outline-hidden focus:border-primary"
-                placeholder="Ví dụ: Bảng menu món nổi bật / Thiệp tri ân khách hàng"
+                placeholder="Ví dụ: Bảng menu món nổi bật / Thiệp tri ấn khách hàng"
               />
             </div>
 
             <div className="space-y-1.5">
               <label className="text-caption font-bold text-text">Thông điệp phụ / Lời chúc</label>
-              <textarea
+              <Textarea
                 value={subtitle}
                 onChange={(e) => setSubtitle(e.target.value)}
                 rows={3}
                 maxLength={200}
-                className="w-full px-3 py-2 rounded-xl border border-border bg-surface text-caption text-text focus:outline-hidden focus:border-primary"
                 placeholder="Lời cảm ơn, hướng dẫn nhận ưu đãi..."
               />
             </div>
 
             <div className="space-y-1.5">
               <label className="text-caption font-bold text-text">Liên kết mã QR</label>
-              <input
+              <Input
                 type="url"
                 value={qrLink}
                 onChange={(e) => setQrLink(e.target.value)}
-                className="w-full px-3 py-2 rounded-xl border border-border bg-surface text-caption text-text focus:outline-hidden focus:border-primary"
                 placeholder="https://smeos.vn/shop-cua-ban"
               />
               <p className="text-caption text-text-muted">
@@ -252,17 +251,18 @@ export function PrintWorkflow({
               <ArrowLeft className="w-4 h-4" />
               <span>Quay lại</span>
             </Button>
-            <button
+            <Button
               type="button"
+              variant="outline"
               onClick={() => {
                 runPreflight()
                 setCurrentStep(3)
               }}
-              className="px-4 py-2 rounded-xl bg-primary text-white text-caption font-semibold hover:bg-primary/90 transition-colors flex items-center gap-2"
+              className="flex items-center gap-2 border-primary text-primary hover:bg-primary/5"
             >
               <span>Tiếp tục: Kiểm tra quy cách</span>
               <ArrowRight className="w-4 h-4" />
-            </button>
+            </Button>
           </div>
         </div>
       )}

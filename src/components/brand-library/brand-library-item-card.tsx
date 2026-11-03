@@ -1,6 +1,7 @@
 "use client"
 
 import { Download, History, Share2 } from "@/components/ui/icons"
+import { Button } from "@/components/ui/button"
 import { CATEGORY_LABEL, isFileCategory, parseColorList, type BrandLibraryItemView } from "@/modules/profiles/domain/brand-library"
 
 function Preview({ item }: { item: BrandLibraryItemView }) {
@@ -64,19 +65,19 @@ export function BrandLibraryItemCard({
           </a>
         )}
         {!readOnly && item.status === "ACTIVE" && (
-          <button type="button" onClick={onNewVersion} className={`${action} text-text hover:bg-surface-alt`}>
+          <Button type="button" variant="ghost" size="sm" onClick={onNewVersion} className="gap-1 px-2 text-caption">
             <History size={14} aria-hidden /> Phiên bản mới
-          </button>
+          </Button>
         )}
         {!readOnly && canShare && item.status === "ACTIVE" && (
-          <button type="button" onClick={onToggleShare} aria-pressed={item.share_with_members} className={`${action} text-text hover:bg-surface-alt`}>
+          <Button type="button" variant="ghost" size="sm" onClick={onToggleShare} aria-pressed={item.share_with_members} className="gap-1 px-2 text-caption">
             <Share2 size={14} aria-hidden /> {item.share_with_members ? "Ngừng chia sẻ" : "Chia sẻ cho cửa hàng"}
-          </button>
+          </Button>
         )}
         {!readOnly && (
-          <button type="button" onClick={onToggleArchive} className={`${action} text-text-muted hover:bg-surface-alt`}>
+          <Button type="button" variant="ghost" size="sm" onClick={onToggleArchive} className="gap-1 px-2 text-caption text-text-muted">
             {item.status === "ARCHIVED" ? "Khôi phục" : "Lưu trữ"}
-          </button>
+          </Button>
         )}
       </footer>
     </article>

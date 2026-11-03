@@ -71,7 +71,7 @@ export function PartnerCard({ partner, onToggleStatus, onOpenSettlement }: Partn
               variant="outline"
               size="sm"
               onClick={() => onOpenSettlement(partner)}
-              className="text-xs gap-1.5 text-text-muted hover:text-primary hover:border-primary/30"
+              className="text-caption gap-1.5 text-text-muted hover:text-primary hover:border-primary/30"
               title="Đối soát tài chính & tiền công gia công"
             >
               Sổ đối soát
@@ -82,7 +82,7 @@ export function PartnerCard({ partner, onToggleStatus, onOpenSettlement }: Partn
             variant="outline"
             size="sm"
             onClick={() => onToggleStatus(partner)}
-            className={`text-xs gap-1.5 ${
+            className={`text-caption gap-1.5 ${
               partner.isActive
                 ? "text-text-muted hover:text-danger hover:border-danger/30"
                 : "text-success hover:border-success/30"

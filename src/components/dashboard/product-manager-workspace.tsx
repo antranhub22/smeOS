@@ -143,25 +143,25 @@ export function ProductManagerWorkspace() {
         {/* Khối P1: Thống kê nhanh danh mục */}
         <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
           <Card className="flex flex-col gap-1 p-3.5">
-            <span className="text-xs text-text-muted">Tổng sản phẩm</span>
-            <span className="text-title font-extrabold text-foreground">
+            <span className="text-caption text-text-muted">Tổng sản phẩm</span>
+            <span className="text-title font-extrabold text-text">
               {!daTai ? "—" : products?.length ?? 0}
             </span>
           </Card>
           <Card className="flex flex-col gap-1 p-3.5">
-            <span className="text-xs text-text-muted">Cần hoàn thiện</span>
+            <span className="text-caption text-text-muted">Cần hoàn thiện</span>
             <span className="text-title font-extrabold text-warning">
               {!daTai ? "—" : unready.length}
             </span>
           </Card>
           <Card className="flex flex-col gap-1 p-3.5">
-            <span className="text-xs text-text-muted">Sẵn sàng bán</span>
+            <span className="text-caption text-text-muted">Sẵn sàng bán</span>
             <span className="text-title font-extrabold text-success">
               {!daTai ? "—" : ready.length}
             </span>
           </Card>
           <Card className="flex flex-col gap-1 p-3.5">
-            <span className="text-xs text-text-muted">Điểm sẵn sàng TB</span>
+            <span className="text-caption text-text-muted">Điểm sẵn sàng TB</span>
             <span className="text-title font-extrabold text-primary">
               {!daTai ? "—" : `${averageScore}%`}
             </span>
@@ -181,7 +181,7 @@ export function ProductManagerWorkspace() {
               size="sm"
               variant="outline"
               onClick={() => router.push("/san-pham" as Route)}
-              className="text-xs"
+              className="text-caption"
             >
               Xem tất cả
               <ChevronRight size={14} aria-hidden="true" />
@@ -202,7 +202,7 @@ export function ProductManagerWorkspace() {
                   <button
                     type="button"
                     onClick={() => router.push("/san-pham" as Route)}
-                    className="flex min-h-12 w-full items-center gap-3 rounded-lg px-2 py-2 text-left hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-primary"
+                    className="flex cursor-pointer min-h-12 w-full items-center gap-3 rounded-lg px-2 py-2 text-left hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-primary"
                   >
                     {product.masterImageUrl ? (
                       // eslint-disable-next-line @next/next/no-img-element
@@ -218,7 +218,7 @@ export function ProductManagerWorkspace() {
                     )}
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2">
-                        <span className="truncate text-body font-semibold text-foreground">
+                        <span className="truncate text-body font-semibold text-text">
                           {product.name}
                         </span>
                         <span className="rounded-sm bg-surface-alt px-1.5 py-0.5 text-caption font-mono text-text-muted">
@@ -237,7 +237,7 @@ export function ProductManagerWorkspace() {
                       </div>
                     </div>
                     <div className="flex items-center gap-2 text-right">
-                      <span className="text-xs font-bold text-text-muted">
+                      <span className="text-caption font-bold text-text-muted">
                         {readiness.score}%
                       </span>
                       <ChevronRight size={16} className="text-text-muted" aria-hidden="true" />
@@ -277,10 +277,10 @@ export function ProductManagerWorkspace() {
                     </div>
                   )}
                   <div className="min-w-0 flex-1">
-                    <div className="truncate text-body font-semibold text-foreground">
+                    <div className="truncate text-body font-semibold text-text">
                       {product.name}
                     </div>
-                    <div className="text-xs text-text-muted">
+                    <div className="text-caption text-text-muted">
                       {product.category || "Chưa phân loại"} · Mã: {product.code}
                     </div>
                   </div>

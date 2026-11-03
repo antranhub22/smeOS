@@ -3,6 +3,9 @@
 import React, { useState } from "react"
 import { Gift, ShieldCheck, FileText, Plus, Trash2, Check, RotateCcw } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
+import { Checkbox } from "@/components/ui/checkbox"
 import { useConfirmDialog } from "@/components/ui/confirm-dialog"
 import { PromotionKindField } from "./promotion-kind-field"
 import { AgreementsSection } from "./store-policies-agreements-section"
@@ -110,39 +113,39 @@ export function StorePoliciesEditor({
       <div className="flex flex-wrap items-center justify-between gap-3 bg-surface p-4 rounded-2xl border border-border shadow-xs">
         {!hideSubTabs ? (
           <div className="flex flex-wrap gap-2">
-            <button
+            <Button
               type="button"
+              variant={activeSection === "promo" ? "primary" : "ghost"}
+              size="sm"
               onClick={() => setActiveSection("promo")}
-              className={`inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-body-sm font-bold transition-colors ${
-                activeSection === "promo" ? "bg-primary text-white" : "text-text-muted hover:bg-surface-muted"
-              }`}
+              className="gap-2"
             >
               <Gift size={16} />
               <span>A. Ưu đãi ({promotions.length})</span>
-            </button>
-            <button
+            </Button>
+            <Button
               type="button"
+              variant={activeSection === "commit" ? "primary" : "ghost"}
+              size="sm"
               onClick={() => setActiveSection("commit")}
-              className={`inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-body-sm font-bold transition-colors ${
-                activeSection === "commit" ? "bg-primary text-white" : "text-text-muted hover:bg-surface-muted"
-              }`}
+              className="gap-2"
             >
               <ShieldCheck size={16} />
               <span>B. Cam kết ({commitments.length})</span>
-            </button>
-            <button
+            </Button>
+            <Button
               type="button"
+              variant={activeSection === "agree" ? "primary" : "ghost"}
+              size="sm"
               onClick={() => setActiveSection("agree")}
-              className={`inline-flex items-center gap-2 px-3.5 py-2 rounded-xl text-body-sm font-bold transition-colors ${
-                activeSection === "agree" ? "bg-primary text-white" : "text-text-muted hover:bg-surface-muted"
-              }`}
+              className="gap-2"
             >
               <FileText size={16} />
               <span>C. Thỏa thuận ({agreements.length})</span>
-            </button>
+            </Button>
           </div>
         ) : (
-          <div className="text-xs font-bold text-text-muted flex items-center gap-1.5">
+          <div className="text-caption font-bold text-text-muted flex items-center gap-1.5">
             <span>Đang thiết lập:</span>
             <span className="text-primary font-extrabold uppercase">
               {activeSection === "promo" && "Danh mục Ưu đãi"}
@@ -168,7 +171,7 @@ export function StorePoliciesEditor({
         <div className="rounded-2xl border border-border bg-surface p-5 space-y-4">
           <div className="flex items-center justify-between pb-3 border-b border-border">
             <div>
-              <h3 className="text-title-sm font-extrabold text-foreground">Danh mục Ưu đãi (Khách chọn khi đặt hoa)</h3>
+              <h3 className="text-title-sm font-extrabold text-text">Danh mục Ưu đãi (Khách chọn khi đặt hoa)</h3>
               <p className="text-caption text-text-muted">Bộ sưu tập áp dụng ưu đãi sẽ cho phép khách chọn duy nhất 01 ưu đãi trong nhóm này.</p>
             </div>
             <Button type="button" size="sm" variant="outline" onClick={addPromo} className="gap-1 h-8 text-caption font-bold">
@@ -180,13 +183,11 @@ export function StorePoliciesEditor({
           <div className="rounded-xl border border-primary/20 bg-primary/5 p-4 space-y-2.5">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <label className="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="checkbox"
+                <Checkbox
                   checked={intakeCta.enabled}
-                  onChange={(e) => setIntakeCta({ ...intakeCta, enabled: e.target.checked })}
-                  className="h-4 w-4 accent-primary rounded"
+                  onCheckedChange={(checked) => setIntakeCta({ ...intakeCta, enabled: checked === true })}
                 />
-                <span className="text-body-sm font-bold text-foreground">
+                <span className="text-body-sm font-bold text-text">
                   Bật dòng ưu đãi khi khách mở link Thẻ Chào (Chặng 1)
                 </span>
               </label>
@@ -194,7 +195,7 @@ export function StorePoliciesEditor({
               {intakeCta.enabled && (
                 <div className="flex items-center gap-1.5 text-body-sm">
                   <span className="text-text-muted">Mức giảm:</span>
-                  <input
+                  <Input
                     type="number"
                     min={1}
                     max={100}
@@ -203,7 +204,8 @@ export function StorePoliciesEditor({
                       const val = Math.min(100, Math.max(1, Number(e.target.value) || 1))
                       setIntakeCta({ ...intakeCta, percent: val })
                     }}
-                    className="h-8 w-16 px-2 text-center rounded-lg border border-border bg-background text-body-sm font-bold text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20"
+                    inputSize="sm"
+                    className="w-16 text-center font-bold"
                   />
                   <span className="font-bold text-primary">%</span>
                 </div>
@@ -212,7 +214,7 @@ export function StorePoliciesEditor({
 
             {intakeCta.enabled && (
               <p className="text-caption text-text-muted">
-                Xem trước: <strong className="text-foreground">&ldquo;Nhận quà {intakeCta.percent}% giảm giá khi Đặt mua hoa trực tiếp tại link này!&rdquo;</strong>
+                Xem trước: <strong className="text-text">&ldquo;Nhận quà {intakeCta.percent}% giảm giá khi Đặt mua hoa trực tiếp tại link này!&rdquo;</strong>
               </p>
             )}
           </div>
@@ -220,27 +222,29 @@ export function StorePoliciesEditor({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {promotions.map((p) => (
               <div key={p.id} className="p-3.5 rounded-xl border border-border bg-surface-muted/30 flex flex-col gap-2 relative group">
-                <button
+                <Button
                   type="button"
+                  variant="ghost"
+                  size="sm"
                   onClick={() => removePromo(p.id)}
                   aria-label="Xóa ưu đãi"
-                  className="absolute top-3 right-3 text-text-muted hover:text-danger p-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity"
+                  className="absolute top-3 right-3 text-text-muted hover:text-danger p-1 h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity"
                 >
                   <Trash2 size={14} />
-                </button>
-                <input
-                  type="text"
+                </Button>
+                <Input
+                  inputSize="sm"
                   value={p.title}
                   onChange={(e) => updatePromo(p.id, { title: e.target.value })}
                   placeholder="Tiêu đề ưu đãi..."
-                  className="font-bold text-body-sm text-foreground bg-transparent border-b border-transparent focus:border-primary focus:outline-none"
+                  className="font-bold text-body-sm text-text bg-transparent border-0 border-b border-border/40 rounded-none px-0"
                 />
-                <textarea
+                <Textarea
                   rows={2}
                   value={p.description}
                   onChange={(e) => updatePromo(p.id, { description: e.target.value })}
                   placeholder="Mô tả quyền lợi nhận được..."
-                  className="text-caption text-text-muted bg-transparent border-none focus:ring-0 focus:outline-none resize-none p-0"
+                  className="text-caption text-text-muted bg-transparent border-none min-h-[60px] p-0 shadow-none focus-visible:outline-hidden"
                 />
                 <PromotionKindField item={p} onChange={(patch) => updatePromo(p.id, patch)} />
               </div>
@@ -254,7 +258,7 @@ export function StorePoliciesEditor({
         <div className="rounded-2xl border border-border bg-surface p-5 space-y-4">
           <div className="flex items-center justify-between pb-3 border-b border-border">
             <div>
-              <h3 className="text-title-sm font-extrabold text-foreground">Cam kết cốt lõi của Cửa hàng</h3>
+              <h3 className="text-title-sm font-extrabold text-text">Cam kết cốt lõi của Cửa hàng</h3>
               <p className="text-caption text-text-muted">Những điều cửa hàng chắc chắn thực hiện đúng chuẩn đã công bố tới khách hàng.</p>
             </div>
             <Button type="button" size="sm" variant="outline" onClick={addCommit} className="gap-1 h-8 text-caption font-bold">
@@ -264,34 +268,36 @@ export function StorePoliciesEditor({
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {commitments.map((c) => (
               <div key={c.id} className="p-3.5 rounded-xl border border-border bg-surface-muted/30 flex flex-col gap-2 relative group">
-                <button
+                <Button
                   type="button"
+                  variant="ghost"
+                  size="sm"
                   onClick={() => removeCommit(c.id)}
                   aria-label="Xóa cam kết"
-                  className="absolute top-3 right-3 text-text-muted hover:text-danger p-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity"
+                  className="absolute top-3 right-3 text-text-muted hover:text-danger p-1 h-7 w-7 opacity-0 group-hover:opacity-100 transition-opacity"
                 >
                   <Trash2 size={14} />
-                </button>
-                <input
-                  type="text"
+                </Button>
+                <Input
+                  inputSize="sm"
                   value={c.title}
                   onChange={(e) => updateCommit(c.id, { title: e.target.value })}
                   placeholder="Tiêu đề cam kết..."
-                  className="font-bold text-body-sm text-foreground bg-transparent border-b border-transparent focus:border-primary focus:outline-none"
+                  className="font-bold text-body-sm text-text bg-transparent border-0 border-b border-border/40 rounded-none px-0"
                 />
-                <textarea
+                <Textarea
                   rows={2}
                   value={c.customerText}
                   onChange={(e) => updateCommit(c.id, { customerText: e.target.value })}
                   placeholder="Văn bản công bố với khách hàng..."
-                  className="text-caption text-text-muted bg-transparent border-none focus:ring-0 focus:outline-none resize-none p-0"
+                  className="text-caption text-text-muted bg-transparent border-none min-h-[60px] p-0 shadow-none focus-visible:outline-hidden"
                 />
-                <input
-                  type="text"
+                <Input
+                  inputSize="sm"
                   value={c.internalText || ""}
                   onChange={(e) => updateCommit(c.id, { internalText: e.target.value })}
                   placeholder="Quy định nội bộ cho nhân viên (tùy chọn)..."
-                  className="text-caption text-text-muted/70 italic bg-transparent border-t border-border/40 pt-1 focus:outline-none"
+                  className="text-caption text-text-muted/70 italic bg-transparent border-0 border-t border-border/40 rounded-none px-0 pt-1"
                 />
               </div>
             ))}

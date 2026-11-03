@@ -9,6 +9,8 @@
 
 import { useState } from "react"
 import { Lock, RotateCcw, Loader2 } from "@/components/ui/icons"
+import { Button } from "@/components/ui/button"
+import { Switch } from "@/components/ui/switch"
 import type { GovernanceMatrixItem, GovernanceViewerTier } from "./governance-matrix-types"
 import { GOVERNANCE_TIER_LABELS } from "./governance-matrix-types"
 
@@ -85,21 +87,25 @@ export function GovernanceMatrixCell({
 
       {/* Nút Reset về mặc định */}
       {item.hasLocalOverride && !item.isLocked && onResetOverride && (
-        <button
+        <Button
           type="button"
+          variant="ghost"
+          size="sm"
           onClick={handleReset}
           disabled={loading}
           title="Khôi phục về mặc định của Cấp trên"
-          className="p-1.5 rounded-lg text-text-muted hover:text-text hover:bg-surface-alt transition-colors"
+          className="h-7 w-7 p-0 text-text-muted hover:text-text"
         >
           <RotateCcw size={14} />
-        </button>
+        </Button>
       )}
 
       {/* Quản trị Hard-Lock cho tầng có quyền */}
       {canManageHardLocks && onToggleHardLock && (
-        <button
+        <Button
           type="button"
+          variant="ghost"
+          size="sm"
           onClick={handleLockToggle}
           disabled={loading || isLockedByUpper}
           title={
@@ -107,37 +113,31 @@ export function GovernanceMatrixCell({
               ? "Gỡ khóa cứng cho các đơn vị trực thuộc"
               : "Khóa cứng quy tắc này (Cấp dưới không thể đổi)"
           }
-          className={`p-1.5 rounded-lg transition-colors ${
+          className={`h-7 w-7 p-0 ${
             item.isOwnHardLock
               ? "bg-danger/10 text-danger hover:bg-danger/20"
-              : "text-text-muted hover:text-text hover:bg-surface-alt"
+              : "text-text-muted hover:text-text"
           }`}
         >
           <Lock size={14} className={item.isOwnHardLock ? "fill-danger" : ""} />
-        </button>
+        </Button>
       )}
 
       {/* Toggle Button */}
-      <button
-        type="button"
-        onClick={handleToggle}
-        disabled={isDisabled}
-        aria-label={`${item.enabled ? "Tắt" : "Bật"} ${item.title}`}
-        className={`relative inline-flex h-5 w-9 shrink-0 items-center rounded-full transition-colors duration-200 focus-visible:outline-2 focus-visible:outline-primary ${
-          isDisabled ? "cursor-not-allowed opacity-50" : "cursor-pointer"
-        } ${item.enabled ? "bg-primary" : "bg-surface-alt border border-border"}`}
-      >
-        <span
-          className={`inline-block h-3.5 w-3.5 rounded-full bg-white shadow-sm transition-transform duration-200 ${
-            item.enabled ? "translate-x-4" : "translate-x-0.5"
-          }`}
+      <div className="relative inline-flex items-center">
+        <Switch
+          checked={item.enabled}
+          onCheckedChange={() => void handleToggle()}
+          disabled={isDisabled}
+          aria-label={`${item.enabled ? "Tắt" : "Bật"} ${item.title}`}
+          className="h-5 w-9"
         />
         {loading && (
-          <span className="absolute inset-0 flex items-center justify-center">
-            <Loader2 size={10} className="animate-spin motion-reduce:animate-none text-white" />
+          <span className="pointer-events-none absolute inset-0 flex items-center justify-center">
+            <Loader2 size={10} className="animate-spin motion-reduce:animate-none text-primary" />
           </span>
         )}
-      </button>
+      </div>
 
       {/* Khóa bởi cấp trên cảnh báo */}
       {isLockedByUpper && item.lockReason && (

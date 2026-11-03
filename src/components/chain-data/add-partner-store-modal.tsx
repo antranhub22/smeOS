@@ -3,6 +3,8 @@
 import React, { useState } from "react"
 import { Dialog } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { NativeSelect } from "@/components/ui/select"
 import { ShieldAlert, AlertCircle, FileText, CheckCircle2, Handshake } from "@/components/ui/icons"
 import type { PropagationTarget } from "@/modules/field-platform/domain/field-registry-v2"
 
@@ -105,7 +107,7 @@ export function AddPartnerStoreModal({ isOpen, onClose, onSuccess }: AddPartnerS
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div className="space-y-1">
             <label className="text-caption font-bold text-text">Tên đối tác / Cửa hàng *</label>
-            <input
+            <Input
               type="text"
               required
               placeholder="VD: Chi nhánh Đà Lạt Franchise…"
@@ -117,7 +119,7 @@ export function AddPartnerStoreModal({ isOpen, onClose, onSuccess }: AddPartnerS
 
           <div className="space-y-1">
             <label className="text-caption font-bold text-text">Mã cửa hàng *</label>
-            <input
+            <Input
               type="text"
               required
               placeholder="VD: FC-DL01…"
@@ -131,7 +133,7 @@ export function AddPartnerStoreModal({ isOpen, onClose, onSuccess }: AddPartnerS
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div className="space-y-1">
             <label className="text-caption font-bold text-text">MST / Mã pháp nhân đối tác *</label>
-            <input
+            <Input
               type="text"
               required
               placeholder="VD: 5801234567…"
@@ -143,7 +145,7 @@ export function AddPartnerStoreModal({ isOpen, onClose, onSuccess }: AddPartnerS
 
           <div className="space-y-1">
             <label className="text-caption font-bold text-text">Thời hạn hiệu lực thỏa thuận</label>
-            <select
+            <NativeSelect
               value={validYears}
               onChange={(e) => setValidYears(e.target.value)}
               className="w-full text-body-sm h-9 px-3 rounded-xl border border-border bg-surface focus:outline-primary"
@@ -151,13 +153,13 @@ export function AddPartnerStoreModal({ isOpen, onClose, onSuccess }: AddPartnerS
               <option value="1">1 năm</option>
               <option value="2">2 năm</option>
               <option value="5">5 năm</option>
-            </select>
+            </NativeSelect>
           </div>
         </div>
 
         <div className="space-y-1">
           <label className="text-caption font-bold text-text">Địa chỉ cơ sở đối tác</label>
-          <input
+          <Input
             type="text"
             placeholder="VD: Số 12 Đường Hùng Vương, Đà Lạt"
             value={address}
@@ -176,38 +178,38 @@ export function AddPartnerStoreModal({ isOpen, onClose, onSuccess }: AddPartnerS
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-caption">
             <div className="space-y-1">
               <span className="font-semibold text-text-muted">Giá bán sản phẩm:</span>
-              <select
+              <NativeSelect
                 value={priceCeiling}
                 onChange={(e) => setPriceCeiling(e.target.value as PropagationTarget)}
                 className="w-full h-8 px-2 rounded-lg border border-border bg-surface font-semibold"
               >
                 <option value="RAW">RAW (Giá chi tiết)</option>
                 <option value="AGGREGATED">AGGREGATED (Dải giá)</option>
-              </select>
+              </NativeSelect>
             </div>
 
             <div className="space-y-1">
               <span className="font-semibold text-text-muted">Tồn kho / Vật tư:</span>
-              <select
+              <NativeSelect
                 value={inventoryCeiling}
                 onChange={(e) => setInventoryCeiling(e.target.value as PropagationTarget)}
                 className="w-full h-8 px-2 rounded-lg border border-border bg-surface font-semibold"
               >
                 <option value="AGGREGATED">AGGREGATED (Tổng hợp)</option>
                 <option value="RAW">RAW (Chi tiết từng món)</option>
-              </select>
+              </NativeSelect>
             </div>
 
             <div className="space-y-1">
               <span className="font-semibold text-text-muted">Tài khoản riêng:</span>
-              <select
+              <NativeSelect
                 value={bankCeiling}
                 onChange={(e) => setBankCeiling(e.target.value as PropagationTarget)}
                 className="w-full h-8 px-2 rounded-lg border border-border bg-surface font-semibold"
               >
                 <option value="MASKED">MASKED (Che số đuôi)</option>
                 <option value="NONE">NONE (Khóa hoàn toàn)</option>
-              </select>
+              </NativeSelect>
             </div>
           </div>
         </div>

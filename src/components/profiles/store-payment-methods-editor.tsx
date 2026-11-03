@@ -77,10 +77,10 @@ export function StorePaymentMethodsEditor() {
       <div className="p-6 rounded-2xl border border-border bg-surface shadow-xs">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div>
-            <h2 className="text-base font-extrabold text-text flex items-center gap-2">
+            <h2 className="text-title-sm font-extrabold text-text flex items-center gap-2">
               <Landmark size={18} className="text-primary" /> Cơ Chế Nhận Thanh Toán & Đối Soát
             </h2>
-            <p className="text-xs text-text-muted mt-1">
+            <p className="text-caption text-text-muted mt-1">
               Thiết lập các phương thức thanh toán hiển thị cho khách hàng trên Thẻ Chào, trang đặt hàng và tại điểm bán.
             </p>
           </div>
@@ -97,7 +97,7 @@ export function StorePaymentMethodsEditor() {
 
         {message && (
           <div
-            className={`mt-4 p-3 rounded-xl text-xs flex items-center gap-2 border ${
+            className={`mt-4 p-3 rounded-xl text-caption flex items-center gap-2 border ${
               message.kind === "ok"
                 ? "bg-success-bg text-primary border-success-border"
                 : "bg-danger/10 text-danger border-danger/20"
@@ -131,7 +131,7 @@ export function StorePaymentMethodsEditor() {
           variant="primary"
           size="sm"
           disabled={saving || loading}
-          className="text-xs font-bold gap-1.5 shadow-xs"
+          className="text-caption font-bold gap-1.5 shadow-xs"
         >
           {saving ? <Loader2 size={13} className="animate-spin motion-reduce:animate-none" /> : <Save size={13} />}
           {saving ? "Đang lưu cấu hình..." : "Lưu cơ chế thanh toán"}

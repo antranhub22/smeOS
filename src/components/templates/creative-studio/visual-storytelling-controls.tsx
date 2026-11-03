@@ -2,6 +2,7 @@
 
 import * as React from "react"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import {
   Camera,
@@ -90,11 +91,13 @@ export function VisualStorytellingControls({
         </div>
 
         {/* Storyline Carousel Toggle Button */}
-        <button
+        <Button
           type="button"
           disabled={disabled}
+          variant={isCarousel ? "primary" : "outline"}
+          size="sm"
           onClick={() => onStorylineModeChange(isCarousel ? "single_shot" : "four_part_story_carousel")}
-          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-xs font-bold transition select-none ${
+          className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold transition select-none ${
             isCarousel
               ? "bg-primary text-white border-primary shadow-xs"
               : "bg-surface-alt border-border text-text hover:border-primary/50"
@@ -102,7 +105,7 @@ export function VisualStorytellingControls({
         >
           <BookOpen size={13} strokeWidth={2.4} />
           <span>{isCarousel ? "Đang bật: Trọn bộ Story (4 ảnh)" : "Tạo 1 ảnh đơn"}</span>
-        </button>
+        </Button>
       </div>
 
       {/* When Carousel is active, show the 4-part Storyline sequence */}
@@ -141,11 +144,13 @@ export function VisualStorytellingControls({
                 const isSelected = cameraAngle === angle.id
                 return (
                   <button
-                    key={angle.id}
                     type="button"
                     disabled={disabled}
-                    onClick={() => onCameraAngleChange(angle.id)}
-                    className={`flex flex-col items-start p-2.5 rounded-xl border text-left transition select-none ${
+                    key={angle.id}
+                    onClick={() => !disabled && onCameraAngleChange(angle.id)}
+                    className={`flex flex-col items-start p-2.5 rounded-xl border text-left transition select-none cursor-pointer ${
+                      disabled ? "opacity-50 cursor-not-allowed" : ""
+                    } ${
                       isSelected
                         ? "border-primary bg-primary/5 text-primary shadow-xs ring-1 ring-primary/30"
                         : "border-border bg-surface-alt hover:border-text-muted/40 text-text"
@@ -175,11 +180,13 @@ export function VisualStorytellingControls({
                 const isSelected = humanInteraction === item.id
                 return (
                   <button
-                    key={item.id}
                     type="button"
                     disabled={disabled}
-                    onClick={() => onHumanInteractionChange(item.id)}
-                    className={`flex flex-col items-start p-2.5 rounded-xl border text-left transition select-none ${
+                    key={item.id}
+                    onClick={() => !disabled && onHumanInteractionChange(item.id)}
+                    className={`flex flex-col items-start p-2.5 rounded-xl border text-left transition select-none cursor-pointer ${
+                      disabled ? "opacity-50 cursor-not-allowed" : ""
+                    } ${
                       isSelected
                         ? "border-primary bg-primary/5 text-primary shadow-xs ring-1 ring-primary/30"
                         : "border-border bg-surface-alt hover:border-text-muted/40 text-text"

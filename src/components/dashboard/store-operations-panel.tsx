@@ -2,6 +2,7 @@
 
 import React from "react"
 import { ArrowLeft } from "@/components/ui/icons"
+import { Button } from "@/components/ui/button"
 import { IconTile } from "@/components/ui/app-icon"
 import { InfoTip } from "@/components/ui/info-tip"
 import type { StoreOperationsSection } from "@/modules/toolkit/domain/store-operations"
@@ -17,14 +18,16 @@ export function StoreOperationsPanel({ section, isDev, onBack }: StoreOperations
   return (
     <section className="space-y-8">
       {onBack && (
-        <button
+        <Button
           type="button"
+          variant="ghost"
+          size="sm"
           onClick={onBack}
-          className="inline-flex items-center gap-1.5 min-h-8 px-2 -ml-2 rounded-lg text-body-sm font-medium text-text-muted hover:text-primary hover:bg-surface-alt transition-colors"
+          className="inline-flex items-center gap-1.5 -ml-2 text-body-sm font-medium text-text-muted hover:text-primary"
         >
           <ArrowLeft className="w-4 h-4" aria-hidden="true" />
           Tất cả các mục
-        </button>
+        </Button>
       )}
 
       <div className="flex items-center gap-4 p-5 sm:p-6 rounded-2xl bg-surface shadow-sm ring-1 ring-border/60">

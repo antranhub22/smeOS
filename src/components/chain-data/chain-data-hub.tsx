@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import { SkeletonBlock } from "@/components/ui/skeleton"
 import {
   Database,
@@ -109,28 +110,32 @@ export function ChainDataHub() {
       <div className="border-b border-border/80 pb-5 space-y-3">
         {/* Breadcrumb Navigation */}
         <nav className="flex items-center gap-2 text-caption font-bold text-text-muted flex-wrap">
-          <button
+          <Button
             type="button"
+            variant="ghost"
+            size="sm"
             onClick={handleBackToStores}
-            className="flex items-center gap-1.5 hover:text-primary transition-colors text-text font-bold"
+            className="h-auto p-0 flex items-center gap-1.5 hover:text-primary transition-colors text-text font-bold"
           >
             <Database size={15} className="text-primary" />
             <span>Trung Tâm Dữ Liệu Chuỗi</span>
-          </button>
+          </Button>
 
           {selectedStore && (
             <>
               <ChevronRight size={13} className="text-text-muted/60" />
-              <button
+              <Button
                 type="button"
+                variant="ghost"
+                size="sm"
                 onClick={handleBackToStoreFolders}
-                className={`flex items-center gap-1.5 transition-colors ${
+                className={`h-auto p-0 flex items-center gap-1.5 transition-colors ${
                   selectedFolder ? "hover:text-primary text-text-muted" : "text-primary font-extrabold"
                 }`}
               >
                 <Store size={14} />
                 <span>{selectedStore.name}</span>
-              </button>
+              </Button>
             </>
           )}
 
@@ -194,7 +199,7 @@ export function ChainDataHub() {
               <div className="flex items-center gap-2 flex-wrap">
                 <div className="relative w-48 sm:w-56">
                   <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" />
-                  <input
+                  <Input
                     type="text"
                     placeholder="Tìm kiếm cửa hàng…"
                     value={searchQuery}
@@ -207,7 +212,7 @@ export function ChainDataHub() {
                   variant="outline"
                   size="sm"
                   onClick={() => setIsAddBranchOpen(true)}
-                  className="gap-1.5 font-bold h-9 text-xs rounded-xl"
+                  className="gap-1.5 font-bold h-9 text-caption rounded-xl"
                 >
                   <Building2 size={14} className="text-primary" />
                   <span>+ Thêm chi nhánh</span>
@@ -216,7 +221,7 @@ export function ChainDataHub() {
                 <Button
                   size="sm"
                   onClick={() => setIsAddPartnerOpen(true)}
-                  className="gap-1.5 font-bold h-9 text-xs rounded-xl"
+                  className="gap-1.5 font-bold h-9 text-caption rounded-xl"
                 >
                   <Handshake size={14} />
                   <span>+ Kết nối đối tác</span>
@@ -278,7 +283,7 @@ export function ChainDataHub() {
               <button
                 type="button"
                 onClick={() => setFilterType("ALL")}
-                className={`px-3 py-1 rounded-lg text-caption font-bold transition-colors ${
+                className={`cursor-pointer px-3 py-1 rounded-lg text-caption font-bold transition-colors ${
                   filterType === "ALL"
                     ? "bg-primary text-white"
                     : "bg-surface border border-border text-text-muted hover:text-text"
@@ -289,7 +294,7 @@ export function ChainDataHub() {
               <button
                 type="button"
                 onClick={() => setFilterType("DIRECT")}
-                className={`px-3 py-1 rounded-lg text-caption font-bold transition-colors ${
+                className={`cursor-pointer px-3 py-1 rounded-lg text-caption font-bold transition-colors ${
                   filterType === "DIRECT"
                     ? "bg-primary text-white"
                     : "bg-surface border border-border text-text-muted hover:text-text"
@@ -300,7 +305,7 @@ export function ChainDataHub() {
               <button
                 type="button"
                 onClick={() => setFilterType("PARTNER")}
-                className={`px-3 py-1 rounded-lg text-caption font-bold transition-colors ${
+                className={`cursor-pointer px-3 py-1 rounded-lg text-caption font-bold transition-colors ${
                   filterType === "PARTNER"
                     ? "bg-primary text-white"
                     : "bg-surface border border-border text-text-muted hover:text-text"

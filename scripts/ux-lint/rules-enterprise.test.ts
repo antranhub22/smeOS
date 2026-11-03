@@ -51,6 +51,14 @@ describe("UX Lint Enterprise Rules (R17–R23)", () => {
       expect(violations[1]!.snippet).toBe("<input>")
     })
 
+    it("detects non-control elements given a widget role", () => {
+      const { sourceFile, context } = createTsxSource(
+        `<div><div role="button" tabIndex={0}>Bấm</div><span role="checkbox" aria-checked="false" /><div role="dialog" /><Card role="button" /></div>`
+      )
+      const violations = checkR18(sourceFile, context)
+      expect(violations.map((v) => v.snippet)).toEqual(['<div role="button">', '<span role="checkbox">'])
+    })
+
     it("allows system component primitives", () => {
       const { sourceFile, context } = createTsxSource(
         `<div><Button>Bấm</Button><Input placeholder="Nhập" /></div>`

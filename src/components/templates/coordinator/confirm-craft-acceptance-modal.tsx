@@ -4,6 +4,9 @@ import React, { useState } from "react"
 import { CheckCircle2, AlertTriangle, ShieldCheck } from "@/components/ui/icons"
 import { Dialog } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select"
 import type { CoordinationPartner } from "@/components/coordinator/coordinator-api"
 import { useSession } from "@/lib/session"
 import { getIndustryTerminology } from "@/modules/organization/domain/industry-profile"
@@ -107,18 +110,21 @@ export function ConfirmCraftAcceptanceModal({
           <label className="font-bold text-text block">
             Bộ phận / {ti.makerTitle} phụ trách <span className="text-danger">*</span>
           </label>
-          <select
-            value={partnerId}
-            onChange={(e) => setPartnerId(e.target.value)}
-            className="w-full px-3 py-2 rounded-xl border border-border bg-surface text-text text-body-sm focus:outline-none focus:ring-1 focus:ring-primary"
+          <Select
+            value={partnerId || undefined}
+            onValueChange={(val) => setPartnerId(val)}
           >
-            <option value="">-- Chọn xưởng / {ti.makerTitle} --</option>
-            {activePartners.map((p) => (
-              <option key={p.id} value={p.id}>
-                {p.name} {p.district ? `(${p.district}, ${p.province})` : ""} - Công suất: {p.capacityDaily} đơn/ngày
-              </option>
-            ))}
-          </select>
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder={`-- Chọn xưởng / ${ti.makerTitle} --`} />
+            </SelectTrigger>
+            <SelectContent>
+              {activePartners.map((p) => (
+                <SelectItem key={p.id} value={p.id}>
+                  {p.name} {p.district ? `(${p.district}, ${p.province})` : ""} - Công suất: {p.capacityDaily} đơn/ngày
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
 
         <div className="space-y-1.5">
@@ -131,7 +137,7 @@ export function ConfirmCraftAcceptanceModal({
             </span>
           </div>
           <div className="relative">
-            <input
+            <Input
               type="number"
               step={10000}
               min={0}
@@ -150,21 +156,21 @@ export function ConfirmCraftAcceptanceModal({
               <button
                 type="button"
                 onClick={() => setAgreedFee(suggestedCraftFeeVnd)}
-                className="px-2 py-0.5 rounded bg-surface-alt border border-border text-text hover:bg-surface text-caption font-semibold"
+                className="px-2 py-0.5 rounded bg-surface-alt border border-border text-text hover:bg-surface text-caption font-semibold cursor-pointer"
               >
                 Mức gợi ý ({suggestedCraftFeeVnd.toLocaleString("vi-VN")}đ)
               </button>
               <button
                 type="button"
                 onClick={() => setAgreedFee((prev) => Math.max(0, prev - 20000))}
-                className="px-1.5 py-0.5 rounded bg-surface-alt border border-border text-text hover:bg-surface text-caption"
+                className="px-1.5 py-0.5 rounded bg-surface-alt border border-border text-text hover:bg-surface text-caption cursor-pointer"
               >
                 -20k
               </button>
               <button
                 type="button"
                 onClick={() => setAgreedFee((prev) => prev + 20000)}
-                className="px-1.5 py-0.5 rounded bg-surface-alt border border-border text-text hover:bg-surface text-caption"
+                className="px-1.5 py-0.5 rounded bg-surface-alt border border-border text-text hover:bg-surface text-caption cursor-pointer"
               >
                 +20k
               </button>
@@ -190,7 +196,7 @@ export function ConfirmCraftAcceptanceModal({
 
         <div className="space-y-1">
           <label className="font-semibold text-text block">Ghi chú bổ sung cho {ti.makerTitle} (nếu có)</label>
-          <textarea
+          <Textarea
             rows={2}
             value={notes}
             onChange={(e) => setNotes(e.target.value)}

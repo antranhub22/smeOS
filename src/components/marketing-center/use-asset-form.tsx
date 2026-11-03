@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { ConfirmDialog } from "@/components/ui/confirm-dialog"
 import { Input } from "@/components/ui/input"
+import { NativeSelect } from "@/components/ui/select"
 import type { UsageDestination } from "@/modules/marketing-center/domain/asset-type"
 import { type CtaCode, getCtaDefinition } from "@/modules/marketing-center/domain/cta-registry"
 import {
@@ -115,7 +116,7 @@ export function UseAssetForm({
                 type="button"
                 key={dest}
                 onClick={() => handleDestinationChange(dest)}
-                className={`rounded-2xl p-3 text-left transition-all border bg-surface ${
+                className={`rounded-2xl p-3 text-left cursor-pointer transition-all border bg-surface ${
                   isSelected
                     ? "border-primary bg-selected ring-1 ring-primary"
                     : "border-border hover:border-text-muted/40"
@@ -143,7 +144,7 @@ export function UseAssetForm({
                 type="button"
                 key={cta}
                 onClick={() => setCtaCode(cta)}
-                className={`p-2 rounded-xl text-left border text-caption transition-all ${
+                className={`p-2 rounded-xl text-left border text-caption cursor-pointer transition-all ${
                   isSelected
                     ? "border-primary bg-selected font-bold text-primary"
                     : "border-border text-text hover:bg-surface-alt"
@@ -161,17 +162,17 @@ export function UseAssetForm({
         <label className="text-body-sm font-bold text-text block mb-1.5">
           3. Kênh phân phối
         </label>
-        <select
+        <NativeSelect
           value={channelId}
           onChange={(e) => setChannelId(e.target.value)}
-          className="w-full rounded-xl border border-border bg-surface-alt px-3 py-2 text-body-sm outline-none focus:border-primary"
+          className="w-full"
         >
           {USAGE_CHANNELS.map((ch) => (
             <option key={ch.id} value={ch.id}>
               {ch.name} ({ch.automationLevel === "AUTOMATED" ? "Tự động" : "Thủ công"})
             </option>
           ))}
-        </select>
+        </NativeSelect>
       </div>
 
       {/* 4. Cấu hình chi tiết */}

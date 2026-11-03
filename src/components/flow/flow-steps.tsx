@@ -13,7 +13,7 @@ export interface FlowStep {
 
 export interface FlowStepStatus {
   key: string
-  status: "done" | "active" | "pending" | "error" | "cancelled"
+  status: "succeeded" | "active" | "pending" | "error" | "canceled"
 }
 
 export interface FlowStepsProps {
@@ -44,7 +44,7 @@ export function FlowSteps({
       const found = statuses.find((s) => s.key === steps[index]!.key)
       if (found) return found.status
     }
-    if (index < currentIndex) return "done"
+    if (index < currentIndex) return "succeeded"
     if (index === currentIndex) return "active"
     return "pending"
   }
@@ -53,10 +53,10 @@ export function FlowSteps({
     <Card className="flex flex-col gap-3 p-4">
       {steps.map((step, index) => {
         const status = getStepStatus(index)
-        const isDone = status === "done"
+        const isDone = status === "succeeded"
         const isActive = status === "active"
         const isError = status === "error"
-        const isCancelled = status === "cancelled"
+        const isCancelled = status === "canceled"
 
         return (
           <div key={step.key} className="flex items-center gap-3">
@@ -123,10 +123,12 @@ export function FlowSteps({
 
       {showLog && logs && logs.length > 0 && (
         <div className="border-t border-border pt-3">
-          <button
+          <Button
             type="button"
+            variant="ghost"
+            size="sm"
             onClick={() => setExpanded(!expanded)}
-            className="flex w-full items-center justify-between text-meta font-bold text-text"
+            className="flex w-full items-center justify-between text-meta font-bold text-text h-auto p-0"
           >
             <span>Nhật ký</span>
             {expanded ? (
@@ -134,7 +136,7 @@ export function FlowSteps({
             ) : (
               <ChevronDownIcon />
             )}
-          </button>
+          </Button>
           {expanded && (
             <div className="mt-2 max-h-40 overflow-y-auto rounded-lg bg-surface-alt p-2">
               {logs.map((log) => (

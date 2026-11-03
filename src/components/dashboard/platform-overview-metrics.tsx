@@ -2,6 +2,7 @@
 
 import React, { useState } from "react"
 import Link from "next/link"
+import { Button } from "@/components/ui/button"
 import { StatTile } from "@/components/ui/stat-tile"
 import { Building2, Clock, AlertTriangle, ArrowRight, Zap } from "@/components/ui/icons"
 import { VietQrTopupModal } from "@/components/platform/vietqr-topup-modal"
@@ -75,14 +76,16 @@ export function PlatformOverviewMetrics({
             </p>
           </div>
           <div className="flex items-center gap-2">
-            <button
+            <Button
               type="button"
+              variant="outline"
+              size="sm"
               onClick={() => setIsTopupOpen(true)}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-primary/30 bg-primary/5 text-body-sm font-semibold text-primary hover:bg-primary/10 transition-colors"
+              className="inline-flex items-center gap-1.5 border-primary/30 bg-primary/5 text-body-sm font-semibold text-primary hover:bg-primary/10"
             >
               <Zap className="w-4 h-4" aria-hidden="true" />
               <span>Nạp Credit VietQR</span>
-            </button>
+            </Button>
             <Link
               href={"/van-hanh/to-chuc" as never}
               className="inline-flex items-center gap-1.5 text-body-sm font-semibold text-primary hover:underline"

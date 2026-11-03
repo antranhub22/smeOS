@@ -3,6 +3,7 @@
 import React, { useState } from "react"
 import { Radio, X, Wallet, CheckCircle2, Ban } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import { PartnerProductCard } from "@/components/templates/coordinator/partner-product-card"
 import { FloristJobCard } from "@/components/templates/coordinator/florist-job-card"
 import { AIQCReportCard } from "@/components/templates/coordinator/ai-qc-report-card"
@@ -324,7 +325,7 @@ export function CoordinatorOrderDetailModal({
               {!["COMPLETED", "CANCELLED", "DELIVERED"].includes(order.stage) && (
                 <div className="p-3 rounded-xl border border-dashed border-border flex flex-col gap-2">
                   <span className="font-bold text-text">Huỷ đơn (cần quyền điều hành)</span>
-                  <input className={fieldClass} placeholder="Lý do huỷ" value={cancelReason} onChange={(e) => setCancelReason(e.target.value)} />
+                  <Input placeholder="Lý do huỷ" value={cancelReason} onChange={(e) => setCancelReason(e.target.value)} />
                   <Button size="sm" variant="outline" onClick={() => void handleCancelOrder()} className="w-fit gap-1 text-danger border-danger/40">
                     <Ban size={13} /> Huỷ đơn
                   </Button>

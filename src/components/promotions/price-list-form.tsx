@@ -7,6 +7,7 @@ import { ActiveSwitch } from "@/components/promotions/active-switch"
 import { Button } from "@/components/ui/button"
 import { Disclosure } from "@/components/ui/disclosure"
 import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
 
 export interface PriceListFormValue {
   id?: string | undefined
@@ -93,15 +94,28 @@ export function PriceListForm({
           <p className="text-body-sm text-text-muted">Bảng giá gồm mọi sản phẩm đang bán.</p>
         ) : (
           <div className="flex flex-wrap gap-2">
-            <button type="button" aria-pressed={v.categories.length === 0} onClick={() => set("categories", [])}
-              className={`min-h-9 rounded-full border px-3 text-body-sm ${v.categories.length === 0 ? "border-primary bg-primary-muted text-primary" : "border-border bg-surface text-text"}`}>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              aria-pressed={v.categories.length === 0}
+              onClick={() => set("categories", [])}
+              className={`min-h-9 h-auto rounded-full border px-3 text-body-sm ${v.categories.length === 0 ? "border-primary bg-primary-muted text-primary" : "border-border bg-surface text-text"}`}
+            >
               Tất cả
-            </button>
+            </Button>
             {categories.map((c) => (
-              <button key={c.value} type="button" aria-pressed={v.categories.includes(c.value)} onClick={() => toggleCategory(c.value)}
-                className={`min-h-9 rounded-full border px-3 text-body-sm ${v.categories.includes(c.value) ? "border-primary bg-primary-muted text-primary" : "border-border bg-surface text-text"}`}>
+              <Button
+                key={c.value}
+                type="button"
+                variant="ghost"
+                size="sm"
+                aria-pressed={v.categories.includes(c.value)}
+                onClick={() => toggleCategory(c.value)}
+                className={`min-h-9 h-auto rounded-full border px-3 text-body-sm ${v.categories.includes(c.value) ? "border-primary bg-primary-muted text-primary" : "border-border bg-surface text-text"}`}
+              >
                 {c.label}
-              </button>
+              </Button>
             ))}
           </div>
         )}
@@ -116,9 +130,14 @@ export function PriceListForm({
           </label>
           <label className={FIELD}>
             Ghi chú cuối bảng
-            <textarea value={v.note} onChange={(e) => set("note", e.target.value)} rows={3} maxLength={1000}
-              className="rounded-xl border border-border bg-surface px-3 py-2 text-body text-text focus-visible:outline-2 focus-visible:outline-primary"
-              placeholder="Ví dụ: Giá đã gồm VAT, chưa gồm phí giao hàng" />
+            <Textarea
+              value={v.note}
+              onChange={(e) => set("note", e.target.value)}
+              rows={3}
+              maxLength={1000}
+              className="text-body"
+              placeholder="Ví dụ: Giá đã gồm VAT, chưa gồm phí giao hàng"
+            />
             {err("note")}
           </label>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">

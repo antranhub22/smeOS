@@ -76,7 +76,7 @@ export function CopilotMessageItem({
 
   if (isSystem) {
     return (
-      <div className="rounded-lg bg-surface-raised border border-border p-2.5 text-center text-caption text-muted-foreground italic">
+      <div className="rounded-lg bg-surface-raised border border-border p-2.5 text-center text-caption text-text-muted italic">
         {message.content}
       </div>
     )
@@ -92,10 +92,10 @@ export function CopilotMessageItem({
 
       <div className="max-w-[85%] space-y-2">
         <div
-          className={`rounded-2xl px-3.5 py-2 text-xs leading-relaxed whitespace-pre-line transition-all ${
+          className={`rounded-2xl px-3.5 py-2 text-caption leading-relaxed whitespace-pre-line transition-all ${
             isUser
               ? "bg-primary text-white font-medium rounded-br-none"
-              : "bg-surface-raised border border-border text-foreground rounded-bl-none shadow-2xs select-text"
+              : "bg-surface-raised border border-border text-text rounded-bl-none shadow-2xs select-text"
           }`}
         >
           {displayedText}
@@ -110,7 +110,7 @@ export function CopilotMessageItem({
             <Button
               size="sm"
               onClick={() => onNavigate(targetRoute)}
-              className="w-full bg-primary hover:bg-primary-dark text-white text-xs font-semibold flex items-center justify-center gap-1.5 shadow-xs"
+              className="w-full bg-primary hover:bg-primary-dark text-white text-caption font-semibold flex items-center justify-center gap-1.5 shadow-xs"
             >
               <BookOpen className="h-3.5 w-3.5" />
               {actionLabel}
@@ -140,7 +140,7 @@ export function CopilotMessageItem({
                 )}
 
                 <div className="flex-1 min-w-0">
-                  <div className="font-bold text-foreground text-xs truncate">
+                  <div className="font-bold text-text text-caption truncate">
                     {f.productName}
                   </div>
                   <div className="text-primary font-extrabold text-caption">

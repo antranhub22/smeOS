@@ -63,13 +63,13 @@ export function SettingsTabsNav({
         const isActive = activeTab === tab.key
         return (
           <button
-            key={tab.key}
             type="button"
+            key={tab.key}
             onClick={() => onSelectTab(tab.key)}
-            className={`flex items-center gap-2 px-3.5 py-2.5 rounded-xl text-xs font-bold transition-all whitespace-nowrap ${
+            className={`flex items-center gap-2 px-3.5 py-2.5 rounded-xl text-caption font-bold transition-all whitespace-nowrap cursor-pointer ${
               isActive
                 ? "bg-primary text-primary-foreground shadow-xs"
-                : "text-text-muted hover:text-text hover:bg-background"
+                : "text-text-muted hover:text-text hover:bg-surface-alt"
             }`}
           >
             <Icon size={15} />

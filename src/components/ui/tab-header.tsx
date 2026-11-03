@@ -132,7 +132,7 @@ export function TabActionHeader({
               disabled={tab.disabled}
               onClick={() => onTabChange(tab.id)}
               className={cn(
-                "flex items-center gap-2 py-2 px-3.5 rounded-xl text-xs sm:text-body-sm font-bold transition-all whitespace-nowrap flex-shrink-0",
+                "flex items-center gap-2 py-2 px-3.5 rounded-xl text-caption sm:text-body-sm font-bold transition-all whitespace-nowrap flex-shrink-0",
                 "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
                 isActive
                   ? "bg-surface text-primary shadow-sm border border-border"
@@ -176,7 +176,7 @@ export function TabActionHeader({
                 disabled={action.disabled || action.loading}
                 title={action.tooltip || action.label}
                 className={cn(
-                  "flex items-center gap-1.5 px-3.5 h-8 sm:h-9 rounded-xl text-xs font-bold transition-all",
+                  "flex items-center gap-1.5 px-3.5 h-8 sm:h-9 rounded-xl text-caption font-bold transition-all",
                   "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
                   getVariantStyles(action.variant),
                   (action.disabled || action.loading) && "opacity-60 cursor-not-allowed"

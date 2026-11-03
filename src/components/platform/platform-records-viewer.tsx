@@ -31,13 +31,13 @@ const DOMAIN_META: Record<
   RecordDomain,
   { label: string; icon: React.ElementType; color: string }
 > = {
-  catalog: { label: "Danh mục sản phẩm", icon: Package, color: "text-emerald-600" },
-  orders: { label: "Đơn hàng", icon: ShoppingCart, color: "text-blue-600" },
-  members: { label: "Thành viên", icon: Users, color: "text-violet-600" },
-  branches: { label: "Chi nhánh", icon: Building2, color: "text-amber-600" },
-  customers: { label: "Khách hàng", icon: UserCircle, color: "text-rose-600" },
+  catalog: { label: "Danh mục sản phẩm", icon: Package, color: "text-success" },
+  orders: { label: "Đơn hàng", icon: ShoppingCart, color: "text-info" },
+  members: { label: "Thành viên", icon: Users, color: "text-accent" },
+  branches: { label: "Chi nhánh", icon: Building2, color: "text-warning" },
+  customers: { label: "Khách hàng", icon: UserCircle, color: "text-danger" },
   jobs: { label: "AI Jobs", icon: Cpu, color: "text-primary" },
-  spreadsheets: { label: "File Excel / Bảng tính gốc", icon: FileSpreadsheet, color: "text-teal-600" },
+  spreadsheets: { label: "File Excel / Bảng tính gốc", icon: FileSpreadsheet, color: "text-success" },
 }
 
 const STATUS_COLOR: Record<string, string> = {
@@ -311,7 +311,7 @@ export function PlatformRecordsViewer({
       ) : (
         <>
           <div className="overflow-x-auto rounded-2xl border border-border">
-            <table className="w-full text-left text-xs min-w-max">
+            <table className="w-full text-left text-caption min-w-max">
               <thead>
                 <tr className="border-b border-border bg-surface-alt">
                   <th className="py-2.5 px-3 font-bold text-text-muted w-8">#</th>
@@ -367,10 +367,10 @@ export function PlatformRecordsViewer({
                   const p = i + 1
                   return (
                     <button
-                      key={p}
                       type="button"
+                      key={p}
                       onClick={() => void loadPage(p)}
-                      className={`h-8 w-8 rounded-lg text-caption font-bold transition-colors ${
+                      className={`cursor-pointer inline-flex items-center justify-center h-8 w-8 rounded-lg text-caption font-bold transition-colors ${
                         p === page
                           ? "bg-primary text-white"
                           : "hover:bg-surface-alt text-text-muted"

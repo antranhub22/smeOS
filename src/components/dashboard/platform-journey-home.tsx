@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import { Sparkles, SlidersHorizontal } from "@/components/ui/icons"
+import { Button } from "@/components/ui/button"
 import { PLATFORM_JOURNEYS } from "@/modules/journey/domain/journey-catalog"
 import type { JourneyDefinition } from "@/modules/journey/domain/journey-model"
 import { createJourneyState } from "@/modules/journey/domain/journey-state"
@@ -107,14 +108,16 @@ export function PlatformJourneyHome({
               Bạn đang ở Chế độ chuyên gia (Bảng điều khiển số liệu tổng quan)
             </span>
           </div>
-          <button
+          <Button
             type="button"
+            variant="outline"
+            size="sm"
             onClick={() => handleToggleExpertMode(false)}
-            className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-surface border border-border hover:bg-surface-alt text-caption font-bold text-primary transition-colors cursor-pointer"
+            className="inline-flex items-center gap-1.5 text-caption font-bold text-primary"
           >
             <Sparkles className="w-3.5 h-3.5" aria-hidden="true" />
             <span>Chuyển sang Chế độ hành trình tác vụ</span>
-          </button>
+          </Button>
         </div>
         {orgs && health ? (
           <PlatformOverviewMetrics orgs={orgs} health={health} />
@@ -157,13 +160,13 @@ export function PlatformJourneyHome({
               </p>
             </div>
             {activeJourney.primaryHref && (
-              <button
+              <Button
                 type="button"
                 onClick={() => router.push(activeJourney.primaryHref as never)}
-                className="px-5 py-2.5 rounded-lg bg-primary text-surface text-body-sm font-bold hover:bg-primary-dark transition-colors cursor-pointer"
+                className="font-bold"
               >
                 Mở giao diện tác vụ chi tiết
-              </button>
+              </Button>
             )}
           </div>
         )}

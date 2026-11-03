@@ -60,7 +60,7 @@ export default function DangNhapPage() {
           <button
             type="button"
             onClick={() => setCheDo("dang-nhap")}
-            className={`py-2 text-center text-body-sm font-bold rounded-xl transition-all ${
+            className={`cursor-pointer py-2 text-center text-body-sm font-bold rounded-xl transition-all ${
               cheDo === "dang-nhap"
                 ? "bg-surface text-primary shadow-xs border border-border/60"
                 : "text-text-muted hover:text-text"
@@ -72,7 +72,7 @@ export default function DangNhapPage() {
           <button
             type="button"
             onClick={() => setCheDo("dang-ky")}
-            className={`py-2 text-center text-body-sm font-bold rounded-xl transition-all ${
+            className={`cursor-pointer py-2 text-center text-body-sm font-bold rounded-xl transition-all ${
               cheDo === "dang-ky"
                 ? "bg-surface text-primary shadow-xs border border-border/60"
                 : "text-text-muted hover:text-text"
@@ -84,7 +84,7 @@ export default function DangNhapPage() {
           <button
             type="button"
             onClick={() => setCheDo("dung-thu")}
-            className={`py-2 text-center text-body-sm font-bold rounded-xl transition-all flex items-center justify-center gap-1.5 ${
+            className={`cursor-pointer py-2 text-center text-body-sm font-bold rounded-xl transition-all flex items-center justify-center gap-1.5 ${
               cheDo === "dung-thu"
                 ? "bg-primary text-text-inverse shadow-xs font-extrabold"
                 : "text-primary hover:text-primary-hover font-semibold"

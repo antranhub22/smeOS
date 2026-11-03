@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react"
 import { ShieldCheck } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import { EmptyState } from "@/components/ui/empty-state"
 import { InlineError } from "@/components/ui/inline-error"
 import { SkeletonBlock } from "@/components/ui/skeleton"
@@ -57,7 +58,7 @@ export function ApprovalRequestsList() {
                 </p>
               </div>
               <div className="flex flex-col gap-2 sm:flex-row">
-                <input
+                <Input
                   aria-label={`Ghi chú cho đơn ${i.order.code} (bắt buộc khi từ chối)`}
                   placeholder="Ghi chú (bắt buộc khi từ chối)"
                   value={notes[i.id] ?? ""}

@@ -5,6 +5,7 @@ import { Clock, RefreshCw } from "@/components/ui/icons"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { Checkbox } from "@/components/ui/checkbox"
 import type { PlatformFeedPost } from "./platform-feed-preview"
 
 export interface SchedulePostItemCardProps {
@@ -39,15 +40,28 @@ export function SchedulePostItemCard({
           : "border-border hover:border-primary/40 bg-surface"
       }`}
     >
-      <input
-        type="checkbox"
-        checked={isChecked}
-        onChange={(e) => {
+      <div
+        role="button"
+        tabIndex={0}
+        onClick={(e) => {
           e.stopPropagation()
           onToggleCheck()
         }}
-        className="h-4 w-4 rounded accent-primary cursor-pointer"
-      />
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault()
+            e.stopPropagation()
+            onToggleCheck()
+          }
+        }}
+        aria-label={`Chọn bài ${item.title}`}
+      >
+        <Checkbox
+          checked={isChecked}
+          onCheckedChange={onToggleCheck}
+          aria-label={item.title}
+        />
+      </div>
       {item.media_url && (
         <div className="w-11 h-11 rounded-lg overflow-hidden flex-shrink-0 bg-surface-alt border border-border shadow-2xs">
           <img

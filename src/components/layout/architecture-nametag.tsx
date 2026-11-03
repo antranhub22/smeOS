@@ -13,6 +13,7 @@ import { usePathname, useRouter } from "next/navigation"
 import { useSession } from "@/lib/session"
 import { cn } from "@/lib/utils"
 import { FlaskConical, Check, ChevronDown } from "@/components/ui/icons"
+import { Button } from "@/components/ui/button"
 import { DEV_ROLE_PRESETS, type DevRoleOverride } from "@/lib/dev-role-override"
 
 const INDUSTRY_SHORT_NAME: Record<string, string> = {
@@ -62,7 +63,7 @@ export function ArchitectureNametag({ isDev = false }: Props) {
         label: "SaaS Mother",
         title: "Hệ điều hành Nền tảng Mẹ",
         badgeClass:
-          "bg-orchid-50 text-orchid-700 border-orchid-200/90",
+          "bg-primary/10 text-primary border-primary/20",
       }
     }
 
@@ -79,7 +80,7 @@ export function ArchitectureNametag({ isDev = false }: Props) {
         label: `SaaS Ngành • ${industryShort}`,
         title: `Hệ điều hành Chuẩn hóa & Mạng lưới Ngành`,
         badgeClass:
-          "bg-lagoon-50 text-lagoon-700 border-lagoon-200/90",
+          "bg-info-bg text-info border-border",
       }
     }
 
@@ -95,7 +96,7 @@ export function ArchitectureNametag({ isDev = false }: Props) {
         label: `ChainOS • ${industryShort}`,
         title: `Hệ điều hành Mạng lưới Chuỗi`,
         badgeClass:
-          "bg-azure-50 text-azure-700 border-azure-200/90",
+          "bg-accent/10 text-accent border-accent/20",
       }
     }
 
@@ -104,7 +105,7 @@ export function ArchitectureNametag({ isDev = false }: Props) {
       label: `StoreOS • ${industryShort}`,
       title: `Hệ điều hành Cửa hàng Cơ sở`,
       badgeClass:
-        "bg-mint-50 text-mint-700 border-mint-200/90",
+        "bg-success-bg text-success border-success-border",
     }
   }, [pathname, organizationType, roleKey, organization?.industry])
 
@@ -167,7 +168,7 @@ export function ArchitectureNametag({ isDev = false }: Props) {
         aria-expanded={open}
         aria-haspopup="listbox"
         aria-label={`Tầng kiến trúc: ${nametag.label}. Click để switch vai dev`}
-        className="flex items-center"
+        className="flex items-center cursor-pointer"
       >
         {badge}
       </button>
@@ -185,18 +186,18 @@ export function ArchitectureNametag({ isDev = false }: Props) {
           <div
             role="listbox"
             aria-label="Chọn vai dev"
-            className="absolute left-0 top-full z-[9999] mt-2 w-64 overflow-hidden rounded-xl border border-sand-300 bg-sand-50 shadow-2xl"
+            className="absolute left-0 top-full z-[9999] mt-2 w-64 overflow-hidden rounded-xl border border-border bg-surface shadow-2xl"
           >
           {/* Header */}
-          <div className="flex items-center gap-1.5 border-b border-sand-200 px-3 py-2">
-            <FlaskConical size={11} className="text-sand-600" aria-hidden />
-            <span className="text-caption font-bold uppercase tracking-widest text-sand-700">
+          <div className="flex items-center gap-1.5 border-b border-border px-3 py-2">
+            <FlaskConical size={11} className="text-text-muted" aria-hidden />
+            <span className="text-caption font-bold uppercase tracking-widest text-text">
               Dev Role Override
             </span>
           </div>
 
           {/* Presets */}
-          <ul className="divide-y divide-sand-100">
+          <ul className="divide-y divide-border">
             {DEV_ROLE_PRESETS.length === 0 ? (
               <li className="px-3 py-2 text-caption text-text-muted">Chưa có vai dev mẫu</li>
             ) : (
@@ -207,24 +208,27 @@ export function ArchitectureNametag({ isDev = false }: Props) {
                   <li key={preset.roleKey} role="option" aria-selected={isActive}>
                     <button
                       type="button"
-                      onClick={() => applyOverride(preset)}
                       disabled={isLoading}
+                      onClick={() => {
+                        if (!isLoading) applyOverride(preset)
+                      }}
+                      aria-disabled={isLoading}
                       className={cn(
-                        "flex w-full items-center gap-2 px-3 py-2 text-left text-meta transition-colors",
+                        "flex w-full items-center gap-2 px-3 py-2 text-left text-meta transition-colors cursor-pointer",
                         isActive
-                          ? "bg-sand-200 font-bold text-sand-900"
-                          : "text-sand-800 hover:bg-sand-100",
-                        isLoading && "opacity-50"
+                          ? "bg-surface-alt font-bold text-text"
+                          : "text-text hover:bg-surface-alt",
+                        isLoading && "opacity-50 cursor-not-allowed"
                       )}
                     >
                       {isActive ? (
-                        <Check size={11} className="flex-shrink-0 text-sand-700" aria-hidden />
+                        <Check size={11} className="flex-shrink-0 text-text" aria-hidden />
                       ) : (
                         <span className="h-[11px] w-[11px] flex-shrink-0" aria-hidden />
                       )}
                       <span className="flex-1">{preset.label}</span>
                       {isLoading && (
-                        <span className="text-caption text-sand-500">Đang lưu…</span>
+                        <span className="text-caption text-text-muted">Đang lưu…</span>
                       )}
                     </button>
                   </li>
@@ -234,15 +238,17 @@ export function ArchitectureNametag({ isDev = false }: Props) {
           </ul>
 
           {/* Clear override */}
-          <div className="border-t border-sand-200 p-2">
-            <button
+          <div className="border-t border-border p-2">
+            <Button
               type="button"
+              variant="ghost"
+              size="sm"
               onClick={() => applyOverride(null)}
               disabled={loading === "clear"}
-              className="w-full rounded-lg px-3 py-1.5 text-center text-caption text-sand-700 hover:bg-sand-100"
+              className="w-full text-center text-caption text-text hover:bg-surface-alt"
             >
               {loading === "clear" ? "Đang xoá…" : "↩ Xoá override — dùng session thật"}
-            </button>
+            </Button>
           </div>
         </div>
       </>

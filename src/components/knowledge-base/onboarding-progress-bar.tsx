@@ -25,32 +25,32 @@ export function OnboardingProgressBar() {
   const percent = Math.round((completedCount / steps.length) * 100)
 
   return (
-    <div className="rounded-2xl border border-border bg-card p-4 sm:p-5 shadow-sm space-y-4">
+    <div className="rounded-2xl border border-border bg-surface p-4 sm:p-5 shadow-sm space-y-4">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
         <div className="flex items-center gap-2">
           <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-success/15 text-success">
             <ShieldCheck className="h-5 w-5" />
           </div>
           <div>
-            <div className="text-sm font-extrabold text-foreground flex items-center gap-2">
+            <div className="text-body-sm font-extrabold text-text flex items-center gap-2">
               Tiến Độ Khởi Tạo Dữ Liệu Cửa Hàng (Commercial-Ready)
               <span className="rounded-full bg-success/15 px-2 py-0.5 text-caption font-bold text-success">
                 100% Sẵn Sàng
               </span>
             </div>
-            <div className="text-xs text-muted-foreground">
+            <div className="text-caption text-text-muted">
               Đã hoàn thành {completedCount}/{steps.length} tiêu chuẩn nhập liệu cốt lõi của smeOS
             </div>
           </div>
         </div>
 
         <div className="text-right">
-          <span className="text-xl font-black text-success">{percent}%</span>
+          <span className="text-title font-black text-success">{percent}%</span>
         </div>
       </div>
 
       {/* Progress Bar */}
-      <div className="h-2 w-full overflow-hidden rounded-full bg-muted">
+      <div className="h-2 w-full overflow-hidden rounded-full bg-surface-alt">
         <div
           className="h-full bg-success transition-all duration-500 rounded-full"
           style={{ width: `${percent}%` }}
@@ -62,14 +62,14 @@ export function OnboardingProgressBar() {
         {steps.map((step) => (
           <div
             key={step.id}
-            className="flex items-center gap-1.5 rounded-lg border border-border/80 bg-background/50 p-2 text-caption font-medium"
+            className="flex items-center gap-1.5 rounded-lg border border-border/80 bg-surface-alt/50 p-2 text-caption font-medium"
           >
             {step.completed ? (
               <CheckCircle2 className="h-3.5 w-3.5 text-success shrink-0" />
             ) : (
-              <Circle className="h-3.5 w-3.5 text-muted-foreground shrink-0" />
+              <Circle className="h-3.5 w-3.5 text-text-muted shrink-0" />
             )}
-            <span className="truncate text-foreground font-semibold">{step.title}</span>
+            <span className="truncate text-text font-semibold">{step.title}</span>
           </div>
         ))}
       </div>
