@@ -41,7 +41,7 @@ export function CreateDesignCard({
           <div className="flex items-center gap-2 text-title-sm font-bold text-text">
             <Layers size={18} className="text-primary" />
             <span>{cfg.cardTitle}</span>
-            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-caption font-bold bg-danger-bg text-danger border border-danger/30">
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-caption font-bold bg-danger-bg text-danger-text border border-danger/30">
               <ShieldCheck size={10} />
               Đặc điểm niêm yết cam kết *
             </span>

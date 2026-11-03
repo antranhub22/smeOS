@@ -228,7 +228,7 @@ export function StorageTrashTab({ onItemRestored }: StorageTrashTabProps) {
                       <span
                         className={`px-2 py-0.5 rounded-md text-caption font-extrabold ${
                           isDangerCountdown
-                            ? "bg-danger-bg text-danger border border-danger/30"
+                            ? "bg-danger-bg text-danger-text border border-danger/30"
                             : "bg-warning-bg text-warning border border-warning/30"
                         }`}
                       >

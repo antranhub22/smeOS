@@ -63,7 +63,7 @@ export default function DangNhapPage() {
             className={`cursor-pointer py-2 text-center text-body-sm font-bold rounded-xl transition-all ${
               cheDo === "dang-nhap"
                 ? "bg-surface text-primary shadow-xs border border-border/60"
-                : "text-text-muted hover:text-text"
+                : "text-text hover:text-primary"
             }`}
           >
             Đăng nhập
@@ -75,7 +75,7 @@ export default function DangNhapPage() {
             className={`cursor-pointer py-2 text-center text-body-sm font-bold rounded-xl transition-all ${
               cheDo === "dang-ky"
                 ? "bg-surface text-primary shadow-xs border border-border/60"
-                : "text-text-muted hover:text-text"
+                : "text-text hover:text-primary"
             }`}
           >
             Đăng ký mới
