@@ -7,9 +7,9 @@
 ## 1. Kết luận
 
 - **Khung kiến trúc UI đạt mức có cổng kiểm tự động.** Token ngữ nghĩa có một nguồn (`src/styles/tokens/`), shell dùng chung (`AppShell`, `LiveRegionProvider`), 48 primitive trong `src/components/ui/` có test, Screen Contract phủ 111/111 trang, và các cổng ratchet trong CI (ESLint, UX lint, thuật ngữ ngành, gọi `Intl` trực tiếp) chặn nợ tăng thêm.
-- **Độ phủ trên màn hình thật còn thấp.** Baseline UX lint còn 5.498 vi phạm; 1.009 `<button>` và 636 `<input>` thô ngoài `src/components/ui/`; 12/111 trang gọi trực tiếp `PageLayout`/`PageHeader`; 90 tệp nguồn vượt 350 dòng.
-- **Trợ năng có lỗi mới, hiệu năng chưa đo.** `test:e2e:ux` có 12 lỗi mới so với `main`: luật R20 ("`<h1>` chỉ trong PageHeader") đổi `<h1>` thành `<h2>` ở khoảng 40 tệp không dùng PageHeader, để lại trang chủ, các công cụ, `/van-hanh/*` và một số trang công khai không có tiêu đề cấp 1. Web Vitals chưa đo.
-- **Kết luận bàn giao:** đạt điều kiện bàn giao thương mại với nợ UX được kiểm soát bằng ratchet và có lộ trình (mục 6). Chưa đạt mức "enterprise grade toàn diện" ở các miền D, F, G, J; lỗi `<h1>` ở miền F phải xử lý trước khi hợp nhất vào `main`.
+- **Độ phủ trên màn hình thật còn thấp.** Baseline UX lint còn 5.491 vi phạm; 1.009 `<button>` và 636 `<input>` thô ngoài `src/components/ui/`; 43/111 trang gọi trực tiếp `PageLayout`/`PageHeader`/`ToolHero`; 87 tệp nguồn vượt 350 dòng.
+- **Trợ năng: bộ E2E UX đạt 22/22, hiệu năng chưa đo.** Mọi trang có đúng một `<h1>`: trang công cụ qua `ToolHero`, trang nội bộ qua `PageHeader`, trang công khai giữ `<h1>` như `main`. Kiểm thủ công WCAG 12 hành trình và Web Vitals chưa thực hiện.
+- **Kết luận bàn giao:** đạt điều kiện bàn giao thương mại với nợ UX được kiểm soát bằng ratchet và có lộ trình (mục 6). Chưa đạt mức "enterprise grade toàn diện" ở các miền D, F, G, J.
 
 ## 2. Cổng CI
 
@@ -18,10 +18,10 @@ Chạy trên nhánh khắc phục, Postgres 16 cục bộ, ngày 03/11/2026.
 | Cổng | Kết quả |
 |---|---|
 | `typecheck`, `lint:ratchet`, `lint:ux -- --check`, `check:docs`, `check:layers`, `check:tokens-doc`, `check:template-ssot`, `check:screen-contracts`, `check:industry`, `check:schemas:creative`, `build` | Đạt |
-| `test:tenant` · `test:platform` | Đạt — 692/692 · 36/36 |
-| `npm test` | Đạt — 3.847 ca thử |
+| `test:tenant` · `test:platform` | Đạt — 693/693 · 36/36 |
+| `npm test` | Đạt — 3.861 ca thử |
 | `check:schemas:coordinator` · `check:schemas:content-engine` | Đỏ trên cả `main` — lỗi có sẵn, theo phiên bản `zod` của môi trường đo |
-| `test:e2e:ux` (Playwright + axe), bản build production, DB đã seed | 10 đạt / 12 lỗi; `main` cùng điều kiện 21 đạt / 1 lỗi. 11 lỗi mới do trang không có `<h1>`, 1 do chữ liên kết bỏ qua đổi |
+| `test:e2e:ux` (Playwright + axe), bản build production, DB đã seed | Đạt — 22/22; `main` cùng điều kiện 21/22 (ảnh mốc /vai-tro) |
 
 ## 3. Theo miền kiến trúc
 
@@ -30,13 +30,13 @@ Chạy trên nhánh khắc phục, Postgres 16 cục bộ, ngày 03/11/2026.
 | A. Kiến trúc UI | Đạt một phần | `AppShell` dùng chung, có `LiveRegionProvider`; 79/111 `page.tsx` là client component (đặc tả 04 §3 yêu cầu server component mặc định) |
 | B. Design System | Đạt | Token ở `src/styles/tokens/*.css`, `check:tokens-doc` đồng bộ tài liệu; 3 preset `moc-lan`, `modern-slate`, `pure-swiss` (+ bí danh `clean-blue`); `data-theme` gắn từ server |
 | C. Component | Đạt một phần | 48 primitive, 17 tệp test trong `src/components/ui/__tests__/`; chưa có `date-picker` (có `date-field`); R18 (điều khiển thô) còn 1.797 trong baseline |
-| D. Chuẩn UX | Đạt một phần | Luật R13–R23 trong `scripts/ux-lint/`; 12/111 trang gọi trực tiếp `PageLayout`/`PageHeader` |
+| D. Chuẩn UX | Đạt một phần | Luật R13–R23 trong `scripts/ux-lint/`; 43/111 trang gọi trực tiếp `PageLayout`/`PageHeader`/`ToolHero` |
 | E. Screen Contract | Đạt | `check:screen-contracts`: 32 v2 · 72 v1 · 7 miễn trừ · 0 thiếu (111 trang) |
-| F. Responsive & trợ năng | Chưa đạt | Copilot là BottomSheet dưới `sm` (`floraos-global-copilot.tsx:206`); không có kết quả axe, bàn phím hay trình đọc màn hình được lưu |
+| F. Responsive & trợ năng | Đạt một phần | Copilot là BottomSheet dưới `sm` (`floraos-global-copilot.tsx:206`); không có kết quả axe, bàn phím hay trình đọc màn hình được lưu |
 | G. Kiểm thử giao diện | Đạt một phần | `tests/e2e/ux/` có 8 tệp (a11y, visual); ảnh mốc visual chỉ ở vài màn (404, vai trò); `ui-weekly.yml` chạy hằng tuần |
 | H. Quản trị agent | Đạt | Tài liệu SSOT trong `00-DOCUMENTATION-REGISTRY.yaml`, `check:docs` xanh |
 | I. Quản trị Design System | Đạt | `docs/design-system/CHANGELOG.md` theo SemVer; `check:tokens-doc` giữ tài liệu token khớp mã |
-| J. Tuân thủ trên màn hình | Chưa đạt | Baseline UX lint 5.498 (mục 4); Thẻ chào giữ nguyên bản `main` theo quyết định PO 03/11/2026 |
+| J. Tuân thủ trên màn hình | Chưa đạt | Baseline UX lint 5.491 (mục 4); Thẻ chào giữ nguyên bản `main` theo quyết định PO 03/11/2026 |
 
 ## 4. Chỉ số định lượng
 
@@ -46,18 +46,18 @@ Chạy trên nhánh khắc phục, Postgres 16 cục bộ, ngày 03/11/2026.
 | K2 | Token shadcn cũ R17 | 933 | như trên |
 | K3 | Điều khiển HTML thô R18 | 1.797 | như trên |
 | K4 | Overlay tự chế R19 | 62 | như trên |
-| K5 | Trang gọi trực tiếp `PageLayout`/`PageHeader` | 12/111 | `grep -l "PageLayout\|PageHeader"` trên `src/app/**/page.tsx` |
+| K5 | Trang gọi trực tiếp `PageLayout`/`PageHeader`/`ToolHero` (các trang còn lại nhận đầu trang qua thành phần con) | 43/111 | `grep -l "PageLayout\|PageHeader"` trên `src/app/**/page.tsx` |
 | K6 | Bao phủ Screen Contract | 111/111 (32 v2, 72 v1, 7 miễn trừ) | `npm run check:screen-contracts` |
 | K7 | Ảnh mốc visual | Vài màn trong `tests/e2e/ux/visual.spec.ts` | đọc mã |
-| K8 | Quét axe critical/serious = 0 | Đạt ở `a11y.spec.ts`; 9 tuyến công cụ dừng ở bước kiểm `<h1>` trước khi quét axe | `npm run test:e2e:ux` |
+| K8 | Quét axe critical/serious = 0 | Đạt trên các tuyến trong `tests/e2e/ux/a11y*.spec.ts` | `npm run test:e2e:ux` |
 | K9 | Kiểm thủ công WCAG 2.2 AA | Chưa kiểm chứng | `docs/design-system/accessibility-audit-12-journeys.md` là quy trình kiểm, chưa có kết quả |
 | K10 | Token không dùng | Chưa đo | — |
-| K11 | Tệp nguồn > 350 dòng | 90 | `wc -l` trên `src/**/*.{ts,tsx}` trừ test |
+| K11 | Tệp nguồn > 350 dòng | 87 | `wc -l` trên `src/**/*.{ts,tsx}` trừ test |
 | K12 | Mâu thuẫn tài liệu và mã | 0 | `npm run check:docs` |
 | K13 | Design System có phiên bản và CHANGELOG | Có | `docs/design-system/CHANGELOG.md` |
-| — | Tổng baseline UX lint | 5.498 | `scripts/ux-lint-baseline.json` |
+| — | Tổng baseline UX lint | 5.491 | `scripts/ux-lint-baseline.json` |
 
-Baseline UX lint trên `main` là 120 vì bộ luật cũ hẹp hơn; con số 5.498 phản ánh luật R1 mở rộng và các luật R17–R23 mới, không phải nợ phát sinh thêm. Trong 5.498 có 131 điểm của vùng Thẻ chào được khôi phục về `main`; 880 điểm trước đây được loại khỏi baseline bằng allowlist theo glob cho `src/components/templates/**` (R1, R21) và `src/components/layout/**` (R19), không phải bằng sửa mã.
+Baseline UX lint trên `main` là 120 vì bộ luật cũ hẹp hơn; con số 5.491 phản ánh luật R1 mở rộng và các luật R17–R23 mới, không phải nợ phát sinh thêm. Trong đó có 131 điểm của vùng Thẻ chào được khôi phục về `main`; 880 điểm trước đây được loại khỏi baseline bằng allowlist theo glob cho `src/components/templates/**` (R1, R21) và `src/components/layout/**` (R19), không phải bằng sửa mã.
 
 ## 5. Phát hiện ưu tiên P1 trong `11_FINDINGS_REGISTER.md`
 

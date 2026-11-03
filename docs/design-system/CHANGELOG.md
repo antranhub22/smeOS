@@ -29,12 +29,12 @@ Tất cả các thay đổi đáng chú ý của SMEOS Design System sẽ đư�
 | K2 | Token shadcn cũ R17 | 933 |
 | K3 | Điều khiển HTML thô R18 | 1.797 |
 | K4 | Overlay tự chế R19 | 62 |
-| K5 | Trang gọi trực tiếp `PageLayout`/`PageHeader` | 12/111 |
+| K5 | Trang gọi trực tiếp `PageLayout`/`PageHeader`/`ToolHero` (các trang còn lại nhận đầu trang qua thành phần con) | 43/111 |
 | K6 | Bao phủ Screen Contract | 111/111 |
 | K7 | Ảnh mốc visual | Vài màn trong `tests/e2e/ux/visual.spec.ts` |
 | K8 | Quét axe critical/serious | Chưa chạy |
 | K9 | Kiểm thủ công WCAG 2.2 AA | Chưa kiểm |
-| K11 | Tệp nguồn > 350 dòng | 90 |
+| K11 | Tệp nguồn > 350 dòng | 87 |
 | K13 | Phiên bản và CHANGELOG | `1.2.0` |
 
 Số liệu đo ngày 03/11/2026; lệnh đo ở `13_RE_AUDIT_ENTERPRISE_REPORT.md` mục 4.
