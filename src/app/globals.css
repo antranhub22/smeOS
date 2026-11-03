@@ -17,6 +17,12 @@ body {
   min-height: 100%;
 }
 
+/* Tiêu điểm không bị che (WCAG 2.4.11): khi cuộn tới phần tử nhận tiêu điểm, chừa vùng của
+   thanh điều hướng đáy (di động) và nút Copilot nổi ở góc dưới. */
+html {
+  scroll-padding-bottom: calc(5.5rem + env(safe-area-inset-bottom));
+}
+
 body {
   background: var(--color-bg);
   color: var(--color-text);

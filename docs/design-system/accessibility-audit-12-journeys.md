@@ -57,6 +57,7 @@ Giới hạn của lần kiểm:
 - **Tương phản:** 3 preset ở giao diện sáng; hệ thống chưa có chế độ tối.
 - **Trang công khai có dữ liệu** của Thẻ chào (`/b`, `/bst`, `/g`) và cổng gia công (`/subcontract`) mới kiểm ở trạng thái không tìm thấy; trạng thái có dữ liệu cần dữ liệu seed cho link gửi và đơn gia công. Ba trang không tìm thấy `/b`, `/g`, `/subcontract` không có liên kết nào để quay lại.
 - **Trình đọc màn hình** (VoiceOver, NVDA) chưa kiểm theo quyết định PO 03/11/2026.
+- **Lỗi đã biết trong vùng PO khoá:** ô tìm kiếm đơn trên `/don-hang` (`src/components/greeting-card/coordinator/coordinator-brochure-tab.tsx`, vùng Thẻ chào) chỉ đổi màu viền khi nhận tiêu điểm, không có vòng tiêu điểm (2.4.7). Chưa sửa khi chưa có PO duyệt; bộ kiểm ghi ở `KNOWN_FROZEN`.
 
 Lỗi đã sửa trong lần kiểm này: nút hiện/ẩn mật khẩu thiếu tên; ô nhập đăng nhập thiếu vòng tiêu điểm; huy hiệu trạng thái dùng `text-danger`/`text-warning` trên nền nhạt (đổi sang `text-danger-text`/`text-warning-text`); ô chọn và ô số thiếu tên ở tạo sản phẩm, cài đặt, ưu đãi; thẻ ngành bị làm mờ dưới ngưỡng tương phản; `PageHeader` và thanh lọc ma trận quản trị gây cuộn ngang ở 640px.
 

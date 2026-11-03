@@ -233,7 +233,7 @@ export function ProductReminderOverrideCard({
                     onClick={() => {
                       if (canEdit) toggleKey(m.key)
                     }}
-                    className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors focus:outline-none ${
+                    className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
                       isEnabled ? "bg-primary" : "bg-surface-alt"
                     } ${!canEdit ? "opacity-40 cursor-not-allowed" : ""}`}
                   >
