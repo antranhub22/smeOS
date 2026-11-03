@@ -3,6 +3,7 @@
  * Thuần: không import hạ tầng. Cột 0 là dấu thời gian, cột 74 là ghi chú thêm.
  */
 import type { PartnerStoreMarketplaceEntity } from "./partner-marketplace.types"
+import { remapRow, type ColumnMapping } from "./partner-marketplace-column-match"
 
 export type PartnerStoreProfile = Omit<PartnerStoreMarketplaceEntity, "id">
 
@@ -21,6 +22,8 @@ export function normalizeTier(raw: string | undefined | null): string {
   return MERGED_TIERS[t.toLowerCase()] ?? t
 }
 export const SURVEY_COLUMN_COUNT = 75
+/** Trần số cột đọc từ tệp nhập — tệp có thể thêm cột ngoài 75 cột gốc. */
+export const MAX_IMPORT_COLUMNS = 200
 /** Trần số dòng mỗi lần nhập — vòng lặp và bộ nhớ luôn có giới hạn. */
 export const MAX_IMPORT_ROWS = 5000
 /** Số ảnh khảo sát tối đa mỗi cửa hàng được tải và hiển thị. */
@@ -114,14 +117,20 @@ export function rowToProfile(row: readonly unknown[]): PartnerStoreProfile | nul
   }
 }
 
-/** Chuyển bảng (dòng 0 là tiêu đề) thành hồ sơ; dòng trống/thiếu tên bị bỏ, tên trùng giữ dòng sau. */
-export function rowsToProfiles(rows: readonly (readonly unknown[])[]): { profiles: PartnerStoreProfile[]; skipped: number } {
+/**
+ * Chuyển bảng (dòng 0 là tiêu đề) thành hồ sơ; dòng trống/thiếu tên bị bỏ, tên trùng giữ dòng sau.
+ * Có `mapping` → lấy cột theo bảng ghép (tệp lệch cột); không có → theo thứ tự cột gốc.
+ */
+export function rowsToProfiles(
+  rows: readonly (readonly unknown[])[],
+  mapping?: ColumnMapping
+): { profiles: PartnerStoreProfile[]; skipped: number } {
   const byKey = new Map<string, PartnerStoreProfile>()
   let skipped = 0
   const data = rows.slice(1, MAX_IMPORT_ROWS + 1)
   data.forEach((row) => {
     if (!row.some((cell) => String(cell ?? "").trim())) return
-    const profile = rowToProfile(row)
+    const profile = rowToProfile(mapping ? remapRow(row, mapping) : row)
     if (!profile) {
       skipped++
       return

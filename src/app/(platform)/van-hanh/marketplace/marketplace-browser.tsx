@@ -30,9 +30,11 @@ interface MarketplaceBrowserProps {
   /** Thay toàn bộ nội dung khi lỗi (vd. link hết hạn). */
   renderError?: (status: number) => React.ReactNode | null
   readOnly?: boolean
+  /** Xoá một hồ sơ (chỉ trang console truyền khi người xem có quyền xoá). Trả câu lỗi hoặc null. */
+  deleteStore?: (store: PartnerStoreMarketplaceEntity) => Promise<string | null>
 }
 
-export function MarketplaceBrowser({ endpoint, title, errorFor, actions, emptyHint, onLoaded, renderError, readOnly = false }: MarketplaceBrowserProps) {
+export function MarketplaceBrowser({ endpoint, title, errorFor, actions, emptyHint, onLoaded, renderError, readOnly = false, deleteStore }: MarketplaceBrowserProps) {
   const [stores, setStores] = useState<PartnerStoreMarketplaceEntity[]>([])
   const [loading, setLoading] = useState(true)
   const [loadError, setLoadError] = useState<{ status: number; message: string } | null>(null)
@@ -135,7 +137,24 @@ export function MarketplaceBrowser({ endpoint, title, errorFor, actions, emptyHi
         </div>
       )}
 
-      <MarketplaceProfileModal key={selectedStore?.id ?? "none"} store={selectedStore} onClose={() => setSelectedStore(null)} readOnly={readOnly} />
+      <MarketplaceProfileModal
+        key={selectedStore?.id ?? "none"}
+        store={selectedStore}
+        onClose={() => setSelectedStore(null)}
+        readOnly={readOnly}
+        {...(deleteStore
+          ? {
+              onDelete: async (store: PartnerStoreMarketplaceEntity) => {
+                const error = await deleteStore(store)
+                if (!error) {
+                  setSelectedStore(null)
+                  await fetchStores()
+                }
+                return error
+              },
+            }
+          : {})}
+      />
     </PageContainer>
   )
 }

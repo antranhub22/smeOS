@@ -5,6 +5,8 @@ import React, { useRef, useState } from "react"
 import { AlertCircle, CheckCircle, Download, FileSpreadsheet, Images, RefreshCw } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { useConfirmDialog } from "@/components/ui/confirm-dialog"
+import type { ColumnMapping } from "@/modules/platform/domain/partner-marketplace-column-match"
+import { MarketplaceColumnMappingDialog, type ColumnMappingPreview } from "./marketplace-column-mapping-dialog"
 
 type Notice = { tone: "success" | "error"; message: string }
 type Summary = { added: number; updated: number; total: number; skipped: number }
@@ -36,6 +38,7 @@ export function MarketplaceSyncActions({ loading, onRefresh }: MarketplaceSyncAc
   const [notice, setNotice] = useState<Notice | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
   const [confirm, confirmDialog] = useConfirmDialog()
+  const [pending, setPending] = useState<{ file: File; preview: ColumnMappingPreview; error?: string } | null>(null)
 
   async function run<T>(kind: "sheet" | "excel" | "photos", call: () => Promise<{ data: T } | { error: string }>, ok: (d: T) => string) {
     setBusy(kind)
@@ -60,19 +63,41 @@ export function MarketplaceSyncActions({ loading, onRefresh }: MarketplaceSyncAc
     await run<Summary>("sheet", () => callApi("/api/v1/platform/marketplace/sync", { method: "POST" }), (s) => importMessage("Đã đồng bộ Sheet", s))
   }
 
+  /** Bước 1: đọc tiêu đề tệp, tự ghép cột theo tên → mở hộp duyệt ghép cột. */
   async function uploadExcel(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0]
     if (fileInputRef.current) fileInputRef.current.value = ""
     if (!file) return
-    const yes = await confirm({
-      title: `Nhập tệp ${file.name}?`,
-      consequence: "Hồ sơ cửa hàng trùng tên sẽ được ghi đè bằng dữ liệu trong tệp. Ảnh đã tải được giữ nguyên.",
-      confirmLabel: "Nhập tệp",
-    })
-    if (!yes) return
+    setBusy("excel")
+    setNotice(null)
     const body = new FormData()
     body.append("file", file)
-    await run<Summary>("excel", () => callApi("/api/v1/platform/marketplace/import-excel", { method: "POST", body }), (s) => importMessage("Đã nhập tệp", s))
+    const result = await callApi<ColumnMappingPreview>("/api/v1/platform/marketplace/import-excel/preview", { method: "POST", body })
+    setBusy(null)
+    if ("error" in result) {
+      setNotice({ tone: "error", message: result.error })
+      return
+    }
+    setPending({ file, preview: result.data })
+  }
+
+  /** Bước 2: nhập theo bảng ghép cột đã duyệt. */
+  async function importWithMapping(mapping: ColumnMapping) {
+    if (!pending) return
+    const body = new FormData()
+    body.append("file", pending.file)
+    body.append("mapping", JSON.stringify(mapping))
+    setBusy("excel")
+    const result = await callApi<Summary>("/api/v1/platform/marketplace/import-excel", { method: "POST", body })
+    setBusy(null)
+    // Lỗi → giữ hộp ghép cột (không mất phần đã chỉnh), báo ngay trong hộp
+    if ("error" in result) {
+      setPending({ ...pending, error: result.error })
+      return
+    }
+    setPending(null)
+    setNotice({ tone: "success", message: importMessage("Đã nhập tệp", result.data) })
+    await onRefresh()
   }
 
   async function syncPhotos() {
@@ -93,6 +118,16 @@ export function MarketplaceSyncActions({ loading, onRefresh }: MarketplaceSyncAc
   return (
     <div className="flex flex-wrap items-center gap-2">
       {confirmDialog}
+      {pending && (
+        <MarketplaceColumnMappingDialog
+          fileName={pending.file.name}
+          preview={pending.preview}
+          busy={busy === "excel"}
+          {...(pending.error ? { error: pending.error } : {})}
+          onCancel={() => setPending(null)}
+          onConfirm={(mapping) => void importWithMapping(mapping)}
+        />
+      )}
       {notice && (
         <div
           role="status"
@@ -109,7 +144,7 @@ export function MarketplaceSyncActions({ loading, onRefresh }: MarketplaceSyncAc
 
       <Button type="button" variant="outline" size="sm" onClick={() => fileInputRef.current?.click()} disabled={disabled} title="Nhập tệp khảo sát .xlsx, .xls hoặc .csv (tối đa 10 MB)">
         <FileSpreadsheet className="mr-1.5 h-4 w-4 text-success" />
-        {busy === "excel" ? "Đang nhập tệp..." : "Nhập tệp Excel"}
+        {busy === "excel" ? (pending ? "Đang nhập tệp..." : "Đang đọc tệp...") : "Nhập tệp Excel"}
       </Button>
       <Button type="button" variant="outline" size="sm" onClick={() => void syncSheet()} disabled={disabled} title="Lấy dữ liệu khảo sát mới nhất từ Google Sheet">
         <Download className={`mr-1.5 h-4 w-4 text-primary ${busy === "sheet" ? "animate-pulse motion-reduce:animate-none" : ""}`} />

@@ -90,6 +90,19 @@ export class PartnerMarketplaceRepository implements IPartnerMarketplaceReposito
       data: { photo_keys: photoKeys, photo_source_ids: photoSourceIds, updated_at: new Date() },
     })
   }
+
+  async deleteById(id: string) {
+    // deleteMany: không có dòng → count 0, không ném lỗi; đọc trước để trả tên cho nhật ký
+    return prisma.$transaction(async (tx) => {
+      const row = await tx.partner_marketplace_stores.findUnique({
+        where: { id },
+        select: { shop_name: true, source: true, photo_keys: true },
+      })
+      if (!row) return null
+      const { count } = await tx.partner_marketplace_stores.deleteMany({ where: { id } })
+      return count ? { shopName: row.shop_name, source: row.source, photoKeys: row.photo_keys } : null
+    })
+  }
 }
 
 let instance: IPartnerMarketplaceRepository | null = null

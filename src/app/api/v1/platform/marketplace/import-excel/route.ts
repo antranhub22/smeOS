@@ -1,18 +1,34 @@
-/** POST /api/v1/platform/marketplace/import-excel — nhập tệp khảo sát .xlsx/.xls/.csv (`N17`, tối đa 10 MB). */
+/**
+ * POST /api/v1/platform/marketplace/import-excel — nhập tệp khảo sát .xlsx/.xls/.csv (`N17`, tối đa 10 MB).
+ * Trường `mapping` (JSON, tuỳ chọn): bảng ghép cột đã duyệt ở bước xem trước; thiếu → tự ghép theo tên tiêu đề.
+ */
+import { z } from "zod"
 import { validationFailed } from "@/core/http/errors"
 import { handle, jsonResponse } from "@/core/http/response"
-import { MAX_EXCEL_BYTES, importMarketplaceExcel } from "@/modules/platform/use-cases/manage-partner-marketplace"
+import { SURVEY_COLUMN_COUNT } from "@/modules/platform/domain/partner-marketplace-row-mapper"
+import { importMarketplaceExcel } from "@/modules/platform/use-cases/manage-partner-marketplace"
 import { requirePlatformContext } from "@/modules/platform/use-cases/resolve-platform-session"
+import { readExcelUpload } from "./read-excel-upload"
+
+const MappingSchema = z.array(z.number().int().min(0).nullable()).length(SURVEY_COLUMN_COUNT)
 
 export const POST = handle(async (request) => {
   const pctx = await requirePlatformContext(request)
-  if (Number(request.headers.get("content-length")) > MAX_EXCEL_BYTES + 64 * 1024) {
-    throw validationFailed({ file: "Tệp vượt quá 10 MB" })
+  const { form, file } = await readExcelUpload(request)
+  const rawMapping = form.get("mapping")
+  let mapping: z.infer<typeof MappingSchema> | undefined
+  if (typeof rawMapping === "string" && rawMapping.trim()) {
+    let json: unknown
+    try {
+      json = JSON.parse(rawMapping)
+    } catch {
+      json = null
+    }
+    const parsed = MappingSchema.safeParse(json)
+    if (!parsed.success) throw validationFailed({ mapping: "Bảng ghép cột không hợp lệ" })
+    mapping = parsed.data
   }
-  const file = (await request.formData().catch(() => null))?.get("file")
-  if (!(file instanceof File)) throw validationFailed({ file: "Vui lòng đính kèm tệp Excel" })
-  const bytes = new Uint8Array(await file.arrayBuffer())
-  return jsonResponse({ data: await importMarketplaceExcel(pctx, { name: file.name, bytes }) })
+  return jsonResponse({ data: await importMarketplaceExcel(pctx, file, undefined, mapping) })
 })
 
 export const dynamic = "force-dynamic"
