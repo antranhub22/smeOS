@@ -9,12 +9,12 @@ import { approveAndLogin } from "./ux/helpers"
  *   → Khách nhận phiên → xem mẫu hoa → chọn ưu đãi "Giảm 10%" → đặt → báo thanh toán
  *   → Điều hành xác nhận → Khách xem tracking → mở lại ở trình duyệt khác bằng 4 số cuối SĐT
  *
- * Yêu cầu: docker compose up -d + npm run dev đang chạy tại localhost:3100
+ * Yêu cầu: docker compose up -d + npm run dev đang chạy tại localhost:3200
  */
 
 test.describe.configure({ mode: "serial" })
 
-const BASE = "http://localhost:3100"
+const BASE = "http://localhost:3200"
 
 // Đăng ký tenant & lấy session cookie
 async function registerTenant(request: APIRequestContext, suffix: string) {

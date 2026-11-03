@@ -21,4 +21,12 @@ describe("publicAppUrl — gốc URL cho ảnh xem trước link và link trong 
     vi.stubEnv("RENDER_EXTERNAL_URL", "")
     expect(publicAppUrl()).toBe("")
   })
+
+  it("dev chưa cấu hình: rơi về cổng của `npm run dev` (3200)", () => {
+    for (const k of ["PUBLIC_APP_URL", "NEXT_PUBLIC_APP_URL", "RENDER_EXTERNAL_URL", "VERCEL_URL", "PORT"]) {
+      vi.stubEnv(k, "")
+    }
+    vi.stubEnv("NODE_ENV", "development")
+    expect(publicAppUrl()).toBe("http://localhost:3200")
+  })
 })

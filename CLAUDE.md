@@ -21,6 +21,7 @@ Full rulebook (anti-patterns A1–A12, security, performance, Journey-First UX, 
 
 ## Before coding
 
+- Product context, tiers, glossary: `CONTEXT.md`.
 - Domain skills in `.claude/skills/` load automatically by task (api, ui, ai, worker, db schema, testing, creative studio). Read every skill that applies.
 - Find SSOT in `docs/00-DOCUMENTATION-REGISTRY.yaml` with `grep`; current state: read §4–6 of `docs/kien-truc/TRANG_THAI.md` and grep the rest (never read whole).
 - Read the real code and its tests before changing them; a ticked checklist or a doc is not evidence.

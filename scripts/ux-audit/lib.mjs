@@ -6,7 +6,7 @@ import AxeBuilder from "@axe-core/playwright"
 import pg from "pg"
 import { assertTestDatabase, scanRedFlags, summarize } from "./checks.mjs"
 
-export const BASE = process.env.UX_AUDIT_BASE_URL || "http://localhost:3100"
+export const BASE = process.env.UX_AUDIT_BASE_URL || "http://localhost:3200"
 export const OUT = process.env.UX_AUDIT_OUT || "ux-audit-output"
 const DB = process.env.DATABASE_URL || ""
 const VIEWPORTS = [[390, 844], [1280, 900]]
