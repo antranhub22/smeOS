@@ -1,9 +1,11 @@
 "use client"
 
 import React from "react"
-import { Check, ShoppingBag, MessageCircle } from "@/components/ui/icons"
+import { Check, ShoppingBag } from "@/components/ui/icons"
 import type { PublicCatalogProduct, PublicCatalogShop } from "@/modules/catalog-links/use-cases/get-public-catalog"
-import { formatVnd, getZaloUrl } from "./product-detail-modal"
+import { formatVnd } from "./product-detail-modal"
+import { CardOrderAction } from "./cards/card-order-action"
+import type { PublicEntry } from "./public/public-entry"
 import { SmartFlowerImage } from "./smart-flower-image"
 import type { StyleDefinition } from "@/modules/catalog-studio/domain/entities/catalog-studio.types"
 import { CatalogCardOverlay } from "./cards/catalog-card-overlay"
@@ -16,6 +18,8 @@ interface CatalogProductListViewProps {
   shop: PublicCatalogShop
   style?: StyleDefinition | undefined
   onSelectProduct: (product: PublicCatalogProduct) => void
+  entry: PublicEntry
+  onOrderProduct: (product: PublicCatalogProduct) => void
   onResetFilter: () => void
 }
 
@@ -25,6 +29,8 @@ export function CatalogProductListView({
   shop,
   style,
   onSelectProduct,
+  entry,
+  onOrderProduct,
   onResetFilter,
 }: CatalogProductListViewProps) {
   const fontDisplay = style?.typography.fontDisplay || ""
@@ -46,6 +52,8 @@ export function CatalogProductListView({
           shop={shop}
           style={style}
           onSelectProduct={onSelectProduct}
+          entry={entry}
+          onOrderProduct={onOrderProduct}
         />
       )
     }
@@ -59,6 +67,8 @@ export function CatalogProductListView({
           shop={shop}
           style={style}
           onSelectProduct={onSelectProduct}
+          entry={entry}
+          onOrderProduct={onOrderProduct}
         />
       )
     }
@@ -73,6 +83,8 @@ export function CatalogProductListView({
         style={style}
         aspectRatio={aspect}
         onSelectProduct={onSelectProduct}
+        entry={entry}
+        onOrderProduct={onOrderProduct}
       />
     )
   }
@@ -159,16 +171,7 @@ export function CatalogProductListView({
                     {formatVnd(p.price)}
                   </div>
                 </div>
-                <a
-                  href={getZaloUrl(p, shop)}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{ backgroundColor: `${accentColor}18`, color: accentColor }}
-                  className="p-2 rounded-xl transition-colors"
-                  title="Đặt Zalo"
-                >
-                  <MessageCircle size={16} />
-                </a>
+                <CardOrderAction product={p} shop={shop} entry={entry} onOrderProduct={onOrderProduct} ctaBg={style?.tokens.ctaBg || accentColor} ctaText={style?.tokens.ctaText || "#FFFFFF"} />
               </div>
             </div>
           ))}

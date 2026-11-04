@@ -1,11 +1,12 @@
 "use client"
 
 import React from "react"
-import { MessageCircle } from "@/components/ui/icons"
 import type { PublicCatalogProduct, PublicCatalogShop } from "@/modules/catalog-links/use-cases/get-public-catalog"
 import type { StyleDefinition } from "@/modules/catalog-studio/domain/entities/catalog-studio.types"
 import { SmartFlowerImage } from "../smart-flower-image"
-import { formatVnd, getZaloUrl } from "../product-detail-modal"
+import { formatVnd } from "../product-detail-modal"
+import { CardOrderAction } from "./card-order-action"
+import type { PublicEntry } from "../public/public-entry"
 
 interface CatalogCardPaperProps {
   product: PublicCatalogProduct
@@ -14,6 +15,9 @@ interface CatalogCardPaperProps {
   style?: StyleDefinition | undefined
   aspectRatio?: "square" | "4/5" | undefined
   onSelectProduct: (product: PublicCatalogProduct) => void
+  /** Nút Đặt hàng / Liên hệ theo cài đặt Điều hành */
+  entry: PublicEntry
+  onOrderProduct: (product: PublicCatalogProduct) => void
 }
 
 export function CatalogCardPaper({
@@ -23,6 +27,8 @@ export function CatalogCardPaper({
   style,
   aspectRatio = "square",
   onSelectProduct,
+  entry,
+  onOrderProduct,
 }: CatalogCardPaperProps) {
   const fontDisplay = style?.typography.fontDisplay || ""
   const textPrimary = style?.tokens.textPrimary || "#1C1917"
@@ -127,17 +133,7 @@ export function CatalogCardPaper({
             {formatVnd(product.price)}
           </div>
         </div>
-        <a
-          href={getZaloUrl(product, shop)}
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label="Đặt ngay qua Zalo"
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all shadow-xs active:scale-95"
-          style={{ backgroundColor: ctaBg, color: ctaText }}
-        >
-          <MessageCircle size={14} aria-hidden="true" />
-          <span className="hidden sm:inline">Đặt ngay</span>
-        </a>
+        <CardOrderAction product={product} shop={shop} entry={entry} onOrderProduct={onOrderProduct} ctaBg={ctaBg} ctaText={ctaText} />
       </div>
     </article>
   )
