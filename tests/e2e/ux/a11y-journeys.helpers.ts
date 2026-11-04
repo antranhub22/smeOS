@@ -46,6 +46,19 @@ export async function keyboardIssues(page: Page): Promise<{ stops: number; issue
   let stops = 0
   for (let i = 0; i < MAX_TABS; i++) {
     await page.keyboard.press("Tab")
+    // Chờ cuộn (kể cả cuộn mượt của trang hoặc dải tab) đưa phần tử vào khung nhìn xong rồi mới đo.
+    await page.evaluate(async () => {
+      const el = document.activeElement
+      if (!el) return
+      let last = ""
+      for (let i = 0; i < 30; i++) {
+        await new Promise((r) => requestAnimationFrame(() => r(null)))
+        const r = el.getBoundingClientRect()
+        const now = `${Math.round(r.top)}:${Math.round(r.left)}`
+        if (now === last) return
+        last = now
+      }
+    })
     const info = await page.evaluate(() => {
       const el = document.activeElement as HTMLElement | null
       if (!el || el === document.body) return null
