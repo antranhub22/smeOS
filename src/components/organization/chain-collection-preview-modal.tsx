@@ -39,7 +39,7 @@ export function ChainCollectionPreviewModal({
         <div
           className={`p-3.5 rounded-xl border flex items-start gap-3 ${
             isR1
-              ? "bg-warning/10 border-warning/30 text-warning"
+              ? "bg-warning/10 border-warning/30 text-warning-text"
               : "bg-primary/10 border-primary/30 text-primary"
           }`}
         >
@@ -70,7 +70,7 @@ export function ChainCollectionPreviewModal({
           </div>
           <div className="p-3 rounded-xl border border-border bg-surface-alt text-center">
             <ShieldAlert size={16} className="mx-auto text-warning mb-1" />
-            <div className="text-title-sm font-black text-warning">{summary.s2FieldsCollected}</div>
+            <div className="text-title-sm font-black text-warning-text">{summary.s2FieldsCollected}</div>
             <div className="text-caption text-text-muted">Trường S2/Cá nhân</div>
           </div>
         </div>

@@ -199,6 +199,7 @@ export function StorePoliciesEditor({
                     type="number"
                     min={1}
                     max={100}
+                    aria-label="Mức giảm (%)"
                     value={intakeCta.percent}
                     onChange={(e) => {
                       const val = Math.min(100, Math.max(1, Number(e.target.value) || 1))
@@ -297,7 +298,7 @@ export function StorePoliciesEditor({
                   value={c.internalText || ""}
                   onChange={(e) => updateCommit(c.id, { internalText: e.target.value })}
                   placeholder="Quy định nội bộ cho nhân viên (tùy chọn)..."
-                  className="text-caption text-text-muted/70 italic bg-transparent border-0 border-t border-border/40 rounded-none px-0 pt-1"
+                  className="text-caption text-text-muted italic bg-transparent border-0 border-t border-border/40 rounded-none px-0 pt-1"
                 />
               </div>
             ))}

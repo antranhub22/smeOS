@@ -144,7 +144,7 @@ export function ModelChangeCard() {
       >
         <div className="space-y-4 p-1">
           {error && (
-            <div className="rounded-xl border border-danger/30 bg-danger/10 p-2.5 text-caption font-medium text-danger">
+            <div className="rounded-xl border border-danger/30 bg-danger/10 p-2.5 text-caption font-medium text-danger-text">
               {error}
             </div>
           )}
@@ -176,7 +176,7 @@ export function ModelChangeCard() {
               </div>
 
               <div className="rounded-xl bg-surface-alt/60 p-2.5 border border-border text-caption text-text-muted">
-                ⚠️ Lưu ý: Sau khi được Admin SaaS duyệt, toàn bộ cơ chế phân phối đơn hàng và quyền điều phối sẽ tự động chuyển sang mô hình mới.
+                ⚠️ Lưu ý: Sau khi được quản trị viên smeOS duyệt, toàn bộ cơ chế phân phối đơn hàng và quyền điều phối sẽ tự động chuyển sang mô hình mới.
               </div>
 
               <div className="flex items-center justify-end gap-2 pt-2">

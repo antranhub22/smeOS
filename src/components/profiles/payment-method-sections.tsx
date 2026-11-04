@@ -171,7 +171,7 @@ export function InternationalCardSection({ config, updateConfig }: SectionProps)
               value={config.cardProvider}
               onValueChange={(val) => updateConfig({ cardProvider: val as CardProviderKey })}
             >
-              <SelectTrigger className="w-full">
+              <SelectTrigger aria-label="Nhà cung cấp cổng thanh toán" className="w-full">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -222,6 +222,7 @@ export function InStoreAndEWalletSection({ config, updateConfig }: SectionProps)
           <div className="space-y-1 pt-1">
             <label className="text-caption font-bold text-text">Hướng dẫn thanh toán tại quầy</label>
             <Input
+              aria-label="Hướng dẫn thanh toán tại quầy"
               value={config.inStoreInstructions}
               onChange={(e) => updateConfig({ inStoreInstructions: e.target.value })}
             />
@@ -255,7 +256,7 @@ export function InStoreAndEWalletSection({ config, updateConfig }: SectionProps)
                 value={config.eWalletProvider}
                 onValueChange={(val) => updateConfig({ eWalletProvider: val as EWalletProviderKey })}
               >
-                <SelectTrigger className="w-full">
+                <SelectTrigger aria-label="Loại ví" className="w-full">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>

@@ -32,8 +32,8 @@ export function PromotionKindField({ item, onChange }: { item: PromotionItem; on
         />
         <span>{item.active !== false ? "Đang áp dụng" : "Tạm tắt — khách không thấy"}</span>
       </label>
-      <Select aria-label="Loại ưu đãi" value={pricing.kind} onValueChange={(v) => setKind(v as PromotionKind)}>
-        <SelectTrigger className="h-8 w-[160px] text-caption">
+      <Select value={pricing.kind} onValueChange={(v) => setKind(v as PromotionKind)}>
+        <SelectTrigger aria-label="Loại ưu đãi" className="h-8 w-[160px] text-caption">
           <SelectValue placeholder="Loại ưu đãi" />
         </SelectTrigger>
         <SelectContent>

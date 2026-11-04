@@ -149,7 +149,7 @@ export function ChangeRoleDialog({
     >
       <div className="flex flex-col gap-4">
         {error && (
-          <div className="rounded-xl border border-warning/30 bg-warning-bg p-3 text-caption text-warning">
+          <div className="rounded-xl border border-warning/30 bg-warning-bg p-3 text-caption text-warning-text">
             {error}
           </div>
         )}
@@ -239,7 +239,7 @@ export function ChangeRoleDialog({
                   size="sm"
                   onClick={() => setShowRemoveConfirm(true)}
                   disabled={submitting || removing}
-                  className="text-danger hover:border-danger hover:bg-danger-bg"
+                  className="text-danger-text hover:border-danger hover:bg-danger-bg"
                 >
                   <Trash2 size={15} />
                   <span>Gỡ nhân viên</span>
