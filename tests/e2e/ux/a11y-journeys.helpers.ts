@@ -30,7 +30,10 @@ export async function axeSevere(page: Page, only?: string[]): Promise<string[]> 
   const { violations } = await builder.analyze()
   return violations
     .filter((v) => v.impact === "critical" || v.impact === "serious")
-    .map((v) => `${v.id} (${v.impact}) × ${v.nodes.length}: ${v.nodes[0]?.target.join(" ") ?? ""}`)
+    .map((v) => {
+      const text = (v.nodes[0]?.html ?? "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim().slice(0, 40)
+      return `${v.id} (${v.impact}) × ${v.nodes.length}: ${v.nodes[0]?.target.join(" ") ?? ""} "${text}"`
+    })
 }
 
 /**
