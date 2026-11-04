@@ -11,7 +11,9 @@ export interface InventoryRow {
   quantity_available: number | null
 }
 
-export function isProductAvailable(product: { branch_id?: string | null | undefined; inventory?: readonly InventoryRow[] | null | undefined }): boolean {
+export function isProductAvailable(product: { status?: string | undefined; branch_id?: string | null | undefined; inventory?: readonly InventoryRow[] | null | undefined }): boolean {
+  // Mẫu tạm ngưng hoặc đã lưu trữ không bán trên link khách (checklist ALG 2.3)
+  if (product.status === "PAUSED" || product.status === "ARCHIVED") return false
   if (!product.branch_id) return true
   const row = product.inventory?.find((r) => r.branch_id === product.branch_id)
   if (!row) return true

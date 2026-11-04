@@ -25,7 +25,7 @@ Ký hiệu đường dẫn rút gọn: `org/` = `src/modules/organization/`, `gc
 | Nhóm | Nội dung | Số chức năng | Hoàn thiện | Dang dở | Chưa hoàn thành |
 |---|---|---:|---:|---:|---:|
 | 1 | Nền tảng chung & phân quyền | 19 | 17 | 2 | 0 |
-| 2 | Quản lý sản phẩm, mẫu hoa & hình ảnh | 9 | 5 | 4 | 0 |
+| 2 | Quản lý sản phẩm, mẫu hoa & hình ảnh | 9 | 7 | 2 | 0 |
 | 3 | Tạo & quản lý báo giá | 13 | 8 | 5 | 0 |
 | 4 | Tiếp nhận, quản lý & xử lý đơn hàng | 32 | 29 | 3 | 0 |
 | 5 | Thẻ Chào mẫu hoa & trang khách hàng | 15 | 10 | 5 | 0 |
@@ -34,9 +34,9 @@ Ký hiệu đường dẫn rút gọn: `org/` = `src/modules/organization/`, `gc
 | 8 | Landing page bán hàng | 1 | 1 | 0 | 0 |
 | 9 | Chat nội bộ, đa chuỗi & phân quyền nâng cao | 14 | 10 | 3 | 1 |
 | 10 | Quản lý credit AI, hạn mức & thuê bao SaaS | 8 | 2 | 3 | 3 |
-| | **Tổng cộng** | **123** | **86** | **33** | **4** |
+| | **Tổng cộng** | **123** | **88** | **31** | **4** |
 
-Tỷ lệ: Hoàn thiện 69,9% · Dang dở 26,8% · Chưa hoàn thành 3,3%.
+Tỷ lệ: Hoàn thiện 71,5% · Dang dở 25,2% · Chưa hoàn thành 3,3%.
 
 ### Bốn chức năng chưa hoàn thành
 
@@ -77,9 +77,9 @@ Tỷ lệ: Hoàn thiện 69,9% · Dang dở 26,8% · Chưa hoàn thành 3,3%.
 
 | STT | Chức năng | Trạng thái | Bằng chứng | Còn thiếu |
 |---|---|---|---|---|
-| 2.1 | Tạo thẻ sản phẩm mẫu hoa | Dang dở | `api/products/route.ts:84-108` (L2); form `src/components/products/use-create-product-form.ts:87-93` sinh mã (tiền tố ngành + 4 số ngẫu nhiên phía trình duyệt, trùng thì 409 tại `src/modules/products/use-cases/create-product.ts:21-22`), mô tả, màu, ảnh `:313-336`; `tt/products-pricing.test.ts:37,60` | Trường dịp và kích thước khi tạo; mã tự sinh phía máy chủ |
+| 2.1 | Tạo thẻ sản phẩm mẫu hoa | Hoàn thiện | `api/products/route.ts` (L2); mã để trống → máy chủ sinh mã `AUTO-` duy nhất trong tổ chức, thử lại khi trùng `src/modules/products/use-cases/create-product.ts` (quy ước `src/modules/products/domain/product-code.ts`), mã nhập trùng → 409; dịp (danh mục dịp của tiệm → `attributes.occasionCodes`) và kích thước (`attributes.dimensions`) `src/components/products/use-product-occasion-size.ts`, `create-occasion-size-card.tsx`; mô tả, màu, ảnh `src/components/products/use-create-product-form.ts`; `tt/products-create.test.ts`, `tt/products-pricing.test.ts:37,60` | — |
 | 2.2 | Cập nhật thẻ sản phẩm & đồng bộ Thẻ Chào | Hoàn thiện | `api/products/[id]/route.ts:44-54` (L3); Thẻ Chào đọc sản phẩm trực tiếp qua quan hệ `gc/infra/greeting-catalog-repository.ts:15`; `tt/products-pricing.test.ts:131`, `tt/product-governance.test.ts:94` | — |
-| 2.3 | Trạng thái sản phẩm (Nháp/Hoạt động/Lưu trữ) | Dang dở | `schema:806-810` enum `DRAFT/ACTIVE/ARCHIVED`; lưu trữ cần L4 `api/products/[id]/route.ts:52`; không có API xoá sản phẩm | Trạng thái "Tạm ngưng"; quy tắc theo việc mẫu đã có đơn |
+| 2.3 | Trạng thái sản phẩm (Nháp/Hoạt động/Lưu trữ) | Hoàn thiện | Enum `DRAFT/ACTIVE/PAUSED/ARCHIVED` (migration `20261104120000_product_status_paused`); lưu trữ cần L4 `api/products/[id]/route.ts`; mẫu tạm ngưng/lưu trữ không bán trên link khách `gc/domain/product-availability.ts`, `gc/use-cases/check-product-availability.ts`; mẫu đã có đơn (dòng đơn hoặc lịch đặt) không xoá vĩnh viễn được, chỉ lưu trữ `src/modules/storage/infra/trash-repository.ts` → 409; nhãn và thao tác hàng loạt "Tạm ngưng" `src/components/products/product-card.tsx`, `product-bulk-status-bar.tsx`; `tt/products-status.test.ts` | — |
 | 2.4 | Biến thể kích cỡ (Nhỏ/Vừa/Lớn/VIP) | Dang dở | Giá theo phiên bản (nhóm Kích cỡ × Màu) `src/modules/products/domain/product-pricing.ts:1-40`; S/M/L/XL co giãn công thức `src/modules/products/domain/product-size-variants.ts` chỉ dùng ở `src/app/(app)/gia/pricing-calculator-card.tsx` | Lưu số lượng hoa riêng theo từng kích cỡ vào mẫu |
 | 2.5 | Định mức nguyên liệu BOM | Hoàn thiện | `schema:3622-3656` (`product_recipes`, `product_recipe_items`); nhóm Hoa chính/Hoa phụ/Lá `org/domain/industries/floral.ts:23-25`; `api/costing/recipes/[productId]/route.ts:11,26`; `src/app/(app)/tinh-gia/cong-thuc`; `tt/costing-isolation.test.ts:66` | — |
 | 2.6 | Nhập danh mục hàng loạt từ Excel/CSV | Hoàn thiện | `src/components/products/bulk-import/parse-product-sheet.ts:84-123` (đánh lỗi từng dòng, trùng mã), `import-preview.tsx:46,186`; `api/products/batch-import/route.ts:37-38`; `tu/products/parse-product-sheet.test.ts`, `tu/products/run-bulk-import.test.ts`, `tt/products-batch-import-images.test.ts:56-105`, `tt/product-governance.test.ts:110` | — |

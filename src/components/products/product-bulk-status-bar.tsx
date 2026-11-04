@@ -5,7 +5,7 @@ import { X } from "@/components/ui/icons"
 import { readApiError } from "@/components/greeting-card/api-error"
 import { useConfirmDialog } from "@/components/ui/confirm-dialog"
 
-type BulkStatus = "DRAFT" | "ACTIVE" | "ARCHIVED"
+type BulkStatus = "DRAFT" | "ACTIVE" | "PAUSED" | "ARCHIVED"
 
 export interface ProductBulkStatusBarProps {
   selectedIds: string[]
@@ -17,6 +17,7 @@ export interface ProductBulkStatusBarProps {
 const ACTIONS: Array<{ status: BulkStatus; label: string }> = [
   { status: "ACTIVE", label: "Mở bán" },
   { status: "DRAFT", label: "Chuyển về nháp" },
+  { status: "PAUSED", label: "Tạm ngưng" },
   { status: "ARCHIVED", label: "Ngừng bán" },
 ]
 

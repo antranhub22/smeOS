@@ -8,7 +8,7 @@ import { BULK_MAX_IDS, bulkUpdateStatus } from "@/modules/products/use-cases/bul
 
 const bodySchema = z.object({
   ids: z.array(z.string().min(1)).min(1).max(BULK_MAX_IDS),
-  status: z.enum(["DRAFT", "ACTIVE", "ARCHIVED"]),
+  status: z.enum(["DRAFT", "ACTIVE", "PAUSED", "ARCHIVED"]),
 })
 
 /** `POST /products/bulk-status` (`L3`; chuyển `ARCHIVED` thêm `L4` — cùng luật `PATCH /products/:id`). */

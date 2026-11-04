@@ -175,14 +175,14 @@ Mọi bảng mới có `organization_id` + `@@index([organization_id])` (trừ b
 | Đợt | Số chức năng | Đã hoàn thiện |
 |---|---:|---:|
 | 1 | 13 | 13 |
-| 2 | 11 | 4 |
+| 2 | 11 | 6 |
 | 3 | 6 | 0 |
 | 4 | 9 | 0 |
 | 5 | 6 | 0 |
 | 6 | 8 | 0 |
 | 7 | 1 | 0 |
-| **Tổng** | **54** | **17** |
+| **Tổng** | **54** | **19** |
 
-Đợt 2 đã hoàn thiện: 1.12, 4.5, 4.13, 4.14. Phần mở rộng còn theo dõi trong Đợt 2: link giao riêng cho shipper thuê ngoài (4.5) và đưa đơn Thẻ Chào vào hàng đợi của tài khoản thợ (4.13). Shipper nội bộ được gắn đơn theo số điện thoại Điều phối ghi khi điều xe; Điều hành nhập số điện thoại nhân viên ở màn Thành viên.
+Đợt 2 đã hoàn thiện: 1.12, 2.1, 2.3, 4.5, 4.13, 4.14. Phần mở rộng còn theo dõi trong Đợt 2: link giao riêng cho shipper thuê ngoài (4.5) và đưa đơn Thẻ Chào vào hàng đợi của tài khoản thợ (4.13). Shipper nội bộ được gắn đơn theo số điện thoại Điều phối ghi khi điều xe; Điều hành nhập số điện thoại nhân viên ở màn Thành viên.
 
 Khi mọi đợt hoàn tất, báo cáo ánh xạ đạt 123/123 chức năng Hoàn thiện và checklist bàn giao ALG đủ điều kiện nghiệm thu.

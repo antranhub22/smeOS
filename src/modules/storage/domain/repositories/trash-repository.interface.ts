@@ -2,7 +2,8 @@ import type { TenantContext } from "@/core/tenancy"
 import type { TrashItem, TrashItemType } from "../trash-types"
 
 /** `legal_hold`: asset đang được giữ theo yêu cầu pháp lý (SDAGF D-04). */
-export type TrashDeleteResult = "deleted" | "not_found" | "legal_hold"
+/** `in_use`: mẫu sản phẩm đã có đơn — chỉ lưu trữ, không xoá vĩnh viễn (checklist ALG 2.3). */
+export type TrashDeleteResult = "deleted" | "not_found" | "legal_hold" | "in_use"
 
 export interface ITrashRepository {
   listTrash(ctx: TenantContext): Promise<TrashItem[]>

@@ -10,6 +10,7 @@ export class AvailabilityCheckRepository {
     return this.db.products.findFirst({
       where: { id: productId, organization_id: organizationId },
       select: {
+        status: true,
         availability_config: true,
         branch_id: true,
         inventory: { select: { branch_id: true, status: true, quantity_available: true } },

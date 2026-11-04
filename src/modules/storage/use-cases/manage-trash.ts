@@ -67,6 +67,7 @@ export async function permanentDelete(
   requireProductArchive(ctx, input.type)
   const result = await repo.permanentDelete(ctx, input)
   if (result === "legal_hold") throw conflict(LEGAL_HOLD_MESSAGE)
+  if (result === "in_use") throw conflict("Mẫu này đã có đơn hàng — chỉ được lưu trữ, không xoá vĩnh viễn.")
   if (result === "not_found") throw notFound()
 }
 

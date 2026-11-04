@@ -9,7 +9,7 @@ export interface ProductReadinessInput {
   id: string
   name: string
   code: string
-  status: "DRAFT" | "ACTIVE" | "ARCHIVED" | string
+  status: "DRAFT" | "ACTIVE" | "PAUSED" | "ARCHIVED" | string
   category?: string | null | undefined
   style?: string | null | undefined
   shape?: string | null | undefined

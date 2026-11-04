@@ -66,6 +66,8 @@ export async function checkProductAvailability(
   const product = await db.findProduct(req.organizationId, req.productId)
 
   if (!product) return { available: false, mode: "STOCK_QUANTITY", message: "Sản phẩm không tồn tại" }
+  // Mẫu tạm ngưng hoặc đã lưu trữ không nhận đơn (checklist ALG 2.3)
+  if (product.status === "PAUSED" || product.status === "ARCHIVED") return { available: false, mode: "STOCK_QUANTITY", message: "Mẫu đang tạm ngưng nhận đơn" }
 
   const config = parseAvailabilityConfig(product.availability_config, req.industryKey)
 

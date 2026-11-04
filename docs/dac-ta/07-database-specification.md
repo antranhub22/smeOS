@@ -48,7 +48,7 @@ enum membership_status { INVITED  ACTIVE  SUSPENDED }
 enum capability_scope  { ORGANIZATION  BRANCH  STORE  FLOWER_NETWORK }
 enum job_status        { PENDING  PROCESSING  COMPLETED  FAILED  CANCELLED }
 enum approval_state    { PENDING  APPROVED  REJECTED }
-enum product_status    { DRAFT  ACTIVE  ARCHIVED }
+enum product_status    { DRAFT  ACTIVE  PAUSED  ARCHIVED }   // PAUSED: tạm ngưng nhận đơn, ẩn khỏi link khách
 enum asset_kind        { ORIGINAL  ANALYZED  ENHANCED  MASTER  RATIO  MARKETING  VIDEO  CATALOG  LANDING  SOCIAL }
 enum asset_state       { PROCESSING  READY  FAILED  ARCHIVED }
 enum trial_status      { ACTIVE  EXHAUSTED  EXPIRED }

@@ -14,7 +14,7 @@ const itemSchema = z.object({
   shape: z.string().nullable().optional(),
   facing: z.string().nullable().optional(),
   container: z.string().nullable().optional(),
-  status: z.enum(["DRAFT", "ACTIVE", "ARCHIVED"]).optional(),
+  status: z.enum(["DRAFT", "ACTIVE", "PAUSED", "ARCHIVED"]).optional(),
   attributes: z.record(z.string(), z.unknown()).nullable().optional(),
   image_asset_id: z.string().nullable().optional(),
 })

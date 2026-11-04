@@ -3,7 +3,7 @@ import type { TenantContext } from "@/core/tenancy"
 import { updateProduct } from "./update-product"
 
 export const BULK_MAX_IDS = 100
-export type BulkStatus = "DRAFT" | "ACTIVE" | "ARCHIVED"
+export type BulkStatus = "DRAFT" | "ACTIVE" | "PAUSED" | "ARCHIVED"
 
 /**
  * `POST /products/bulk-status`: đổi trạng thái nhiều sản phẩm. Mỗi dòng đi qua đúng

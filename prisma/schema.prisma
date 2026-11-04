@@ -806,9 +806,11 @@ model brand_profiles {
 // (`TECHNICAL_DEBT.md` #8: bốn bảng thuộc tenant của P3 thiếu khoá ngoại vì
 // đặc tả 07 mục 3 khai `organization_id` là cột thường lúc đó).
 
+// PAUSED: tạm ngưng nhận đơn (PO 04/11/2026, checklist ALG 2.3) — ẩn khỏi link khách, mở bán lại bất cứ lúc nào.
 enum product_status {
   DRAFT
   ACTIVE
+  PAUSED
   ARCHIVED
 }
 
