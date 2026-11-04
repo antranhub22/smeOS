@@ -14,6 +14,7 @@ import { buildFacetGroups, matchesFacets, type FacetSelection } from "@/modules/
 import { searchTextOf } from "@/modules/platform/domain/partner-marketplace-row-mapper"
 import { MarketplaceStoreCard } from "./marketplace-store-card"
 import { MarketplaceProfileModal } from "./marketplace-profile-modal"
+import { MarketplaceBulkDeleteBar, type BulkDeleteRequest, type BulkDeleteResult } from "./marketplace-bulk-delete-bar"
 import { MarketplaceFacetFilter } from "./marketplace-facet-filter"
 
 export type MarketplaceLoadResult = { stores: PartnerStoreMarketplaceEntity[] } & Record<string, unknown>
@@ -32,15 +33,19 @@ interface MarketplaceBrowserProps {
   readOnly?: boolean
   /** Xoá một hồ sơ (chỉ trang console truyền khi người xem có quyền xoá). Trả câu lỗi hoặc null. */
   deleteStore?: (store: PartnerStoreMarketplaceEntity) => Promise<string | null>
+  /** Xoá hàng loạt (chọn nhiều / toàn bộ) — cùng điều kiện với `deleteStore`. */
+  deleteStores?: (request: BulkDeleteRequest) => Promise<BulkDeleteResult>
 }
 
-export function MarketplaceBrowser({ endpoint, title, errorFor, actions, emptyHint, onLoaded, renderError, readOnly = false, deleteStore }: MarketplaceBrowserProps) {
+export function MarketplaceBrowser({ endpoint, title, errorFor, actions, emptyHint, onLoaded, renderError, readOnly = false, deleteStore, deleteStores }: MarketplaceBrowserProps) {
   const [stores, setStores] = useState<PartnerStoreMarketplaceEntity[]>([])
   const [loading, setLoading] = useState(true)
   const [loadError, setLoadError] = useState<{ status: number; message: string } | null>(null)
   const [search, setSearch] = useState("")
   const [selection, setSelection] = useState<FacetSelection>({})
   const [selectedStore, setSelectedStore] = useState<PartnerStoreMarketplaceEntity | null>(null)
+  const [selecting, setSelecting] = useState(false)
+  const [pickedIds, setPickedIds] = useState<Set<string>>(() => new Set())
 
   // Tải toàn bộ một lần; lọc tại chỗ bằng các hàm domain thuần.
   const fetchStores = useCallback(async () => {
@@ -113,6 +118,25 @@ export function MarketplaceBrowser({ endpoint, title, errorFor, actions, emptyHi
         </p>
       </div>
 
+      {deleteStores && !loading && (
+        <MarketplaceBulkDeleteBar
+          selecting={selecting}
+          selectedCount={pickedIds.size}
+          selectedIds={[...pickedIds]}
+          visibleIds={filteredStores.map((s) => s.id)}
+          totalCount={stores.length}
+          onStart={() => setSelecting(true)}
+          onStop={() => setSelecting(false)}
+          onSelectIds={(ids) => setPickedIds((prev) => new Set([...prev, ...ids]))}
+          onClear={() => setPickedIds(new Set())}
+          run={async (request) => {
+            const result = await deleteStores(request)
+            await fetchStores()
+            return result
+          }}
+        />
+      )}
+
       {loadError && <InlineError message={loadError.message} />}
 
       {loading ? (
@@ -132,7 +156,25 @@ export function MarketplaceBrowser({ endpoint, title, errorFor, actions, emptyHi
       ) : (
         <div className="grid grid-cols-1 gap-5 md:grid-cols-2 lg:grid-cols-3">
           {filteredStores.map((store) => (
-            <MarketplaceStoreCard key={store.id} store={store} onQuickView={(s) => setSelectedStore(s)} />
+            <MarketplaceStoreCard
+              key={store.id}
+              store={store}
+              onQuickView={(s) => setSelectedStore(s)}
+              {...(selecting
+                ? {
+                    selection: {
+                      selected: pickedIds.has(store.id),
+                      onToggle: () =>
+                        setPickedIds((prev) => {
+                          const next = new Set(prev)
+                          if (next.has(store.id)) next.delete(store.id)
+                          else next.add(store.id)
+                          return next
+                        }),
+                    },
+                  }
+                : {})}
+            />
           ))}
         </div>
       )}
