@@ -9,10 +9,12 @@ import {
   searchTextOf,
   type PartnerStoreProfile,
 } from "../domain/partner-marketplace-row-mapper"
-import type {
-  IPartnerMarketplaceRepository,
-  MarketplaceImportSource,
-  MarketplacePhotoState,
+import {
+  MAX_AUDIT_NAMES,
+  type IPartnerMarketplaceRepository,
+  type MarketplaceDeleteTarget,
+  type MarketplaceImportSource,
+  type MarketplacePhotoState,
 } from "../domain/repositories/partner-marketplace-repository.interface"
 
 /** Bảng cấp nền tảng (không có organization_id) — chỉ console vận hành truy cập, qua N1/N17. */
@@ -101,6 +103,28 @@ export class PartnerMarketplaceRepository implements IPartnerMarketplaceReposito
       if (!row) return null
       const { count } = await tx.partner_marketplace_stores.deleteMany({ where: { id } })
       return count ? { shopName: row.shop_name, source: row.source, photoKeys: row.photo_keys } : null
+    })
+  }
+
+  async deleteMany(target: MarketplaceDeleteTarget) {
+    return prisma.$transaction(async (tx) => {
+      const where = "ids" in target ? { id: { in: target.ids } } : {}
+      if (!("ids" in target)) {
+        const total = await tx.partner_marketplace_stores.count()
+        if (total !== target.expectedTotal) return null
+      }
+      const rows = await tx.partner_marketplace_stores.findMany({
+        where,
+        select: { shop_name: true, photo_keys: true },
+        orderBy: { shop_name: "asc" },
+        take: MAX_IMPORT_ROWS,
+      })
+      const { count } = await tx.partner_marketplace_stores.deleteMany({ where })
+      return {
+        count,
+        shopNames: rows.slice(0, MAX_AUDIT_NAMES).map((r) => r.shop_name),
+        photoCount: rows.reduce((n, r) => n + r.photo_keys.length, 0),
+      }
     })
   }
 }
