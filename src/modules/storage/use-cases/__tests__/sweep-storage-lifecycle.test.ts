@@ -10,9 +10,16 @@ describe("sweepExpiredTrash", () => {
       { id: "a1", organization_id: "org-a", storage_key: "org/org-a/p/a1.jpg", thumb_key: null },
       { id: "b1", organization_id: "org-b", storage_key: "org/org-b/p/b1.jpg", thumb_key: null },
     ])
-    expect(await sweepExpiredTrash(now, { findExpired, remove })).toBe(1)
+    expect(await sweepExpiredTrash(now, { findExpired, remove, usages: async () => [] })).toBe(1)
     expect(findExpired).toHaveBeenCalledWith(now, expect.any(Number))
     expect(remove.mock.calls[0]![0].organizationId).toBe("org-a")
     expect(remove.mock.calls[1]![0].organizationId).toBe("org-b")
+  })
+
+  it("bỏ qua ảnh đang được dùng: giữ trong thùng rác, không xoá", async () => {
+    const remove = vi.fn().mockResolvedValue(true)
+    const findExpired = vi.fn().mockResolvedValue([{ id: "a1", organization_id: "org-a", storage_key: "org/org-a/p/a1.jpg", thumb_key: null }])
+    expect(await sweepExpiredTrash(new Date(), { findExpired, remove, usages: async () => ["product_image"] })).toBe(0)
+    expect(remove).not.toHaveBeenCalled()
   })
 })

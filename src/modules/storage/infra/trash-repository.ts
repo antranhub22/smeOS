@@ -262,6 +262,13 @@ export class TrashRepository implements ITrashRepository {
     return false
   }
 
+  async findTargetAssetId(ctx: TenantContext, input: { id: string; type: TrashItemType }): Promise<string | null> {
+    if (input.type === "RAW_ASSET") return input.id
+    if (input.type !== "APPROVED_ANALYSIS") return null
+    const analysis = await prisma.product_analyses.findFirst({ where: scopedWhere(ctx, { id: input.id }), select: { asset_id: true } })
+    return analysis?.asset_id ?? null
+  }
+
   async permanentDelete(
     ctx: TenantContext,
     input: { id: string; type: TrashItemType }

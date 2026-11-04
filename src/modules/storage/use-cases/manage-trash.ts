@@ -1,5 +1,7 @@
 import { AppError, conflict, notFound } from "@/core/http/errors"
 import { LEGAL_HOLD_MESSAGE } from "@/modules/assets/use-cases/delete-asset"
+import { assetInUseMessage, type AssetUsage } from "@/modules/assets/domain/asset-lifecycle"
+import { findAssetUsages } from "@/modules/assets/infra/asset-usage-guard"
 import type { TenantContext } from "@/core/tenancy"
 import type { ITrashRepository } from "../domain/repositories/trash-repository.interface"
 import { getTrashRepository } from "../infra/trash-repository"
@@ -36,13 +38,25 @@ export async function getTrashList(
   return repo.listTrash(ctx)
 }
 
+type UsageLookup = (ctx: TenantContext, assetId: string) => Promise<AssetUsage[]>
+
+/** SDAGF-012: ảnh đang được dùng (chứng từ, ảnh sản phẩm, logo…) không vào thùng rác/không xoá. */
+async function assertNotInUse(ctx: TenantContext, input: { id: string; type: TrashItemType }, repo: ITrashRepository, usages: UsageLookup) {
+  const assetId = await repo.findTargetAssetId(ctx, input)
+  if (!assetId) return
+  const found = await usages(ctx, assetId)
+  if (found.length > 0) throw conflict(assetInUseMessage(found))
+}
+
 export async function moveToTrash(
   ctx: TenantContext,
   input: { id: string; type: TrashItemType },
-  repo: ITrashRepository = getTrashRepository()
+  repo: ITrashRepository = getTrashRepository(),
+  usages: UsageLookup = findAssetUsages
 ): Promise<void> {
   requireExecutiveRole(ctx)
   requireProductArchive(ctx, input.type)
+  await assertNotInUse(ctx, input, repo, usages)
   const ok = await repo.moveToTrash(ctx, { ...input, userId: ctx.userId })
   if (!ok) throw notFound()
 }
@@ -61,10 +75,12 @@ export async function restoreFromTrash(
 export async function permanentDelete(
   ctx: TenantContext,
   input: { id: string; type: TrashItemType },
-  repo: ITrashRepository = getTrashRepository()
+  repo: ITrashRepository = getTrashRepository(),
+  usages: UsageLookup = findAssetUsages
 ): Promise<void> {
   requireExecutiveRole(ctx)
   requireProductArchive(ctx, input.type)
+  await assertNotInUse(ctx, input, repo, usages)
   const result = await repo.permanentDelete(ctx, input)
   if (result === "legal_hold") throw conflict(LEGAL_HOLD_MESSAGE)
   if (result === "not_found") throw notFound()
