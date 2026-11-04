@@ -18,7 +18,7 @@ Căn cứ: `docs/handover/BAO_CAO_ANH_XA_123_CHUC_NANG.md` (mã nguồn tại `0
 | Mã | Nội dung cần chốt | Chức năng chịu ảnh hưởng | Thời điểm cần chốt | Quyết định |
 |---|---|---|---|---|
 | Q1 | Mở khoá Thẻ Chào (`tests/unit/architecture/the-chao-freeze.test.ts`) cho từng PR được liệt kê; mốc băm cập nhật sau khi PO duyệt PR | 2.8, 3.1, 3.4, 3.6, 4.3, 4.9, 4.14, 4.18, 4.26, 5.4, 5.5, 5.9, 5.14, 5.15, 9.11 | Trước Đợt 1 | Mở khoá |
-| Q2 | Thay đổi lược đồ CSDL theo danh sách mục 6 | 1.4, 2.3, 3.8, 3.10, 9.3, 10.3, 10.4, 10.6, 10.7, 10.8, 1.18 | Trước đợt chứa chức năng | Chờ chốt |
+| Q2 | Thay đổi lược đồ CSDL theo danh sách mục 6 | 1.4, 2.3, 3.8, 3.10, 9.3, 10.3, 10.4, 10.6, 10.7, 10.8, 1.18 | Trước đợt chứa chức năng | Đã duyệt `users.must_change_password`, `order_payments.status` (1.4, 1.16); các thay đổi khác chờ chốt theo đợt |
 | Q3 | Quyền thu tiền R9: (a) trần cứng Điều hành, hoặc (b) Sale/Điều phối chỉ "ghi nhận chờ xác nhận", Điều hành xác nhận mới vào sổ thu | 1.16 | Trước Đợt 1 | Phương án (b): Sale/Điều phối ghi nhận chờ xác nhận, Điều hành xác nhận mới vào sổ thu |
 | Q4 | Tắt mặc định công tắc tự duyệt (`cho_phep_tu_duyet = false`) | 9.12 | Trước Đợt 1 | Tắt mặc định |
 | Q5 | Ảnh giao hàng bắt buộc ở mọi gói chính sách | 4.18 | Trước Đợt 1 | Bắt buộc mặc định; Điều hành cửa hàng được tắt yêu cầu ảnh giao trong Cài đặt |
@@ -174,13 +174,13 @@ Mọi bảng mới có `organization_id` + `@@index([organization_id])` (trừ b
 
 | Đợt | Số chức năng | Đã hoàn thiện |
 |---|---:|---:|
-| 1 | 13 | 0 |
+| 1 | 13 | 13 |
 | 2 | 11 | 0 |
 | 3 | 6 | 0 |
 | 4 | 9 | 0 |
 | 5 | 6 | 0 |
 | 6 | 8 | 0 |
 | 7 | 1 | 0 |
-| **Tổng** | **54** | **0** |
+| **Tổng** | **54** | **13** |
 
 Khi mọi đợt hoàn tất, báo cáo ánh xạ đạt 123/123 chức năng Hoàn thiện và checklist bàn giao ALG đủ điều kiện nghiệm thu.
