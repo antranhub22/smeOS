@@ -3,7 +3,7 @@
  * Helper for CoordinatorRepository to adhere to SRP line limits.
  */
 
-import { scopedData, type TenantContext } from "@/core/tenancy"
+import { branchScopeOf, scopedData, type TenantContext } from "@/core/tenancy"
 import type { Prisma } from "@/generated/prisma/client"
 import type { CoordinatorStage, CoordinationRiskLevel } from "../domain/coordinator-types"
 import type { MappedOrderAxes } from "../domain/state-mapper"
@@ -71,6 +71,8 @@ export async function executeCreateOrder(
       internal_note: data.internalNote,
       delivery_window: data.deliveryWindow as Prisma.InputJsonValue,
       delivery_address: data.deliveryAddress as Prisma.InputJsonValue,
+      // Nhân viên chi nhánh tạo đơn → đơn thuộc chi nhánh đó (checklist ALG 9.13)
+      branch_id: branchScopeOf(ctx),
       created_by: ctx.userId,
     }),
   })

@@ -3,6 +3,7 @@
  */
 
 import { AppError } from "@/core/http/errors"
+import { inBranchScope } from "@/core/tenancy"
 import type { TenantContext } from "@/core/tenancy/tenant-context"
 import type { IOrderRepository } from "../domain/repositories/order-repository.interface"
 import { getOrderRepository } from "../infra/order-repository"
@@ -34,7 +35,8 @@ export async function getOrderPrintout(
   repo: IOrderRepository = getOrderRepository()
 ): Promise<OrderPrintData> {
   const order = await repo.findById(ctx.organizationId, orderId)
-  if (!order) {
+  // Ngoài chi nhánh được giao → như không tồn tại (checklist ALG 9.13)
+  if (!order || !inBranchScope(ctx, order.branchId)) {
     throw new AppError("NOT_FOUND", `Không tìm thấy đơn hàng với mã ID: ${orderId}`)
   }
 

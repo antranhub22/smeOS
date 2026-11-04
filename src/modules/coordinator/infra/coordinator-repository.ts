@@ -7,7 +7,7 @@
  * bảng là lỗi 500 thật, lộ ngay lần gọi đầu.
  */
 
-import { scopedData, scopedWhere, type TenantContext } from "@/core/tenancy"
+import { branchScopedWhere, scopedData, scopedWhere, type TenantContext } from "@/core/tenancy"
 import { prisma } from "@/core/tenancy/infra/prisma"
 import type { Prisma } from "@/generated/prisma/client"
 import type { CoordinatorStage, CoordinationRiskLevel } from "../domain/coordinator-types"
@@ -53,6 +53,7 @@ export class CoordinatorRepository implements ICoordinatorRepository<Coordinator
       where: scopedWhere(ctx, {
         OR: [{ id: idOrCode }, { code: idOrCode }],
         coordination: { isNot: null },
+        ...branchScopedWhere(ctx),
       }),
       include: ORDER_INCLUDE,
     })
@@ -65,6 +66,7 @@ export class CoordinatorRepository implements ICoordinatorRepository<Coordinator
     return this.db.orders.findMany({
       where: scopedWhere(ctx, {
         coordination: options.stage ? { is: { stage: options.stage } } : { isNot: null },
+        ...branchScopedWhere(ctx),
       }),
       include: ORDER_INCLUDE,
       orderBy: { created_at: "desc" },

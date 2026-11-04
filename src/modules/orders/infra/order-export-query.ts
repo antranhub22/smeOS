@@ -4,7 +4,7 @@
  */
 
 import { prisma } from "@/core/tenancy/infra/prisma"
-import type { TenantContext } from "@/core/tenancy"
+import { branchScopedWhere, type TenantContext } from "@/core/tenancy"
 
 const MAX_ROWS = 5_000
 
@@ -23,6 +23,8 @@ export interface OrderExportFilter {
 export async function queryOrdersForExport(ctx: TenantContext, filter: OrderExportFilter = {}) {
   const where = {
     organization_id: ctx.organizationId,
+    // Chi nhánh được giao (checklist ALG 9.13)
+    ...branchScopedWhere(ctx),
     ...(filter.source ? { source: filter.source } : {}),
     ...(filter.fromDate || filter.toDate
       ? {
