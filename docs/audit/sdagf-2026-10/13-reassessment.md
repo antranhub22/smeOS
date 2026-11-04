@@ -15,7 +15,7 @@ Phạm vi: mã trên branch `claude/focused-faraday-nlh8p6` (PR antranhub22/smeO
 | 009 | Secrets ngoài repo/log | PASS | PASS | gitleaks CI; `STORAGE_SIGNING_SECRET` tách khoá | — |
 | 010 | Lifecycle transitions | PARTIAL | PARTIAL | `trashed_at/purge_after` thành cột | State machine tập trung cho `asset_state` |
 | 011 | Retention có owner/cơ sở | FAIL | PARTIAL | D-03 đã duyệt; thùng rác 30 ngày thực thi bằng cron | Luật sư xác nhận; retention log/audit/bảng tính chưa tự động |
-| 012 | Deletion versions/derived | FAIL | PARTIAL | Outbox + đếm tham chiếu 10 nguồn | **Bật cờ** sau backup R2 |
+| 012 | Deletion versions/derived | FAIL | PARTIAL | Outbox + đếm tham chiếu theo khoá; chặn xoá ảnh đang dùng theo id (audit lại 04/11, `15-reaudit-2026-11-04.md`) | **Bật cờ** sau backup R2 |
 | 013 | Legal hold | FAIL | **PASS** | Cấp asset + cấp tổ chức; chặn API/thùng rác/cron/outbox/dọn bàn giao; N14 + audit | — |
 | 014 | Versioning không ghi đè | PARTIAL | PARTIAL | PUT chỉ với chữ ký PUT 15 phút, khoá UUID | Ghi một lần (`If-None-Match`) |
 | 015 | Provenance | PASS | PASS | Cột provenance `assets` | Video/audio chưa có model/provider đầy đủ |

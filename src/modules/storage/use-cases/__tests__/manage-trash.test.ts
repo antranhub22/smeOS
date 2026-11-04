@@ -24,6 +24,7 @@ function createMockRepo(overrides: Partial<ITrashRepository> = {}): ITrashReposi
     moveToTrash: vi.fn().mockResolvedValue(true),
     restoreFromTrash: vi.fn().mockResolvedValue(true),
     permanentDelete: vi.fn().mockResolvedValue("deleted"),
+    findTargetAssetId: vi.fn().mockResolvedValue(null),
     ...overrides,
   }
 }
@@ -160,6 +161,24 @@ describe("Storage Use-Cases with ITrashRepository Port", () => {
       await expect(
         permanentDelete(ctx, { id: "asset_hold", type: "RAW_ASSET" }, repo)
       ).rejects.toMatchObject({ status: 409 })
+    })
+  })
+
+  describe("ảnh đang được dùng (SDAGF-012)", () => {
+    it("không cho chuyển vào thùng rác hay xoá vĩnh viễn ảnh đang là chứng từ thanh toán", async () => {
+      const ctx = createMockContext(["B6"])
+      const repo = createMockRepo({ findTargetAssetId: vi.fn().mockResolvedValue("asset_1") })
+      const usages = vi.fn().mockResolvedValue(["payment_proof"])
+      await expect(moveToTrash(ctx, { id: "asset_1", type: "RAW_ASSET" }, repo, usages)).rejects.toMatchObject({ status: 409 })
+      await expect(permanentDelete(ctx, { id: "asset_1", type: "RAW_ASSET" }, repo, usages)).rejects.toMatchObject({ status: 409 })
+      expect(repo.moveToTrash).not.toHaveBeenCalled()
+      expect(repo.permanentDelete).not.toHaveBeenCalled()
+    })
+
+    it("ảnh không còn nơi dùng thì vẫn chuyển vào thùng rác bình thường", async () => {
+      const repo = createMockRepo({ findTargetAssetId: vi.fn().mockResolvedValue("asset_2") })
+      await moveToTrash(createMockContext(["B6"]), { id: "asset_2", type: "RAW_ASSET" }, repo, vi.fn().mockResolvedValue([]))
+      expect(repo.moveToTrash).toHaveBeenCalled()
     })
   })
 })

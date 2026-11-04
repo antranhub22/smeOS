@@ -1,6 +1,6 @@
 # SMEOS · 02 · Storage (đối chiếu code 30/10/2026)
 
-Áp dụng của [universal/02](../universal/02-storage.md). Nguồn: khung SDAGF và audit `docs/governance/sdagf/`, `docs/audit/sdagf-2026-10/` (`672ca64`); chữ ký theo phương thức `e0bedb8`; xoá payload `20861a4`; vòng đời + outbox + legal hold `bf0ea76`; đối soát + audit xuất `1df8926`; registry SSOT + legal hold tổ chức `a95ac1e`; Kho dữ liệu v2 `bdab759`, `587c147`.
+Áp dụng của [universal/02](../universal/02-storage.md). Nguồn: khung SDAGF và audit `docs/governance/sdagf/`, `docs/audit/sdagf-2026-10/` (`672ca64`); chữ ký theo phương thức `e0bedb8`; xoá payload `20861a4`; vòng đời + outbox + legal hold `bf0ea76`; đối soát + audit xuất `1df8926`; registry SSOT + legal hold tổ chức `a95ac1e`; Kho dữ liệu v2 `bdab759`, `587c147`; chặn xoá ảnh đang dùng (audit lại 04/11/2026).
 
 ## 1. Bản đồ code
 
@@ -31,6 +31,7 @@
 | Audit bắt buộc cho route xuất dữ liệu | ✅ | `tests/unit/architecture/export-audit.test.ts` |
 | Xoá vĩnh viễn + outbox + audit cùng transaction | ✅ | `tests/tenant/storage-lifecycle.test.ts` |
 | Legal hold tệp + tổ chức (API, thùng rác, cron, outbox, bàn giao) | ✅ | `tests/tenant/storage-lifecycle.test.ts` |
+| Chặn xoá ảnh đang được dùng (chứng từ thanh toán, ảnh sản phẩm, logo, video, bản in, chiến dịch…) — API, thùng rác, cron (bỏ qua) | ✅ 04/11/2026 | `tests/unit/architecture/asset-usage-guard.test.ts` (mọi cột `*asset_id*` phải khai), `tests/tenant/storage-lifecycle.test.ts` |
 | Xoá payload thật | 🟡 sau cờ `STORAGE_DELETE_PAYLOADS=enabled`, **mặc định tắt** tới khi có backup object store (SDAGF D-06) | — |
 | Số ngày thùng rác | ✅ `TRASH_RETENTION_DAYS` + `trashExpiresAt()` (`storage/domain/trash-types.ts`) | nợ #196 (đã trả) |
 | `LocalDiskStorageProvider` cho production | 🟡 adapter tạm | nợ #15 |
@@ -41,6 +42,6 @@
 1. Ghi tệp chỉ qua `StorageProvider` (`getStorageProvider().put`) với khoá `buildStorageKey`. Adapter AI/media trả byte; use-case ghi.
 2. Nơi ghi mới (TS hoặc `workers/`): thêm nguồn vào `STORAGE_REFERENCE_SOURCES` + `countPayloadReferences` (`assets/infra/payload-references.ts`), khai dòng trong `storage-write-contract.test.ts`. Thiếu → test đỏ.
 3. Đọc/hiển thị: chỉ URL ký (`signedUrl(key, ttl, "GET")`). Không tạo URL không ký, không thêm ngoại lệ tiền tố.
-4. Xoá: dùng use-case thùng rác / xoá vĩnh viễn có sẵn — tự kiểm legal hold (409), outbox, audit. Không gọi `storage.delete` trực tiếp.
+4. Xoá: dùng use-case thùng rác / xoá vĩnh viễn có sẵn — tự kiểm legal hold (409), ảnh đang được dùng (409), outbox, audit. Không gọi `storage.delete` trực tiếp. Bảng mới có cột `*asset_id*`: khai vào `ASSET_ID_REFERENCES` (chặn xoá) hoặc `ASSET_ID_REFERENCES_IGNORED` (có lý do) trong `assets/infra/asset-usage-guard.ts` — thiếu → test đỏ.
 5. Route xuất dữ liệu mới: ghi audit (test kiến trúc bắt buộc), không log giá trị tìm kiếm.
 6. Bật xoá payload thật, đổi số ngày giữ, đổi chính sách legal hold → **hỏi PO** (quyết định SDAGF D-xx).

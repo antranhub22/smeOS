@@ -14,7 +14,7 @@ const ctx = (codes: string[]): TenantContext => ({
   capabilities: new Set(codes),
 })
 
-const repo = () => ({ moveToTrash: vi.fn().mockResolvedValue(true) }) as unknown as TrashRepository
+const repo = () => ({ moveToTrash: vi.fn().mockResolvedValue(true), findTargetAssetId: vi.fn().mockResolvedValue(null) }) as unknown as TrashRepository
 
 describe("thùng rác — sản phẩm cần L4", () => {
   it("B6 (không có trần cứng) không đủ để xoá sản phẩm", async () => {

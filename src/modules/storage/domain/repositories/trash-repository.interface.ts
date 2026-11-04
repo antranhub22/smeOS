@@ -14,6 +14,8 @@ export interface ITrashRepository {
     ctx: TenantContext,
     input: { id: string; type: TrashItemType }
   ): Promise<boolean>
+  /** Asset ứng với mục thùng rác (ảnh gốc: chính nó; ảnh đã duyệt: ảnh của phân tích; sản phẩm: null). */
+  findTargetAssetId(ctx: TenantContext, input: { id: string; type: TrashItemType }): Promise<string | null>
   permanentDelete(
     ctx: TenantContext,
     input: { id: string; type: TrashItemType }
