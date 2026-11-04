@@ -29,7 +29,7 @@ a1ac7b9688d251074dc1ec15e8dfec3914bf55cf68eea1c2e693e62d0204b105  src/modules/gr
 67eb5173c9cf91a67a24203eaccb8f5a19074fc312d12dab25d08a8e0fea54e1  src/modules/greeting-card/domain/__tests__/balance-collection.test.ts
 09dcb663083159fdeb22521446d92e551279abf2c6ac0644c35e50591f4bda7c  src/modules/greeting-card/domain/__tests__/bank-transfer-matching.test.ts
 2f696e312a06917ad54a26a778927c81d4342d7457649bfaa4800f2a88e6e4e5  src/modules/greeting-card/domain/__tests__/brochure-commerce-rules.test.ts
-aef199222ce4d80c1b5ffa926fc918e99f1e8bab5c4aecfc6ad11b8ea7664b12  src/modules/greeting-card/domain/__tests__/brochure-payment-policy.test.ts
+b2c698ad28a2f7e863cdedd801054de7bfc316b46d550457a02f04d68edbc73b  src/modules/greeting-card/domain/__tests__/brochure-payment-policy.test.ts
 4425e31f78d002529a51f27e7e82fb9a0c116e6681dc9ef4885645f2d8cae204  src/modules/greeting-card/domain/__tests__/brochure-pricing.test.ts
 5526492457359e45601c66b4d15c8d25570928d4dfb4038f610a1e8ff2d40b95  src/modules/greeting-card/domain/__tests__/cancellation-follow-up.test.ts
 a4b1c752718b4eff7bb1ca6e1c808b1f435e639c5fb17059fdd34101714f80f9  src/modules/greeting-card/domain/__tests__/catalog-channel.test.ts
@@ -99,10 +99,10 @@ c26fd1a9e4414e02c178402e9933f4a213888b9d2577b08ececbc519c13e9c43  src/modules/gr
 088a8b753e679b225ad26e5818686728b2ed8c3021fa1150628b653f0411da3a  src/modules/greeting-card/domain/bank-transfer-matching.ts
 a66d50466bf6e161ce3a7e7d9a6ff1eced0025fe7c347324e66950a46e7bafd0  src/modules/greeting-card/domain/brochure-commerce-rules.ts
 d059022b4eeb27f29f27cae937905e6589864b66cf6fca4a88a7d67210e6a0c8  src/modules/greeting-card/domain/brochure-language-policy.ts
-b7d6c79f0ae3958d494f2f506b07387336d0478a78a17816b7868f8d9776f00a  src/modules/greeting-card/domain/brochure-payment-policy.ts
-5c1896598fda003cd8c8bf6f9946ee66bc4a325fcd831d11eb3ceeae86fd77d9  src/modules/greeting-card/domain/brochure-policy-resolvers.ts
+3bd826b767bd9c9c2585aa1ff8f16387d8e8f1eee86c4c18be669986ddcc56e1  src/modules/greeting-card/domain/brochure-payment-policy.ts
+33f42199e9094db35dc621f9c0b55d688f84e85108e08d848d95e9f38a5da822  src/modules/greeting-card/domain/brochure-policy-resolvers.ts
 b71792472eb4d94727bedc9262eced559a42857f8dc7f9756f41c1b618e1d5d7  src/modules/greeting-card/domain/brochure-pricing.ts
-43f6a6b61d650dabcd6eb69959283b315d16a2e10b942bc1bca65aee20bbe6ba  src/modules/greeting-card/domain/brochure-workflow-policy.ts
+4024a8a1d53e0d013c66c954c62eba5a7baa5aa184572655212dba87ca6ee12c  src/modules/greeting-card/domain/brochure-workflow-policy.ts
 68cbc796dda86dc1c9c187780670eb07d9b72f1233a75735e8a5a06e7ec0207a  src/modules/greeting-card/domain/cancellation-request.ts
 29fde5718cfd8fa558c7f618bd3de4ac5278f7e747e962c99aa86b2a01ca71cd  src/modules/greeting-card/domain/catalog-channel.ts
 a0fc5fd436de455771a6004af40b47f48ac9003ba6251e83a0b7d06d175cb60c  src/modules/greeting-card/domain/catalog-edit-policy.ts

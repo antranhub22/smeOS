@@ -151,9 +151,12 @@ describe("Brochure Workflow Policy Domain Tests", () => {
         expect(canRoleApproveDeposit("COORDINATOR", STANDARD_WORKFLOW_POLICY, { isOverdueSla: false })).toBe(false)
         expect(canRoleApproveDeposit("SALE", STANDARD_WORKFLOW_POLICY, { isOverdueSla: false })).toBe(false)
 
-        // When overdue SLA and escalation allowed
-        expect(canRoleApproveDeposit("COORDINATOR", STANDARD_WORKFLOW_POLICY, { isOverdueSla: true })).toBe(true)
-        expect(canRoleApproveDeposit("SALE", STANDARD_WORKFLOW_POLICY, { isOverdueSla: true })).toBe(true)
+        // Quá hạn: mặc định KHÔNG uỷ quyền (PO 04/11/2026, Q3b — ALG 1.16); Điều hành bật công tắc thì được
+        expect(canRoleApproveDeposit("COORDINATOR", STANDARD_WORKFLOW_POLICY, { isOverdueSla: true })).toBe(false)
+        expect(canRoleApproveDeposit("SALE", STANDARD_WORKFLOW_POLICY, { isOverdueSla: true })).toBe(false)
+        const escalation = { ...STANDARD_WORKFLOW_POLICY, allowSlaEscalation: true }
+        expect(canRoleApproveDeposit("COORDINATOR", escalation, { isOverdueSla: true })).toBe(true)
+        expect(canRoleApproveDeposit("SALE", escalation, { isOverdueSla: true })).toBe(true)
 
         // When order is urgent
         expect(canRoleApproveDeposit("COORDINATOR", STANDARD_WORKFLOW_POLICY, { isUrgent: true })).toBe(true)
