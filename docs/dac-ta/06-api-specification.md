@@ -559,7 +559,8 @@ Mọi route nhận `:id` là id HOẶC mã đơn (`FLR-YYMMDD-NNNN`); tổ chứ
 | PATCH | `/coordinator/orders/:id/stage` | `R3` | Kiểm luồng + bằng chứng (đối tác / QC đạt / POD / hết sự cố) |
 | PATCH | `/coordinator/orders/:id/custom-fields` | `R3` | ĐP-3.16 — sửa giá trị trường tự tạo (entity ORDER); trộn vào giá trị cũ, không thay nguyên khối |
 | GET | `/coordinator/orders/:id/payments` | `R1` | ĐP-4a (PO D2) — sổ thu của một đơn |
-| POST | `/coordinator/orders/:id/payments` | `R9`/`R10` | ĐP-4a (PO D2) — ghi một dòng sổ thu. `kind=DEPOSIT`/`BALANCE` đòi `R9`; `kind=REFUND` đòi `R10` (trần cứng điều hành). `orders.paid_vnd`/`balance_vnd` cập nhật cùng giao dịch |
+| POST | `/coordinator/orders/:id/payments` | `R9`/`R10` | ĐP-4a (PO D2) — ghi một dòng sổ thu. `kind=DEPOSIT`/`BALANCE` đòi `R9`; `kind=REFUND` đòi `R10` (trần cứng điều hành). Người có `R11` ghi thì `orders.paid_vnd`/`balance_vnd` cập nhật cùng giao dịch; người không có `R11` ghi thì dòng ở trạng thái `PENDING`, chưa cộng vào số đã thu (checklist ALG 1.16) |
+| POST | `/coordinator/orders/:id/payments/:paymentId/decision` | `R11` | Checklist ALG 1.16 — Điều hành xác nhận (`approve: true`, cộng vào số đã thu) hoặc từ chối (`approve: false`, bắt buộc `note`) dòng sổ thu `PENDING`. Người tạo dòng không tự duyệt khi công tắc tự duyệt tắt |
 | POST | `/coordinator/orders/:id/assign-partner` | `R4` | Đối tác cùng tổ chức, đang hoạt động, chưa vượt `capacity_daily` (trừ `overrideCapacity`) |
 | POST | `/coordinator/orders/:id/production` | `R3` | `MARK_READY` bắt buộc ảnh thành phẩm (`assets` cùng tổ chức); `REPORT_MATERIAL_ISSUE` mở sự cố |
 | POST | `/coordinator/orders/:id/qc` | `R3` | Người kiểm kết luận; không đạt bắt buộc lý do; `REJECTED` mở sự cố `QC_FAILURE` |
