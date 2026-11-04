@@ -25,18 +25,18 @@ Ký hiệu đường dẫn rút gọn: `org/` = `src/modules/organization/`, `gc
 | Nhóm | Nội dung | Số chức năng | Hoàn thiện | Dang dở | Chưa hoàn thành |
 |---|---|---:|---:|---:|---:|
 | 1 | Nền tảng chung & phân quyền | 19 | 17 | 2 | 0 |
-| 2 | Quản lý sản phẩm, mẫu hoa & hình ảnh | 9 | 7 | 2 | 0 |
+| 2 | Quản lý sản phẩm, mẫu hoa & hình ảnh | 9 | 9 | 0 | 0 |
 | 3 | Tạo & quản lý báo giá | 13 | 8 | 5 | 0 |
-| 4 | Tiếp nhận, quản lý & xử lý đơn hàng | 32 | 31 | 1 | 0 |
+| 4 | Tiếp nhận, quản lý & xử lý đơn hàng | 32 | 32 | 0 | 0 |
 | 5 | Thẻ Chào mẫu hoa & trang khách hàng | 15 | 10 | 5 | 0 |
 | 6 | Báo cáo hoạt động & tài chính | 9 | 3 | 6 | 0 |
 | 7 | AI phân tích, nội dung & marketing | 3 | 1 | 2 | 0 |
 | 8 | Landing page bán hàng | 1 | 1 | 0 | 0 |
 | 9 | Chat nội bộ, đa chuỗi & phân quyền nâng cao | 14 | 10 | 3 | 1 |
 | 10 | Quản lý credit AI, hạn mức & thuê bao SaaS | 8 | 2 | 3 | 3 |
-| | **Tổng cộng** | **123** | **90** | **29** | **4** |
+| | **Tổng cộng** | **123** | **93** | **26** | **4** |
 
-Tỷ lệ: Hoàn thiện 73,2% · Dang dở 23,6% · Chưa hoàn thành 3,3%.
+Tỷ lệ: Hoàn thiện 75,6% · Dang dở 21,1% · Chưa hoàn thành 3,3%.
 
 ### Bốn chức năng chưa hoàn thành
 
@@ -80,11 +80,11 @@ Tỷ lệ: Hoàn thiện 73,2% · Dang dở 23,6% · Chưa hoàn thành 3,3%.
 | 2.1 | Tạo thẻ sản phẩm mẫu hoa | Hoàn thiện | `api/products/route.ts` (L2); mã để trống → máy chủ sinh mã `AUTO-` duy nhất trong tổ chức, thử lại khi trùng `src/modules/products/use-cases/create-product.ts` (quy ước `src/modules/products/domain/product-code.ts`), mã nhập trùng → 409; dịp (danh mục dịp của tiệm → `attributes.occasionCodes`) và kích thước (`attributes.dimensions`) `src/components/products/use-product-occasion-size.ts`, `create-occasion-size-card.tsx`; mô tả, màu, ảnh `src/components/products/use-create-product-form.ts`; `tt/products-create.test.ts`, `tt/products-pricing.test.ts:37,60` | — |
 | 2.2 | Cập nhật thẻ sản phẩm & đồng bộ Thẻ Chào | Hoàn thiện | `api/products/[id]/route.ts:44-54` (L3); Thẻ Chào đọc sản phẩm trực tiếp qua quan hệ `gc/infra/greeting-catalog-repository.ts:15`; `tt/products-pricing.test.ts:131`, `tt/product-governance.test.ts:94` | — |
 | 2.3 | Trạng thái sản phẩm (Nháp/Hoạt động/Lưu trữ) | Hoàn thiện | Enum `DRAFT/ACTIVE/PAUSED/ARCHIVED` (migration `20261104120000_product_status_paused`); lưu trữ cần L4 `api/products/[id]/route.ts`; mẫu tạm ngưng/lưu trữ không bán trên link khách `gc/domain/product-availability.ts`, `gc/use-cases/check-product-availability.ts`; mẫu đã có đơn (dòng đơn hoặc lịch đặt) không xoá vĩnh viễn được, chỉ lưu trữ `src/modules/storage/infra/trash-repository.ts` → 409; nhãn và thao tác hàng loạt "Tạm ngưng" `src/components/products/product-card.tsx`, `product-bulk-status-bar.tsx`; `tt/products-status.test.ts` | — |
-| 2.4 | Biến thể kích cỡ (Nhỏ/Vừa/Lớn/VIP) | Dang dở | Giá theo phiên bản (nhóm Kích cỡ × Màu) `src/modules/products/domain/product-pricing.ts:1-40`; S/M/L/XL co giãn công thức `src/modules/products/domain/product-size-variants.ts` chỉ dùng ở `src/app/(app)/gia/pricing-calculator-card.tsx` | Lưu số lượng hoa riêng theo từng kích cỡ vào mẫu |
+| 2.4 | Biến thể kích cỡ (Nhỏ/Vừa/Lớn/VIP) | Hoàn thiện | Giá theo phiên bản (nhóm Kích cỡ × Màu) và số cành riêng từng phiên bản (`stem_count`) `src/modules/products/domain/product-pricing.ts`; cột "Số cành" ở bảng phiên bản `src/components/products/pricing/pricing-variant-table.tsx`; đơn khách đặt ghi phiên bản + số cành vào dòng đơn `gc/use-cases/place-brochure-order.ts`; phiếu thợ đọc theo phiên bản khách chọn `gc/domain/order-product-view.ts`, `src/modules/orders/domain/florist-work.ts`; `tu/…/product-pricing.test.ts`, `tt/product-size-stems.test.ts` | Giá vốn vẫn tính theo công thức mẫu, chưa tách theo phiên bản |
 | 2.5 | Định mức nguyên liệu BOM | Hoàn thiện | `schema:3622-3656` (`product_recipes`, `product_recipe_items`); nhóm Hoa chính/Hoa phụ/Lá `org/domain/industries/floral.ts:23-25`; `api/costing/recipes/[productId]/route.ts:11,26`; `src/app/(app)/tinh-gia/cong-thuc`; `tt/costing-isolation.test.ts:66` | — |
 | 2.6 | Nhập danh mục hàng loạt từ Excel/CSV | Hoàn thiện | `src/components/products/bulk-import/parse-product-sheet.ts:84-123` (đánh lỗi từng dòng, trùng mã), `import-preview.tsx:46,186`; `api/products/batch-import/route.ts:37-38`; `tu/products/parse-product-sheet.test.ts`, `tu/products/run-bulk-import.test.ts`, `tt/products-batch-import-images.test.ts:56-105`, `tt/product-governance.test.ts:110` | — |
 | 2.7 | Duyệt đề xuất thay đổi thông tin/giá 2 bước | Hoàn thiện | `schema:872-890` (`product_change_requests`); `api/products/[id]/change-requests`; `tt/product-governance.test.ts:44,81` | — |
-| 2.8 | Cấu hình khả dụng, ẩn mẫu theo ngày | Dang dở | Ngành hoa dùng chế độ tồn kho `gc/domain/product-availability-config.ts:1-30`, `gc/use-cases/check-product-availability.ts:83-100`; khoá theo ngày chỉ chạy ở chế độ lịch đặt phòng `:125,151` | Đánh dấu hết nguyên liệu theo ngày cho mẫu hoa và tự ẩn khỏi danh mục/Thẻ Chào của ngày đó |
+| 2.8 | Cấu hình khả dụng, ẩn mẫu theo ngày | Hoàn thiện | Ngày không nhận đơn áp cho mọi chế độ khả dụng `gc/domain/product-availability-config.ts`; kiểm khả dụng theo ngày giao khách chọn `gc/use-cases/check-product-availability.ts`; máy chủ từ chối đơn vào ngày đã khoá `gc/use-cases/assert-product-date-open.ts` (gọi ở `place-brochure-order.ts`); khai ngày chặn trong thẻ khả dụng của mẫu `src/components/products/blocked-dates-editor.tsx`; `tt/availability-by-date.test.ts`, `tt/product-size-stems.test.ts` | Danh sách mẫu trên link vẫn hiện mẫu bị khoá; khách chỉ bị chặn khi chọn đúng ngày đó |
 | 2.9 | Lưu bộ nội dung tư vấn bán hàng chuẩn SEO | Hoàn thiện | `src/modules/product-copies/domain/product-copy-rules.ts:28-59,156-171` (tiêu đề ngắn, điểm nổi bật, câu chuyện, từ khoá SEO); `api/product-copies`; `src/components/sales/sales-pitch-card.tsx` (sao chép); `tt/product-copies.test.ts:152-260` | — |
 
 ### Nhóm 3 — Tạo & quản lý báo giá (13)
@@ -117,7 +117,7 @@ Tỷ lệ: Hoàn thiện 73,2% · Dang dở 23,6% · Chưa hoàn thành 3,3%.
 | 4.6 | Đổi thông tin đơn giữ vết | Hoàn thiện | `schema:2975-2995` (`order_change_requests`: giá trị cũ/mới, lý do); `tt/greeting-card-order-change.test.ts:61,70,105` | — |
 | 4.7 | Luồng hủy đơn & hoàn tiền duyệt 2 bước | Hoàn thiện | R6/R10 trần cứng; `tt/greeting-card-cancellation.test.ts:37-124`, `tt/greeting-card-cancellation-follow-up.test.ts:57,82`, `tt/coordinator.test.ts:587` | — |
 | 4.8 | Lịch sử thao tác đơn tóm tắt | Hoàn thiện | Tab "Lịch sử đơn hàng" `src/components/greeting-card/brochure-order-detail-modal.tsx:85`; nút sao chép `src/components/greeting-card/evidence-timeline-diagram.tsx:100,145`; `tt/order-isolation.test.ts:163-185` | — |
-| 4.9 | In phiếu xưởng (khổ A6) & thiệp/băng rôn | Dang dở | In phiếu thợ `src/components/greeting-card/brochure-florist-job-tab.tsx:162` (ảnh mẫu, tóm tắt hoa, lời thiệp) | Khổ A6; in băng rôn; công thức cắm đầy đủ trên phiếu; test nội dung in |
+| 4.9 | In phiếu xưởng (khổ A6) & thiệp/băng rôn | Hoàn thiện | Trang in ngoài khung ứng dụng `src/app/in-phieu/[id]/page.tsx`: phiếu xưởng `@page size: A6` (ảnh mẫu, phiên bản và số cành, công thức có ô đánh dấu, lời thiệp) `src/components/orders/print/florist-ticket-a6.tsx`, băng rôn A4 ngang `ribbon-banner-print.tsx`; dữ liệu `api/orders/[id]/print` (R7) → `src/modules/orders/use-cases/get-order-printout.ts`; nút In trong chi tiết đơn; `tt/print-ticket.test.ts` | — |
 | 4.10 | Xuất danh sách đơn Excel | Hoàn thiện | `api/orders/export/route.ts` (.xlsx, R13, ghi nhật ký xuất); phạm vi sale và chi nhánh `src/modules/orders/infra/order-export-query.ts`, `src/modules/orders/use-cases/export-orders.ts`; `export-orders.test.ts`, `tt/order-export-scope.test.ts` | — |
 | 4.11 | Lịch sử đơn liên quan cùng khách hàng | Hoàn thiện | Tab "Đơn đã đặt" trong chi tiết khách `src/components/crm/customer-orders-tab.tsx` (bấm mở chi tiết đơn); `api/crm/customers/[id]/orders` (Q1 + R1) → `src/modules/orders/use-cases/list-customer-orders.ts`: đơn gắn khách và đơn chưa gắn khách cùng SĐT người đặt (Thẻ Chào, Điều phối), trong phạm vi chi nhánh; `tt/customer-orders.test.ts` | — |
 | 4.12 | Bảng điều phối phân cấp mức rủi ro trễ giờ | Hoàn thiện | 4 mức `src/modules/coordinator/domain/coordinator-types.ts:30`; `operation-rules.ts:164-190` (đếm phút còn lại); `src/components/coordinator/control-tower-dashboard.tsx`; `tu/coordinator/operation-rules.test.ts:81-90`, `tt/greeting-card-coordinator-board.test.ts:51,71` | — |

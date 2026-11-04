@@ -105,4 +105,22 @@ describe("product-pricing", () => {
     })
     expect(p.rows.map((r) => r.imageAssetId)).toEqual(["asset-1", null])
   })
+
+  it("mỗi phiên bản lưu và đọc lại số cành riêng (checklist ALG 2.4)", () => {
+    const attrs = {
+      pricing: {
+        mode: "RANGE",
+        dimensions: [{ key: "SIZE", label: "Kích cỡ", values: ["Nhỏ", "Lớn"] }],
+        rows: [
+          { values: ["Nhỏ"], price_vnd: 300000, stem_count: 10 },
+          { values: ["Lớn"], price_vnd: 900000, stem_count: 50 },
+        ],
+      },
+    }
+    const parsed = parsePricing(attrs)
+    expect(parsed.rows.map((r) => r.stemCount)).toEqual([10, 50])
+    const again = parsePricing(serializePricing(parsed))
+    expect(again.rows.map((r) => r.stemCount)).toEqual([10, 50])
+    expect(sellableOptions(again).find((o) => o.name === "Lớn")?.stemCount).toBe(50)
+  })
 })

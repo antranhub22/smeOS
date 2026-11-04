@@ -99,7 +99,7 @@ export function OrderDetailModal({ orderId, onClose, onUpdated }: OrderDetailMod
   }
 
   function handlePrint() {
-    window.open(`/api/v1/orders/${orderId}/print`, "_blank")
+    window.open(`/in-phieu/${orderId}`, "_blank")
   }
 
   // Chuẩn bị dữ liệu cho Florist Ticket Projection (Giấu giá, hiển thị BOM + Ảnh).

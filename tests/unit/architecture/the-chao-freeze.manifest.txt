@@ -66,7 +66,7 @@ e2f17085a5a103ac94d91065e25b3f6a87697458fc80b24df740ddf3d3615d7d  src/modules/gr
 4a65962d16de8c6fc6aa4960af6beb79521d591550bc6740484116ea5cfdd616  src/modules/greeting-card/domain/__tests__/message-copy-governance.test.ts
 31ab3126eeb85a4d6cc198cb1a9b9ce2f5b9327a117e54797dcfffa872836acc  src/modules/greeting-card/domain/__tests__/order-change-request.test.ts
 94d02bcd250145ed21d34d4d9ae9dd9ea90b85f31476dba03c9b85c53632d6ca  src/modules/greeting-card/domain/__tests__/order-family.test.ts
-f0f17ede9c690aaa9245e643b9f77f03d47c1164b9879cd7776328bb65db3ca0  src/modules/greeting-card/domain/__tests__/order-product-view.test.ts
+e962314b0b74dd458f5c3b478ec4600a9e5e0ebf25054bbc7f95835f8e889911  src/modules/greeting-card/domain/__tests__/order-product-view.test.ts
 299d024bb5ac2a86c04cbdc6ab919017d77f67bf16973dbe3a11c0de690a35ed  src/modules/greeting-card/domain/__tests__/order-settlement.test.ts
 4530970577837ff4ffd57acd2113aa8018808f9e96471cac614c46705604c6b2  src/modules/greeting-card/domain/__tests__/order-slip-extras.test.ts
 13d33961ad3e77faf7ef73fd479c3d8de144d7bf358d9155eea96b577c34bbd7  src/modules/greeting-card/domain/__tests__/order-time-tier.test.ts
@@ -101,7 +101,7 @@ a66d50466bf6e161ce3a7e7d9a6ff1eced0025fe7c347324e66950a46e7bafd0  src/modules/gr
 d059022b4eeb27f29f27cae937905e6589864b66cf6fca4a88a7d67210e6a0c8  src/modules/greeting-card/domain/brochure-language-policy.ts
 3bd826b767bd9c9c2585aa1ff8f16387d8e8f1eee86c4c18be669986ddcc56e1  src/modules/greeting-card/domain/brochure-payment-policy.ts
 33f42199e9094db35dc621f9c0b55d688f84e85108e08d848d95e9f38a5da822  src/modules/greeting-card/domain/brochure-policy-resolvers.ts
-b71792472eb4d94727bedc9262eced559a42857f8dc7f9756f41c1b618e1d5d7  src/modules/greeting-card/domain/brochure-pricing.ts
+53dcb090418aaa6a8073a4481c01409b1957b095fce91880c4e07da4ec33584c  src/modules/greeting-card/domain/brochure-pricing.ts
 4024a8a1d53e0d013c66c954c62eba5a7baa5aa184572655212dba87ca6ee12c  src/modules/greeting-card/domain/brochure-workflow-policy.ts
 68cbc796dda86dc1c9c187780670eb07d9b72f1233a75735e8a5a06e7ec0207a  src/modules/greeting-card/domain/cancellation-request.ts
 29fde5718cfd8fa558c7f618bd3de4ac5278f7e747e962c99aa86b2a01ca71cd  src/modules/greeting-card/domain/catalog-channel.ts
@@ -153,7 +153,7 @@ b93b1e785280ce3606ba16a4d5b24742d23db0c688e6fe0fbc217042ce1fc9e1  src/modules/gr
 611efc6481595020c4385ff746401539de60778f67bb09a2828fd2e0be707857  src/modules/greeting-card/domain/order-family.ts
 b2f08fa95e3fc9e2790ad934d010428ac1a92c591cf830c887858e3a3838e37f  src/modules/greeting-card/domain/order-guard.ts
 a59c5b2597aa70c0ab9e0680183de781a8864095a5197351c61d34be48fce026  src/modules/greeting-card/domain/order-policies.ts
-fefce0be1ef99039bd77ea7ee806d2655c1adf9a7325b52d4c8ee5af6d70db03  src/modules/greeting-card/domain/order-product-view.ts
+7caeb917d09078157855069e45e45cf1124b48aa1f5d77db81703d3d34c0ddd2  src/modules/greeting-card/domain/order-product-view.ts
 dd744ed1f9fbcada8da46dad01096de1ce7d79dd0772f747df78907d49194ef3  src/modules/greeting-card/domain/order-settlement.ts
 2638af2286b9b96255218a237060bcc4e0c195459fa1b5ed2714bb2509683663  src/modules/greeting-card/domain/order-slip-extras.ts
 d2c9d6ecf16d5774ec648f907853b0f36f0134fadaf804598c211a5ed97ee681  src/modules/greeting-card/domain/order-time-tier.ts
@@ -166,8 +166,8 @@ c17db350bd177be23c5a97d31343fea2f1912af5b12a9329aa1b415e5d735340  src/modules/gr
 b465f3ab1c0ddca1383941896f1e34a99aca56de01bf822d9e26fb03bee5e780  src/modules/greeting-card/domain/payment-summary.ts
 870320bf7dc0f699709534567e89803542ee30dd09c3e84458edadb4d136bea3  src/modules/greeting-card/domain/photo-approval.ts
 6d7513b596ca87a2f05aef458cc9620e600856a662098b9dadf638ba91f7f8dd  src/modules/greeting-card/domain/pipeline-clock.ts
-93cdc4382f39609c0067ec3850c10009f8459017acd8851cf4940a0a3d2f802f  src/modules/greeting-card/domain/product-availability-config.test.ts
-8b249f63e86ad8aba9cdd60d170fb042720b1ff938f69d09ab237cd63188f23c  src/modules/greeting-card/domain/product-availability-config.ts
+a2a939d6e9c9c4efcb467474cc909f65a13b9b628a2ef88c0f74abf6afe14216  src/modules/greeting-card/domain/product-availability-config.test.ts
+3dc3feb0e17b2be8e297b5e42ccd4183097840d1424316782d5fb7ef835513ce  src/modules/greeting-card/domain/product-availability-config.ts
 2dbe83762995d8e7f3f612ce6028bd4c0808aa7ea947b47792815edbecd4eb8a  src/modules/greeting-card/domain/product-availability.ts
 82056f02405b00a3d0ac51994b7ae31b52ed3e4e4f2363d3f4a1d0ab4c81fb37  src/modules/greeting-card/domain/promotion-pricing.ts
 67e6d77db188b8ab41ff93c7ec5cf7d5d9067456303d802cd98d3d4fa0dae5f2  src/modules/greeting-card/domain/public-image-url.ts
@@ -204,7 +204,7 @@ dfbd7eb17d2f8e8a51777ef1ad791a1b2fc301686c8ebc780720d942bac6b37b  src/modules/gr
 1b1378166dece7802ec74f308abcd06e6c97cacdcbbab064847d618fdcd34fe7  src/modules/greeting-card/infra/availability-check-repository.ts
 03ea0689ef94a34bc086c4da1af7651968566344229e0ae68e63097316bd4aaf  src/modules/greeting-card/infra/background-sweep-repository.ts
 3bca30da83a1815fc7c574111794263741d694e0df479ebd084eab05f1392ef4  src/modules/greeting-card/infra/branch-portal-repository.ts
-a4cd136bd1aa7e0d3f64ab65d46acc5f44c1c1867eb79d97521ac9ea81e4e851  src/modules/greeting-card/infra/brochure-checkout-repository.ts
+8835fd30e29922b7b2372ebab7d97b9055d5dd15356ea6332132a382a7adc28c  src/modules/greeting-card/infra/brochure-checkout-repository.ts
 82a096e06f6d87b351ff35e9ba618883e1a68126f8f117398b891b5230ea2c2e  src/modules/greeting-card/infra/brochure-order-repository.ts
 b1cc1dbd079e5c2ef99a4e6b235ee796f6d636d736fd00b6dd32fc72fb7c5192  src/modules/greeting-card/infra/brochure-payment-repository.ts
 7bbbe31093625aee3958b102fd555fe35bd960a30bdfd308368ad72fd9ea314d  src/modules/greeting-card/infra/cancellation-follow-up-repository.ts
@@ -284,6 +284,7 @@ e0202ca022b92a1673971d7eccda86a355cce66b1d6830f2c191aa6c488483ee  src/modules/gr
 479712905b05a90dc564db1740299b0f09eb91402a319a1812006830ba5d58ec  src/modules/greeting-card/use-cases/admin-confirm-brochure-order.ts
 eabb00fbc3de3a908044f2b121e4b1d56698d12f8d3a1158252c57692e1f9c4a  src/modules/greeting-card/use-cases/advance-dispatch-round.ts
 de26c6e3a1b031170198cbb6a2be3cef43b1d14b15cec2c0147b4ed66e118330  src/modules/greeting-card/use-cases/approve-brochure-photo.ts
+68bbd3fb903d9073def8ea9f42820e75e12a74f2ec1bae3abd769fff5a547f3e  src/modules/greeting-card/use-cases/assert-product-date-open.ts
 a3b9d0a39a4d4232665b68341439d61f8b12c8fe50d96913fcb039c3a70256a7  src/modules/greeting-card/use-cases/authorize-subcontract-branch.ts
 4c3581f986a6ebcb0c5064b5e9aee77e654f9fceac01cb416a00fb6de739cead  src/modules/greeting-card/use-cases/background-sweep-scheduler.ts
 195827cd693baebf92cd170a9e7cddbd895672352cb6b81d04a096a521767e64  src/modules/greeting-card/use-cases/background-sweep.ts
@@ -299,7 +300,7 @@ b876bb9828a2c1e84b4da34e0a5ccd86d9e44b8aac1bc3730bbf2538c6cd582b  src/modules/gr
 7bc266e705ed9970ca6a1d9ac9c9ade58e909849ea1640fd0a054271fd624230  src/modules/greeting-card/use-cases/catalog-channel-events.ts
 ca75960e733c0c2b0455f772ef1229225b86d7c6c1774b1e76bea486a79bd92a  src/modules/greeting-card/use-cases/catalog-collage.ts
 89a91b4b9c6670ead86e83d0bd9418af247ce08752658c43b65f3a2f6fa02479  src/modules/greeting-card/use-cases/catalog-edit-access.ts
-2b4b497d10b713ab01c39c8ed13d9b8e64f9e3cfb810c26b1d88f2d716c7f1f2  src/modules/greeting-card/use-cases/check-product-availability.ts
+73e3542b804d02cb5888347f16ecccf2676c444a5f64264a072b3d0e74520d4e  src/modules/greeting-card/use-cases/check-product-availability.ts
 abf5007d897e93a071b2813d624f886edfeecc3acc511c3f0d225b6f3fc02511  src/modules/greeting-card/use-cases/commit-subcontract-claim.ts
 15982003f8c0af06acb474302e1e1f9b855839ba342fc0e52f6d06f99fefbe81  src/modules/greeting-card/use-cases/confirm-brochure-payment.ts
 711426a7d6b9b94aac59b29a7539be0f5ebbdd613323ba8f0134dcdd4c98734c  src/modules/greeting-card/use-cases/coordinator-board.ts
@@ -345,7 +346,7 @@ d3b05c3cf33c2a4223537672b57099a3f600aaeb81d02b1f24c7e906262b228e  src/modules/gr
 ebfbd7e05c329f12910ded7b1a46ac2769c4d7726711cc68effda8bdc3d75048  src/modules/greeting-card/use-cases/payment-instructions.ts
 2caa6f2849968e7f3927c352ce7115e8e803a79b121c072c97acb6fe87c87f16  src/modules/greeting-card/use-cases/payment-plan-quote.ts
 047b49af633d8a3b252d3081d13bf5ec2e5c0913d5efe19d1be8178ccc219ef7  src/modules/greeting-card/use-cases/payment-webhook.ts
-88646bef837a024cd2d430f970ea556702b07c14f2ca95383564411c95100f2f  src/modules/greeting-card/use-cases/place-brochure-order.ts
+d22b71b590233978bcc134271b1944817c6cb18bac71e61a828857b3e7cdb380  src/modules/greeting-card/use-cases/place-brochure-order.ts
 a725e49d563bd8ed9925b2657118095cc43b055309be99d304a1cfc921225960  src/modules/greeting-card/use-cases/process-dispatch-reminders.ts
 5b788508542ab981be05f655c6223d155a2f8611f937a5b9cead63f714a4b7b0  src/modules/greeting-card/use-cases/process-payment-proof-job.ts
 93055756472228454158a7db819380c13a6e3ac2129d97e9b0f28db199d4a519  src/modules/greeting-card/use-cases/propose-dismissal.ts
@@ -556,7 +557,7 @@ c9218e3b337aaf9f8a7faec34f293e2a995b39923f11cb113d9ff6d7ff6eddee  src/components
 b0b4e72bd827920dcb7ffb547ba62af538780f55a5e3125918f9dcccf04d578a  src/components/greeting-card/customer/use-saved-state.ts
 4d2136e7747e34cdb207ba66ef127d35601605aab86446b335c1c5706d3f7948  src/components/greeting-card/customer/use-step-history.ts
 3d092930022d20f1eee288b38d261eed7f7464f26f336250c496604f172b6877  src/components/greeting-card/customer/use-vn-address-units.ts
-ae544de6c27c485495402b428738c813cd306fc5a5c333ec943d92bc6c91eee8  src/components/greeting-card/customer/variant-step-picker.tsx
+a6464c04e7662e98785d5838a5422db3c619223c6b69a7218a4dd3e3b1b04f1d  src/components/greeting-card/customer/variant-step-picker.tsx
 a650a07e67397e09e6be69e22d553de5072069dc2c49844599047ca0b06de22e  src/components/greeting-card/customer/vi-date-input.tsx
 b00802cc5983ae041239683dddfdf6c537b91807f35379412854bdcb6e63975a  src/components/greeting-card/default-view.ts
 92d56f7a68e922e14030d2a04c334465ebad17ed54f5bbf9d2a2d5b30074d06a  src/components/greeting-card/drive-thumb-image.tsx

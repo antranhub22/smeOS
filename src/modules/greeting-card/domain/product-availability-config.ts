@@ -20,27 +20,31 @@ export type AvailabilityMode =
 
 // ─── Config shapes per mode ────────────────────────────────────────────────────
 
-export interface StockQuantityConfig {
+/** Ngày không nhận đơn "YYYY-MM-DD" (hết nguyên liệu, nghỉ, bảo trì) — áp cho mọi chế độ (checklist ALG 2.8). */
+interface BlockableDates {
+  manualBlockedDates?: string[]
+}
+
+export interface StockQuantityConfig extends BlockableDates {
   mode: "STOCK_QUANTITY"
   /** null = không giới hạn (tiệm bật/tắt thủ công qua product_inventory). */
   maxQuantity: number | null
 }
 
-export interface DailyCapacityConfig {
+export interface DailyCapacityConfig extends BlockableDates {
   mode: "DAILY_CAPACITY"
   maxOrdersPerDay: number
   closedWeekdays: number[] // 0=CN, 1=T2, ..., 6=T7
 }
 
-export interface BookingCalendarConfig {
+export interface BookingCalendarConfig extends BlockableDates {
   mode: "BOOKING_CALENDAR"
   minNights: number
   maxNights: number // 0 = không giới hạn
   leadDays: number  // ngày đặt trước tối thiểu
-  manualBlockedDates?: string[] // "YYYY-MM-DD" — admin block thủ công
 }
 
-export interface ScheduleSlotsConfig {
+export interface ScheduleSlotsConfig extends BlockableDates {
   mode: "SCHEDULE_SLOTS"
   slots: Array<{
     id: string
@@ -104,7 +108,12 @@ export function parseAvailabilityConfig(
   if (!raw || typeof raw !== "object" || Array.isArray(raw)) {
     return defaultConfigForIndustry(industryKey)
   }
-  const obj = raw as Record<string, unknown>
+  const blocked = parseDateArray((raw as Record<string, unknown>).manualBlockedDates)
+  const parsed = parseModeConfig(raw as Record<string, unknown>, industryKey)
+  return blocked.length > 0 ? { ...parsed, manualBlockedDates: blocked } : parsed
+}
+
+function parseModeConfig(obj: Record<string, unknown>, industryKey?: string | null): AvailabilityConfig {
   const mode = obj.mode as AvailabilityMode | undefined
 
   switch (mode) {
@@ -114,7 +123,6 @@ export function parseAvailabilityConfig(
         minNights: safeInt(obj.minNights, 1),
         maxNights: safeInt(obj.maxNights, 0),
         leadDays:  safeInt(obj.leadDays, 1),
-        manualBlockedDates: parseDateArray(obj.manualBlockedDates),
       }
     case "DAILY_CAPACITY":
       return {
@@ -175,7 +183,7 @@ export function validateNights(nights: number, cfg: BookingCalendarConfig): stri
   return null
 }
 
-export function isManuallyBlocked(date: string, cfg: BookingCalendarConfig): boolean {
+export function isManuallyBlocked(date: string, cfg: BlockableDates): boolean {
   return (cfg.manualBlockedDates ?? []).includes(date)
 }
 

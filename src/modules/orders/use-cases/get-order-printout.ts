@@ -8,6 +8,7 @@ import type { TenantContext } from "@/core/tenancy/tenant-context"
 import type { IOrderRepository } from "../domain/repositories/order-repository.interface"
 import { getOrderRepository } from "../infra/order-repository"
 import { formatDate } from "@/lib/i18n/formatters"
+import { toFloristItem, type FloristItem } from "../domain/florist-work"
 
 export interface OrderPrintData {
   orderCode: string
@@ -27,6 +28,8 @@ export interface OrderPrintData {
   }>
   totalVnd: number
   floristNote: string
+  /** Phiếu xưởng khổ A6 (checklist ALG 4.9): công thức theo phiên bản, ảnh mẫu — không có giá. */
+  florist: FloristItem[]
 }
 
 export async function getOrderPrintout(
@@ -70,5 +73,6 @@ export async function getOrderPrintout(
     })),
     totalVnd: order.totalVnd,
     floristNote: order.internalNote ?? "",
+    florist: (order.items ?? []).map((it) => toFloristItem({ description: it.description ?? null, quantity: it.quantity, metadata: it.metadata })),
   }
 }

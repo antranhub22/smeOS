@@ -23,7 +23,7 @@ interface Work {
   productionStatus: "ASSIGNED" | "ARRANGING" | "QUALITY_CHECK"
   deliveryWindow: { date: string; timeSlot?: string } | null
   cardMessage: string | null
-  items: { description: string | null; quantity: number; sampleImageUrl: string | null; recipe: { flowerName: string; quantity: number; unit: string | null; color: string | null; role: string | null }[] }[]
+  items: { description: string | null; quantity: number; variantName: string | null; stemCount: number | null; sampleImageUrl: string | null; recipe: { flowerName: string; quantity: number; unit: string | null; color: string | null; role: string | null }[] }[]
 }
 
 const STATUS_TEXT: Record<Work["productionStatus"], string> = {
@@ -116,6 +116,7 @@ export function FloristQueueHome() {
                 )}
                 <div className="text-body-sm text-text">
                   <p className="font-semibold">{item.description ?? "Mẫu theo yêu cầu"} × {item.quantity}</p>
+                  {item.variantName && <p className="text-primary">Phiên bản {item.variantName}{item.stemCount ? `: ${item.stemCount} cành` : ""}</p>}
                   <ul className="text-text-muted">
                     {item.recipe.map((r, j) => (
                       <li key={j}>{r.flowerName}{r.color ? ` (${r.color})` : ""}: {r.quantity} {r.unit ?? ""}{r.role ? ` · ${r.role}` : ""}</li>

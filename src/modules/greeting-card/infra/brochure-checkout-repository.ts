@@ -32,7 +32,7 @@ export interface CreateBrochureOrderData {
   delivery?: { notes?: string; mapUrl?: string } | undefined
   note?: string | null | undefined
   snapshot: ProductSnapshot
-  variant: { id: string; name: string } | null
+  variant: { id: string; name: string; stemCount?: number | null } | null
   quote: BrochureQuote
   voucherId: string | null
   /** Bản chụp ưu đãi/thỏa thuận khách đã đồng ý (Spec #2, #5). */

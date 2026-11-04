@@ -31,6 +31,9 @@ export interface RecipeLine {
 export interface FloristItem {
   description: string | null
   quantity: number
+  /** Phiên bản khách chọn và số cành của phiên bản (checklist ALG 2.4) */
+  variantName: string | null
+  stemCount: number | null
   recipe: RecipeLine[]
   sampleImageUrl: string | null
 }
@@ -55,5 +58,7 @@ export function toFloristItem(item: { description: string | null; quantity: numb
       role: text(f.role),
     })
   }
-  return { description: item.description, quantity: item.quantity, recipe, sampleImageUrl: text(meta.sampleImageUrl) }
+  const variant = meta.variant && typeof meta.variant === "object" ? (meta.variant as Record<string, unknown>) : {}
+  const stemCount = typeof variant.stemCount === "number" && variant.stemCount > 0 ? variant.stemCount : null
+  return { description: item.description, quantity: item.quantity, variantName: text(variant.name), stemCount, recipe, sampleImageUrl: text(meta.sampleImageUrl) }
 }

@@ -70,6 +70,10 @@ export async function checkProductAvailability(
   if (product.status === "PAUSED" || product.status === "ARCHIVED") return { available: false, mode: "STOCK_QUANTITY", message: "Mẫu đang tạm ngưng nhận đơn" }
 
   const config = parseAvailabilityConfig(product.availability_config, req.industryKey)
+  // Ngày chặn thủ công áp cho mọi chế độ (checklist ALG 2.8); lịch phòng tự xử lý trong nhánh riêng
+  if (config.mode !== "BOOKING_CALENDAR" && req.deliveryDate && isManuallyBlocked(req.deliveryDate, config)) {
+    return { available: false, mode: config.mode, message: "Mẫu này không nhận đơn giao ngày đã chọn — vui lòng chọn ngày khác hoặc mẫu khác" }
+  }
 
   // 2. Dispatch theo mode
   switch (config.mode) {

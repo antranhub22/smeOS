@@ -1,4 +1,5 @@
 import { queueOrderNotification } from "./notify-customer"
+import { assertProductDateOpen } from "./assert-product-date-open"
 import { queueStaffNotification } from "./notify-staff"
 import { AppError, validationFailed } from "@/core/http/errors"
 import { MAX_ORDERS_PER_PHONE_PER_HOUR, TOO_MANY_ORDERS_MESSAGE } from "../domain/order-guard"
@@ -66,6 +67,8 @@ export async function placeBrochureOrder(
   const { organizationId, session, product, input } = params
   const customerPhone = normalizePhone(input.customerPhone)
   await assertPhoneQuota(organizationId, customerPhone, checkout)
+  // Ngày cửa hàng đã khoá cho mẫu này → không nhận đơn (checklist ALG 2.8)
+  await assertProductDateOpen(organizationId, product.id, input.deliveryDate)
   // Homestay / lưu trú: khoảng ngày đã có người giữ thì không tạo đơn (rà soát 21/10/2026, H8)
   if (input.checkOutDate && input.deliveryDate) {
     await assertBookingDatesAvailable({ organizationId, productId: product.id, checkInDate: input.deliveryDate, checkOutDate: input.checkOutDate })
@@ -116,7 +119,7 @@ export async function placeBrochureOrder(
       delivery: deliveryNoteFields(input),
       note,
       snapshot,
-      variant: priced.variant ? { id: priced.variant.id, name: priced.variant.name } : null,
+      variant: priced.variant ? { id: priced.variant.id, name: priced.variant.name, stemCount: priced.variant.stemCount ?? null } : null,
       quote: priced.quote,
       voucherId: priced.voucher?.id ?? null,
       policies: policies.snapshot,
