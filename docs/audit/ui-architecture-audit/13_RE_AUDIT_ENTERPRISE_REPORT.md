@@ -8,7 +8,7 @@
 
 - **Khung kiến trúc UI đạt mức có cổng kiểm tự động.** Token ngữ nghĩa có một nguồn (`src/styles/tokens/`), shell dùng chung (`AppShell`, `LiveRegionProvider`), 48 primitive trong `src/components/ui/` có test, Screen Contract phủ 111/111 trang, và các cổng ratchet trong CI (ESLint, UX lint, thuật ngữ ngành, gọi `Intl` trực tiếp) chặn nợ tăng thêm.
 - **Độ phủ trên màn hình thật tăng nhưng chưa trọn.** Baseline UX lint 3.945 vi phạm (từ 5.491), tính cả 45 điểm do R18 bắt thêm phần tử gắn `role` điều khiển; 43/111 trang gọi trực tiếp `PageLayout`/`PageHeader`/`ToolHero`; 87 tệp nguồn vượt 350 dòng.
-- **Trợ năng và hiệu năng có số đo.** Bộ E2E UX 34/34, gồm kiểm tự động 12 hành trình (axe, bàn phím, phóng 200%, giảm chuyển động, tương phản 3 preset) và 22 ảnh mốc màn chính. Web Vitals lab: CLS và INP đạt 5/5 tuyến, LCP di động đạt 4/5 (`/san-pham` 5,3 s). Kiểm bằng trình đọc màn hình chưa thực hiện.
+- **Trợ năng và hiệu năng có số đo.** Bộ E2E UX 34/34, gồm kiểm tự động 12 hành trình (axe, bàn phím, phóng 200%, giảm chuyển động, tương phản 3 preset) và 22 ảnh mốc màn chính. Web Vitals lab: LCP, CLS và INP đạt 6/6 tuyến (LCP di động cao nhất 1,92 s; `/san-pham` 5,3 s → 1,72 s nhờ render trang đầu phía máy chủ). Kiểm bằng trình đọc màn hình chưa thực hiện.
 - **Kết luận bàn giao:** đạt điều kiện bàn giao thương mại với nợ UX được kiểm soát bằng ratchet và có lộ trình (mục 6). Chưa đạt mức "enterprise grade toàn diện" ở các miền D, J và phần trình đọc màn hình của F.
 
 ## 2. Cổng CI
@@ -78,6 +78,5 @@ Baseline UX lint trên `main` là 120 vì bộ luật cũ hẹp hơn; con số 5
 | Nâng giao diện Thẻ chào trong PR riêng có PO duyệt và E2E | 2–3 ngày | `the-chao-freeze` cập nhật có biên bản |
 | Tách các tệp > 350 dòng, ưu tiên tệp đang sửa | 1–2 tuần | K11 giảm dần |
 | Kiểm bằng VoiceOver và NVDA 12 hành trình, lưu phiếu kiểm có người kiểm và ngày | 1–2 ngày | K9 phần trình đọc màn hình |
-| `/san-pham`: render trang đầu danh sách phía server, ảnh khung nhìn đầu tải ưu tiên | 1–2 ngày | LCP di động ≤ 2,5 s |
-| Seed dữ liệu link gửi, đơn gia công; kiểm trợ năng và ảnh mốc trang công khai có dữ liệu | 1 ngày | J01, J02, J09 kiểm ở trạng thái có dữ liệu |
+| Dữ liệu đơn gia công cho bộ kiểm; kiểm trợ năng `/subcontract` ở trạng thái có dữ liệu | 0,5–1 ngày | J09 kiểm ở trạng thái có dữ liệu |
 | Ảnh mốc `-darwin` cho 11 màn mới | 0,5 ngày, cần máy Mac | K7 đủ hai nền tảng |

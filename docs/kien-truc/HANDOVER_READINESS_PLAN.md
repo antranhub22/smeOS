@@ -36,7 +36,7 @@ Ngoài phạm vi (lộ trình sau bàn giao): trả nợ UX lint 5.491 điểm, 
 
 - [x] **H2-1** Script `scripts/measure-web-vitals.ts` đo bằng Playwright và `PerformanceObserver` của Chromium — không thêm thư viện. Đo LCP, CLS, TBT; INP qua Event Timing với một tương tác chuẩn mỗi tuyến. Hai cấu hình: di động (390×844, CPU chậm 4×, mạng 4G mô phỏng qua CDP) và máy tính (1280×800). Mỗi tuyến 3 lần, lấy trung vị.
 - [x] **H2-2** Đo 6 tuyến của `12_PERFORMANCE_REPORT.md` (`/`, `/san-pham`, `/dieu-phoi`, `/so-lieu`, `/b/[sendCode]`, `/van-hanh`) trên bản build production, database đã seed. Lưu JSON vào `docs/audit/ui-architecture-audit/perf/<ngày>/`; cập nhật báo cáo với số đo và đường dẫn tệp. Số liệu ghi là số đo phòng thí nghiệm (lab), không phải số đo người dùng thật.
-- [x] **H2-3** Tuyến vượt ngưỡng (LCP > 2,5 s, CLS > 0,1, INP > 200 ms): sửa trong đợt này nếu nguyên nhân rõ và sửa ≤ 0,5 ngày; còn lại ghi vào lộ trình kèm số đo. Kết quả 04/11: 5/5 tuyến đạt CLS và INP; LCP di động đạt 4/5, `/san-pham` 5,3 s do tải danh sách phía client sau hydrate — cần render phía server, vượt khung 0,5 ngày, ghi trong `12_PERFORMANCE_REPORT.md` §2. `/b/[sendCode]` đo sau khi seed E2E có link gửi (H3-1).
+- [x] **H2-3** Tuyến vượt ngưỡng (LCP > 2,5 s, CLS > 0,1, INP > 200 ms): sửa trong đợt này nếu nguyên nhân rõ và sửa ≤ 0,5 ngày; còn lại ghi vào lộ trình kèm số đo. Kết quả 04/11: 6/6 tuyến đạt LCP, CLS, INP sau khi `/san-pham` render trang đầu phía máy chủ (5,3 s → 1,72 s, `12_PERFORMANCE_REPORT.md` §2).
 
 ## 5. H3 — Trợ năng 12 hành trình (2–4 ngày)
 
