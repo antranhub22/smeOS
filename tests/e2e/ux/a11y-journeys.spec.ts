@@ -52,7 +52,7 @@ test.describe("Trợ năng 12 hành trình (WCAG 2.2 AA)", () => {
     const { context, page } = await newPage(browser, { auth: false, storage: undefined })
     const user = await createTestUserAndLogin(page, { workspaceKind: "PRODUCTION" })
     await grantPlatformOperator(user.userId)
-    const { productId, catalogSlug } = await seedJourneyData(page.request)
+    const { productId, catalogSlug, greetingCatalogId, greetingCatalogCode, sendCode } = await seedJourneyData(page.request)
     const orgSlug = await withDb(async (db) => (await db.query<{ slug: string }>("SELECT slug FROM organizations WHERE id = $1", [user.orgId])).rows[0]?.slug ?? "khong-co")
     storage = join(test.info().outputDir, "state.json")
     await context.storageState({ path: storage })
@@ -60,6 +60,9 @@ test.describe("Trợ năng 12 hành trình (WCAG 2.2 AA)", () => {
 
     routes = [
       ...(catalogSlug ? [{ journey: "J01", path: `/c/${catalogSlug}`, auth: false }] : []),
+      ...(sendCode ? [{ journey: "J01", path: `/b/${sendCode}`, auth: false }] : []),
+      ...(greetingCatalogCode ? [{ journey: "J01", path: `/bst/${orgSlug}/${greetingCatalogCode}`, auth: false }] : []),
+      ...(greetingCatalogId ? [{ journey: "J02", path: `/g/${greetingCatalogId}`, auth: false }] : []),
       { journey: "J01", path: "/b/KHONGTONTAI", auth: false, state: "không tìm thấy" },
       { journey: "J01", path: `/bst/${orgSlug}/khong-ton-tai`, auth: false, state: "không tìm thấy" },
       { journey: "J02", path: "/g/khong-ton-tai", auth: false, state: "không tìm thấy" },

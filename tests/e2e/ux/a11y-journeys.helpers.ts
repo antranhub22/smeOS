@@ -109,14 +109,54 @@ export async function applyPreset(page: Page, preset: string): Promise<void> {
   await page.waitForTimeout(150)
 }
 
-/** Dữ liệu cho tuyến cần mã: một sản phẩm và một trang catalog công khai của tổ chức đo. */
-export async function seedJourneyData(request: APIRequestContext): Promise<{ productId: string | null; catalogSlug: string | null }> {
-  const code = `A11Y-${Date.now().toString(36).toUpperCase()}`
-  const prod = await request.post("/api/v1/products", { data: { code, name: "Bó hoa kiểm trợ năng" } })
-  const prodBody = prod.ok() ? ((await prod.json()) as { data?: { id?: string }; id?: string }) : null
-  const link = await request.post("/api/v1/catalog-links", { data: { name: "Bộ sưu tập kiểm trợ năng" } })
-  const linkBody = link.ok() ? ((await link.json()) as { data?: { slug?: string }; slug?: string }) : null
-  return { productId: prodBody?.data?.id ?? prodBody?.id ?? null, catalogSlug: linkBody?.data?.slug ?? linkBody?.slug ?? null }
+export type JourneyData = {
+  productId: string | null
+  catalogSlug: string | null
+  greetingCatalogId: string | null
+  greetingCatalogCode: string | null
+  sendCode: string | null
+}
+
+async function postJson<T>(request: APIRequestContext, url: string, data: unknown): Promise<T | null> {
+  const res = await request.post(url, { data })
+  if (!res.ok()) return null
+  const body = (await res.json()) as { data?: T } & T
+  return (body.data ?? body) as T
+}
+
+/**
+ * Dữ liệu cho tuyến cần mã, tạo qua chính API của ứng dụng: một sản phẩm, một trang catalog công khai,
+ * một bộ sưu tập Thẻ chào chứa sản phẩm đó và một link gửi cho khách (`/b`, `/bst`, `/g`).
+ */
+export async function seedJourneyData(request: APIRequestContext): Promise<JourneyData> {
+  const suffix = Date.now().toString(36).toUpperCase()
+  const product = await postJson<{ id?: string }>(request, "/api/v1/products", {
+    code: `A11Y-${suffix}`,
+    name: "Bó hoa kiểm trợ năng",
+    status: "ACTIVE",
+  })
+  const link = await postJson<{ slug?: string }>(request, "/api/v1/catalog-links", { name: "Bộ sưu tập kiểm trợ năng" })
+  const productId = product?.id ?? null
+  const catalog = productId
+    ? await postJson<{ id?: string; code?: string }>(request, "/api/v1/greeting-card/catalogs", {
+        code: `kiem-tro-nang-${suffix.toLowerCase()}`,
+        name: "Bộ sưu tập kiểm trợ năng",
+        productIds: [productId],
+      })
+    : null
+  const send = catalog?.id
+    ? await postJson<{ sendCode?: string }>(request, "/api/v1/greeting-card/send-links", {
+        catalogId: catalog.id,
+        customerName: "Khách kiểm trợ năng",
+      })
+    : null
+  return {
+    productId,
+    catalogSlug: link?.slug ?? null,
+    greetingCatalogId: catalog?.id ?? null,
+    greetingCatalogCode: catalog?.code ?? null,
+    sendCode: send?.sendCode ?? null,
+  }
 }
 
 /** Cấp quyền vận hành nền tảng (N1, N4, N5) cho tài khoản kiểm để mở /van-hanh. */
