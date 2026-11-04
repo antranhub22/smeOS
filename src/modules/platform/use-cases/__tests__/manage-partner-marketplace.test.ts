@@ -36,6 +36,7 @@ function makeDeps(over: Partial<MarketplaceDeps> = {}) {
     })),
     setPhotos: vi.fn(async () => undefined),
     deleteById: vi.fn(async () => null),
+    deleteMany: vi.fn(async () => null),
   }
   const storage = {
     put: vi.fn(async () => undefined),
