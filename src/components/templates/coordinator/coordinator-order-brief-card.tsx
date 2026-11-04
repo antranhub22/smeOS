@@ -87,7 +87,7 @@ export function CoordinatorOrderBriefCard({
             </span>
           )}
         </div>
-        <div className="flex items-center gap-1.5 text-xs font-semibold text-blush-600 bg-blush-50 px-2.5 py-1 rounded-full border border-blush-200">
+        <div className="flex items-center gap-1.5 text-caption font-semibold text-danger-text bg-danger-bg px-2.5 py-1 rounded-full border border-danger/30">
           <Clock size={13} />
           <span>Hẹn giao: {deliveryTargetTime}</span>
         </div>
