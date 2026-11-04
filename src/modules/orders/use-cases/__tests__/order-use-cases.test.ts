@@ -207,7 +207,8 @@ describe("Order Use-cases with Mocked IOrderRepository (Clean Architecture)", ()
 
     const res = await listOrders(mockTenant, { status: "CONFIRMED" }, mockRepo)
     expect(res.total).toBe(1)
-    expect(mockRepo.list).toHaveBeenCalledWith("org-1", { status: "CONFIRMED" })
+    // Nhân viên gắn chi nhánh (không có F7) chỉ thấy đơn của chi nhánh mình (checklist ALG 9.13)
+    expect(mockRepo.list).toHaveBeenCalledWith("org-1", { status: "CONFIRMED", branchId: "branch-1" })
   })
 })
 
