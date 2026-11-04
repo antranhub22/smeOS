@@ -1,7 +1,15 @@
 "use client";
 
 import React from "react";
-import { Sparkles, Tag, Gift, Users, BookOpen, CheckCircle, DollarSign, PackagePlus } from "@/components/ui/icons";
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
+import { Tag } from "@/components/ui/icon-set/tag"
+import { Gift } from "@/components/ui/icon-set/gift"
+import { Users } from "@/components/ui/icon-set/users"
+import { BookOpen } from "@/components/ui/icon-set/book-open"
+import { CheckCircle } from "@/components/ui/icon-set/check-circle"
+import { DollarSign } from "@/components/ui/icon-set/dollar-sign"
+import { PackagePlus } from "@/components/ui/icon-set/package-plus"
+;
 import type { CommercialPassport } from "@/modules/market-intelligence/domain/product-intelligence-types";
 
 interface CommercialPassportCardProps {

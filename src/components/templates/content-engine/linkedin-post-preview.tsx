@@ -1,15 +1,13 @@
 "use client"
 
 import React from "react"
-import {
-  ThumbsUp,
-  MessageSquare,
-  Repeat,
-  Send,
-  MoreHorizontal,
-  Globe,
-  Building2,
-} from "@/components/ui/icons"
+import { ThumbsUp } from "@/components/ui/icon-set/thumbs-up"
+import { MessageSquare } from "@/components/ui/icon-set/message-square"
+import { Repeat } from "@/components/ui/icon-set/repeat"
+import { Send } from "@/components/ui/icon-set/send"
+import { MoreHorizontal } from "@/components/ui/icon-set/more-horizontal"
+import { Globe } from "@/components/ui/icon-set/globe"
+import { Building2 } from "@/components/ui/icon-set/building2"
 import type { SocialPostPreviewProps } from "./social-post-preview"
 
 /**

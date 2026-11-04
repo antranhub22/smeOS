@@ -3,7 +3,12 @@
 import React from "react"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Store, ChevronRight, MapPin, Database, Sparkles, CheckCircle2 } from "@/components/ui/icons"
+import { Store } from "@/components/ui/icon-set/store"
+import { ChevronRight } from "@/components/ui/icon-set/chevron-right"
+import { MapPin } from "@/components/ui/icon-set/map-pin"
+import { Database } from "@/components/ui/icon-set/database"
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
 import type { ChainStoreSummary } from "@/modules/field-platform/use-cases/get-chain-stores-data"
 
 interface StoreCardProps {

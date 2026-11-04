@@ -2,7 +2,10 @@
 
 import React from "react"
 import Link from "next/navigation"
-import { ArrowLeft, Folder, Sparkles, Wrench } from "@/components/ui/icons"
+import { ArrowLeft } from "@/components/ui/icon-set/arrow-left"
+import { Folder } from "@/components/ui/icon-set/folder"
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
+import { Wrench } from "@/components/ui/icon-set/wrench"
 import { Button } from "@/components/ui/button"
 import { IconTile } from "@/components/ui/app-icon"
 import { InfoTip } from "@/components/ui/info-tip"

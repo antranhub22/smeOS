@@ -1,7 +1,12 @@
 "use client"
 
 import React from "react"
-import { Clock, AlertTriangle, ArrowRight, User, MapPin, Flower2 } from "@/components/ui/icons"
+import { Clock } from "@/components/ui/icon-set/clock"
+import { AlertTriangle } from "@/components/ui/icon-set/alert-triangle"
+import { ArrowRight } from "@/components/ui/icon-set/arrow-right"
+import { User } from "@/components/ui/icon-set/user"
+import { MapPin } from "@/components/ui/icon-set/map-pin"
+import { Flower2 } from "@/components/ui/icon-set/flower2"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"

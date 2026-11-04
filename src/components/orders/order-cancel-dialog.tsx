@@ -1,7 +1,8 @@
 "use client"
 
 import { useState } from "react"
-import { AlertCircle, Loader2 } from "@/components/ui/icons"
+import { AlertCircle } from "@/components/ui/icon-set/alert-circle"
+import { Loader2 } from "@/components/ui/icon-set/loader2"
 import { Button } from "@/components/ui/button"
 import { Dialog } from "@/components/ui/dialog"
 import { Textarea } from "@/components/ui/textarea"

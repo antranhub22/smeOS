@@ -1,7 +1,11 @@
 "use client"
 
 import React, { useState, use } from "react"
-import { Heart, History, Users, Sparkles, ArrowLeft } from "@/components/ui/icons"
+import { Heart } from "@/components/ui/icon-set/heart"
+import { History } from "@/components/ui/icon-set/history"
+import { Users } from "@/components/ui/icon-set/users"
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
+import { ArrowLeft } from "@/components/ui/icon-set/arrow-left"
 import { Button } from "@/components/ui/button"
 import { MobileMenuButton } from "@/components/layout/mobile-nav-context"
 import { useSession } from "@/lib/session"

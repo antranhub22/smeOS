@@ -2,7 +2,9 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { Eye, EyeOff, Info } from "@/components/ui/icons"
+import { Eye } from "@/components/ui/icon-set/eye"
+import { EyeOff } from "@/components/ui/icon-set/eye-off"
+import { Info } from "@/components/ui/icon-set/info"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 

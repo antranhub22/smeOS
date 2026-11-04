@@ -1,7 +1,8 @@
 "use client"
 
 import React, { useState } from "react"
-import { Ban, AlertCircle } from "@/components/ui/icons"
+import { Ban } from "@/components/ui/icon-set/ban"
+import { AlertCircle } from "@/components/ui/icon-set/alert-circle"
 import { Dialog } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"

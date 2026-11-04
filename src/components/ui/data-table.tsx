@@ -1,7 +1,10 @@
 "use client"
 
 import * as React from "react"
-import { ChevronUp, ChevronDown, ChevronLeft, ChevronRight } from "@/components/ui/icons"
+import { ChevronUp } from "@/components/ui/icon-set/chevron-up"
+import { ChevronDown } from "@/components/ui/icon-set/chevron-down"
+import { ChevronLeft } from "@/components/ui/icon-set/chevron-left"
+import { ChevronRight } from "@/components/ui/icon-set/chevron-right"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"

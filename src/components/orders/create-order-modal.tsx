@@ -1,7 +1,11 @@
 "use client"
 
 import React, { useState, useEffect } from "react"
-import { Plus, Trash2, Loader2, Sparkles, Flower2 } from "@/components/ui/icons"
+import { Plus } from "@/components/ui/icon-set/plus"
+import { Trash2 } from "@/components/ui/icon-set/trash2"
+import { Loader2 } from "@/components/ui/icon-set/loader2"
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
+import { Flower2 } from "@/components/ui/icon-set/flower2"
 import { Button } from "@/components/ui/button"
 import { Dialog } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"

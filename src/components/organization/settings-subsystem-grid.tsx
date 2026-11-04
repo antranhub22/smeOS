@@ -2,7 +2,12 @@
 
 import Link from "next/link"
 import type { Route } from "next"
-import { Building2, Cpu, Share2, Server, Users, ArrowRight } from "@/components/ui/icons"
+import { Building2 } from "@/components/ui/icon-set/building2"
+import { Cpu } from "@/components/ui/icon-set/cpu"
+import { Share2 } from "@/components/ui/icon-set/share2"
+import { Server } from "@/components/ui/icon-set/server"
+import { Users } from "@/components/ui/icon-set/users"
+import { ArrowRight } from "@/components/ui/icon-set/arrow-right"
 
 export function SettingsSubsystemGrid() {
   return (

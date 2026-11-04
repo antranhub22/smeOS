@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useCallback, useEffect, useState } from "react"
-import { X } from "@/components/ui/icons"
+import { X } from "@/components/ui/icon-set/x"
 import { Button } from "@/components/ui/button"
 import { FeatureGuidanceCard } from "@/components/templates/shared/feature-guidance-card"
 import { CoordinatorOrderBriefCard } from "@/components/templates/coordinator/coordinator-order-brief-card"

@@ -1,7 +1,9 @@
 "use client";
 
 import React from "react";
-import { Video, Play } from "@/components/ui/icons";
+import { Video } from "@/components/ui/icon-set/video"
+import { Play } from "@/components/ui/icon-set/play"
+;
 import { determineTrendLifecycle, LIFECYCLE_SPECS } from "@/modules/market-intelligence/domain/trend-lifecycle";
 import { getOpportunityTimeframeMeta } from "@/modules/market-intelligence/domain/trend-timeframe";
 import { getOpportunityHeadline } from "./opportunity-illustration";

@@ -2,7 +2,12 @@
 
 import React, { useState } from "react"
 import type { ActionCardOrderPayload } from "@/modules/internal-chat/domain/chat-entities"
-import { CheckCircle2, XCircle, Clock, MapPin, DollarSign, Package } from "@/components/ui/icons"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
+import { XCircle } from "@/components/ui/icon-set/x-circle"
+import { Clock } from "@/components/ui/icon-set/clock"
+import { MapPin } from "@/components/ui/icon-set/map-pin"
+import { DollarSign } from "@/components/ui/icon-set/dollar-sign"
+import { Package } from "@/components/ui/icon-set/package"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"

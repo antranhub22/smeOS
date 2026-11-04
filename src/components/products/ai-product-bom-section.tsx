@@ -1,7 +1,9 @@
 "use client"
 
 import React from "react"
-import { FileText, Plus, Trash2 } from "@/components/ui/icons"
+import { FileText } from "@/components/ui/icon-set/file-text"
+import { Plus } from "@/components/ui/icon-set/plus"
+import { Trash2 } from "@/components/ui/icon-set/trash2"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"

@@ -15,24 +15,22 @@
 
 import { useMemo, useState } from "react"
 import Link from "next/link"
-import {
-  LayoutTemplate,
-  Search,
-  Camera,
-  Sparkles,
-  Video,
-  Megaphone,
-  Share2,
-  Globe,
-  Users,
-  ShoppingBag,
-  Bot,
-  BarChart3,
-  Plug,
-  ArrowUpRight,
-  Eye,
-  X,
-} from "@/components/ui/icons"
+import { LayoutTemplate } from "@/components/ui/icon-set/layout-template"
+import { Search } from "@/components/ui/icon-set/search"
+import { Camera } from "@/components/ui/icon-set/camera"
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
+import { Video } from "@/components/ui/icon-set/video"
+import { Megaphone } from "@/components/ui/icon-set/megaphone"
+import { Share2 } from "@/components/ui/icon-set/share2"
+import { Globe } from "@/components/ui/icon-set/globe"
+import { Users } from "@/components/ui/icon-set/users"
+import { ShoppingBag } from "@/components/ui/icon-set/shopping-bag"
+import { Bot } from "@/components/ui/icon-set/bot"
+import { BarChart3 } from "@/components/ui/icon-set/bar-chart3"
+import { Plug } from "@/components/ui/icon-set/plug"
+import { ArrowUpRight } from "@/components/ui/icon-set/arrow-up-right"
+import { Eye } from "@/components/ui/icon-set/eye"
+import { X } from "@/components/ui/icon-set/x"
 import { FeatureGuidanceCard } from "@/components/templates/shared/feature-guidance-card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"

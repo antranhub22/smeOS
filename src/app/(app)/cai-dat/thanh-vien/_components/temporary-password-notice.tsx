@@ -1,7 +1,9 @@
 "use client"
 
 import { useState } from "react"
-import { Copy, Check, KeyRound } from "@/components/ui/icons"
+import { Copy } from "@/components/ui/icon-set/copy"
+import { Check } from "@/components/ui/icon-set/check"
+import { KeyRound } from "@/components/ui/icon-set/key-round"
 import { Button } from "@/components/ui/button"
 
 /**

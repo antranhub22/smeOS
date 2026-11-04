@@ -1,7 +1,11 @@
 "use client"
 
 import React, { useState } from "react"
-import { ShieldCheck, CheckCircle2, RotateCcw, Ban, Info } from "@/components/ui/icons"
+import { ShieldCheck } from "@/components/ui/icon-set/shield-check"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
+import { RotateCcw } from "@/components/ui/icon-set/rotate-ccw"
+import { Ban } from "@/components/ui/icon-set/ban"
+import { Info } from "@/components/ui/icon-set/info"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Dialog } from "@/components/ui/dialog"

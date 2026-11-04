@@ -8,7 +8,9 @@
 "use client"
 
 import { useState } from "react"
-import { Lock, RotateCcw, Loader2 } from "@/components/ui/icons"
+import { Lock } from "@/components/ui/icon-set/lock"
+import { RotateCcw } from "@/components/ui/icon-set/rotate-ccw"
+import { Loader2 } from "@/components/ui/icon-set/loader2"
 import { Button } from "@/components/ui/button"
 import { Switch } from "@/components/ui/switch"
 import type { GovernanceMatrixItem, GovernanceViewerTier } from "./governance-matrix-types"

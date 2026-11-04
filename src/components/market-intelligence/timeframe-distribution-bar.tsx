@@ -1,16 +1,15 @@
 "use client";
 
 import React, { useMemo } from "react";
-import {
-  Zap,
-  Calendar,
-  CalendarDays,
-  TrendingUp,
-  Layers,
-  Clock,
-  ChevronRight,
-  Filter,
-} from "@/components/ui/icons";
+import { Zap } from "@/components/ui/icon-set/zap"
+import { Calendar } from "@/components/ui/icon-set/calendar"
+import { CalendarDays } from "@/components/ui/icon-set/calendar-days"
+import { TrendingUp } from "@/components/ui/icon-set/trending-up"
+import { Layers } from "@/components/ui/icon-set/layers"
+import { Clock } from "@/components/ui/icon-set/clock"
+import { ChevronRight } from "@/components/ui/icon-set/chevron-right"
+import { Filter } from "@/components/ui/icon-set/filter"
+;
 import {
   type MarketTimeframeKey,
   type TimeframeDistribution,

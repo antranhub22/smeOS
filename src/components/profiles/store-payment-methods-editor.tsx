@@ -1,7 +1,11 @@
 "use client"
 
 import React, { useState } from "react"
-import { Landmark, Save, Loader2, CheckCircle2, AlertCircle } from "@/components/ui/icons"
+import { Landmark } from "@/components/ui/icon-set/landmark"
+import { Save } from "@/components/ui/icon-set/save"
+import { Loader2 } from "@/components/ui/icon-set/loader2"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
+import { AlertCircle } from "@/components/ui/icon-set/alert-circle"
 import { Button } from "@/components/ui/button"
 import { apiSend, useApi } from "@/components/greeting-card/greeting-api"
 import { BROCHURE_PAYMENT_SETTINGS_KEY } from "@/modules/greeting-card/domain/brochure-commerce-rules"

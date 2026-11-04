@@ -1,19 +1,17 @@
 "use client"
 
 import React from "react"
-import {
-  Heart,
-  MessageCircle,
-  Share2,
-  Bookmark,
-  Send,
-  MoreHorizontal,
-  ThumbsUp,
-  Globe,
-  Sparkles,
-  Music,
-  CheckCircle2,
-} from "@/components/ui/icons"
+import { Heart } from "@/components/ui/icon-set/heart"
+import { MessageCircle } from "@/components/ui/icon-set/message-circle"
+import { Share2 } from "@/components/ui/icon-set/share2"
+import { Bookmark } from "@/components/ui/icon-set/bookmark"
+import { Send } from "@/components/ui/icon-set/send"
+import { MoreHorizontal } from "@/components/ui/icon-set/more-horizontal"
+import { ThumbsUp } from "@/components/ui/icon-set/thumbs-up"
+import { Globe } from "@/components/ui/icon-set/globe"
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
+import { Music } from "@/components/ui/icon-set/music"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
 import type { MultichannelPostItem } from "./multichannel-post-card"
 import { LinkedInPreview } from "./linkedin-post-preview"
 import { useI18n } from "@/lib/i18n"

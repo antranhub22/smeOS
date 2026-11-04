@@ -1,7 +1,9 @@
 "use client"
 
 import React from "react"
-import { Upload, Image as ImageIcon, X } from "@/components/ui/icons"
+import { Upload } from "@/components/ui/icon-set/upload"
+import { Image as ImageIcon } from "@/components/ui/icon-set/image"
+import { X } from "@/components/ui/icon-set/x"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"

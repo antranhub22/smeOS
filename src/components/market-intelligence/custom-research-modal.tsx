@@ -1,7 +1,12 @@
 "use client";
 
 import React, { useState } from "react";
-import { X, Sparkles, Search, Zap, Compass } from "@/components/ui/icons";
+import { X } from "@/components/ui/icon-set/x"
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
+import { Search } from "@/components/ui/icon-set/search"
+import { Zap } from "@/components/ui/icon-set/zap"
+import { Compass } from "@/components/ui/icon-set/compass"
+;
 import { ResearchParameterFields } from "./research-parameter-fields";
 
 export interface CustomResearchParams {

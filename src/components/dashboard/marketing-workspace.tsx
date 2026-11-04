@@ -3,17 +3,15 @@
 import { useEffect, useState, useCallback, useMemo } from "react"
 import { useRouter } from "next/navigation"
 import type { Route } from "next"
-import {
-  Sparkles,
-  PenTool,
-  Calendar,
-  AlertTriangle,
-  Flame,
-  ChevronRight,
-  TrendingUp,
-  Share2,
-  Video,
-} from "@/components/ui/icons"
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
+import { PenTool } from "@/components/ui/icon-set/pen-tool"
+import { Calendar } from "@/components/ui/icon-set/calendar"
+import { AlertTriangle } from "@/components/ui/icon-set/alert-triangle"
+import { Flame } from "@/components/ui/icon-set/flame"
+import { ChevronRight } from "@/components/ui/icon-set/chevron-right"
+import { TrendingUp } from "@/components/ui/icon-set/trending-up"
+import { Share2 } from "@/components/ui/icon-set/share2"
+import { Video } from "@/components/ui/icon-set/video"
 import { useSession } from "@/lib/session"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"

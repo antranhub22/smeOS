@@ -2,16 +2,14 @@
 
 import { useEffect, useState, useCallback } from "react"
 import { useRouter } from "next/navigation"
-import {
-  AlertOctagon,
-  Radio,
-  Users,
-  CheckCircle,
-  Truck,
-  ArrowRight,
-  ShieldAlert,
-  Sparkles,
-} from "@/components/ui/icons"
+import { AlertOctagon } from "@/components/ui/icon-set/alert-octagon"
+import { Radio } from "@/components/ui/icon-set/radio"
+import { Users } from "@/components/ui/icon-set/users"
+import { CheckCircle } from "@/components/ui/icon-set/check-circle"
+import { Truck } from "@/components/ui/icon-set/truck"
+import { ArrowRight } from "@/components/ui/icon-set/arrow-right"
+import { ShieldAlert } from "@/components/ui/icon-set/shield-alert"
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
 import { StatTile } from "@/components/ui/stat-tile"
 import { InfoTip } from "@/components/ui/info-tip"
 import { useSession } from "@/lib/session"

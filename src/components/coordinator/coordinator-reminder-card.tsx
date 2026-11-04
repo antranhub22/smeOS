@@ -1,16 +1,14 @@
 "use client"
 
 import React, { useState } from "react"
-import {
-  Clock,
-  Copy,
-  Check,
-  AlertTriangle,
-  AlertOctagon,
-  CheckCircle2,
-  CalendarClock,
-  XCircle,
-} from "@/components/ui/icons"
+import { Clock } from "@/components/ui/icon-set/clock"
+import { Copy } from "@/components/ui/icon-set/copy"
+import { Check } from "@/components/ui/icon-set/check"
+import { AlertTriangle } from "@/components/ui/icon-set/alert-triangle"
+import { AlertOctagon } from "@/components/ui/icon-set/alert-octagon"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
+import { CalendarClock } from "@/components/ui/icon-set/calendar-clock"
+import { XCircle } from "@/components/ui/icon-set/x-circle"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import type {

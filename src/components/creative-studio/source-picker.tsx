@@ -8,13 +8,11 @@
 "use client"
 
 import { useState } from "react"
-import {
-  ShieldCheck,
-  Sparkles,
-  ArrowLeft,
-  Loader2,
-  Image as ImageIcon,
-} from "@/components/ui/icons"
+import { ShieldCheck } from "@/components/ui/icon-set/shield-check"
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
+import { ArrowLeft } from "@/components/ui/icon-set/arrow-left"
+import { Loader2 } from "@/components/ui/icon-set/loader2"
+import { Image as ImageIcon } from "@/components/ui/icon-set/image"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"

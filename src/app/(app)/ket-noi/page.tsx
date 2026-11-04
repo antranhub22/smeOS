@@ -2,7 +2,12 @@
 
 import React, { useState } from "react"
 import { useRouter } from "next/navigation"
-import { Share2, RefreshCw, CheckCircle2, AlertCircle, ArrowRight, Calendar } from "@/components/ui/icons"
+import { Share2 } from "@/components/ui/icon-set/share2"
+import { RefreshCw } from "@/components/ui/icon-set/refresh-cw"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
+import { AlertCircle } from "@/components/ui/icon-set/alert-circle"
+import { ArrowRight } from "@/components/ui/icon-set/arrow-right"
+import { Calendar } from "@/components/ui/icon-set/calendar"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { FeatureGuidanceCard } from "@/components/ui/feature-guidance-card"

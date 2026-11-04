@@ -6,7 +6,8 @@
  */
 "use client"
 
-import { ChevronDown, ChevronRight } from "@/components/ui/icons"
+import { ChevronDown } from "@/components/ui/icon-set/chevron-down"
+import { ChevronRight } from "@/components/ui/icon-set/chevron-right"
 import { useState } from "react"
 import { NotificationMatrixCell } from "./notification-matrix-cell"
 import type {

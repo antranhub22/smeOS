@@ -1,7 +1,11 @@
 "use client"
 
 import React, { useState } from "react"
-import { Radio, X, Wallet, CheckCircle2, Ban } from "@/components/ui/icons"
+import { Radio } from "@/components/ui/icon-set/radio"
+import { X } from "@/components/ui/icon-set/x"
+import { Wallet } from "@/components/ui/icon-set/wallet"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
+import { Ban } from "@/components/ui/icon-set/ban"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { PartnerProductCard } from "@/components/templates/coordinator/partner-product-card"

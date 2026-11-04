@@ -1,14 +1,12 @@
 "use client"
 
 import React from "react"
-import {
-  CheckCircle2,
-  XCircle,
-  AlertTriangle,
-  ArrowLeft,
-  ArrowRight,
-  ShieldCheck,
-} from "@/components/ui/icons"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
+import { XCircle } from "@/components/ui/icon-set/x-circle"
+import { AlertTriangle } from "@/components/ui/icon-set/alert-triangle"
+import { ArrowLeft } from "@/components/ui/icon-set/arrow-left"
+import { ArrowRight } from "@/components/ui/icon-set/arrow-right"
+import { ShieldCheck } from "@/components/ui/icon-set/shield-check"
 import { Button } from "@/components/ui/button"
 
 import type { TransitionValidationResult, TransitionField } from "@/modules/creative-production/domain/validate-transition"

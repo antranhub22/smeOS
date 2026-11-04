@@ -1,7 +1,10 @@
 "use client"
 
 import React from "react"
-import { Phone, MapPin, Star, Power } from "@/components/ui/icons"
+import { Phone } from "@/components/ui/icon-set/phone"
+import { MapPin } from "@/components/ui/icon-set/map-pin"
+import { Star } from "@/components/ui/icon-set/star"
+import { Power } from "@/components/ui/icon-set/power"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"

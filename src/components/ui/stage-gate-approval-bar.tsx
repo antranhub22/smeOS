@@ -1,7 +1,11 @@
 "use client"
 
 import * as React from "react"
-import { Check, CheckCircle2, ArrowRight, ShieldCheck, Edit3 } from "@/components/ui/icons"
+import { Check } from "@/components/ui/icon-set/check"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
+import { ArrowRight } from "@/components/ui/icon-set/arrow-right"
+import { ShieldCheck } from "@/components/ui/icon-set/shield-check"
+import { Edit3 } from "@/components/ui/icon-set/edit3"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 

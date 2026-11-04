@@ -2,26 +2,24 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import {
-  ChevronRight,
-  Info,
-  X,
-  Menu,
-  X as XIcon,
-  Zap,
-  ScanSearch,
-  Sparkles,
-  Video,
-  FileText,
-  Rss,
-  LayoutGrid,
-  Users,
-  Package,
-  MessageCircle,
-  BarChart3,
-  TrendingUp,
-  type LucideIcon,
-} from "@/components/ui/icons"
+import type { LucideIcon } from "@/components/ui/icon-set/wrap"
+import { ChevronRight } from "@/components/ui/icon-set/chevron-right"
+import { Info } from "@/components/ui/icon-set/info"
+import { X } from "@/components/ui/icon-set/x"
+import { Menu } from "@/components/ui/icon-set/menu"
+import { X as XIcon } from "@/components/ui/icon-set/x"
+import { Zap } from "@/components/ui/icon-set/zap"
+import { ScanSearch } from "@/components/ui/icon-set/scan-search"
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
+import { Video } from "@/components/ui/icon-set/video"
+import { FileText } from "@/components/ui/icon-set/file-text"
+import { Rss } from "@/components/ui/icon-set/rss"
+import { LayoutGrid } from "@/components/ui/icon-set/layout-grid"
+import { Users } from "@/components/ui/icon-set/users"
+import { Package } from "@/components/ui/icon-set/package"
+import { MessageCircle } from "@/components/ui/icon-set/message-circle"
+import { BarChart3 } from "@/components/ui/icon-set/bar-chart3"
+import { TrendingUp } from "@/components/ui/icon-set/trending-up"
 import { useSession } from "@/lib/session"
 import { FEATURES, TRIAL_LIMIT, STATUS_META, type ModuleStatus } from "@/lib/mock-data"
 import { Card } from "@/components/ui/card"

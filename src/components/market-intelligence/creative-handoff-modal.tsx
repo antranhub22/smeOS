@@ -20,22 +20,21 @@
 import React, { useState, useMemo, useEffect } from "react";
 import { ProviderSelect } from "@/components/creative-studio/provider-select";
 import { useRouter } from "next/navigation";
-import {
-  Sparkles,
-  Leaf,
-  Image as ImageIcon,
-  Video,
-  ArrowRight,
-  X,
-  CheckCircle2,
-  Quote,
-  Target,
-  FileText,
-  Package,
-  Wand2,
-  Check,
-  AlertTriangle,
-} from "@/components/ui/icons";
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
+import { Leaf } from "@/components/ui/icon-set/leaf"
+import { Image as ImageIcon } from "@/components/ui/icon-set/image"
+import { Video } from "@/components/ui/icon-set/video"
+import { ArrowRight } from "@/components/ui/icon-set/arrow-right"
+import { X } from "@/components/ui/icon-set/x"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
+import { Quote } from "@/components/ui/icon-set/quote"
+import { Target } from "@/components/ui/icon-set/target"
+import { FileText } from "@/components/ui/icon-set/file-text"
+import { Package } from "@/components/ui/icon-set/package"
+import { Wand2 } from "@/components/ui/icon-set/wand2"
+import { Check } from "@/components/ui/icon-set/check"
+import { AlertTriangle } from "@/components/ui/icon-set/alert-triangle"
+;
 import { Button } from "@/components/ui/button";
 import { buildHandoffSearchParams } from "@/modules/creative-production/domain/build-handoff-url";
 import {

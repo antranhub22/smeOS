@@ -1,12 +1,10 @@
 import * as React from "react"
 import { Badge, type BadgeProps } from "@/components/ui/badge"
-import {
-  CheckCircle2,
-  Clock,
-  XCircle,
-  AlertCircle,
-  Package,
-} from "@/components/ui/icons"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
+import { Clock } from "@/components/ui/icon-set/clock"
+import { XCircle } from "@/components/ui/icon-set/x-circle"
+import { AlertCircle } from "@/components/ui/icon-set/alert-circle"
+import { Package } from "@/components/ui/icon-set/package"
 import { cn } from "@/lib/utils"
 
 export type BusinessDomain = "order" | "product" | "job" | "approval" | "general"

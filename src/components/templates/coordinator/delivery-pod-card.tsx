@@ -1,7 +1,12 @@
 "use client"
 
 import React from "react"
-import { Truck, CheckCircle2, MapPin, Phone, User, Image as ImageIcon } from "@/components/ui/icons"
+import { Truck } from "@/components/ui/icon-set/truck"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
+import { MapPin } from "@/components/ui/icon-set/map-pin"
+import { Phone } from "@/components/ui/icon-set/phone"
+import { User } from "@/components/ui/icon-set/user"
+import { Image as ImageIcon } from "@/components/ui/icon-set/image"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"

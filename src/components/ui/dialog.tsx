@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { Dialog as BaseDialog } from "@base-ui/react"
-import { X } from "@/components/ui/icons"
+import { X } from "@/components/ui/icon-set/x"
 import { cn } from "@/lib/utils"
 
 export interface DialogProps {

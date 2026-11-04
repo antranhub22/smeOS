@@ -12,7 +12,12 @@
  */
 
 import React, { useEffect, useState } from "react"
-import { CalendarHeart, Plus, Check, AlertCircle, CheckCircle2, Power } from "@/components/ui/icons"
+import { CalendarHeart } from "@/components/ui/icon-set/calendar-heart"
+import { Plus } from "@/components/ui/icon-set/plus"
+import { Check } from "@/components/ui/icon-set/check"
+import { AlertCircle } from "@/components/ui/icon-set/alert-circle"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
+import { Power } from "@/components/ui/icon-set/power"
 import { SkeletonBlock } from "@/components/ui/skeleton"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"

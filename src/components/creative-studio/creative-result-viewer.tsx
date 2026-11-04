@@ -1,30 +1,28 @@
 "use client"
 
 import React, { useState, useContext, useMemo, useEffect } from "react"
-import {
-  Sparkles,
-  Copy,
-  Check,
-  Film,
-  FileText,
-  Volume2,
-  Share2,
-  ArrowRight,
-  Layers,
-  Wand2,
-  Clock,
-  Quote,
-  Hash,
-  Edit3,
-  CheckCircle2,
-  Eye,
-  Globe,
-  Grid,
-  Heart,
-  MessageCircle,
-  Send,
-  Calendar,
-} from "@/components/ui/icons"
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
+import { Copy } from "@/components/ui/icon-set/copy"
+import { Check } from "@/components/ui/icon-set/check"
+import { Film } from "@/components/ui/icon-set/film"
+import { FileText } from "@/components/ui/icon-set/file-text"
+import { Volume2 } from "@/components/ui/icon-set/volume2"
+import { Share2 } from "@/components/ui/icon-set/share2"
+import { ArrowRight } from "@/components/ui/icon-set/arrow-right"
+import { Layers } from "@/components/ui/icon-set/layers"
+import { Wand2 } from "@/components/ui/icon-set/wand2"
+import { Clock } from "@/components/ui/icon-set/clock"
+import { Quote } from "@/components/ui/icon-set/quote"
+import { Hash } from "@/components/ui/icon-set/hash"
+import { Edit3 } from "@/components/ui/icon-set/edit3"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
+import { Eye } from "@/components/ui/icon-set/eye"
+import { Globe } from "@/components/ui/icon-set/globe"
+import { Grid } from "@/components/ui/icon-set/grid"
+import { Heart } from "@/components/ui/icon-set/heart"
+import { MessageCircle } from "@/components/ui/icon-set/message-circle"
+import { Send } from "@/components/ui/icon-set/send"
+import { Calendar } from "@/components/ui/icon-set/calendar"
 import { Button } from "@/components/ui/button"
 import { StageGateApprovalBar } from "@/components/ui/stage-gate-approval-bar"
 import { CreativeStudioContext } from "@/app/(app)/creative-studio/page"

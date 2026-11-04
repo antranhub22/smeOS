@@ -1,6 +1,7 @@
 "use client"
 
-import { CheckCircle2, Eye } from "@/components/ui/icons"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
+import { Eye } from "@/components/ui/icon-set/eye"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { EmptyState } from "@/components/ui/empty-state"

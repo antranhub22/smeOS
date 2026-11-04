@@ -1,7 +1,13 @@
 "use client";
 
 import React from "react";
-import { Flame, TrendingUp, Lightbulb, CalendarDays, Sparkles, LayoutGrid } from "@/components/ui/icons";
+import { Flame } from "@/components/ui/icon-set/flame"
+import { TrendingUp } from "@/components/ui/icon-set/trending-up"
+import { Lightbulb } from "@/components/ui/icon-set/lightbulb"
+import { CalendarDays } from "@/components/ui/icon-set/calendar-days"
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
+import { LayoutGrid } from "@/components/ui/icon-set/layout-grid"
+;
 
 export type ExecutiveFilterType = "ALL" | "IMPORTANT" | "RISING" | "TOPICS" | "OCCASIONS";
 

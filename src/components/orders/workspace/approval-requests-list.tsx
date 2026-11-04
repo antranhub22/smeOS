@@ -1,7 +1,7 @@
 "use client"
 
 import { useCallback, useEffect, useState } from "react"
-import { ShieldCheck } from "@/components/ui/icons"
+import { ShieldCheck } from "@/components/ui/icon-set/shield-check"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { EmptyState } from "@/components/ui/empty-state"

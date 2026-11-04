@@ -1,7 +1,11 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { ArrowDown, ArrowUp, CheckCircle2, AlertCircle, Loader2 } from "@/components/ui/icons"
+import { ArrowDown } from "@/components/ui/icon-set/arrow-down"
+import { ArrowUp } from "@/components/ui/icon-set/arrow-up"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
+import { AlertCircle } from "@/components/ui/icon-set/alert-circle"
+import { Loader2 } from "@/components/ui/icon-set/loader2"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"

@@ -1,7 +1,10 @@
 "use client"
 
 import React, { useState, useRef, useEffect } from "react"
-import { ChevronDown, X, Check, Plus } from "@/components/ui/icons"
+import { ChevronDown } from "@/components/ui/icon-set/chevron-down"
+import { X } from "@/components/ui/icon-set/x"
+import { Check } from "@/components/ui/icon-set/check"
+import { Plus } from "@/components/ui/icon-set/plus"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 

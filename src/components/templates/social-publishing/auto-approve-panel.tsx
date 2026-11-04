@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { AlertTriangle } from "@/components/ui/icons"
+import { AlertTriangle } from "@/components/ui/icon-set/alert-triangle"
 import { Card } from "@/components/ui/card"
 import { Switch } from "@/components/ui/switch"
 

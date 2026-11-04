@@ -1,16 +1,14 @@
 "use client"
 
 import React, { useState, useEffect, useCallback } from "react"
-import {
-  Bell,
-  AlertOctagon,
-  AlertTriangle,
-  CheckCircle2,
-  ChevronDown,
-  ChevronUp,
-  Settings2,
-  RefreshCw,
-} from "@/components/ui/icons"
+import { Bell } from "@/components/ui/icon-set/bell"
+import { AlertOctagon } from "@/components/ui/icon-set/alert-octagon"
+import { AlertTriangle } from "@/components/ui/icon-set/alert-triangle"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
+import { ChevronDown } from "@/components/ui/icon-set/chevron-down"
+import { ChevronUp } from "@/components/ui/icon-set/chevron-up"
+import { Settings2 } from "@/components/ui/icon-set/settings2"
+import { RefreshCw } from "@/components/ui/icon-set/refresh-cw"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { useSession } from "@/lib/session"

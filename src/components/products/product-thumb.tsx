@@ -1,6 +1,6 @@
 "use client"
 
-import { ImageOff } from "@/components/ui/icons"
+import { ImageOff } from "@/components/ui/icon-set/image-off"
 import { DriveThumbImage } from "@/components/greeting-card/drive-thumb-image"
 
 type Props = {

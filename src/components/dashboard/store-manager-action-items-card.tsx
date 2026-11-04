@@ -2,7 +2,11 @@
 
 import React from "react"
 import { useRouter } from "next/navigation"
-import { AlertTriangle, ChevronRight, Clock, ShoppingBag, type LucideIcon } from "@/components/ui/icons"
+import type { LucideIcon } from "@/components/ui/icon-set/wrap"
+import { AlertTriangle } from "@/components/ui/icon-set/alert-triangle"
+import { ChevronRight } from "@/components/ui/icon-set/chevron-right"
+import { Clock } from "@/components/ui/icon-set/clock"
+import { ShoppingBag } from "@/components/ui/icon-set/shopping-bag"
 import { Card } from "@/components/ui/card"
 import { SkeletonBlock } from "@/components/ui/skeleton"
 

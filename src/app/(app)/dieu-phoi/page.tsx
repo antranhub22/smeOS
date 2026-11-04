@@ -1,7 +1,11 @@
 "use client"
 
 import React, { useState } from "react"
-import { Radio, RefreshCw, Plus, LayoutDashboard, Sparkles } from "@/components/ui/icons"
+import { Radio } from "@/components/ui/icon-set/radio"
+import { RefreshCw } from "@/components/ui/icon-set/refresh-cw"
+import { Plus } from "@/components/ui/icon-set/plus"
+import { LayoutDashboard } from "@/components/ui/icon-set/layout-dashboard"
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
 import { Button } from "@/components/ui/button"
 import { ListLayout } from "@/components/layout/page-layout"
 import { PageHeader } from "@/components/ui/page-header"

@@ -8,7 +8,8 @@ import {
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Check, Layers } from "@/components/ui/icons"
+import { Check } from "@/components/ui/icon-set/check"
+import { Layers } from "@/components/ui/icon-set/layers"
 import { formatNumber } from "@/lib/i18n/formatters"
 
 export interface PresetSelectorProps {

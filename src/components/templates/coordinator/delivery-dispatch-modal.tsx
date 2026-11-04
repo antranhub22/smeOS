@@ -1,7 +1,12 @@
 "use client"
 
 import React, { useRef, useState } from "react"
-import { Truck, CheckCircle2, Upload, PackageCheck, Navigation, AlertOctagon } from "@/components/ui/icons"
+import { Truck } from "@/components/ui/icon-set/truck"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
+import { Upload } from "@/components/ui/icon-set/upload"
+import { PackageCheck } from "@/components/ui/icon-set/package-check"
+import { Navigation } from "@/components/ui/icon-set/navigation"
+import { AlertOctagon } from "@/components/ui/icon-set/alert-octagon"
 import { Button } from "@/components/ui/button"
 import { safeImageSrc } from "@/lib/safe-image-src"
 import { Dialog } from "@/components/ui/dialog"

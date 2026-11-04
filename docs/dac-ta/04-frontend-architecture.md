@@ -10,7 +10,7 @@ Theo `LocalBudd`, để hai repo dùng chung được component và người là
 | Giao diện | React 19 | Server Components mặc định |
 | Kiểu dáng | Tailwind CSS 4 | Token ngữ nghĩa tập trung |
 | Component | Base UI (`@base-ui/react` 1.9.0) | Chuẩn hoá theo ADR-011, không phụ thuộc Radix |
-| Biểu tượng | Phosphor Icons (`@phosphor-icons/react`) | Bọc qua `@/components/ui/icons`; cấm import `lucide-react` (ADR-011 D-UI-06) |
+| Biểu tượng | Phosphor Icons (`@phosphor-icons/react`) | Bọc theo từng icon trong `@/components/ui/icon-set/<ten>`, import trực tiếp tệp icon (barrel `@/components/ui/icons` chỉ còn cho vùng khoá và tệp lớn chờ tách); cấm import `lucide-react` (ADR-011 D-UI-06) |
 | Kiểm dữ liệu | `zod` | Dùng chung một lược đồ cho cả client và máy chủ |
 | ORM | **Prisma 7** | Bản mới, chuẩn snake_case CSDL |
 | Test đầu cuối | Playwright | E2E, Visual Regression 390/1280px, Axe-core a11y |

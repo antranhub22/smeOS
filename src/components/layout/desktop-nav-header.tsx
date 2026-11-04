@@ -6,7 +6,10 @@
  * tên tổ chức ở dòng chính, nhãn tầng ở dòng phụ, dải nhấn mảnh trên cùng.
  */
 
-import { Sparkles, PanelLeftClose, PanelLeftOpen, X } from "@/components/ui/icons"
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
+import { PanelLeftClose } from "@/components/ui/icon-set/panel-left-close"
+import { PanelLeftOpen } from "@/components/ui/icon-set/panel-left-open"
+import { X } from "@/components/ui/icon-set/x"
 import { Button } from "@/components/ui/button"
 import { useSession } from "@/lib/session"
 import { useI18n } from "@/lib/i18n"

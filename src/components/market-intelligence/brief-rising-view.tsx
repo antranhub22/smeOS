@@ -1,6 +1,12 @@
 "use client";
 
-import { TrendingUp, Zap, Video, ArrowRight, Tag, Play } from "@/components/ui/icons";
+import { TrendingUp } from "@/components/ui/icon-set/trending-up"
+import { Zap } from "@/components/ui/icon-set/zap"
+import { Video } from "@/components/ui/icon-set/video"
+import { ArrowRight } from "@/components/ui/icon-set/arrow-right"
+import { Tag } from "@/components/ui/icon-set/tag"
+import { Play } from "@/components/ui/icon-set/play"
+;
 import type { OpportunityItem } from "./opportunity-card";
 import { determineTrendLifecycle, LIFECYCLE_SPECS } from "@/modules/market-intelligence/domain/trend-lifecycle";
 import { getDualOpportunityEvidencePreview, getOpportunityHeadline } from "./opportunity-illustration";

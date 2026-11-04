@@ -1,7 +1,10 @@
 "use client"
 
 import { useState } from "react"
-import { KeyRound, Lock, Trash2, Unlock } from "@/components/ui/icons"
+import { KeyRound } from "@/components/ui/icon-set/key-round"
+import { Lock } from "@/components/ui/icon-set/lock"
+import { Trash2 } from "@/components/ui/icon-set/trash2"
+import { Unlock } from "@/components/ui/icon-set/unlock"
 import { Dialog } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { useConfirmDialog } from "@/components/ui/confirm-dialog"

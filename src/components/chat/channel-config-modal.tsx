@@ -1,7 +1,9 @@
 "use client"
 
 import React from "react"
-import { Settings, AlertCircle, Loader2 } from "@/components/ui/icons"
+import { Settings } from "@/components/ui/icon-set/settings"
+import { AlertCircle } from "@/components/ui/icon-set/alert-circle"
+import { Loader2 } from "@/components/ui/icon-set/loader2"
 import { Button } from "@/components/ui/button"
 import { Dialog } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"

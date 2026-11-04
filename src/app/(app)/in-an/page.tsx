@@ -2,7 +2,10 @@
 
 import React, { useState, use } from "react"
 import Link from "next/link"
-import { Printer, History, Sparkles, ArrowLeft } from "@/components/ui/icons"
+import { Printer } from "@/components/ui/icon-set/printer"
+import { History } from "@/components/ui/icon-set/history"
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
+import { ArrowLeft } from "@/components/ui/icon-set/arrow-left"
 import { Button } from "@/components/ui/button"
 import { MobileMenuButton } from "@/components/layout/mobile-nav-context"
 import { useSession } from "@/lib/session"

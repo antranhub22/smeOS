@@ -1,7 +1,10 @@
 "use client"
 
 import React from "react"
-import { Radio, AlertCircle, AlertTriangle, CheckCircle2 } from "@/components/ui/icons"
+import { Radio } from "@/components/ui/icon-set/radio"
+import { AlertCircle } from "@/components/ui/icon-set/alert-circle"
+import { AlertTriangle } from "@/components/ui/icon-set/alert-triangle"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
 import { Card } from "@/components/ui/card"
 import type { CoordinationOrder } from "./coordinator-api"
 

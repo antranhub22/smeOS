@@ -1,7 +1,8 @@
 "use client"
 
 import React from "react"
-import { Sparkles, Loader2 } from "@/components/ui/icons"
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
+import { Loader2 } from "@/components/ui/icon-set/loader2"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"

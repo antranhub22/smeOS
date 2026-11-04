@@ -1,7 +1,8 @@
 "use client"
 
 import React from "react"
-import { Plus, Trash2 } from "@/components/ui/icons"
+import { Plus } from "@/components/ui/icon-set/plus"
+import { Trash2 } from "@/components/ui/icon-set/trash2"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import type { SalesPitchItem } from "@/modules/products/domain/sales-pitch-template"

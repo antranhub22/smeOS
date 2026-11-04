@@ -1,14 +1,13 @@
 "use client";
 
 import React, { useState } from "react";
-import {
-  Search,
-  Zap,
-  Loader2,
-  SlidersHorizontal,
-  ChevronDown,
-  Layers,
-} from "@/components/ui/icons";
+import { Search } from "@/components/ui/icon-set/search"
+import { Zap } from "@/components/ui/icon-set/zap"
+import { Loader2 } from "@/components/ui/icon-set/loader2"
+import { SlidersHorizontal } from "@/components/ui/icon-set/sliders-horizontal"
+import { ChevronDown } from "@/components/ui/icon-set/chevron-down"
+import { Layers } from "@/components/ui/icon-set/layers"
+;
 import type { CustomResearchParams } from "./custom-research-modal";
 import { ResearchParameterFields } from "./research-parameter-fields";
 import {

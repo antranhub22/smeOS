@@ -1,20 +1,18 @@
 "use client"
 
 import React, { useState } from "react"
-import {
-  CheckCircle2,
-  Clock,
-  AlertCircle,
-  Eye,
-  Heart,
-  MessageCircle,
-  Share2,
-  TrendingUp,
-  RefreshCw,
-  Send,
-  Sparkles,
-  ExternalLink,
-} from "@/components/ui/icons"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
+import { Clock } from "@/components/ui/icon-set/clock"
+import { AlertCircle } from "@/components/ui/icon-set/alert-circle"
+import { Eye } from "@/components/ui/icon-set/eye"
+import { Heart } from "@/components/ui/icon-set/heart"
+import { MessageCircle } from "@/components/ui/icon-set/message-circle"
+import { Share2 } from "@/components/ui/icon-set/share2"
+import { TrendingUp } from "@/components/ui/icon-set/trending-up"
+import { RefreshCw } from "@/components/ui/icon-set/refresh-cw"
+import { Send } from "@/components/ui/icon-set/send"
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
+import { ExternalLink } from "@/components/ui/icon-set/external-link"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"

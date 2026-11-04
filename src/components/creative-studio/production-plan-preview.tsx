@@ -10,7 +10,12 @@
  */
 
 import { useState } from "react"
-import { Clapperboard, Film, Loader2, Megaphone, Music, Save } from "@/components/ui/icons"
+import { Clapperboard } from "@/components/ui/icon-set/clapperboard"
+import { Film } from "@/components/ui/icon-set/film"
+import { Loader2 } from "@/components/ui/icon-set/loader2"
+import { Megaphone } from "@/components/ui/icon-set/megaphone"
+import { Music } from "@/components/ui/icon-set/music"
+import { Save } from "@/components/ui/icon-set/save"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"

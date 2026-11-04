@@ -1,16 +1,14 @@
 "use client"
 
 import React, { useState } from "react"
-import {
-  Calendar,
-  Clock,
-  Sparkles,
-  Zap,
-  Sun,
-  Moon,
-  CheckCircle2,
-  RefreshCw,
-} from "@/components/ui/icons"
+import { Calendar } from "@/components/ui/icon-set/calendar"
+import { Clock } from "@/components/ui/icon-set/clock"
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
+import { Zap } from "@/components/ui/icon-set/zap"
+import { Sun } from "@/components/ui/icon-set/sun"
+import { Moon } from "@/components/ui/icon-set/moon"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
+import { RefreshCw } from "@/components/ui/icon-set/refresh-cw"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Dialog } from "@/components/ui/dialog"

@@ -1,6 +1,9 @@
 import * as React from "react"
 import Link from "next/link"
-import { Package, Search, Lock, AlertCircle } from "@/components/ui/icons"
+import { Package } from "@/components/ui/icon-set/package"
+import { Search } from "@/components/ui/icon-set/search"
+import { Lock } from "@/components/ui/icon-set/lock"
+import { AlertCircle } from "@/components/ui/icon-set/alert-circle"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 

@@ -1,7 +1,8 @@
 "use client"
 
 import React from "react"
-import { CheckCircle2, XCircle } from "@/components/ui/icons"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
+import { XCircle } from "@/components/ui/icon-set/x-circle"
 import { Button } from "@/components/ui/button"
 
 interface PolicyRowProps {

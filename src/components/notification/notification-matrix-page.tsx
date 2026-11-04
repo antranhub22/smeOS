@@ -9,16 +9,14 @@
 "use client"
 
 import { useState, useMemo } from "react"
-import {
-  BellRing,
-  Search,
-  Filter,
-  Shield,
-  Lock,
-  Sparkles,
-  AlertTriangle,
-  RefreshCw,
-} from "@/components/ui/icons"
+import { BellRing } from "@/components/ui/icon-set/bell-ring"
+import { Search } from "@/components/ui/icon-set/search"
+import { Filter } from "@/components/ui/icon-set/filter"
+import { Shield } from "@/components/ui/icon-set/shield"
+import { Lock } from "@/components/ui/icon-set/lock"
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
+import { AlertTriangle } from "@/components/ui/icon-set/alert-triangle"
+import { RefreshCw } from "@/components/ui/icon-set/refresh-cw"
 import { SkeletonBlock } from "@/components/ui/skeleton"
 import { FeatureGuidanceCard } from "@/components/templates/shared/feature-guidance-card"
 import { Button } from "@/components/ui/button"

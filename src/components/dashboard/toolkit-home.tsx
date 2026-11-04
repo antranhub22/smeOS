@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState, useMemo } from "react"
-import { Search } from "@/components/ui/icons"
+import { Search } from "@/components/ui/icon-set/search"
 import { Input } from "@/components/ui/input"
 import {
   countByStatus,

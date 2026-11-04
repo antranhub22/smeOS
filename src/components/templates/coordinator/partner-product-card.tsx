@@ -1,22 +1,20 @@
 "use client"
 
 import React, { useRef, useCallback, useState } from "react"
-import {
-  Flower2,
-  Clock,
-  MapPin,
-  Copy,
-  Send,
-  Download,
-  CheckCircle2,
-  Banknote,
-  ClipboardList,
-  MessageSquare,
-  ArrowRight,
-  Image as ImageIcon,
-  Scissors,
-  AlertTriangle,
-} from "@/components/ui/icons"
+import { Flower2 } from "@/components/ui/icon-set/flower2"
+import { Clock } from "@/components/ui/icon-set/clock"
+import { MapPin } from "@/components/ui/icon-set/map-pin"
+import { Copy } from "@/components/ui/icon-set/copy"
+import { Send } from "@/components/ui/icon-set/send"
+import { Download } from "@/components/ui/icon-set/download"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
+import { Banknote } from "@/components/ui/icon-set/banknote"
+import { ClipboardList } from "@/components/ui/icon-set/clipboard-list"
+import { MessageSquare } from "@/components/ui/icon-set/message-square"
+import { ArrowRight } from "@/components/ui/icon-set/arrow-right"
+import { Image as ImageIcon } from "@/components/ui/icon-set/image"
+import { Scissors } from "@/components/ui/icon-set/scissors"
+import { AlertTriangle } from "@/components/ui/icon-set/alert-triangle"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"

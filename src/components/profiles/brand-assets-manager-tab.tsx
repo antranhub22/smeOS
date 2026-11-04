@@ -1,14 +1,12 @@
 "use client"
 
 import React, { useState, useEffect } from "react"
-import {
-  Sparkles,
-  CheckCircle2,
-  AlertCircle,
-  Link2,
-  ShieldCheck,
-  Check,
-} from "@/components/ui/icons"
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
+import { AlertCircle } from "@/components/ui/icon-set/alert-circle"
+import { Link2 } from "@/components/ui/icon-set/link2"
+import { ShieldCheck } from "@/components/ui/icon-set/shield-check"
+import { Check } from "@/components/ui/icon-set/check"
 import { Button } from "@/components/ui/button"
 import type { BrandProfileDetail } from "@/modules/profiles/use-cases/get-brand-profile"
 import type { UpsertBrandProfileInput } from "@/modules/profiles/domain/repositories/brand-profile-repository.interface"

@@ -1,16 +1,14 @@
 "use client"
 
 import React, { useState } from "react"
-import {
-  Download,
-  Share2,
-  Check,
-  Film,
-  Image as ImageIcon,
-  Copy,
-  ExternalLink,
-  Sparkles,
-} from "@/components/ui/icons"
+import { Download } from "@/components/ui/icon-set/download"
+import { Share2 } from "@/components/ui/icon-set/share2"
+import { Check } from "@/components/ui/icon-set/check"
+import { Film } from "@/components/ui/icon-set/film"
+import { Image as ImageIcon } from "@/components/ui/icon-set/image"
+import { Copy } from "@/components/ui/icon-set/copy"
+import { ExternalLink } from "@/components/ui/icon-set/external-link"
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
 import { Dialog } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"

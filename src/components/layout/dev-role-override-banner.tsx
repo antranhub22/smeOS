@@ -12,7 +12,9 @@
 
 import { useState, useCallback } from "react"
 import { useRouter } from "next/navigation"
-import { ChevronDown, FlaskConical, X } from "@/components/ui/icons"
+import { ChevronDown } from "@/components/ui/icon-set/chevron-down"
+import { FlaskConical } from "@/components/ui/icon-set/flask-conical"
+import { X } from "@/components/ui/icon-set/x"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { DEV_ROLE_PRESETS, type DevRoleOverride } from "@/lib/dev-role-override"

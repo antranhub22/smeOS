@@ -13,7 +13,7 @@
  */
 
 import { useState, type ComponentType, type ReactNode } from "react"
-import { Tag } from "@/components/ui/icons"
+import { Tag } from "@/components/ui/icon-set/tag"
 import { cn } from "@/lib/utils"
 import { COMING_SOON_LABEL, isRouteLocked } from "@/lib/feature-lock"
 import type { NavEntry } from "./nav-model"

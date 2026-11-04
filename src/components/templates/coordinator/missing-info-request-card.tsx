@@ -1,7 +1,10 @@
 "use client"
 
 import React from "react"
-import { HelpCircle, Send, CheckCircle2, AlertTriangle } from "@/components/ui/icons"
+import { HelpCircle } from "@/components/ui/icon-set/help-circle"
+import { Send } from "@/components/ui/icon-set/send"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
+import { AlertTriangle } from "@/components/ui/icon-set/alert-triangle"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"

@@ -1,6 +1,10 @@
 import React from "react"
 import Link from "next/link"
-import { Building2, Store, MessageSquare, ChevronRight, Layers } from "@/components/ui/icons"
+import { Building2 } from "@/components/ui/icon-set/building2"
+import { Store } from "@/components/ui/icon-set/store"
+import { MessageSquare } from "@/components/ui/icon-set/message-square"
+import { ChevronRight } from "@/components/ui/icon-set/chevron-right"
+import { Layers } from "@/components/ui/icon-set/layers"
 import { Card } from "@/components/ui/card"
 
 export interface ChainRelation {

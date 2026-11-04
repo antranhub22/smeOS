@@ -3,16 +3,14 @@
 import { useI18n } from "@/lib/i18n"
 import React, { useState } from "react"
 import Link from "next/link"
-import {
-  BookOpen,
-  Search,
-  Sparkles,
-  Bot,
-  Filter,
-  CheckCircle2,
-  ExternalLink,
-  HelpCircle,
-} from "@/components/ui/icons"
+import { BookOpen } from "@/components/ui/icon-set/book-open"
+import { Search } from "@/components/ui/icon-set/search"
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
+import { Bot } from "@/components/ui/icon-set/bot"
+import { Filter } from "@/components/ui/icon-set/filter"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
+import { ExternalLink } from "@/components/ui/icon-set/external-link"
+import { HelpCircle } from "@/components/ui/icon-set/help-circle"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"

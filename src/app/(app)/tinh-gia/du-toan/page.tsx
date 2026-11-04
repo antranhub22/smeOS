@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import { ClipboardList } from "@/components/ui/icons"
+import { ClipboardList } from "@/components/ui/icon-set/clipboard-list"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Checkbox } from "@/components/ui/checkbox"

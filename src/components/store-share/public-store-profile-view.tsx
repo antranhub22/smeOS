@@ -3,7 +3,13 @@
  * phía khách. Màu thương hiệu chỉ tô dải trang trí — chữ luôn dùng token để
  * giữ tương phản.
  */
-import { Phone, MessageCircle, MapPin, Mail, Globe, Clock, ExternalLink } from "@/components/ui/icons"
+import { Phone } from "@/components/ui/icon-set/phone"
+import { MessageCircle } from "@/components/ui/icon-set/message-circle"
+import { MapPin } from "@/components/ui/icon-set/map-pin"
+import { Mail } from "@/components/ui/icon-set/mail"
+import { Globe } from "@/components/ui/icon-set/globe"
+import { Clock } from "@/components/ui/icon-set/clock"
+import { ExternalLink } from "@/components/ui/icon-set/external-link"
 import type { ContactAction, PublicStoreProfile } from "@/modules/profiles/domain/store-share-page"
 
 const ACTION_ICON: Record<ContactAction["kind"], typeof Phone> = {

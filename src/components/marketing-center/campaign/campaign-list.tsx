@@ -6,7 +6,8 @@ import { Button } from "@/components/ui/button"
 import { EmptyState } from "@/components/ui/empty-state"
 import { InlineError } from "@/components/ui/inline-error"
 import { SkeletonBlock } from "@/components/ui/skeleton"
-import { Megaphone, Plus } from "@/components/ui/icons"
+import { Megaphone } from "@/components/ui/icon-set/megaphone"
+import { Plus } from "@/components/ui/icon-set/plus"
 import { formatDate, formatDateTime } from "@/lib/i18n/formatters"
 import {
   CAMPAIGN_OBJECTIVE_LABELS,

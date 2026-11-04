@@ -1,7 +1,15 @@
 "use client";
 
 import React from "react";
-import { Mail, Gift, Scissors, Plus, Trash2, Sparkles, CheckSquare, Square } from "@/components/ui/icons";
+import { Mail } from "@/components/ui/icon-set/mail"
+import { Gift } from "@/components/ui/icon-set/gift"
+import { Scissors } from "@/components/ui/icon-set/scissors"
+import { Plus } from "@/components/ui/icon-set/plus"
+import { Trash2 } from "@/components/ui/icon-set/trash2"
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
+import { CheckSquare } from "@/components/ui/icon-set/check-square"
+import { Square } from "@/components/ui/icon-set/square"
+;
 import type {
   ProductPackaging,
   ProductCardAccessory,

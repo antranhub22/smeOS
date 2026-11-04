@@ -12,7 +12,10 @@
  */
 
 import { useState, useEffect, useCallback, useRef, useMemo, useSyncExternalStore } from "react"
-import { Plus, X, Pin, RotateCcw } from "@/components/ui/icons"
+import { Plus } from "@/components/ui/icon-set/plus"
+import { X } from "@/components/ui/icon-set/x"
+import { Pin } from "@/components/ui/icon-set/pin"
+import { RotateCcw } from "@/components/ui/icon-set/rotate-ccw"
 import { cn } from "@/lib/utils"
 import { useI18n } from "@/lib/i18n"
 import { NAV_ICONS as ICONS } from "./nav-icons"

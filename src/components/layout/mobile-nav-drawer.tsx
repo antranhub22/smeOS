@@ -6,7 +6,7 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react"
 import { usePathname } from "next/navigation"
-import { Menu } from "@/components/ui/icons"
+import { Menu } from "@/components/ui/icon-set/menu"
 import { Button } from "@/components/ui/button"
 import { useSession } from "@/lib/session"
 import { DesktopNav } from "./desktop-nav"

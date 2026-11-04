@@ -1,7 +1,9 @@
 "use client"
 
 import React from "react"
-import { Cpu, ShieldCheck, Zap } from "@/components/ui/icons"
+import { Cpu } from "@/components/ui/icon-set/cpu"
+import { ShieldCheck } from "@/components/ui/icon-set/shield-check"
+import { Zap } from "@/components/ui/icon-set/zap"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 

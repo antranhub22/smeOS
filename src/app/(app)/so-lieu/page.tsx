@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
-import { BarChart3, TrendingUp } from "@/components/ui/icons"
+import { BarChart3 } from "@/components/ui/icon-set/bar-chart3"
+import { TrendingUp } from "@/components/ui/icon-set/trending-up"
 import { useSession } from "@/lib/session"
 import { Button } from "@/components/ui/button"
 import { FeatureGuidanceCard } from "@/components/ui/feature-guidance-card"

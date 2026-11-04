@@ -4,7 +4,9 @@
  * toolkit-picker.tsx — Dropdown chọn công cụ để pin vào shortcuts (SRP)
  */
 
-import { RotateCcw, X, PinOff } from "@/components/ui/icons"
+import { RotateCcw } from "@/components/ui/icon-set/rotate-ccw"
+import { X } from "@/components/ui/icon-set/x"
+import { PinOff } from "@/components/ui/icon-set/pin-off"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { NAV_ICONS as ICONS } from "./nav-icons"

@@ -1,6 +1,6 @@
 "use client"
 
-import { Clock } from "@/components/ui/icons"
+import { Clock } from "@/components/ui/icon-set/clock"
 import { Button } from "@/components/ui/button"
 
 /** Sau khi đăng ký / dùng thử: tài khoản chờ quản trị viên duyệt (PO 22/10/2026). */

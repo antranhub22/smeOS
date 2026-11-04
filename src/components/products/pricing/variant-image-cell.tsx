@@ -1,7 +1,8 @@
 "use client"
 
 import React, { useRef, useState } from "react"
-import { ImagePlus, X } from "@/components/ui/icons"
+import { ImagePlus } from "@/components/ui/icon-set/image-plus"
+import { X } from "@/components/ui/icon-set/x"
 import { Button } from "@/components/ui/button"
 import { uploadImageFile } from "../ai-product-helpers"
 

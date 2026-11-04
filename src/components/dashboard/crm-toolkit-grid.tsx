@@ -2,7 +2,10 @@
 
 import { useRouter } from "next/navigation"
 import type { Route } from "next"
-import { Users, MessageSquare, ShoppingBag, Gift } from "@/components/ui/icons"
+import { Users } from "@/components/ui/icon-set/users"
+import { MessageSquare } from "@/components/ui/icon-set/message-square"
+import { ShoppingBag } from "@/components/ui/icon-set/shopping-bag"
+import { Gift } from "@/components/ui/icon-set/gift"
 import { Card } from "@/components/ui/card"
 
 export function CrmToolkitGrid() {

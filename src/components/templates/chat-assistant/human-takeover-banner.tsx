@@ -1,7 +1,8 @@
 "use client"
 
 import React from "react"
-import { AlertCircle, UserCheck } from "@/components/ui/icons"
+import { AlertCircle } from "@/components/ui/icon-set/alert-circle"
+import { UserCheck } from "@/components/ui/icon-set/user-check"
 import { Button } from "@/components/ui/button"
 
 export interface HumanTakeoverBannerProps {

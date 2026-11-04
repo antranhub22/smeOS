@@ -10,7 +10,11 @@
  */
 
 import { useCallback, useEffect, useRef, useState } from "react"
-import { AlertTriangle, CheckCircle2, Clapperboard, Loader2, RefreshCw } from "@/components/ui/icons"
+import { AlertTriangle } from "@/components/ui/icon-set/alert-triangle"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
+import { Clapperboard } from "@/components/ui/icon-set/clapperboard"
+import { Loader2 } from "@/components/ui/icon-set/loader2"
+import { RefreshCw } from "@/components/ui/icon-set/refresh-cw"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"

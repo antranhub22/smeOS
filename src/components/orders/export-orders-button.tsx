@@ -7,7 +7,10 @@
  */
 
 import React, { useState, useRef, useEffect } from "react"
-import { Download, Loader2, CalendarRange, ChevronDown } from "@/components/ui/icons"
+import { Download } from "@/components/ui/icon-set/download"
+import { Loader2 } from "@/components/ui/icon-set/loader2"
+import { CalendarRange } from "@/components/ui/icon-set/calendar-range"
+import { ChevronDown } from "@/components/ui/icon-set/chevron-down"
 import { Button } from "@/components/ui/button"
 import { useSession } from "@/lib/session"
 import { Input } from "@/components/ui/input"

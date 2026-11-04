@@ -1,21 +1,19 @@
 "use client"
 
 import React, { useRef, useState } from "react"
-import {
-  Clock,
-  Printer,
-  Copy,
-  Check,
-  Eye,
-  EyeOff,
-  MessageSquare,
-  MapPin,
-  Phone,
-  Sparkles,
-  Ban,
-  CheckCircle2,
-  FileText,
-} from "@/components/ui/icons"
+import { Clock } from "@/components/ui/icon-set/clock"
+import { Printer } from "@/components/ui/icon-set/printer"
+import { Copy } from "@/components/ui/icon-set/copy"
+import { Check } from "@/components/ui/icon-set/check"
+import { Eye } from "@/components/ui/icon-set/eye"
+import { EyeOff } from "@/components/ui/icon-set/eye-off"
+import { MessageSquare } from "@/components/ui/icon-set/message-square"
+import { MapPin } from "@/components/ui/icon-set/map-pin"
+import { Phone } from "@/components/ui/icon-set/phone"
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
+import { Ban } from "@/components/ui/icon-set/ban"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
+import { FileText } from "@/components/ui/icon-set/file-text"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"

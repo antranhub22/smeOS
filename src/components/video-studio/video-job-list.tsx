@@ -1,7 +1,13 @@
 "use client";
 
 import React from "react";
-import { Film, CheckCircle2, Clock, AlertCircle, Sparkles, ChevronRight } from "@/components/ui/icons";
+import { Film } from "@/components/ui/icon-set/film"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
+import { Clock } from "@/components/ui/icon-set/clock"
+import { AlertCircle } from "@/components/ui/icon-set/alert-circle"
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
+import { ChevronRight } from "@/components/ui/icon-set/chevron-right"
+;
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";

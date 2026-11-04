@@ -3,7 +3,13 @@
 import { useI18n } from "@/lib/i18n"
 import { useEffect, useState } from "react";
 import { useParams, useRouter, useSearchParams } from "next/navigation";
-import { ArrowLeft, Loader2, CheckCircle2, AlertCircle, Info, RefreshCw } from "@/components/ui/icons";
+import { ArrowLeft } from "@/components/ui/icon-set/arrow-left"
+import { Loader2 } from "@/components/ui/icon-set/loader2"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
+import { AlertCircle } from "@/components/ui/icon-set/alert-circle"
+import { Info } from "@/components/ui/icon-set/info"
+import { RefreshCw } from "@/components/ui/icon-set/refresh-cw"
+;
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";

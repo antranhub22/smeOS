@@ -3,6 +3,8 @@
  * `from "@/components/ui/icons"` bằng `from "@/components/ui/icons"` mà không đổi chỗ dùng.
  * Mặc định nét `regular`; `strokeWidth ≥ 2.5` → `bold`; có `fill` → `fill`.
  * Ô icon lớn dùng `IconTile` (`app-icon.tsx`). Icon mới: thêm tệp vào `icon-set/` và một dòng ở đây, không import lucide.
+ * Chỗ dùng import thẳng `@/components/ui/icon-set/<ten>`: Turbopack không lược re-export của barrel nội bộ,
+ * nên barrel này chỉ còn cho tệp vùng PO khoá và tệp lớn chờ tách (`tests/unit/architecture/icon-imports.test.ts`).
  *
  * Mỗi icon một tệp, tệp này chỉ re-export: bundler giữ đúng icon trang dùng. Trước đây mọi icon được bọc
  * ngay trong tệp này nên trang nào cũng tải đủ ~236 icon × 6 nét vẽ (chunk chung 174 KB gzip).

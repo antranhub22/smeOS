@@ -2,7 +2,7 @@
 
 import React, { useState } from "react"
 import { PublicChatLimitRequest } from "./public-chat-limit-request"
-import { MessageCircle } from "@/components/ui/icons"
+import { MessageCircle } from "@/components/ui/icon-set/message-circle"
 import { Switch } from "@/components/ui/switch"
 import type { ChannelStatusItem } from "@/modules/chat-assistant/use-cases/list-chat-channels"
 import {

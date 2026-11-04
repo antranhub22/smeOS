@@ -2,7 +2,10 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import { Check, Copy, ExternalLink, Layers } from "@/components/ui/icons"
+import { Check } from "@/components/ui/icon-set/check"
+import { Copy } from "@/components/ui/icon-set/copy"
+import { ExternalLink } from "@/components/ui/icon-set/external-link"
+import { Layers } from "@/components/ui/icon-set/layers"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"

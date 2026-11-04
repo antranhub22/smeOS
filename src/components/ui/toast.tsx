@@ -2,7 +2,11 @@
 
 import * as React from "react"
 import { useAnnounce } from "@/components/ui/live-region"
-import { CheckCircle2, AlertCircle, Info, XCircle, X } from "@/components/ui/icons"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
+import { AlertCircle } from "@/components/ui/icon-set/alert-circle"
+import { Info } from "@/components/ui/icon-set/info"
+import { XCircle } from "@/components/ui/icon-set/x-circle"
+import { X } from "@/components/ui/icon-set/x"
 import { cn } from "@/lib/utils"
 
 export type ToastTone = "success" | "error" | "info" | "warning"

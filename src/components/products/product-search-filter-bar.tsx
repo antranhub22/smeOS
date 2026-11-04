@@ -2,17 +2,15 @@
 
 import { InfoTip } from "@/components/ui/info-tip"
 import React, { useState } from "react"
-import {
-  Search,
-  X,
-  LayoutGrid,
-  LayoutList,
-  Sparkles,
-  ArrowUpDown,
-  CircleDollarSign,
-  RotateCcw,
-  SlidersHorizontal,
-} from "@/components/ui/icons"
+import { Search } from "@/components/ui/icon-set/search"
+import { X } from "@/components/ui/icon-set/x"
+import { LayoutGrid } from "@/components/ui/icon-set/layout-grid"
+import { LayoutList } from "@/components/ui/icon-set/layout-list"
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
+import { ArrowUpDown } from "@/components/ui/icon-set/arrow-up-down"
+import { CircleDollarSign } from "@/components/ui/icon-set/circle-dollar-sign"
+import { RotateCcw } from "@/components/ui/icon-set/rotate-ccw"
+import { SlidersHorizontal } from "@/components/ui/icon-set/sliders-horizontal"
 import {
   OCCASIONS,
   PRICE_RANGES,

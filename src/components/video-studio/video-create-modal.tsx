@@ -1,7 +1,14 @@
 "use client";
 
 import React, { useState } from "react";
-import { Sparkles, Clock, Coins, Film, Music, Mic, Type } from "@/components/ui/icons";
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
+import { Clock } from "@/components/ui/icon-set/clock"
+import { Coins } from "@/components/ui/icon-set/coins"
+import { Film } from "@/components/ui/icon-set/film"
+import { Music } from "@/components/ui/icon-set/music"
+import { Mic } from "@/components/ui/icon-set/mic"
+import { Type } from "@/components/ui/icon-set/type"
+;
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Dialog } from "@/components/ui/dialog";

@@ -2,7 +2,10 @@
 
 import { safeImageSrc } from "@/lib/safe-image-src"
 import React, { useState } from "react"
-import { CheckCircle2, AlertCircle, Download, RotateCcw } from "@/components/ui/icons"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
+import { AlertCircle } from "@/components/ui/icon-set/alert-circle"
+import { Download } from "@/components/ui/icon-set/download"
+import { RotateCcw } from "@/components/ui/icon-set/rotate-ccw"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import type { PhotoEnhanceQcEvaluation } from "@/modules/product-photo-studio/domain/photo-enhance-rules"

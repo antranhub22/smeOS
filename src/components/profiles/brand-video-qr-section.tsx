@@ -1,7 +1,10 @@
 "use client"
 
 import React, { useState, useRef } from "react"
-import { Video, QrCode, Trash2, Loader2 } from "@/components/ui/icons"
+import { Video } from "@/components/ui/icon-set/video"
+import { QrCode } from "@/components/ui/icon-set/qr-code"
+import { Trash2 } from "@/components/ui/icon-set/trash2"
+import { Loader2 } from "@/components/ui/icon-set/loader2"
 import { Button } from "@/components/ui/button"
 import { PhotoUploadGuidance, VIDEO_GUIDANCE, QR_GUIDANCE } from "./photo-upload-guidance"
 import { uploadBrandAsset } from "./upload-brand-asset"

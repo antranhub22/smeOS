@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useState } from "react"
 import Link from "next/link"
 import type { Route } from "next"
-import { UserPlus } from "@/components/ui/icons"
+import { UserPlus } from "@/components/ui/icon-set/user-plus"
 import { Badge } from "@/components/ui/badge"
 import { EmptyState } from "@/components/ui/empty-state"
 import { InlineError } from "@/components/ui/inline-error"

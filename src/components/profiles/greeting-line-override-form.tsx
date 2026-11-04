@@ -21,7 +21,11 @@
  */
 
 import React, { useEffect, useState } from "react"
-import { MessageSquareText, Check, X, AlertCircle, CheckCircle2 } from "@/components/ui/icons"
+import { MessageSquareText } from "@/components/ui/icon-set/message-square-text"
+import { Check } from "@/components/ui/icon-set/check"
+import { X } from "@/components/ui/icon-set/x"
+import { AlertCircle } from "@/components/ui/icon-set/alert-circle"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { SkeletonBlock } from "@/components/ui/skeleton"

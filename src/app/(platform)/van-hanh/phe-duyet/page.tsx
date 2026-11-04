@@ -6,7 +6,10 @@
  */
 
 import { useCallback, useEffect, useState } from "react"
-import { CheckCircle2, XCircle, RefreshCw, InboxIcon } from "@/components/ui/icons"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
+import { XCircle } from "@/components/ui/icon-set/x-circle"
+import { RefreshCw } from "@/components/ui/icon-set/refresh-cw"
+import { InboxIcon } from "@/components/ui/icon-set/inbox-icon"
 import {
   ApprovalCard,
   TYPE_META,

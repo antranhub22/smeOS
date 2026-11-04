@@ -1,5 +1,9 @@
 import React from "react"
-import { Award, UserCheck, Calendar, FileText, CheckCircle } from "@/components/ui/icons"
+import { Award } from "@/components/ui/icon-set/award"
+import { UserCheck } from "@/components/ui/icon-set/user-check"
+import { Calendar } from "@/components/ui/icon-set/calendar"
+import { FileText } from "@/components/ui/icon-set/file-text"
+import { CheckCircle } from "@/components/ui/icon-set/check-circle"
 import type {
   PartnerStoreScoreAndTier,
   PartnerStoreAudit,

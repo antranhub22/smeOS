@@ -3,13 +3,11 @@
 import { useEffect, useState, useCallback, useMemo } from "react"
 import { useRouter } from "next/navigation"
 import type { Route } from "next"
-import {
-  CalendarHeart,
-  ChevronRight,
-  UserPlus,
-  AlertCircle,
-  MessageSquare,
-} from "@/components/ui/icons"
+import { CalendarHeart } from "@/components/ui/icon-set/calendar-heart"
+import { ChevronRight } from "@/components/ui/icon-set/chevron-right"
+import { UserPlus } from "@/components/ui/icon-set/user-plus"
+import { AlertCircle } from "@/components/ui/icon-set/alert-circle"
+import { MessageSquare } from "@/components/ui/icon-set/message-square"
 import { useSession } from "@/lib/session"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"

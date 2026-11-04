@@ -2,7 +2,11 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import { Search, ExternalLink, CheckCircle2, AlertTriangle, XCircle } from "@/components/ui/icons"
+import { Search } from "@/components/ui/icon-set/search"
+import { ExternalLink } from "@/components/ui/icon-set/external-link"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
+import { AlertTriangle } from "@/components/ui/icon-set/alert-triangle"
+import { XCircle } from "@/components/ui/icon-set/x-circle"
 import { Input } from "@/components/ui/input"
 import type { AvailabilityBoardProduct } from "@/modules/availability/use-cases/get-availability-board"
 

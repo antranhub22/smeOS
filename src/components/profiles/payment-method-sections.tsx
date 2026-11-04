@@ -1,13 +1,11 @@
 "use client"
 
 import React from "react"
-import {
-  Landmark,
-  CreditCard,
-  Truck,
-  Store,
-  Smartphone,
-} from "@/components/ui/icons"
+import { Landmark } from "@/components/ui/icon-set/landmark"
+import { CreditCard } from "@/components/ui/icon-set/credit-card"
+import { Truck } from "@/components/ui/icon-set/truck"
+import { Store } from "@/components/ui/icon-set/store"
+import { Smartphone } from "@/components/ui/icon-set/smartphone"
 import {
   Select,
   SelectContent,

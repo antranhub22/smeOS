@@ -1,7 +1,9 @@
 "use client"
 
 import React from "react"
-import { CheckCircle2, AlertTriangle, RefreshCw } from "@/components/ui/icons"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
+import { AlertTriangle } from "@/components/ui/icon-set/alert-triangle"
+import { RefreshCw } from "@/components/ui/icon-set/refresh-cw"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 

@@ -8,7 +8,10 @@
 "use client"
 
 import { useState, useMemo } from "react"
-import { Search, Lock, AlertTriangle, RefreshCw } from "@/components/ui/icons"
+import { Search } from "@/components/ui/icon-set/search"
+import { Lock } from "@/components/ui/icon-set/lock"
+import { AlertTriangle } from "@/components/ui/icon-set/alert-triangle"
+import { RefreshCw } from "@/components/ui/icon-set/refresh-cw"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { NativeSelect } from "@/components/ui/select"

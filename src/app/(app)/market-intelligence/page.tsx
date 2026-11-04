@@ -4,14 +4,13 @@ import { useI18n } from "@/lib/i18n"
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import {
-  TrendingUp,
-  RefreshCw,
-  Shield,
-  Search,
-  Camera,
-  Settings,
-} from "@/components/ui/icons";
+import { TrendingUp } from "@/components/ui/icon-set/trending-up"
+import { RefreshCw } from "@/components/ui/icon-set/refresh-cw"
+import { Shield } from "@/components/ui/icon-set/shield"
+import { Search } from "@/components/ui/icon-set/search"
+import { Camera } from "@/components/ui/icon-set/camera"
+import { Settings } from "@/components/ui/icon-set/settings"
+;
 import { FeatureGuidanceCard } from "@/components/ui/feature-guidance-card";
 import { CustomResearchModal } from "@/components/market-intelligence/custom-research-modal";
 import { MarketIntelligenceView } from "@/components/market-intelligence/market-intelligence-view";

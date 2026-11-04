@@ -2,7 +2,8 @@
 
 import { useCallback, useEffect, useState } from "react"
 import Link from "next/link"
-import { FileSpreadsheet, Plus } from "@/components/ui/icons"
+import { FileSpreadsheet } from "@/components/ui/icon-set/file-spreadsheet"
+import { Plus } from "@/components/ui/icon-set/plus"
 
 import { ActiveSwitch } from "@/components/promotions/active-switch"
 import { EMPTY_PRICE_LIST, PriceListForm, type PriceListFormValue } from "@/components/promotions/price-list-form"

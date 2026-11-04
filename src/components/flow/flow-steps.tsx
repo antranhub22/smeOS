@@ -1,7 +1,12 @@
 "use client"
 
 import { useState } from "react"
-import { Check, Circle, AlertCircle, X, RotateCcw, Ban } from "@/components/ui/icons"
+import { Check } from "@/components/ui/icon-set/check"
+import { Circle } from "@/components/ui/icon-set/circle"
+import { AlertCircle } from "@/components/ui/icon-set/alert-circle"
+import { X } from "@/components/ui/icon-set/x"
+import { RotateCcw } from "@/components/ui/icon-set/rotate-ccw"
+import { Ban } from "@/components/ui/icon-set/ban"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"

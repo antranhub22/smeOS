@@ -2,7 +2,8 @@
 
 import * as React from "react"
 import { Select as BaseSelect } from "@base-ui/react/select"
-import { ChevronDown, Check } from "@/components/ui/icons"
+import { ChevronDown } from "@/components/ui/icon-set/chevron-down"
+import { Check } from "@/components/ui/icon-set/check"
 import { cn } from "@/lib/utils"
 
 export interface SelectProps<T extends string = string> {

@@ -2,7 +2,12 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import { Check, Copy, ExternalLink, Receipt, Send, Sparkles } from "@/components/ui/icons"
+import { Check } from "@/components/ui/icon-set/check"
+import { Copy } from "@/components/ui/icon-set/copy"
+import { ExternalLink } from "@/components/ui/icon-set/external-link"
+import { Receipt } from "@/components/ui/icon-set/receipt"
+import { Send } from "@/components/ui/icon-set/send"
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"

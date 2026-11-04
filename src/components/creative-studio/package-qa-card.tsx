@@ -5,7 +5,9 @@
  */
 
 import React from "react"
-import { AlertCircle, CheckCircle2, XCircle } from "@/components/ui/icons"
+import { AlertCircle } from "@/components/ui/icon-set/alert-circle"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
+import { XCircle } from "@/components/ui/icon-set/x-circle"
 
 import type { CampaignPackageDto } from "./package-client"
 

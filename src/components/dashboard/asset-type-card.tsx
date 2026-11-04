@@ -2,7 +2,8 @@
 
 import React from "react"
 import { useRouter } from "next/navigation"
-import { ArrowUpRight, Sparkles } from "@/components/ui/icons"
+import { ArrowUpRight } from "@/components/ui/icon-set/arrow-up-right"
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
 import { Button } from "@/components/ui/button"
 import { InfoTip } from "@/components/ui/info-tip"
 import {

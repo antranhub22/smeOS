@@ -1,7 +1,9 @@
 "use client"
 
 import React from "react"
-import { Printer, CheckSquare, Clock } from "@/components/ui/icons"
+import { Printer } from "@/components/ui/icon-set/printer"
+import { CheckSquare } from "@/components/ui/icon-set/check-square"
+import { Clock } from "@/components/ui/icon-set/clock"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"

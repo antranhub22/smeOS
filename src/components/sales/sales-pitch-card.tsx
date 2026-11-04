@@ -1,37 +1,35 @@
 "use client"
 
 import { useState, useRef } from "react"
-import {
-  Copy,
-  Check,
-  Sparkles,
-  Gift,
-  ShieldCheck,
-  Maximize2,
-  Tag,
-  Clock,
-  Heart,
-  Pencil,
-  FileText,
-  Plus,
-  Trash2,
-  CheckCircle2,
-  Layers,
-  Phone,
-  Store,
-  AlertCircle,
-  HelpCircle,
-  Eye,
-  Download,
-  FileDown,
-  Image as ImageIcon,
-  Share2,
-  Unlock,
-  RotateCcw,
-  MessageSquareText,
-  ShoppingBag,
-  BookOpen,
-} from "@/components/ui/icons"
+import { Copy } from "@/components/ui/icon-set/copy"
+import { Check } from "@/components/ui/icon-set/check"
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
+import { Gift } from "@/components/ui/icon-set/gift"
+import { ShieldCheck } from "@/components/ui/icon-set/shield-check"
+import { Maximize2 } from "@/components/ui/icon-set/maximize2"
+import { Tag } from "@/components/ui/icon-set/tag"
+import { Clock } from "@/components/ui/icon-set/clock"
+import { Heart } from "@/components/ui/icon-set/heart"
+import { Pencil } from "@/components/ui/icon-set/pencil"
+import { FileText } from "@/components/ui/icon-set/file-text"
+import { Plus } from "@/components/ui/icon-set/plus"
+import { Trash2 } from "@/components/ui/icon-set/trash2"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
+import { Layers } from "@/components/ui/icon-set/layers"
+import { Phone } from "@/components/ui/icon-set/phone"
+import { Store } from "@/components/ui/icon-set/store"
+import { AlertCircle } from "@/components/ui/icon-set/alert-circle"
+import { HelpCircle } from "@/components/ui/icon-set/help-circle"
+import { Eye } from "@/components/ui/icon-set/eye"
+import { Download } from "@/components/ui/icon-set/download"
+import { FileDown } from "@/components/ui/icon-set/file-down"
+import { Image as ImageIcon } from "@/components/ui/icon-set/image"
+import { Share2 } from "@/components/ui/icon-set/share2"
+import { Unlock } from "@/components/ui/icon-set/unlock"
+import { RotateCcw } from "@/components/ui/icon-set/rotate-ccw"
+import { MessageSquareText } from "@/components/ui/icon-set/message-square-text"
+import { ShoppingBag } from "@/components/ui/icon-set/shopping-bag"
+import { BookOpen } from "@/components/ui/icon-set/book-open"
 import { toBlob, toPng, toJpeg } from "html-to-image"
 import jsPDF from "jspdf"
 import {

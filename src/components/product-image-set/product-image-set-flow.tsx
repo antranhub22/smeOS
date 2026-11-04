@@ -2,7 +2,8 @@
 
 import React, { useState } from "react"
 import Link from "next/link"
-import { RefreshCw, Sparkles } from "@/components/ui/icons"
+import { RefreshCw } from "@/components/ui/icon-set/refresh-cw"
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
 import { FeatureGuidanceCard } from "@/components/templates/shared/feature-guidance-card"
 import { PhotoUploadPanel } from "@/components/product-photo-studio/photo-upload-panel"
 import { BundleSelector } from "@/components/product-image-set/bundle-selector"

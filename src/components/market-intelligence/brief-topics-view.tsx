@@ -2,7 +2,14 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Lightbulb, Copy, Check, Video, Play, Sparkles, ArrowRight } from "@/components/ui/icons";
+import { Lightbulb } from "@/components/ui/icon-set/lightbulb"
+import { Copy } from "@/components/ui/icon-set/copy"
+import { Check } from "@/components/ui/icon-set/check"
+import { Video } from "@/components/ui/icon-set/video"
+import { Play } from "@/components/ui/icon-set/play"
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
+import { ArrowRight } from "@/components/ui/icon-set/arrow-right"
+;
 import type { OpportunityItem } from "./opportunity-card";
 import { getDualOpportunityEvidencePreview } from "./opportunity-illustration";
 import type { Route } from "next"

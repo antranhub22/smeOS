@@ -1,7 +1,9 @@
 "use client"
 
 import React, { useState } from "react"
-import { Pencil, Eye, CheckCircle2 } from "@/components/ui/icons"
+import { Pencil } from "@/components/ui/icon-set/pencil"
+import { Eye } from "@/components/ui/icon-set/eye"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { PitchGeneralTab, type PitchGeneralTabProps } from "./pitch-general-tab"

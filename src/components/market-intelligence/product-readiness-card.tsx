@@ -1,7 +1,13 @@
 "use client";
 
 import React from "react";
-import { CheckCircle2, AlertTriangle, Video, Image as ImageIcon, Sparkles, Send } from "@/components/ui/icons";
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
+import { AlertTriangle } from "@/components/ui/icon-set/alert-triangle"
+import { Video } from "@/components/ui/icon-set/video"
+import { Image as ImageIcon } from "@/components/ui/icon-set/image"
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
+import { Send } from "@/components/ui/icon-set/send"
+;
 import type { ProductContentReadiness } from "@/modules/market-intelligence/domain/product-intelligence-types";
 
 interface ProductReadinessCardProps {

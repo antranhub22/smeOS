@@ -7,7 +7,8 @@
  * khối "Từ chuỗi" chỉ đọc.
  */
 import { useState } from "react"
-import { Library, Plus } from "@/components/ui/icons"
+import { Library } from "@/components/ui/icon-set/library"
+import { Plus } from "@/components/ui/icon-set/plus"
 import { Button } from "@/components/ui/button"
 import { useSession } from "@/lib/session"
 import { isChainTier } from "@/core/governance/tier-of"

@@ -2,20 +2,18 @@
 
 import { useI18n } from "@/lib/i18n"
 import React, { useEffect, useState } from "react"
-import {
-  Shield,
-  Cpu,
-  Lock,
-  Sparkles,
-  AlertCircle,
-  CheckCircle2,
-  Layers,
-  Settings2,
-  RefreshCw,
-  Server,
-  DollarSign,
-  Sliders,
-} from "@/components/ui/icons"
+import { Shield } from "@/components/ui/icon-set/shield"
+import { Cpu } from "@/components/ui/icon-set/cpu"
+import { Lock } from "@/components/ui/icon-set/lock"
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
+import { AlertCircle } from "@/components/ui/icon-set/alert-circle"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
+import { Layers } from "@/components/ui/icon-set/layers"
+import { Settings2 } from "@/components/ui/icon-set/settings2"
+import { RefreshCw } from "@/components/ui/icon-set/refresh-cw"
+import { Server } from "@/components/ui/icon-set/server"
+import { DollarSign } from "@/components/ui/icon-set/dollar-sign"
+import { Sliders } from "@/components/ui/icon-set/sliders"
 import { useSession } from "@/lib/session"
 import { FeatureGuidanceCard } from "@/components/templates/shared/feature-guidance-card"
 import { Button } from "@/components/ui/button"

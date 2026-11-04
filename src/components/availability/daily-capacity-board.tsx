@@ -1,7 +1,11 @@
 "use client"
 
 import { useState } from "react"
-import { Calendar, ChevronLeft, ChevronRight, CheckCircle2, AlertTriangle } from "@/components/ui/icons"
+import { Calendar } from "@/components/ui/icon-set/calendar"
+import { ChevronLeft } from "@/components/ui/icon-set/chevron-left"
+import { ChevronRight } from "@/components/ui/icon-set/chevron-right"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
+import { AlertTriangle } from "@/components/ui/icon-set/alert-triangle"
 import { Button } from "@/components/ui/button"
 import type { AvailabilityBoardProduct } from "@/modules/availability/use-cases/get-availability-board"
 import type { ProductBookingRecord } from "@/modules/availability/domain/availability-mode"

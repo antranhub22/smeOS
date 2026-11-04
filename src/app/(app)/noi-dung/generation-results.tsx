@@ -7,7 +7,8 @@
  */
 
 import React from "react"
-import { RefreshCw, Send } from "@/components/ui/icons"
+import { RefreshCw } from "@/components/ui/icon-set/refresh-cw"
+import { Send } from "@/components/ui/icon-set/send"
 import { Button } from "@/components/ui/button"
 import { MultichannelPostCard, type MultichannelPostItem } from "@/components/templates/content-engine"
 import { useRouter } from "next/navigation"

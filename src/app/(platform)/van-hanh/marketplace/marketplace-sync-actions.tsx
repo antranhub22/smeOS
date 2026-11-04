@@ -2,7 +2,12 @@
 
 // Nút đồng bộ chợ đối tác — cần N17 (máy chủ kiểm, trả 403 nếu thiếu); mọi thao tác ghi nhật ký nền tảng.
 import React, { useRef, useState } from "react"
-import { AlertCircle, CheckCircle, Download, FileSpreadsheet, Images, RefreshCw } from "@/components/ui/icons"
+import { AlertCircle } from "@/components/ui/icon-set/alert-circle"
+import { CheckCircle } from "@/components/ui/icon-set/check-circle"
+import { Download } from "@/components/ui/icon-set/download"
+import { FileSpreadsheet } from "@/components/ui/icon-set/file-spreadsheet"
+import { Images } from "@/components/ui/icon-set/images"
+import { RefreshCw } from "@/components/ui/icon-set/refresh-cw"
 import { Button } from "@/components/ui/button"
 import { useConfirmDialog } from "@/components/ui/confirm-dialog"
 import type { ColumnMapping } from "@/modules/platform/domain/partner-marketplace-column-match"

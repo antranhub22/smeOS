@@ -6,7 +6,12 @@
  */
 
 import React, { useRef, useCallback } from "react"
-import { Upload, ImageIcon, Loader2, CheckCircle2, AlertCircle, RefreshCw } from "@/components/ui/icons"
+import { Upload } from "@/components/ui/icon-set/upload"
+import { ImageIcon } from "@/components/ui/icon-set/image-icon"
+import { Loader2 } from "@/components/ui/icon-set/loader2"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
+import { AlertCircle } from "@/components/ui/icon-set/alert-circle"
+import { RefreshCw } from "@/components/ui/icon-set/refresh-cw"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import type { UploadFlowState } from "./use-image-upload-flow"

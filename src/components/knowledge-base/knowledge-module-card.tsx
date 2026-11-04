@@ -2,16 +2,14 @@
 
 import React, { useState } from "react"
 import Link from "next/link"
-import {
-  Sparkles,
-  ArrowRight,
-  CheckCircle2,
-  XCircle,
-  HelpCircle,
-  ChevronDown,
-  ChevronUp,
-  Table,
-} from "@/components/ui/icons"
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
+import { ArrowRight } from "@/components/ui/icon-set/arrow-right"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
+import { XCircle } from "@/components/ui/icon-set/x-circle"
+import { HelpCircle } from "@/components/ui/icon-set/help-circle"
+import { ChevronDown } from "@/components/ui/icon-set/chevron-down"
+import { ChevronUp } from "@/components/ui/icon-set/chevron-up"
+import { Table } from "@/components/ui/icon-set/table"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { ModuleKnowledgeSpec } from "./knowledge-data"

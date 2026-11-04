@@ -2,7 +2,8 @@ import * as React from "react"
 import Link from "next/link"
 import { cn } from "@/lib/utils"
 import { InfoTip } from "@/components/ui/info-tip"
-import { ChevronLeft, ChevronRight } from "@/components/ui/icons"
+import { ChevronLeft } from "@/components/ui/icon-set/chevron-left"
+import { ChevronRight } from "@/components/ui/icon-set/chevron-right"
 
 export interface BreadcrumbItem {
   label: string

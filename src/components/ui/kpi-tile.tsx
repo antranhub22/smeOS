@@ -1,7 +1,10 @@
 "use client"
 
 import * as React from "react"
-import { Eye, EyeOff, ArrowUpRight, ArrowDownRight } from "@/components/ui/icons"
+import { Eye } from "@/components/ui/icon-set/eye"
+import { EyeOff } from "@/components/ui/icon-set/eye-off"
+import { ArrowUpRight } from "@/components/ui/icon-set/arrow-up-right"
+import { ArrowDownRight } from "@/components/ui/icon-set/arrow-down-right"
 import { InfoTip } from "@/components/ui/info-tip"
 import { cn } from "@/lib/utils"
 
