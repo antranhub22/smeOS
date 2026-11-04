@@ -9,6 +9,7 @@ import { parseListQuery, toPage } from "@/modules/greeting-card/contracts/list-q
 import { resolveSaleScope } from "@/modules/greeting-card/use-cases/order-scope"
 import { withOrderProduct } from "@/modules/greeting-card/use-cases/order-product-views"
 import { GREETING_CARD_CAPABILITY } from "@/modules/greeting-card/domain/greeting-card-capabilities"
+import { parseDeliveryDate } from "@/modules/orders/domain/order-list-filter"
 
 export const GET = handle(async (request) => {
   const { ctx } = await requireTenantContext(request)
@@ -28,9 +29,13 @@ export const GET = handle(async (request) => {
   // Mở đúng một đơn từ Hộp việc — bỏ qua bộ lọc tab, vẫn trong phạm vi tiệm + sale
   const orderId = url.searchParams.get("orderId")?.trim().slice(0, 64) || undefined
 
+  // Lọc nâng cao (checklist ALG 4.3): ngày giao, nhân viên bán, chi nhánh. Sale "chỉ khách của mình" luôn bị giới hạn về mình.
+  const deliveryFrom = parseDeliveryDate(url.searchParams.get("delivery_from"))
+  const deliveryTo = parseDeliveryDate(url.searchParams.get("delivery_to"))
+  const branchId = url.searchParams.get("branch_id")?.trim().slice(0, 64) || undefined
   const repo = new BrochureOrderRepository()
-  const saleId = (await resolveSaleScope(ctx)) ?? undefined
-  const rows = await repo.listBrochureOrders(ctx, { status, payment, saleId, q, reported, delivered, orderId, limit, cursor })
+  const saleId = (await resolveSaleScope(ctx)) ?? (url.searchParams.get("sale_id")?.trim().slice(0, 64) || undefined)
+  const rows = await repo.listBrochureOrders(ctx, { status, payment, saleId, q, reported, delivered, orderId, limit, cursor, deliveryFrom, deliveryTo, branchId })
 
   // Batch-resolve ảnh chuyển khoản và kết quả phân tích AI (tránh N+1) — chỉ ký asset của đúng tổ chức
   const proofAssetIds = rows

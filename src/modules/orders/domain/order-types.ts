@@ -182,6 +182,10 @@ export interface OrderFilter {
   search?: string | undefined
   fromDate?: Date | undefined
   toDate?: Date | undefined
+  /** Khoảng ngày giao YYYY-MM-DD và nhân viên bán (checklist ALG 4.3). */
+  deliveryFrom?: string | undefined
+  deliveryTo?: string | undefined
+  saleId?: string | undefined
   limit?: number | undefined
   cursor?: string | undefined
 }

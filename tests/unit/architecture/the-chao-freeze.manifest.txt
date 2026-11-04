@@ -205,7 +205,7 @@ dfbd7eb17d2f8e8a51777ef1ad791a1b2fc301686c8ebc780720d942bac6b37b  src/modules/gr
 03ea0689ef94a34bc086c4da1af7651968566344229e0ae68e63097316bd4aaf  src/modules/greeting-card/infra/background-sweep-repository.ts
 3bca30da83a1815fc7c574111794263741d694e0df479ebd084eab05f1392ef4  src/modules/greeting-card/infra/branch-portal-repository.ts
 a4cd136bd1aa7e0d3f64ab65d46acc5f44c1c1867eb79d97521ac9ea81e4e851  src/modules/greeting-card/infra/brochure-checkout-repository.ts
-0a5b160ffd43c0ee1e1766950fb35bc9ff6fb53d1eb80f061f8d8247f0c3bc7b  src/modules/greeting-card/infra/brochure-order-repository.ts
+82a096e06f6d87b351ff35e9ba618883e1a68126f8f117398b891b5230ea2c2e  src/modules/greeting-card/infra/brochure-order-repository.ts
 b1cc1dbd079e5c2ef99a4e6b235ee796f6d636d736fd00b6dd32fc72fb7c5192  src/modules/greeting-card/infra/brochure-payment-repository.ts
 7bbbe31093625aee3958b102fd555fe35bd960a30bdfd308368ad72fd9ea314d  src/modules/greeting-card/infra/cancellation-follow-up-repository.ts
 e0eb1d37f30a079cecf7687946118361e756660e136e4585953e088880b48d10  src/modules/greeting-card/infra/cancellation-repository.ts
@@ -380,7 +380,7 @@ bbaaf2be81ba021008a2eba692b2f4de55228e6413e3c779a81e415cd1428e5b  src/modules/gr
 92b4d402dbf7c79b69e2bd091de9f9b7e4e47858b4410fc62080769b6d97f236  src/modules/greeting-card/use-cases/verify-qc-photo-ai.test.ts
 0c4d9cbc0daa01647555d4cd0f0fed63e8a1b4ea4ded5077b1b0e2f6b26cee86  src/modules/greeting-card/use-cases/verify-qc-photo-ai.ts
 c5a1aebc1be50a6504cae5ccc474d9c7f386d92777f96c545233bf27526cb95b  src/modules/greeting-card/use-cases/zalo-oa-link.ts
-1f04d3001bd69aa8e29cc603a9894fb2d4521904ba7d46480306e146fab080c4  src/components/greeting-card/admin/admin-brochure-payment-tab.tsx
+d25eb8c375b428436d0c8affc76c2c31a2f37f47e9bf87a7ac692416e2d7a9f1  src/components/greeting-card/admin/admin-brochure-payment-tab.tsx
 78bddacf55402786fa1e87e8186af109cdf92828f8e30eb3eb6edd0aedd53c6a  src/components/greeting-card/admin/admin-order-action-dialog.tsx
 128f79f7344c82f88eb157c7bc1e3dbc39789691b2ff8058ff224e669ec486b6  src/components/greeting-card/admin/admin-order-table.tsx
 2a42eaab19a3a7650032e793805d63f1b9fafde61c5a4a1d4a20573336b310c3  src/components/greeting-card/admin/admin-order-types.ts
@@ -709,7 +709,7 @@ a2e5ff4d24acc8601f7ddcc1f5b53eda8546c62c6ff3c0fbdc9d0230dd7408ea  src/app/api/v1
 bacf70179ee1ff8178c0d4d193a555324d0377b6b2b4f303495a72027f32cb0b  src/app/api/v1/greeting-card/orders/[id]/reject-reported-payment/route.ts
 17761703c4c1bc415ad41ef8537f14648b0ff8657fe7a6df1abd5afdca1e6aff  src/app/api/v1/greeting-card/orders/[id]/substitute/route.ts
 2b7d0f1b1fa8371320284afe476707f825c0d00377c77afc2708fc1519ee21d7  src/app/api/v1/greeting-card/orders/[id]/vat/route.ts
-9db886757547d4fed839041555e05d3bd5b81eddd36ba6ba30996739a2c45c53  src/app/api/v1/greeting-card/orders/route.ts
+e81a0c4d8a38bd9887b66b8f4fc241179e2540e28eb25e46eb6d136f18c5be01  src/app/api/v1/greeting-card/orders/route.ts
 7945d1db38bf001974dbe73d9fb83bdffc39447f9aa8f682f0a599a970fa64d9  src/app/api/v1/greeting-card/payment-events/[id]/handle/route.ts
 4a656e3ac904bc51e6af73b52191889af3885226b325cc047664266d5703b5f2  src/app/api/v1/greeting-card/payment-events/route.ts
 70ba43dee994f7da1e04730534647701574855b92b48069d30249b584c4837aa  src/app/api/v1/greeting-card/sale-visibility/route.ts

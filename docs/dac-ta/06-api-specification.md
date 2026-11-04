@@ -517,6 +517,7 @@ Liên kết thu hồi được nhưng không xoá được: một mã QR đã d�
 | DELETE | `/crm/customers/:id` | `Q4` | Thay cho `POST /customers/:id/archive` của bản cũ |
 | GET | `/crm/customers/:id/master-index` | `Q1` | Customer Master Index — SSOT một khách |
 | POST | `/crm/customers/:id/occasions` | `Q5` | |
+| GET | `/crm/customers/:id/orders` | `Q1` + `R1` | Đơn đã đặt của khách, mọi nguồn: đơn gắn khách hoặc đơn chưa gắn khách có SĐT người đặt trùng (Thẻ Chào, Điều phối); trong phạm vi chi nhánh; tối đa 50, mới nhất trước · khách tổ chức khác → 404 |
 | POST | `/crm/customers/:id/consent` | `Q6` | Cơ sở đồng ý, có mốc thời gian |
 | GET | `/crm/reminders/upcoming` | `Q7` | Quét dịp trước 14 ngày |
 
@@ -532,7 +533,7 @@ Nội dung nhắc mua sinh từ dịp và sản phẩm. Không endpoint nào g�
 
 | Method | Path | Năng lực | Ghi chú |
 |---|---|---|---|
-| GET | `/orders` | `R1` | Lọc theo ngày, trạng thái, chi nhánh, người được phân công |
+| GET | `/orders` | `R1` | Lọc theo ngày, trạng thái, chi nhánh, người được phân công · `?delivery_from=&delivery_to=` (YYYY-MM-DD, theo `delivery_window.date` hoặc giờ hẹn đơn Điều phối, giờ Việt Nam; ngày sai định dạng bị bỏ qua) · `?sale_id=` (Sale phụ trách, hoặc người tạo khi đơn chưa gán Sale) |
 | POST | `/orders` | `R2` | |
 | GET · PATCH | `/orders/:id` | `R1` · `R3` | |
 | POST | `/orders/:id/assign` | `R4` | Người nhận việc phải là thành viên đang hoạt động của tổ chức (khác → 422); giao lại thu hồi phân công cũ |
@@ -845,7 +846,7 @@ Trang công khai ngoài `/api/v1` (06/10/2026): **`/s/<mã>`** — link bộ sư
 | GET | `/greeting-card/catalogs/:id/collage` | `L1` | Tải ảnh catalog PNG 1200×630 (ghép tối đa 4 mẫu JPG/PNG + tên, khoảng giá, tên tiệm) để đăng lên kênh; catalog tiệm khác/đã ẩn → 404. Cùng ảnh này làm ảnh xem trước (`og:image`) của `/g/:id` và `/bst/:orgSlug/:code` |
 | GET | `/greeting-card/catalogs/:id/hearts` | `L1` | "Mẫu được thả tim nhiều nhất": `{ catalogId, totalHearts, rows: [{ productId, code, name, imageUrl, hearts, privateHearts, publicHearts }] }` xếp giảm dần. Cộng tim từ link gửi riêng (`PRODUCT_LIKED`/`PRODUCT_UNLIKED` của các phiên thuộc bộ sưu tập) và link công khai (`LIKE`/`UNLIKE`); mỗi khách tối đa 1 tim/mẫu, thao tác cuối quyết định; mẫu đã gỡ khỏi bộ sưu tập không hiện. Tổ chức khác → 404 (07/10/2026) |
 | GET | `/greeting-card/stats/channels` | `R1` | `?days=7\|30\|90` — phễu link bộ sưu tập theo kênh chia sẻ (`?kenh=` zalo/facebook/instagram/tiktok/website/khac; lạ/trống = trực tiếp): khách xem → xem mẫu → mở form → đặt đơn, đếm khách không trùng · Link chung không thuộc riêng sale nào: sale "chỉ khách của mình" nhận `rows: []` |
-| GET | `/greeting-card/orders` | `R1` | `?status=` (order_status), `?payment=OUTSTANDING\|PAID` (OUTSTANDING gồm cả đơn chờ báo giá — tổng 0); tiền trả dạng số · `?q=` (≤ 40 ký tự) tìm theo mã đơn, mã link hoặc ≥ 3 chữ số SĐT khách/người nhận; `?reported=1` chỉ đơn khách đã báo chuyển khoản (Điều hành 20/10, 08/10/2026) · `?delivered=1` (đi cùng `payment=OUTSTANDING`): báo cáo đơn đã giao còn nợ (15/10/2026) |
+| GET | `/greeting-card/orders` | `R1` | `?status=` (order_status), `?payment=OUTSTANDING\|PAID` (OUTSTANDING gồm cả đơn chờ báo giá — tổng 0); tiền trả dạng số · `?q=` (≤ 40 ký tự) tìm theo mã đơn, mã link hoặc ≥ 3 chữ số SĐT khách/người nhận; `?reported=1` chỉ đơn khách đã báo chuyển khoản (Điều hành 20/10, 08/10/2026) · `?delivered=1` (đi cùng `payment=OUTSTANDING`): báo cáo đơn đã giao còn nợ (15/10/2026) · `?delivery_from=&delivery_to=` (YYYY-MM-DD) · `?branch_id=` (người bị giới hạn chi nhánh vẫn chỉ thấy chi nhánh mình) · `?sale_id=` (Sale gửi link; Sale "chỉ khách của mình" luôn bị giới hạn về chính mình) |
 | GET | `/greeting-card/coordinator-board` | `R1` | `?date=YYYY-MM-DD` (bỏ trống = mọi ngày). Bảng Điều phối: mọi đơn Thẻ chào đang làm + đơn xong/huỷ trong 24 giờ qua, xếp theo ngày + giờ bắt đầu khung giao; tối đa 1000 đơn → `{ data, truncated }`; vượt trần thì giữ các đơn có ngày + giờ giao gần nhất (16/10/2026). Áp phạm vi xem như `/orders` (08/10/2026). Mỗi đơn kèm `product` `{ productId, name, code, imageUrl, price, flowersSummary }` (SSOT `orderProductView`, cũng có trên `GET /greeting-card/orders`) (15/10/2026) |
 | GET | `/greeting-card/coordinator-work` | `R1` | Trạng thái việc từng ĐƠN cho bảng Điều phối (bước, kẹt, `sla`) — cùng nguồn `loadTrackingDataset` với Theo dõi tiến độ nhưng bỏ link chưa có đơn; thay `tracking-pipeline` ở tab Điều phối, làm mới 30 giây (16/10/2026) |
 | POST | `/greeting-card/orders/:id/confirm-payment` | `R11` | `amountVnd?` (bỏ trống = khoản đang chờ theo chính sách cọc). Khoá lạc quan trên `paid_vnd`, ghi `order_payments` (DEPOSIT/BALANCE) + `order_events` + `audit_logs`; đã thu đủ → 409; vượt phần còn lại → 422 · Sale chế độ "chỉ khách của mình" chỉ thao tác đơn của mình (khác → 404, 06/10/2026). Phiên link chỉ `COMPLETED` khi đã thu ĐỦ (đơn mới cọc vẫn hiện QR phần còn lại) | · **PO 08/10/2026: chỉ Điều hành (`R11`, trần cứng) — thay quyết định 06/10 dùng `R9`**

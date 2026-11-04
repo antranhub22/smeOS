@@ -5,11 +5,11 @@ import { conflict } from "@/core/http/errors"
 import { resolveCoordinatorId } from "../domain/coordinator-owner"
 import { sortByDelivery } from "../domain/coordinator-board"
 import type { delivery_status, order_status, production_status } from "@/generated/prisma/client"
+import { orderListExtraWhere, type OrderListExtraFilter } from "@/modules/orders/domain/order-list-filter"
 
 export const ORDER_STATUSES: readonly order_status[] = [
   "DRAFT", "CONFIRMED", "PROCESSING", "DELIVERED", "COMPLETED", "CANCELLED",
 ]
-
 /** Đơn hàng nguồn Thẻ chào: tạo đơn, thu tiền, tra cứu, cập nhật xưởng. */
 /** Mã đơn, mã link, tên khách hàng (không phân biệt hoa thường) hoặc số điện thoại khách (so phần số). */
 function searchConditions(q: string) {
@@ -124,10 +124,10 @@ export class BrochureOrderRepository {
       orderId?: string | undefined
       limit: number
       cursor?: string | undefined
-    }
+    } & Omit<OrderListExtraFilter, "saleId">
   ) {
     const rows = await this.db.orders.findMany({
-      where: scopedWhere(ctx, {
+      where: { AND: [orderListExtraWhere(options), scopedWhere(ctx, {
         source: "BROCHURE", ...branchScopedWhere(ctx),
         ...(options.orderId ? { id: options.orderId } : {}),
         ...(options.status ? { status: options.status } : {}),
@@ -141,7 +141,7 @@ export class BrochureOrderRepository {
         ...(options.q || options.delivered
           ? { AND: [...(options.q ? [{ OR: searchConditions(options.q) }] : []), ...(options.delivered ? [{ OR: [{ delivery_status: "DELIVERED" as const }, { status: "COMPLETED" as const }] }] : [])] }
           : {}),
-      }),
+      })] },
       include: {
         customer: { select: { id: true, code: true, name: true, phone: true } },
         items: true,
