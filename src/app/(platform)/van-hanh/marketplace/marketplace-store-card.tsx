@@ -41,12 +41,13 @@ export function MarketplaceStoreCard({ store, onQuickView, selection }: Marketpl
       className="group relative flex flex-col justify-between overflow-hidden rounded-2xl border border-border/80 bg-surface transition-all duration-200 hover:-translate-y-1 hover:border-primary/50 hover:shadow-lg"
     >
       {selection && (
-        <button
+        <Button
           type="button"
+          variant="ghost"
           aria-pressed={selection.selected}
           aria-label={`${selection.selected ? "Bỏ chọn" : "Chọn"} ${identity.shopName}`}
           onClick={selection.onToggle}
-          className={`absolute inset-0 z-30 rounded-2xl ${selection.selected ? "bg-danger-bg/40 ring-2 ring-inset ring-danger" : "hover:bg-surface-alt/30"}`}
+          className={`absolute inset-0 z-30 h-auto w-auto rounded-2xl p-0 ${selection.selected ? "bg-danger-bg/40 ring-2 ring-inset ring-danger" : "hover:bg-surface-alt/30"}`}
         >
           <span
             className={`absolute right-3 bottom-3 flex h-8 w-8 items-center justify-center rounded-lg border-2 ${
@@ -55,7 +56,7 @@ export function MarketplaceStoreCard({ store, onQuickView, selection }: Marketpl
           >
             {selection.selected && <Check className="h-5 w-5" aria-hidden />}
           </span>
-        </button>
+        </Button>
       )}
       <div className="relative h-40 w-full overflow-hidden bg-surface-alt">
         {coverUrl ? (

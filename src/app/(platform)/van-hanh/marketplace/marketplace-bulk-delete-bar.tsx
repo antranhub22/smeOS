@@ -64,7 +64,7 @@ export function MarketplaceBulkDeleteBar(props: MarketplaceBulkDeleteBarProps) {
   const noticeView = notice && (
     <div
       role="status"
-      className={`flex items-center gap-2 rounded-xl border px-3 py-1.5 text-xs font-medium ${
+      className={`flex items-center gap-2 rounded-xl border px-3 py-1.5 text-caption font-medium ${
         notice.tone === "success" ? "border-success-border bg-success-bg text-success-text" : "border-danger-border bg-danger-bg text-danger-text"
       }`}
     >
@@ -91,7 +91,7 @@ export function MarketplaceBulkDeleteBar(props: MarketplaceBulkDeleteBarProps) {
   return (
     <div className="flex flex-wrap items-center gap-2 rounded-xl border border-danger-border bg-danger-bg/40 px-3 py-2" role="toolbar" aria-label="Chọn hồ sơ để xoá">
       {confirmDialog}
-      <span className="text-sm font-semibold text-text">{`Đã chọn ${selectedCount}`}</span>
+      <span className="text-body-sm font-semibold text-text">{`Đã chọn ${selectedCount}`}</span>
       <Button type="button" variant="ghost" size="sm" onClick={() => onSelectIds(visibleIds)} disabled={visibleIds.length === 0}>
         {`Chọn tất cả đang hiển thị (${visibleIds.length})`}
       </Button>
