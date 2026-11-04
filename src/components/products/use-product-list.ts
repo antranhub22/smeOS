@@ -2,15 +2,13 @@
 
 import { useCallback, useEffect, useRef, useState } from "react"
 import { useRouter } from "next/navigation"
+import { INITIAL_PRODUCT_LIST_URL, PRODUCT_PAGE_SIZE, type ProductListPage } from "./product-list-page"
 
-const PAGE_SIZE = "100"
+export { INITIAL_PRODUCT_LIST_URL, type ProductListPage }
+
 const SEARCH_DEBOUNCE_MS = 300
 
-export type ProductListPage<T> = { data: T[]; next_cursor: string | null; total?: number; truncated?: boolean }
 type Page<T> = ProductListPage<T>
-
-/** URL trang đầu khi chưa lọc — máy chủ render sẵn trang này (`san-pham/page.tsx`). */
-export const INITIAL_PRODUCT_LIST_URL = `/api/v1/products?limit=${PAGE_SIZE}`
 
 /** Lọc Dịp/Khoảng giá/Sắp xếp — máy chủ áp cho toàn kho (`scan-products.ts`). */
 export interface ServerScanFilters {
@@ -51,7 +49,7 @@ export function useProductList<T extends { id: string }>(
   }, [search])
 
   const buildUrl = useCallback((cursor?: string | null) => {
-    const params = new URLSearchParams({ limit: PAGE_SIZE })
+    const params = new URLSearchParams({ limit: PRODUCT_PAGE_SIZE })
     if (debounced.trim()) params.set("search", debounced.trim())
     if (category) params.set("category", category)
     if (proposal) params.set("proposal", proposal)

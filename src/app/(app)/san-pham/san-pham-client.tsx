@@ -13,7 +13,8 @@ import {
   type TrashConfirmTarget,
 } from "@/components/storage/trash-confirm-modal"
 import { readApiError } from "@/components/greeting-card/api-error"
-import { useProductList, type ProductListPage } from "@/components/products/use-product-list"
+import { useProductList } from "@/components/products/use-product-list"
+import type { ProductListPage } from "@/components/products/product-list-page"
 import { ProposalQueueBar } from "@/components/products/proposal-queue-bar"
 import { ProductCard, type ProductItem } from "@/components/products/product-card"
 import { ProductTableView } from "@/components/products/product-table-view"

@@ -1,4 +1,6 @@
 import React from "react"
+import { readFileSync } from "node:fs"
+import { join } from "node:path"
 import { describe, expect, it, vi } from "vitest"
 import { renderToStaticMarkup } from "react-dom/server"
 import { INITIAL_PRODUCT_LIST_URL, useProductList, type ProductListPage } from "../use-product-list"
@@ -36,5 +38,14 @@ describe("useProductList — trang đầu máy chủ tải sẵn (/san-pham LCP)
 
   it("URL trang đầu khớp URL client gọi khi chưa lọc", () => {
     expect(INITIAL_PRODUCT_LIST_URL).toBe("/api/v1/products?limit=100")
+  })
+
+  it("trang máy chủ chỉ lấy hằng số/kiểu từ module dùng chung, không từ module \"use client\"", () => {
+    // Import giá trị từ tệp "use client" vào server component trả về tham chiếu client, không phải giá trị
+    // (lỗi thật: URL trang đầu thành hàm → trang đầu luôn rỗng, LCP không cải thiện).
+    const page = readFileSync(join(process.cwd(), "src/app/(app)/san-pham/page.tsx"), "utf8")
+    expect(page).not.toMatch(/from "@\/components\/products\/use-product-list"/)
+    expect(page).toMatch(/from "@\/components\/products\/product-list-page"/)
+    expect(readFileSync(join(process.cwd(), "src/components/products/product-list-page.ts"), "utf8")).not.toContain('"use client"')
   })
 })
