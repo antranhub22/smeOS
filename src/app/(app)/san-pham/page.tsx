@@ -5,6 +5,7 @@
 
 import { cookies, headers } from "next/headers"
 
+import { log } from "@/core/observability/log"
 import { hasCapability } from "@/core/rbac/capabilities"
 import type { ProductItem } from "@/components/products/product-card"
 import { INITIAL_PRODUCT_LIST_URL, type ProductListPage } from "@/components/products/use-product-list"
@@ -16,22 +17,25 @@ const INITIAL_LIMIT = Number(new URL(INITIAL_PRODUCT_LIST_URL, "http://localhost
 
 /**
  * Trang đầu như `GET /api/v1/products?limit=100` trả về, cùng kiểm phiên, khoá công cụ và năng lực `L1`.
- * Lỗi bất kỳ → `null`: client tự gọi API như trước.
+ * Lỗi khi tải → `null` (ghi log): client tự gọi API như trước.
+ * `cookies()`/`headers()` gọi NGOÀI try: chúng đánh dấu trang là động bằng cách ném lỗi lúc build —
+ * bắt lỗi đó làm trang bị dựng tĩnh với `initialPage: null`.
  */
 async function loadInitialPage(): Promise<ProductListPage<ProductItem> | null> {
+  const cookieHeader = (await cookies())
+    .getAll()
+    .map((c) => `${c.name}=${c.value}`)
+    .join("; ")
+  const host = (await headers()).get("host") ?? "localhost"
   try {
-    const cookieHeader = (await cookies())
-      .getAll()
-      .map((c) => `${c.name}=${c.value}`)
-      .join("; ")
-    const host = (await headers()).get("host") ?? "localhost"
     const request = new Request(`http://${host}${INITIAL_PRODUCT_LIST_URL}`, { headers: { cookie: cookieHeader } })
     const { ctx } = await requireTenantContext(request)
     if (!hasCapability(ctx, "L1")) return null
     const result = await listProducts(ctx, {}, { limit: INITIAL_LIMIT, cursor: null })
     // Cùng dạng JSON với API (ngày → chuỗi ISO) để client không phân biệt nguồn.
     return JSON.parse(JSON.stringify(result)) as ProductListPage<ProductItem>
-  } catch {
+  } catch (error) {
+    log.warn("products.initial_page_failed", { error: error instanceof Error ? error.message : String(error) })
     return null
   }
 }
