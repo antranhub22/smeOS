@@ -48,11 +48,19 @@ export function JourneyProgress({
               )}
 
               {/* Step indicator */}
-              <button
-                type="button"
+              <div
+                role={canClick ? "button" : undefined}
+                tabIndex={canClick ? 0 : -1}
                 onClick={() => canClick && onStepClick(idx)}
-                disabled={!canClick}
+                onKeyDown={(e) => {
+                  if (canClick && (e.key === "Enter" || e.key === " ")) {
+                    e.preventDefault()
+                    onStepClick(idx)
+                  }
+                }}
                 className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border transition-all ${
+                  canClick ? "cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary" : ""
+                } ${
                   isCurrent
                     ? "bg-selected text-primary border-primary font-bold shadow-xs"
                     : isCompleted
@@ -97,7 +105,7 @@ export function JourneyProgress({
                     </span>
                   )}
                 </span>
-              </button>
+              </div>
             </React.Fragment>
           )
         })}

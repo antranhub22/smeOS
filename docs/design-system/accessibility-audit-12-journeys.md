@@ -1,6 +1,7 @@
 # Quy trình kiểm trợ năng WCAG 2.2 AA trên 12 hành trình
 
-> **Tiêu chuẩn:** WCAG 2.2 Level AA · **Trạng thái:** Chưa kiểm. Bảng kết quả (mục 3) chỉ được điền khi có người kiểm, ngày kiểm và tệp kết quả lưu trong repo.
+> **Tiêu chuẩn:** WCAG 2.2 Level AA · **Lần kiểm:** 04/11/2026 — phần tự động; trình đọc màn hình chưa kiểm.
+> **Tệp kết quả:** [`a11y-results/2026-11-04/a11y-journeys.json`](a11y-results/2026-11-04/a11y-journeys.json), sinh bởi `tests/e2e/ux/a11y-journeys.spec.ts` (chạy trong `npm run test:e2e:ux`, chặn CI).
 > **Công cụ:** Playwright + `@axe-core/playwright` (`tests/e2e/ux/a11y*.spec.ts`), bàn phím, VoiceOver (macOS/iOS), NVDA (Windows).
 
 ## 1. Năm phép kiểm cho mỗi hành trình
@@ -32,9 +33,33 @@ Mỗi hành trình chạy thêm quét axe tự động; mọi vi phạm `critica
 
 ## 3. Kết quả
 
-| # | Bàn phím | Tiêu điểm | Tương phản | Phóng 200% | Trình đọc màn hình | axe | Người kiểm · ngày |
-|---|---|---|---|---|---|---|---|
-| J01–J12 | Chưa kiểm | Chưa kiểm | Chưa kiểm | Chưa kiểm | Chưa kiểm | Chưa chạy | — |
+Bản build production, commit `ee6e5aea`, database đã seed; người kiểm: bộ kiểm tự động `a11y-journeys.spec.ts`. "Đạt" = 0 vi phạm critical/serious (axe), 0 lỗi ở phép kiểm tương ứng.
+
+| # | Tuyến đã kiểm | Bàn phím | Tiêu điểm | Tương phản (3 preset) | Phóng 200% | Giảm chuyển động | axe | Trình đọc màn hình |
+|---|---|---|---|---|---|---|---|---|
+| J01 | `/c/[slug]`, `/b/[sendCode]`, `/bst/[orgSlug]/[catalogCode]` (có dữ liệu và không tìm thấy) | Đạt | Đạt | Đạt | Đạt | Đạt | Đạt | Chưa kiểm |
+| J02 | `/g/[id]` (có dữ liệu và không tìm thấy) | Đạt | Đạt | Đạt | Đạt | Đạt | Đạt | Chưa kiểm |
+| J03 | `/dang-nhap` | Đạt | Đạt | Đạt | Đạt | Đạt | Đạt | Chưa kiểm |
+| J04 | `/` | Đạt | Đạt | Đạt | Đạt | Đạt | Đạt | Chưa kiểm |
+| J05 | `/san-pham`, `/san-pham/[id]`, `/san-pham/tao-moi` | Đạt | Đạt | Đạt | Đạt | Đạt | Đạt | Chưa kiểm |
+| J06 | `/don-hang` | Đạt | Đạt | Đạt | Đạt | Đạt | Đạt | Chưa kiểm |
+| J07 | `/khach-hang` | Đạt | Đạt | Đạt | Đạt | Đạt | Đạt | Chưa kiểm |
+| J08 | `/dieu-phoi`, `/dieu-phoi/doi-tac` | Đạt | Đạt | Đạt | Đạt | Đạt | Đạt | Chưa kiểm |
+| J09 | `/subcontract/[orderCode]` ở trạng thái không tìm thấy | Đạt | Đạt | Đạt | Đạt | Đạt | Đạt | Chưa kiểm |
+| J10 | `/so-lieu` | Đạt | Đạt | Đạt | Đạt | Đạt | Đạt | Chưa kiểm |
+| J11 | `/cai-dat`, `/uu-dai`, `/tich-hop` | Đạt | Đạt | Đạt | Đạt | Đạt | Đạt | Chưa kiểm |
+| J12 | `/van-hanh` | Đạt | Đạt | Đạt | Đạt | Đạt | Đạt | Chưa kiểm |
+
+Giới hạn của lần kiểm:
+
+- **Bàn phím:** kiểm 40 điểm dừng `Tab` đầu tiên mỗi tuyến (vòng tiêu điểm thấy được, không bị che hoàn toàn); chưa kiểm hết luồng thao tác như mở và đóng hộp thoại, chọn trong danh sách xổ.
+- **Phóng 200%:** khung 640×400 CSS px (tương đương 1280×800 ở 200%); kiểm không cuộn ngang toàn trang.
+- **Tương phản:** 3 preset ở giao diện sáng; hệ thống chưa có chế độ tối.
+- **Trang công khai:** `/b`, `/bst`, `/g` kiểm cả trạng thái có dữ liệu (bộ sưu tập và link gửi tạo qua API trong bộ kiểm) và trạng thái không tìm thấy; `/subcontract` mới kiểm trạng thái không tìm thấy (cần chuỗi chi nhánh và đơn gia công). Ba trang không tìm thấy `/b`, `/g`, `/subcontract` không có liên kết nào để quay lại.
+- **Trình đọc màn hình** (VoiceOver, NVDA) chưa kiểm theo quyết định PO 03/11/2026.
+- **Lỗi đã biết trong vùng PO khoá:** ô tìm kiếm đơn trên `/don-hang` (`src/components/greeting-card/coordinator/coordinator-brochure-tab.tsx`, vùng Thẻ chào) chỉ đổi màu viền khi nhận tiêu điểm, không có vòng tiêu điểm (2.4.7). Huy hiệu "Ưu đãi …" trên trang đặt hàng của khách `/b`, `/bst`, `/g` (`src/components/greeting-card/customer/templates/swipe/journey-contact-form.tsx`) dùng `text-danger` trên `bg-danger-bg`, tương phản 4,23:1 (cần 4,5:1; sửa bằng `text-danger-text`). Chưa sửa khi chưa có PO duyệt; bộ kiểm ghi ở `KNOWN_FROZEN`.
+
+Lỗi đã sửa trong lần kiểm này: nút hiện/ẩn mật khẩu thiếu tên; ô nhập đăng nhập thiếu vòng tiêu điểm; huy hiệu trạng thái dùng `text-danger`/`text-warning` trên nền nhạt (đổi sang `text-danger-text`/`text-warning-text`); ô chọn và ô số thiếu tên ở tạo sản phẩm, cài đặt, ưu đãi; thẻ ngành bị làm mờ dưới ngưỡng tương phản; `PageHeader` và thanh lọc ma trận quản trị gây cuộn ngang ở 640px.
 
 ## 4. Cơ chế trợ năng có trong mã
 
@@ -43,4 +68,4 @@ Mỗi hành trình chạy thêm quét axe tự động; mọi vi phạm `critica
 | Thông báo cho trình đọc màn hình | `LiveRegionProvider` trong `src/components/layout/app-shell.tsx` |
 | Quản lý lớp nổi (modal, drawer, bottom sheet) | `src/components/layout/floating-layer.tsx` |
 | Luật lint nút chỉ có icon phải có nhãn (R6), hiệu ứng phải có `motion-reduce` (R23) | `scripts/ux-lint/` — R23 còn 96 vi phạm trong baseline |
-| Chưa có | `scroll-padding` cho header dính (2.4.11); thay điều khiển HTML thô — còn 1.009 `<button>` và 636 `<input>` ngoài `src/components/ui/` |
+| Bộ kiểm tự động 12 hành trình | `tests/e2e/ux/a11y-journeys.spec.ts`, `tests/e2e/ux/a11y-journeys.helpers.ts` |

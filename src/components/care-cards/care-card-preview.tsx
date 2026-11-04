@@ -48,7 +48,7 @@ export function CareCardPreview({ content, storeName = "Cửa hàng", storePhone
           </p>
         )}
 
-        <h3 className="text-xl sm:text-2xl font-bold text-text tracking-tight font-serif">
+        <h3 className="text-title sm:text-title-lg font-bold text-text tracking-tight font-serif">
           {content.headline}
         </h3>
 
@@ -63,7 +63,7 @@ export function CareCardPreview({ content, storeName = "Cửa hàng", storePhone
               <Gift className="w-4 h-4 text-primary" aria-hidden="true" />
               <span>Mã quà tặng ưu đãi</span>
             </div>
-            <div className="text-lg font-mono font-bold text-primary tracking-wider">
+            <div className="text-title-sm font-mono font-bold text-primary tracking-wider">
               {content.voucherCode || "TRI-AN-KHACH-HANG"}
             </div>
             {content.voucherValue && (

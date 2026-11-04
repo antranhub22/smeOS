@@ -17,10 +17,10 @@ export function BrochureFlowSettingsTab() {
   return (
     <div className="flex flex-col gap-6">
       <div className="p-6 rounded-2xl border border-border bg-surface shadow-xs">
-        <h2 className="text-base font-extrabold text-text flex items-center gap-2 mb-1">
+        <h2 className="text-title-sm font-extrabold text-text flex items-center gap-2 mb-1">
           <Send size={18} className="text-primary" /> Cơ Chế Vận Hành & Tự Động Hủy Đơn Thẻ Chào
         </h2>
-        <p className="text-xs text-text-muted">
+        <p className="text-caption text-text-muted">
           Thiết lập quy trình duyệt (Tinh gọn / Tiêu chuẩn / Nghiêm ngặt), ngôn ngữ quốc tế, thời hạn hết hạn liên kết và thời gian giữ chỗ.
         </p>
       </div>
@@ -42,7 +42,7 @@ export function BrochureFlowSettingsTab() {
 
       {/* Thông báo Telegram điều phối */}
       <div className="p-6 rounded-2xl border border-border bg-surface shadow-xs">
-        <h3 className="text-sm font-bold text-text mb-3">Thông Báo Kênh Điều Phối & Telegram</h3>
+        <h3 className="text-body-sm font-bold text-text mb-3">Thông Báo Kênh Điều Phối & Telegram</h3>
         <div className="space-y-4">
           <StaffNotifySettings />
           <TelegramDispatchConnector />

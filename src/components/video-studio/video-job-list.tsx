@@ -38,7 +38,7 @@ export function VideoJobList({
       <div className="flex h-64 items-center justify-center">
         <div className="flex flex-col items-center gap-2 text-text-muted">
           <Clock className="h-6 w-6 animate-spin motion-reduce:animate-none text-primary" />
-          <span className="text-sm">Đang tải danh sách video...</span>
+          <span className="text-body-sm">Đang tải danh sách video...</span>
         </div>
       </div>
     );
@@ -51,8 +51,8 @@ export function VideoJobList({
           <Film size={28} />
         </div>
         <div>
-          <h3 className="text-base font-bold text-text">Chưa có video marketing nào</h3>
-          <p className="mt-1 text-sm text-text-muted max-w-sm">
+          <h3 className="text-title-sm font-bold text-text">Chưa có video marketing nào</h3>
+          <p className="mt-1 text-body-sm text-text-muted max-w-sm">
             Bắt đầu tạo video ngắn đầu tiên từ Master Image sản phẩm để quảng bá trên Reel, TikTok hoặc Slideshow.
           </p>
         </div>
@@ -98,7 +98,7 @@ export function VideoJobList({
           >
             <div>
               <div className="flex items-center justify-between gap-2">
-                <span className="text-xs font-semibold text-text-muted">
+                <span className="text-caption font-semibold text-text-muted">
                   {spec?.label || job.format}
                 </span>
                 {renderStageBadge(job.stage)}
@@ -108,7 +108,7 @@ export function VideoJobList({
               </h4>
             </div>
 
-            <div className="flex items-center justify-between text-xs text-text-muted border-t border-border/60 pt-3">
+            <div className="flex items-center justify-between text-caption text-text-muted border-t border-border/60 pt-3">
               <div className="flex items-center gap-3">
                 <span className="flex items-center gap-1">
                   <Clock size={13} /> {job.duration_seconds}s
@@ -117,7 +117,7 @@ export function VideoJobList({
                   {job.cost_credits} credits
                 </span>
               </div>
-              <span className="flex items-center gap-1 text-primary font-semibold text-xs">
+              <span className="flex items-center gap-1 text-primary font-semibold text-caption">
                 Chi tiết <ChevronRight size={14} />
               </span>
             </div>

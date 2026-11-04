@@ -80,8 +80,8 @@ export function QuotationsListView({ onSelectQuotation }: QuotationsListViewProp
             { id: "EXPIRED", label: "Hết hạn" },
           ].map((tab) => (
             <button
-              key={tab.id}
               type="button"
+              key={tab.id}
               onClick={() => setStatusFilter(tab.id)}
               className={`px-3 py-1.5 rounded-lg text-caption font-medium transition-colors cursor-pointer ${
                 statusFilter === tab.id

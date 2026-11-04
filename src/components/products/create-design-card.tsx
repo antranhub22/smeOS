@@ -4,6 +4,7 @@ import { InfoTip } from "@/components/ui/info-tip"
 import React from "react"
 import { Layers, ShieldCheck } from "@/components/ui/icons"
 import { Card } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
 import { getDesignFieldsConfig } from "./create-product-types"
 import { MultiSelectDropdown } from "./multi-select-dropdown"
 import { SingleSelectCustom } from "./single-select-custom"
@@ -40,7 +41,7 @@ export function CreateDesignCard({
           <div className="flex items-center gap-2 text-title-sm font-bold text-text">
             <Layers size={18} className="text-primary" />
             <span>{cfg.cardTitle}</span>
-            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-caption font-bold bg-danger-bg text-danger border border-danger/30">
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-caption font-bold bg-danger-bg text-danger-text border border-danger/30">
               <ShieldCheck size={10} />
               Đặc điểm niêm yết cam kết *
             </span>
@@ -56,6 +57,7 @@ export function CreateDesignCard({
             {cfg.shapeLabel}
           </label>
           <SingleSelectCustom
+            ariaLabel={cfg.shapeLabel}
             options={cfg.shapeOptions}
             value={shape}
             onChange={setShape}
@@ -74,6 +76,7 @@ export function CreateDesignCard({
           </label>
           {cfg.facingMultiple ? (
             <MultiSelectDropdown
+              ariaLabel={cfg.facingLabel}
               options={cfg.facingOptions}
               value={facing}
               onChange={setFacing}
@@ -82,6 +85,7 @@ export function CreateDesignCard({
             />
           ) : (
             <SingleSelectCustom
+              ariaLabel={cfg.facingLabel}
               options={cfg.facingOptions}
               value={facing}
               onChange={setFacing}
@@ -101,6 +105,7 @@ export function CreateDesignCard({
           </label>
           {cfg.containerOptions && cfg.containerMultiple ? (
             <MultiSelectDropdown
+              ariaLabel={cfg.containerLabel}
               options={cfg.containerOptions}
               value={container}
               onChange={setContainer}
@@ -109,6 +114,7 @@ export function CreateDesignCard({
             />
           ) : cfg.containerOptions ? (
             <SingleSelectCustom
+              ariaLabel={cfg.containerLabel}
               options={cfg.containerOptions}
               value={container}
               onChange={setContainer}
@@ -117,12 +123,12 @@ export function CreateDesignCard({
             />
           ) : (
             // free-text fallback
-            <input
+            <Input
               type="text"
               value={container}
               onChange={(e) => setContainer(e.target.value)}
               placeholder={cfg.containerPlaceholder}
-              className="h-10 w-full rounded-xl border border-border bg-surface px-3 text-body-sm outline-none focus:border-primary focus-visible:outline-2 focus-visible:outline-primary"
+              className="h-10 text-body-sm"
             />
           )}
         </div>
@@ -132,12 +138,12 @@ export function CreateDesignCard({
           <label className="block text-caption font-semibold text-text">
             Tông màu chủ đạo
           </label>
-          <input
+          <Input
             type="text"
             value={primaryColor}
             onChange={(e) => setPrimaryColor(e.target.value)}
             placeholder="Đỏ, Pastel, Trắng kem..."
-            className="h-10 w-full rounded-xl border border-border bg-surface px-3 text-body-sm outline-none focus:border-primary focus-visible:outline-2 focus-visible:outline-primary"
+            className="h-10 text-body-sm"
           />
         </div>
       </div>

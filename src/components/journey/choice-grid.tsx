@@ -2,6 +2,8 @@
 
 import React, { useState } from "react"
 import { Sparkles, SlidersHorizontal, Search } from "@/components/ui/icons"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import type { JourneyDefinition } from "@/modules/journey/domain/journey-model"
 import { useSession } from "@/lib/session"
 import { isJourneyLocked } from "@/lib/feature-lock"
@@ -88,14 +90,16 @@ export function ChoiceGrid({
         actions={
           <>
           {onSwitchToExpertMode && (
-            <button
+            <Button
               type="button"
+              variant="outline"
+              size="sm"
               onClick={onSwitchToExpertMode}
-              className="inline-flex items-center gap-2 px-3.5 py-2 rounded-lg border border-border bg-surface hover:bg-surface-alt text-body-sm font-medium text-text transition-colors cursor-pointer"
+              className="gap-2"
             >
               <SlidersHorizontal className="w-4 h-4 text-text-muted" aria-hidden="true" />
               <span>{dict.home.header.expertModeButton}</span>
-            </button>
+            </Button>
           )}
           <UserMenu initials={userInitials || "U"} direction="down" />
           </>
@@ -105,60 +109,52 @@ export function ChoiceGrid({
       {/* Filter and Search Bar */}
       <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
         <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0 scrollbar-none [scrollbar-width:none]">
-          <button
+          <Button
             type="button"
+            variant={selectedCategory === "ALL" ? "primary" : "outline"}
+            size="sm"
             onClick={() => setSelectedCategory("ALL")}
-            className={`shrink-0 px-3 py-1.5 rounded-lg text-body-sm font-medium transition-colors cursor-pointer whitespace-nowrap ${
-              selectedCategory === "ALL"
-                ? "bg-primary text-surface font-semibold"
-                : "bg-surface border border-border text-text hover:bg-surface-alt"
-            }`}
+            className="shrink-0 whitespace-nowrap"
           >
             {t("home.filters.all", { count: journeys.length })}
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
+            variant={selectedCategory === "SINGLE" ? "primary" : "outline"}
+            size="sm"
             onClick={() => setSelectedCategory("SINGLE")}
-            className={`shrink-0 px-3 py-1.5 rounded-lg text-body-sm font-medium transition-colors cursor-pointer whitespace-nowrap ${
-              selectedCategory === "SINGLE"
-                ? "bg-primary text-surface font-semibold"
-                : "bg-surface border border-border text-text hover:bg-surface-alt"
-            }`}
+            className="shrink-0 whitespace-nowrap"
           >
             {dict.home.filters.singleTask}
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
+            variant={selectedCategory === "COMBO" ? "primary" : "outline"}
+            size="sm"
             onClick={() => setSelectedCategory("COMBO")}
-            className={`shrink-0 px-3 py-1.5 rounded-lg text-body-sm font-medium transition-colors cursor-pointer whitespace-nowrap ${
-              selectedCategory === "COMBO"
-                ? "bg-primary text-surface font-semibold"
-                : "bg-surface border border-border text-text hover:bg-surface-alt"
-            }`}
+            className="shrink-0 whitespace-nowrap"
           >
             {dict.home.filters.workflow}
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
+            variant={selectedCategory === "AI_SUGGEST" ? "primary" : "outline"}
+            size="sm"
             onClick={() => setSelectedCategory("AI_SUGGEST")}
-            className={`shrink-0 px-3 py-1.5 rounded-lg text-body-sm font-medium transition-colors cursor-pointer whitespace-nowrap ${
-              selectedCategory === "AI_SUGGEST"
-                ? "bg-primary text-surface font-semibold"
-                : "bg-surface border border-border text-text hover:bg-surface-alt"
-            }`}
+            className="shrink-0 whitespace-nowrap"
           >
             {dict.home.filters.aiAssistant}
-          </button>
+          </Button>
         </div>
 
         <div className="relative w-full sm:w-64">
           <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" aria-hidden="true" />
-          <input
+          <Input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder={dict.home.filters.searchPlaceholder}
-            className="w-full pl-9 pr-3 py-1.5 rounded-lg border border-border bg-surface text-body-sm text-text placeholder:text-text-muted focus:outline-none focus:border-primary transition-colors"
+            className="pl-9 pr-3"
           />
         </div>
       </div>

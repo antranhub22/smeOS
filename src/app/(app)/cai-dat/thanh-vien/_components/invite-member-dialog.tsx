@@ -89,7 +89,7 @@ export function InviteMemberDialog({
     >
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         {error && (
-          <div className="rounded-xl border border-warning/30 bg-warning-bg p-3 text-caption text-warning">
+          <div className="rounded-xl border border-warning/30 bg-warning-bg p-3 text-caption text-warning-text">
             {error}
           </div>
         )}

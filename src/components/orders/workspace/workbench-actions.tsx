@@ -2,6 +2,8 @@
 
 import { useState } from "react"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { NativeSelect } from "@/components/ui/select"
 import { ordersWorkspaceApi, type WorkbenchItem } from "./orders-workspace-api"
 
 const METHODS = [
@@ -45,7 +47,7 @@ export function QuoteAction({ item, onDone, onFail }: { item: WorkbenchItem; onD
         void run(async () => (await ordersWorkspaceApi.quote(item.id, amount), `Đã báo giá đơn ${item.code}`))
       }}
     >
-      <input aria-label={`Giá cho đơn ${item.code} (đồng)`} inputMode="numeric" placeholder="Giá (đồng)" value={value} onChange={(e) => setValue(e.target.value)} className={inputCls} />
+      <Input aria-label={`Giá cho đơn ${item.code} (đồng)`} inputMode="numeric" placeholder="Giá (đồng)" value={value} onChange={(e) => setValue(e.target.value)} className={inputCls} />
       <Button type="submit" size="sm" variant="secondary" disabled={busy || amount <= 0}>Báo giá</Button>
     </form>
   )
@@ -65,7 +67,7 @@ export function DeliverBeforePayAction({ item, onDone, onFail }: { item: Workben
         void run(async () => (await ordersWorkspaceApi.deliverBeforePay(item.id, reason.trim())).message)
       }}
     >
-      <input aria-label="Lý do giao trước, thu sau" placeholder="Lý do (vd. khách quen)" value={reason} onChange={(e) => setReason(e.target.value)} className={inputCls} />
+      <Input aria-label="Lý do giao trước, thu sau" placeholder="Lý do (vd. khách quen)" value={reason} onChange={(e) => setReason(e.target.value)} className={inputCls} />
       <Button type="submit" size="sm" variant="secondary" disabled={busy || !reason.trim()}>Gửi</Button>
       <Button type="button" size="sm" variant="ghost" onClick={() => setOpen(false)}>Huỷ</Button>
     </form>
@@ -86,10 +88,10 @@ export function ConfirmPaymentAction({ item, onDone, onFail }: { item: Workbench
         void run(async () => (await ordersWorkspaceApi.confirmPayment(item.id, amount, method), `Đã ghi nhận tiền đơn ${item.code}`))
       }}
     >
-      <input aria-label={`Số tiền đã nhận cho đơn ${item.code} (đồng)`} inputMode="numeric" value={value} onChange={(e) => setValue(e.target.value)} className={inputCls} />
-      <select aria-label="Cách thanh toán" value={method} onChange={(e) => setMethod(e.target.value)} className={inputCls}>
+      <Input aria-label={`Số tiền đã nhận cho đơn ${item.code} (đồng)`} inputMode="numeric" value={value} onChange={(e) => setValue(e.target.value)} className={inputCls} />
+      <NativeSelect aria-label="Cách thanh toán" value={method} onChange={(e) => setMethod(e.target.value)} className={inputCls}>
         {METHODS.map((m) => <option key={m.id} value={m.id}>{m.label}</option>)}
-      </select>
+      </NativeSelect>
       <Button type="submit" size="sm" disabled={busy || amount <= 0}>Xác nhận tiền</Button>
     </form>
   )

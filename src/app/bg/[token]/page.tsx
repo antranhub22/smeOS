@@ -29,7 +29,7 @@ export default async function PublicQuotationPage({ params }: PageProps) {
   const displayStatus = expired && quotation.status !== "CONVERTED" ? "EXPIRED" : quotation.status
 
   return (
-    <div className="min-h-screen bg-background py-8 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-bg py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-3xl mx-auto bg-surface rounded-2xl border border-border shadow-xs overflow-hidden">
         {/* Header */}
         <div className="p-6 border-b border-border bg-surface-alt/50">

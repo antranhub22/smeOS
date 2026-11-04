@@ -3,6 +3,7 @@
 import React, { useState, useEffect, useMemo } from "react"
 import { useRouter } from "next/navigation"
 import { Sparkles, SlidersHorizontal } from "@/components/ui/icons"
+import { Button } from "@/components/ui/button"
 import { getStoreJourneys } from "@/modules/journey/domain/journey-catalog"
 import type { JourneyDefinition } from "@/modules/journey/domain/journey-model"
 import { createJourneyState } from "@/modules/journey/domain/journey-state"
@@ -104,14 +105,16 @@ export function StoreJourneyHome() {
               Bạn đang xem bảng số liệu trực tiếp.
             </span>
           </div>
-          <button
+          <Button
             type="button"
+            variant="outline"
+            size="sm"
             onClick={() => handleToggleExpertMode(false)}
-            className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-surface border border-border hover:bg-surface-alt text-caption font-bold text-primary transition-colors cursor-pointer"
+            className="inline-flex items-center gap-1.5 text-caption font-bold text-primary"
           >
             <Sparkles className="w-3.5 h-3.5" aria-hidden="true" />
             <span>Về trang chọn công việc</span>
-          </button>
+          </Button>
         </div>
         <StoreGrowthCenter />
       </div>
@@ -155,13 +158,13 @@ export function StoreJourneyHome() {
               </p>
             </div>
             {activeJourney.primaryHref && (
-              <button
+              <Button
                 type="button"
                 onClick={() => router.push((activeJourney.primaryHref || "/") as never)}
-                className="px-5 py-2.5 rounded-lg bg-primary text-surface text-body-sm font-bold hover:bg-primary-dark transition-colors cursor-pointer"
+                className="font-bold"
               >
                 Mở giao diện chi tiết
-              </button>
+              </Button>
             )}
           </div>
         )}

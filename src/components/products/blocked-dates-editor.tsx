@@ -25,7 +25,7 @@ export function BlockedDatesEditor({ dates, onChange, canEdit, saving, label = "
   }
   return (
     <div className="pt-2 border-t border-primary/20 flex flex-col gap-2">
-      <span className="text-caption font-bold text-foreground">{label}</span>
+      <span className="text-caption font-bold text-text">{label}</span>
       <div className="flex gap-2">
         <Input type="date" disabled={!canEdit || saving} value={next} onChange={(e) => setNext(e.target.value)} className="h-9 flex-1 text-caption" aria-label={label} />
         <Button type="button" variant="outline" size="sm" disabled={!canEdit || !next} onClick={add} className="h-9 text-caption flex items-center gap-1">

@@ -7,6 +7,7 @@
  */
 
 import { Sparkles, PanelLeftClose, PanelLeftOpen, X } from "@/components/ui/icons"
+import { Button } from "@/components/ui/button"
 import { useSession } from "@/lib/session"
 import { useI18n } from "@/lib/i18n"
 import { cn } from "@/lib/utils"
@@ -98,24 +99,28 @@ export function DesktopNavHeader({
           </div>
 
           {drawer && onClose ? (
-            <button
+            <Button
               type="button"
+              variant="ghost"
+              size="icon"
               onClick={onClose}
               aria-label={t("common.actions.close")}
               className={cn(ICON_BUTTON, "h-10 w-10")}
             >
               <X size={18} />
-            </button>
+            </Button>
           ) : (
-            <button
+            <Button
               type="button"
+              variant="ghost"
+              size="icon"
               onClick={onToggleCollapse}
               aria-label={t("layout.collapseSidebar")}
               title={`${t("layout.collapseSidebar")} (⌘B)`}
               className={cn(ICON_BUTTON, "h-8 w-8")}
             >
               <PanelLeftClose size={16} aria-hidden />
-            </button>
+            </Button>
           )}
         </>
       )}

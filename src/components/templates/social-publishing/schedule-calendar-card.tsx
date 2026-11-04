@@ -99,8 +99,8 @@ export function ScheduleCalendarCard({
           { key: "linkedin", label: "LinkedIn" },
         ].map((c) => (
           <button
-            key={c.key}
             type="button"
+            key={c.key}
             onClick={() => setSelectedChannel(c.key)}
             className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
               selectedChannel === c.key

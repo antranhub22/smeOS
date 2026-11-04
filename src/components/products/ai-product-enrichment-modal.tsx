@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react"
 import { Sparkles, CheckCircle2, AlertCircle, X, Loader2 } from "@/components/ui/icons"
 import { AiProductModalFooter, type SubmitMode } from "./ai-product-modal-footer"
 import { Button } from "@/components/ui/button"
+import { Dialog } from "@/components/ui/dialog"
 import { useI18n } from "@/lib/i18n"
 import { useSession } from "@/lib/session"
 import { isPendingProposal } from "@/modules/products/domain/product-proposal"
@@ -259,7 +260,11 @@ export function AiProductEnrichmentModal({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 overflow-y-auto">
+    <Dialog
+      open={isOpen}
+      onOpenChange={(open) => !open && onClose()}
+      title={`Bảng thông số ${ti("sampleProduct").toLowerCase()} & Phân tích AI`}
+    >
       <div className="relative w-full max-w-4xl rounded-2xl bg-surface border border-border shadow-2xl flex flex-col max-h-[90vh] overflow-hidden">
         {/* Header */}
         <div className="flex items-center justify-between border-b border-border px-5 py-4 bg-surface">
@@ -288,14 +293,16 @@ export function AiProductEnrichmentModal({
               )}
               <span>{isAnalyzing ? "Đang phân tích..." : `Phân tích ${ti("sampleProduct").toLowerCase()} bằng AI`}</span>
             </Button>
-            <button
+            <Button
               type="button"
+              variant="ghost"
+              size="icon"
               onClick={onClose}
               aria-label="Đóng"
-              className="flex h-8 w-8 items-center justify-center rounded-full text-text-muted hover:bg-surface-alt transition-colors"
+              className="h-8 w-8 rounded-full text-text-muted hover:bg-surface-alt"
             >
               <X size={18} />
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -333,6 +340,6 @@ export function AiProductEnrichmentModal({
 
         <AiProductModalFooter canOverwrite={canOverwrite} submitting={isSubmitting} onCancel={onClose} onSubmit={(mode) => void handleSubmit(mode)} />
       </div>
-    </div>
+    </Dialog>
   )
 }

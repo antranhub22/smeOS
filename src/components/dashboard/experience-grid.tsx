@@ -26,6 +26,7 @@ import { useSession } from "@/lib/session"
 import { FEATURES, TRIAL_LIMIT, STATUS_META, type ModuleStatus } from "@/lib/mock-data"
 import { Card } from "@/components/ui/card"
 import { Progress } from "@/components/ui/progress"
+import { Button } from "@/components/ui/button"
 import { UserMenu } from "@/components/layout/user-menu"
 import { cn } from "@/lib/utils"
 
@@ -108,17 +109,19 @@ export function ExperienceGrid() {
               Đang dùng thử
             </span>
           </div>
-          <div className="mt-0.5 text-xs text-text-muted">Workspace trải nghiệm</div>
+          <div className="mt-0.5 text-caption text-text-muted">Workspace trải nghiệm</div>
         </div>
         <div className="flex items-center gap-2">
-          <button
+          <Button
             type="button"
+            variant="ghost"
+            size="icon"
             className="flex h-9 w-9 items-center justify-center rounded-full text-text hover:bg-surface-alt md:hidden"
             onClick={() => setMenuOpen(!menuOpen)}
             aria-label="Menu"
           >
             {menuOpen ? <XIcon size={20} /> : <Menu size={20} />}
-          </button>
+          </Button>
           <UserMenu initials={userInitials} />
         </div>
       </div>
@@ -131,15 +134,17 @@ export function ExperienceGrid() {
               const route = routeForFeature(mod.id)
               return (
                 <button
-                  key={mod.id}
                   type="button"
+                  disabled={mod.disabled}
+                  key={mod.id}
                   onClick={() => {
+                    if (mod.disabled) return
                     setMenuOpen(false)
                     openFeature(mod)
                   }}
-                  disabled={mod.disabled}
+                  aria-disabled={mod.disabled}
                   className={cn(
-                    "flex items-center gap-3 rounded-lg px-3 py-2 text-left text-body font-medium transition-colors",
+                    "flex cursor-pointer items-center gap-3 rounded-lg px-3 py-2 text-left text-body font-medium transition-colors",
                     mod.disabled && "opacity-40 cursor-not-allowed",
                     !mod.disabled && route && "hover:bg-surface-alt",
                     !route && "text-text-muted"
@@ -167,7 +172,7 @@ export function ExperienceGrid() {
           <button
             type="button"
             onClick={() => setHienThongBaoNangCap((v) => !v)}
-            className="w-fit text-meta font-bold text-primary hover:underline focus-visible:outline-2 focus-visible:outline-primary"
+            className="w-fit cursor-pointer text-meta font-bold text-primary hover:underline focus-visible:outline-2 focus-visible:outline-primary"
           >
             Chuyển sang tổ chức thật →
           </button>
@@ -177,14 +182,16 @@ export function ExperienceGrid() {
               <div className="flex-1 text-caption leading-snug text-text-muted">
                 Bản hiện tại chưa hỗ trợ tự chuyển đổi — liên hệ quản trị hệ thống để nâng cấp tổ chức.
               </div>
-              <button
-              aria-label="Đóng"
+              <Button
+                aria-label="Đóng"
                 type="button"
+                variant="ghost"
+                size="icon"
                 onClick={() => setHienThongBaoNangCap(false)}
                 className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full text-text-muted hover:bg-surface-alt"
               >
                 <X size={12} strokeWidth={2.2} />
-              </button>
+              </Button>
             </div>
           )}
         </Card>
@@ -217,12 +224,17 @@ export function ExperienceGrid() {
                   <button
                     type="button"
                     disabled={disabled}
-                    onClick={() => openFeature(mod)}
-                    className="text-left text-body font-bold text-text hover:text-primary transition-colors focus-visible:outline-2 focus-visible:outline-primary disabled:hover:text-text disabled:cursor-not-allowed"
+                    onClick={() => {
+                      if (!disabled) openFeature(mod)
+                    }}
+                    className={cn(
+                      "cursor-pointer text-left text-body font-bold text-text hover:text-primary transition-colors focus-visible:outline-2 focus-visible:outline-primary",
+                      disabled && "cursor-not-allowed hover:text-text"
+                    )}
                   >
                     {mod.name}
                   </button>
-                  <div className="mt-0.5 text-xs leading-snug text-text-muted">{mod.desc}</div>
+                  <div className="mt-0.5 text-caption leading-snug text-text-muted">{mod.desc}</div>
                 </div>
                 <StatusBadge status={mod.status ?? "chua_co"} />
                 {isWaiting && (
@@ -234,15 +246,17 @@ export function ExperienceGrid() {
                   <span className={cn("text-caption font-bold", disabled ? "text-text-muted" : "text-secondary-text")}>
                     {disabled ? "Sắp có" : route ? "Mở ngay" : "Chưa có"}
                   </span>
-                  <button
+                  <Button
                     aria-label={`Mở ${mod.name}`}
                     type="button"
+                    variant="ghost"
+                    size="icon"
                     disabled={disabled || !route}
                     onClick={() => openFeature(mod)}
-                    className="flex h-10 w-10 items-center justify-center rounded-full bg-primary disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-primary"
+                    className="flex h-10 w-10 items-center justify-center rounded-full bg-primary text-white hover:bg-primary/90 disabled:cursor-not-allowed disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-primary"
                   >
                     <ChevronRight size={17} strokeWidth={2.4} color="white" />
-                  </button>
+                  </Button>
                 </div>
                 {noticeId === mod.id && (
                   <div className="flex items-start gap-1.5 rounded-lg bg-surface-alt px-2.5 py-2">
@@ -256,14 +270,16 @@ export function ExperienceGrid() {
                             ? "Module đang phát triển. Chức năng sẽ có trong bản sắp tới."
                             : "Chưa có màn thao tác cho chức năng này trong bản hiện tại."}
                     </div>
-                    <button
-              aria-label="Đóng"
+                    <Button
+                      aria-label="Đóng"
                       type="button"
+                      variant="ghost"
+                      size="icon"
                       onClick={() => setNoticeId(null)}
                       className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full text-text-muted hover:bg-surface-alt"
                     >
                       <X size={12} strokeWidth={2.2} />
-                    </button>
+                    </Button>
                   </div>
                 )}
               </div>

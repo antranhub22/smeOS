@@ -3,9 +3,9 @@
 > [!NOTE]
 > **VAI TRÒ TÀI LIỆU — KIẾN TRÚC TRẢI NGHIỆM CẤP KHUNG (UX FRAMEWORK & PRINCIPLES)**  
 > Tệp này quy định các nguyên tắc thiết kế trải nghiệm nền tảng, luồng phân vai (Role-based Navigation) và hành vi hệ thống chung.  
-> **Chuẩn chất lượng UX toàn cục, thứ bậc L0–L4, WCAG 2.2 và Screen Contract**: [`docs/dac-ta/03a-ux-constitution.md`](file:///Users/tuan/Projects/floraos-core/docs/dac-ta/03a-ux-constitution.md) (Level 3, CANONICAL).  
-> **Đặc tả trải nghiệm 14 vai (Role UX)**: [`docs/dac-ta/03b-role-ux.md`](file:///Users/tuan/Projects/floraos-core/docs/dac-ta/03b-role-ux.md) (Level 3, CANONICAL).  
-> **Đặc tả chi tiết giao diện 10 màn hình chức năng lõi và tương tác trực quan** được duy trì tại: [`docs/FloraOS-UIUX-10-chuc-nang.md`](file:///Users/tuan/Projects/floraos-core/docs/FloraOS-UIUX-10-chuc-nang.md).
+> **Chuẩn chất lượng UX toàn cục, thứ bậc L0–L4, WCAG 2.2 và Screen Contract**: [`docs/dac-ta/03a-ux-constitution.md`](03a-ux-constitution.md) (Level 3, CANONICAL).  
+> **Đặc tả trải nghiệm 14 vai (Role UX)**: [`docs/dac-ta/03b-role-ux.md`](03b-role-ux.md) (Level 3, CANONICAL).  
+> **Đặc tả chi tiết giao diện 10 màn hình chức năng lõi và tương tác trực quan** được duy trì tại: [`docs/FloraOS-UIUX-10-chuc-nang.md`](../FloraOS-UIUX-10-chuc-nang.md).
 > **Nguyên tắc bố cục thông tin nền tảng (áp dụng mọi page)** — Macro trước Micro, người dùng tự chọn hướng đi, tiết lộ thông tin theo lớp — đã tích hợp trực tiếp vào **§18** của tài liệu này. *(File gốc đã lưu trữ tại `docs/archive/merged/MACRO_TO_MICRO_STORYTELLING_UX_FRAMEWORK.md`)*
 
 ## 1. Bốn quyết định nền
@@ -25,7 +25,7 @@ Phạm vi chi nhánh không có bộ chọn ở bản đầu. RBAC vẫn đỡ s
 
 Điều hành có đầy đủ năng lực của Sale và Điều phối. Giao diện phải phản ánh điều đó mà không biến màn hình thành mớ hỗn độn: Điều hành thấy **cùng những màn hình** mà Sale và Điều phối thấy, cộng thêm bốn khối quản trị trên dashboard.
 
-**Một bộ màn hình và component dùng chung; vai quyết định trang chủ, thứ tự điều hướng và ưu tiên thông tin; mã năng lực quyết định nút nào được hiện và được dùng** (sửa theo quyết định PO 26/09/2026, D-RU2 — chi tiết ở [`03b-role-ux.md`](file:///Users/tuan/Projects/floraos-core/docs/dac-ta/03b-role-ux.md)). Không dựng hai bản của cùng một màn cho hai vai; khác biệt giữa các vai nằm ở *thứ tự và điểm vào*, không ở *bản sao màn hình*. Danh sách năng lực vẫn đọc từ `GET /auth/me`; khuôn vai chọn theo `membership.role_key` và không bao giờ mở thêm quyền.
+**Một bộ màn hình và component dùng chung; vai quyết định trang chủ, thứ tự điều hướng và ưu tiên thông tin; mã năng lực quyết định nút nào được hiện và được dùng** (sửa theo quyết định PO 26/09/2026, D-RU2 — chi tiết ở [`03b-role-ux.md`](03b-role-ux.md)). Không dựng hai bản của cùng một màn cho hai vai; khác biệt giữa các vai nằm ở *thứ tự và điểm vào*, không ở *bản sao màn hình*. Danh sách năng lực vẫn đọc từ `GET /auth/me`; khuôn vai chọn theo `membership.role_key` và không bao giờ mở thêm quyền.
 
 ## 3. Bản đồ màn hình và Điều hướng (SSOT `nav-model.ts`)
 

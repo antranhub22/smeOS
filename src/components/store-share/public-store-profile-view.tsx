@@ -15,7 +15,7 @@ export function PublicStoreProfileView({ profile }: { profile: PublicStoreProfil
   const external = (href: string) => href.startsWith("http")
 
   return (
-    <main className="min-h-screen bg-background">
+    <main className="min-h-screen bg-bg">
       <div aria-hidden className="h-24 bg-primary" style={profile.primaryColor ? { backgroundColor: profile.primaryColor } : undefined} />
       <div className="max-w-lg mx-auto px-4 -mt-12 pb-10">
         <section className="bg-surface rounded-3xl border border-border p-6 text-center">
@@ -23,7 +23,7 @@ export function PublicStoreProfileView({ profile }: { profile: PublicStoreProfil
             // eslint-disable-next-line @next/next/no-img-element -- URL ký có hạn từ kho lưu trữ, không qua tối ưu ảnh
             <img src={profile.logoUrl} alt={`Logo ${profile.name}`} className="w-20 h-20 mx-auto -mt-16 rounded-full object-cover border-4 border-surface bg-surface" />
           ) : null}
-          <h1 className="mt-3 text-2xl font-bold text-text">{profile.name}</h1>
+          <h1 className="mt-3 text-title-lg font-bold text-text">{profile.name}</h1>
           {profile.description && <p className="mt-2 text-body-sm text-text-muted whitespace-pre-line">{profile.description}</p>}
 
           {primary && (

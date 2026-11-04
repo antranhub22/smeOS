@@ -1,6 +1,7 @@
 import React from "react"
 import { describe, it, expect } from "vitest"
 import { renderToStaticMarkup } from "react-dom/server"
+import { Button } from "@/components/ui/button"
 import {
   PageLayout,
   PageHeader,
@@ -121,7 +122,7 @@ describe("PageLayout & PageHeader (S3-02)", () => {
           archetype="D"
           width="narrow"
           header={<PageHeader title="Thêm mới sản phẩm" />}
-          footer={<button type="submit">Lưu sản phẩm</button>}
+          footer={<Button type="submit">Lưu sản phẩm</Button>}
         >
           <div id="form-fields">Các trường nhập</div>
         </PageLayout>

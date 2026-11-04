@@ -2,6 +2,8 @@
 
 import React, { useState } from "react"
 import { Plus, X } from "@/components/ui/icons"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import type { IndustryVariantDimensionPreset } from "@/modules/organization/domain/industry-plugin-contract"
 import { MAX_DIMENSIONS, MAX_DIMENSION_VALUES, type PriceDimension } from "@/modules/products/domain/product-pricing"
 
@@ -34,38 +36,42 @@ export function PricingDimensionsPicker({ presets, dimensions, onChange }: Props
         </span>
         <div className="flex flex-wrap gap-2">
           {presets.map((p) => (
-            <button
+            <Button
               key={p.key}
               type="button"
+              variant="outline"
+              size="sm"
               disabled={used.has(p.key) || full}
               onClick={() => addDimension({ key: p.key, label: p.label, values: p.values.slice(0, 3) })}
-              className={`${chip(used.has(p.key))} disabled:opacity-60`}
+              className={`${chip(used.has(p.key))} disabled:opacity-60 h-auto p-0 px-3`}
             >
               {!used.has(p.key) && <Plus className="h-3 w-3" aria-hidden />}
               {p.label}
-            </button>
+            </Button>
           ))}
         </div>
         {!full && (
           <div className="mt-2 flex gap-2">
-            <input
+            <Input
               value={customName}
               onChange={(e) => setCustomName(e.target.value)}
               placeholder="Hoặc tự đặt tên nhóm, ví dụ: Kiểu nơ"
               aria-label="Tên nhóm đặc điểm khác"
-              className="h-9 flex-1 rounded-xl border border-border bg-surface px-3 text-body-sm outline-none focus:border-primary"
+              className="h-9 flex-1"
             />
-            <button
+            <Button
               type="button"
+              variant="outline"
+              size="sm"
               disabled={!customName.trim()}
               onClick={() => {
                 addDimension({ key: `CUSTOM_${Date.now()}`, label: customName.trim(), values: [] })
                 setCustomName("")
               }}
-              className="h-9 rounded-xl border border-border bg-surface px-3 text-body-sm font-semibold text-text disabled:opacity-50"
+              className="h-9 text-body-sm font-semibold text-text"
             >
               Thêm nhóm
-            </button>
+            </Button>
           </div>
         )}
       </div>
@@ -110,21 +116,36 @@ function DimensionValues({
     <div className="rounded-xl border border-border p-3 space-y-2">
       <div className="flex items-center justify-between">
         <span className="text-body-sm font-semibold text-text">{dimension.label}</span>
-        <button type="button" onClick={onRemove} className="text-caption text-text-muted hover:text-danger">
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
+          onClick={onRemove}
+          className="text-caption text-text-muted hover:text-danger h-auto p-0 hover:bg-transparent font-normal"
+        >
           Bỏ nhóm này
-        </button>
+        </Button>
       </div>
       <div className="flex flex-wrap gap-2">
         {[...suggested, ...extra].map((v) => (
-          <button key={v} type="button" aria-pressed={has(v)} disabled={!has(v) && !canAdd} onClick={() => toggle(v)} className={chip(has(v))}>
+          <Button
+            key={v}
+            type="button"
+            variant="outline"
+            size="sm"
+            aria-pressed={has(v)}
+            disabled={!has(v) && !canAdd}
+            onClick={() => toggle(v)}
+            className={`${chip(has(v))} h-auto p-0 px-3`}
+          >
             {v}
             {has(v) && extra.includes(v) && <X className="h-3 w-3" aria-hidden />}
-          </button>
+          </Button>
         ))}
       </div>
       {canAdd && (
         <div className="flex gap-2">
-          <input
+          <Input
             value={draft}
             onChange={(e) => setDraft(e.target.value)}
             onKeyDown={(e) => {
@@ -136,11 +157,17 @@ function DimensionValues({
             }}
             placeholder={`Thêm ${dimension.label.toLowerCase()} khác`}
             aria-label={`Thêm giá trị cho ${dimension.label}`}
-            className="h-9 flex-1 rounded-xl border border-border bg-surface px-3 text-body-sm outline-none focus:border-primary"
+            className="h-9 flex-1"
           />
-          <button type="button" onClick={addDraft} className="h-9 rounded-xl border border-border bg-surface px-3 text-body-sm font-semibold text-text">
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={addDraft}
+            className="h-9 text-body-sm font-semibold text-text"
+          >
             Thêm
-          </button>
+          </Button>
         </div>
       )}
     </div>

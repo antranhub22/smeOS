@@ -2,6 +2,7 @@
 
 import React, { useState, useRef } from "react"
 import { Plus, Trash2, Loader2 } from "@/components/ui/icons"
+import { Button } from "@/components/ui/button"
 import { PhotoUploadGuidance, STOREFRONT_GUIDANCE } from "./photo-upload-guidance"
 import { uploadBrandAsset } from "./upload-brand-asset"
 
@@ -73,15 +74,17 @@ export function BrandStorefrontSection({
               className="hidden"
               disabled={disabled || photoUploading}
             />
-            <button
+            <Button
               type="button"
+              variant="outline"
+              size="sm"
               disabled={disabled || photoUploading}
               onClick={() => storefrontInputRef.current?.click()}
               className="inline-flex items-center gap-1.5 rounded-xl border border-border bg-surface px-3 py-1.5 text-body-sm font-semibold text-text hover:border-primary transition-colors disabled:opacity-50"
             >
               {photoUploading ? <Loader2 className="animate-spin motion-reduce:animate-none" size={14} /> : <Plus size={14} />}
               <span>Thêm ảnh</span>
-            </button>
+            </Button>
           </div>
         )}
       </div>
@@ -101,14 +104,16 @@ export function BrandStorefrontSection({
             className="group relative aspect-4/3 rounded-xl border border-border overflow-hidden bg-surface"
           >
             <img src={url} alt={`Không gian ${idx + 1}`} className="h-full w-full object-cover" />
-            <button
+            <Button
               type="button"
+              variant="ghost"
+              size="icon"
               onClick={() => handleRemovePhoto(idx)}
-              className="absolute top-1.5 right-1.5 rounded-lg bg-surface/80 p-1 text-text-muted hover:text-danger hover:bg-surface transition-colors"
+              className="absolute top-1.5 right-1.5 h-7 w-7 rounded-lg bg-surface/80 p-1 text-text-muted hover:text-danger hover:bg-surface transition-colors"
               title="Xóa ảnh"
             >
               <Trash2 size={14} />
-            </button>
+            </Button>
           </div>
         ))}
 

@@ -28,5 +28,7 @@ Xếp theo thứ tự ưu tiên của Master Prompt Phase 4. Khả năng xảy r
 | R-14 (**đã xử lý 29/10: `publish_render` đưa video lên kho dùng chung**) | Worker video ghi tệp ra đĩa cục bộ của worker (`workers/media_ai/video/video_worker.py:31-32,102`), không lên kho dùng chung; web (dịch vụ Render khác) nhiều khả năng không đọc được video đã render | Ngoài phạm vi SDAGF P3 — đề xuất task riêng |
 | R-15 | `npm run nap:phan-tich` nạp `storage-provider-factory` (`import "server-only"`) qua `tsx` không có `--conditions=react-server` — nhiều khả năng lỗi khi chạy | Ngoài phạm vi; `storage:reconcile` đã dùng cờ này |
 
+| R-16 (**đã xử lý 04/11/2026**) | Xoá vĩnh viễn không kiểm asset đang dùng theo id — mất chứng từ thanh toán, ảnh sản phẩm, logo sau 30 ngày thùng rác | `asset-usage-guard.ts` + test kiến trúc; xem `15-reaudit-2026-11-04.md` |
+
 ## Hypothesis (chưa có bằng chứng)
 - H-1: ngoại lệ `videos/` được thêm để thẻ `<video>` trên trang công khai phát được mà không cần ký lại. Cần xác nhận với người viết.

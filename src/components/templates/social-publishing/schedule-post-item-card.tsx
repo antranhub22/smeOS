@@ -5,6 +5,7 @@ import { Clock, RefreshCw } from "@/components/ui/icons"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { Checkbox } from "@/components/ui/checkbox"
 import type { PlatformFeedPost } from "./platform-feed-preview"
 
 export interface SchedulePostItemCardProps {
@@ -30,24 +31,19 @@ export function SchedulePostItemCard({
 
   return (
     <Card
-              role="button"
-              tabIndex={0}
-      onClick={onSelect}
-      className={`flex items-center gap-3.5 p-3.5 transition-all cursor-pointer border ${
+      className={`relative flex items-center gap-3.5 p-3.5 transition-all cursor-pointer border ${
         isActive
           ? "border-primary ring-1 ring-primary/20 bg-primary/[0.02]"
           : "border-border hover:border-primary/40 bg-surface"
       }`}
     >
-      <input
-        type="checkbox"
-        checked={isChecked}
-        onChange={(e) => {
-          e.stopPropagation()
-          onToggleCheck()
-        }}
-        className="h-4 w-4 rounded accent-primary cursor-pointer"
-      />
+      <div className="relative z-10 flex">
+        <Checkbox
+          checked={isChecked}
+          onCheckedChange={onToggleCheck}
+          aria-label={`Chọn bài ${item.title}`}
+        />
+      </div>
       {item.media_url && (
         <div className="w-11 h-11 rounded-lg overflow-hidden flex-shrink-0 bg-surface-alt border border-border shadow-2xs">
           <img
@@ -61,7 +57,15 @@ export function SchedulePostItemCard({
         </div>
       )}
       <div className="flex-1 min-w-0">
-        <div className="text-body font-bold text-text truncate">{item.title}</div>
+        {/* Nút chính phủ cả thẻ (after:inset-0) — ô chọn và nút Thử lại nằm trên lớp phủ */}
+        <button
+          type="button"
+          onClick={onSelect}
+          aria-current={isActive || undefined}
+          className="block w-full truncate text-left text-body font-bold text-text after:absolute after:inset-0 after:rounded-[inherit] after:content-[''] focus-visible:outline-none focus-visible:after:ring-2 focus-visible:after:ring-ring"
+        >
+          {item.title}
+        </button>
         <div className="text-caption text-text-muted flex items-center gap-2 mt-0.5">
           <span className="font-semibold text-primary">{item.channel_label}</span>
           <span>·</span>
@@ -71,7 +75,7 @@ export function SchedulePostItemCard({
         </div>
       </div>
 
-      <div className="flex items-center gap-2 flex-shrink-0">
+      <div className="relative z-10 flex items-center gap-2 flex-shrink-0">
         <Badge
           tone={
             item.status === "scheduled"

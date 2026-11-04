@@ -4,6 +4,8 @@ import React, { useState } from "react"
 import { Coins, Loader2 } from "@/components/ui/icons"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { NativeSelect } from "@/components/ui/select"
 import type { CraftComplexity, IndustryCraftFeeSpec } from "@/modules/organization/domain/industry-plugin-contract"
 
 interface ProductCraftFeeCardProps {
@@ -50,33 +52,33 @@ export function ProductCraftFeeCard({ productId, attributes, spec, onUpdated }: 
   return (
     <Card className="flex flex-col gap-3 p-5">
       <div>
-        <h3 className="text-body font-extrabold text-foreground flex items-center gap-2">
+        <h3 className="text-body font-extrabold text-text flex items-center gap-2">
           <Coins size={18} className="text-primary" /> {spec.feeLabel} của mẫu này
         </h3>
         <p className="text-caption text-text-muted">Dùng khi cửa hàng chọn cách tính theo từng mẫu hoặc theo độ khó. Để trống thì tính theo % giá hàng.</p>
       </div>
-      <label className="flex items-center justify-between gap-3 text-body-sm text-foreground">
+      <label className="flex items-center justify-between gap-3 text-body-sm text-text">
         Phí cố định cho một sản phẩm
-        <input
+        <Input
           type="number"
           min={0}
           step={10_000}
           value={fee || ""}
           onChange={(e) => setFee(Math.max(0, Number(e.target.value) || 0))}
           placeholder="Chưa đặt"
-          className="w-36 px-2.5 py-1.5 rounded-lg border border-border bg-surface text-right font-bold"
+          className="w-36 text-right font-bold"
         />
       </label>
-      <label className="flex items-center justify-between gap-3 text-body-sm text-foreground">
+      <label className="flex items-center justify-between gap-3 text-body-sm text-text">
         Độ khó khi làm
-        <select value={level} onChange={(e) => setLevel(e.target.value as CraftComplexity | "")} className="w-36 px-2.5 py-1.5 rounded-lg border border-border bg-surface">
+        <NativeSelect value={level} onChange={(e) => setLevel(e.target.value as CraftComplexity | "")} className="w-36">
           <option value="">Chưa đặt</option>
           {LEVELS.map((l) => (
             <option key={l} value={l}>
               {spec.complexityLabels[l]}
             </option>
           ))}
-        </select>
+        </NativeSelect>
       </label>
       <div className="flex items-center justify-end gap-3">
         {message && <span className={`text-caption ${message.ok ? "text-success" : "text-danger"}`}>{message.text}</span>}

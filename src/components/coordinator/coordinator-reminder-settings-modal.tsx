@@ -1,8 +1,10 @@
 "use client"
 
 import React, { useState, useEffect } from "react"
-import { Settings2, Clock, Check, RefreshCw, X, ShieldAlert } from "@/components/ui/icons"
+import { Settings2, Clock, Check, RefreshCw, ShieldAlert } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Dialog } from "@/components/ui/dialog"
 import type { DispatchReminderPolicyConfig } from "@/modules/coordinator/domain/dispatch-reminder-types"
 
 interface CoordinatorReminderSettingsModalProps {
@@ -84,39 +86,28 @@ export function CoordinatorReminderSettingsModal({
     }
   }
 
-  if (!isOpen) return null
-
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-xs p-4">
-      <div className="w-full max-w-lg rounded-2xl bg-surface border border-border shadow-xl overflow-hidden flex flex-col max-h-[90vh]">
-        {/* Modal Header */}
-        <div className="flex items-center justify-between px-5 py-4 border-b border-border bg-surface">
-          <div className="flex items-center gap-2.5">
-            <div className="h-8 w-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
-              <Settings2 size={18} />
-            </div>
-            <div>
-              <h2 className="text-body font-bold text-text">
-                Cài Đặt Chính Sách Nhắc Nghiệp Vụ
-              </h2>
-              <p className="text-caption text-text-muted">
-                Chuỗi 6 mốc thời gian nhắc việc tự động cho Điều phối viên (M0..M5)
-              </p>
-            </div>
+    <Dialog
+      open={isOpen}
+      onOpenChange={(open) => {
+        if (!open) onClose()
+      }}
+      title={
+        <div className="flex items-center gap-2.5">
+          <div className="h-8 w-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
+            <Settings2 size={18} />
           </div>
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label="Đóng"
-            title="Đóng"
-            className="p-1 rounded-md text-text-muted hover:text-text hover:bg-surface-alt transition-colors"
-          >
-            <X size={18} />
-          </button>
+          <div>
+            <span className="text-body font-bold text-text">
+              Cài Đặt Chính Sách Nhắc Nghiệp Vụ
+            </span>
+          </div>
         </div>
-
-        {/* Modal Body */}
-        <form onSubmit={handleSave} className="flex-1 overflow-y-auto p-5 space-y-4">
+      }
+      description="Chuỗi 6 mốc thời gian nhắc việc tự động cho Điều phối viên (M0..M5)"
+      size="md"
+    >
+      <form onSubmit={handleSave} className="space-y-4">
           {errorMessage && (
             <div className="p-3 rounded-lg bg-danger-bg text-danger text-body-sm flex items-center gap-2">
               <ShieldAlert size={16} />
@@ -150,7 +141,7 @@ export function CoordinatorReminderSettingsModal({
                     </h4>
                   </div>
                   <div className="flex items-center gap-1.5">
-                    <input
+                    <Input
                       type="number"
                       min={1}
                       max={360}
@@ -161,7 +152,7 @@ export function CoordinatorReminderSettingsModal({
                           m0MinutesAfterPaid: Number(e.target.value),
                         })
                       }
-                      className="w-16 h-8 text-center text-body-sm font-bold rounded-md border border-border bg-surface text-text"
+                      className="w-20 text-center font-bold"
                     />
                     <span className="text-caption text-text-muted">phút</span>
                   </div>
@@ -183,7 +174,7 @@ export function CoordinatorReminderSettingsModal({
                     </h4>
                   </div>
                   <div className="flex items-center gap-1.5">
-                    <input
+                    <Input
                       type="number"
                       min={10}
                       max={720}
@@ -194,7 +185,7 @@ export function CoordinatorReminderSettingsModal({
                           m1MinutesBeforeDelivery: Number(e.target.value),
                         })
                       }
-                      className="w-16 h-8 text-center text-body-sm font-bold rounded-md border border-border bg-surface text-text"
+                      className="w-20 text-center font-bold"
                     />
                     <span className="text-caption text-text-muted">phút</span>
                   </div>
@@ -216,7 +207,7 @@ export function CoordinatorReminderSettingsModal({
                     </h4>
                   </div>
                   <div className="flex items-center gap-1.5">
-                    <input
+                    <Input
                       type="number"
                       min={10}
                       max={360}
@@ -227,7 +218,7 @@ export function CoordinatorReminderSettingsModal({
                           m2MinutesBeforeDelivery: Number(e.target.value),
                         })
                       }
-                      className="w-16 h-8 text-center text-body-sm font-bold rounded-md border border-border bg-surface text-text"
+                      className="w-20 text-center font-bold"
                     />
                     <span className="text-caption text-text-muted">phút</span>
                   </div>
@@ -249,7 +240,7 @@ export function CoordinatorReminderSettingsModal({
                     </h4>
                   </div>
                   <div className="flex items-center gap-1.5">
-                    <input
+                    <Input
                       type="number"
                       min={5}
                       max={120}
@@ -260,7 +251,7 @@ export function CoordinatorReminderSettingsModal({
                           m3MinutesAfterShipperAssigned: Number(e.target.value),
                         })
                       }
-                      className="w-16 h-8 text-center text-body-sm font-bold rounded-md border border-border bg-surface text-text"
+                      className="w-20 text-center font-bold"
                     />
                     <span className="text-caption text-text-muted">phút</span>
                   </div>
@@ -282,7 +273,7 @@ export function CoordinatorReminderSettingsModal({
                     </h4>
                   </div>
                   <div className="flex items-center gap-1.5">
-                    <input
+                    <Input
                       type="number"
                       min={5}
                       max={360}
@@ -293,7 +284,7 @@ export function CoordinatorReminderSettingsModal({
                           m5MinutesAfterDelivery: Number(e.target.value),
                         })
                       }
-                      className="w-16 h-8 text-center text-body-sm font-bold rounded-md border border-border bg-surface text-text"
+                      className="w-20 text-center font-bold"
                     />
                     <span className="text-caption text-text-muted">phút</span>
                   </div>
@@ -327,7 +318,6 @@ export function CoordinatorReminderSettingsModal({
             </Button>
           </div>
         </form>
-      </div>
-    </div>
+    </Dialog>
   )
 }

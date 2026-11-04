@@ -120,7 +120,7 @@ export const BannerPreviewCard = forwardRef<HTMLDivElement, BannerPreviewCardPro
           /* BẢN NGANG 16:9: TÁCH 2 CỘT HOÀN TOÀN (NÚT CTA NẰM LUÔN BÊN CỘT TRÁI) */
           <div className="relative z-20 flex-1 min-h-0 my-1 flex flex-row items-center justify-between gap-3 overflow-hidden">
             <div className="flex flex-col justify-center w-3/5 text-left pr-1">
-              <h3 className={`font-serif uppercase tracking-tight font-black text-xs leading-tight line-clamp-2 mt-0.5 ${preset.textPrimaryClass}`}>
+              <h3 className={`font-serif uppercase tracking-tight font-black text-caption leading-tight line-clamp-2 mt-0.5 ${preset.textPrimaryClass}`}>
                 {copy.headline || "TIÊU ĐỀ QUẢNG CÁO BÙNG NỔ"}
               </h3>
               <p className={`text-caption mt-0.5 line-clamp-1 font-normal ${preset.textMutedClass}`}>
@@ -153,7 +153,7 @@ export const BannerPreviewCard = forwardRef<HTMLDivElement, BannerPreviewCardPro
                   <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none" />
                 </div>
               ) : (
-                <div className="flex items-center justify-center p-2 rounded-lg bg-white/10 h-full w-full text-lg">💐</div>
+                <div className="flex items-center justify-center p-2 rounded-lg bg-white/10 h-full w-full text-title-sm">💐</div>
               )}
             </div>
           </div>
@@ -178,7 +178,7 @@ export const BannerPreviewCard = forwardRef<HTMLDivElement, BannerPreviewCardPro
                 </div>
               ) : (
                 <div className="flex flex-col items-center justify-center p-2 text-center rounded-xl bg-white/10 h-full w-full">
-                  <span className="text-2xl mb-0.5">💐</span>
+                  <span className="text-display mb-0.5">💐</span>
                   <span className="text-caption text-white/90 font-bold uppercase tracking-wider">Mẫu thực tế</span>
                 </div>
               )}
@@ -186,7 +186,7 @@ export const BannerPreviewCard = forwardRef<HTMLDivElement, BannerPreviewCardPro
 
             {/* Typography */}
             <div className="text-center w-full px-1 flex flex-col justify-center shrink-0">
-              <h3 className={`font-serif uppercase tracking-tight font-black text-xs leading-tight line-clamp-2 mt-0.5 ${preset.textPrimaryClass}`}>
+              <h3 className={`font-serif uppercase tracking-tight font-black text-caption leading-tight line-clamp-2 mt-0.5 ${preset.textPrimaryClass}`}>
                 {copy.headline || "TIÊU ĐỀ QUẢNG CÁO BÙNG NỔ"}
               </h3>
               <p className={`text-caption line-clamp-1 mt-0.5 leading-tight font-normal ${preset.textMutedClass}`}>
@@ -233,7 +233,7 @@ export const BannerPreviewCard = forwardRef<HTMLDivElement, BannerPreviewCardPro
         {/* Watermark nếu có */}
         {isWatermarked && (
           <div className="absolute inset-0 pointer-events-none flex items-center justify-center opacity-10 rotate-12">
-            <span className="text-4xl font-black uppercase tracking-widest text-white">
+            <span className="text-display font-black uppercase tracking-widest text-white">
               smeOS Banner
             </span>
           </div>

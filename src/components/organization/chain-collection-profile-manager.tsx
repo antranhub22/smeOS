@@ -164,7 +164,7 @@ export function ChainCollectionProfileManager() {
           className={`p-3.5 rounded-xl border flex items-center gap-2.5 text-body-sm font-semibold ${
             notification.type === "success"
               ? "bg-primary/10 border-primary/30 text-primary"
-              : "bg-danger/10 border-danger/30 text-danger"
+              : "bg-danger/10 border-danger/30 text-danger-text"
           }`}
         >
           {notification.type === "success" ? <CheckCircle2 size={16} /> : <AlertCircle size={16} />}

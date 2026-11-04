@@ -76,8 +76,8 @@ export function ConnectionDetailDialog({ connection, connectorLabel, isSalesChan
       <div className="space-y-5">
         <div className="flex flex-wrap items-center gap-3">
           <Badge tone={status.tone}>{status.text}</Badge>
-          <span className="text-sm text-text-muted">Kiểm tra gần nhất: {formatDateTime(connection.lastHealthAt)}</span>
-          {connection.credentialHint && <span className="text-sm text-text-muted">Khoá: ••••{connection.credentialHint}</span>}
+          <span className="text-body-sm text-text-muted">Kiểm tra gần nhất: {formatDateTime(connection.lastHealthAt)}</span>
+          {connection.credentialHint && <span className="text-body-sm text-text-muted">Khoá: ••••{connection.credentialHint}</span>}
           {!connection.managed && (
             <Button variant="outline" size="sm" disabled={busy} onClick={() => run(() => integrationApi.test(connection.id))}>
               Kiểm tra ngay
@@ -99,7 +99,7 @@ export function ConnectionDetailDialog({ connection, connectorLabel, isSalesChan
           ) : (
             <ul className="divide-y divide-border rounded-xl border border-border">
               {events.map((event) => (
-                <li key={event.id} className="flex flex-wrap items-center justify-between gap-2 p-3 text-sm">
+                <li key={event.id} className="flex flex-wrap items-center justify-between gap-2 p-3 text-body-sm">
                   <span className="text-text">{formatDateTime(event.createdAt)}</span>
                   <span className={event.status === "DEAD" ? "font-semibold text-danger-text" : "text-text-muted"}>
                     {EVENT_STATUS_LABEL[event.status] ?? event.status}
@@ -116,13 +116,13 @@ export function ConnectionDetailDialog({ connection, connectorLabel, isSalesChan
         </section>
 
         {connection.managed ? (
-          <p className="text-sm text-text-muted">
+          <p className="text-body-sm text-text-muted">
             Tin lỗi không gửi lại được từ đây — nhân viên trả lời khách trong mục Hội thoại. Đổi cấu hình bằng nút Quản lý của dịch vụ.
           </p>
         ) : (
         <Disclosure label="Đổi khoá hoặc ngắt kết nối">
           <div className="space-y-4 pt-2">
-            <label className="block space-y-1 text-sm font-semibold text-text">
+            <label className="block space-y-1 text-body-sm font-semibold text-text">
               <span>Khoá mới</span>
               <Input type="password" autoComplete="off" value={newSecret} onChange={(e) => setNewSecret(e.target.value)} aria-label="Khoá mới" />
             </label>

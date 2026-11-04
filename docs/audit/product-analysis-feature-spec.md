@@ -2,10 +2,10 @@
 
 > **Mục đích**: Reverse-engineer 100% tính năng Phân tích ảnh sản phẩm từ mã nguồn TypeScript (Next.js), Python Worker, CSDL Postgres/Prisma và tài liệu thực tế của `floraos-core`.
 > **Phạm vi**: 
-> - Web Client: [`src/app/(app)/tai-anh/page.tsx`](file:///Users/tuan/Projects/floraos-core/src/app/(app)/tai-anh/page.tsx), [`src/components/templates/product-analysis/`](file:///Users/tuan/Projects/floraos-core/src/components/templates/product-analysis/), [`src/components/result/result-card.tsx`](file:///Users/tuan/Projects/floraos-core/src/components/result/result-card.tsx), [`src/components/sales/sales-pitch-card.tsx`](file:///Users/tuan/Projects/floraos-core/src/components/sales/sales-pitch-card.tsx), [`src/components/storage/account-storage-hub.tsx`](file:///Users/tuan/Projects/floraos-core/src/components/storage/account-storage-hub.tsx).
-> - API Routes: [`src/app/api/v1/vision/`](file:///Users/tuan/Projects/floraos-core/src/app/api/v1/vision/) (6 routes) & [`src/app/api/v1/product-copies/`](file:///Users/tuan/Projects/floraos-core/src/app/api/v1/product-copies/) (5 routes).
-> - Domain & Use-Cases: [`src/modules/products/`](file:///Users/tuan/Projects/floraos-core/src/modules/products/) (57 files bao gồm domain rules, BOM mapping, pricing, readiness, exports).
-> - AI Worker: [`workers/vision/`](file:///Users/tuan/Projects/floraos-core/workers/vision/) (29 files: `jobs/worker.py`, contracts `Schema.json`, SAM2 + Florence-2 CV, OpenAI Structured/Direct providers, color & count engine).
+> - Web Client: [`src/app/(app)/tai-anh/page.tsx`](../../src/app/%28app%29/tai-anh/page.tsx), [`src/components/templates/product-analysis/`](../../src/components/templates/product-analysis), [`src/components/result/result-card.tsx`](../../src/components/result/result-card.tsx), [`src/components/sales/sales-pitch-card.tsx`](../../src/components/sales/sales-pitch-card.tsx), [`src/components/storage/account-storage-hub.tsx`](../../src/components/storage/account-storage-hub.tsx).
+> - API Routes: [`src/app/api/v1/vision/`](../../src/app/api/v1/vision) (6 routes) & [`src/app/api/v1/product-copies/`](../../src/app/api/v1/product-copies) (5 routes).
+> - Domain & Use-Cases: [`src/modules/products/`](../../src/modules/products) (57 files bao gồm domain rules, BOM mapping, pricing, readiness, exports).
+> - AI Worker: [`workers/vision/`](../../workers/vision) (29 files: `jobs/worker.py`, contracts `Schema.json`, SAM2 + Florence-2 CV, OpenAI Structured/Direct providers, color & count engine).
 > - Cơ sở dữ liệu: `product_analyses`, `product_copies`, `products`, `product_variants`, `product_images`, `generation_jobs`, `job_events`, `ai_requests`.
 > **Tiêu chuẩn phân loại**: ✅ Implemented · ⚠️ Partial · ❌ Missing · 🪦 Dead Code · ❓ Unclear
 
@@ -49,12 +49,12 @@ Phân tích ảnh sản phẩm (**Module M01 / Feature `vision.analyze`**) là c
 
 | Tầng | Thư mục mã nguồn | Số file | Vai trò & Quy ước thiết kế | Trạng thái |
 |---|---|---|---|---|
-| **Domain** | [`src/modules/products/domain/`](file:///Users/tuan/Projects/floraos-core/src/modules/products/domain/) | 18 file | Pure TypeScript, 0 import Prisma. Chứa luật duyệt/sửa (`product-analysis-rules.ts`), Schema mapper 100% trường (`analysis-schema-mapper.ts`), Sales Pitch builder (`sales-pitch-template.ts`), Budget Matcher (`budget-flower-matcher.ts`), Pricing rules, Readiness scoring. | ✅ Implemented |
-| **Use-Cases** | [`src/modules/products/use-cases/`](file:///Users/tuan/Projects/floraos-core/src/modules/products/use-cases/) | 16 file | Điều phối luồng: `request-analysis`, `get-analysis`, `edit-analysis`, `approve-analysis`, `reject-analysis`, `export-analyses`, `manage-vision-engine`, `list-pending-analyses`, `list-approved-analyses`. | ✅ Implemented |
-| **Infra** | [`src/modules/products/infra/`](file:///Users/tuan/Projects/floraos-core/src/modules/products/infra/) | 6 file | Tương tác Postgres qua Prisma Client: `ProductAnalysisRepository`, `ProductRepository`, `PricingRuleRepository`. | ✅ Implemented |
-| **Adapters** | [`src/modules/products/adapters/`](file:///Users/tuan/Projects/floraos-core/src/modules/products/adapters/) | 1 file | Port & Adapters cho tích hợp ngoài. | ✅ Implemented |
-| **Python Worker** | [`workers/vision/`](file:///Users/tuan/Projects/floraos-core/workers/vision/) | 29 file | `worker.py` (claim job, emit SSE, tải asset từ R2/Disk, chạy inference, ghi kết quả, trừ/tính chi phí `ai_requests`). 3 Engine: `openai_structured`, `openai_direct`, `local_cv`. | ✅ Implemented |
-| **UI Components** | [`src/components/templates/product-analysis/`](file:///Users/tuan/Projects/floraos-core/src/components/templates/product-analysis/) + [`tai-anh/`](file:///Users/tuan/Projects/floraos-core/src/app/(app)/tai-anh/) | 15+ file | Màn hình tác vụ `/tai-anh`, Guidance Card M01a/b/c, AnalysisResultCard, CommercialContentCard, SalesPitchCardA6, ZaloScriptBox, StorageHub. | ✅ Implemented |
+| **Domain** | [`src/modules/products/domain/`](../../src/modules/products/domain) | 18 file | Pure TypeScript, 0 import Prisma. Chứa luật duyệt/sửa (`product-analysis-rules.ts`), Schema mapper 100% trường (`analysis-schema-mapper.ts`), Sales Pitch builder (`sales-pitch-template.ts`), Budget Matcher (`budget-flower-matcher.ts`), Pricing rules, Readiness scoring. | ✅ Implemented |
+| **Use-Cases** | [`src/modules/products/use-cases/`](../../src/modules/products/use-cases) | 16 file | Điều phối luồng: `request-analysis`, `get-analysis`, `edit-analysis`, `approve-analysis`, `reject-analysis`, `export-analyses`, `manage-vision-engine`, `list-pending-analyses`, `list-approved-analyses`. | ✅ Implemented |
+| **Infra** | [`src/modules/products/infra/`](../../src/modules/products/infra) | 6 file | Tương tác Postgres qua Prisma Client: `ProductAnalysisRepository`, `ProductRepository`, `PricingRuleRepository`. | ✅ Implemented |
+| **Adapters** | [`src/modules/products/adapters/`](../../src/modules/products/adapters) | 1 file | Port & Adapters cho tích hợp ngoài. | ✅ Implemented |
+| **Python Worker** | [`workers/vision/`](../../workers/vision) | 29 file | `worker.py` (claim job, emit SSE, tải asset từ R2/Disk, chạy inference, ghi kết quả, trừ/tính chi phí `ai_requests`). 3 Engine: `openai_structured`, `openai_direct`, `local_cv`. | ✅ Implemented |
+| **UI Components** | [`src/components/templates/product-analysis/`](../../src/components/templates/product-analysis) + [`tai-anh/`](../../src/app/%28app%29/tai-anh) | 15+ file | Màn hình tác vụ `/tai-anh`, Guidance Card M01a/b/c, AnalysisResultCard, CommercialContentCard, SalesPitchCardA6, ZaloScriptBox, StorageHub. | ✅ Implemented |
 
 ---
 
@@ -240,7 +240,7 @@ Truy cập tại tab `m01c` trên màn hình `/tai-anh`:
 
 ## 5. Động cơ Phân tích Thị giác Python (Worker Engines & Algorithms)
 
-Hệ thống hỗ trợ 3 bộ máy phân tích được đăng ký tập trung tại [`registry.py`](file:///Users/tuan/Projects/floraos-core/workers/vision/providers/registry.py):
+Hệ thống hỗ trợ 3 bộ máy phân tích được đăng ký tập trung tại [`registry.py`](../../workers/vision/providers/registry.py):
 
 | Engine Key | Tên bộ máy | Công nghệ sử dụng | Mức độ sẵn sàng | Đặc điểm kỹ thuật & Thác dự phòng |
 |---|---|---|---|---|
@@ -312,7 +312,7 @@ Hệ thống hỗ trợ 3 bộ máy phân tích được đăng ký tập trung 
 Dưới đây là các phát hiện thực tế từ quá trình rà soát mã nguồn làm cơ sở nâng cấp lên chuẩn **Enterprise Commercial-Ready**:
 
 1. **Kích thước File Giao diện Quá Lớn (Vi phạm Giới hạn SRP 350 dòng)**:
-   - File [`src/app/(app)/tai-anh/page.tsx`](file:///Users/tuan/Projects/floraos-core/src/app/(app)/tai-anh/page.tsx) hiện tại dài tới **1,878 dòng**. File này đang gánh quá nhiều trách nhiệm: quản lý state của cả 4 tab, gọi API, xử lý upload, chuyển đổi phase, quản lý modal budget matching, selector phân tích đã duyệt...
+   - File [`src/app/(app)/tai-anh/page.tsx`](../../src/app/%28app%29/tai-anh/page.tsx) hiện tại dài tới **1,878 dòng**. File này đang gánh quá nhiều trách nhiệm: quản lý state của cả 4 tab, gọi API, xử lý upload, chuyển đổi phase, quản lý modal budget matching, selector phân tích đã duyệt...
    - *Hướng giải quyết*: Cần phân rã triệt để thành các sub-components độc lập: `M01aWorkspace.tsx`, `M01bWorkspace.tsx`, `M01cWorkspace.tsx`, `useAnalysisFlow.ts`, `useProductCopyFlow.ts`.
 2. **Khả năng Phục hồi Kết nối SSE khi Mất Mạng Tạm thời**:
    - Khi tiến trình xử lý AI kéo dài (10–25 giây), nếu kết nối mạng của thiết bị di động chập chờn, kết nối SSE có thể bị đứt khiến UI kẹt ở trạng thái "Đang phân tích".

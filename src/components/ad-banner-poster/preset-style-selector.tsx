@@ -21,7 +21,7 @@ export function PresetStyleSelector({
 
   return (
     <div className="space-y-2">
-      <label className="text-xs font-semibold text-text flex items-center justify-between">
+      <label className="text-caption font-semibold text-text flex items-center justify-between">
         <span>Phong cách thiết kế</span>
         <span className="text-caption font-normal text-text-muted">
           5 phong cách chuẩn sàn
@@ -33,10 +33,10 @@ export function PresetStyleSelector({
           const isSelected = preset.id === selectedPresetId
           return (
             <button
-              key={preset.id}
               type="button"
+              key={preset.id}
               onClick={() => onSelectPreset(preset.id)}
-              className={`relative flex flex-col items-start p-2.5 rounded-lg border text-left transition-all ${
+              className={`relative flex flex-col items-start p-2.5 rounded-lg border text-left transition-all cursor-pointer ${
                 isSelected
                   ? "border-primary bg-primary/5 ring-1 ring-primary shadow-sm"
                   : "border-border bg-surface hover:border-border-strong hover:bg-surface-alt"
@@ -53,7 +53,7 @@ export function PresetStyleSelector({
                 className={`h-3 w-8 rounded-full mb-1.5 bg-gradient-to-r ${preset.decorativeAccent}`}
               />
 
-              <div className="text-xs font-bold text-text line-clamp-2 w-full">
+              <div className="text-caption font-bold text-text line-clamp-2 w-full">
                 {preset.name}
               </div>
               <div className="text-caption text-text-muted truncate w-full mt-0.5">

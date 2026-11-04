@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/icons"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import type {
   DispatchReminderPolicyConfig,
   TemplateReminderOverrides,
@@ -229,11 +230,12 @@ export function ProductReminderOverrideCard({
                     role="switch"
                     aria-checked={isEnabled}
                     aria-label={`Bật/tắt ghi đè mốc ${m.label}`}
-                    disabled={!canEdit}
-                    onClick={() => toggleKey(m.key)}
-                    className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors focus:outline-none ${
+                    onClick={() => {
+                      if (canEdit) toggleKey(m.key)
+                    }}
+                    className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
                       isEnabled ? "bg-primary" : "bg-surface-alt"
-                    } disabled:opacity-40 disabled:cursor-not-allowed`}
+                    } ${!canEdit ? "opacity-40 cursor-not-allowed" : ""}`}
                   >
                     <span
                       className={`pointer-events-none inline-block h-4 w-4 translate-y-0 rounded-full bg-white shadow-sm transition-transform ${
@@ -259,7 +261,7 @@ export function ProductReminderOverrideCard({
                 {/* Input giá trị (chỉ hiện khi bật) */}
                 {isEnabled && (
                   <div className="flex items-center gap-2 shrink-0">
-                    <input
+                    <Input
                       type="number"
                       min={m.min}
                       max={m.max}
@@ -267,7 +269,7 @@ export function ProductReminderOverrideCard({
                       disabled={!canEdit || isSaving}
                       onChange={(e) => handleChangeValue(m.key, Number(e.target.value))}
                       aria-label={`Giá trị ghi đè mốc ${m.label}`}
-                      className="w-18 h-8 text-center text-body-sm font-bold rounded-lg border border-primary/40 bg-background text-text focus:outline-none focus:ring-1 focus:ring-primary disabled:opacity-50"
+                      className="w-20 text-center font-bold"
                     />
                     <span className="text-caption text-text-muted whitespace-nowrap">
                       {m.unit}

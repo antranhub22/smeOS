@@ -51,10 +51,11 @@ export function LinkedInPreview({
 
         <div className="flex items-center gap-1">
           <button
-              aria-label="Thêm tùy chọn"
             type="button"
-            className="text-cool-400 hover:text-cool-600 p-1 transition-colors"
-           onClick={() => undefined}>
+            aria-label="Thêm tùy chọn"
+            className="text-cool-400 hover:text-cool-600 p-1 transition-colors cursor-pointer"
+            onClick={() => undefined}
+          >
             <MoreHorizontal size={18} />
           </button>
         </div>
@@ -143,29 +144,33 @@ export function LinkedInPreview({
       <div className="px-2 py-1.5 grid grid-cols-4 gap-1 text-caption font-semibold text-cool-600">
         <button
           type="button"
-          className="flex items-center justify-center gap-1.5 py-2 rounded-lg hover:bg-cool-100 transition-colors"
-         onClick={() => undefined}>
+          className="flex items-center justify-center gap-1.5 py-2 rounded-lg hover:bg-cool-100 transition-colors cursor-pointer"
+          onClick={() => undefined}
+        >
           <ThumbsUp size={15} />
           <span>Thích</span>
         </button>
         <button
           type="button"
-          className="flex items-center justify-center gap-1.5 py-2 rounded-lg hover:bg-cool-100 transition-colors"
-         onClick={() => undefined}>
+          className="flex items-center justify-center gap-1.5 py-2 rounded-lg hover:bg-cool-100 transition-colors cursor-pointer"
+          onClick={() => undefined}
+        >
           <MessageSquare size={15} />
           <span>Bình luận</span>
         </button>
         <button
           type="button"
-          className="flex items-center justify-center gap-1.5 py-2 rounded-lg hover:bg-cool-100 transition-colors"
-         onClick={() => undefined}>
+          className="flex items-center justify-center gap-1.5 py-2 rounded-lg hover:bg-cool-100 transition-colors cursor-pointer"
+          onClick={() => undefined}
+        >
           <Repeat size={15} />
           <span>Đăng lại</span>
         </button>
         <button
           type="button"
-          className="flex items-center justify-center gap-1.5 py-2 rounded-lg hover:bg-cool-100 transition-colors"
-         onClick={() => undefined}>
+          className="flex items-center justify-center gap-1.5 py-2 rounded-lg hover:bg-cool-100 transition-colors cursor-pointer"
+          onClick={() => undefined}
+        >
           <Send size={15} />
           <span>Gửi</span>
         </button>

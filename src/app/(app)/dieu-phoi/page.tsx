@@ -26,7 +26,7 @@ export default function DieuPhoiPage() {
           title={dict.orders.coordinator.title}
           tip={dict.orders.coordinator.subtitle}
           badge={
-            <span className="px-2 py-0.5 rounded-full bg-warning-bg text-warning text-caption font-bold">
+            <span className="px-2 py-0.5 rounded-full bg-warning-bg text-warning-text text-caption font-bold">
               {dict.orders.coordinator.statusBadge}
             </span>
           }

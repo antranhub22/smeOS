@@ -74,7 +74,7 @@ export function CoordinatorOrderBriefCard({
       <div className="flex items-center justify-between flex-wrap gap-2">
         <div className="flex items-center gap-2 flex-wrap">
           <span className="px-2 py-0.5 rounded-md bg-cool-100 text-cool-700 text-caption font-black uppercase border border-cool-200 tracking-wider">
-            P2 • BRIEF (T02)
+            BƯỚC 2 • BRIEF (T02)
           </span>
           <span className="text-xs font-bold text-text-muted">ĐIỀU PHỐI ĐƠN</span>
           <span className="text-base font-extrabold text-text">#{orderCode}</span>

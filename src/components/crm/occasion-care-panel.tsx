@@ -76,13 +76,15 @@ export function OccasionCareCard({
         </div>
 
         {onViewCustomer && (
-          <button
+          <Button
             type="button"
+            variant="ghost"
+            size="sm"
             onClick={() => onViewCustomer(reminder.customerId)}
-            className="text-caption text-primary hover:underline font-semibold shrink-0"
+            className="text-caption text-primary hover:underline font-semibold shrink-0 h-auto p-0 hover:bg-transparent"
           >
             Hồ sơ →
-          </button>
+          </Button>
         )}
       </div>
 
@@ -102,14 +104,16 @@ export function OccasionCareCard({
       {/* Kịch bản Zalo chăm sóc */}
       <div className="border-t border-border/50 pt-3 space-y-2">
         <div className="flex items-center justify-between">
-          <button
+          <Button
             type="button"
+            variant="ghost"
+            size="sm"
             onClick={() => setShowScript(!showScript)}
-            className="flex items-center gap-1 text-caption font-semibold text-primary hover:text-primary-dark"
+            className="flex items-center gap-1 text-caption font-semibold text-primary hover:text-primary-dark h-auto p-0 hover:bg-transparent"
           >
             {showScript ? <ChevronUp size={13} /> : <ChevronDown size={13} />}
             Kịch bản Zalo chăm sóc
-          </button>
+          </Button>
           <div className="flex items-center gap-1.5">
             <Button
               type="button"
@@ -195,14 +199,16 @@ export function OccasionCarePanel({
             )}
           </div>
         </div>
-        <button
+        <Button
           type="button"
+          variant="ghost"
+          size="sm"
           onClick={onClose}
-          className="p-1.5 rounded-lg hover:bg-surface-alt text-text-muted hover:text-text transition-colors"
+          className="h-8 w-8 p-0 text-text-muted hover:text-text hover:bg-surface-alt"
           aria-label="Đóng"
         >
           <X size={16} />
-        </button>
+        </Button>
       </div>
 
       {/* Grid thẻ chăm sóc */}

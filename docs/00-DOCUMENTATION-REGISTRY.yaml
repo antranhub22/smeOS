@@ -50,6 +50,20 @@ documents:
     dependencies: ["docs/kien-truc/TRANG_THAI.md"]
     supersedes: []
 
+  - id: "DOC-01-HANDOVER-READINESS"
+    path: "docs/kien-truc/HANDOVER_READINESS_PLAN.md"
+    title: "Kế hoạch sẵn sàng bàn giao — nhóm việc làm ngay"
+    domain: "Governance"
+    layer: "Level 1"
+    purpose: "Giấy phép và gói bàn giao, đo Web Vitals, kiểm trợ năng 12 hành trình, ảnh mốc giao diện; checklist và bảng theo dõi trạng thái trước bàn giao repo cho khách hàng"
+    status: "DRAFT"
+    authority: "Level 1"
+    canonical: false
+    ssot: false
+    owner: "Product Owner"
+    dependencies: ["docs/kien-truc/REMEDIATION_ENTERPRISE_UI.md", "docs/design-system/accessibility-audit-12-journeys.md"]
+    supersedes: []
+
   - id: "DOC-01-CONTEXT"
     path: "CONTEXT.md"
     title: "Bối cảnh sản phẩm smeOS"

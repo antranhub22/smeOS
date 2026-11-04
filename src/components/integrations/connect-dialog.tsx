@@ -71,12 +71,12 @@ export function ConnectDialog({ item, onClose, onConnected, askConfirm }: Connec
       }
     >
       <div className="space-y-4">
-        <ol className="list-decimal space-y-1 pl-5 text-sm text-text">
+        <ol className="list-decimal space-y-1 pl-5 text-body-sm text-text">
           <li>Mở trang quản trị của {item?.label} và tạo {secretLabel.toLowerCase()} mới.</li>
           <li>Dán {secretLabel.toLowerCase()} vào ô bên dưới.</li>
           <li>Bấm Kết nối — hệ thống kiểm tra khoá trước khi lưu.</li>
         </ol>
-        <label className="block space-y-1 text-sm font-semibold text-text">
+        <label className="block space-y-1 text-body-sm font-semibold text-text">
           <span>{secretLabel}</span>
           <Input
             type="password"
@@ -86,7 +86,7 @@ export function ConnectDialog({ item, onClose, onConnected, askConfirm }: Connec
             aria-label={secretLabel}
           />
         </label>
-        <p className="text-sm text-text-muted">Khoá được mã hoá khi lưu. Sau khi lưu chỉ hiện 4 ký tự cuối.</p>
+        <p className="text-body-sm text-text-muted">Khoá được mã hoá khi lưu. Sau khi lưu chỉ hiện 4 ký tự cuối.</p>
         {error && <InlineError message={error} />}
       </div>
     </Dialog>

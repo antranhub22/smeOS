@@ -6,6 +6,7 @@ import { Loader2 } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { Disclosure } from "@/components/ui/disclosure"
 import { Input } from "@/components/ui/input"
+import { NativeSelect } from "@/components/ui/select"
 import { discountLabel, MAX_BATCH_QUANTITY, type VoucherBatchMode, type VoucherDiscountType } from "@/modules/promotions/domain/voucher-batch"
 
 export interface PromotionOption {
@@ -105,16 +106,17 @@ export function VoucherBatchForm({
         <legend className="text-body-sm font-semibold text-text">Kiểu mã</legend>
         <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
           {([["SHARED", "Một mã chung", "Nhiều khách cùng nhập một mã, ví dụ TET2027"], ["UNIQUE", "Nhiều mã riêng", "Mỗi khách một mã, để in lên thiệp hoặc gửi riêng"]] as const).map(([m, title, hint]) => (
-            <button
+            <Button
               key={m}
               type="button"
+              variant="ghost"
               aria-pressed={mode === m}
               onClick={() => setMode(m)}
-              className={`rounded-xl border p-3 text-left ${mode === m ? "border-primary bg-primary-muted" : "border-border bg-surface hover:border-primary"}`}
+              className={`rounded-xl border p-3 h-auto text-left block whitespace-normal w-full ${mode === m ? "border-primary bg-primary-muted" : "border-border bg-surface hover:border-primary"}`}
             >
               <span className="block text-body font-semibold text-text">{title}</span>
-              <span className="block text-meta text-text-muted">{hint}</span>
-            </button>
+              <span className="block text-meta text-text-muted font-normal">{hint}</span>
+            </Button>
           ))}
         </div>
       </fieldset>
@@ -143,10 +145,10 @@ export function VoucherBatchForm({
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
         <label className={FIELD}>
           Cách giảm
-          <select className={SELECT} value={discountType} onChange={(e) => setDiscountType(e.target.value as VoucherDiscountType)}>
+          <NativeSelect className={SELECT} value={discountType} onChange={(e) => setDiscountType(e.target.value as VoucherDiscountType)}>
             <option value="PERCENTAGE">Giảm theo %</option>
             <option value="FIXED_AMOUNT">Giảm số tiền</option>
-          </select>
+          </NativeSelect>
         </label>
         <label className={FIELD}>
           {discountType === "PERCENTAGE" ? `Mức giảm (%)${maxDiscountPercent ? ` — tối đa ${maxDiscountPercent}%` : ""}` : "Số tiền giảm (đ)"}
@@ -157,10 +159,10 @@ export function VoucherBatchForm({
 
       <label className={FIELD}>
         Thuộc chương trình ưu đãi
-        <select className={SELECT} value={promotionId} onChange={(e) => setPromotionId(e.target.value)}>
+        <NativeSelect className={SELECT} value={promotionId} onChange={(e) => setPromotionId(e.target.value)}>
           <option value="">Không gắn — mã dùng độc lập</option>
           {promotions.map((p) => <option key={p.id} value={p.id}>{p.title}</option>)}
-        </select>
+        </NativeSelect>
         <span className="text-meta font-normal text-text-muted">Gắn vào một ưu đãi thì khi tắt ưu đãi đó, mọi mã của đợt cũng ngừng nhận.</span>
         {err("promotionId")}
       </label>

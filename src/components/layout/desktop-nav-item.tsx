@@ -166,6 +166,7 @@ export function DesktopNavItem({
         aria-label={collapsed ? item.label : undefined}
         title={collapsed ? undefined : item.label}
         className={cn(
+          "cursor-pointer",
           itemBaseClass(isSubItem, collapsed),
           active
             ? "bg-primary-muted font-semibold text-primary"

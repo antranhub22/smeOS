@@ -8,6 +8,7 @@ import {
   CheckCircle2,
   Loader2,
 } from "@/components/ui/icons"
+import { Button } from "@/components/ui/button"
 import { PhotoUploadGuidance, LOGO_GUIDANCE } from "./photo-upload-guidance"
 import { uploadBrandAsset, resolveAssetViewUrl } from "./upload-brand-asset"
 import { BrandStorefrontSection } from "./brand-storefront-section"
@@ -105,15 +106,17 @@ export function BrandAssetsUploader({
   return (
     <div className="space-y-6">
       {errorMessage && (
-        <div className="rounded-xl border border-danger-border bg-danger-bg p-3.5 text-body-sm text-danger flex items-center justify-between">
+        <div className="rounded-xl border border-danger-border bg-danger-bg p-3.5 text-body-sm text-danger-text flex items-center justify-between">
           <span>{errorMessage}</span>
-          <button
+          <Button
             type="button"
+            variant="ghost"
+            size="sm"
             onClick={() => setErrorMessage(null)}
-            className="text-meta font-bold underline"
+            className="text-meta font-bold underline h-auto p-0 text-danger hover:bg-transparent"
           >
             Đóng
-          </button>
+          </Button>
         </div>
       )}
 
@@ -163,7 +166,7 @@ export function BrandAssetsUploader({
               className="hidden"
               disabled={disabled || logoUploading}
             />
-            <button
+            <Button
               type="button"
               disabled={disabled || logoUploading}
               onClick={() => logoInputRef.current?.click()}
@@ -175,11 +178,13 @@ export function BrandAssetsUploader({
                 <Upload size={16} />
               )}
               <span>{hasLogo ? "Thay logo khác" : "Tải ảnh logo lên"}</span>
-            </button>
+            </Button>
 
             {hasLogo && (
-              <button
+              <Button
                 type="button"
+                variant="outline"
+                size="icon"
                 disabled={disabled || logoUploading}
                 onClick={() => {
                   onLogoChange("", "")
@@ -188,7 +193,7 @@ export function BrandAssetsUploader({
                 title="Xóa logo"
               >
                 <Trash2 size={16} />
-              </button>
+              </Button>
             )}
           </div>
         </div>

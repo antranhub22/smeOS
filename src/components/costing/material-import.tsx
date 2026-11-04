@@ -2,6 +2,8 @@
 
 import { useMemo, useState } from "react"
 import { Button } from "@/components/ui/button"
+import { Textarea } from "@/components/ui/textarea"
+import { NativeSelect } from "@/components/ui/select"
 import { Disclosure } from "@/components/ui/disclosure"
 import { InlineError } from "@/components/ui/inline-error"
 import { parseMaterialTable } from "@/modules/costing/domain/material-import"
@@ -52,8 +54,8 @@ export function MaterialImport({ existingNames, onImported }: { existingNames: r
         </p>
         <label className="flex flex-col gap-1 text-body-sm text-text">
           Bảng nguyên liệu
-          <textarea
-            className="min-h-32 rounded-xl border border-border bg-surface p-3 text-body text-text focus:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+          <Textarea
+            className="min-h-32 text-body"
             value={text}
             onChange={(e) => {
               setText(e.target.value)
@@ -64,13 +66,13 @@ export function MaterialImport({ existingNames, onImported }: { existingNames: r
         </label>
         <label className="flex flex-col gap-1 text-body-sm text-text sm:max-w-xs">
           Nhóm dùng khi cột Nhóm trống
-          <select className={selectClass} value={fallback} onChange={(e) => setFallback(e.target.value)}>
+          <NativeSelect className={selectClass} value={fallback} onChange={(e) => setFallback(e.target.value)}>
             {spec.materialCategories.map((c) => (
               <option key={c.key} value={c.key}>
                 {c.label}
               </option>
             ))}
-          </select>
+          </NativeSelect>
         </label>
         {parsed.rows.length > 0 && (
           <div className="flex flex-col gap-1 text-body-sm text-text" role="status">

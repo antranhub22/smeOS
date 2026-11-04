@@ -87,21 +87,21 @@ describe("Asset Use-Cases with IAssetRepository Port", () => {
     it("xóa asset: xoá dòng và ghi hàng đợi xoá payload qua một lệnh", async () => {
       const repo = createMockAssetRepo()
       const remove = vi.fn().mockResolvedValue(true)
-      await expect(deleteAsset(mockTenant, "ast_123", repo, { remove, organizationHoldUntil: async () => null })).resolves.toBeUndefined()
+      await expect(deleteAsset(mockTenant, "ast_123", repo, { remove, organizationHoldUntil: async () => null, usages: async () => [] })).resolves.toBeUndefined()
       expect(remove).toHaveBeenCalledWith(mockTenant, mockAsset, "asset.delete")
     })
 
     it("ném lỗi 404 khi không thấy asset, không xoá gì", async () => {
       const repo = createMockAssetRepo({ findById: vi.fn().mockResolvedValue(null) })
       const remove = vi.fn()
-      await expect(deleteAsset(mockTenant, "ast_unknown", repo, { remove, organizationHoldUntil: async () => null })).rejects.toThrow()
+      await expect(deleteAsset(mockTenant, "ast_unknown", repo, { remove, organizationHoldUntil: async () => null, usages: async () => [] })).rejects.toThrow()
       expect(remove).not.toHaveBeenCalled()
     })
 
     it("ném lỗi 404 khi xoá thất bại", async () => {
       const repo = createMockAssetRepo()
       await expect(
-        deleteAsset(mockTenant, "ast_123", repo, { remove: vi.fn().mockResolvedValue(false), organizationHoldUntil: async () => null })
+        deleteAsset(mockTenant, "ast_123", repo, { remove: vi.fn().mockResolvedValue(false), organizationHoldUntil: async () => null, usages: async () => [] })
       ).rejects.toThrow()
     })
 
@@ -112,8 +112,20 @@ describe("Asset Use-Cases with IAssetRepository Port", () => {
       })
       const remove = vi.fn()
       await expect(
-        deleteAsset(mockTenant, "ast_123", repo, { remove, organizationHoldUntil: async () => null, now })
+        deleteAsset(mockTenant, "ast_123", repo, { remove, organizationHoldUntil: async () => null, usages: async () => [], now })
       ).rejects.toMatchObject({ code: "CONFLICT" })
+      expect(remove).not.toHaveBeenCalled()
+    })
+
+    it("chặn xoá khi ảnh đang được dùng (chứng từ thanh toán) — 409, không xoá gì", async () => {
+      const remove = vi.fn()
+      await expect(
+        deleteAsset(mockTenant, "ast_123", createMockAssetRepo(), {
+          remove,
+          organizationHoldUntil: async () => null,
+          usages: async () => ["payment_proof"],
+        })
+      ).rejects.toMatchObject({ code: "CONFLICT", message: expect.stringContaining("chứng từ thanh toán") })
       expect(remove).not.toHaveBeenCalled()
     })
 
@@ -124,6 +136,7 @@ describe("Asset Use-Cases with IAssetRepository Port", () => {
         deleteAsset(mockTenant, "ast_123", createMockAssetRepo(), {
           remove,
           organizationHoldUntil: async () => new Date("2027-01-01T00:00:00Z"),
+          usages: async () => [],
           now,
         })
       ).rejects.toMatchObject({ code: "CONFLICT" })

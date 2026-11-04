@@ -52,11 +52,11 @@ export function ShortLinkCreateForm({ onCreated, onCancel }: { onCreated: (link:
       <div role="group" aria-label="Loại" className="grid grid-cols-1 gap-2 sm:grid-cols-2">
         {KIND_OPTIONS.map((opt) => (
           <button
-            key={opt.id}
             type="button"
+            key={opt.id}
             aria-pressed={kind === opt.id}
             onClick={() => setKind(opt.id)}
-            className={`rounded-xl border p-3 text-left transition-colors ${kind === opt.id ? "border-primary bg-primary/5" : "border-border hover:bg-surface-alt"}`}
+            className={`cursor-pointer rounded-xl border p-3 text-left transition-colors focus:outline-none focus:ring-2 focus:ring-primary ${kind === opt.id ? "border-primary bg-primary/5" : "border-border hover:bg-surface-alt"}`}
           >
             <div className="text-body-sm font-semibold text-text">{opt.label}</div>
             <div className="text-caption text-text-muted">{opt.hint}</div>

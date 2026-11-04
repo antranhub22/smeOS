@@ -47,14 +47,14 @@ export function CustomerOrdersTab({ customerId }: { customerId: string }) {
         <li key={o.id}>
           <button type="button" onClick={() => setOpenId(o.id)} className="flex w-full items-start justify-between gap-3 p-3 text-left text-caption hover:bg-surface-alt">
             <span>
-              <span className="block font-semibold text-foreground">Đơn {o.code} · {STATUS_TEXT[o.status] ?? o.status}</span>
+              <span className="block font-semibold text-text">Đơn {o.code} · {STATUS_TEXT[o.status] ?? o.status}</span>
               <span className="block text-text-muted">{o.summary || "—"}</span>
               <span className="block text-text-muted">
                 {SOURCE_TEXT[o.source ?? ""] ?? "Khác"} · đặt {formatDate(o.createdAt)}{o.deliveryDate ? ` · giao ${o.deliveryDate}` : ""}
               </span>
             </span>
             <span className="text-right">
-              <span className="block font-bold text-foreground">{formatCurrency(o.totalVnd)}</span>
+              <span className="block font-bold text-text">{formatCurrency(o.totalVnd)}</span>
               {o.balanceVnd > 0 && o.status !== "CANCELLED" && <span className="block text-warning">còn {formatCurrency(o.balanceVnd)}</span>}
             </span>
           </button>

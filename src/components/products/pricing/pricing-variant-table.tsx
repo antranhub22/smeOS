@@ -4,8 +4,10 @@ import React, { useState } from "react"
 import { optionName, priceLabel, summarizePricing, type PriceOptionRow, type ProductPricing } from "@/modules/products/domain/product-pricing"
 import { formatVndInput, parseVndInput } from "./pricing-form"
 import { MoneyInput } from "./money-input"
-import { Input } from "@/components/ui/input"
 import { VariantImageCell } from "./variant-image-cell"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Checkbox } from "@/components/ui/checkbox"
 
 interface Props {
   pricing: ProductPricing
@@ -41,24 +43,36 @@ export function PricingVariantTable({ pricing, setPricing }: Props) {
         <div className="w-36">
           <MoneyInput label="Giá cho các ô còn trống" value={bulkPrice} onChange={setBulkPrice} placeholder="Giá chung" />
         </div>
-        <button type="button" onClick={fillEmpty} className="h-10 rounded-xl border border-border bg-surface px-3 text-body-sm font-semibold text-text">
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={fillEmpty}
+          className="h-10 text-body-sm font-semibold text-text"
+        >
           Điền ô còn trống
-        </button>
+        </Button>
         <div className="flex items-center gap-1">
           <span className="text-caption text-text-muted">Cao điểm +</span>
-          <input
+          <Input
             inputMode="numeric"
             aria-label="Phần trăm tăng giá ngày cao điểm"
             value={peakPercent}
             onChange={(e) => setPeakPercent(e.target.value.replace(/\D/g, "").slice(0, 3))}
-            className="h-10 w-16 rounded-xl border border-border bg-surface px-2 text-body-sm"
+            className="h-10 w-16 text-center text-body-sm"
             placeholder="20"
           />
           <span className="text-caption text-text-muted">%</span>
         </div>
-        <button type="button" onClick={applyPeak} className="h-10 rounded-xl border border-border bg-surface px-3 text-body-sm font-semibold text-text">
+        <Button
+          type="button"
+          variant="outline"
+          size="sm"
+          onClick={applyPeak}
+          className="h-10 text-body-sm font-semibold text-text"
+        >
           Tính giá cao điểm
-        </button>
+        </Button>
       </div>
 
       <div className="overflow-x-auto rounded-xl border border-border">
@@ -109,11 +123,10 @@ export function PricingVariantTable({ pricing, setPricing }: Props) {
                   <VariantImageCell label={optionName(r.values)} assetId={r.imageAssetId} onChange={(imageAssetId) => setRow(i, { imageAssetId })} />
                 </td>
                 <td className="px-3 py-2 text-center">
-                  <input
-                    type="checkbox"
+                  <Checkbox
                     aria-label={`Đang bán ${optionName(r.values)}`}
                     checked={r.active}
-                    onChange={(e) => setRow(i, { active: e.target.checked })}
+                    onCheckedChange={(checked) => setRow(i, { active: !!checked })}
                   />
                 </td>
               </tr>

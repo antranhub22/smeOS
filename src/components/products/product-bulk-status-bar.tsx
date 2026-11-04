@@ -2,6 +2,7 @@
 
 import React, { useState } from "react"
 import { X } from "@/components/ui/icons"
+import { Button } from "@/components/ui/button"
 import { readApiError } from "@/components/greeting-card/api-error"
 import { useConfirmDialog } from "@/components/ui/confirm-dialog"
 
@@ -68,27 +69,31 @@ export function ProductBulkStatusBar({ selectedIds, canArchive, onClear, onDone 
         <>
           <span className="font-semibold text-text">Đã chọn {selectedIds.length}</span>
           {ACTIONS.filter((a) => canArchive || a.status !== "ARCHIVED").map((a) => (
-            <button
+            <Button
               key={a.status}
               type="button"
+              variant="outline"
+              size="sm"
               disabled={busy}
               onClick={() => void apply(a.status, a.label)}
-              className="rounded-lg border border-border bg-surface px-3 h-8 font-semibold text-text hover:bg-surface-alt disabled:opacity-60 focus-visible:outline-2 focus-visible:outline-primary"
+              className="h-8 font-semibold text-text"
             >
               {a.label}
-            </button>
+            </Button>
           ))}
         </>
       )}
       {message && <span className="text-caption text-text-muted" aria-live="polite">{message}</span>}
-      <button
+      <Button
         type="button"
+        variant="ghost"
+        size="icon"
         onClick={() => { setMessage(null); onClear() }}
         aria-label="Bỏ chọn"
-        className="ml-auto flex h-8 w-8 items-center justify-center rounded-lg text-text-muted hover:bg-surface focus-visible:outline-2 focus-visible:outline-primary"
+        className="ml-auto h-8 w-8 text-text-muted hover:bg-surface"
       >
         <X size={14} />
-      </button>
+      </Button>
       {confirmDialog}
     </div>
   )

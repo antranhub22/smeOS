@@ -39,4 +39,4 @@ Chạy kiểm tra tự động qua `npm run lint:ux`:
 ## 3. KẾ HOẠCH BÀN GIAO & BƯỚC TIẾP THEO
 
 - Nền tảng UI Foundation và style Mộc Lan Artisan đã chứng minh khả năng áp dụng mượt mà, giảm vi phạm nhanh chóng mà không làm ảnh hưởng logic nghiệp vụ.
-- Sẵn sàng tiến hành các đợt di trú tiếp theo theo [MIGRATION_PLAN.md](file:///Users/tuan/Projects/smeOS/docs/ui-ux/MIGRATION_PLAN.md) hoặc chuyển sang **Phase 4 (Hoàn thiện Runtime UI System & UI Studio)**.
+- Sẵn sàng tiến hành các đợt di trú tiếp theo theo MIGRATION_PLAN.md hoặc chuyển sang **Phase 4 (Hoàn thiện Runtime UI System & UI Studio)**.

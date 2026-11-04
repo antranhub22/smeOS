@@ -14,6 +14,9 @@
 import React, { useEffect, useState } from "react"
 import { CalendarHeart, Plus, Check, AlertCircle, CheckCircle2, Power } from "@/components/ui/icons"
 import { SkeletonBlock } from "@/components/ui/skeleton"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { NativeSelect } from "@/components/ui/select"
 import { OCCASION_REGISTER_LABELS, type OccasionRegisterValue } from "@/modules/organization/domain/occasion-rules"
 import { errorText } from "@/lib/error-text"
 
@@ -27,7 +30,7 @@ interface OccasionRow {
 }
 
 const REGISTER_BADGE_CLASS: Record<OccasionRegisterValue, string> = {
-  FESTIVE: "bg-warning/10 text-warning border-warning/30",
+  FESTIVE: "bg-warning/10 text-warning-text border-warning/30",
   NEUTRAL: "bg-surface-alt text-text-muted border-border",
   SOLEMN: "bg-primary/10 text-primary border-primary/30",
 }
@@ -117,13 +120,13 @@ export function OccasionsSettingsForm() {
   return (
     <div className="space-y-6">
       {successMessage && (
-        <div className="flex items-center gap-2.5 rounded-2xl border border-success/30 bg-success/10 p-4 text-xs sm:text-sm font-medium text-success shadow-xs">
+        <div className="flex items-center gap-2.5 rounded-2xl border border-success/30 bg-success/10 p-4 text-body-sm font-medium text-success shadow-xs">
           <CheckCircle2 size={18} className="text-success flex-shrink-0" />
           <span>{successMessage}</span>
         </div>
       )}
       {error && (
-        <div className="flex items-center gap-2.5 rounded-2xl border border-danger/30 bg-danger/10 p-4 text-xs sm:text-sm font-medium text-danger shadow-xs">
+        <div className="flex items-center gap-2.5 rounded-2xl border border-danger/30 bg-danger/10 p-4 text-body-sm font-medium text-danger-text shadow-xs">
           <AlertCircle size={18} className="text-danger flex-shrink-0" />
           <span>{error}</span>
         </div>
@@ -136,54 +139,55 @@ export function OccasionsSettingsForm() {
             <CalendarHeart size={18} />
           </div>
           <div>
-            <h3 className="text-sm font-bold text-text">Thêm dịp mới</h3>
-            <p className="text-xs text-text-muted">Mỗi dịp mang một tông giọng — dùng để chỉnh kịch bản Zalo tự động</p>
+            <h3 className="text-body-sm font-bold text-text">Thêm dịp mới</h3>
+            <p className="text-caption text-text-muted">Mỗi dịp mang một tông giọng — dùng để chỉnh kịch bản Zalo tự động</p>
           </div>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-[2fr_1.4fr_1.4fr_auto] gap-3">
-          <input
+          <Input
             type="text"
             value={newName}
             onChange={(e) => setNewName(e.target.value)}
             placeholder="Tên dịp (VD: Ngày Nhà giáo)"
-            className="rounded-xl border border-border bg-surface px-3.5 py-2 text-xs sm:text-sm text-text focus:border-primary focus:outline-none"
+            className="text-body-sm"
           />
-          <input
+          <Input
             type="text"
             value={newCode}
             onChange={(e) => setNewCode(e.target.value)}
             placeholder="Mã (VD: teacher_day)"
-            className="rounded-xl border border-border bg-surface px-3.5 py-2 text-xs sm:text-sm text-text focus:border-primary focus:outline-none"
+            className="text-body-sm"
           />
-          <select
+          <NativeSelect
+            aria-label="Giọng điệu của dịp mới"
             value={newRegister}
             onChange={(e) => setNewRegister(e.target.value as OccasionRegisterValue)}
-            className="rounded-xl border border-border bg-surface px-3.5 py-2 text-xs sm:text-sm text-text focus:border-primary focus:outline-none"
+            className="text-body-sm"
           >
             {Object.entries(OCCASION_REGISTER_LABELS).map(([value, label]) => (
               <option key={value} value={value}>{label}</option>
             ))}
-          </select>
-          <button
+          </NativeSelect>
+          <Button
             type="submit"
             disabled={saving || !newName.trim() || !newCode.trim()}
-            className="flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-primary text-white text-xs sm:text-sm font-bold shadow-md hover:bg-primary/95 transition-all disabled:opacity-60"
+            className="gap-1.5"
           >
             <Plus size={15} />
             <span>Thêm</span>
-          </button>
+          </Button>
         </div>
       </form>
 
       {/* Khối 2: Danh sách dịp hiện có */}
       <div className="rounded-2xl border border-border bg-surface p-5 sm:p-6 shadow-xs">
-        <h3 className="text-sm font-bold text-text pb-4 border-b border-border mb-4">Danh mục dịp của cửa hàng</h3>
+        <h3 className="text-body-sm font-bold text-text pb-4 border-b border-border mb-4">Danh mục dịp của cửa hàng</h3>
 
         {loading ? (
           <div className="py-4"><SkeletonBlock lines={3} /></div>
         ) : occasions.length === 0 ? (
-          <p className="text-xs text-text-muted italic text-center py-6">Chưa có dịp nào — thêm dịp đầu tiên ở trên</p>
+          <p className="text-caption text-text-muted italic text-center py-6">Chưa có dịp nào — thêm dịp đầu tiên ở trên</p>
         ) : (
           <div className="space-y-2.5">
             {occasions.map((o) => (
@@ -192,35 +196,34 @@ export function OccasionsSettingsForm() {
                 className={`flex flex-col sm:flex-row sm:items-center gap-2.5 rounded-xl border border-border p-3 ${o.is_active ? "bg-surface" : "bg-surface-alt opacity-60"}`}
               >
                 <div className="flex-1 min-w-0">
-                  <p className="text-xs sm:text-sm font-semibold text-text truncate">{o.name}</p>
+                  <p className="text-body-sm font-semibold text-text truncate">{o.name}</p>
                   <p className="text-caption text-text-muted">Mã: {o.code}</p>
                 </div>
 
-                <select
+                <NativeSelect
+                  aria-label={`Giọng điệu — ${o.name}`}
                   value={o.register}
                   onChange={(e) => patchOccasion(o.id, { register: e.target.value as OccasionRegisterValue })}
                   disabled={saving}
-                  className={`rounded-lg border px-2.5 py-1.5 text-caption font-semibold ${REGISTER_BADGE_CLASS[o.register]}`}
+                  className={`w-auto text-caption font-semibold ${REGISTER_BADGE_CLASS[o.register]}`}
                 >
                   {Object.entries(OCCASION_REGISTER_LABELS).map(([value, label]) => (
                     <option key={value} value={value}>{label}</option>
                   ))}
-                </select>
+                </NativeSelect>
 
-                <button
+                <Button
                   type="button"
+                  variant={o.is_active ? "outline" : "secondary"}
+                  size="sm"
                   onClick={() => patchOccasion(o.id, { isActive: !o.is_active })}
                   disabled={saving}
                   title={o.is_active ? "Tắt dịp này" : "Bật lại dịp này"}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border text-caption font-semibold transition-colors flex-shrink-0 ${
-                    o.is_active
-                      ? "border-border text-text-muted hover:text-danger hover:border-danger/30"
-                      : "border-success/30 text-success hover:bg-success/10"
-                  }`}
+                  className="gap-1.5 text-caption font-semibold flex-shrink-0"
                 >
                   <Power size={13} />
                   <span>{o.is_active ? "Đang bật" : "Đã tắt"}</span>
-                </button>
+                </Button>
               </div>
             ))}
           </div>

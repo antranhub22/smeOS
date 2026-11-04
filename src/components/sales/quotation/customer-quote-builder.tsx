@@ -133,8 +133,8 @@ export function CustomerQuoteBuilder({
                 { id: "ABOVE_1000", label: "Trên 1 Triệu" },
               ].map((b) => (
                 <button
-                  key={b.id}
                   type="button"
+                  key={b.id}
                   onClick={() => setBudgetFilter(b.id)}
                   className={`px-2.5 py-1 rounded-md text-caption font-medium transition-colors cursor-pointer ${
                     budgetFilter === b.id

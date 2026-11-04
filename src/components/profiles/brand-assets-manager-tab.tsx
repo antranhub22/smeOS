@@ -9,6 +9,7 @@ import {
   ShieldCheck,
   Check,
 } from "@/components/ui/icons"
+import { Button } from "@/components/ui/button"
 import type { BrandProfileDetail } from "@/modules/profiles/use-cases/get-brand-profile"
 import type { UpsertBrandProfileInput } from "@/modules/profiles/domain/repositories/brand-profile-repository.interface"
 import {
@@ -101,7 +102,7 @@ export function BrandAssetsManagerTab({
             </div>
           </div>
 
-          <button
+          <Button
             type="button"
             disabled={saving}
             onClick={handleSave}
@@ -120,7 +121,7 @@ export function BrandAssetsManagerTab({
                 <span>Lưu toàn bộ tài nguyên</span>
               </>
             )}
-          </button>
+          </Button>
         </div>
 
         {/* 2. Bảng Trạng thái Kết nối Hệ thống (Connection & Readiness Status) */}

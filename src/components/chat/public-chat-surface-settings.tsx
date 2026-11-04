@@ -3,6 +3,7 @@
 import React, { useState } from "react"
 import { PublicChatLimitRequest } from "./public-chat-limit-request"
 import { MessageCircle } from "@/components/ui/icons"
+import { Switch } from "@/components/ui/switch"
 import type { ChannelStatusItem } from "@/modules/chat-assistant/use-cases/list-chat-channels"
 import {
   isSurfaceAllowed,
@@ -65,7 +66,7 @@ export function PublicChatSurfaceSettings({ channels, onChanged }: PublicChatSur
           <MessageCircle className="h-4 w-4" />
         </span>
         <div>
-          <h3 className="text-xs font-bold text-foreground">Khung chat AI trên trang của tiệm</h3>
+          <h3 className="text-caption font-bold text-text">Khung chat AI trên trang của tiệm</h3>
           <p className="text-caption text-text-muted">
             Chọn những trang khách xem được trò chuyện với trợ lý. Tắt ở đây thì khung chat ẩn khỏi trang đó.
           </p>
@@ -81,18 +82,17 @@ export function PublicChatSurfaceSettings({ channels, onChanged }: PublicChatSur
           return (
             <li key={surface} className="flex items-center justify-between gap-3 py-2.5">
               <label htmlFor={id} className="min-w-0">
-                <span className="block text-xs font-semibold text-foreground">{label}</span>
+                <span className="block text-caption font-semibold text-text">{label}</span>
                 <span className="block text-caption text-text-muted">
                   {channelOn ? hint : "Bật kênh tương ứng ở trên để dùng khung chat trên trang này"}
                 </span>
               </label>
-              <input
+              <Switch
                 id={id}
-                type="checkbox"
-                className="h-4 w-4 shrink-0 accent-primary"
                 checked={checked}
                 disabled={!channelOn || busy !== null}
-                onChange={(e) => handleToggle(surface, e.target.checked)}
+                onCheckedChange={(val) => handleToggle(surface, val)}
+                aria-label={`Bật khung chat trên ${label}`}
               />
             </li>
           )

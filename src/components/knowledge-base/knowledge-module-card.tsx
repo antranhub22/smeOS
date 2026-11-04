@@ -26,20 +26,20 @@ export function KnowledgeModuleCard({ module, onAskCopilot }: KnowledgeModuleCar
   const [showFields, setShowFields] = useState(true)
 
   return (
-    <div className="rounded-2xl border border-border bg-card shadow-xs overflow-hidden transition-all hover:shadow-md">
+    <div className="rounded-2xl border border-border bg-surface shadow-xs overflow-hidden transition-all hover:shadow-md">
       {/* 1. Header Khối Thông Tin Phân Hệ (K1: Card con không lồng FeatureGuidanceCard) */}
       <div className="p-4 sm:p-5 flex flex-col gap-2">
         <div className="flex items-center gap-2">
-          <span className="rounded-full bg-primary/10 text-primary text-xs font-bold px-2.5 py-0.5 uppercase tracking-wider">
+          <span className="rounded-full bg-primary/10 text-primary text-caption font-bold px-2.5 py-0.5 uppercase tracking-wider">
             {module.badgeLabel}
           </span>
-          <h2 className="text-base font-bold text-foreground">{module.title}</h2>
+          <h2 className="text-body font-bold text-text">{module.title}</h2>
         </div>
-        <p className="text-xs text-muted-foreground leading-relaxed">{module.summary}</p>
+        <p className="text-caption text-text-muted leading-relaxed">{module.summary}</p>
         {module.tips.length > 0 && (
-          <ul className="flex flex-wrap gap-2 pt-1 text-xs text-muted-foreground">
+          <ul className="flex flex-wrap gap-2 pt-1 text-caption text-text-muted">
             {module.tips.map((tip, idx) => (
-              <li key={idx} className="flex items-center gap-1 rounded-md bg-muted/60 px-2.5 py-1 text-foreground">
+              <li key={idx} className="flex items-center gap-1 rounded-md bg-surface-alt px-2.5 py-1 text-text">
                 <span aria-hidden="true">💡</span> <span>{tip}</span>
               </li>
             ))}
@@ -48,28 +48,30 @@ export function KnowledgeModuleCard({ module, onAskCopilot }: KnowledgeModuleCar
       </div>
 
       {/* 2. Bảng Trường Dữ Liệu Nguyên Tử (Atomic Disaggregated Fields) */}
-      <div className="border-t border-border px-4 sm:px-6 py-4 bg-muted/20">
+      <div className="border-t border-border px-4 sm:px-6 py-4 bg-surface-alt/50">
         <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
             <Table className="h-4 w-4 text-primary" />
-            <span className="text-xs font-bold text-foreground uppercase tracking-wide">
+            <span className="text-caption font-bold text-text uppercase tracking-wide">
               Các trường dữ liệu nguyên tử cần nhập liệu ({module.atomicFields.length} trường)
             </span>
           </div>
-          <button
+          <Button
             type="button"
+            variant="ghost"
+            size="sm"
             onClick={() => setShowFields(!showFields)}
-            className="flex items-center gap-1 text-xs font-semibold text-muted-foreground hover:text-foreground"
+            className="h-auto p-0 flex items-center gap-1 text-caption font-semibold text-text-muted hover:text-text"
           >
             <span>{showFields ? "Thu gọn" : "Xem chi tiết"}</span>
             {showFields ? <ChevronUp className="h-3.5 w-3.5" /> : <ChevronDown className="h-3.5 w-3.5" />}
-          </button>
+          </Button>
         </div>
 
         {showFields && (
-          <div className="overflow-x-auto rounded-xl border border-border bg-background">
-            <table className="w-full text-left text-xs">
-              <thead className="bg-muted/50 border-b border-border text-xs font-bold text-muted-foreground uppercase">
+          <div className="overflow-x-auto rounded-xl border border-border bg-surface">
+            <table className="w-full text-left text-caption">
+              <thead className="bg-surface-alt border-b border-border text-caption font-bold text-text-muted uppercase">
                 <tr>
                   <th className="px-3 py-2.5">Trường dữ liệu</th>
                   <th className="px-3 py-2.5">Kiểu</th>
@@ -79,18 +81,18 @@ export function KnowledgeModuleCard({ module, onAskCopilot }: KnowledgeModuleCar
               </thead>
               <tbody className="divide-y divide-border">
                 {module.atomicFields.map((field, idx) => (
-                  <tr key={idx} className="hover:bg-muted/30 transition-colors">
-                    <td className="px-3 py-2.5 font-bold text-foreground whitespace-nowrap">
+                  <tr key={idx} className="hover:bg-surface-alt/60 transition-colors">
+                    <td className="px-3 py-2.5 font-bold text-text whitespace-nowrap">
                       {field.name}
                       {field.required && <span className="text-warning ml-1 font-bold">*</span>}
                     </td>
                     <td className="px-3 py-2.5">
-                      <Badge className="bg-secondary/20 text-secondary-foreground text-xs font-mono px-1.5 py-0.5">
+                      <Badge className="bg-secondary/20 text-secondary-foreground text-caption font-mono px-1.5 py-0.5">
                         {field.dataType}
                       </Badge>
                     </td>
-                    <td className="px-3 py-2.5 text-muted-foreground">{field.description}</td>
-                    <td className="px-3 py-2.5 font-mono text-xs text-primary/90 font-medium">
+                    <td className="px-3 py-2.5 text-text-muted">{field.description}</td>
+                    <td className="px-3 py-2.5 font-mono text-caption text-primary/90 font-medium">
                       {field.example}
                     </td>
                   </tr>
@@ -102,44 +104,46 @@ export function KnowledgeModuleCard({ module, onAskCopilot }: KnowledgeModuleCar
       </div>
 
       {/* 3. So sánh Chuẩn vs Sai lệch */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-4 sm:p-6 border-t border-border bg-background">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 p-4 sm:p-6 border-t border-border bg-surface">
         <div className="rounded-xl border border-success-border bg-success-bg p-3.5 space-y-1.5">
-          <div className="flex items-center gap-1.5 text-xs font-bold text-primary">
+          <div className="flex items-center gap-1.5 text-caption font-bold text-primary">
             <CheckCircle2 className="h-4 w-4 text-primary" />
             <span>Cách nhập liệu chuẩn (Recommended)</span>
           </div>
-          <p className="text-xs leading-relaxed text-text">
+          <p className="text-caption leading-relaxed text-text">
             {module.goodPractice}
           </p>
         </div>
 
         <div className="rounded-xl border border-warning/30 bg-warning-bg p-3.5 space-y-1.5">
-          <div className="flex items-center gap-1.5 text-xs font-bold text-warning">
+          <div className="flex items-center gap-1.5 text-caption font-bold text-warning">
             <XCircle className="h-4 w-4 text-warning" />
             <span>Sai lầm cần tránh (Anti-pattern)</span>
           </div>
-          <p className="text-xs leading-relaxed text-warning line-through decoration-warning/60">
+          <p className="text-caption leading-relaxed text-warning line-through decoration-warning/60">
             {module.badPractice}
           </p>
         </div>
       </div>
 
       {/* 4. Thanh Tác Vụ 1-Chạm Ở Chân Khối */}
-      <div className="flex flex-wrap items-center justify-between gap-3 px-4 sm:px-6 py-3.5 border-t border-border bg-muted/30">
-        <button
+      <div className="flex flex-wrap items-center justify-between gap-3 px-4 sm:px-6 py-3.5 border-t border-border bg-surface-alt/60">
+        <Button
           type="button"
+          variant="ghost"
+          size="sm"
           onClick={() => onAskCopilot?.(module.copilotPrompt)}
-          className="inline-flex items-center gap-1.5 text-xs font-bold text-primary hover:underline"
+          className="h-auto p-0 inline-flex items-center gap-1.5 text-caption font-bold text-primary hover:underline"
         >
           <Sparkles className="h-3.5 w-3.5" />
           <span>Hỏi smeOS Copilot về phân hệ này</span>
-        </button>
+        </Button>
 
         <Link href={module.routePath as Route}>
           <Button
             variant="primary"
             size="sm"
-            className="text-xs font-bold gap-1.5 shadow-xs"
+            className="text-caption font-bold gap-1.5 shadow-xs"
           >
             <span>👉 {module.actionButtonLabel}</span>
             <ArrowRight className="h-3.5 w-3.5" />

@@ -8,16 +8,26 @@ type Props = {
   masterImageUrl?: string | undefined
   driveLink?: string | undefined
   size: "card" | "row"
+  /** Ảnh trong khung nhìn đầu tiên: tải ngay, ưu tiên cao (LCP). */
+  priority?: boolean | undefined
 }
 
 /** Ảnh sản phẩm: ảnh lưu trữ → thumbnail Google Drive → ô "Chưa có ảnh". */
-export function ProductThumb({ name, masterImageUrl, driveLink, size }: Props) {
+export function ProductThumb({ name, masterImageUrl, driveLink, size, priority = false }: Props) {
   const imgClass = size === "card"
     ? "h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
     : "h-full w-full object-cover"
   if (masterImageUrl) {
-    // eslint-disable-next-line @next/next/no-img-element
-    return <img src={masterImageUrl} alt={name} className={imgClass} loading="lazy" />
+    return (
+      // eslint-disable-next-line @next/next/no-img-element
+      <img
+        src={masterImageUrl}
+        alt={name}
+        className={imgClass}
+        loading={priority ? "eager" : "lazy"}
+        fetchPriority={priority ? "high" : "auto"}
+      />
+    )
   }
   if (driveLink) return <DriveThumbImage driveLink={driveLink} alt={name} className="h-full w-full" fallback={size === "card" ? "full" : "icon"} />
   return size === "card" ? (

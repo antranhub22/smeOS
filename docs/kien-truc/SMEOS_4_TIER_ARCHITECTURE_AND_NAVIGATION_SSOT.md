@@ -803,7 +803,7 @@ Theo quyết định phê chuẩn của PO, hệ thống triệt tiêu hoàn to�
 - **Chức năng 03 $\rightarrow$ Tool Nghiên cứu Thị trường & Xu hướng:** Độc lập hóa Chặng 03 thành công cụ tra cứu xu hướng và cơ hội kinh doanh theo mùa vụ (`/cong-cu/thi-truong`).
 - **Chức năng 13 $\rightarrow$ Tool Trợ lý Học & Tối ưu Tác nghiệp:** Độc lập hóa Chặng 13 thành công cụ học máy, nhận diện thói quen và đề xuất giải pháp tối ưu tác nghiệp (`/cong-cu/toi-uu-he-thong`).
 - **Chức năng 14 $\rightarrow$ Universal Next Action Component:** Chuẩn hóa Chặng 14 thành component dùng chung `NextActionCard` tích hợp ở cuối trang kết quả của MỌI công cụ trong hệ thống.
-Chi tiết xem văn bản SSOT cấp 2: [`docs/kien-truc/QUY_CHUAN_HOP_NHAT_14_CHANG_VA_BO_CONG_CU_SSOT.md`](file:///Users/tuan/Projects/smeOS/docs/kien-truc/QUY_CHUAN_HOP_NHAT_14_CHANG_VA_BO_CONG_CU_SSOT.md).
+Chi tiết xem văn bản SSOT cấp 2: [`docs/kien-truc/QUY_CHUAN_HOP_NHAT_14_CHANG_VA_BO_CONG_CU_SSOT.md`](QUY_CHUAN_HOP_NHAT_14_CHANG_VA_BO_CONG_CU_SSOT.md).
 
 ### 4.8 KIẾN TRÚC SSOT SẢN PHẨM & KHO (PRODUCT & INVENTORY SSOT ARCHITECTURE)
 

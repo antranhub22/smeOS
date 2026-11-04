@@ -1,8 +1,11 @@
 "use client"
 
 import React, { useState } from "react"
-import { X, ShieldCheck, CheckCircle2, RotateCcw, Ban, Info } from "@/components/ui/icons"
+import { ShieldCheck, CheckCircle2, RotateCcw, Ban, Info } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
+import { Checkbox } from "@/components/ui/checkbox"
+import { Dialog } from "@/components/ui/dialog"
+import { Textarea } from "@/components/ui/textarea"
 import { errorMessage, type CoordinationOrder } from "@/components/coordinator/coordinator-api"
 
 /**
@@ -70,77 +73,31 @@ export function AiQcInspectionModal({ isOpen, order, onClose, onSubmit }: AiQcIn
   )
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-      <div className="bg-surface border border-border rounded-2xl max-w-3xl w-full max-h-[92vh] overflow-y-auto shadow-2xl flex flex-col">
-        <div className="p-4 border-b border-border flex items-center justify-between sticky top-0 bg-surface z-10">
-          <div className="flex items-center gap-2">
-            <div className="h-8 w-8 rounded-lg bg-mint-100 text-mint-800 flex items-center justify-center">
-              <ShieldCheck size={18} />
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="px-2 py-0.5 rounded bg-cool-100 text-cool-700 text-caption font-black uppercase border border-cool-200">
-                  CHẶNG P5 • KIỂM ĐỊNH QC
-                </span>
-                <h3 className="text-base font-extrabold text-text">Kiểm Định Chất Lượng (T14)</h3>
-              </div>
-              <p className="text-caption text-text-muted">
-                Đơn #{order.orderCode} • Đối chiếu ảnh thợ cắm với ảnh mẫu chuẩn đầu vào
-              </p>
-            </div>
+    <Dialog
+      open={isOpen}
+      onOpenChange={(open) => {
+        if (!open) onClose()
+      }}
+      size="lg"
+      className="max-w-3xl"
+      title={
+        <div className="flex items-center gap-2">
+          <div className="h-8 w-8 rounded-lg bg-mint-100 text-mint-800 flex items-center justify-center">
+            <ShieldCheck size={18} />
           </div>
-          <button onClick={onClose} aria-label="Đóng" className="p-1.5 rounded-lg hover:bg-surface-alt text-text-muted">
-            <X size={18} />
-          </button>
-        </div>
-
-        <div className="p-5 flex flex-col gap-4 text-xs">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {imageBox("📸 Ảnh mẫu chuẩn đầu vào", order.sampleImageUrl, "Đơn chưa có ảnh mẫu")}
-            {imageBox("🌸 Ảnh thành phẩm thợ gửi", finished, "Chưa có ảnh thành phẩm — không kiểm được")}
-          </div>
-
-          <div className="p-3 rounded-xl border border-ocean-200 bg-ocean-50/60 text-ocean-900 flex items-start gap-2">
-            <Info size={14} className="shrink-0 mt-0.5" />
-            <span>
-              Chấm điểm AI tự động chưa bật cho điều phối — kết luận dưới đây là của người kiểm và được ghi vào hồ sơ QC
-              kèm tên người kiểm.
-            </span>
-          </div>
-
-          <div className="flex flex-col gap-2">
-            <span className="font-bold text-text">Danh mục kiểm:</span>
-            {CHECKS.map((c) => (
-              <label key={c.key} className="flex items-center gap-2 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={Boolean(checklist[c.key])}
-                  onChange={(e) => setChecklist((prev) => ({ ...prev, [c.key]: e.target.checked }))}
-                />
-                <span>{c.label}</span>
-              </label>
-            ))}
-          </div>
-
           <div>
-            <label className="font-bold text-text block mb-1">Ghi chú QC (bắt buộc khi không đạt):</label>
-            <textarea
-              value={notes}
-              onChange={(e) => setNotes(e.target.value)}
-              rows={3}
-              placeholder="Ví dụ: nơ lệch màu, thiếu 2 cành hồng chủ đạo…"
-              className="w-full px-3 py-2 rounded-xl border border-border bg-surface text-text focus:outline-none focus:border-alert-500"
-            />
-          </div>
-
-          {error && (
-            <div role="alert" className="p-3 rounded-xl border border-alert-300 bg-alert-50 text-alert-800 font-semibold">
-              {error}
+            <div className="flex items-center gap-2">
+              <span className="px-2 py-0.5 rounded bg-cool-100 text-cool-700 text-caption font-black uppercase border border-cool-200">
+                BƯỚC 5 • KIỂM ĐỊNH QC
+              </span>
+              <h3 className="text-base font-extrabold text-text">Kiểm Định Chất Lượng (T14)</h3>
             </div>
-          )}
+          </div>
         </div>
-
-        <div className="p-4 border-t border-border flex flex-wrap items-center justify-end gap-2.5 sticky bottom-0 bg-surface">
+      }
+      description={`Đơn #${order.orderCode} • Đối chiếu ảnh thành phẩm với ảnh mẫu chuẩn đầu vào`}
+      footer={
+        <div className="flex flex-wrap items-center justify-end gap-2.5 w-full">
           <Button variant="outline" size="sm" onClick={onClose}>
             Đóng
           </Button>
@@ -157,10 +114,55 @@ export function AiQcInspectionModal({ isOpen, order, onClose, onSubmit }: AiQcIn
             title={allChecked ? undefined : "Tích đủ danh mục kiểm trước khi duyệt đạt"}
             className="bg-mint-600 hover:bg-mint-700 text-white font-bold gap-1.5"
           >
-            <CheckCircle2 size={14} /> Đạt — chuyển giao hàng (P6)
+            <CheckCircle2 size={14} /> Đạt — chuyển giao hàng
           </Button>
         </div>
+      }
+    >
+      <div className="p-1 flex flex-col gap-4 text-xs">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {imageBox("📸 Ảnh mẫu chuẩn đầu vào", order.sampleImageUrl, "Đơn chưa có ảnh mẫu")}
+          {imageBox("🌸 Ảnh thành phẩm thợ gửi", finished, "Chưa có ảnh thành phẩm — không kiểm được")}
+        </div>
+
+        <div className="p-3 rounded-xl border border-ocean-200 bg-ocean-50/60 text-ocean-900 flex items-start gap-2">
+          <Info size={14} className="shrink-0 mt-0.5" />
+          <span>
+            Chấm điểm AI tự động chưa bật cho điều phối — kết luận dưới đây là của người kiểm và được ghi vào hồ sơ QC
+            kèm tên người kiểm.
+          </span>
+        </div>
+
+        <div className="flex flex-col gap-2">
+          <span className="font-bold text-text">Danh mục kiểm:</span>
+          {CHECKS.map((c) => (
+            <label key={c.key} className="flex items-center gap-2 cursor-pointer">
+              <Checkbox
+                checked={Boolean(checklist[c.key])}
+                onCheckedChange={(checked) => setChecklist((prev) => ({ ...prev, [c.key]: Boolean(checked) }))}
+              />
+              <span>{c.label}</span>
+            </label>
+          ))}
+        </div>
+
+        <div>
+          <label className="font-bold text-text block mb-1">Ghi chú QC (bắt buộc khi không đạt):</label>
+          <Textarea
+            value={notes}
+            onChange={(e) => setNotes(e.target.value)}
+            rows={3}
+            placeholder="Ví dụ: nơ lệch màu, thiếu 2 cành hồng chủ đạo…"
+            className="w-full px-3 py-2 rounded-xl border border-border bg-surface text-text focus:outline-none focus:border-alert-500"
+          />
+        </div>
+
+        {error && (
+          <div role="alert" className="p-3 rounded-xl border border-alert-300 bg-alert-50 text-alert-800 font-semibold">
+            {error}
+          </div>
+        )}
       </div>
-    </div>
+    </Dialog>
   )
 }

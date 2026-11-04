@@ -2,6 +2,7 @@
 
 import React, { useState, useRef, useCallback, useMemo } from "react"
 import { Download, FolderUp, RefreshCw, Share2, LayoutGrid } from "@/components/ui/icons"
+import { Button } from "@/components/ui/button"
 import { useSession } from "@/lib/session"
 import { useTenantProfile } from "@/lib/hooks/use-tenant-profile"
 import { TabActionHeader, type TabItem, type TabAction, type TabOverflowAction } from "@/components/ui/tab-header"
@@ -234,11 +235,17 @@ export function PosterBannerClient() {
       <BannerGuidanceCallout />
 
       {statusMessage && (
-        <div className="flex items-center justify-between p-3 rounded-lg bg-selected border border-primary/20 text-xs font-semibold text-primary">
+        <div className="flex items-center justify-between p-3 rounded-lg bg-selected border border-primary/20 text-caption font-semibold text-primary">
           <span>{statusMessage}</span>
-          <button type="button" onClick={() => setStatusMessage(null)} className="text-primary hover:opacity-70 text-xs">
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            onClick={() => setStatusMessage(null)}
+            className="text-primary hover:opacity-70 text-caption h-auto p-0 hover:bg-transparent"
+          >
             Đóng
-          </button>
+          </Button>
         </div>
       )}
 

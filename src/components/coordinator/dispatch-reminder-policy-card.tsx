@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
 import type { DispatchReminderPolicyConfig } from "@/modules/coordinator/domain/dispatch-reminder-types"
 
 interface DispatchReminderPolicySectionProps {
@@ -45,13 +46,13 @@ const MILESTONE_META: {
     unit: "phút trước giờ giao",
     min: 10,
     max: 720,
-    colorClass: "text-warning bg-warning/10",
+    colorClass: "text-warning-text bg-warning/10",
   },
   {
     key: "m2MinutesBeforeDelivery",
     code: "M2",
-    label: "Hoàn thành & Book ship",
-    description: "Nhắc xưởng chụp ảnh thành phẩm và book shipper để có SĐT tài xế trước giờ giao",
+    label: "Hoàn thành & đặt shipper",
+    description: "Nhắc xưởng chụp ảnh thành phẩm và đặt shipper để có số điện thoại tài xế trước giờ giao",
     unit: "phút trước giờ giao",
     min: 10,
     max: 360,
@@ -65,13 +66,13 @@ const MILESTONE_META: {
     unit: "phút sau khi gán shipper",
     min: 5,
     max: 120,
-    colorClass: "text-warning bg-warning/10",
+    colorClass: "text-warning-text bg-warning/10",
   },
   {
     key: "m5MinutesAfterDelivery",
     code: "M5",
     label: "Chăm sóc sau giao",
-    description: "Nhắc kiểm tra ảnh POD từ shipper và liên hệ hỏi mức độ hài lòng của khách hàng",
+    description: "Nhắc kiểm tra ảnh giao hàng từ shipper và liên hệ hỏi mức độ hài lòng của khách hàng",
     unit: "phút sau giờ giao",
     min: 5,
     max: 360,
@@ -165,7 +166,7 @@ export function DispatchReminderPolicySection({ canEdit }: DispatchReminderPolic
 
       {/* Thông báo trạng thái */}
       {errorMessage && (
-        <div className="flex items-center gap-2 p-3 rounded-lg bg-danger-bg text-danger text-body-sm border border-danger/20">
+        <div className="flex items-center gap-2 p-3 rounded-lg bg-danger-bg text-danger-text text-body-sm border border-danger/20">
           <AlertCircle size={15} />
           <span>{errorMessage}</span>
         </div>
@@ -179,7 +180,7 @@ export function DispatchReminderPolicySection({ canEdit }: DispatchReminderPolic
 
       {/* Bảng cấu hình 5 mốc */}
       <div className="divide-y divide-border rounded-xl border border-border overflow-hidden">
-        {MILESTONE_META.map((m) => (
+        {MILESTONE_META.map((m, i) => (
           <div
             key={m.key}
             className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-4 bg-surface hover:bg-surface-alt/30 transition-colors"
@@ -187,8 +188,9 @@ export function DispatchReminderPolicySection({ canEdit }: DispatchReminderPolic
             <div className="flex items-start gap-3 flex-1">
               <span
                 className={`inline-flex items-center justify-center h-7 w-10 rounded-lg text-caption font-extrabold shrink-0 ${m.colorClass}`}
+                aria-label={`Mốc ${i + 1}`}
               >
-                {m.code}
+                {i + 1}
               </span>
               <div>
                 <div className="text-body-sm font-bold text-text">{m.label}</div>
@@ -199,14 +201,14 @@ export function DispatchReminderPolicySection({ canEdit }: DispatchReminderPolic
             </div>
 
             <div className="flex items-center gap-2 shrink-0 ml-13 sm:ml-0">
-              <input
+              <Input
                 type="number"
                 min={m.min}
                 max={m.max}
                 value={config[m.key]}
                 disabled={!canEdit || isSaving}
                 onChange={(e) => handleChange(m.key, Number(e.target.value))}
-                className="w-20 h-9 text-center text-body-sm font-bold rounded-lg border border-border bg-background text-text focus:outline-none focus:ring-1 focus:ring-primary disabled:opacity-50 disabled:bg-surface-alt"
+                className="w-20 text-center font-bold"
                 aria-label={`Cấu hình ${m.label}`}
               />
               <span className="text-caption text-text-muted whitespace-nowrap">
@@ -244,7 +246,7 @@ export function DispatchReminderPolicyCard({ canEdit }: DispatchReminderPolicySe
           <Bell size={20} />
         </div>
         <div>
-          <h2 className="text-base font-extrabold text-text">
+          <h2 className="text-title-sm font-extrabold text-text">
             Nhắc Nghiệp Vụ Điều Phối
           </h2>
           <p className="text-caption text-text-muted mt-0.5">

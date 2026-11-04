@@ -13,6 +13,7 @@ import {
   ArrowRight,
 } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import type { SuggestedProductCard } from "@/modules/chat-assistant/domain/chat-types"
 import {
   extractOrderDraftFromChat,
@@ -125,12 +126,13 @@ export function PublicStorefrontChatWidget({
       <div className="fixed bottom-5 right-5 z-50">
         {!isOpen && (
           <button
+            type="button"
             onClick={() => setIsOpen(true)}
-            className="group flex items-center gap-2 rounded-full bg-gradient-to-r from-primary via-primary/95 to-primary-dark p-3.5 text-white shadow-xl hover:shadow-2xl transition-all hover:scale-105"
+            className="group flex items-center gap-2 rounded-full bg-gradient-to-r from-primary via-primary/95 to-primary-dark p-3.5 text-white shadow-xl hover:shadow-2xl transition-all hover:scale-105 cursor-pointer"
             aria-label="Tư vấn đặt hoa"
           >
             <MessageCircle className="h-6 w-6 animate-pulse motion-reduce:animate-none" />
-            <span className="hidden sm:inline-block pr-1 text-xs font-bold tracking-wide">
+            <span className="hidden sm:inline-block pr-1 text-caption font-bold tracking-wide">
               Tư vấn đặt hoa
             </span>
           </button>
@@ -147,7 +149,7 @@ export function PublicStorefrontChatWidget({
                 <Bot className="h-4 w-4" />
               </span>
               <div>
-                <div className="text-xs font-bold text-foreground flex items-center gap-1.5">
+                <div className="text-caption font-bold text-text flex items-center gap-1.5">
                   Trợ Lý {shopName}
                   <span className="inline-block h-2 w-2 rounded-full bg-success" />
                 </div>
@@ -155,24 +157,25 @@ export function PublicStorefrontChatWidget({
               </div>
             </div>
             <button
+              type="button"
               aria-label="Đóng"
               onClick={() => setIsOpen(false)}
-              className="rounded-lg p-1.5 text-muted-foreground hover:bg-black/5"
+              className="rounded-lg p-1.5 text-text-muted hover:bg-black/5 cursor-pointer"
             >
               <X className="h-4 w-4" />
             </button>
           </div>
 
           {/* Vùng tin nhắn */}
-          <div className="flex-1 overflow-y-auto p-4 space-y-3 text-xs">
+          <div className="flex-1 overflow-y-auto p-4 space-y-3 text-caption">
             {messages.length === 0 ? (
-              <div className="flex h-full flex-col items-center justify-center gap-2 text-center text-muted-foreground p-2">
+              <div className="flex h-full flex-col items-center justify-center gap-2 text-center text-text-muted p-2">
                 <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-primary/10 text-primary">
                   <Sparkles className="h-5 w-5" />
                 </div>
                 <div>
-                  <div className="font-bold text-foreground text-xs">Kính chào Quý Khách!</div>
-                  <p className="text-caption text-muted-foreground mt-0.5">
+                  <div className="font-bold text-text text-caption">Kính chào Quý Khách!</div>
+                  <p className="text-caption text-text-muted mt-0.5">
                     Quý khách đang tìm hoa cho dịp gì và ngân sách khoảng bao nhiêu ạ?
                   </p>
                 </div>
@@ -184,9 +187,10 @@ export function PublicStorefrontChatWidget({
                     "Hoa tặng mẹ ngày lễ 20/10",
                   ].map((q, idx) => (
                     <button
+                      type="button"
                       key={idx}
                       onClick={() => handleSendMessage(q)}
-                      className="w-full text-left rounded-xl border border-primary/20 bg-primary/5 p-2 text-caption font-medium text-foreground hover:bg-primary/10 flex items-center justify-between"
+                      className="w-full text-left rounded-xl border border-primary/20 bg-primary/5 p-2 text-caption font-medium text-text hover:bg-primary/10 flex items-center justify-between cursor-pointer"
                     >
                       <span className="truncate">{q}</span>
                       <ArrowRight className="h-3 w-3 text-primary shrink-0 ml-1" />
@@ -209,10 +213,10 @@ export function PublicStorefrontChatWidget({
 
                     <div className="max-w-[85%] space-y-2">
                       <div
-                        className={`rounded-2xl px-3.5 py-2 text-xs leading-relaxed whitespace-pre-line ${
+                        className={`rounded-2xl px-3.5 py-2 text-caption leading-relaxed whitespace-pre-line ${
                           isUser
                             ? "bg-primary text-white font-medium rounded-br-none"
-                            : "bg-surface-raised border border-border text-foreground rounded-bl-none shadow-2xs"
+                            : "bg-surface-raised border border-border text-text rounded-bl-none shadow-2xs"
                         }`}
                       >
                         {m.content}
@@ -239,7 +243,7 @@ export function PublicStorefrontChatWidget({
                               )}
 
                               <div className="flex-1 min-w-0">
-                                <div className="font-bold text-foreground text-xs truncate">
+                                <div className="font-bold text-text text-caption truncate">
                                   {f.productName}
                                 </div>
                                 <div className="text-primary font-extrabold text-caption">
@@ -278,7 +282,7 @@ export function PublicStorefrontChatWidget({
               <button
                 type="button"
                 onClick={() => handleOpenCheckout()}
-                className="inline-flex items-center gap-1 text-caption font-bold text-primary hover:underline"
+                className="inline-flex items-center gap-1 text-caption font-bold text-primary hover:underline cursor-pointer"
               >
                 <Sparkles className="h-3 w-3" /> Trích xuất đơn VietQR →
               </button>
@@ -294,10 +298,10 @@ export function PublicStorefrontChatWidget({
               }}
               className="flex items-center gap-1.5"
             >
-              <input
+              <Input
                 type="text"
                 placeholder="Nhắn tin cho cửa hàng..."
-                className="flex-1 rounded-xl border border-border bg-background px-3 py-2 text-xs focus:ring-1 focus:ring-primary"
+                className="flex-1"
                 value={inputQuery}
                 onChange={(e) => setInputQuery(e.target.value)}
                 disabled={sending}

@@ -4,6 +4,7 @@ import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { Check, Sparkles, Zap, ShieldCheck } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import { PendingApprovalNotice } from "./pending-approval-notice"
 import { listAllIndustries, getIndustryDefinition, DEFAULT_INDUSTRY } from "@/modules/organization/domain/industry-profile"
 
@@ -106,10 +107,10 @@ export function InstantTrialForm({ onSwitchToLogin }: InstantTrialFormProps) {
             const isSelected = ind.key === industryKey
             return (
               <button
-                key={ind.key}
                 type="button"
+                key={ind.key}
                 onClick={() => setIndustryKey(ind.key)}
-                className={`flex flex-col items-start p-3 rounded-xl border text-left transition-all ${
+                className={`cursor-pointer flex flex-col items-start p-3 rounded-xl border text-left transition-all ${
                   isSelected
                     ? "border-primary bg-primary/10 ring-2 ring-primary/30 shadow-xs"
                     : "border-border bg-surface-alt/60 hover:border-primary/50"
@@ -138,13 +139,13 @@ export function InstantTrialForm({ onSwitchToLogin }: InstantTrialFormProps) {
           <div className="mb-1.5 text-body-sm font-semibold">
             Họ và tên của bạn <span className="text-danger">*</span>
           </div>
-          <input
+          <Input
             type="text"
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="Ví dụ: Nguyễn Văn An"
             required
-            className="h-[46px] w-full rounded-xl border-[1.5px] border-border bg-surface px-3.5 text-sm outline-none focus:border-primary"
+            className="h-[46px] w-full rounded-xl border-[1.5px] border-border bg-surface px-3.5 text-body-sm outline-none focus:border-primary"
           />
         </div>
 
@@ -153,13 +154,13 @@ export function InstantTrialForm({ onSwitchToLogin }: InstantTrialFormProps) {
             <div className="mb-1.5 text-body-sm font-semibold">
               Số điện thoại / Zalo <span className="text-danger">*</span>
             </div>
-            <input
+            <Input
               type="tel"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
               placeholder="0912 345 678"
               required
-              className="h-[46px] w-full rounded-xl border-[1.5px] border-border bg-surface px-3.5 text-sm outline-none focus:border-primary"
+              className="h-[46px] w-full rounded-xl border-[1.5px] border-border bg-surface px-3.5 text-body-sm outline-none focus:border-primary"
             />
           </div>
 
@@ -167,19 +168,19 @@ export function InstantTrialForm({ onSwitchToLogin }: InstantTrialFormProps) {
             <div className="mb-1.5 text-body-sm font-semibold">
               Email nhận tài liệu <span className="text-danger">*</span>
             </div>
-            <input
+            <Input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="ban@gmail.com"
               required
-              className="h-[46px] w-full rounded-xl border-[1.5px] border-border bg-surface px-3.5 text-sm outline-none focus:border-primary"
+              className="h-[46px] w-full rounded-xl border-[1.5px] border-border bg-surface px-3.5 text-body-sm outline-none focus:border-primary"
             />
           </div>
         </div>
       </div>
 
-      <Button type="submit" className="mt-1 h-12 w-full text-base font-bold shadow-md" disabled={dangGui}>
+      <Button type="submit" className="mt-1 h-12 w-full text-body font-bold shadow-md" disabled={dangGui}>
         {dangGui ? (
           "Đang gửi đăng ký…"
         ) : (
@@ -197,19 +198,21 @@ export function InstantTrialForm({ onSwitchToLogin }: InstantTrialFormProps) {
 
       <div className="my-1 flex items-center gap-2.5">
         <div className="h-px flex-1 bg-border" />
-        <div className="text-xs text-text-muted">hoặc</div>
+        <div className="text-caption text-text-muted">hoặc</div>
         <div className="h-px flex-1 bg-border" />
       </div>
 
       <div className="text-center text-body text-text-muted">
         Đã có tài khoản trước đó?{" "}
-        <button
+        <Button
           type="button"
+          variant="ghost"
+          size="sm"
           onClick={onSwitchToLogin}
-          className="font-bold text-accent-text hover:underline"
+          className="h-auto p-0 font-bold text-accent-text hover:underline inline"
         >
           Đăng nhập
-        </button>
+        </Button>
       </div>
     </form>
   )

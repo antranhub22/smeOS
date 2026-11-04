@@ -22,6 +22,8 @@
 
 import React, { useEffect, useState } from "react"
 import { MessageSquareText, Check, X, AlertCircle, CheckCircle2 } from "@/components/ui/icons"
+import { Button } from "@/components/ui/button"
+import { Textarea } from "@/components/ui/textarea"
 import { SkeletonBlock } from "@/components/ui/skeleton"
 import { errorText } from "@/lib/error-text"
 
@@ -119,13 +121,13 @@ export function GreetingLineOverrideForm() {
   return (
     <div className="space-y-6">
       {successMessage && (
-        <div className="flex items-center gap-2.5 rounded-2xl border border-success/30 bg-success/10 p-4 text-xs sm:text-sm font-medium text-success shadow-xs">
+        <div className="flex items-center gap-2.5 rounded-2xl border border-success/30 bg-success/10 p-4 text-body-sm font-medium text-success shadow-xs">
           <CheckCircle2 size={18} className="text-success flex-shrink-0" />
           <span>{successMessage}</span>
         </div>
       )}
       {error && (
-        <div className="flex items-center gap-2.5 rounded-2xl border border-danger/30 bg-danger/10 p-4 text-xs sm:text-sm font-medium text-danger shadow-xs">
+        <div className="flex items-center gap-2.5 rounded-2xl border border-danger/30 bg-danger/10 p-4 text-body-sm font-medium text-danger-text shadow-xs">
           <AlertCircle size={18} className="text-danger flex-shrink-0" />
           <span>{error}</span>
         </div>
@@ -137,8 +139,8 @@ export function GreetingLineOverrideForm() {
             <MessageSquareText size={18} />
           </div>
           <div>
-            <h3 className="text-sm font-bold text-text">Câu chào mở đầu kịch bản Zalo</h3>
-            <p className="text-xs text-text-muted">
+            <h3 className="text-body-sm font-bold text-text">Câu chào mở đầu kịch bản Zalo</h3>
+            <p className="text-caption text-text-muted">
               Tuỳ chọn — thêm một câu chào riêng của cửa hàng vào đầu mỗi kịch bản tư vấn Zalo tự động (trước
               dòng &quot;[THÔNG TIN SẢN PHẨM]&quot;). Để trống thì dùng mặc định hệ thống, không có dòng chào riêng.
             </p>
@@ -149,36 +151,38 @@ export function GreetingLineOverrideForm() {
           <div className="py-4"><SkeletonBlock lines={2} /></div>
         ) : (
           <>
-            <textarea
+            <Textarea
               value={value}
               onChange={(e) => setValue(e.target.value)}
               maxLength={MAX_LENGTH}
               rows={2}
               placeholder="VD: Chào mừng quý khách đến với SiiN Store! 🌸"
-              className="w-full rounded-xl border border-border bg-surface px-3.5 py-2.5 text-xs sm:text-sm text-text transition-all focus:border-primary focus:outline-none resize-none"
+              className="resize-none text-body-sm"
             />
             <div className="flex items-center justify-between mt-2">
               <span className="text-caption text-text-muted">{value.length}/{MAX_LENGTH} ký tự</span>
               <div className="flex items-center gap-2">
                 {hasOverride && (
-                  <button
+                  <Button
                     type="button"
+                    variant="outline"
+                    size="sm"
                     onClick={handleClear}
                     disabled={saving}
-                    className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-border text-text-muted text-xs sm:text-sm font-semibold hover:text-danger hover:border-danger/30 transition-colors disabled:opacity-60"
+                    className="flex items-center gap-1.5"
                   >
                     <X size={14} />
                     <span>Xoá, dùng mặc định</span>
-                  </button>
+                  </Button>
                 )}
-                <button
+                <Button
                   type="submit"
                   disabled={saving || !value.trim()}
-                  className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-primary text-white text-xs sm:text-sm font-bold shadow-md hover:bg-primary/95 transition-all disabled:opacity-60"
+                  className="flex items-center gap-1.5"
                 >
                   <Check size={15} />
                   <span>{saving ? "Đang lưu..." : "Lưu câu chào"}</span>
-                </button>
+                </Button>
               </div>
             </div>
           </>

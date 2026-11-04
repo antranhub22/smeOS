@@ -2,6 +2,8 @@
 
 import React, { useState } from "react"
 import { ChevronDown, Sliders } from "@/components/ui/icons"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import { BACKGROUND_PRESETS, ASPECT_RATIO_OPTIONS } from "@/modules/product-photo-studio/domain/preset-catalog"
 
 export interface PresetSelectorProps {
@@ -25,11 +27,12 @@ export function PresetSelector({
 
   return (
     <div className="border border-border rounded-2xl bg-surface shadow-xs overflow-hidden transition-all">
-      <button
+      <Button
         type="button"
+        variant="ghost"
         onClick={() => setIsOpen(!isOpen)}
         aria-expanded={isOpen}
-        className="w-full px-5 py-3.5 flex items-center justify-between text-left hover:bg-surface-alt/60 transition-colors cursor-pointer"
+        className="w-full px-5 py-3.5 h-auto flex items-center justify-between text-left hover:bg-surface-alt/60 transition-colors cursor-pointer rounded-none"
       >
         <div className="flex items-center gap-2.5">
           <Sliders className="w-4 h-4 text-text-muted" />
@@ -43,7 +46,7 @@ export function PresetSelector({
         <ChevronDown
           className={`w-4 h-4 text-text-muted transition-transform ${isOpen ? "rotate-180" : ""}`}
         />
-      </button>
+      </Button>
 
       {isOpen && (
         <div className="p-5 border-t border-border space-y-5 bg-surface-alt/20">
@@ -55,12 +58,13 @@ export function PresetSelector({
               {BACKGROUND_PRESETS.map((p) => {
                 const isSelected = selectedPreset === p.id
                 return (
-                  <button
+                  <Button
                     key={p.id}
                     type="button"
+                    variant="ghost"
                     onClick={() => onPresetChange(p.id)}
                     aria-pressed={isSelected}
-                    className={`p-3 rounded-xl border text-left transition-all flex items-start gap-3 cursor-pointer ${
+                    className={`p-3 h-auto rounded-xl border text-left transition-all flex items-start gap-3 cursor-pointer whitespace-normal w-full ${
                       isSelected
                         ? "border-primary bg-primary-subtle ring-1 ring-primary shadow-xs"
                         : "border-border bg-surface hover:border-primary/40"
@@ -74,7 +78,7 @@ export function PresetSelector({
                       <div className="text-body-sm font-semibold text-text">{p.name}{isSelected && <span className="ml-1 text-primary" aria-hidden="true">✓</span>}</div>
                       <div className="text-caption text-text-muted line-clamp-1">{p.description}</div>
                     </div>
-                  </button>
+                  </Button>
                 )
               })}
             </div>
@@ -88,19 +92,21 @@ export function PresetSelector({
               {ASPECT_RATIO_OPTIONS.map((r) => {
                 const isSelected = selectedRatio === r.id
                 return (
-                  <button
+                  <Button
                     key={r.id}
                     type="button"
+                    variant="ghost"
+                    size="sm"
                     onClick={() => onRatioChange(r.id)}
                     aria-pressed={isSelected}
-                    className={`py-2 px-3 rounded-xl border text-center transition-all cursor-pointer ${
+                    className={`py-2 px-3 h-auto rounded-xl border text-center transition-all cursor-pointer whitespace-normal ${
                       isSelected
                         ? "border-primary bg-primary-subtle font-semibold text-primary ring-1 ring-primary"
                         : "border-border bg-surface text-text hover:border-primary/40 text-caption"
                     }`}
                   >
                     <div className="text-caption font-semibold">{isSelected && <span aria-hidden="true">✓ </span>}{r.label}</div>
-                  </button>
+                  </Button>
                 )
               })}
             </div>
@@ -110,12 +116,12 @@ export function PresetSelector({
             <label className="block text-caption font-bold text-text uppercase tracking-wider mb-1.5">
               Ghi chú bổ sung cho trợ lý AI (Tùy chọn)
             </label>
-            <input
+            <Input
               type="text"
               value={customNote}
               onChange={(e) => onCustomNoteChange(e.target.value)}
               placeholder="Ví dụ: làm sáng hơn ở bên phải, nền ánh kem nhẹ ấm áp..."
-              className="w-full text-caption rounded-xl border border-border px-3.5 py-2.5 bg-surface focus:outline-hidden focus:ring-1 focus:ring-primary focus:border-primary text-text"
+              className="w-full text-caption h-10"
             />
           </div>
         </div>

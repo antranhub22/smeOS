@@ -5,6 +5,7 @@ import { Calendar, Layers, Clock, CheckCircle2, Plus, Trash2, ShieldCheck, Alert
 import { Card } from "@/components/ui/card"
 import { BlockedDatesEditor } from "./blocked-dates-editor"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import {
   type AvailabilityMode,
   type AvailabilityConfig,
@@ -91,7 +92,7 @@ export function ProductAvailabilityCard({
       <div className="flex items-center justify-between border-b border-border pb-3">
         <div className="flex items-center gap-2">
           <Calendar size={18} className="text-primary" />
-          <span className="text-body font-bold text-foreground">Cơ chế Khả dụng & Đặt hàng</span>
+          <span className="text-body font-bold text-text">Cơ chế Khả dụng & Đặt hàng</span>
         </div>
         <span className="text-caption px-2.5 py-0.5 rounded-full bg-surface-muted text-text-muted font-medium">
           Ngành: {industryKey || "Mặc định"}
@@ -104,9 +105,10 @@ export function ProductAvailabilityCard({
           const Icon = m.icon
           const isSelected = config.mode === m.key
           return (
-            <button
+            <Button
               key={m.key}
               type="button"
+              variant="outline"
               disabled={!canEdit || saving}
               onClick={() => {
                 if (m.key === "BOOKING_CALENDAR") {
@@ -126,18 +128,18 @@ export function ProductAvailabilityCard({
                   setConfig({ mode: "STOCK_QUANTITY", maxQuantity: null })
                 }
               }}
-              className={`p-3 rounded-xl border text-left transition flex flex-col gap-1 ${
+              className={`p-3 h-auto rounded-xl border text-left transition flex flex-col items-start gap-1 justify-start ${
                 isSelected
                   ? "border-primary bg-primary/5 ring-1 ring-primary/30"
-                  : "border-border bg-background hover:bg-surface-muted/30"
+                  : "border-border bg-surface hover:bg-surface-muted/30"
               }`}
             >
-              <div className="flex items-center gap-2 font-bold text-body-sm text-foreground">
+              <div className="flex items-center gap-2 font-bold text-body-sm text-text">
                 <Icon size={16} className={isSelected ? "text-primary" : "text-text-muted"} />
                 <span>{m.label}</span>
               </div>
-              <p className="text-caption text-text-muted leading-tight">{m.desc}</p>
-            </button>
+              <p className="text-caption text-text-muted leading-tight font-normal whitespace-normal">{m.desc}</p>
+            </Button>
           )
         })}
       </div>
@@ -150,8 +152,8 @@ export function ProductAvailabilityCard({
           </div>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label className="block text-caption font-bold text-foreground mb-1">Số đêm tối thiểu</label>
-              <input
+              <label className="block text-caption font-bold text-text mb-1">Số đêm tối thiểu</label>
+              <Input
                 type="number"
                 min={1}
                 max={30}
@@ -160,14 +162,14 @@ export function ProductAvailabilityCard({
                 onChange={(e) =>
                   setConfig({ ...config, minNights: Math.max(1, parseInt(e.target.value) || 1) })
                 }
-                className="w-full h-9 px-3 rounded-lg border border-border bg-background text-body-sm font-semibold"
+                className="w-full h-9 px-3 text-body-sm font-semibold"
               />
             </div>
             <div>
-              <label className="block text-caption font-bold text-foreground mb-1">
+              <label className="block text-caption font-bold text-text mb-1">
                 Đặt trước tối thiểu (ngày)
               </label>
-              <input
+              <Input
                 type="number"
                 min={0}
                 max={30}
@@ -176,7 +178,7 @@ export function ProductAvailabilityCard({
                 onChange={(e) =>
                   setConfig({ ...config, leadDays: Math.max(0, parseInt(e.target.value) || 0) })
                 }
-                className="w-full h-9 px-3 rounded-lg border border-border bg-background text-body-sm font-semibold"
+                className="w-full h-9 px-3 text-body-sm font-semibold"
               />
             </div>
           </div>
@@ -187,14 +189,14 @@ export function ProductAvailabilityCard({
       {/* Cấu hình chi tiết cho DAILY_CAPACITY */}
       {config.mode === "DAILY_CAPACITY" && (
         <div className="p-4 rounded-xl border border-border bg-surface-muted/30 flex flex-col gap-3">
-          <div className="text-caption font-bold uppercase tracking-wider text-foreground">
+          <div className="text-caption font-bold uppercase tracking-wider text-text">
             Khống chế Năng lực Chế tác Mỗi Ngày
           </div>
           <div>
-            <label className="block text-caption font-bold text-foreground mb-1">
+            <label className="block text-caption font-bold text-text mb-1">
               Số đơn tối đa nhận trong 1 ngày
             </label>
-            <input
+            <Input
               type="number"
               min={1}
               max={100}
@@ -203,7 +205,7 @@ export function ProductAvailabilityCard({
               onChange={(e) =>
                 setConfig({ ...config, maxOrdersPerDay: Math.max(1, parseInt(e.target.value) || 1) })
               }
-              className="w-full sm:w-48 h-9 px-3 rounded-lg border border-border bg-background text-body-sm font-semibold"
+              className="w-full sm:w-48 h-9 px-3 text-body-sm font-semibold"
             />
             <span className="text-caption text-text-muted mt-1 block">
               Vượt quá số lượng này trong ngày, form sẽ báo kín đơn và đề xuất khách chuyển sang ngày khác.

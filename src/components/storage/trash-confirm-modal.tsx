@@ -1,8 +1,9 @@
 "use client"
 
 import React, { useState } from "react"
-import { AlertTriangle, Trash2, X, Clock, ShieldCheck, Loader2 } from "@/components/ui/icons"
+import { AlertTriangle, Trash2, Clock, ShieldCheck, Loader2 } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
+import { Dialog } from "@/components/ui/dialog"
 
 export interface TrashConfirmTarget {
   id: string
@@ -46,33 +47,29 @@ export function TrashConfirmModal({ target, onClose, onConfirm }: TrashConfirmMo
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4 animate-in fade-in duration-150">
-      <div className="w-full max-w-md bg-surface rounded-3xl border border-border p-6 shadow-2xl flex flex-col gap-5">
-        {/* Header */}
-        <div className="flex items-start justify-between gap-3">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-2xl bg-danger-bg text-danger flex items-center justify-center shrink-0">
-              <Trash2 size={20} />
-            </div>
-            <div>
-              <h3 className="text-body font-black text-foreground truncate max-w-xs">
-                Chuyển “{target.name}” vào thùng rác?
-              </h3>
-              <span className="text-caption text-text-muted font-bold">
-                Quyền Điều Hành • Lưu trữ 30 ngày
-              </span>
-            </div>
+    <Dialog
+      open={Boolean(target)}
+      onOpenChange={(open) => {
+        if (!open) onClose()
+      }}
+      title={
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-2xl bg-danger-bg text-danger flex items-center justify-center shrink-0">
+            <Trash2 size={20} />
           </div>
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label="Đóng hộp thoại"
-            className="p-1 rounded-xl text-text-muted hover:text-foreground hover:bg-surface-hover transition-colors"
-          >
-            <X size={18} />
-          </button>
+          <div className="min-w-0">
+            <span className="text-body font-black text-text truncate max-w-xs block">
+              Chuyển “{target.name}” vào thùng rác?
+            </span>
+            <span className="text-caption text-text-muted font-bold block">
+              Quyền Điều Hành • Lưu trữ 30 ngày
+            </span>
+          </div>
         </div>
-
+      }
+      size="sm"
+    >
+      <div className="flex flex-col gap-5">
         {/* Target preview card */}
         <div className="flex items-center gap-3.5 p-3.5 rounded-2xl bg-surface border border-border">
           {target.imageUrl ? (
@@ -90,7 +87,7 @@ export function TrashConfirmModal({ target, onClose, onConfirm }: TrashConfirmMo
             <span className="text-caption px-2 py-0.5 rounded-md bg-surface-alt text-text-muted font-bold">
               {typeLabel}
             </span>
-            <p className="text-body-sm font-extrabold text-foreground truncate mt-1" title={target.name}>
+            <p className="text-body-sm font-extrabold text-text truncate mt-1" title={target.name}>
               {target.name}
             </p>
             {target.code && (
@@ -100,7 +97,7 @@ export function TrashConfirmModal({ target, onClose, onConfirm }: TrashConfirmMo
         </div>
 
         {/* Policy Notice Box */}
-        <div className="p-3.5 rounded-2xl bg-warning-bg border border-warning/30 text-caption text-foreground space-y-1.5">
+        <div className="p-3.5 rounded-2xl bg-warning-bg border border-warning/30 text-caption text-text space-y-1.5">
           <div className="flex items-center gap-1.5 font-bold text-warning">
             <Clock size={14} />
             <span>Chính sách lưu trữ an toàn 30 ngày</span>
@@ -147,6 +144,6 @@ export function TrashConfirmModal({ target, onClose, onConfirm }: TrashConfirmMo
           </Button>
         </div>
       </div>
-    </div>
+    </Dialog>
   )
 }

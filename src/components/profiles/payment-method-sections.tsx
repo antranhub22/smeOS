@@ -8,6 +8,16 @@ import {
   Store,
   Smartphone,
 } from "@/components/ui/icons"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import { Input } from "@/components/ui/input"
+import { Checkbox } from "@/components/ui/checkbox"
+import { Switch } from "@/components/ui/switch"
 import type {
   StorePaymentMethodsConfig,
   CardProviderKey,
@@ -29,64 +39,53 @@ export function BankTransferSection({ config, updateConfig }: SectionProps) {
             <Landmark size={18} />
           </div>
           <div>
-            <h3 className="text-sm font-bold text-text">1. Chuyển khoản ngân hàng (VietQR)</h3>
+            <h3 className="text-body-sm font-bold text-text">1. Chuyển khoản ngân hàng (VietQR)</h3>
             <p className="text-caption text-text-muted">Tự động sinh mã VietQR động theo đơn hàng</p>
           </div>
         </div>
-        <label className="relative inline-flex items-center cursor-pointer">
-          <input
-            type="checkbox"
-            checked={config.enableVietQr}
-            onChange={(e) => updateConfig({ enableVietQr: e.target.checked })}
-            className="sr-only peer"
-          />
-          <div className="w-10 h-6 bg-surface-alt peer-focus:outline-hidden rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-border after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary" />
-        </label>
+        <Switch
+          checked={config.enableVietQr}
+          onCheckedChange={(checked) => updateConfig({ enableVietQr: checked })}
+          aria-label="Bật VietQR"
+        />
       </div>
 
       {config.enableVietQr && (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3.5 pt-1">
           <div className="space-y-1">
             <label className="text-caption font-bold text-text">Mã ngân hàng (VietQR)</label>
-            <input
-              type="text"
+            <Input
               value={config.bankId}
               onChange={(e) => updateConfig({ bankId: e.target.value.toUpperCase() })}
               placeholder="VD: VCB, MB, TCB, ACB, TPB..."
-              className="w-full h-10 px-3 text-xs rounded-xl border border-border bg-background text-text focus:ring-1 focus:ring-primary"
             />
           </div>
 
           <div className="space-y-1">
             <label className="text-caption font-bold text-text">Tên ngân hàng hiển thị</label>
-            <input
-              type="text"
+            <Input
               value={config.bankName}
               onChange={(e) => updateConfig({ bankName: e.target.value })}
               placeholder="VD: Vietcombank, Ngân hàng Quân Đội..."
-              className="w-full h-10 px-3 text-xs rounded-xl border border-border bg-background text-text focus:ring-1 focus:ring-primary"
             />
           </div>
 
           <div className="space-y-1">
             <label className="text-caption font-bold text-text">Số tài khoản nhận tiền</label>
-            <input
-              type="text"
+            <Input
               value={config.accountNo}
               onChange={(e) => updateConfig({ accountNo: e.target.value })}
               placeholder="VD: 0071001234567"
-              className="w-full h-10 px-3 text-xs rounded-xl border border-border bg-background text-text focus:ring-1 focus:ring-primary"
             />
           </div>
 
           <div className="space-y-1">
             <label className="text-caption font-bold text-text">Tên chủ tài khoản</label>
-            <input
-              type="text"
+            <Input
               value={config.accountName}
               onChange={(e) => updateConfig({ accountName: e.target.value.toUpperCase() })}
               placeholder="VD: NGUYEN VAN A"
-              className="w-full h-10 px-3 text-xs rounded-xl border border-border bg-background text-text focus:ring-1 focus:ring-primary uppercase"
+              className="uppercase"
             />
           </div>
         </div>
@@ -105,41 +104,35 @@ export function CodPaymentSection({ config, updateConfig }: SectionProps) {
             <Truck size={18} />
           </div>
           <div>
-            <h3 className="text-sm font-bold text-text">2. Tiền mặt khi nhận hàng (COD)</h3>
+            <h3 className="text-body-sm font-bold text-text">2. Tiền mặt khi nhận hàng (COD)</h3>
             <p className="text-caption text-text-muted">Shipper thu tiền mặt khi giao hàng tận nơi</p>
           </div>
         </div>
-        <label className="relative inline-flex items-center cursor-pointer">
-          <input
-            type="checkbox"
-            checked={config.enableCod}
-            onChange={(e) => updateConfig({ enableCod: e.target.checked })}
-            className="sr-only peer"
-          />
-          <div className="w-10 h-6 bg-surface-alt peer-focus:outline-hidden rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-border after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary" />
-        </label>
+        <Switch
+          checked={config.enableCod}
+          onCheckedChange={(checked) => updateConfig({ enableCod: checked })}
+          aria-label="Bật COD"
+        />
       </div>
 
       {config.enableCod && (
         <div className="space-y-3 pt-1">
-          <label className="flex items-center gap-2 text-xs font-semibold text-text cursor-pointer">
-            <input
-              type="checkbox"
+          <label className="flex items-center gap-2 text-body-sm font-semibold text-text cursor-pointer">
+            <Checkbox
               checked={config.codRequiresDeposit}
-              onChange={(e) => updateConfig({ codRequiresDeposit: e.target.checked })}
-              className="rounded border-border text-primary focus:ring-primary"
+              onCheckedChange={(checked) => updateConfig({ codRequiresDeposit: checked === true })}
             />
             <span>Yêu cầu đặt cọc trước (khách cọc theo tỷ lệ ở mục 4, phần còn lại thu COD khi giao)</span>
           </label>
 
           <div className="flex flex-col sm:flex-row sm:items-center gap-2">
-            <span className="text-xs text-text-muted">Áp dụng COD cho đơn tối đa:</span>
-            <input
+            <span className="text-body-sm text-text-muted">Áp dụng COD cho đơn tối đa:</span>
+            <Input
               type="number"
               value={config.codMaxVnd ?? ""}
               onChange={(e) => updateConfig({ codMaxVnd: e.target.value ? Number(e.target.value) : null })}
               placeholder="Để trống = Không giới hạn"
-              className="w-56 h-9 px-3 text-xs rounded-xl border border-border bg-background text-text"
+              className="w-56"
             />
             <span className="text-caption text-text-muted">VNĐ (Đơn trên mức này bắt buộc thanh toán 100%)</span>
           </div>
@@ -159,44 +152,42 @@ export function InternationalCardSection({ config, updateConfig }: SectionProps)
             <CreditCard size={18} />
           </div>
           <div>
-            <h3 className="text-sm font-bold text-text">3. Cổng thanh toán thẻ quốc tế (Visa / Mastercard)</h3>
+            <h3 className="text-body-sm font-bold text-text">3. Cổng thanh toán thẻ quốc tế (Visa / Mastercard)</h3>
             <p className="text-caption text-text-muted">Phục vụ khách hàng Việt kiều & quốc tế thanh toán từ xa</p>
           </div>
         </div>
-        <label className="relative inline-flex items-center cursor-pointer">
-          <input
-            type="checkbox"
-            checked={config.enableCard}
-            onChange={(e) => updateConfig({ enableCard: e.target.checked })}
-            className="sr-only peer"
-          />
-          <div className="w-10 h-6 bg-surface-alt peer-focus:outline-hidden rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-border after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary" />
-        </label>
+        <Switch
+          checked={config.enableCard}
+          onCheckedChange={(checked) => updateConfig({ enableCard: checked })}
+          aria-label="Bật thanh toán thẻ"
+        />
       </div>
 
       {config.enableCard && (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
           <div className="space-y-1">
             <label className="text-caption font-bold text-text">Nhà cung cấp cổng thanh toán</label>
-            <select
+            <Select
               value={config.cardProvider}
-              onChange={(e) => updateConfig({ cardProvider: e.target.value as CardProviderKey })}
-              className="w-full h-10 px-3 text-xs rounded-xl border border-border bg-surface text-text"
+              onValueChange={(val) => updateConfig({ cardProvider: val as CardProviderKey })}
             >
-              <option value="ONEPAY">OnePay (Hỗ trợ Visa, Master, JCB, Napas)</option>
-              <option value="VNPAY">VNPay Gateway (Cổng thanh toán quốc tế & QR)</option>
-              <option value="STRIPE">Stripe (Dành cho tài khoản doanh nghiệp quốc tế)</option>
-              <option value="CUSTOM">Cổng liên kết đối tác riêng</option>
-            </select>
+              <SelectTrigger aria-label="Nhà cung cấp cổng thanh toán" className="w-full">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="ONEPAY">OnePay (Hỗ trợ Visa, Master, JCB, Napas)</SelectItem>
+                <SelectItem value="VNPAY">VNPay Gateway (Cổng thanh toán quốc tế & QR)</SelectItem>
+                <SelectItem value="STRIPE">Stripe (Dành cho tài khoản doanh nghiệp quốc tế)</SelectItem>
+                <SelectItem value="CUSTOM">Cổng liên kết đối tác riêng</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
           <div className="space-y-1 sm:col-span-2">
             <label className="text-caption font-bold text-text">Hướng dẫn / Cam kết hiển thị cho khách</label>
-            <input
-              type="text"
+            <Input
               value={config.cardInstructions}
               onChange={(e) => updateConfig({ cardInstructions: e.target.value })}
-              className="w-full h-10 px-3 text-xs rounded-xl border border-border bg-surface text-text"
             />
           </div>
         </div>
@@ -216,29 +207,24 @@ export function InStoreAndEWalletSection({ config, updateConfig }: SectionProps)
               <Store size={18} />
             </div>
             <div>
-              <h3 className="text-sm font-bold text-text">4. Thanh toán tại cửa hàng khi nhận hàng</h3>
+              <h3 className="text-body-sm font-bold text-text">4. Thanh toán tại cửa hàng khi nhận hàng</h3>
               <p className="text-caption text-text-muted">Áp dụng cho khách đến lấy trực tiếp tại shop</p>
             </div>
           </div>
-          <label className="relative inline-flex items-center cursor-pointer">
-            <input
-              type="checkbox"
-              checked={config.enableInStore}
-              onChange={(e) => updateConfig({ enableInStore: e.target.checked })}
-              className="sr-only peer"
-            />
-            <div className="w-10 h-6 bg-surface-alt peer-focus:outline-hidden rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-border after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary" />
-          </label>
+          <Switch
+            checked={config.enableInStore}
+            onCheckedChange={(checked) => updateConfig({ enableInStore: checked })}
+            aria-label="Bật thanh toán tại cửa hàng"
+          />
         </div>
 
         {config.enableInStore && (
           <div className="space-y-1 pt-1">
             <label className="text-caption font-bold text-text">Hướng dẫn thanh toán tại quầy</label>
-            <input
-              type="text"
+            <Input
+              aria-label="Hướng dẫn thanh toán tại quầy"
               value={config.inStoreInstructions}
               onChange={(e) => updateConfig({ inStoreInstructions: e.target.value })}
-              className="w-full h-10 px-3 text-xs rounded-xl border border-border bg-surface text-text"
             />
           </div>
         )}
@@ -251,44 +237,42 @@ export function InStoreAndEWalletSection({ config, updateConfig }: SectionProps)
               <Smartphone size={18} />
             </div>
             <div>
-              <h3 className="text-sm font-bold text-text">5. Ví điện tử (MoMo / ZaloPay)</h3>
+              <h3 className="text-body-sm font-bold text-text">5. Ví điện tử (MoMo / ZaloPay)</h3>
               <p className="text-caption text-text-muted">Nhận tiền qua số điện thoại ví điện tử</p>
             </div>
           </div>
-          <label className="relative inline-flex items-center cursor-pointer">
-            <input
-              type="checkbox"
-              checked={config.enableEWallet}
-              onChange={(e) => updateConfig({ enableEWallet: e.target.checked })}
-              className="sr-only peer"
-            />
-            <div className="w-10 h-6 bg-surface-alt peer-focus:outline-hidden rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-border after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary" />
-          </label>
+          <Switch
+            checked={config.enableEWallet}
+            onCheckedChange={(checked) => updateConfig({ enableEWallet: checked })}
+            aria-label="Bật ví điện tử"
+          />
         </div>
 
         {config.enableEWallet && (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
             <div className="space-y-1">
               <label className="text-caption font-bold text-text">Loại ví</label>
-              <select
+              <Select
                 value={config.eWalletProvider}
-                onChange={(e) => updateConfig({ eWalletProvider: e.target.value as EWalletProviderKey })}
-                className="w-full h-10 px-3 text-xs rounded-xl border border-border bg-background text-text"
+                onValueChange={(val) => updateConfig({ eWalletProvider: val as EWalletProviderKey })}
               >
-                <option value="MOMO">Ví MoMo</option>
-                <option value="ZALOPAY">ZaloPay</option>
-                <option value="VNPAY">VNPay Ví</option>
-              </select>
+                <SelectTrigger aria-label="Loại ví" className="w-full">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="MOMO">Ví MoMo</SelectItem>
+                  <SelectItem value="ZALOPAY">ZaloPay</SelectItem>
+                  <SelectItem value="VNPAY">VNPay Ví</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
 
             <div className="space-y-1">
               <label className="text-caption font-bold text-text">Số điện thoại nhận tiền</label>
-              <input
-                type="text"
+              <Input
                 value={config.eWalletPhone}
                 onChange={(e) => updateConfig({ eWalletPhone: e.target.value })}
                 placeholder="VD: 0908123456"
-                className="w-full h-10 px-3 text-xs rounded-xl border border-border bg-background text-text"
               />
             </div>
           </div>

@@ -3,8 +3,8 @@ import Link from "next/link"
 export default function RootNotFound() {
   return (
     <div className="flex flex-col items-center justify-center min-h-[50vh] p-6 text-center max-w-md mx-auto">
-      <h2 className="text-xl font-bold text-text mb-2">Không tìm thấy trang</h2>
-      <p className="text-sm text-text-muted mb-6">
+      <h2 className="text-title font-bold text-text mb-2">Không tìm thấy trang</h2>
+      <p className="text-body-sm text-text-muted mb-6">
         Trang bạn đang tìm kiếm không tồn tại hoặc đã được di chuyển.
       </p>
       <Link

@@ -3,6 +3,7 @@
 import React, { useState } from "react"
 import type { PrintPreset } from "@/modules/print/domain/print-preset"
 import { Eye, Scissors, QrCode } from "@/components/ui/icons"
+import { Button } from "@/components/ui/button"
 
 export interface PrintPreviewCanvasProps {
   preset: PrintPreset
@@ -46,15 +47,17 @@ export function PrintPreviewCanvas({
           </span>
         </div>
 
-        <button
+        <Button
           type="button"
+          variant="outline"
+          size="sm"
           onClick={() => setShowGuidelines(!showGuidelines)}
-          className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg border border-border bg-surface text-caption text-text-muted hover:text-text transition-colors"
+          className="h-8 gap-1.5 text-caption"
           title="Bật/Tắt đường hướng dẫn kỹ thuật"
         >
           <Eye className="w-3.5 h-3.5" />
           <span>{showGuidelines ? "Ẩn lưới canh" : "Hiện lưới canh"}</span>
-        </button>
+        </Button>
       </div>
 
       {/* Vùng canvas mô phỏng bản in */}

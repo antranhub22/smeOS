@@ -4,6 +4,8 @@ import React from "react"
 import { FileText, Plus, Trash2 } from "@/components/ui/icons"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { NativeSelect } from "@/components/ui/select"
 import { FLOWER_ROLES, type FlowerItem } from "./ai-product-helpers"
 
 interface AiProductBomSectionProps {
@@ -60,58 +62,60 @@ export function AiProductBomSection({ flowers, onChange }: AiProductBomSectionPr
             className="grid grid-cols-12 gap-2.5 items-center rounded-xl border border-border bg-surface-alt/40 p-2.5"
           >
             <div className="col-span-12 sm:col-span-4">
-              <input
+              <Input
                 type="text"
                 value={item.name}
                 onChange={(e) => handleUpdateFlower(item.id, "name", e.target.value)}
                 placeholder="Tên loài hoa (VD: Hoa hồng đỏ)"
-                className="h-9 w-full rounded-lg border border-border bg-surface px-3 text-body-sm outline-none focus:border-primary"
+                className="h-9"
               />
             </div>
 
             <div className="col-span-4 sm:col-span-2">
-              <input
+              <Input
                 type="number"
                 min={1}
                 value={item.quantity}
                 onChange={(e) => handleUpdateFlower(item.id, "quantity", Number(e.target.value) || 1)}
-                className="h-9 w-full rounded-lg border border-border bg-surface px-2.5 text-body-sm text-center outline-none focus:border-primary"
+                className="h-9 text-center"
               />
             </div>
 
             <div className="col-span-4 sm:col-span-2">
-              <input
+              <Input
                 type="text"
                 value={item.unit}
                 onChange={(e) => handleUpdateFlower(item.id, "unit", e.target.value)}
                 placeholder="cành"
-                className="h-9 w-full rounded-lg border border-border bg-surface px-2.5 text-body-sm text-center outline-none focus:border-primary"
+                className="h-9 text-center"
               />
             </div>
 
             <div className="col-span-4 sm:col-span-2">
-              <select
+              <NativeSelect
                 value={item.role}
                 onChange={(e) => handleUpdateFlower(item.id, "role", e.target.value)}
-                className="h-9 w-full rounded-lg border border-border bg-surface px-2 text-body-sm outline-none focus:border-primary"
+                className="h-9"
               >
                 {FLOWER_ROLES.map((r) => (
                   <option key={r} value={r}>
                     {r}
                   </option>
                 ))}
-              </select>
+              </NativeSelect>
             </div>
 
             <div className="col-span-12 sm:col-span-2 flex items-center justify-end">
-              <button
+              <Button
                 type="button"
+                variant="ghost"
+                size="icon"
                 onClick={() => handleRemoveFlower(item.id)}
                 aria-label="Xoá thành phần hoa"
-                className="flex h-9 w-9 items-center justify-center rounded-lg text-text-muted hover:text-danger hover:bg-danger-bg transition-colors"
+                className="h-9 w-9 text-text-muted hover:text-danger hover:bg-danger-bg"
               >
                 <Trash2 size={16} />
-              </button>
+              </Button>
             </div>
           </div>
         ))}

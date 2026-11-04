@@ -49,7 +49,7 @@ export function ChainGovernanceSection() {
   return (
     <section aria-label="Quản trị cửa hàng thành viên" className="space-y-3">
       <h2 className="text-title font-bold text-text">Quản trị cửa hàng thành viên</h2>
-      <p className="text-sm text-text-muted">
+      <p className="text-body-sm text-text-muted">
         Chọn cửa hàng trong chuỗi được tự kết nối, bắt buộc dùng kết nối của chuỗi, hay không được dùng. Thay đổi áp ngay cho mọi cửa hàng đang liên kết.
       </p>
       {error && <InlineError message={error} />}

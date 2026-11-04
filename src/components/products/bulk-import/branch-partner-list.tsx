@@ -2,6 +2,7 @@
 
 import React, { useState } from "react"
 import { Bot, Loader2, MessageCircle, Phone, Store } from "@/components/ui/icons"
+import { Button } from "@/components/ui/button"
 import { apiSend, useApi } from "@/components/greeting-card/greeting-api"
 
 export const BRANCH_LIST_URL = "/api/v1/greeting-card/chain-branches"
@@ -43,7 +44,7 @@ export function BranchPartnerList() {
   return (
     <div className="flex flex-col gap-3">
       <div>
-        <h3 className="text-body font-extrabold text-foreground flex items-center gap-2">
+        <h3 className="text-body font-extrabold text-text flex items-center gap-2">
           <Store size={18} className="text-primary" /> Đối tác đang có trong hệ thống ({branches.length})
         </h3>
         <p className="text-caption text-text-muted">
@@ -71,7 +72,7 @@ export function BranchPartnerList() {
               }`}
             >
               <div className="min-w-0">
-                <div className="text-body-sm font-bold text-foreground">
+                <div className="text-body-sm font-bold text-text">
                   {b.name} <span className="font-mono text-caption text-text-muted">[{b.branchCode}]</span>
                 </div>
                 {b.address && <div className="text-caption text-text-muted truncate">{b.address}</div>}
@@ -92,19 +93,21 @@ export function BranchPartnerList() {
                   )}
                 </div>
               </div>
-              <button
+              <Button
                 type="button"
+                variant="outline"
+                size="sm"
                 role="switch"
                 aria-checked={b.isActive}
                 disabled={saving === b.branchCode}
                 onClick={() => toggle(b)}
                 className={`shrink-0 inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-caption font-bold border disabled:opacity-50 ${
-                  b.isActive ? "bg-success-bg text-success border-success-border" : "bg-surface text-text-muted border-border"
+                  b.isActive ? "bg-success-bg text-success border-success-border hover:bg-success-bg/80" : "bg-surface text-text-muted border-border hover:bg-surface-alt"
                 }`}
               >
                 {saving === b.branchCode ? <Loader2 size={12} className="animate-spin motion-reduce:animate-none" /> : null}
                 {b.isActive ? "Hoạt động" : "Tạm dừng"}
-              </button>
+              </Button>
             </div>
           ))}
         </div>

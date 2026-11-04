@@ -2,6 +2,7 @@
 
 import React from "react"
 import { ArrowLeft, Loader2, AlertCircle, ArrowRight, RefreshCw } from "@/components/ui/icons"
+import { Button } from "@/components/ui/button"
 import { NextActions, type NextActionItem } from "./next-actions"
 
 interface ActionContractWrapperProps {
@@ -41,14 +42,16 @@ export function ActionContractWrapper({
       <div className="flex items-center justify-between pb-4 border-b border-border bg-surface px-4 py-3 rounded-xl">
         <div className="flex items-center gap-3">
           {onBack && (
-            <button
+            <Button
               type="button"
+              variant="outline"
+              size="sm"
               onClick={onBack}
-              className="inline-flex items-center justify-center w-9 h-9 rounded-lg border border-border bg-surface hover:bg-surface-alt text-text transition-colors cursor-pointer"
+              className="w-9 h-9 p-0"
               title="Quay lại"
             >
               <ArrowLeft className="w-4 h-4" aria-hidden="true" />
-            </button>
+            </Button>
           )}
           <div>
             <h2 className="text-title font-bold text-text">
@@ -86,14 +89,16 @@ export function ActionContractWrapper({
             </div>
           </div>
           {onRetry && (
-            <button
+            <Button
               type="button"
+              variant="outline"
+              size="sm"
               onClick={onRetry}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface border border-danger text-body-sm font-bold text-danger hover:bg-danger-bg transition-colors shrink-0 cursor-pointer"
+              className="gap-1.5 border-danger text-danger hover:bg-danger-bg shrink-0"
             >
               <RefreshCw className="w-3.5 h-3.5" aria-hidden="true" />
               <span>Thử lại</span>
-            </button>
+            </Button>
           )}
         </div>
       )}
@@ -105,14 +110,15 @@ export function ActionContractWrapper({
             <div>{inputNode}</div>
             {onProceedToConfirm && (
               <div className="flex justify-end pt-4 border-t border-border">
-                <button
+                <Button
                   type="button"
+                  variant="secondary"
                   onClick={onProceedToConfirm}
-                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-primary text-surface text-body-sm font-bold hover:bg-primary-dark transition-colors cursor-pointer"
+                  className="gap-2"
                 >
                   <span>Tiếp tục xác nhận</span>
                   <ArrowRight className="w-4 h-4" aria-hidden="true" />
-                </button>
+                </Button>
               </div>
             )}
           </div>
@@ -124,22 +130,23 @@ export function ActionContractWrapper({
             {onConfirm && (
               <div className="flex justify-end gap-3 pt-4 border-t border-border">
                 {onBack && (
-                  <button
+                  <Button
                     type="button"
+                    variant="outline"
                     onClick={onBack}
-                    className="px-4 py-2 rounded-lg border border-border text-body-sm font-medium text-text hover:bg-surface-alt transition-colors cursor-pointer"
                   >
                     Chỉnh sửa lại
-                  </button>
+                  </Button>
                 )}
-                <button
+                <Button
                   type="button"
+                  variant="primary"
                   onClick={onConfirm}
-                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg bg-primary text-surface text-body-sm font-bold hover:bg-primary-dark transition-colors cursor-pointer"
+                  className="gap-2"
                 >
                   <span>Tiến hành ngay</span>
                   <ArrowRight className="w-4 h-4" aria-hidden="true" />
-                </button>
+                </Button>
               </div>
             )}
           </div>

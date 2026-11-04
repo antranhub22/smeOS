@@ -5,6 +5,7 @@
  */
 
 import { RotateCcw, X, PinOff } from "@/components/ui/icons"
+import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { NAV_ICONS as ICONS } from "./nav-icons"
 import type { NavEntry } from "./nav-model"
@@ -40,23 +41,27 @@ export function ToolkitPicker({
         <span className="text-meta font-semibold text-text">Chọn lối tắt</span>
         <div className="flex items-center gap-1">
           {isCustomized && (
-            <button
+            <Button
               type="button"
+              variant="ghost"
+              size="sm"
               onClick={onReset}
-              className="flex items-center gap-1 rounded-md px-2 py-0.5 text-caption text-text-muted hover:text-text hover:bg-surface-alt transition-colors"
+              className="flex h-6 items-center gap-1 rounded-md px-2 py-0.5 text-caption text-text-muted hover:text-text hover:bg-surface-alt transition-colors"
             >
               <RotateCcw size={10} />
               Mặc định
-            </button>
+            </Button>
           )}
-          <button
+          <Button
             type="button"
+            variant="ghost"
+            size="icon"
             aria-label="Đóng"
             onClick={onClose}
-            className="rounded-md p-0.5 text-text-muted hover:text-text hover:bg-surface-alt transition-colors"
+            className="h-6 w-6 rounded-md p-0.5 text-text-muted hover:text-text hover:bg-surface-alt transition-colors"
           >
             <X size={13} />
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -71,14 +76,14 @@ export function ToolkitPicker({
             const Icon = ICONS[entry.iconKey]
             return (
               <button
-                key={entry.navKey}
                 type="button"
+                key={entry.navKey}
                 onClick={() => {
                   onPin(entry.navKey)
                   onClose()
                 }}
                 className={cn(
-                  "flex w-full items-center gap-2.5 px-3 py-2 text-meta text-left",
+                  "flex w-full cursor-pointer items-center gap-2.5 px-3 py-2 text-meta text-left",
                   "hover:bg-surface-alt transition-colors duration-100"
                 )}
               >

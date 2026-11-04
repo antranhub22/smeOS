@@ -11,6 +11,7 @@ import {
   ArrowRight,
 } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import { CopilotMessageItem } from "@/components/chat/copilot-message-item"
 import { errorText } from "@/lib/error-text"
 import { cn } from "@/lib/utils"
@@ -184,8 +185,9 @@ export function FloraOSGlobalCopilot() {
       {/* Nút bong bóng nổi — định vị tránh đụng BottomNav trên mobile */}
       <div className="fixed top-1/2 right-3 -translate-y-1/2 z-40 flex items-center gap-2">
         {!isOpen && (
-          <button
+          <Button
             type="button"
+            variant="ghost"
             onClick={() => setIsOpen(true)}
             aria-label="Mở smeOS Copilot"
             className="group relative flex h-11 w-11 items-center justify-center rounded-full bg-gradient-to-br from-primary via-primary to-primary-dark text-white shadow-lg hover:shadow-xl transition-all hover:scale-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
@@ -199,7 +201,7 @@ export function FloraOSGlobalCopilot() {
               <span>smeOS Copilot</span>
               <kbd className="rounded bg-white/20 px-1 py-0.2 text-caption font-mono">⌘K</kbd>
             </div>
-          </button>
+          </Button>
         )}
       </div>
 
@@ -243,21 +245,21 @@ export function FloraOSGlobalCopilot() {
                 type="button"
                 aria-label="Đóng trợ lý"
                 onClick={() => setIsOpen(false)}
-                className="rounded-lg p-1.5 text-text-muted hover:bg-surface hover:text-text transition-colors"
+                className="rounded-lg p-1.5 text-text-muted hover:bg-surface hover:text-text transition-colors cursor-pointer"
               >
                 <X className="h-4 w-4" />
               </button>
             </div>
 
             {/* Vùng nội dung tin nhắn */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-3.5 text-xs">
+            <div className="flex-1 overflow-y-auto p-4 space-y-3.5 text-caption">
               {messages.length === 0 ? (
                 <div className="flex h-full flex-col items-center justify-center gap-3 text-center text-text-muted p-2">
                   <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-primary/10 text-primary">
                     <Sparkles className="h-6 w-6" />
                   </div>
                   <div>
-                    <div className="font-bold text-text text-sm">Xin chào! Em có thể hỗ trợ gì?</div>
+                    <div className="font-bold text-text text-body-sm">Xin chào! Em có thể hỗ trợ gì?</div>
                     <p className="text-caption text-text-muted mt-1 max-w-[280px] mx-auto">
                       Anh/chị có thể hỏi về cách thao tác: xuất đơn hàng, cấu hình giá, in phiếu xưởng, CRM khách hàng...
                     </p>
@@ -267,10 +269,10 @@ export function FloraOSGlobalCopilot() {
                     <div className="text-caption font-bold text-text-muted text-left px-1">💡 Hướng dẫn thao tác nhanh:</div>
                     {QUICK_PROMPTS.map((q, idx) => (
                       <button
-                        key={idx}
                         type="button"
+                        key={idx}
                         onClick={() => handleSendMessage(q)}
-                        className="w-full text-left rounded-xl border border-border bg-surface-alt p-2 text-caption font-medium text-text hover:bg-border/30 transition-colors flex items-center justify-between"
+                        className="w-full text-left rounded-xl border border-border bg-surface-alt p-2 text-caption font-medium text-text hover:bg-border/30 transition-colors flex items-center justify-between cursor-pointer"
                       >
                         <span className="truncate">{q}</span>
                         <ArrowRight className="h-3 w-3 text-primary shrink-0 ml-1" />
@@ -316,10 +318,10 @@ export function FloraOSGlobalCopilot() {
                 }}
                 className="flex items-center gap-1.5"
               >
-                <input
+                <Input
                   type="text"
                   placeholder="Hỏi về cách dùng hệ thống hoặc tìm sản phẩm..."
-                  className="flex-1 rounded-xl border border-border bg-bg px-3 py-2 text-caption text-text placeholder:text-text-muted focus-visible:outline-2 focus-visible:outline-primary"
+                  className="flex-1"
                   value={inputQuery}
                   onChange={(e) => setInputQuery(e.target.value)}
                   disabled={sending}

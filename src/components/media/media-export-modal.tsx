@@ -166,16 +166,17 @@ export function MediaExportModal({
             {presets.map((preset) => {
               const isSelected = preset.id === activePreset.id
               return (
-                <button
+                <Button
                   key={preset.id}
                   type="button"
+                  variant="ghost"
                   onClick={() => {
                     setSelectedPresetId(preset.id)
                     if (mediaType === "IMAGE") {
                       setFormat(preset.recommendedFormat === "PNG" ? "png" : "jpeg")
                     }
                   }}
-                  className={`p-2.5 rounded-xl border text-left transition-all ${
+                  className={`p-2.5 h-auto rounded-xl border text-left transition-all block whitespace-normal w-full ${
                     isSelected
                       ? "border-primary bg-primary/5 shadow-xs"
                       : "border-border bg-surface hover:border-primary/40"
@@ -189,10 +190,10 @@ export function MediaExportModal({
                       {preset.ratio}
                     </Badge>
                   </div>
-                  <div className="text-caption text-text-muted mt-1 font-mono">
+                  <div className="text-caption text-text-muted mt-1 font-mono font-normal">
                     {preset.dimensions.width}×{preset.dimensions.height}
                   </div>
-                </button>
+                </Button>
               )
             })}
           </div>
@@ -228,28 +229,32 @@ export function MediaExportModal({
             <div className="flex items-center gap-1.5">
               {mediaType === "IMAGE" ? (
                 <>
-                  <button
+                  <Button
                     type="button"
+                    variant="ghost"
+                    size="sm"
                     onClick={() => setFormat("jpeg")}
-                    className={`px-2.5 py-1 rounded-lg text-caption font-bold border ${
+                    className={`px-2.5 py-1 h-auto rounded-lg text-caption font-bold border ${
                       format === "jpeg"
                         ? "bg-primary text-white border-primary"
                         : "bg-surface text-text-muted border-border"
                     }`}
                   >
                     JPEG (Tối ưu web)
-                  </button>
-                  <button
+                  </Button>
+                  <Button
                     type="button"
+                    variant="ghost"
+                    size="sm"
                     onClick={() => setFormat("png")}
-                    className={`px-2.5 py-1 rounded-lg text-caption font-bold border ${
+                    className={`px-2.5 py-1 h-auto rounded-lg text-caption font-bold border ${
                       format === "png"
                         ? "bg-primary text-white border-primary"
                         : "bg-surface text-text-muted border-border"
                     }`}
                   >
                     PNG (Chất lượng cao)
-                  </button>
+                  </Button>
                 </>
               ) : (
                 <span className="px-2.5 py-1 rounded-lg text-caption font-bold bg-primary text-white">

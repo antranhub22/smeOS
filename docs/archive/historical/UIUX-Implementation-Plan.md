@@ -3,7 +3,7 @@
 > [!NOTE]
 > **TÀI LIỆU QUYẾT ĐỊNH KẾ HOẠCH & LỘ TRÌNH TRIỂN KHAI**  
 > Tệp này lưu trữ các quyết định kiến trúc sản phẩm dựa trên 26 câu hỏi (Q1–Q26) và phân kỳ giai đoạn (Phase 0, 1, 2).  
-> **Tiến độ chi tiết từng tính năng và API kết nối** được theo dõi tại tài liệu hợp nhất: [`docs/UIUX-Execution-Checklist.md`](file:///Users/tuan/Projects/floraos-core/docs/UIUX-Execution-Checklist.md).
+> **Tiến độ chi tiết từng tính năng và API kết nối** được theo dõi tại tài liệu hợp nhất: [`docs/UIUX-Execution-Checklist.md`](../../UIUX-Execution-Checklist.md).
 
 **Ngày:** 14/09/2026 (Cập nhật hoàn tất M01c & Kho dữ liệu)  
 **Trạng thái:** 49/127 tính năng đã code (39%)

@@ -166,8 +166,8 @@ export function PlatformFeedPreview({
           const isSelected = activePlatform === item.key
           return (
             <button
-              key={item.key}
               type="button"
+              key={item.key}
               onClick={() =>
                 setPlatformOverride({
                   postId: post.id,

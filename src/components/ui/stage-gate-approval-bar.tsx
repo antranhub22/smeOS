@@ -104,7 +104,7 @@ export function StageGateApprovalBar({
               variant="outline"
               size="sm"
               onClick={onEdit}
-              className="text-text-muted hover:text-text text-xs font-semibold gap-1"
+              className="text-text-muted hover:text-text text-caption font-semibold gap-1"
             >
               <Edit3 size={13} />
               Chỉnh sửa lại
@@ -116,7 +116,7 @@ export function StageGateApprovalBar({
               type="button"
               onClick={onApprove}
               disabled={isLoading}
-              className="bg-success hover:bg-success/90 text-white text-xs font-bold px-4 py-2 gap-1.5 shadow-sm transition-all"
+              className="bg-success hover:bg-success/90 text-white text-caption font-bold px-4 py-2 gap-1.5 shadow-sm transition-all"
             >
               <Check size={14} />
               {approveLabel}
@@ -127,7 +127,7 @@ export function StageGateApprovalBar({
               type="button"
               variant="outline"
               onClick={onApprove}
-              className="border-success/30 bg-surface text-success hover:bg-success/10 text-xs font-bold px-3 py-1.5 gap-1.5"
+              className="border-success/30 bg-surface text-success hover:bg-success/10 text-caption font-bold px-3 py-1.5 gap-1.5"
             >
               <CheckCircle2 size={14} className="text-success" />
               Đã duyệt (Tiếp tục)

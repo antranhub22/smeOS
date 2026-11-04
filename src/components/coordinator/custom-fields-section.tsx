@@ -1,6 +1,9 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { Checkbox } from "@/components/ui/checkbox"
+import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
 import { isAudienceAllowed, type EffectiveFieldConfig } from "@/modules/field-platform/domain/field-rules"
 import type { FieldAudience } from "@/modules/field-platform/domain/core-field-registry"
 
@@ -106,58 +109,51 @@ function renderCustomFieldInput(def: EffectiveCustomFieldConfig, value: unknown,
   switch (def.dataType) {
     case "BOOLEAN":
       return (
-        <input
-          type="checkbox"
+        <Checkbox
           checked={Boolean(value)}
-          onChange={(e) => onChange(e.target.checked)}
-          className="h-4 w-4"
+          onCheckedChange={(checked) => onChange(Boolean(checked))}
         />
       )
     case "NUMBER":
     case "MONEY_VND":
       return (
-        <input
+        <Input
           type="number"
           value={typeof value === "number" ? value : ""}
           onChange={(e) => onChange(e.target.value === "" ? null : Number(e.target.value))}
-          className={inputClass}
         />
       )
     case "DATE":
       return (
-        <input
+        <Input
           type="date"
           value={typeof value === "string" ? value : ""}
           onChange={(e) => onChange(e.target.value || null)}
-          className={inputClass}
         />
       )
     case "DATETIME":
       return (
-        <input
+        <Input
           type="datetime-local"
           value={typeof value === "string" ? value : ""}
           onChange={(e) => onChange(e.target.value || null)}
-          className={inputClass}
         />
       )
     case "LONG_TEXT":
       return (
-        <textarea
+        <Textarea
           rows={2}
           value={typeof value === "string" ? value : ""}
           onChange={(e) => onChange(e.target.value)}
-          className={inputClass}
         />
       )
     default:
       // TEXT, PHONE, EMAIL, URL, SELECT, MULTI_SELECT.
       return (
-        <input
+        <Input
           type="text"
           value={typeof value === "string" ? value : ""}
           onChange={(e) => onChange(e.target.value)}
-          className={inputClass}
         />
       )
   }
@@ -209,7 +205,7 @@ export function CustomFieldsSection({
 
   return (
     <div className="flex flex-col gap-3">
-      <span className="font-extrabold text-text text-sm flex items-center gap-1.5 border-b border-border pb-1">
+      <span className="font-extrabold text-text text-body-sm flex items-center gap-1.5 border-b border-border pb-1">
         Trường tự tạo (cấu hình riêng của tổ chức)
       </span>
       {defs.map((def) => (
