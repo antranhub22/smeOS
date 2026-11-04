@@ -6,6 +6,7 @@ import { Image as ImageIcon } from "@/components/ui/icon-set/image"
 import { X } from "@/components/ui/icon-set/x"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import { safeImageSrc } from "@/lib/safe-image-src"
 import { Input } from "@/components/ui/input"
 import { NativeSelect } from "@/components/ui/select"
 import type { IndustryPluginContract } from "@/modules/organization/domain/industry-plugin-contract"
@@ -91,7 +92,7 @@ export function CreateGeneralCard({
           {imagePreview ? (
             <div className="relative aspect-square w-full rounded-2xl border border-border bg-surface-alt overflow-hidden group">
               <img
-                src={imagePreview}
+                src={safeImageSrc(imagePreview)}
                 alt={`Preview ${ti("sampleProduct").toLowerCase()}`}
                 className="h-full w-full object-cover"
               />
@@ -109,7 +110,7 @@ export function CreateGeneralCard({
           ) : driveLink ? (
             <div className="relative aspect-square w-full rounded-2xl border border-border bg-surface-alt overflow-hidden group">
               <img
-                src={driveLink.includes("lh3.googleusercontent.com") ? driveLink : driveLink}
+                src={safeImageSrc(driveLink)}
                 alt={`Preview ${ti("sampleProduct").toLowerCase()}`}
                 className="h-full w-full object-cover"
               />
