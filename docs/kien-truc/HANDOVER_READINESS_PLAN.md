@@ -36,7 +36,7 @@ Ngoài phạm vi (lộ trình sau bàn giao): trả nợ UX lint 5.491 điểm, 
 
 - [x] **H2-1** Script `scripts/measure-web-vitals.ts` đo bằng Playwright và `PerformanceObserver` của Chromium — không thêm thư viện. Đo LCP, CLS, TBT; INP qua Event Timing với một tương tác chuẩn mỗi tuyến. Hai cấu hình: di động (390×844, CPU chậm 4×, mạng 4G mô phỏng qua CDP) và máy tính (1280×800). Mỗi tuyến 3 lần, lấy trung vị.
 - [x] **H2-2** Đo 6 tuyến của `12_PERFORMANCE_REPORT.md` (`/`, `/san-pham`, `/dieu-phoi`, `/so-lieu`, `/b/[sendCode]`, `/van-hanh`) trên bản build production, database đã seed. Lưu JSON vào `docs/audit/ui-architecture-audit/perf/<ngày>/`; cập nhật báo cáo với số đo và đường dẫn tệp. Số liệu ghi là số đo phòng thí nghiệm (lab), không phải số đo người dùng thật.
-- [x] **H2-3** Tuyến vượt ngưỡng (LCP > 2,5 s, CLS > 0,1, INP > 200 ms): sửa trong đợt này nếu nguyên nhân rõ và sửa ≤ 0,5 ngày; còn lại ghi vào lộ trình kèm số đo. Kết quả 04/11: 5/5 tuyến đạt CLS và INP; LCP di động đạt 4/5, `/san-pham` 5,3 s do tải danh sách phía client sau hydrate — cần render phía server, vượt khung 0,5 ngày, ghi trong `12_PERFORMANCE_REPORT.md` §2. `/b/[sendCode]` đo sau khi seed E2E có link gửi (H3-1).
+- [x] **H2-3** Tuyến vượt ngưỡng (LCP > 2,5 s, CLS > 0,1, INP > 200 ms): sửa trong đợt này nếu nguyên nhân rõ và sửa ≤ 0,5 ngày; còn lại ghi vào lộ trình kèm số đo. Kết quả 04/11: 6/6 tuyến đạt LCP, CLS, INP sau khi `/san-pham` render trang đầu phía máy chủ (5,3 s → 1,72 s, `12_PERFORMANCE_REPORT.md` §2).
 
 ## 5. H3 — Trợ năng 12 hành trình (2–4 ngày)
 
@@ -59,9 +59,9 @@ Ngoài phạm vi (lộ trình sau bàn giao): trả nợ UX lint 5.491 điểm, 
 
 ## 7. H5 — Đóng đợt
 
-- [ ] **H5-1** Chạy đủ cổng của `CLAUDE.md`, gồm `test:e2e:ux`; mở PR vào `main`; CI xanh.
+- [x] **H5-1** Chạy đủ cổng của `CLAUDE.md`, gồm `test:e2e:ux`; mở PR vào `main`; CI xanh.
 - [x] **H5-2** Cập nhật `13_RE_AUDIT_ENTERPRISE_REPORT.md` (miền F, G; chỉ số K7–K9), `12_PERFORMANCE_REPORT.md`, `TRANG_THAI.md` §6.
-- [ ] **H5-3** Dựng gói bàn giao cuối theo H1-2 từ `main` sau khi PR hợp nhất; bàn giao kèm SHA-256 và danh sách phần còn trong lộ trình.
+- [x] **H5-3** Dựng gói bàn giao cuối theo H1-2 từ `main` sau khi PR hợp nhất; bàn giao kèm SHA-256 và danh sách phần còn trong lộ trình.
 
 ## 7a. Tích hợp đợt giảm nợ UI của nhánh Enterprise (04/11/2026)
 
@@ -71,7 +71,7 @@ Nhánh `Hoan_Thien_Kien_Truc_He_Thong_UI_UX_Tieu_Chuan_Enterprise` có 6 commit 
 - [x] **I-2** Không nhận thay đổi ở vùng PO khoá khi chưa có biên bản duyệt: 53 tệp Catalog, 1 tệp Thẻ chào (`subcontract/[orderCode]`), `FeatureGuidanceCard` (K1).
 - [x] **I-3** 191 chỗ `<div role="button|menuitem…" tabIndex onKeyDown>` trả về `<button type="button">` (giữ `disabled` khi `tabIndex` có điều kiện); 6 tệp đổi radio thành nút bấm: 5 tệp giữ bản `main`, `campaign-create-modal.tsx` dùng `RadioGroup`. R18 bắt cả phần tử gắn `role` điều khiển (test trong `rules-enterprise.test.ts`); `AGENT_RULES.md` §14 #20.
 - [x] **I-4** 8 tệp > 350 dòng bị phình giữ bản `main`. Baseline UX lint 5.491 → 3.945 (gồm 45 điểm R18 mới bắt trên mã có sẵn).
-- [ ] **I-5** Còn lại: hàng nút đầu trang `/san-pham` bị cắt ở khổ 390 (ảnh mốc `san-pham-mobile`); 5 vùng kéo-thả ảnh dùng `div role="button"` chứa ô chọn tệp ẩn (`auto-generate-panel`, `photo-upload-panel`, `industry-select-section`, `optimization-mode-selector`, `schedule-post-item-card`) — xử lý cùng lộ trình nợ UX.
+- [x] **I-5** Hàng nút đầu trang `/san-pham` xuống dòng ở khổ 390 thay vì bị cắt. 5 vùng có `div role="button"` chứa điều khiển lồng nhau: vùng tải ảnh (`auto-generate-panel`, `photo-upload-panel`) là `<button>` với ô chọn tệp tách ra ngoài; thẻ chọn tính năng (`optimization-mode-selector`) là `<label>` của ô chọn; thẻ ngành (`industry-select-section`) và thẻ bài lên lịch (`schedule-post-item-card`) dùng nút chính phủ cả thẻ, điều khiển phụ nằm trên lớp phủ.
 
 ## 8. Lịch thực hiện
 
@@ -102,9 +102,9 @@ Nhánh `Hoan_Thien_Kien_Truc_He_Thong_UI_UX_Tieu_Chuan_Enterprise` có 6 commit 
 | H4-1 | Xong | `git log --grep "H4-1"` | `test:e2e:ux` | Ổn định qua 3 lần chạy |
 | H4-2 | Xong | `git log --grep "H4-1"` | `test:e2e:ux` | 22 ảnh `-linux` |
 | H4-3 | Chưa làm | | | Cần máy Mac |
-| H5-1 | Đang làm | | typecheck, lint:ratchet, lint:ux, check:docs/layers/industry/screen-contracts/template-ssot/tokens-doc/schemas:creative, npm test 3.887, test:tenant 693, test:platform 36, build, test:e2e:ux 34/34, handover:check | Chờ CI trên PR |
+| H5-1 | Xong | PR #112 (`7dce8e53`) | CI `main`: web, worker, e2e-ux, security, industry-terms, CodeQL, deploy — đạt | |
 | H5-2 | Xong | `git log --grep "H5-2"` | `check:docs` | |
-| H5-3 | Chưa làm | | | |
+| H5-3 | Xong | `7dce8e53` | `handover:check origin/main` (6.548 mục) | `smeos-handover-2026-11-04-7dce8e53.tar.gz`, SHA-256 `2d4ad3359181452c5836e5bc706b10783f324ad66491cbc36c95668618813107` |
 
 ## 10. Rủi ro và kiểm soát
 

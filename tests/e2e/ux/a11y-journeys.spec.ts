@@ -29,9 +29,13 @@ const reportOnly = process.env.A11Y_REPORT_ONLY === "1"
  * Lỗi đã biết trong vùng PO khoá (Thẻ chào — `tests/unit/architecture/the-chao-freeze.test.ts`):
  * chưa sửa khi chưa có duyệt; ghi tại `docs/design-system/accessibility-audit-12-journeys.md` §3. Gỡ dòng khi đã sửa.
  */
-const KNOWN_FROZEN: Record<string, string[]> = {
-  "/don-hang": ['2.4.7 không thấy vòng tiêu điểm: <input> "Tìm kiếm đơn hàng theo tên khách, mã đơn"'],
-}
+const KNOWN_FROZEN: { route: RegExp; issue: RegExp }[] = [
+  // Ô tìm kiếm đơn (coordinator-brochure-tab.tsx): chỉ đổi màu viền khi nhận tiêu điểm
+  { route: /^\/don-hang$/, issue: /^2\.4\.7 .*Tìm kiếm đơn hàng/ },
+  // Huy hiệu "Ưu đãi" trên trang đặt hàng của khách (journey-contact-form.tsx): text-danger trên bg-danger-bg 4,23:1
+  { route: /^\/(b|bst|g)\//, issue: /^color-contrast .*"Ưu đãi/ },
+]
+const isKnown = (path: string, issue: string) => KNOWN_FROZEN.some((k) => k.route.test(path) && k.issue.test(issue))
 const results: Result[] = []
 
 async function newPage(browser: Browser, opts: { auth: boolean; storage: string | undefined; reducedMotion?: boolean; viewport?: { width: number; height: number } }) {
@@ -52,7 +56,7 @@ test.describe("Trợ năng 12 hành trình (WCAG 2.2 AA)", () => {
     const { context, page } = await newPage(browser, { auth: false, storage: undefined })
     const user = await createTestUserAndLogin(page, { workspaceKind: "PRODUCTION" })
     await grantPlatformOperator(user.userId)
-    const { productId, catalogSlug } = await seedJourneyData(page.request)
+    const { productId, catalogSlug, greetingCatalogId, greetingCatalogCode, sendCode } = await seedJourneyData(page.request)
     const orgSlug = await withDb(async (db) => (await db.query<{ slug: string }>("SELECT slug FROM organizations WHERE id = $1", [user.orgId])).rows[0]?.slug ?? "khong-co")
     storage = join(test.info().outputDir, "state.json")
     await context.storageState({ path: storage })
@@ -60,6 +64,9 @@ test.describe("Trợ năng 12 hành trình (WCAG 2.2 AA)", () => {
 
     routes = [
       ...(catalogSlug ? [{ journey: "J01", path: `/c/${catalogSlug}`, auth: false }] : []),
+      ...(sendCode ? [{ journey: "J01", path: `/b/${sendCode}`, auth: false }] : []),
+      ...(greetingCatalogCode ? [{ journey: "J01", path: `/bst/${orgSlug}/${greetingCatalogCode}`, auth: false }] : []),
+      ...(greetingCatalogId ? [{ journey: "J02", path: `/g/${greetingCatalogId}`, auth: false }] : []),
       { journey: "J01", path: "/b/KHONGTONTAI", auth: false, state: "không tìm thấy" },
       { journey: "J01", path: `/bst/${orgSlug}/khong-ton-tai`, auth: false, state: "không tìm thấy" },
       { journey: "J02", path: "/g/khong-ton-tai", auth: false, state: "không tìm thấy" },
@@ -124,10 +131,10 @@ test.describe("Trợ năng 12 hành trình (WCAG 2.2 AA)", () => {
     if (reportOnly) return
     for (const r of results) {
       const where = `${r.journey} ${r.path}`
-      expect.soft(r.axe, `${where}: axe critical/serious`).toEqual([])
-      for (const preset of PRESETS) expect.soft(r.contrast[preset], `${where}: tương phản preset ${preset}`).toEqual([])
-      const known = KNOWN_FROZEN[r.path] ?? []
-      expect.soft(r.keyboard.issues.filter((i) => !known.includes(i)), `${where}: bàn phím`).toEqual([])
+      const open = (issues: string[]) => issues.filter((i) => !isKnown(r.path, i))
+      expect.soft(open(r.axe), `${where}: axe critical/serious`).toEqual([])
+      for (const preset of PRESETS) expect.soft(open(r.contrast[preset] ?? []), `${where}: tương phản preset ${preset}`).toEqual([])
+      expect.soft(open(r.keyboard.issues), `${where}: bàn phím`).toEqual([])
       expect.soft(r.zoom, `${where}: phóng 200%`).toEqual([])
       expect.soft(r.motion, `${where}: giảm chuyển động`).toEqual([])
     }

@@ -183,17 +183,9 @@ export const OptimizationModeSelector: React.FC<OptimizationModeSelectorProps> =
               const IconComp = ICON_MAP[cap.iconName] || Sparkles
 
               return (
-                <div
-                  role="button"
-                  tabIndex={supported ? 0 : -1}
+                // Cả thẻ là nhãn của ô chọn: bấm thẻ bật/tắt ô chọn, bàn phím dùng chính ô chọn.
+                <label
                   key={cap.id}
-                  onClick={() => toggleCapability(cap.id, supported)}
-                  onKeyDown={(e) => {
-                    if (supported && (e.key === "Enter" || e.key === " ")) {
-                      e.preventDefault()
-                      toggleCapability(cap.id, supported)
-                    }
-                  }}
                   className={`flex items-start gap-3 rounded-xl border p-3 transition-all ${
                     !supported
                       ? "opacity-60 bg-surface-alt/40 border-dashed border-border cursor-not-allowed select-none"
@@ -238,7 +230,7 @@ export const OptimizationModeSelector: React.FC<OptimizationModeSelectorProps> =
                   >
                     <IconComp size={15} />
                   </div>
-                </div>
+                </label>
               )
             })}
           </div>

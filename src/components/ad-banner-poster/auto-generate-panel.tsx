@@ -69,30 +69,22 @@ export function AutoGeneratePanel({
           </span>
         </label>
 
-        <div
-          role="button"
-          tabIndex={0}
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/*"
+          className="hidden"
+          onChange={handleFileUpload}
+        />
+        <button
+          type="button"
           onClick={() => fileInputRef.current?.click()}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" || e.key === " ") {
-              e.preventDefault()
-              fileInputRef.current?.click()
-            }
-          }}
-          className={`w-full relative border-2 border-dashed rounded-xl p-4 text-center cursor-pointer transition-all ${
+          className={`block w-full relative border-2 border-dashed rounded-xl p-4 text-center cursor-pointer transition-all focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
             productImageUrl
               ? "border-primary/50 bg-primary/5"
               : "border-border hover:border-primary hover:bg-surface-alt"
           }`}
         >
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/*"
-            className="hidden"
-            onChange={handleFileUpload}
-          />
-
           {productImageUrl ? (
             <div className="flex items-center justify-center gap-3">
               {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -105,9 +97,9 @@ export function AutoGeneratePanel({
                 <span className="text-caption font-bold text-text flex items-center gap-1">
                   <CheckCircle2 className="h-3.5 w-3.5 text-success" /> Đã nạp ảnh thành công
                 </span>
-                <p className="text-caption text-text-muted mt-0.5">
+                <span className="block text-caption text-text-muted mt-0.5">
                   Nhấp để chọn ảnh khác từ máy tính
-                </p>
+                </span>
               </div>
             </div>
           ) : (
@@ -118,12 +110,12 @@ export function AutoGeneratePanel({
               <span className="text-caption font-bold text-text">
                 Kéo thả hoặc nhấp để chọn ảnh sản phẩm từ máy
               </span>
-              <p className="text-caption text-text-muted mt-0.5">
+              <span className="block text-caption text-text-muted mt-0.5">
                 Hỗ trợ PNG, JPG, WebP chất lượng cao
-              </p>
+              </span>
             </div>
           )}
-        </div>
+        </button>
 
       </div>
 

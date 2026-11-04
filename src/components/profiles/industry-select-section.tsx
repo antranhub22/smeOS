@@ -158,19 +158,7 @@ export function IndustrySelectSection({
             return (
               <div
                 key={ind.key}
-                role="button"
-                tabIndex={isUnlocked ? 0 : -1}
-                onClick={() => {
-                  if (isUnlocked && loadingMockKey === null) {
-                    handleSelect(ind.key)
-                  }
-                }}
-                onKeyDown={(e) => {
-                  if ((e.key === "Enter" || e.key === " ") && isUnlocked && loadingMockKey === null) {
-                    handleSelect(ind.key)
-                  }
-                }}
-                className={`flex flex-col justify-between p-3 rounded-xl border text-left transition-all ${
+                className={`relative flex flex-col justify-between p-3 rounded-xl border text-left transition-all ${
                   isSelected
                     ? "border-primary bg-primary/5 ring-2 ring-primary/20 shadow-xs"
                     : "border-border bg-surface hover:border-primary/40"
@@ -178,7 +166,16 @@ export function IndustrySelectSection({
               >
                 <div>
                   <div className="flex items-center justify-between w-full mb-1">
-                    <span className="text-body-sm font-bold text-text">{ind.name}</span>
+                    {/* Nút chọn ngành phủ cả thẻ (after:inset-0); nút "Nạp" nằm trên lớp phủ */}
+                    <button
+                      type="button"
+                      aria-pressed={isSelected}
+                      disabled={!isUnlocked || loadingMockKey !== null}
+                      onClick={() => handleSelect(ind.key)}
+                      className="text-left text-body-sm font-bold text-text after:absolute after:inset-0 after:rounded-xl after:content-[''] focus-visible:outline-none focus-visible:after:ring-2 focus-visible:after:ring-ring disabled:cursor-not-allowed"
+                    >
+                      {ind.name}
+                    </button>
                     {isSelected && <Check size={14} className="text-primary font-bold" />}
                   </div>
                   <p className="text-caption text-text-muted line-clamp-2 leading-relaxed">
@@ -187,7 +184,7 @@ export function IndustrySelectSection({
                 </div>
 
                 {organizationType === "EXPERIENCE" && isUnlocked && (
-                  <div className="mt-3 pt-2 border-t border-border/60 flex items-center justify-between w-full gap-1.5">
+                  <div className="relative z-10 mt-3 pt-2 border-t border-border/60 flex items-center justify-between w-full gap-1.5">
                     <span className="text-caption text-text-muted font-medium">Dữ liệu mẫu</span>
                     <Button
                       type="button"

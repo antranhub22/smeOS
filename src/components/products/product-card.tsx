@@ -88,9 +88,11 @@ export interface ProductCardProps {
   isExecutive?: boolean
   onTrash?: (product: ProductItem) => void
   onImageClick?: (product: ProductItem) => void
+  /** Thẻ nằm trong khung nhìn đầu tiên: ảnh tải ưu tiên. */
+  priority?: boolean | undefined
 }
 
-export function ProductCard({ product, isExecutive, onTrash, onImageClick }: ProductCardProps) {
+export function ProductCard({ product, isExecutive, onTrash, onImageClick, priority = false }: ProductCardProps) {
   return (
     <div className="group relative flex flex-col overflow-hidden rounded-2xl border border-border/70 bg-surface shadow-sm transition-all hover:border-primary/40 hover:shadow-md">
       {/* Vùng ảnh sản phẩm: Bấm để mở Bảng thông số sản phẩm & Phân tích AI */}
@@ -106,6 +108,7 @@ export function ProductCard({ product, isExecutive, onTrash, onImageClick }: Pro
           masterImageUrl={product.masterImageUrl}
           driveLink={product.driveLink}
           size="card"
+          priority={priority}
         />
         <div className="absolute top-2 left-2 flex flex-col items-start gap-1 pointer-events-none">
           <StatusBadge status={product.status} />
