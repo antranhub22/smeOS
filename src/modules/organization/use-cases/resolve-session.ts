@@ -1,5 +1,6 @@
 import { AppError, sessionSuperseded, unauthenticated } from "@/core/http/errors"
 import { readCookie, SESSION_COOKIE } from "@/core/http/cookies"
+import { bindRequestActor } from "@/core/observability/request-context"
 import type { TenantContext } from "@/core/tenancy"
 import { canSignIn } from "@/modules/organization/domain/account-approval"
 import { isUsable } from "@/modules/organization/domain/session-policy"
@@ -127,6 +128,8 @@ export async function requireTenantContext(
   if (!resolved.ctx) {
     throw new AppError("CONFLICT", "Phiên chưa chọn tổ chức đang hoạt động")
   }
+  // Người thao tác đã xác thực → nhật ký tầng HTTP biết ai làm (checklist ALG 1.15, 1.17)
+  bindRequestActor({ organizationId: resolved.ctx.organizationId, userId: resolved.ctx.userId })
   await assertToolUnlocked(request, resolved.ctx)
   return { resolved, ctx: resolved.ctx }
 }

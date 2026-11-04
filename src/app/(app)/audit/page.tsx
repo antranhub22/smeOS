@@ -44,12 +44,20 @@ export default function AuditLogsPage() {
   const [error, setError] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedLog, setSelectedLog] = useState<AuditLogRow | null>(null)
+  // Lọc phía máy chủ: loại thao tác và khoảng ngày (checklist ALG 1.17)
+  const [actionFilter, setActionFilter] = useState("")
+  const [fromDate, setFromDate] = useState("")
+  const [toDate, setToDate] = useState("")
 
   const fetchLogs = useCallback(async () => {
     try {
       setLoading(true)
       setError(null)
-      const res = await fetch("/api/v1/audit-logs?limit=40")
+      const params = new URLSearchParams({ limit: "100" })
+      if (actionFilter) params.set("action", actionFilter)
+      if (fromDate) params.set("from", fromDate)
+      if (toDate) params.set("to", toDate)
+      const res = await fetch(`/api/v1/audit-logs?${params.toString()}`)
       if (!res.ok) {
         throw new Error("Không thể tải nhật ký kiểm toán.")
       }
@@ -60,7 +68,7 @@ export default function AuditLogsPage() {
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [actionFilter, fromDate, toDate])
 
   useEffect(() => {
     if (canView) {
@@ -140,6 +148,31 @@ export default function AuditLogsPage() {
             Làm mới
           </Button>
         </div>
+      </div>
+
+      <div className="flex flex-wrap items-end gap-3" aria-label="Bộ lọc nhật ký">
+        <label className="flex flex-col gap-1 text-caption text-text-muted">
+          Loại thao tác
+          <select
+            value={actionFilter}
+            onChange={(e) => setActionFilter(e.target.value)}
+            className="h-9 rounded-md border border-border bg-surface px-2 text-body-sm text-text"
+          >
+            <option value="">Tất cả</option>
+            <option value="api.mutation">Thao tác ghi dữ liệu</option>
+            <option value="security.access_denied">Cố thao tác ngoài quyền</option>
+            <option value="member.">Thành viên và vai trò</option>
+            <option value="product.">Sản phẩm</option>
+          </select>
+        </label>
+        <label className="flex flex-col gap-1 text-caption text-text-muted">
+          Từ ngày
+          <Input type="date" value={fromDate} onChange={(e) => setFromDate(e.target.value)} className="w-40" />
+        </label>
+        <label className="flex flex-col gap-1 text-caption text-text-muted">
+          Đến ngày
+          <Input type="date" value={toDate} onChange={(e) => setToDate(e.target.value)} className="w-40" />
+        </label>
       </div>
 
       {/* 2. Danh sách nhật ký kiểm toán */}

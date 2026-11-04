@@ -1,8 +1,10 @@
 import { captureError } from "@/core/observability/error-tracker"
 import { log } from "@/core/observability/log"
-import { requestIdOf, runWithRequestId } from "@/core/observability/request-context"
+import { requestIdOf, runWithRequestMeta } from "@/core/observability/request-context"
 
 import { AppError } from "./errors"
+import { clientIp } from "./rate-limit"
+import { auditDenied, auditMutation, userAgentOf } from "./request-audit"
 
 export function jsonResponse(
   body: unknown,
@@ -67,11 +69,16 @@ export function handle<Args extends unknown[]>(
   fn: (request: Request, ...args: Args) => Promise<Response>
 ) {
   return async (request: Request, ...args: Args): Promise<Response> => {
-    // Mã yêu cầu do `src/proxy.ts` gắn — `log` và job tạo trong handler tự nhận (E1.1).
-    return runWithRequestId(requestIdOf(request), async () => {
+    // Mã yêu cầu do `src/proxy.ts` gắn — `log` và job tạo trong handler tự nhận (E1.1). IP và thiết
+    // bị đi cùng để `audit_logs` tự điền (checklist ALG 1.17).
+    const meta = { requestId: requestIdOf(request) ?? undefined, ip: clientIp(request), userAgent: userAgentOf(request) }
+    return runWithRequestMeta(meta, async () => {
       try {
-        return await fn(request, ...args)
+        const response = await fn(request, ...args)
+        await auditMutation(request, response)
+        return response
       } catch (error) {
+        await auditDenied(request, error)
         return errorResponse(error, { method: request.method, path: new URL(request.url).pathname })
       }
     })
