@@ -77,37 +77,30 @@ export function PhotoUploadPanel({ onFileSelected, disabled }: PhotoUploadPanelP
 
   return (
     <div className="space-y-4">
-      <div
-        role="button"
-        tabIndex={disabled ? -1 : 0}
+      <input
+        ref={fileInputRef}
+        type="file"
+        accept="image/*"
+        className="hidden"
+        disabled={disabled}
+        onChange={handleChange}
+      />
+      <button
+        type="button"
+        disabled={disabled}
         onDragOver={(e) => {
           e.preventDefault()
           if (!disabled) setDragOver(true)
         }}
         onDragLeave={() => setDragOver(false)}
         onDrop={handleDrop}
-        onClick={() => !disabled && fileInputRef.current?.click()}
-        onKeyDown={(e) => {
-          if (!disabled && (e.key === "Enter" || e.key === " ")) {
-            e.preventDefault()
-            fileInputRef.current?.click()
-          }
-        }}
-        aria-disabled={disabled}
-        className={`w-full relative border-2 border-dashed rounded-2xl p-8 sm:p-10 text-center transition-all cursor-pointer ${
+        onClick={() => fileInputRef.current?.click()}
+        className={`block w-full relative border-2 border-dashed rounded-2xl p-8 sm:p-10 text-center transition-all cursor-pointer ${
           dragOver
             ? "border-primary bg-primary/10 scale-[1.01]"
             : "border-border hover:border-primary/50 bg-surface shadow-sm"
-        } ${disabled ? "opacity-60 cursor-not-allowed" : ""}`}
+        } ${disabled ? "opacity-60 cursor-not-allowed" : ""} focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary`}
       >
-        <input
-          ref={fileInputRef}
-          type="file"
-          accept="image/*"
-          className="hidden"
-          disabled={disabled}
-          onChange={handleChange}
-        />
 
         {preview ? (
           <div className="flex flex-col sm:flex-row items-center gap-6 justify-center">
@@ -146,14 +139,14 @@ export function PhotoUploadPanel({ onFileSelected, disabled }: PhotoUploadPanelP
           <div className="space-y-4 py-4">
             <IconTile name="Upload" tone="rose" className="mx-auto w-20 h-20 sm:w-20 sm:h-20 [&>svg]:w-10 [&>svg]:h-10" />
             <div>
-              <p className="text-title-sm font-bold text-text">
+              <span className="block text-title-sm font-bold text-text">
                 Kéo thả hoặc <span className="text-primary underline">chọn ảnh</span>
-              </p>
-              <p className="text-caption text-text-muted mt-1">JPG, PNG, WEBP · tối đa 15MB</p>
+              </span>
+              <span className="block text-caption text-text-muted mt-1">JPG, PNG, WEBP · tối đa 15MB</span>
             </div>
           </div>
         )}
-      </div>
+      </button>
     </div>
   )
 }

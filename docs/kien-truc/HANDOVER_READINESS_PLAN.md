@@ -71,7 +71,7 @@ Nhánh `Hoan_Thien_Kien_Truc_He_Thong_UI_UX_Tieu_Chuan_Enterprise` có 6 commit 
 - [x] **I-2** Không nhận thay đổi ở vùng PO khoá khi chưa có biên bản duyệt: 53 tệp Catalog, 1 tệp Thẻ chào (`subcontract/[orderCode]`), `FeatureGuidanceCard` (K1).
 - [x] **I-3** 191 chỗ `<div role="button|menuitem…" tabIndex onKeyDown>` trả về `<button type="button">` (giữ `disabled` khi `tabIndex` có điều kiện); 6 tệp đổi radio thành nút bấm: 5 tệp giữ bản `main`, `campaign-create-modal.tsx` dùng `RadioGroup`. R18 bắt cả phần tử gắn `role` điều khiển (test trong `rules-enterprise.test.ts`); `AGENT_RULES.md` §14 #20.
 - [x] **I-4** 8 tệp > 350 dòng bị phình giữ bản `main`. Baseline UX lint 5.491 → 3.945 (gồm 45 điểm R18 mới bắt trên mã có sẵn).
-- [ ] **I-5** Còn lại: hàng nút đầu trang `/san-pham` bị cắt ở khổ 390 (ảnh mốc `san-pham-mobile`); 5 vùng kéo-thả ảnh dùng `div role="button"` chứa ô chọn tệp ẩn (`auto-generate-panel`, `photo-upload-panel`, `industry-select-section`, `optimization-mode-selector`, `schedule-post-item-card`) — xử lý cùng lộ trình nợ UX.
+- [x] **I-5** Hàng nút đầu trang `/san-pham` xuống dòng ở khổ 390 thay vì bị cắt. 5 vùng có `div role="button"` chứa điều khiển lồng nhau: vùng tải ảnh (`auto-generate-panel`, `photo-upload-panel`) là `<button>` với ô chọn tệp tách ra ngoài; thẻ chọn tính năng (`optimization-mode-selector`) là `<label>` của ô chọn; thẻ ngành (`industry-select-section`) và thẻ bài lên lịch (`schedule-post-item-card`) dùng nút chính phủ cả thẻ, điều khiển phụ nằm trên lớp phủ.
 
 ## 8. Lịch thực hiện
 
