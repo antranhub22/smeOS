@@ -24,4 +24,21 @@ export interface IPartnerMarketplaceRepository {
   setPhotos(id: string, photoKeys: string[], photoSourceIds: string[]): Promise<void>
   /** Xoá một hồ sơ; không có → null. Trả tên và khoá ảnh của hồ sơ vừa xoá (để ghi nhật ký). */
   deleteById(id: string): Promise<{ shopName: string; source: string; photoKeys: string[] } | null>
+  /**
+   * Xoá nhiều hồ sơ trong một giao dịch: theo danh sách id, hoặc toàn bộ khi `expectedTotal`
+   * khớp số hồ sơ hiện có (lệch → null, không xoá gì).
+   */
+  deleteMany(target: MarketplaceDeleteTarget): Promise<MarketplaceDeleteResult | null>
 }
+
+export type MarketplaceDeleteTarget = { ids: string[] } | { all: true; expectedTotal: number }
+
+export interface MarketplaceDeleteResult {
+  count: number
+  /** Tên các hồ sơ đã xoá (tối đa `MAX_AUDIT_NAMES`) — để ghi nhật ký. */
+  shopNames: string[]
+  photoCount: number
+}
+
+/** Số tên hồ sơ tối đa ghi vào một dòng nhật ký xoá hàng loạt. */
+export const MAX_AUDIT_NAMES = 50
