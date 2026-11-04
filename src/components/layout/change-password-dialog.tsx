@@ -7,8 +7,22 @@ import { Input } from "@/components/ui/input"
 
 const MIN_LENGTH = 10
 
-/** Tự đổi mật khẩu (`A2`) — dùng ngay sau khi nhận mật khẩu tạm từ Điều hành. */
-export function ChangePasswordDialog({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void }) {
+/**
+ * Tự đổi mật khẩu (`A2`) — dùng ngay sau khi nhận mật khẩu tạm từ Điều hành. `required`: tài khoản
+ * đang dùng mật khẩu tạm, hộp không đóng được tới khi đổi xong (checklist ALG 1.4); `onChanged` chạy
+ * sau khi đổi thành công.
+ */
+export function ChangePasswordDialog({
+  open,
+  onOpenChange,
+  required = false,
+  onChanged,
+}: {
+  open: boolean
+  onOpenChange: (open: boolean) => void
+  required?: boolean
+  onChanged?: () => void
+}) {
   const [current, setCurrent] = useState("")
   const [next, setNext] = useState("")
   const [confirm, setConfirm] = useState("")
@@ -16,6 +30,7 @@ export function ChangePasswordDialog({ open, onOpenChange }: { open: boolean; on
   const [message, setMessage] = useState<{ ok: boolean; text: string } | null>(null)
 
   const close = (value: boolean) => {
+    if (!value && required) return
     if (!value) {
       setCurrent("")
       setNext("")
@@ -46,6 +61,7 @@ export function ChangePasswordDialog({ open, onOpenChange }: { open: boolean; on
       setNext("")
       setConfirm("")
       setMessage({ ok: true, text: "Đã đổi mật khẩu. Các máy khác đã được đăng xuất." })
+      onChanged?.()
     } catch (err) {
       setMessage({ ok: false, text: err instanceof Error ? err.message : "Không đổi được mật khẩu" })
     } finally {
@@ -54,7 +70,14 @@ export function ChangePasswordDialog({ open, onOpenChange }: { open: boolean; on
   }
 
   return (
-    <Dialog open={open} onOpenChange={close} title="Đổi mật khẩu" size="sm">
+    <Dialog
+      open={open}
+      onOpenChange={close}
+      title="Đổi mật khẩu"
+      size="sm"
+      showCloseButton={!required}
+      {...(required ? { description: "Tài khoản đang dùng mật khẩu tạm. Đặt mật khẩu mới để tiếp tục làm việc." } : {})}
+    >
       <form onSubmit={submit} className="flex flex-col gap-3">
         <label className="flex flex-col gap-1 text-body-sm font-semibold text-text">
           Mật khẩu hiện tại
@@ -72,7 +95,7 @@ export function ChangePasswordDialog({ open, onOpenChange }: { open: boolean; on
           <p role={message.ok ? "status" : "alert"} className={`text-caption ${message.ok ? "text-success" : "text-danger"}`}>{message.text}</p>
         )}
         <div className="flex justify-end gap-2 border-t border-border pt-3">
-          <Button type="button" variant="outline" size="sm" onClick={() => close(false)} disabled={busy}>Đóng</Button>
+          {!required && <Button type="button" variant="outline" size="sm" onClick={() => close(false)} disabled={busy}>Đóng</Button>}
           <Button type="submit" variant="primary" size="sm" disabled={busy}>{busy ? "Đang đổi..." : "Đổi mật khẩu"}</Button>
         </div>
       </form>

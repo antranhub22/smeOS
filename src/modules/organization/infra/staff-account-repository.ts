@@ -15,7 +15,8 @@ export class StaffAccountRepository {
     input: { email: string; name: string; passwordHash: string; roleId: string; branchId: string | null }
   ): Promise<{ membershipId: string; userId: string }> {
     return this.db.$transaction(async (tx) => {
-      const user = await tx.users.create({ data: { email: input.email, name: input.name, password_hash: input.passwordHash } })
+      // Mật khẩu tạm → bắt buộc tự đổi ở lần đăng nhập đầu (checklist ALG 1.4)
+      const user = await tx.users.create({ data: { email: input.email, name: input.name, password_hash: input.passwordHash, must_change_password: true } })
       const membership = await tx.memberships.create({
         data: scopedData(ctx, {
           user_id: user.id,
@@ -40,7 +41,9 @@ export class StaffAccountRepository {
    */
   async setPassword(userId: string, passwordHash: string, opts: { revokeAllSessions?: true; keepSessionId?: string }): Promise<string> {
     return this.db.$transaction(async (tx) => {
-      const user = await tx.users.update({ where: { id: userId }, data: { password_hash: passwordHash }, select: { email: true } })
+      // Điều hành đặt lại → mật khẩu tạm, phải tự đổi; người dùng tự đổi → xoá cờ (checklist ALG 1.4)
+      const mustChange = opts.revokeAllSessions === true
+      const user = await tx.users.update({ where: { id: userId }, data: { password_hash: passwordHash, must_change_password: mustChange }, select: { email: true } })
       await tx.sessions.updateMany({
         where: { user_id: userId, revoked_at: null, ...(opts.keepSessionId ? { id: { not: opts.keepSessionId } } : {}) },
         data: { revoked_at: new Date() },

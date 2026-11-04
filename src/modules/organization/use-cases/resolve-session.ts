@@ -120,6 +120,9 @@ export async function tenantContextFor(
   }
 }
 
+/** Đường duy nhất mở cho tài khoản còn mật khẩu tạm (`/auth/me`, đăng xuất không qua `requireTenantContext`). */
+const PASSWORD_CHANGE_PATH = "/api/v1/session/password"
+
 /** Dùng cho endpoint bắt buộc phải có tổ chức đang hoạt động. */
 export async function requireTenantContext(
   request: Request
@@ -130,6 +133,10 @@ export async function requireTenantContext(
   }
   // Người thao tác đã xác thực → nhật ký tầng HTTP biết ai làm (checklist ALG 1.15, 1.17)
   bindRequestActor({ organizationId: resolved.ctx.organizationId, userId: resolved.ctx.userId })
+  // Đang dùng mật khẩu tạm → chỉ được đổi mật khẩu (checklist ALG 1.4)
+  if (resolved.user.must_change_password && new URL(request.url).pathname !== PASSWORD_CHANGE_PATH) {
+    throw new AppError("PASSWORD_CHANGE_REQUIRED", "Tài khoản đang dùng mật khẩu tạm — đổi mật khẩu trước khi tiếp tục")
+  }
   await assertToolUnlocked(request, resolved.ctx)
   return { resolved, ctx: resolved.ctx }
 }
