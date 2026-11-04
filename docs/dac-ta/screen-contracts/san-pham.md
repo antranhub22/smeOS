@@ -17,7 +17,7 @@ acceptance:
 
 # Screen Contract — Danh sách & Chi tiết Sản phẩm (`/san-pham`, `/san-pham/[id]`)
 
-**Tuyến:** `/san-pham`, `/san-pham/[id]` · **Tệp chính:** `src/app/(app)/san-pham/page.tsx`, `src/app/(app)/san-pham/[id]/page.tsx` · **Cập nhật:** 26/09/2026 · **Thẻ:** T5.B1
+**Tuyến:** `/san-pham`, `/san-pham/[id]` · **Tệp chính:** `src/app/(app)/san-pham/page.tsx` (máy chủ tải trang đầu), `src/app/(app)/san-pham/san-pham-client.tsx`, `src/app/(app)/san-pham/[id]/page.tsx` · **Cập nhật:** 26/09/2026 · **Thẻ:** T5.B1
 
 ## 1. Vai và mục đích
 - **Vai chính (03b):** `store_manager`, `florist`, `sales`, `marketer`.

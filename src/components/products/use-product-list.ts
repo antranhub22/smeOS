@@ -6,7 +6,11 @@ import { useRouter } from "next/navigation"
 const PAGE_SIZE = "100"
 const SEARCH_DEBOUNCE_MS = 300
 
-type Page<T> = { data: T[]; next_cursor: string | null; total?: number; truncated?: boolean }
+export type ProductListPage<T> = { data: T[]; next_cursor: string | null; total?: number; truncated?: boolean }
+type Page<T> = ProductListPage<T>
+
+/** URL trang đầu khi chưa lọc — máy chủ render sẵn trang này (`san-pham/page.tsx`). */
+export const INITIAL_PRODUCT_LIST_URL = `/api/v1/products?limit=${PAGE_SIZE}`
 
 /** Lọc Dịp/Khoảng giá/Sắp xếp — máy chủ áp cho toàn kho (`scan-products.ts`). */
 export interface ServerScanFilters {
@@ -20,19 +24,24 @@ export interface ServerScanFilters {
 /**
  * Danh sách sản phẩm phía server: tìm kiếm (debounce 300ms) + danh mục + "tải thêm" theo cursor.
  * Mỗi lần tải mới huỷ yêu cầu cũ (AbortController) — gõ nhanh không bị kết quả cũ ghi đè kết quả mới.
+ * `initial`: trang đầu máy chủ đã tải cho `INITIAL_PRODUCT_LIST_URL` — dùng ngay, không gọi lại API lần đầu.
  */
 export function useProductList<T extends { id: string }>(
   search: string,
   category: string | null,
   proposal: string | null = null,
-  scan: ServerScanFilters | null = null
+  scan: ServerScanFilters | null = null,
+  initial: Page<T> | null = null
 ) {
   const router = useRouter()
-  const [items, setItems] = useState<T[] | null>(null)
+  const [items, setItems] = useState<T[] | null>(initial?.data ?? null)
   const [error, setError] = useState<string | null>(null)
-  const [nextCursor, setNextCursor] = useState<string | null>(null)
+  const [nextCursor, setNextCursor] = useState<string | null>(initial?.next_cursor ?? null)
   const [loadingMore, setLoadingMore] = useState(false)
-  const [total, setTotal] = useState<{ count: number; truncated: boolean } | null>(null)
+  const [total, setTotal] = useState<{ count: number; truncated: boolean } | null>(
+    typeof initial?.total === "number" ? { count: initial.total, truncated: initial.truncated === true } : null
+  )
+  const initialPending = useRef(initial !== null)
   const [debounced, setDebounced] = useState(search)
   const controller = useRef<AbortController | null>(null)
 
@@ -102,10 +111,15 @@ export function useProductList<T extends { id: string }>(
   }, [fetchPage, nextCursor, loadingMore])
 
   useEffect(() => {
+    // Lần đầu, bộ lọc trùng trang máy chủ đã render: giữ dữ liệu sẵn có.
+    if (initialPending.current) {
+      initialPending.current = false
+      if (buildUrl(null) === INITIAL_PRODUCT_LIST_URL) return
+    }
     // eslint-disable-next-line react-hooks/set-state-in-effect -- tải dữ liệu từ API khi đổi tìm kiếm/danh mục; setState nằm trong hàm tải (nợ #149)
     void reload()
     return () => controller.current?.abort()
-  }, [reload])
+  }, [reload, buildUrl])
 
   const removeLocal = useCallback((id: string) => setItems((prev) => (prev ? prev.filter((p) => p.id !== id) : prev)), [])
 
