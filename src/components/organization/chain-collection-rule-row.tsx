@@ -19,11 +19,11 @@ export function ChainCollectionRuleRow({ field, rule, onChangeRule }: RuleRowPro
   const getSensitivityBadge = () => {
     switch (field.sensitivity) {
       case "S0_PUBLIC":
-        return <Badge tone="neutral" className="text-caption">S0 Công khai</Badge>
+        return <Badge tone="neutral" className="text-caption">Công khai</Badge>
       case "S1_INTERNAL":
-        return <Badge tone="accent" className="text-caption">S1 Nội bộ</Badge>
+        return <Badge tone="accent" className="text-caption">Nội bộ</Badge>
       case "S2_CONFIDENTIAL":
-        return <Badge tone="warning" className="text-caption">S2 Bảo mật</Badge>
+        return <Badge tone="warning" className="text-caption">Bảo mật</Badge>
       default:
         return null
     }
@@ -36,18 +36,18 @@ export function ChainCollectionRuleRow({ field, rule, onChangeRule }: RuleRowPro
           <span className="font-bold text-body-sm text-text">{field.fieldName.vi}</span>
           {getSensitivityBadge()}
           {field.pii.isPii && (
-            <span className="px-1.5 py-0.5 rounded text-caption font-semibold bg-danger/10 text-danger border border-danger/20">
+            <span className="px-1.5 py-0.5 rounded text-caption font-semibold bg-danger/10 text-danger-text border border-danger/20">
               Cá nhân
             </span>
           )}
         </div>
-        <p className="text-caption text-text-muted mt-0.5 font-mono truncate">{field.fieldKey}</p>
         
         {isS2 && (
           <Input
             type="text"
             placeholder="Mục đích thu thập (bắt buộc với dữ liệu cá nhân)…"
             value={rule.purpose ?? ""}
+            aria-label={`Mục đích thu thập — ${field.fieldName.vi}`}
             onChange={(e) => onChangeRule({ ...rule, purpose: e.target.value })}
             className="mt-2 w-full text-caption"
           />
@@ -56,29 +56,31 @@ export function ChainCollectionRuleRow({ field, rule, onChangeRule }: RuleRowPro
 
       <div className="flex items-center gap-2.5 shrink-0 self-end sm:self-center">
         <div className="flex flex-col items-start gap-1">
-          <label className="text-caption font-semibold text-text-muted">Sàn (Tối thiểu)</label>
+          <label className="text-caption font-semibold text-text-muted">Mức tối thiểu</label>
           <NativeSelect
+            aria-label={`Mức tối thiểu — ${field.fieldName.vi}`}
             value={rule.minForm}
             onChange={(e) => onChangeRule({ ...rule, minForm: e.target.value as PropagationTarget })}
             className="text-body-sm h-8"
           >
-            <option value="NONE">NONE (Không thu)</option>
-            <option value="AGGREGATED">AGGREGATED (Tổng hợp)</option>
-            <option value="MASKED">MASKED (Che bảo mật)</option>
-            <option value="RAW">RAW (Nguyên bản)</option>
+            <option value="NONE">Không thu</option>
+            <option value="AGGREGATED">Tổng hợp</option>
+            <option value="MASKED">Che bảo mật</option>
+            <option value="RAW">Nguyên bản</option>
           </NativeSelect>
         </div>
 
         <div className="flex flex-col items-start gap-1">
           <label className="text-caption font-semibold text-text-muted">Trần của chuỗi</label>
           <NativeSelect
+            aria-label={`Trần của chuỗi — ${field.fieldName.vi}`}
             value={rule.maxForm ?? field.propagation.ceiling.toChain}
             onChange={(e) => onChangeRule({ ...rule, maxForm: e.target.value as PropagationTarget })}
             className="text-body-sm h-8"
           >
-            <option value="AGGREGATED">AGGREGATED (Tổng hợp)</option>
-            <option value="MASKED">MASKED (Che bảo mật)</option>
-            <option value="RAW">RAW (Nguyên bản)</option>
+            <option value="AGGREGATED">Tổng hợp</option>
+            <option value="MASKED">Che bảo mật</option>
+            <option value="RAW">Nguyên bản</option>
           </NativeSelect>
         </div>
       </div>

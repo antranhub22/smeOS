@@ -79,7 +79,7 @@ export function PolicyMatrixTable({ policy, onChange, disabled }: Props) {
                 <th scope="col" className="py-3 px-4">Hạng mục chính sách & Quy tắc vận hành</th>
                 <th scope="col" className="py-3 px-3 text-center w-28">Bật</th>
                 <th scope="col" className="py-3 px-3 text-center w-28">Tắt</th>
-                <th scope="col" className="py-3 px-4 text-left w-52 sm:w-64">Cấu hình chi tiết / SLA</th>
+                <th scope="col" className="py-3 px-4 text-left w-52 sm:w-64">Cấu hình chi tiết / thời hạn</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-border/60 text-body-sm">
@@ -158,7 +158,7 @@ export function PolicyMatrixTable({ policy, onChange, disabled }: Props) {
                     value={String(policy.autoApprovePaymentWithProofMinutes ?? 15)}
                     onValueChange={(val) => onChange({ autoApprovePaymentWithProofMinutes: Number(val) })}
                   >
-                    <SelectTrigger className="h-8 w-32">
+                    <SelectTrigger aria-label="Thời gian chờ trước khi tự duyệt bill" className="h-8 w-32">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -174,7 +174,7 @@ export function PolicyMatrixTable({ policy, onChange, disabled }: Props) {
               {/* 5. TỰ ĐỘNG HỦY & HOÀN TIỀN KHI ĐIỀU PHỐI TỪ CHỐI */}
               <PolicyRow
                 icon={<AlertTriangle size={17} className="text-warning" />}
-                title="Tự động hủy & hoàn tiền khi Điều phối từ chối (SLA)"
+                title="Tự động hủy & hoàn tiền khi Điều phối từ chối"
                 description="Khi xưởng hết nguyên liệu/quá tải, Điều phối báo từ chối. Quá thời gian quy định sẽ tự hủy & tạo lệnh hoàn tiền."
                 isOn={Boolean(policy.cancellationApprovalTimeoutMinutes && policy.cancellationApprovalTimeoutMinutes <= 120)}
                 onToggle={(val) => onChange({ cancellationApprovalTimeoutMinutes: val ? 30 : 1440 })}
@@ -184,7 +184,7 @@ export function PolicyMatrixTable({ policy, onChange, disabled }: Props) {
                     value={String(policy.cancellationApprovalTimeoutMinutes ?? 15)}
                     onValueChange={(val) => onChange({ cancellationApprovalTimeoutMinutes: Number(val) })}
                   >
-                    <SelectTrigger className="h-8 w-36">
+                    <SelectTrigger aria-label="Thời gian chờ trước khi tự hủy và hoàn tiền" className="h-8 w-36">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -212,7 +212,7 @@ export function PolicyMatrixTable({ policy, onChange, disabled }: Props) {
                     value={String(policy.paymentTimeoutMinutes || 30)}
                     onValueChange={(val) => onChange({ paymentTimeoutMinutes: Number(val) })}
                   >
-                    <SelectTrigger className="h-8 w-36">
+                    <SelectTrigger aria-label="Hạn thanh toán giữ đơn" className="h-8 w-36">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -251,7 +251,7 @@ export function PolicyMatrixTable({ policy, onChange, disabled }: Props) {
               {/* 9. ĐẾM NGƯỢC DUYỆT ẢNH HOA THÀNH PHẨM */}
               <PolicyRow
                 icon={<Clock size={17} className="text-text" />}
-                title="Đếm ngược duyệt ảnh thành phẩm (SLA)"
+                title="Đếm ngược duyệt ảnh thành phẩm"
                 description="Khách xem ảnh trên link theo dõi. Hết thời gian đếm ngược sẽ tự động duyệt để kịp giờ bàn giao tài xế."
                 isOn={(policy.productPhotoReviewMinutes ?? 10) > 0}
                 onToggle={(val) => onChange({ productPhotoReviewMinutes: val ? 10 : 0 })}
@@ -261,7 +261,7 @@ export function PolicyMatrixTable({ policy, onChange, disabled }: Props) {
                     value={String(policy.productPhotoReviewMinutes || 10)}
                     onValueChange={(val) => onChange({ productPhotoReviewMinutes: Number(val) })}
                   >
-                    <SelectTrigger className="h-8 w-36">
+                    <SelectTrigger aria-label="Thời gian khách duyệt ảnh thành phẩm" className="h-8 w-36">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>

@@ -5,6 +5,10 @@ import { Palette, RefreshCw } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { isValidHexColor } from "@/modules/profiles/domain/profile-rules"
+import { calculateContrastRatio } from "@/modules/organization/domain/brand-config"
+
+/** Chữ trắng hoặc đen — chọn màu đọc rõ hơn trên nền thương hiệu (xem trước phải đúng như ấn phẩm thật). */
+const readableOn = (bg: string) => (calculateContrastRatio("#FFFFFF", bg) >= calculateContrastRatio("#111827", bg) ? "#FFFFFF" : "#111827")
 
 export interface BrandColors {
   primary_color: string
@@ -96,8 +100,8 @@ export function BrandColorsSection({
         <span className="text-caption font-semibold text-text-muted">Xem trước phối màu thương hiệu:</span>
         <div className="flex items-center gap-2">
           <div
-            className="px-4 py-2 rounded-lg text-caption font-bold text-white shadow-xs"
-            style={{ backgroundColor: colors.primary_color }}
+            className="px-4 py-2 rounded-lg text-caption font-bold shadow-xs"
+            style={{ backgroundColor: colors.primary_color, color: readableOn(colors.primary_color) }}
           >
             Nút chính
           </div>
@@ -112,8 +116,8 @@ export function BrandColorsSection({
             Huy hiệu
           </div>
           <div
-            className="px-2.5 py-1 rounded text-caption font-extrabold text-white"
-            style={{ backgroundColor: colors.accent_color }}
+            className="px-2.5 py-1 rounded text-caption font-extrabold"
+            style={{ backgroundColor: colors.accent_color, color: readableOn(colors.accent_color) }}
           >
             Hot Sale
           </div>
@@ -138,6 +142,7 @@ export function BrandColorsSection({
               <div className="flex items-center gap-2">
                 <Input
                   type="color"
+                  aria-label={`Chọn ${cfg.label.toLowerCase()}`}
                   value={isValidHexColor(currentVal) ? currentVal : "#000000"}
                   onChange={(e) => onColorChange(cfg.key, e.target.value)}
                   className="h-8 w-8 cursor-pointer rounded-lg border border-border bg-transparent p-0.5"
@@ -147,6 +152,7 @@ export function BrandColorsSection({
                   value={currentVal}
                   onChange={(e) => onColorChange(cfg.key, e.target.value)}
                   placeholder="Mã màu HEX"
+                  aria-label={`Mã màu ${cfg.label.toLowerCase()}`}
                   className={`flex-1 rounded-lg font-mono font-medium uppercase ${
                     hasErr ? "border-danger ring-1 ring-danger/20" : ""
                   }`}

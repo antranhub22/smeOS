@@ -284,7 +284,7 @@ export function BusinessProfileForm({ initialData, onSave, saving }: BusinessPro
       {/* Khối 3: Giờ vận hành */}
       <div className="rounded-2xl border border-border bg-surface p-5 sm:p-6 shadow-xs">
         <div className="flex items-center gap-2.5 pb-4 border-b border-border mb-5">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-warning/10 text-warning">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-warning/10 text-warning-text">
             <Clock size={18} />
           </div>
           <div>

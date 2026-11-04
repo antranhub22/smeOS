@@ -216,6 +216,7 @@ export function NotificationMatrixPage({
         {/* Group Filter */}
         <div className="relative">
           <NativeSelect
+            aria-label="Lọc theo nhóm thông báo"
             value={selectedGroup}
             onChange={(e) =>
               setSelectedGroup(e.target.value as NotificationEventGroup | "ALL")
@@ -235,7 +236,7 @@ export function NotificationMatrixPage({
         {canManageHardLocks && (
           <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-warning-bg border border-warning-border">
             <Lock size={12} className="text-warning" />
-            <span className="text-caption text-warning">
+            <span className="text-caption text-warning-text">
               Bạn có quyền khóa cứng
             </span>
           </div>

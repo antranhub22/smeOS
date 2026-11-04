@@ -194,7 +194,7 @@ export default function QuanLyThanhVienPage() {
         </div>
 
         <div className="p-4 rounded-2xl border border-border bg-surface flex items-center gap-3">
-          <div className="h-10 w-10 rounded-xl bg-warning-bg text-warning flex items-center justify-center flex-shrink-0">
+          <div className="h-10 w-10 rounded-xl bg-warning-bg text-warning-text flex items-center justify-center flex-shrink-0">
             <Clock size={20} />
           </div>
           <div>
@@ -230,7 +230,7 @@ export default function QuanLyThanhVienPage() {
 
       {/* 5. Thông báo lỗi */}
       {error && (
-        <div className="flex items-center gap-2 p-3 text-caption bg-warning-bg text-warning border border-warning/30 rounded-xl">
+        <div className="flex items-center gap-2 p-3 text-caption bg-warning-bg text-warning-text border border-warning/30 rounded-xl">
           <AlertCircle size={16} />
           <span>{error}</span>
         </div>
