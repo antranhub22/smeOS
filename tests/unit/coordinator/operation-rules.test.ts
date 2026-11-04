@@ -108,6 +108,9 @@ describe("đóng đơn / huỷ (F14)", () => {
     expect(checkClosure({ stage: "DISPATCHING", openExceptionCount: 0, partnerRating: 5, partnerPayoutVnd: 0 }).ok).toBe(false)
     expect(checkClosure({ stage: "DELIVERED", openExceptionCount: 1, partnerRating: 5, partnerPayoutVnd: 0 }).ok).toBe(false)
     expect(checkClosure({ stage: "DELIVERED", openExceptionCount: 0, partnerRating: 7, partnerPayoutVnd: 0 }).ok).toBe(false)
+    // Còn nợ thì chưa hoàn tất (checklist ALG 4.26)
+    expect(checkClosure({ stage: "DELIVERED", openExceptionCount: 0, partnerRating: 5, partnerPayoutVnd: 0, balanceVnd: 200000 }).ok).toBe(false)
+    expect(checkClosure({ stage: "DELIVERED", openExceptionCount: 0, partnerRating: 5, partnerPayoutVnd: 0, balanceVnd: 0 }).ok).toBe(true)
   })
   it("huỷ đòi lý do, không huỷ đơn đã giao", () => {
     expect(checkCancellation({ stage: "PLANNING", reason: "" }).ok).toBe(false)

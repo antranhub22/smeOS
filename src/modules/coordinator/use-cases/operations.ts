@@ -263,6 +263,7 @@ export async function closeCoordinatorOrder(
         openExceptionCount: facts.openExceptionCount,
         partnerRating: input.partnerRating,
         partnerPayoutVnd: input.partnerPayoutVnd,
+        balanceVnd: Number(row.balance_vnd),
       })
     )
     ensureTransition(row.coordination!.stage, "COMPLETED", facts)

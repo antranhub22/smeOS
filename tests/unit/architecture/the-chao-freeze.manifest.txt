@@ -67,6 +67,7 @@ e2f17085a5a103ac94d91065e25b3f6a87697458fc80b24df740ddf3d3615d7d  src/modules/gr
 31ab3126eeb85a4d6cc198cb1a9b9ce2f5b9327a117e54797dcfffa872836acc  src/modules/greeting-card/domain/__tests__/order-change-request.test.ts
 94d02bcd250145ed21d34d4d9ae9dd9ea90b85f31476dba03c9b85c53632d6ca  src/modules/greeting-card/domain/__tests__/order-family.test.ts
 f0f17ede9c690aaa9245e643b9f77f03d47c1164b9879cd7776328bb65db3ca0  src/modules/greeting-card/domain/__tests__/order-product-view.test.ts
+299d024bb5ac2a86c04cbdc6ab919017d77f67bf16973dbe3a11c0de690a35ed  src/modules/greeting-card/domain/__tests__/order-settlement.test.ts
 4530970577837ff4ffd57acd2113aa8018808f9e96471cac614c46705604c6b2  src/modules/greeting-card/domain/__tests__/order-slip-extras.test.ts
 13d33961ad3e77faf7ef73fd479c3d8de144d7bf358d9155eea96b577c34bbd7  src/modules/greeting-card/domain/__tests__/order-time-tier.test.ts
 6e4cdea20d31d3c4bf8f6180a79d929a68029d688374789a9721bb3765024c81  src/modules/greeting-card/domain/__tests__/payment-check.test.ts
@@ -153,6 +154,7 @@ b93b1e785280ce3606ba16a4d5b24742d23db0c688e6fe0fbc217042ce1fc9e1  src/modules/gr
 b2f08fa95e3fc9e2790ad934d010428ac1a92c591cf830c887858e3a3838e37f  src/modules/greeting-card/domain/order-guard.ts
 a59c5b2597aa70c0ab9e0680183de781a8864095a5197351c61d34be48fce026  src/modules/greeting-card/domain/order-policies.ts
 fefce0be1ef99039bd77ea7ee806d2655c1adf9a7325b52d4c8ee5af6d70db03  src/modules/greeting-card/domain/order-product-view.ts
+dd744ed1f9fbcada8da46dad01096de1ce7d79dd0772f747df78907d49194ef3  src/modules/greeting-card/domain/order-settlement.ts
 2638af2286b9b96255218a237060bcc4e0c195459fa1b5ed2714bb2509683663  src/modules/greeting-card/domain/order-slip-extras.ts
 d2c9d6ecf16d5774ec648f907853b0f36f0134fadaf804598c211a5ed97ee681  src/modules/greeting-card/domain/order-time-tier.ts
 ffdfbe57a8f0ab9eed451afb3c6ccdf283f1acf056d33b1af811926ad8e0bd14  src/modules/greeting-card/domain/order-vat.ts
@@ -204,7 +206,7 @@ dfbd7eb17d2f8e8a51777ef1ad791a1b2fc301686c8ebc780720d942bac6b37b  src/modules/gr
 3bca30da83a1815fc7c574111794263741d694e0df479ebd084eab05f1392ef4  src/modules/greeting-card/infra/branch-portal-repository.ts
 cb3b2d8c48c1893464155b9d961b23ebc6185ebf9e40a23c2ba2cf3cbef3c73c  src/modules/greeting-card/infra/brochure-checkout-repository.ts
 e7db7d221b063c6829571e76a3da751e79b10dccc3e6204e79019187ad02fb5e  src/modules/greeting-card/infra/brochure-order-repository.ts
-c0d08e005e6b364a2f1711f95ba010ff40ae3c987d0eb0c5418d48b096179a0a  src/modules/greeting-card/infra/brochure-payment-repository.ts
+b1cc1dbd079e5c2ef99a4e6b235ee796f6d636d736fd00b6dd32fc72fb7c5192  src/modules/greeting-card/infra/brochure-payment-repository.ts
 7bbbe31093625aee3958b102fd555fe35bd960a30bdfd308368ad72fd9ea314d  src/modules/greeting-card/infra/cancellation-follow-up-repository.ts
 e0eb1d37f30a079cecf7687946118361e756660e136e4585953e088880b48d10  src/modules/greeting-card/infra/cancellation-repository.ts
 303c173ab9ccf7bb8e643790c11f5eb413bad72414aef2dc787b378f36d5f371  src/modules/greeting-card/infra/catalog-event-repository.ts
@@ -228,6 +230,7 @@ a1820cbc359041362061b5e189d8d78d36d4d23079c8157d7186a83fa6c69f43  src/modules/gr
 cf87a6041f27fe6586b0bc0ba1898ed8b23de53cd6eddcf9b2b98f3c5dd67ccd  src/modules/greeting-card/infra/order-change-repository.ts
 23c2daa48dd9fb6af66463c6a841e34bb58e4e1b643a62f74e9de4b2649b3f73  src/modules/greeting-card/infra/order-family-repository.ts
 e4d223996132fcea4b9589c32d04f6f7797f80fe897c1a918846da02126bc22d  src/modules/greeting-card/infra/order-photo-repository.ts
+ed36204b6bfab9d8d3d9d096b8b326e092ef1c51a64ca048babaff1f2f2fe8b4  src/modules/greeting-card/infra/order-settlement.ts
 107d7fcc1a01d3bf2d7a6d667d2d6c12e7ae12713a06294a90bcbd86f606f4f1  src/modules/greeting-card/infra/order-slip-repository.ts
 c0d3dfa7e0758da3b4ef2b906e45ca0ae35cb4ff925044d9931d1adcb34208c8  src/modules/greeting-card/infra/order-vat-repository.ts
 aed86e83c48a39b0e6a5b402bd73c751a0a94dd76e70bccdcc672f66d4d83f5b  src/modules/greeting-card/infra/payment-proof-repository.ts
@@ -284,6 +287,7 @@ a3b9d0a39a4d4232665b68341439d61f8b12c8fe50d96913fcb039c3a70256a7  src/modules/gr
 4c3581f986a6ebcb0c5064b5e9aee77e654f9fceac01cb416a00fb6de739cead  src/modules/greeting-card/use-cases/background-sweep-scheduler.ts
 195827cd693baebf92cd170a9e7cddbd895672352cb6b81d04a096a521767e64  src/modules/greeting-card/use-cases/background-sweep.ts
 ac7994ce3897614def6267340eebf0eac8388eaf990eafb421bc61a7e8f17692  src/modules/greeting-card/use-cases/branch-portal.ts
+6fe04036d146f387217b18719c9cc82996ba085be5ad0f2acc52537aea1b00be  src/modules/greeting-card/use-cases/brochure-order-action-guards.ts
 5156103830e61c1c10a60ea19059a96302fda8e35399efc70efdffcfda092ad5  src/modules/greeting-card/use-cases/brochure-owner.ts
 6beb8b3986364e5e686ad19f01278054440aaeaf52f6fafca5e211a47be5093a  src/modules/greeting-card/use-cases/brochure-product-mapper.test.ts
 b2c8bc30a6e097bcac7de2dde724a7505b2cb65c58fdf91eaf38265ee35da245  src/modules/greeting-card/use-cases/brochure-product-mapper.ts
@@ -367,7 +371,7 @@ fa40e60d6157c00aa177d10b1159b60565158849f875082f44723f8be93a8f76  src/modules/gr
 de09f6fb51eb5318c1567ead164c62da8b1ef04ac28d0b13aa40c5a212245212  src/modules/greeting-card/use-cases/substitute.ts
 201ef7549bd9ca7c626bceba47f0ffe6277496332628bfe595dbd8ebf62d4a78  src/modules/greeting-card/use-cases/suggest-craft-fee.ts
 7f06de5a144f965b562be69dc0ca8fc7230cd233d58a44d695d6b76565ef2d63  src/modules/greeting-card/use-cases/telegram-dispatch-link.ts
-e481e111319f5dd19c88422f9d245d4d0295c39eb1a4c4ca170373ed061d3fef  src/modules/greeting-card/use-cases/update-brochure-order-status.ts
+bbaaf2be81ba021008a2eba692b2f4de55228e6413e3c779a81e415cd1428e5b  src/modules/greeting-card/use-cases/update-brochure-order-status.ts
 632f5071ba24ab822c24e3965dfe8f636071ad9fffb17a1dd672faef6d915f05  src/modules/greeting-card/use-cases/upload-payment-proof.ts
 33bb7fa70417d48ec47ebcab375f9a864172ff78c37c023f0063731550031242  src/modules/greeting-card/use-cases/verify-pod-photo-ai.test.ts
 1d03d34b75eeffb7268022e6909e3bd1d1dfe83808ad1aa7ee57b47d4e1995e1  src/modules/greeting-card/use-cases/verify-pod-photo-ai.ts
@@ -745,7 +749,7 @@ b7a5d5ab259cdaeda4248bc445a0722cc4652cc142fa079f974c1ad863dbbfce  src/app/api/v1
 e1232ba3d6a66b91739c237a77f1052f65bc703f4eca29a06d3121f226543dfe  src/app/api/v1/public/greeting-catalog/[id]/quote/route.ts
 18ae0b43d8e6da911ea536c052f8792a3b32e7dd4aaa64eaf1a9c8cb8b18fd81  src/app/api/v1/public/subcontract/[orderCode]/request-bypass/route.ts
 4bc6732bf5b8d5603b9567065cf03e712edac1ee32b2243f319577a75181a085  src/app/api/v1/public/subcontract/[orderCode]/route.ts
-0fd28884f622a3be27a2d5aa7e76c3fd368a6fb30ab6aef7880f2af15563e047  src/app/api/v1/public/subcontract/[orderCode]/submit-delivery/route.ts
+61ad770824bad72e4ef9c789590ae6e4f9d720ac10fb42c5a80021dc580725fb  src/app/api/v1/public/subcontract/[orderCode]/submit-delivery/route.ts
 eba46995cc7168438c622e0c6f753d324ba5f619d1c75a3a6440d4625c505554  src/app/api/v1/public/subcontract/[orderCode]/submit-shipper/route.ts
 a7147399f722f74433e704a2ed196dc6fbd838e2b3302182c6c71c544e398fa9  src/app/api/v1/public/subcontract/[orderCode]/upload-qc/route.ts
 c368fa606b85c5b0f80c6c7885763b7bc86f283910d09dcf442c399bd5a46481  src/app/api/v1/public/payments/sepay/route.ts

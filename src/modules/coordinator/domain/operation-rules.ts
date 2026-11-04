@@ -239,9 +239,14 @@ export function checkClosure(params: {
   openExceptionCount: number
   partnerRating: number | null | undefined
   partnerPayoutVnd: number | null | undefined
+  /** Số còn phải thu của đơn; > 0 thì chưa hoàn tất được (PO 04/11/2026, checklist ALG 4.26). */
+  balanceVnd?: number | undefined
 }): RuleResult {
   if (params.stage !== "DELIVERED") {
     return { ok: false, reason: `Chỉ đóng đơn sau khi đã giao (hiện: ${params.stage}).` }
+  }
+  if ((params.balanceVnd ?? 0) > 0) {
+    return { ok: false, reason: `Đơn còn phải thu ${params.balanceVnd!.toLocaleString("vi-VN")} đ — chỉ hoàn tất khi đã thu đủ.` }
   }
   if (params.openExceptionCount > 0) {
     return { ok: false, reason: `Còn ${params.openExceptionCount} sự cố chưa xử lý.` }

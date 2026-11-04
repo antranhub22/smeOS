@@ -507,6 +507,11 @@ describe("Chức năng 12 — Điều phối đơn hàng: cách ly tenant và lu
     expect(delivered.order.delivery.podImageUrl).toBeTruthy()
     expect(delivered.order.delivery.carrier).toBe("AhaMove")
 
+    // Còn nợ thì chưa hoàn tất (PO 04/11/2026, checklist ALG 4.26); thu đủ rồi mới đóng
+    expect((await call(closeOrder, a, order.id, { partnerRating: 5, partnerPayoutVnd: 350000 })).status).toBe(422)
+    const due = Number((await prisma.orders.findUniqueOrThrow({ where: { id: order.id } })).balance_vnd)
+    if (due > 0) expect((await call(recordOrderPayment, a, order.id, { kind: "BALANCE", amountVnd: due, paymentMethod: "CASH" })).status).toBe(201)
+
     const closed = (await json(await call(closeOrder, a, order.id, { partnerRating: 5, partnerPayoutVnd: 350000 })))
     expect(closed.order.stage).toBe("COMPLETED")
     expect(closed.order.partnerPayoutVnd).toBe(350000)
