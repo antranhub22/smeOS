@@ -1,123 +1,274 @@
-import * as React from "react"
-import * as Ph from "@phosphor-icons/react/dist/ssr"
-import type { Icon as PhosphorIcon, IconWeight } from "@phosphor-icons/react"
-
 /**
  * Bộ icon chuẩn SMEOS (Phosphor, PO 30/10/2026) — giữ tên kiểu lucide để thay
  * `from "@/components/ui/icons"` bằng `from "@/components/ui/icons"` mà không đổi chỗ dùng.
  * Mặc định nét `regular`; `strokeWidth ≥ 2.5` → `bold`; có `fill` → `fill`.
- * Ô icon lớn dùng `IconTile` (`app-icon.tsx`). Icon mới: thêm vào đây, không import lucide.
+ * Ô icon lớn dùng `IconTile` (`app-icon.tsx`). Icon mới: thêm tệp vào `icon-set/` và một dòng ở đây, không import lucide.
+ *
+ * Mỗi icon một tệp, tệp này chỉ re-export: bundler giữ đúng icon trang dùng. Trước đây mọi icon được bọc
+ * ngay trong tệp này nên trang nào cũng tải đủ ~236 icon × 6 nét vẽ (chunk chung 174 KB gzip).
  */
-
-type IconProps = Omit<React.SVGProps<SVGSVGElement>, "ref"> & {
-  size?: number | string
-  strokeWidth?: number | string
-  absoluteStrokeWidth?: boolean
-  weight?: IconWeight
-}
-
-export type LucideProps = IconProps
-export type LucideIcon = React.ForwardRefExoticComponent<IconProps & React.RefAttributes<SVGSVGElement>>
-
-function w(P: PhosphorIcon): LucideIcon {
-  const C = React.forwardRef<SVGSVGElement, IconProps>(function Icon(
-    { size = 24, strokeWidth, absoluteStrokeWidth, weight, fill, ...rest },
-    ref,
-  ) {
-    void absoluteStrokeWidth
-    const auto: IconWeight = fill && fill !== "none" ? "fill" : Number(strokeWidth) >= 2.5 ? "bold" : "regular"
-    return <P ref={ref} size={size} weight={weight ?? auto} {...(rest as Record<string, unknown>)} />
-  })
-  C.displayName = P.displayName
-  return C
-}
-
-/* eslint-disable @typescript-eslint/naming-convention */
-export const Activity = w(Ph.Pulse), AlertCircle = w(Ph.WarningCircle), AlertOctagon = w(Ph.WarningOctagon)
-export const AlertTriangle = w(Ph.Warning), Archive = w(Ph.Archive), ArrowDown = w(Ph.ArrowDown)
-export const ArrowDownCircle = w(Ph.ArrowCircleDown), ArrowDownLeft = w(Ph.ArrowDownLeft), ArrowLeft = w(Ph.ArrowLeft)
-export const ArrowLeftRight = w(Ph.ArrowsLeftRight), ArrowRight = w(Ph.ArrowRight), ArrowUp = w(Ph.ArrowUp)
-export const ArrowUpDown = w(Ph.ArrowsDownUp), ArrowUpRight = w(Ph.ArrowUpRight), ArrowDownRight = w(Ph.ArrowDownRight), Award = w(Ph.Medal)
-export const BadgeCheck = w(Ph.SealCheck), BadgePercent = w(Ph.SealPercent), Ban = w(Ph.Prohibit)
-export const Banknote = w(Ph.Money), BarChart3 = w(Ph.ChartBar), Bed = w(Ph.Bed)
-export const Bell = w(Ph.Bell), BellRing = w(Ph.BellRinging), Bike = w(Ph.Bicycle)
-export const BookOpen = w(Ph.BookOpen), Bookmark = w(Ph.BookmarkSimple), Bot = w(Ph.Robot)
-export const Brain = w(Ph.Brain), Briefcase = w(Ph.Briefcase), Building = w(Ph.Building)
-export const Building2 = w(Ph.Buildings), Calculator = w(Ph.Calculator), Calendar = w(Ph.Calendar)
-export const CalendarCheck = w(Ph.CalendarCheck), CalendarClock = w(Ph.CalendarDots), CalendarDays = w(Ph.CalendarDots)
-export const CalendarHeart = w(Ph.CalendarHeart), CalendarIcon = w(Ph.Calendar), CalendarRange = w(Ph.CalendarDots)
-export const CalendarX = w(Ph.CalendarX), Camera = w(Ph.Camera), Car = w(Ph.Car)
-export const Check = w(Ph.Check), CheckCircle = w(Ph.CheckCircle), CheckCircle2 = w(Ph.CheckCircle)
-export const CheckSquare = w(Ph.CheckSquare), ChevronDown = w(Ph.CaretDown), ChevronLeft = w(Ph.CaretLeft)
-export const ChevronRight = w(Ph.CaretRight), ChevronUp = w(Ph.CaretUp), Circle = w(Ph.Circle)
-export const CircleDollarSign = w(Ph.CurrencyCircleDollar), CircleHelp = w(Ph.Question), Clapperboard = w(Ph.FilmSlate)
-export const ClipboardCheck = w(Ph.ClipboardText), ClipboardList = w(Ph.ClipboardText), Clock = w(Ph.Clock)
-export const Cloud = w(Ph.Cloud), Coffee = w(Ph.Coffee), Coins = w(Ph.Coins)
-export const Compass = w(Ph.Compass), Contact = w(Ph.AddressBook), Copy = w(Ph.Copy)
-export const CopyPlus = w(Ph.CopySimple), CornerUpLeft = w(Ph.ArrowBendUpLeft), Cpu = w(Ph.Cpu)
-export const CreditCard = w(Ph.CreditCard), Crown = w(Ph.Crown), Database = w(Ph.Database)
-export const DollarSign = w(Ph.CurrencyDollar), Download = w(Ph.DownloadSimple), Edit = w(Ph.PencilSimpleLine)
-export const Edit2 = w(Ph.PencilSimple), Edit3 = w(Ph.PencilLine), Eraser = w(Ph.Eraser)
-export const ExternalLink = w(Ph.ArrowSquareOut), Eye = w(Ph.Eye), EyeOff = w(Ph.EyeSlash)
-export const FileCheck = w(Ph.FileArrowDown), FileCheck2 = w(Ph.FileText), FileCode = w(Ph.FileCode)
-export const FileDown = w(Ph.FileArrowDown), FileEdit = w(Ph.NotePencil), FileInput = w(Ph.FileArrowUp)
-export const FileOutput = w(Ph.FileArrowDown), FileSpreadsheet = w(Ph.FileXls), FileText = w(Ph.FileText)
-export const Film = w(Ph.FilmStrip), Filter = w(Ph.Funnel), Flame = w(Ph.Flame)
-export const FlaskConical = w(Ph.Flask), Flower2 = w(Ph.Flower), Folder = w(Ph.Folder)
-export const FolderCheck = w(Ph.FolderSimpleStar), FolderUp = w(Ph.FolderSimplePlus), Gauge = w(Ph.Gauge)
-export const Gift = w(Ph.Gift), GitMerge = w(Ph.GitMerge), Globe = w(Ph.Globe)
-export const Globe2 = w(Ph.GlobeHemisphereEast), Grid = w(Ph.GridFour), Hammer = w(Ph.Hammer)
-export const Hand = w(Ph.Hand), Handshake = w(Ph.Handshake), Hash = w(Ph.Hash)
-export const Headphones = w(Ph.Headphones), Heart = w(Ph.Heart), HeartHandshake = w(Ph.Handshake)
-export const HelpCircle = w(Ph.Question), History = w(Ph.ClockCounterClockwise), Home = w(Ph.House)
-export const Hourglass = w(Ph.Hourglass), IdCard = w(Ph.IdentificationCard), Image = w(Ph.Image)
-export const ImageDown = w(Ph.ImageSquare), ImageIcon = w(Ph.Image), ImageOff = w(Ph.ImageBroken)
-export const ImagePlus = w(Ph.ImageSquare), ImageUp = w(Ph.ImageSquare), Images = w(Ph.Images)
-export const Inbox = w(Ph.Tray), InboxIcon = w(Ph.Tray), Info = w(Ph.Info)
-export const Kanban = w(Ph.Kanban), KeyRound = w(Ph.Key), Landmark = w(Ph.Bank)
-export const Layers = w(Ph.Stack), LayoutDashboard = w(Ph.SquaresFour), LayoutGrid = w(Ph.SquaresFour)
-export const LayoutList = w(Ph.ListDashes), LayoutTemplate = w(Ph.Layout), Leaf = w(Ph.Leaf)
-export const Library = w(Ph.Books), Lightbulb = w(Ph.Lightbulb), Link = w(Ph.Link)
-export const Link2 = w(Ph.LinkSimple), LinkIcon = w(Ph.Link), List = w(Ph.List)
-export const ListChecks = w(Ph.ListChecks), ListFilter = w(Ph.FunnelSimple), Loader2 = w(Ph.CircleNotch)
-export const Lock = w(Ph.Lock), LockKeyhole = w(Ph.LockKey), LogIn = w(Ph.SignIn)
-export const LogOut = w(Ph.SignOut), Mail = w(Ph.Envelope), MapPin = w(Ph.MapPin)
-export const Maximize2 = w(Ph.ArrowsOut), Megaphone = w(Ph.Megaphone), Menu = w(Ph.List)
-export const MessageCircle = w(Ph.ChatCircle), MessageSquare = w(Ph.ChatText), MessageSquareHeart = w(Ph.ChatCircleText)
-export const MessageSquarePlus = w(Ph.ChatCenteredText), MessageSquareQuote = w(Ph.Quotes), MessageSquareText = w(Ph.ChatText)
-export const Mic = w(Ph.Microphone), Minimize2 = w(Ph.ArrowsIn), Minus = w(Ph.Minus)
-export const Monitor = w(Ph.Monitor), Moon = w(Ph.Moon), MoreHorizontal = w(Ph.DotsThree)
-export const Music = w(Ph.MusicNotes), Navigation = w(Ph.NavigationArrow), Network = w(Ph.TreeStructure)
-export const Package = w(Ph.Package), PackageCheck = w(Ph.Package), PackagePlus = w(Ph.Package)
-export const PackageX = w(Ph.Package), Palette = w(Ph.Palette), PanelLeftClose = w(Ph.SidebarSimple)
-export const PanelLeftOpen = w(Ph.SidebarSimple), PartyPopper = w(Ph.Confetti), Pause = w(Ph.Pause)
-export const PenTool = w(Ph.PenNib), Pencil = w(Ph.Pencil), PencilLine = w(Ph.PencilLine)
-export const Percent = w(Ph.Percent), Phone = w(Ph.Phone), PhoneCall = w(Ph.PhoneCall)
-export const Pin = w(Ph.PushPin), PinOff = w(Ph.PushPinSlash), Plane = w(Ph.Airplane)
-export const Play = w(Ph.Play), Plug = w(Ph.Plug), Plus = w(Ph.Plus)
-export const PlusCircle = w(Ph.PlusCircle), Power = w(Ph.Power), Presentation = w(Ph.PresentationChart)
-export const Printer = w(Ph.Printer), QrCode = w(Ph.QrCode), Quote = w(Ph.Quotes)
-export const Radio = w(Ph.Broadcast), Receipt = w(Ph.Receipt), RefreshCw = w(Ph.ArrowsClockwise)
-export const Repeat = w(Ph.Repeat), Rocket = w(Ph.Rocket), RotateCcw = w(Ph.ArrowCounterClockwise)
-export const Rss = w(Ph.Rss), Save = w(Ph.FloppyDisk), ScanLine = w(Ph.Scan)
-export const ScanSearch = w(Ph.MagnifyingGlassPlus), Scissors = w(Ph.Scissors), Search = w(Ph.MagnifyingGlass)
-export const Send = w(Ph.PaperPlaneTilt), Server = w(Ph.HardDrives), Settings = w(Ph.GearSix)
-export const Settings2 = w(Ph.Sliders), Share2 = w(Ph.ShareNetwork), Shield = w(Ph.Shield)
-export const ShieldAlert = w(Ph.ShieldWarning), ShieldCheck = w(Ph.ShieldCheck), Shirt = w(Ph.TShirt)
-export const ShoppingBag = w(Ph.ShoppingBag), ShoppingCart = w(Ph.ShoppingCart), Shuffle = w(Ph.Shuffle)
-export const Sliders = w(Ph.Sliders), SlidersHorizontal = w(Ph.SlidersHorizontal), Smartphone = w(Ph.DeviceMobile)
-export const Sparkles = w(Ph.Sparkle), Square = w(Ph.Square), Star = w(Ph.Star)
-export const Store = w(Ph.Storefront), Sun = w(Ph.Sun), SunMedium = w(Ph.SunDim)
-export const Table = w(Ph.Table), Tag = w(Ph.Tag), Tags = w(Ph.Tag)
-export const Target = w(Ph.Target), ThumbsUp = w(Ph.ThumbsUp), Ticket = w(Ph.Ticket)
-export const Timer = w(Ph.Timer), Trash2 = w(Ph.Trash), TreePine = w(Ph.Tree)
-export const TrendingUp = w(Ph.TrendUp), Trophy = w(Ph.Trophy), Truck = w(Ph.Truck)
-export const Type = w(Ph.TextT), Undo2 = w(Ph.ArrowUUpLeft), Unlock = w(Ph.LockOpen)
-export const Upload = w(Ph.UploadSimple), UploadCloud = w(Ph.CloudArrowUp), User = w(Ph.User)
-export const UserCheck = w(Ph.UserCheck), UserCircle = w(Ph.UserCircle), UserCog = w(Ph.UserGear)
-export const UserPlus = w(Ph.UserPlus), UserRound = w(Ph.User), Users = w(Ph.Users)
-export const Utensils = w(Ph.ForkKnife), Video = w(Ph.VideoCamera), Volume2 = w(Ph.SpeakerHigh)
-export const VolumeX = w(Ph.SpeakerSlash), Wallet = w(Ph.Wallet), WalletCards = w(Ph.Cards)
-export const Wand2 = w(Ph.MagicWand), Wrench = w(Ph.Wrench), X = w(Ph.X)
-export const XCircle = w(Ph.XCircle), XIcon = w(Ph.X), Zap = w(Ph.Lightning)
-export const ZoomIn = w(Ph.MagnifyingGlassPlus), ZoomOut = w(Ph.MagnifyingGlassMinus)
+export type { LucideIcon, LucideProps } from "./icon-set/wrap"
+export { Activity } from "./icon-set/activity"
+export { AlertCircle } from "./icon-set/alert-circle"
+export { AlertOctagon } from "./icon-set/alert-octagon"
+export { AlertTriangle } from "./icon-set/alert-triangle"
+export { Archive } from "./icon-set/archive"
+export { ArrowDown } from "./icon-set/arrow-down"
+export { ArrowDownCircle } from "./icon-set/arrow-down-circle"
+export { ArrowDownLeft } from "./icon-set/arrow-down-left"
+export { ArrowLeft } from "./icon-set/arrow-left"
+export { ArrowLeftRight } from "./icon-set/arrow-left-right"
+export { ArrowRight } from "./icon-set/arrow-right"
+export { ArrowUp } from "./icon-set/arrow-up"
+export { ArrowUpDown } from "./icon-set/arrow-up-down"
+export { ArrowUpRight } from "./icon-set/arrow-up-right"
+export { ArrowDownRight } from "./icon-set/arrow-down-right"
+export { Award } from "./icon-set/award"
+export { BadgeCheck } from "./icon-set/badge-check"
+export { BadgePercent } from "./icon-set/badge-percent"
+export { Ban } from "./icon-set/ban"
+export { Banknote } from "./icon-set/banknote"
+export { BarChart3 } from "./icon-set/bar-chart3"
+export { Bed } from "./icon-set/bed"
+export { Bell } from "./icon-set/bell"
+export { BellRing } from "./icon-set/bell-ring"
+export { Bike } from "./icon-set/bike"
+export { BookOpen } from "./icon-set/book-open"
+export { Bookmark } from "./icon-set/bookmark"
+export { Bot } from "./icon-set/bot"
+export { Brain } from "./icon-set/brain"
+export { Briefcase } from "./icon-set/briefcase"
+export { Building } from "./icon-set/building"
+export { Building2 } from "./icon-set/building2"
+export { Calculator } from "./icon-set/calculator"
+export { Calendar } from "./icon-set/calendar"
+export { CalendarCheck } from "./icon-set/calendar-check"
+export { CalendarClock } from "./icon-set/calendar-clock"
+export { CalendarDays } from "./icon-set/calendar-days"
+export { CalendarHeart } from "./icon-set/calendar-heart"
+export { CalendarIcon } from "./icon-set/calendar-icon"
+export { CalendarRange } from "./icon-set/calendar-range"
+export { CalendarX } from "./icon-set/calendar-x"
+export { Camera } from "./icon-set/camera"
+export { Car } from "./icon-set/car"
+export { Check } from "./icon-set/check"
+export { CheckCircle } from "./icon-set/check-circle"
+export { CheckCircle2 } from "./icon-set/check-circle2"
+export { CheckSquare } from "./icon-set/check-square"
+export { ChevronDown } from "./icon-set/chevron-down"
+export { ChevronLeft } from "./icon-set/chevron-left"
+export { ChevronRight } from "./icon-set/chevron-right"
+export { ChevronUp } from "./icon-set/chevron-up"
+export { Circle } from "./icon-set/circle"
+export { CircleDollarSign } from "./icon-set/circle-dollar-sign"
+export { CircleHelp } from "./icon-set/circle-help"
+export { Clapperboard } from "./icon-set/clapperboard"
+export { ClipboardCheck } from "./icon-set/clipboard-check"
+export { ClipboardList } from "./icon-set/clipboard-list"
+export { Clock } from "./icon-set/clock"
+export { Cloud } from "./icon-set/cloud"
+export { Coffee } from "./icon-set/coffee"
+export { Coins } from "./icon-set/coins"
+export { Compass } from "./icon-set/compass"
+export { Contact } from "./icon-set/contact"
+export { Copy } from "./icon-set/copy"
+export { CopyPlus } from "./icon-set/copy-plus"
+export { CornerUpLeft } from "./icon-set/corner-up-left"
+export { Cpu } from "./icon-set/cpu"
+export { CreditCard } from "./icon-set/credit-card"
+export { Crown } from "./icon-set/crown"
+export { Database } from "./icon-set/database"
+export { DollarSign } from "./icon-set/dollar-sign"
+export { Download } from "./icon-set/download"
+export { Edit } from "./icon-set/edit"
+export { Edit2 } from "./icon-set/edit2"
+export { Edit3 } from "./icon-set/edit3"
+export { Eraser } from "./icon-set/eraser"
+export { ExternalLink } from "./icon-set/external-link"
+export { Eye } from "./icon-set/eye"
+export { EyeOff } from "./icon-set/eye-off"
+export { FileCheck } from "./icon-set/file-check"
+export { FileCheck2 } from "./icon-set/file-check2"
+export { FileCode } from "./icon-set/file-code"
+export { FileDown } from "./icon-set/file-down"
+export { FileEdit } from "./icon-set/file-edit"
+export { FileInput } from "./icon-set/file-input"
+export { FileOutput } from "./icon-set/file-output"
+export { FileSpreadsheet } from "./icon-set/file-spreadsheet"
+export { FileText } from "./icon-set/file-text"
+export { Film } from "./icon-set/film"
+export { Filter } from "./icon-set/filter"
+export { Flame } from "./icon-set/flame"
+export { FlaskConical } from "./icon-set/flask-conical"
+export { Flower2 } from "./icon-set/flower2"
+export { Folder } from "./icon-set/folder"
+export { FolderCheck } from "./icon-set/folder-check"
+export { FolderUp } from "./icon-set/folder-up"
+export { Gauge } from "./icon-set/gauge"
+export { Gift } from "./icon-set/gift"
+export { GitMerge } from "./icon-set/git-merge"
+export { Globe } from "./icon-set/globe"
+export { Globe2 } from "./icon-set/globe2"
+export { Grid } from "./icon-set/grid"
+export { Hammer } from "./icon-set/hammer"
+export { Hand } from "./icon-set/hand"
+export { Handshake } from "./icon-set/handshake"
+export { Hash } from "./icon-set/hash"
+export { Headphones } from "./icon-set/headphones"
+export { Heart } from "./icon-set/heart"
+export { HeartHandshake } from "./icon-set/heart-handshake"
+export { HelpCircle } from "./icon-set/help-circle"
+export { History } from "./icon-set/history"
+export { Home } from "./icon-set/home"
+export { Hourglass } from "./icon-set/hourglass"
+export { IdCard } from "./icon-set/id-card"
+export { Image } from "./icon-set/image"
+export { ImageDown } from "./icon-set/image-down"
+export { ImageIcon } from "./icon-set/image-icon"
+export { ImageOff } from "./icon-set/image-off"
+export { ImagePlus } from "./icon-set/image-plus"
+export { ImageUp } from "./icon-set/image-up"
+export { Images } from "./icon-set/images"
+export { Inbox } from "./icon-set/inbox"
+export { InboxIcon } from "./icon-set/inbox-icon"
+export { Info } from "./icon-set/info"
+export { Kanban } from "./icon-set/kanban"
+export { KeyRound } from "./icon-set/key-round"
+export { Landmark } from "./icon-set/landmark"
+export { Layers } from "./icon-set/layers"
+export { LayoutDashboard } from "./icon-set/layout-dashboard"
+export { LayoutGrid } from "./icon-set/layout-grid"
+export { LayoutList } from "./icon-set/layout-list"
+export { LayoutTemplate } from "./icon-set/layout-template"
+export { Leaf } from "./icon-set/leaf"
+export { Library } from "./icon-set/library"
+export { Lightbulb } from "./icon-set/lightbulb"
+export { Link } from "./icon-set/link"
+export { Link2 } from "./icon-set/link2"
+export { LinkIcon } from "./icon-set/link-icon"
+export { List } from "./icon-set/list"
+export { ListChecks } from "./icon-set/list-checks"
+export { ListFilter } from "./icon-set/list-filter"
+export { Loader2 } from "./icon-set/loader2"
+export { Lock } from "./icon-set/lock"
+export { LockKeyhole } from "./icon-set/lock-keyhole"
+export { LogIn } from "./icon-set/log-in"
+export { LogOut } from "./icon-set/log-out"
+export { Mail } from "./icon-set/mail"
+export { MapPin } from "./icon-set/map-pin"
+export { Maximize2 } from "./icon-set/maximize2"
+export { Megaphone } from "./icon-set/megaphone"
+export { Menu } from "./icon-set/menu"
+export { MessageCircle } from "./icon-set/message-circle"
+export { MessageSquare } from "./icon-set/message-square"
+export { MessageSquareHeart } from "./icon-set/message-square-heart"
+export { MessageSquarePlus } from "./icon-set/message-square-plus"
+export { MessageSquareQuote } from "./icon-set/message-square-quote"
+export { MessageSquareText } from "./icon-set/message-square-text"
+export { Mic } from "./icon-set/mic"
+export { Minimize2 } from "./icon-set/minimize2"
+export { Minus } from "./icon-set/minus"
+export { Monitor } from "./icon-set/monitor"
+export { Moon } from "./icon-set/moon"
+export { MoreHorizontal } from "./icon-set/more-horizontal"
+export { Music } from "./icon-set/music"
+export { Navigation } from "./icon-set/navigation"
+export { Network } from "./icon-set/network"
+export { Package } from "./icon-set/package"
+export { PackageCheck } from "./icon-set/package-check"
+export { PackagePlus } from "./icon-set/package-plus"
+export { PackageX } from "./icon-set/package-x"
+export { Palette } from "./icon-set/palette"
+export { PanelLeftClose } from "./icon-set/panel-left-close"
+export { PanelLeftOpen } from "./icon-set/panel-left-open"
+export { PartyPopper } from "./icon-set/party-popper"
+export { Pause } from "./icon-set/pause"
+export { PenTool } from "./icon-set/pen-tool"
+export { Pencil } from "./icon-set/pencil"
+export { PencilLine } from "./icon-set/pencil-line"
+export { Percent } from "./icon-set/percent"
+export { Phone } from "./icon-set/phone"
+export { PhoneCall } from "./icon-set/phone-call"
+export { Pin } from "./icon-set/pin"
+export { PinOff } from "./icon-set/pin-off"
+export { Plane } from "./icon-set/plane"
+export { Play } from "./icon-set/play"
+export { Plug } from "./icon-set/plug"
+export { Plus } from "./icon-set/plus"
+export { PlusCircle } from "./icon-set/plus-circle"
+export { Power } from "./icon-set/power"
+export { Presentation } from "./icon-set/presentation"
+export { Printer } from "./icon-set/printer"
+export { QrCode } from "./icon-set/qr-code"
+export { Quote } from "./icon-set/quote"
+export { Radio } from "./icon-set/radio"
+export { Receipt } from "./icon-set/receipt"
+export { RefreshCw } from "./icon-set/refresh-cw"
+export { Repeat } from "./icon-set/repeat"
+export { Rocket } from "./icon-set/rocket"
+export { RotateCcw } from "./icon-set/rotate-ccw"
+export { Rss } from "./icon-set/rss"
+export { Save } from "./icon-set/save"
+export { ScanLine } from "./icon-set/scan-line"
+export { ScanSearch } from "./icon-set/scan-search"
+export { Scissors } from "./icon-set/scissors"
+export { Search } from "./icon-set/search"
+export { Send } from "./icon-set/send"
+export { Server } from "./icon-set/server"
+export { Settings } from "./icon-set/settings"
+export { Settings2 } from "./icon-set/settings2"
+export { Share2 } from "./icon-set/share2"
+export { Shield } from "./icon-set/shield"
+export { ShieldAlert } from "./icon-set/shield-alert"
+export { ShieldCheck } from "./icon-set/shield-check"
+export { Shirt } from "./icon-set/shirt"
+export { ShoppingBag } from "./icon-set/shopping-bag"
+export { ShoppingCart } from "./icon-set/shopping-cart"
+export { Shuffle } from "./icon-set/shuffle"
+export { Sliders } from "./icon-set/sliders"
+export { SlidersHorizontal } from "./icon-set/sliders-horizontal"
+export { Smartphone } from "./icon-set/smartphone"
+export { Sparkles } from "./icon-set/sparkles"
+export { Square } from "./icon-set/square"
+export { Star } from "./icon-set/star"
+export { Store } from "./icon-set/store"
+export { Sun } from "./icon-set/sun"
+export { SunMedium } from "./icon-set/sun-medium"
+export { Table } from "./icon-set/table"
+export { Tag } from "./icon-set/tag"
+export { Tags } from "./icon-set/tags"
+export { Target } from "./icon-set/target"
+export { ThumbsUp } from "./icon-set/thumbs-up"
+export { Ticket } from "./icon-set/ticket"
+export { Timer } from "./icon-set/timer"
+export { Trash2 } from "./icon-set/trash2"
+export { TreePine } from "./icon-set/tree-pine"
+export { TrendingUp } from "./icon-set/trending-up"
+export { Trophy } from "./icon-set/trophy"
+export { Truck } from "./icon-set/truck"
+export { Type } from "./icon-set/type"
+export { Undo2 } from "./icon-set/undo2"
+export { Unlock } from "./icon-set/unlock"
+export { Upload } from "./icon-set/upload"
+export { UploadCloud } from "./icon-set/upload-cloud"
+export { User } from "./icon-set/user"
+export { UserCheck } from "./icon-set/user-check"
+export { UserCircle } from "./icon-set/user-circle"
+export { UserCog } from "./icon-set/user-cog"
+export { UserPlus } from "./icon-set/user-plus"
+export { UserRound } from "./icon-set/user-round"
+export { Users } from "./icon-set/users"
+export { Utensils } from "./icon-set/utensils"
+export { Video } from "./icon-set/video"
+export { Volume2 } from "./icon-set/volume2"
+export { VolumeX } from "./icon-set/volume-x"
+export { Wallet } from "./icon-set/wallet"
+export { WalletCards } from "./icon-set/wallet-cards"
+export { Wand2 } from "./icon-set/wand2"
+export { Wrench } from "./icon-set/wrench"
+export { X } from "./icon-set/x"
+export { XCircle } from "./icon-set/x-circle"
+export { XIcon } from "./icon-set/x-icon"
+export { Zap } from "./icon-set/zap"
+export { ZoomIn } from "./icon-set/zoom-in"
+export { ZoomOut } from "./icon-set/zoom-out"
