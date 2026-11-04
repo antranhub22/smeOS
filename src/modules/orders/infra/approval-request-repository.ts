@@ -12,6 +12,8 @@ import { sendToCoordination } from "./coordination-handoff"
 const ORDER_SELECT = {
   id: true, code: true, source: true, status: true, total_vnd: true, paid_vnd: true,
   customer_id: true, delivery_window: true, owner_sale_id: true,
+  // Dòng hàng để tính giá sàn khi báo giá (checklist ALG 3.4)
+  items: { select: { product_id: true, quantity: true } },
 } as const
 
 export type ApprovalOrderRow = Prisma.ordersGetPayload<{ select: typeof ORDER_SELECT }>

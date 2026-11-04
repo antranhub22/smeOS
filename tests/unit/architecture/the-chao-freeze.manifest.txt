@@ -215,7 +215,7 @@ be7f4f83012e3877613dd0e170860166882650b50b8be2709f60ff6cfeb7ca54  src/modules/gr
 fecf8589347615345e1dd3eae70b190d16ea5e2a806338e3a2c8b6b50dc3913b  src/modules/greeting-card/infra/chain-dispatch-sweep-query.ts
 8dbd8eacfcba277c61d4d68c9fe30dde399efaf264ed8f228dc863dc69972e69  src/modules/greeting-card/infra/craft-fee-facts-repository.ts
 59d80d83d86ab52e8eca6c0267cf59b5a1202948182f84074e5a461a8c7c8ccf  src/modules/greeting-card/infra/delivery-failure-repository.ts
-4e2435cf966e0fd73da914153228b84b24d76816028e25cf8cd1624c6750a3b3  src/modules/greeting-card/infra/discount-repository.ts
+d8c78aa171d4a121139d391016b25c784ee811755f544ebe53754384a3d3ac2a  src/modules/greeting-card/infra/discount-repository.ts
 04eb805b5490a8163d4b3136e85c7bf2854ba0061e0b91ddc786dfe122893695  src/modules/greeting-card/infra/dismissal-repository.ts
 17940e7b797855d6ef609be3c7278934f1ccd003164cc30c234c1bac9d582930  src/modules/greeting-card/infra/dismissal-restore-repository.ts
 4d0c0d4570a820d64f5fb986fbd20206870557a2361bdeb04fc7cb3f84b54c4f  src/modules/greeting-card/infra/dismissal-store.ts
@@ -309,7 +309,7 @@ fc0a06ee75e045f4a560032339b16d82eaea7be157418c956a8e9044a8548602  src/modules/gr
 d437b359483f6594665c4086c723b0264aa1f1e33c640e6dd38c79ed256c1d9c  src/modules/greeting-card/use-cases/customer-journey.ts
 42f3e30b5ae9777f54340ce8cff50307f08c118688f0369986471dc481a5c4e2  src/modules/greeting-card/use-cases/decide-dismissal.ts
 4d15b4b5b70730483169ced7d9092ccb1df3ba37d7d4353fe2b4768ddf0578ae  src/modules/greeting-card/use-cases/delete-greeting-catalog.ts
-054b5d149761a04c822ee28b75f0ab2e1ffa49b0e3939108a31d84de2c9517f7  src/modules/greeting-card/use-cases/discount-requests.ts
+c0fcddcf1f5bed4b503f4d22a3a97fa45d93ed4445df9c7c2efb6784f7e1ebb8  src/modules/greeting-card/use-cases/discount-requests.ts
 0e76cd72b50fddc77e0c56e3f68335d5e817390d7ed203aa07a6f8b9e74f38e4  src/modules/greeting-card/use-cases/dispatch-after-payment.ts
 85c50461c46d7505df0f076ff6c15680a39af1f790d645b9c74abdfd34b5cba9  src/modules/greeting-card/use-cases/dispatch-delivery-reminders.ts
 271da6cc8d6f6380b12bea1743630a4aef2712fafe2773fcb3505fb86aaafea1  src/modules/greeting-card/use-cases/dispatch-shipper-reminders.ts

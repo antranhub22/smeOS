@@ -1,4 +1,5 @@
 import { conflict, notFound, validationFailed } from "@/core/http/errors"
+import { assertNotBelowFloor } from "@/modules/costing/use-cases/price-floor-guard"
 import { assertNotSelfApproval } from "@/modules/organization/use-cases/assert-not-self-approval"
 import type { TenantContext } from "@/core/tenancy"
 import { getCurrentOrganization } from "@/modules/organization/use-cases/get-current-organization"
@@ -67,6 +68,8 @@ export async function decideDiscount(
   if (input.approve) {
     const error = discountError(ask, order.baseTotalVnd, await maxPercent(ctx))
     if (error) throw validationFailed({ discount: error })
+    // Giảm xuống dưới giá sàn chỉ người có C10 (Điều hành) duyệt được (checklist ALG 3.4, 9.11)
+    await assertNotBelowFloor(ctx, order.lines ?? [], order.baseTotalVnd - discountVndOf(ask, order.baseTotalVnd))
   }
   return repo.decide(ctx, {
     requestId: input.requestId, approve: input.approve, approvedVnd: input.approve ? discountVndOf(ask, order.baseTotalVnd) : 0,

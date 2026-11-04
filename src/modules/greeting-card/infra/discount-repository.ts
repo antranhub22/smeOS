@@ -19,13 +19,17 @@ export class DiscountRepository {
   async orderBase(ctx: TenantContext, orderId: string) {
     const o = await this.db.orders.findFirst({
       where: scopedWhere(ctx, { id: orderId, source: "BROCHURE" }),
-      select: { id: true, code: true, status: true, total_vnd: true, paid_vnd: true, pricing_rule_ref: true, vat_amount_vnd: true },
+      select: {
+        id: true, code: true, status: true, total_vnd: true, paid_vnd: true, pricing_rule_ref: true, vat_amount_vnd: true,
+        items: { select: { product_id: true, quantity: true } },
+      },
     })
     if (!o) return null
     const manual = obj(obj(o.pricing_rule_ref).manualDiscount)
     // Gốc tính giảm là giá TRƯỚC thuế — VAT không bị tính phần trăm giảm
     const base = typeof manual.baseTotalVnd === "number" ? manual.baseTotalVnd : Number(o.total_vnd) - Number(o.vat_amount_vnd)
-    return { id: o.id, code: o.code, status: o.status, totalVnd: Number(o.total_vnd), paidVnd: Number(o.paid_vnd), baseTotalVnd: base }
+    const lines = o.items.map((i) => ({ productId: i.product_id, quantity: i.quantity }))
+    return { id: o.id, code: o.code, status: o.status, totalVnd: Number(o.total_vnd), paidVnd: Number(o.paid_vnd), baseTotalVnd: base, lines }
   }
 
   async createRequest(ctx: TenantContext, input: { orderId: string; senderRole: MessageRole; reason: string; payload: DiscountPayload }) {
