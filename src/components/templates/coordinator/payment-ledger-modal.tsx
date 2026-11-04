@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react"
 import { X, Wallet, PlusCircle, Undo2 } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
+import { useSession } from "@/lib/session"
 import { SkeletonBlock } from "@/components/ui/skeleton"
 import {
   coordinatorApi,
@@ -44,6 +45,8 @@ const STATUS_LABEL: Record<CoordinationOrder["paymentStatus"], { label: string; 
 const fmtVnd = (n: number) => `${n.toLocaleString("vi-VN")}đ`
 
 export function PaymentLedgerModal({ isOpen, order, onClose, onRecorded }: PaymentLedgerModalProps) {
+  // Khoản Sale/Điều phối ghi chờ Điều hành (R11) xác nhận mới vào sổ thu (checklist ALG 1.16)
+  const canConfirm = useSession().can("R11")
   const [payments, setPayments] = useState<OrderPaymentView[]>([])
   const [loadingList, setLoadingList] = useState(false)
   const [listError, setListError] = useState<string | null>(null)
@@ -98,6 +101,7 @@ export function PaymentLedgerModal({ isOpen, order, onClose, onRecorded }: Payme
         ...(note.trim() ? { note: note.trim() } : {}),
       }
       const updated = await coordinatorApi.recordPayment(order.id, body)
+      if (!canConfirm) setFormError("Đã ghi — khoản này chờ Điều hành xác nhận mới vào sổ thu.")
       onRecorded(updated)
       const rows = await coordinatorApi.listPayments(order.id)
       setPayments(rows)
@@ -105,6 +109,22 @@ export function PaymentLedgerModal({ isOpen, order, onClose, onRecorded }: Payme
       setPaymentMethod("")
       setReference("")
       setNote("")
+    } catch (e) {
+      setFormError(errorMessage(e))
+    } finally {
+      setBusy(false)
+    }
+  }
+
+
+  const decide = async (paymentId: string, approve: boolean) => {
+    if (!order) return
+    setBusy(true)
+    setFormError(null)
+    try {
+      const updated = await coordinatorApi.decidePayment(order.id, paymentId, approve, approve ? undefined : "Không khớp số tiền thực nhận")
+      onRecorded(updated)
+      setPayments(await coordinatorApi.listPayments(order.id))
     } catch (e) {
       setFormError(errorMessage(e))
     } finally {
@@ -170,6 +190,18 @@ export function PaymentLedgerModal({ isOpen, order, onClose, onRecorded }: Payme
                         {new Date(p.collectedAt).toLocaleString("vi-VN")}
                         {p.note ? ` · ${p.note}` : ""}
                       </span>
+                      {p.status === "PENDING" && (
+                        <span className="flex flex-wrap items-center gap-2 text-caption text-warning">
+                          Chờ Điều hành xác nhận
+                          {canConfirm && (
+                            <>
+                              <Button type="button" size="sm" variant="secondary" disabled={busy} onClick={() => void decide(p.id, true)}>Xác nhận</Button>
+                              <Button type="button" size="sm" variant="outline" disabled={busy} onClick={() => void decide(p.id, false)}>Từ chối</Button>
+                            </>
+                          )}
+                        </span>
+                      )}
+                      {p.status === "REJECTED" && <span className="text-caption text-danger">Đã từ chối — không vào sổ thu</span>}
                     </div>
                     <strong className={p.kind === "REFUND" ? "text-alert-700" : "text-mint-700"}>
                       {p.kind === "REFUND" ? "−" : "+"}

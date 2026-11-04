@@ -53,6 +53,8 @@ export async function queryOrdersForExport(ctx: TenantContext, filter: OrderExpo
         select: { id: true, code: true, name: true, phone: true, tier: true },
       },
       payments: {
+        // Chỉ khoản đã xác nhận vào sổ thu — khoản chờ/bị từ chối không tính (checklist ALG 1.16)
+        where: { status: "CONFIRMED" },
         select: {
           id: true,
           kind: true,
