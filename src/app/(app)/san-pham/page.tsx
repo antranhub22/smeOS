@@ -110,12 +110,12 @@ export default function SanPhamPage() {
   return (
     <div className="flex h-full flex-col overflow-hidden">
       {/* Header tác vụ */}
-      <header className="flex flex-shrink-0 items-center justify-between border-b border-border bg-surface px-4 py-3.5 gap-3">
+      <header className="flex flex-shrink-0 flex-wrap items-center justify-between border-b border-border bg-surface px-4 py-3.5 gap-3">
         <PageHeader
           title={ti("sampleProduct")}
           tip={<>Kho {ti("catalogTitle").toLowerCase()}: thêm, sửa và ẩn {ti("sampleProduct").toLowerCase()} để hiện trên catalog bán hàng.</>}
         />
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <Button
             type="button"
             variant="outline"
