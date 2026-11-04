@@ -5,6 +5,7 @@
  */
 
 import type { CoordinatorStage, CoordinationRiskLevel } from "./coordinator-types"
+import { formatCurrency } from "@/lib/i18n/formatters"
 
 export type RuleResult = { ok: true } | { ok: false; reason: string }
 
@@ -246,7 +247,7 @@ export function checkClosure(params: {
     return { ok: false, reason: `Chỉ đóng đơn sau khi đã giao (hiện: ${params.stage}).` }
   }
   if ((params.balanceVnd ?? 0) > 0) {
-    return { ok: false, reason: `Đơn còn phải thu ${params.balanceVnd!.toLocaleString("vi-VN")} đ — chỉ hoàn tất khi đã thu đủ.` }
+    return { ok: false, reason: `Đơn còn phải thu ${formatCurrency(params.balanceVnd!)} — chỉ hoàn tất khi đã thu đủ.` }
   }
   if (params.openExceptionCount > 0) {
     return { ok: false, reason: `Còn ${params.openExceptionCount} sự cố chưa xử lý.` }
