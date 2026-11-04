@@ -1,3 +1,5 @@
+import { readFileSync } from "node:fs"
+import { join } from "node:path"
 import { describe, expect, it } from "vitest"
 import { renderToStaticMarkup } from "react-dom/server"
 import { getAllTools } from "@/modules/toolkit/domain/toolkit-catalog"
@@ -21,5 +23,11 @@ describe("AppIcon / IconTile", () => {
     expect(solid).toContain('aria-hidden="true"')
     const soft = renderToStaticMarkup(<IconTile name="Camera" tone="blue" />)
     expect(soft).toContain("text-tone-blue")
+  })
+
+  it("không tra icon động qua namespace `./icons` (giữ chunk icon của shell nhỏ)", () => {
+    // `import * as X from "./icons"` + `X[name]` buộc bundler giữ mọi icon trong chunk chung của mọi trang.
+    const src = readFileSync(join(process.cwd(), "src/components/ui/app-icon.tsx"), "utf8")
+    expect(src).not.toMatch(/import \* as \w+ from "\.\/icons"/)
   })
 })
