@@ -12,6 +12,12 @@ export interface OrderExportFilter {
   source?: string | undefined
   fromDate?: Date | undefined
   toDate?: Date | undefined
+  /**
+   * Phạm vi của người xuất (checklist ALG 4.10): sale "chỉ khách của mình" chỉ nhận đơn do mình phụ
+   * trách — Thẻ chào theo `greeting_sessions.sale_id`, nguồn khác theo `owner_sale_id` (hoặc người
+   * tạo khi chưa gán sale).
+   */
+  saleId?: string | undefined
 }
 
 export async function queryOrdersForExport(ctx: TenantContext, filter: OrderExportFilter = {}) {
@@ -24,6 +30,15 @@ export async function queryOrdersForExport(ctx: TenantContext, filter: OrderExpo
             ...(filter.fromDate ? { gte: filter.fromDate } : {}),
             ...(filter.toDate ? { lte: filter.toDate } : {}),
           },
+        }
+      : {}),
+    ...(filter.saleId
+      ? {
+          OR: [
+            { greeting_sessions: { some: { sale_id: filter.saleId } } },
+            { owner_sale_id: filter.saleId },
+            { owner_sale_id: null, created_by: filter.saleId, source: { not: "BROCHURE" } },
+          ],
         }
       : {}),
   }
