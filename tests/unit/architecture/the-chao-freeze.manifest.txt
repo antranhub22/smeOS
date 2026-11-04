@@ -141,7 +141,7 @@ c3f7c160c7c242c7f9c4367fc6c9ce07f18d399a70515edd848f17b245da2eec  src/modules/gr
 8f6ee1e30e32daa30e237df4267df4afdf9be728085382cf7688aecbac2652ef  src/modules/greeting-card/domain/greeting-template-types.ts
 d46480d55c8aed5716876b6e7ae6719d458542b266139f92513829284e1ca61f  src/modules/greeting-card/domain/holiday-policy.ts
 7c922d83c38df117253f38408ae33b7ac1d3299cbf7774cda5fe52027da38465  src/modules/greeting-card/domain/inbox-alert.ts
-fb2be2216b65b5bc8528b23737e3f483c7ceb0c8b0b9d3b35de3e75b63b488ee  src/modules/greeting-card/domain/inbox.ts
+c3547b1df2dafaa43ded9cba1098eb40667bbe58ca2f3dd69065966558c57ba4  src/modules/greeting-card/domain/inbox.ts
 d783f1f98be763e4504b3d01a8f5ea0af0a03b65c7c21a9025be8cda9880de4d  src/modules/greeting-card/domain/industry-greeting-templates.ts
 12bbf01c6f82ac6500fa383f89f25350048d32d49b44d93c7200a750f8f138e7  src/modules/greeting-card/domain/industry-notification-formatter.ts
 8a88c01ec199d7c5de3920b1a6d5f7e4dd641b92fe4b38611d7bc099291c1f85  src/modules/greeting-card/domain/internal-message.ts
@@ -319,7 +319,7 @@ e6ae7e2f0f052307151bf81a12756ff7f3aa33a3472dc67609a12a0041c6ee7b  src/modules/gr
 17757b171b74ddb58f1a25afca3fc8965e3dc44e744f20fad824f7ccca6d1516  src/modules/greeting-card/use-cases/get-brochure-tracking.ts
 baacc13f06cf2d42e51c1a70fa23465379cfd3708d3810ff003a798e54aaf005  src/modules/greeting-card/use-cases/get-catalog-hearts.ts
 d6b728d9f56d0f03c092f4c79b41a8bb88193d5c4b1b3a3120f71d8662da3d35  src/modules/greeting-card/use-cases/get-greeting-catalog.ts
-7ff6d9016096ddad020a347b1bc40d68167e9331a7b1248716f5fde9a4f91505  src/modules/greeting-card/use-cases/get-inbox.ts
+49a2a687ec31dd15c605f6f097d965ca5188998d70f8446147e38d4b25461dde  src/modules/greeting-card/use-cases/get-inbox.ts
 87e3a4ee1ecf080539e30ea27ea1aced1b013bdd640e3001fb40abd67b863623  src/modules/greeting-card/use-cases/get-order-family.ts
 531c1f1a7a218646f182bbc7d05a8e8bea563fc4705b37be89d94ff90576588d  src/modules/greeting-card/use-cases/get-public-greeting-catalog-by-slug.ts
 50714a3c36ac35d8475766583a9146840353ccbf938b16f47374b3934ce367ec  src/modules/greeting-card/use-cases/get-public-greeting-catalog.ts
@@ -333,6 +333,7 @@ c8b23a4eed937a854e2579bc185ca77e6b58b4224acc241db1a7ce6124dc4230  src/modules/gr
 079821144136a0a3f818d3f6c4389e2e8104006a3cdc0cbe25b09b5a9696a63f  src/modules/greeting-card/use-cases/internal-messages.ts
 fe6b81e545dfa1bbcadaf081549b30ed4300e73c59201440b98191d951d80f40  src/modules/greeting-card/use-cases/invite-cards.ts
 534a69ab7c16a792c2411fcc3b59a4452213e29fc7b472efa58e04f8a4a759a1  src/modules/greeting-card/use-cases/link-customer.ts
+2f236f91b9123e78f4be40bd872f394d544e18b4a26497b4d6e8d30abf2d8fe7  src/modules/greeting-card/use-cases/missing-info-actions.ts
 d93339b87230630a5dec3ff11ad6484b96d1505aeda9433ea28def062b41a28f  src/modules/greeting-card/use-cases/notify-customer.ts
 06dfac6b0d1f2a46520d353c49f097192a04119dc910ee6efc2287df00844ba2  src/modules/greeting-card/use-cases/notify-settings.ts
 ff2e657230f0db412a6399116a7852e0a33f921dbb91efaf889ba18f80993649  src/modules/greeting-card/use-cases/notify-shipper-request.ts
@@ -569,7 +570,7 @@ d23cf470ac1a5a6d09528090b6b1e6fcb6f28d31bf5283a942bf272367207104  src/components
 9ef2920fb828000566b1691e897f9e3c7101e510b18dd2cc3d0d644014e0c0a9  src/components/greeting-card/inbox/discount-decision.tsx
 4ebc4228c076979a437e7c5b606135db69bc075b39c18c3415fda864b3c72fec  src/components/greeting-card/inbox/discount-request-form.tsx
 b8a35e96bd23e4432bfedc43870c287084f37f3d110e8807325fb8b09b9883f8  src/components/greeting-card/inbox/inbox-button.tsx
-1e26b0b816e23db32a0db10cb341c8e5dffdf79e21d26a96721985331f5a77fa  src/components/greeting-card/inbox/inbox-panel.tsx
+93e4b621d57c3b2dbfdc3bc5b21c8c76d2be966f9eaaddfcdad87d7dc1cf578c  src/components/greeting-card/inbox/inbox-panel.tsx
 ea2d20aaad9f4780da2d03645969020f196ac566dcdf97c6fb9f7e0a31931f82  src/components/greeting-card/inbox/message-composer.tsx
 6e560a61bc15937ffbb007baefcd829d1100b885816b3e4a831a722e35de2905  src/components/greeting-card/inbox/message-thread.tsx
 0ca84fc83cc91cf681db7d89918845ef835cedb7ad944a8ee3ecaed727f0cd1a  src/components/greeting-card/inbox/sheet.tsx
@@ -710,7 +711,7 @@ bacf70179ee1ff8178c0d4d193a555324d0377b6b2b4f303495a72027f32cb0b  src/app/api/v1
 2b7d0f1b1fa8371320284afe476707f825c0d00377c77afc2708fc1519ee21d7  src/app/api/v1/greeting-card/orders/[id]/vat/route.ts
 9db886757547d4fed839041555e05d3bd5b81eddd36ba6ba30996739a2c45c53  src/app/api/v1/greeting-card/orders/route.ts
 7945d1db38bf001974dbe73d9fb83bdffc39447f9aa8f682f0a599a970fa64d9  src/app/api/v1/greeting-card/payment-events/[id]/handle/route.ts
-5c54520b2610271f416eee1a0fdc6e32141348c0d5c658be392f3c3609dd9c17  src/app/api/v1/greeting-card/payment-events/route.ts
+4a656e3ac904bc51e6af73b52191889af3885226b325cc047664266d5703b5f2  src/app/api/v1/greeting-card/payment-events/route.ts
 70ba43dee994f7da1e04730534647701574855b92b48069d30249b584c4837aa  src/app/api/v1/greeting-card/sale-visibility/route.ts
 56bf438c3e694fc555e861a7aaea7bea8bd81959b15965101e2a4039680ef43f  src/app/api/v1/greeting-card/send-links/[id]/copied/route.ts
 a5c571a2fbdcdfbf2b873ea921fe3ba8bcdfba05e42e4cfeef8663b417e63932  src/app/api/v1/greeting-card/send-links/[id]/customer/route.ts
@@ -759,7 +760,7 @@ f1dd8110fe55e9d51789aa988606937e9c7beee71e3572a82e9da89a64bf595b  capability:del
 7a3166aa6c30b36daddbf7771eaa3314e7411a02fab4d1a540a9e698777e2324  capability:integrationManage=F2
 bab189a8908af4456819f1a47562c3ad4c681878cef65b3775463797cab5fe51  capability:manage=R2
 1c9883849e418d9d6deb6256a7b301284466d3190099165ad13a0f12773f46c9  capability:orderCancel=R6
-7de07bf8b43a0b3ef701b708c51f8041ac89c6a18bd16a88f290db92500278ae  capability:orderRead=R1
+ca6a952ab04bd025f80b0cdd6ade396315b7eb5ca2574e8ac9cec50e24d159ac  capability:orderRead=R1
 88da157a99e0e5a2b5bc03c960c7da1eeeb998158673d1ca633f6befdb81ce3b  capability:orderUpdate=R3
 c1bdb16712f9fbdf770fded65a07e167963f88f1dcc85a1e082ef2b3b35f4d0b  capability:paymentRecord=R11
 e5c42edf8a081f4e05f6b2a66125eb300dccf49048b37baeef7b5b5ca5377e29  capability:paymentRefund=R10

@@ -12,6 +12,8 @@
  * Luật thuần — không import Prisma, không import React.
  */
 
+import { OPERATIONS_ROLE_UX } from "./role-ux-operations"
+
 export type RoleUxKey =
   | "platform_admin"
   | "industry_admin"
@@ -31,6 +33,7 @@ export type RoleUxKey =
   | "product_manager"
   | "finance_accounting"
   | "florist"
+  | "shipper"
 
 export type RoleUxGroup = "PLATFORM" | "STORE" | "FLOWER_NETWORK" | "ONE_STORE" | "CHAIN"
 
@@ -57,6 +60,9 @@ export type RoleUxHomepage =
   | "CUSTOMER_SERVICE_WORKSPACE"
   | "CONTROL_TOWER"
   | "TOOLKIT_HOME"
+  | "FLORIST_QUEUE"
+  | "SHIPPER_DELIVERIES"
+  | "ACCOUNTING_WORKSPACE"
   | "NOT_BUILT"
 
 export interface RoleUxDefinition {
@@ -344,40 +350,8 @@ export const ROLE_UX_CATALOG: readonly RoleUxDefinition[] = [
     navPriority: ["/san-pham", "/catalog", "/gia", "/kho-templates"],
     debtRefs: [],
   },
-  {
-    key: "finance_accounting",
-    label: "Tài chính – Kế toán",
-    group: "FLOWER_NETWORK",
-    primaryPhilosophy: "Transaction-first",
-    supportingPhilosophies: [],
-    mission: "Xác thực, đối soát, tất toán giao dịch và lập báo cáo.",
-    primaryQuestion: "Giao dịch nào cần tôi xử lý?",
-    homepageModel: "Transaction Workspace",
-    dominantActions: ["Xác thực", "Đối soát", "Tất toán"],
-    status: "IN_DEVELOPMENT",
-    homepage: "NOT_BUILT",
-    systemRoleKeys: [],
-    entryHref: null,
-    navPriority: [],
-    debtRefs: [165],
-  },
-  {
-    key: "florist",
-    label: "Thợ chế tác",
-    group: "STORE",
-    primaryPhilosophy: "Production Queue",
-    supportingPhilosophies: [],
-    mission: "Chế tác đúng công thức, đúng tiến độ và chuẩn chất lượng theo từng phiếu cắm.",
-    primaryQuestion: "Hôm nay tôi cắm những đơn nào, theo thứ tự nào?",
-    homepageModel: "Production Queue",
-    dominantActions: ["Nhận việc", "Chế tác", "Báo xong"],
-    status: "IN_DEVELOPMENT",
-    homepage: "NOT_BUILT",
-    systemRoleKeys: [],
-    entryHref: null,
-    navPriority: [],
-    debtRefs: [169],
-  },
+  // Vai vận hành Thợ cắm, Shipper, Kế toán (PO Q7, checklist ALG 1.12) — role-ux-operations.ts
+  ...OPERATIONS_ROLE_UX,
 ] as const
 
 export const ROLE_UX_GROUP_LABEL: Record<RoleUxGroup, string> = {

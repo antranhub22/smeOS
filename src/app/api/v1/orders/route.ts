@@ -3,6 +3,7 @@ import { handle, jsonResponse } from "@/core/http/response"
 import { requireCapability } from "@/core/rbac/capabilities"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import { ingestOrder } from "@/modules/orders/use-cases/ingest-order"
+import { syncOrderInfoRequests } from "@/modules/orders/use-cases/order-info-requests"
 import { listOrders } from "@/modules/orders/use-cases/list-orders"
 import type { OrderStatus, ProductionStatus, DeliveryStatus } from "@/modules/orders/domain/order-types"
 
@@ -79,5 +80,7 @@ export const POST = handle(async (request) => {
   const parsed = createOrderSchema.parse(body)
 
   const order = await ingestOrder(ctx, { ...parsed, source: "MANUAL" })
+  // Đơn thiếu địa chỉ/SĐT người nhận → tự sinh yêu cầu bổ sung (checklist ALG 4.14)
+  await syncOrderInfoRequests(ctx, order.id)
   return jsonResponse({ order }, { status: 201 })
 })

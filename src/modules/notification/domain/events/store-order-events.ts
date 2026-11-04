@@ -310,4 +310,20 @@ export const STORE_ORDER_EVENTS: NotificationEventDefinition[] = [
       { roleKey: "store_admin", channels: ["APP_INBOX"], priority: "NORMAL", dispatchMode: "BROADCAST" },
     ],
   },
+  // Checklist ALG 4.14 — yêu cầu bổ sung thông tin đơn quá hạn chưa có câu trả lời
+  {
+    key: "ORDER_INFO_REQUEST_OVERDUE",
+    label: "Quá hạn bổ sung thông tin đơn",
+    description: "Khi đơn còn thiếu địa chỉ, số điện thoại người nhận hoặc lời chúc quá hạn hỏi lại",
+    group: "ORDER",
+    tier: "STORE",
+    version: 1,
+    defaultVisibleToTiers: [],
+    iconName: "AlertCircle",
+    deepLinkTemplate: "/don-hang",
+    roleDefaults: [
+      { roleKey: "sales", channels: ["APP_INBOX"], priority: "URGENT", dispatchMode: "OWNER" },
+      { roleKey: "coordinator", channels: ["APP_INBOX"], priority: "NORMAL", dispatchMode: "BROADCAST" },
+    ],
+  },
 ]

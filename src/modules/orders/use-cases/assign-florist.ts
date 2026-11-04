@@ -10,6 +10,7 @@ import type { OrderRecord } from "../domain/order-types"
 import type { IOrderRepository } from "../domain/repositories/order-repository.interface"
 import { getOrderRepository } from "../infra/order-repository"
 import { notifyOrganization } from "@/modules/notification/use-cases/notify-organization"
+import { FloristQueueRepository } from "../infra/florist-queue-repository"
 
 export interface AssignFloristInput {
   assigneeId: string
@@ -21,7 +22,8 @@ export async function assignFlorist(
   orderId: string,
   input: AssignFloristInput,
   repo: IOrderRepository = getOrderRepository(),
-  notify: typeof notifyOrganization = notifyOrganization
+  notify: typeof notifyOrganization = notifyOrganization,
+  queue: Pick<FloristQueueRepository, "isActiveMember" | "releaseActive"> = new FloristQueueRepository()
 ): Promise<OrderRecord> {
   const existing = await repo.findById(ctx.organizationId, orderId)
   // Ngoài chi nhánh được giao → như không tồn tại (checklist ALG 9.13)
@@ -36,7 +38,13 @@ export async function assignFlorist(
     throw new AppError("UNPROCESSABLE_ENTITY", "Không thể phân công thợ chế tác cho đơn đã kết thúc.")
   }
 
-  // Tạo phân công mới qua repository
+  // Người nhận việc phải là thành viên đang hoạt động của chính tổ chức (checklist ALG 4.13)
+  if (!(await queue.isActiveMember(ctx, input.assigneeId))) {
+    throw new AppError("UNPROCESSABLE_ENTITY", "Người nhận việc không phải thành viên đang hoạt động của tổ chức.")
+  }
+
+  // Giao lại cho thợ khác: phân công cũ hết hiệu lực, việc rời khỏi hàng đợi của thợ cũ
+  await queue.releaseActive(ctx, orderId)
   await repo.createAssignment(
     ctx.organizationId,
     orderId,
@@ -64,7 +72,7 @@ export async function assignFlorist(
     eventKey: "FLORIST_TASK_ASSIGNED",
     ownerUserId: input.assigneeId,
     message: `Bạn được giao chế tác đơn ${existing.code}.`,
-    deepLink: "/don-hang",
+    deepLink: "/",
   })
   return updated
 }

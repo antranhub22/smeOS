@@ -24,25 +24,24 @@ Ký hiệu đường dẫn rút gọn: `org/` = `src/modules/organization/`, `gc
 
 | Nhóm | Nội dung | Số chức năng | Hoàn thiện | Dang dở | Chưa hoàn thành |
 |---|---|---:|---:|---:|---:|
-| 1 | Nền tảng chung & phân quyền | 19 | 16 | 3 | 0 |
+| 1 | Nền tảng chung & phân quyền | 19 | 17 | 2 | 0 |
 | 2 | Quản lý sản phẩm, mẫu hoa & hình ảnh | 9 | 5 | 4 | 0 |
 | 3 | Tạo & quản lý báo giá | 13 | 8 | 5 | 0 |
-| 4 | Tiếp nhận, quản lý & xử lý đơn hàng | 32 | 26 | 5 | 1 |
+| 4 | Tiếp nhận, quản lý & xử lý đơn hàng | 32 | 29 | 3 | 0 |
 | 5 | Thẻ Chào mẫu hoa & trang khách hàng | 15 | 10 | 5 | 0 |
 | 6 | Báo cáo hoạt động & tài chính | 9 | 3 | 6 | 0 |
 | 7 | AI phân tích, nội dung & marketing | 3 | 1 | 2 | 0 |
 | 8 | Landing page bán hàng | 1 | 1 | 0 | 0 |
 | 9 | Chat nội bộ, đa chuỗi & phân quyền nâng cao | 14 | 10 | 3 | 1 |
 | 10 | Quản lý credit AI, hạn mức & thuê bao SaaS | 8 | 2 | 3 | 3 |
-| | **Tổng cộng** | **123** | **82** | **36** | **5** |
+| | **Tổng cộng** | **123** | **86** | **33** | **4** |
 
-Tỷ lệ: Hoàn thiện 66,7% · Dang dở 29,3% · Chưa hoàn thành 4,1%.
+Tỷ lệ: Hoàn thiện 69,9% · Dang dở 26,8% · Chưa hoàn thành 3,3%.
 
-### Năm chức năng chưa hoàn thành
+### Bốn chức năng chưa hoàn thành
 
 | STT | Chức năng | Lý do |
 |---|---|---|
-| 4.14 | Theo dõi đơn thiếu thông tin | Bảng `order_info_requests` có trong lược đồ nhưng không có mã nào sử dụng |
 | 9.10 | Khởi tạo tổ chức & khởi tạo gói dịch vụ | Console không có chức năng tạo tổ chức, không có chỗ gán gói |
 | 10.3 | Thiết lập hạn mức dịch vụ (AI, SMS, Zalo) | Không có cấu hình hạn mức tháng |
 | 10.5 | Cảnh báo khi credit AI còn dưới 20% | Không có sự kiện cảnh báo credit |
@@ -65,7 +64,7 @@ Tỷ lệ: Hoàn thiện 66,7% · Dang dở 29,3% · Chưa hoàn thành 4,1%.
 | 1.9 | Cấu hình trường dữ liệu linh hoạt theo shop | Dang dở | Tạo/ẩn trường chỉ qua Console nền tảng `api/platform/fields/route.ts`, `api/platform/organizations/[id]/field-overrides/route.ts`; cửa hàng chỉ đọc `api/field-config/route.ts:9`; `tp/field-registry.test.ts:47-165` (ca 165 khẳng định cửa hàng không ghi được) | Cửa hàng tự thêm/ẩn trường |
 | 1.10 | Quản lý & mời thành viên | Hoàn thiện | `org/use-cases/staff-accounts.ts:29-58` tạo tài khoản kèm mật khẩu tạm, vai, chi nhánh, nhật ký; `src/app/(app)/cai-dat/thanh-vien/_components/add-staff-dialog.tsx`; `tt/staff-accounts.test.ts:46,58` | Luồng "Mời" (`org/use-cases/invite-member.ts:18-20`) chưa có bước nhận lời mời/mã mời |
 | 1.11 | Điều chỉnh/gỡ thành viên & thu hồi phiên ngay | Hoàn thiện | Gỡ: `api/members/[id]/route.ts` (F4), `tu/organization/remove-member.test.ts`; đổi vai: `org/use-cases/change-member-role.ts` (chặn tự đổi vai, ghi nhật ký vai trước/sau); quyền tính lại mỗi yêu cầu `org/use-cases/resolve-session.ts`; `tt/member-role-change.test.ts` | — |
-| 1.12 | 6 vai trò mặc định | Dang dở | `org/domain/system-roles.ts:9-20` có Điều hành, Điều phối, Sale; Thợ chế tác ở trạng thái `IN_DEVELOPMENT`/`NOT_BUILT` (`org/domain/role-ux-catalog.ts:365-380`); Kế toán `IN_DEVELOPMENT` (`:348-363`) | Vai Thợ cắm hoa, Shipper, Kế toán kèm bộ quyền |
+| 1.12 | 6 vai trò mặc định | Hoàn thiện | Vai hệ thống Điều hành, Điều phối, Sale, Thợ cắm hoa (`tho_cam`), Shipper (`shipper`), Kế toán (`ke_toan`) `org/domain/system-roles.ts`; bộ quyền mặc định theo PO Q7 `src/core/rbac/capability-catalog.ts` (R17 việc chế tác được giao, R18 đơn được giao đi giao, R19 xem đối soát; Kế toán không có R9/R10/R11/R16); trang chủ theo vai `org/domain/role-ux-operations.ts`, `src/app/(app)/page.tsx`, `src/components/dashboard/florist-queue-home.tsx`, `shipper-runs-home.tsx`, `accounting-workspace.tsx`; `src/core/rbac/capability-catalog.test.ts`, `org/domain/role-ux-catalog.test.ts`, `tt/system-roles.test.ts` | — |
 | 1.13 | Tạo vai trò tùy chỉnh | Hoàn thiện | `org/use-cases/create-role.ts:17-38` (vai mới không có quyền); `org/use-cases/update-role-capabilities.ts:31-41` từ chối toàn bộ yêu cầu vượt trần cứng; F5 chỉ Điều hành (`src/core/rbac/capability-catalog.ts:150`), Điều hành có mọi mã trừ K1 (`:219`); `src/core/rbac/permission-resolver.test.ts:17,64`; `tt/greeting-card-transfer-confirm.test.ts:77` | — |
 | 1.14 | Hiển thị giao diện & menu theo quyền | Hoàn thiện | Mục menu mang mã quyền `src/components/layout/nav/nav-chain.ts:25-98`; `src/components/layout/nav-model.test.ts:33` (Sale không thấy `/dieu-phoi`); `src/components/layout/nav-matrix.test.ts` | — |
 | 1.15 | Chặn thao tác vượt quyền & ghi log vi phạm | Hoàn thiện | Chặn: `src/core/rbac/capabilities.ts`; ghi `security.access_denied` (người, đường dẫn, mã quyền, IP, thiết bị, tối đa một dòng/phút/đường dẫn) `src/core/http/request-audit.ts`, gắn ở `src/core/http/response.ts`; `tt/audit-trail.test.ts` | — |
@@ -114,7 +113,7 @@ Tỷ lệ: Hoàn thiện 66,7% · Dang dở 29,3% · Chưa hoàn thành 4,1%.
 | 4.2 | Tự tạo đơn từ form khách trên Thẻ Chào/Link | Hoàn thiện | `api/public/brochure/[sendCode]/order`, `api/public/greeting-catalog/[id]/order`; gắn sale theo phiên; `tt/greeting-card-checkout.test.ts:67-108`, `tt/public-catalog-order.test.ts:32`, `tt/greeting-card-session-owner.test.ts:85` | — |
 | 4.3 | Danh sách/chi tiết đơn & lọc nâng cao | Dang dở | `api/greeting-card/orders/route.ts:12-33` (trạng thái, thanh toán, tìm kiếm); `api/orders/route.ts:51-56` (trạng thái, chi nhánh, khách) | Lọc theo ngày giao và theo nhân viên bán |
 | 4.4 | 3 hệ thống trạng thái độc lập | Hoàn thiện | `schema:1583-1606,1614-1616`; `order_events` `schema:1721-1736` (trục, từ, đến, người, thời điểm); `tt/coordinator.test.ts:155,479`, `tt/order-isolation.test.ts:163` | — |
-| 4.5 | Quản lý khung giờ giao & sức chứa chi nhánh | Dang dở | Địa chỉ 4 tầng bắt buộc `http-schemas.ts:48-55` (`tt/coordinator.test.ts:309`); sức chứa khung giờ `gc/domain/slot-capacity.ts` (`tt/greeting-card-promotion-slot.test.ts:114`) | Màn hình/vai shipper chỉ hiện thông tin người nhận (shipper chỉ là tên + SĐT `api/coordinator/orders/[id]/set-shipper/route.ts:19-26`) |
+| 4.5 | Quản lý khung giờ giao & sức chứa chi nhánh | Hoàn thiện | Địa chỉ 4 tầng bắt buộc `http-schemas.ts:48-55` (`tt/coordinator.test.ts:309`); sức chứa khung giờ `gc/domain/slot-capacity.ts` (`tt/greeting-card-promotion-slot.test.ts:114`); màn "Đơn cần giao" của Shipper: chỉ người nhận, SĐT, địa chỉ, khung giờ, lời thiệp `src/modules/coordinator/use-cases/shipper-runs.ts`, `api/delivery/my-runs`, gắn shipper theo số điện thoại Điều phối ghi khi điều xe (`src/modules/coordinator/domain/shipper-match.ts`), số điện thoại nhân viên `api/members/[id]/phone`; cập nhật giao dùng chung luật ảnh giao bắt buộc `src/modules/coordinator/use-cases/record-delivery-update.ts`; `tt/shipper-view.test.ts` | Shipper thuê ngoài (không có tài khoản) vẫn chỉ ghi tên + SĐT, chưa có link giao riêng |
 | 4.6 | Đổi thông tin đơn giữ vết | Hoàn thiện | `schema:2975-2995` (`order_change_requests`: giá trị cũ/mới, lý do); `tt/greeting-card-order-change.test.ts:61,70,105` | — |
 | 4.7 | Luồng hủy đơn & hoàn tiền duyệt 2 bước | Hoàn thiện | R6/R10 trần cứng; `tt/greeting-card-cancellation.test.ts:37-124`, `tt/greeting-card-cancellation-follow-up.test.ts:57,82`, `tt/coordinator.test.ts:587` | — |
 | 4.8 | Lịch sử thao tác đơn tóm tắt | Hoàn thiện | Tab "Lịch sử đơn hàng" `src/components/greeting-card/brochure-order-detail-modal.tsx:85`; nút sao chép `src/components/greeting-card/evidence-timeline-diagram.tsx:100,145`; `tt/order-isolation.test.ts:163-185` | — |
@@ -122,8 +121,8 @@ Tỷ lệ: Hoàn thiện 66,7% · Dang dở 29,3% · Chưa hoàn thành 4,1%.
 | 4.10 | Xuất danh sách đơn Excel | Hoàn thiện | `api/orders/export/route.ts` (.xlsx, R13, ghi nhật ký xuất); phạm vi sale và chi nhánh `src/modules/orders/infra/order-export-query.ts`, `src/modules/orders/use-cases/export-orders.ts`; `export-orders.test.ts`, `tt/order-export-scope.test.ts` | — |
 | 4.11 | Lịch sử đơn liên quan cùng khách hàng | Dang dở | Chi tiết khách chỉ hiện số đơn `src/components/crm/customer-detail-modal.tsx:199`; `api/orders/route.ts:55` hỗ trợ lọc `customer_id` | Màn hình danh sách đơn trước của khách |
 | 4.12 | Bảng điều phối phân cấp mức rủi ro trễ giờ | Hoàn thiện | 4 mức `src/modules/coordinator/domain/coordinator-types.ts:30`; `operation-rules.ts:164-190` (đếm phút còn lại); `src/components/coordinator/control-tower-dashboard.tsx`; `tu/coordinator/operation-rules.test.ts:81-90`, `tt/greeting-card-coordinator-board.test.ts:51,71` | — |
-| 4.13 | Phân công thợ cắm & hàng đợi chế tác | Dang dở | `api/orders/[id]/assign` → `src/modules/orders/use-cases/assign-florist.ts:11-40`; chi nhánh thấy đơn của mình `tt/branch-portal.test.ts:80` | Danh sách việc của thợ được giao (không truy vấn nào lọc theo người được giao; vai Thợ chưa xây) |
-| 4.14 | Theo dõi đơn thiếu thông tin | Chưa hoàn thành | Bảng `order_info_requests` `schema:2940-2960` không được mã nào sử dụng; `gc/domain/inbox.ts` không có loại việc "thiếu thông tin" | Toàn bộ chức năng |
+| 4.13 | Phân công thợ cắm & hàng đợi chế tác | Hoàn thiện | Phân công `src/modules/orders/use-cases/assign-florist.ts` (người nhận phải là thành viên đang hoạt động, giao lại thu hồi phân công cũ); "Việc của tôi" sắp theo giờ giao, công thức và ảnh mẫu, không có giá `src/modules/orders/use-cases/florist-queue.ts`, `src/modules/orders/infra/florist-queue-repository.ts`; nhận việc/báo xong `api/orders/[id]/my-work`; bảng việc chi nhánh `api/orders/my-work?scope=team` (R4); `tt/florist-queue.test.ts`, `tt/scoping-gaps-18-09.test.ts:46` | Đơn Thẻ Chào giao thợ bằng ghi chú (`gc/use-cases/update-brochure-order-status.ts:32-39`), chưa vào hàng đợi của tài khoản thợ |
+| 4.14 | Theo dõi đơn thiếu thông tin | Hoàn thiện | Dò trường thiếu (địa chỉ, SĐT người nhận, lời chúc khi có thiệp) `src/modules/orders/domain/order-info-gaps.ts`; tự sinh/tự đóng/quá hạn + nhắc `src/modules/orders/use-cases/order-info-requests.ts` trên bảng `order_info_requests`; chạy sau tạo/sửa đơn `api/orders/route.ts`, `api/orders/[id]/route.ts`, `api/coordinator/orders/route.ts`; yêu cầu tay và đóng/huỷ `api/orders/[id]/info-requests`; việc "Thiếu thông tin" trong Hộp việc `gc/use-cases/missing-info-actions.ts`; khối "Thông tin cần bổ sung" trong chi tiết đơn `src/components/orders/order-info-requests.tsx`; `tt/order-info-requests.test.ts` | — |
 | 4.15 | Kiểm tra chất lượng QC | Hoàn thiện | `api/coordinator/orders/[id]/qc`; `tt/coordinator.test.ts:281,537`; `tt/subcontract-customer-photo.test.ts:90` | — |
 | 4.16 | AI chấm ảnh QC so với mẫu gốc | Hoàn thiện | `gc/use-cases/verify-qc-photo-ai.ts` (qua AI gateway, điểm tin cậy, kết luận, lỗi AI chuyển duyệt tay); `gc/use-cases/verify-qc-photo-ai.test.ts` | — |
 | 4.17 | Bàn giao shipper & lên lịch giao lại | Hoàn thiện | Trạng thái giao `schema:1600-1606`; việc giao lại `gc/domain/inbox.ts:244`; `tt/greeting-card-delivery-failure.test.ts:66,85` | — |

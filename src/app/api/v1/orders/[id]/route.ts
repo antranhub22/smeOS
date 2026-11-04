@@ -4,6 +4,7 @@ import { requireCapability } from "@/core/rbac/capabilities"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import { getOrder } from "@/modules/orders/use-cases/get-order"
 import { updateOrderProgress } from "@/modules/orders/use-cases/update-order-progress"
+import { syncOrderInfoRequests } from "@/modules/orders/use-cases/order-info-requests"
 
 const patchOrderSchema = z.object({
   status: z.enum(["DRAFT", "CONFIRMED", "PROCESSING", "DELIVERED", "COMPLETED", "CANCELLED"]).optional(),
@@ -50,5 +51,7 @@ export const PATCH = handle(async (request, context: { params: Promise<{ id: str
   const parsed = patchOrderSchema.parse(body)
 
   const updated = await updateOrderProgress(ctx, id, parsed)
+  // Bổ sung đủ thông tin → yêu cầu bổ sung tự đóng (checklist ALG 4.14)
+  await syncOrderInfoRequests(ctx, id)
   return jsonResponse({ order: updated })
 })

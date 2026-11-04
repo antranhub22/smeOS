@@ -17,6 +17,10 @@ export const SYSTEM_ROLES = [
   { key: "experience_user", name: "Experience User" },
   // PO 22/10/2026 — tài khoản của chi nhánh/cửa hàng nhận đơn gia công trong chuỗi (trang /cua-hang)
   { key: "cua_hang", name: "Cửa hàng nhận gia công" },
+  // PO Q7 04/11/2026 — checklist ALG 1.12
+  { key: "tho_cam", name: "Thợ cắm hoa" },
+  { key: "shipper", name: "Shipper" },
+  { key: "ke_toan", name: "Kế toán" },
 ] as const
 
 export type SystemRoleKey = (typeof SYSTEM_ROLES)[number]["key"]

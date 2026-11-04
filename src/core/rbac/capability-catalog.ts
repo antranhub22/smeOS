@@ -58,11 +58,13 @@ export interface CapabilityDefinition {
   readonly hardCap?: readonly SystemRoleKey[]
 }
 
+// PO Q7 (04/11/2026): mọi vai nhân sự đăng nhập và tự đổi mật khẩu (kể cả mật khẩu tạm — checklist ALG 1.4)
+const STAFF_ROLES: SystemRoleKey[] = ["dieu_hanh", "dieu_phoi", "sale", "product_manager", "marketing", "crm", "customer_service", "cua_hang", "tho_cam", "shipper", "ke_toan"]
 // ─── A–E: 76 mã thu hoạch từ FloraOS, sinh từ src/lib/maChucNang.ts ─────────
 // prettier-ignore
 const HARVESTED: Record<string, Omit<CapabilityDefinition, "code">> = {
-  A1: { name: "access.login", group: "access", label: "Đăng nhập bằng tài khoản nội bộ", defaultRoles: ["dieu_hanh", "dieu_phoi", "sale"] },
-  A2: { name: "access.password.change_own", group: "access", label: "Đổi mật khẩu đăng nhập của chính mình", defaultRoles: ["dieu_hanh", "dieu_phoi", "sale"] },
+  A1: { name: "access.login", group: "access", label: "Đăng nhập bằng tài khoản nội bộ", defaultRoles: STAFF_ROLES },
+  A2: { name: "access.password.change_own", group: "access", label: "Đổi mật khẩu đăng nhập của chính mình", defaultRoles: STAFF_ROLES },
   A3: { name: "access.user.create", group: "access", label: "Tạo tài khoản nội bộ", defaultRoles: ["dieu_hanh"], hardCap: ["dieu_hanh"] },
   A4: { name: "access.user.change_role", group: "access", label: "Đổi vai của một tài khoản", defaultRoles: ["dieu_hanh"], hardCap: ["dieu_hanh"] },
   A5: { name: "access.user.toggle_active", group: "access", label: "Bật tắt trạng thái hoạt động của tài khoản", defaultRoles: ["dieu_hanh"], hardCap: ["dieu_hanh"] },
@@ -143,7 +145,7 @@ const HARVESTED: Record<string, Omit<CapabilityDefinition, "code">> = {
 // prettier-ignore
 const CORE_NEW: Record<string, Omit<CapabilityDefinition, "code">> = {
   // F — Tổ chức và thành viên
-  F1: { name: "org.read", group: "org_member", label: "Xem hồ sơ tổ chức", defaultRoles: ["dieu_hanh", "dieu_phoi", "sale"] },
+  F1: { name: "org.read", group: "org_member", label: "Xem hồ sơ tổ chức", defaultRoles: ["dieu_hanh", "dieu_phoi", "sale", "ke_toan"] },
   F2: { name: "org.update", group: "org_member", label: "Sửa hồ sơ tổ chức", defaultRoles: ["dieu_hanh"], hardCap: ["dieu_hanh"] },
   F3: { name: "member.invite", group: "org_member", label: "Mời thành viên vào tổ chức", defaultRoles: ["dieu_hanh"], hardCap: ["dieu_hanh"] },
   F4: { name: "member.remove", group: "org_member", label: "Gỡ thành viên khỏi tổ chức", defaultRoles: ["dieu_hanh"], hardCap: ["dieu_hanh"] },
@@ -157,14 +159,14 @@ const CORE_NEW: Record<string, Omit<CapabilityDefinition, "code">> = {
   // quản trị token, tách khỏi phạm vi quyền mà token đó mang khi gọi lại.
   F9: { name: "integration.token.manage", group: "org_member", label: "Cấp phát, xoay và thu hồi token tích hợp máy-máy", defaultRoles: ["dieu_hanh"], hardCap: ["dieu_hanh"] },
   // G — Asset và job
-  G1: { name: "asset.read", group: "asset_job", label: "Xem asset của tổ chức", defaultRoles: ["dieu_hanh", "dieu_phoi", "sale", "marketing"] },
-  G2: { name: "asset.upload", group: "asset_job", label: "Tải asset lên", defaultRoles: ["dieu_hanh", "dieu_phoi", "sale", "marketing"] },
+  G1: { name: "asset.read", group: "asset_job", label: "Xem asset của tổ chức", defaultRoles: ["dieu_hanh", "dieu_phoi", "sale", "marketing", "tho_cam"] },
+  G2: { name: "asset.upload", group: "asset_job", label: "Tải asset lên", defaultRoles: ["dieu_hanh", "dieu_phoi", "sale", "marketing", "tho_cam", "shipper"] },
   G3: { name: "asset.delete", group: "asset_job", label: "Xoá asset", defaultRoles: ["dieu_hanh"], hardCap: ["dieu_hanh"] },
   G4: { name: "job.read", group: "asset_job", label: "Xem job của chính mình", defaultRoles: ["dieu_hanh", "dieu_phoi", "sale", "marketing"] },
   G5: { name: "job.read.all", group: "asset_job", label: "Xem job của toàn tổ chức", defaultRoles: ["dieu_hanh"] },
   G6: { name: "job.cancel", group: "asset_job", label: "Huỷ job đang chờ", defaultRoles: ["dieu_hanh", "dieu_phoi", "sale", "marketing"] },
   G7: { name: "job.retry", group: "asset_job", label: "Chạy lại job thất bại", defaultRoles: ["dieu_hanh", "dieu_phoi", "marketing"] },
-  G8: { name: "usage.read", group: "asset_job", label: "Xem mức dùng và hạn mức", defaultRoles: ["dieu_hanh"] },
+  G8: { name: "usage.read", group: "asset_job", label: "Xem mức dùng và hạn mức", defaultRoles: ["dieu_hanh", "ke_toan"] },
   G9: { name: "audit.read", group: "asset_job", label: "Đọc nhật ký kiểm toán", defaultRoles: ["dieu_hanh"], hardCap: ["dieu_hanh"] },
   // H — Vision
   H1: { name: "vision.analyze", group: "vision", label: "Chạy phân tích ảnh sản phẩm", defaultRoles: ["dieu_hanh", "dieu_phoi", "sale", "marketing"] },
@@ -219,7 +221,7 @@ const CORE_NEW: Record<string, Omit<CapabilityDefinition, "code">> = {
   K1: { name: "experience.use", group: "experience", label: "Dùng workspace trải nghiệm trong hạn mức", defaultRoles: ["experience_user"] },
   K2: { name: "experience.convert", group: "experience", label: "Chuyển workspace trải nghiệm thành tổ chức thật", defaultRoles: ["experience_user", "dieu_hanh"] },
   // R — Đơn hàng và vận hành (M10, P22 — đặc tả 02 mục 4, đặc tả 07 mục 12)
-  R1: { name: "order.read", group: "order_operations", label: "Xem đơn hàng", defaultRoles: ["dieu_hanh", "dieu_phoi", "sale", "crm", "customer_service"] },
+  R1: { name: "order.read", group: "order_operations", label: "Xem đơn hàng", defaultRoles: ["dieu_hanh", "dieu_phoi", "sale", "crm", "customer_service", "ke_toan"] },
   R2: { name: "order.create", group: "order_operations", label: "Tạo đơn hàng", defaultRoles: ["dieu_hanh", "dieu_phoi", "sale"] },
   R3: { name: "order.update", group: "order_operations", label: "Sửa đơn và cập nhật trạng thái sản xuất", defaultRoles: ["dieu_hanh", "dieu_phoi"] },
   R4: { name: "order.assign", group: "order_operations", label: "Phân công thợ chế tác cho một đơn", defaultRoles: ["dieu_hanh", "dieu_phoi"] },
@@ -236,7 +238,7 @@ const CORE_NEW: Record<string, Omit<CapabilityDefinition, "code">> = {
   // người giữ tài khoản ngân hàng — xác nhận tiền chuyển khoản và báo giá đơn Thẻ chào. Trần cứng.
   R11: { name: "order.transfer.confirm", group: "order_operations", label: "Xác nhận tiền chuyển khoản và báo giá đơn Thẻ chào", defaultRoles: ["dieu_hanh"], hardCap: ["dieu_hanh"] },
   R12: { name: "order.coordinator_reminder.configure", group: "order_operations", label: "Sửa thời điểm nhắc việc Điều phối (chung và theo sản phẩm)", defaultRoles: ["dieu_hanh", "dieu_phoi"] },
-  R13: { name: "data.export", group: "order_operations", label: "Xuất đơn hàng / khách hàng ra tệp Excel (Điều hành cấp cho người khác khi duyệt)", defaultRoles: ["dieu_hanh"] },
+  R13: { name: "data.export", group: "order_operations", label: "Xuất đơn hàng / khách hàng ra tệp Excel (Điều hành cấp cho người khác khi duyệt)", defaultRoles: ["dieu_hanh", "ke_toan"] },
   // PO 22/10/2026 — trang cửa hàng nhận gia công: chỉ tài khoản cửa hàng thấy đơn của CHÍNH chi nhánh mình
   // (chi nhánh lấy từ `memberships.chain_branch_code`, không từ yêu cầu). Điều hành có theo bất biến "mọi mã
   // trừ K1" và chỉ thấy đơn khi tự gắn chi nhánh. Trần cứng: hai vai này.
@@ -245,8 +247,12 @@ const CORE_NEW: Record<string, Omit<CapabilityDefinition, "code">> = {
   // (Thẻ chào giữ R11 cho báo giá). R15: Sale báo giá. R16: Điều hành duyệt "giao trước, thu sau" — trần cứng.
   R15: { name: "order.quote", group: "order_operations", label: "Báo giá đơn hàng (ngoài Thẻ chào)", defaultRoles: ["dieu_hanh", "sale"] },
   R16: { name: "order.deliver_before_pay.approve", group: "order_operations", label: "Duyệt giao trước, thu sau cho đơn ngoài chính sách", defaultRoles: ["dieu_hanh"], hardCap: ["dieu_hanh"] },
+  // PO Q7 (04/11/2026) — vai Thợ cắm hoa, Shipper, Kế toán (checklist ALG 1.12, 4.5, 4.13). Kế toán không xác nhận tiền.
+  R17: { name: "order.assigned_work", group: "order_operations", label: "Xem và báo tiến độ việc chế tác được giao cho mình", defaultRoles: ["dieu_hanh", "dieu_phoi", "tho_cam"] },
+  R18: { name: "delivery.assigned", group: "order_operations", label: "Xem và cập nhật đơn được giao đi giao", defaultRoles: ["dieu_hanh", "dieu_phoi", "shipper"] },
+  R19: { name: "payment.reconciliation.read", group: "order_operations", label: "Xem sổ thu và đối soát giao dịch ngân hàng", defaultRoles: ["dieu_hanh", "ke_toan"] },
   // Q — CRM & Khách hàng ngành hoa (M09, P21)
-  Q1: { name: "crm.customer.read", group: "crm", label: "Xem thông tin khách hàng và hồ sơ RFM", defaultRoles: ["dieu_hanh", "dieu_phoi", "sale", "crm", "customer_service"] },
+  Q1: { name: "crm.customer.read", group: "crm", label: "Xem thông tin khách hàng và hồ sơ RFM", defaultRoles: ["dieu_hanh", "dieu_phoi", "sale", "crm", "customer_service", "ke_toan"] },
   Q2: { name: "crm.customer.create", group: "crm", label: "Thêm khách hàng mới", defaultRoles: ["dieu_hanh", "dieu_phoi", "sale", "crm", "customer_service"] },
   Q3: { name: "crm.customer.update", group: "crm", label: "Cập nhật hồ sơ, sở thích hoa và phân tầng khách hàng", defaultRoles: ["dieu_hanh", "dieu_phoi", "sale", "crm", "customer_service"] },
   Q4: { name: "crm.customer.delete", group: "crm", label: "Xoá khách hàng", defaultRoles: ["dieu_hanh"], hardCap: ["dieu_hanh"] },

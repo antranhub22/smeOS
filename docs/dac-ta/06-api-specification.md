@@ -83,6 +83,7 @@ Endpoint duyệt luôn tách khỏi endpoint sinh kết quả: `POST /x/:id/appr
 | POST | `/members/invite` | `F3` |
 | DELETE | `/members/:id` | `F4` |
 | POST | `/members/:id/reset-password` | `A7` |
+| PUT | `/members/:id/phone` | `A3` |
 | PATCH | `/members/:id/status` | `A5` |
 | PATCH | `/members/:id/role` | `F5` |
 | PUT | `/members/:id/chain-branch` | `F5` |
@@ -99,7 +100,7 @@ Endpoint duyệt luôn tách khỏi endpoint sinh kết quả: `POST /x/:id/appr
 
 **Tài khoản cửa hàng nhận gia công (PO 22/10/2026).** Vai hệ thống `cua_hang`; `PUT /members/:id/chain-branch` `{ chain_branch_code | null }` gắn tài khoản với một chi nhánh chuỗi (`memberships.chain_branch_code`) — chi nhánh hoặc thành viên không thuộc tổ chức → 404; `GET /members/chain-branches` liệt kê chi nhánh để chọn. `GET /branch-portal/orders` (`R14`) trả `{ branch, orders[] }` cho trang `/cua-hang`: đơn đang mời chi nhánh (`OPEN`, có trong `invitedBranchIds` vòng hiện tại, chưa từ chối, chưa hết hạn), đơn chi nhánh đã nhận (`CLAIMED_GRACE`) hoặc đang làm (`COMMITTED`); lọc trong DB theo JSON, tối đa 100 đơn; chi nhánh lấy từ phiên, không nhận tham số. Mỗi đơn có `cardUrl` — link Thẻ Gia Công đã ký cho đúng chi nhánh (dựng từ `NEXT_PUBLIC_APP_URL`). Trang tự làm mới 30 giây/lần; chi nhánh không có Telegram/Zalo vẫn thấy lời mời ở đây (kết quả phát lệnh ghi kênh `APP`).
 
-**Tài khoản nhân viên (PO 08/10/2026).** `POST /members` `{ name, email, role_id, branch_id? }` tạo người dùng + thành viên **đang hoạt động** trong một giao dịch, trả `temporaryPassword` (12 ký tự, hiện một lần, `Cache-Control: no-store`); email đã có tài khoản FloraOS → 409 (không chiếm tài khoản người khác — dùng `/members/invite`). `POST /members/:id/reset-password` cấp mật khẩu tạm mới và đăng xuất người đó ở mọi máy; người đó còn là thành viên tiệm khác → 409; chính mình → 422. `PATCH /members/:id/status` `{ active }` tạm khoá (`SUSPENDED`, thu hồi ngay phiên ở tiệm này, giữ dữ liệu) hoặc mở lại. `A3`/`A5`/`A7` trần cứng Điều hành; thành viên tiệm khác → 404; mọi thao tác ghi `audit_logs` (không ghi mật khẩu).
+**Tài khoản nhân viên (PO 08/10/2026).** `POST /members` `{ name, email, role_id, branch_id?, phone? }` tạo người dùng + thành viên **đang hoạt động** trong một giao dịch, trả `temporaryPassword` (12 ký tự, hiện một lần, `Cache-Control: no-store`); email đã có tài khoản FloraOS → 409 (không chiếm tài khoản người khác — dùng `/members/invite`). `POST /members/:id/reset-password` cấp mật khẩu tạm mới và đăng xuất người đó ở mọi máy; người đó còn là thành viên tiệm khác → 409; chính mình → 422. `PUT /members/:id/phone` `{ phone | null }` sửa số điện thoại nhân viên (Shipper được gắn đơn qua số này; số không hợp lệ → 400; người đó còn là thành viên tiệm khác → 409); `GET /members` chỉ trả `user.phone` cho người có `A3`. `PATCH /members/:id/status` `{ active }` tạm khoá (`SUSPENDED`, thu hồi ngay phiên ở tiệm này, giữ dữ liệu) hoặc mở lại. `A3`/`A5`/`A7` trần cứng Điều hành; thành viên tiệm khác → 404; mọi thao tác ghi `audit_logs` (không ghi mật khẩu).
 
 `PATCH /roles/:id/capabilities` ghi vào `capability_overrides`. Yêu cầu bật một mã bị trần cứng chặn trả 403 `CAPABILITY_DENIED` và **không** ghi gì — trần cứng cắt sau bảng công tắc.
 
@@ -534,7 +535,13 @@ Nội dung nhắc mua sinh từ dịp và sản phẩm. Không endpoint nào g�
 | GET | `/orders` | `R1` | Lọc theo ngày, trạng thái, chi nhánh, người được phân công |
 | POST | `/orders` | `R2` | |
 | GET · PATCH | `/orders/:id` | `R1` · `R3` | |
-| POST | `/orders/:id/assign` | `R4` | |
+| POST | `/orders/:id/assign` | `R4` | Người nhận việc phải là thành viên đang hoạt động của tổ chức (khác → 422); giao lại thu hồi phân công cũ |
+| GET | `/orders/my-work` | `R17` (`?scope=team`: `R4`) | Việc chế tác đang giao cho người đăng nhập, sắp theo giờ giao; công thức và ảnh mẫu, không có giá · `scope=team`: mọi việc trong phạm vi chi nhánh, kèm tên thợ |
+| POST | `/orders/:id/my-work` | `R17` | `{ action: START \| FINISH }` — nhận việc / báo xong; việc không giao cho mình → 404; sai bước → 422 |
+| GET | `/orders/:id/info-requests` | `R1` | Yêu cầu bổ sung thông tin của đơn; trước khi trả, đơn thiếu địa chỉ / SĐT người nhận / lời chúc (đơn có thiệp) tự sinh yêu cầu (hạn 2 giờ), đủ thông tin thì tự đóng `RECEIVED`, quá hạn → `OVERDUE` và nhắc người tạo (`ORDER_INFO_REQUEST_OVERDUE`) · cũng chạy sau `POST /orders`, `PATCH /orders/:id`, `POST /coordinator/orders` · tổ chức/chi nhánh khác → 404 |
+| POST | `/orders/:id/info-requests` | `R3` | `{ field, label, reason, requestedFrom, dueAt?, channel? }` tạo yêu cầu tay; đơn đã kết thúc → 422 |
+| POST | `/orders/:id/info-requests/:requestId` | `R3` | `{ outcome: RECEIVED \| CANCELLED, note? }` — huỷ bắt buộc lý do (400); yêu cầu đã đóng → 409 |
+| GET | `/orders/info-requests` | `R1` | Mọi yêu cầu còn mở của tổ chức trong phạm vi chi nhánh, hạn gần nhất trước (việc "Thiếu thông tin" trong Hộp việc) |
 | POST | `/orders/:id/cancel` | `R6` | Bắt buộc có lý do |
 | GET | `/orders/:id/print` | `R7` | Phiếu đơn và phiếu sản xuất |
 | GET | `/orders/:id/events` | `R1` | Nhật ký đổi trạng thái, nguồn đo SLA |
@@ -565,6 +572,8 @@ Mọi route nhận `:id` là id HOẶC mã đơn (`FLR-YYMMDD-NNNN`); tổ chứ
 | POST | `/coordinator/orders/:id/production` | `R3` | `MARK_READY` bắt buộc ảnh thành phẩm (`assets` cùng tổ chức); `REPORT_MATERIAL_ISSUE` mở sự cố |
 | POST | `/coordinator/orders/:id/qc` | `R3` | Người kiểm kết luận; không đạt bắt buộc lý do; `REJECTED` mở sự cố `QC_FAILURE` |
 | POST | `/coordinator/orders/:id/delivery` | `R5` | Sự kiện giao; thành công bắt buộc ảnh POD hoặc tên người ký; thất bại mở sự cố |
+| GET | `/delivery/my-runs` | `R18` | Đơn đang giao có số điện thoại shipper trùng số của người đăng nhập (cùng tổ chức, cùng phạm vi chi nhánh): người nhận, SĐT, địa chỉ, khung giờ, lời thiệp — không giá, không ghi chú nội bộ, không người đặt · `phoneMissing: true` khi tài khoản chưa có số |
+| POST | `/delivery/my-runs/:id` | `R18` | `{ event, podAssetId?, recipientSignedName?, failureReason? }` — cùng luật giao của Điều phối (ảnh giao bắt buộc theo Cài đặt); đơn không giao cho mình → 404 |
 | GET | `/coordinator/reminders` | `R1` | Mốc nhắc việc Điều phối đang bật của các đơn |
 | POST | `/coordinator/reminders/acknowledge` | `R3` | `{ orderId, milestone, action, snoozeMinutes?, note? }`; đơn của tổ chức khác → 404 |
 | GET · PUT | `/coordinator/settings/reminders` | `D1` (đọc) · `R12` (sửa) | Thời điểm nhắc việc cấp tổ chức (phút, 0–1440) (14/10/2026: sửa đòi `R12`) |
@@ -881,7 +890,7 @@ Trang công khai ngoài `/api/v1` (06/10/2026): **`/s/<mã>`** — link bộ sư
 | POST · DELETE | `/greeting-card/integrations/payment-webhook` | `F2` | POST sinh khoá SePay mới (trả MỘT lần, chỉ lưu băm SHA-256); DELETE tắt |
 | PUT | `/greeting-card/integrations/notifications` | `F2` | `{ enabled, channel: ZNS\|ESMS, credentials?, templates? }` — credentials chỉ ghi, lưu AES-256-GCM |
 | POST | `/greeting-card/integrations/notifications/test` | `F2` | `{ phone }` gửi một tin thử |
-| GET | `/greeting-card/payment-events` | `R11` | Giao dịch ngân hàng nhận qua webhook, `?status=UNMATCHED…` · Sale "chỉ khách của mình" nhận danh sách rỗng |
+| GET | `/greeting-card/payment-events` | `R19` hoặc `R11` | Giao dịch ngân hàng nhận qua webhook (Kế toán chỉ xem), `?status=UNMATCHED…` · Sale "chỉ khách của mình" nhận danh sách rỗng |
 | POST | `/greeting-card/payment-events/:id/handle` | `R11` | `{ note }` đánh dấu đã xử lý tay · Sale "chỉ khách của mình" → 404 |
 | GET | `/public/brochure/:sendCode` | — | Trang khách: mẫu (giá theo Product Master, `null` = "Liên hệ" — vẫn đặt được, cửa hàng báo giá sau), size, khu vực giao, đơn + hướng dẫn chuyển khoản. Không lộ SĐT/id tổ chức. Link hết hạn/thu hồi/catalog ẩn (chưa có đơn) → 404 · CHỈ ĐỌC (06/10/2026): không còn ghi `OPEN` — máy quét xem trước Zalo/Facebook tải trang này. Mẫu tạm hết hàng theo `product_inventory` của chi nhánh sản phẩm vẫn trả ra với `available: false` (06/10/2026 — khách xem mẫu tương tự; chọn/đặt vẫn 409) · Chỉ chủ phiên (cookie `fl_b_<mã>`), thiếu → 404 |
 | POST | `/public/brochure/:sendCode/claim` | — | Trình duyệt đầu tiên chạy trang nhận chủ phiên: đặt cookie HttpOnly `fl_b_<mã>` (HMAC `SESSION_SECRET`, 90 ngày), ghi `OWNER_CLAIMED` (khoá theo phiên) và báo đã mở như `/open`; `{ opened }`. Đã có chủ khác → 404. 30 lần/phút/IP. Từ 06/10/2026 mọi route `/public/brochure/:sendCode/*` khác chỉ nhận chủ phiên, thiếu cookie → 404 (xem `kien-truc/THE_CHAO_HANH_TRINH_KHACH.md`) |

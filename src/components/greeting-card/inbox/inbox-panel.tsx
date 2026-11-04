@@ -140,6 +140,7 @@ export function InboxPanel({ onClose, onOpenTarget }: { onClose: () => void; onO
 
 const ACTION_LABEL: Partial<Record<InboxAction["kind"], string>> = {
   PRODUCT_PROPOSALS: "Xem mẫu chờ duyệt",
+  MISSING_INFO: "Bổ sung thông tin",
   CLAIM_ORDER: "Nhận đơn",
   REMIND_DEPOSIT: "Nhắc cọc",
   FOLLOW_UP_LEAD: "Tư vấn",

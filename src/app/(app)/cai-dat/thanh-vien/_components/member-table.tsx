@@ -5,10 +5,11 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { SkeletonBlock } from "@/components/ui/skeleton"
 import { MemberAccountActions } from "./member-account-actions"
+import { MemberPhoneAction } from "./member-phone-action"
 
 export interface MemberListItem {
   id: string
-  user: { id: string; name: string | null; email: string }
+  user: { id: string; name: string | null; email: string; phone?: string | null }
   role: { id: string; key: string; name: string } | null
   branch_id: string | null
   chain_branch_code?: string | null
@@ -136,6 +137,7 @@ export function MemberTable({
                 {/* Tác vụ */}
                 <td className="py-3.5 px-4 text-right">
                   <div className="flex flex-wrap items-center justify-end gap-2">
+                  {!isSelf && <MemberPhoneAction member={{ ...m.user, id: m.id }} onChanged={onChanged} />}
                   {!isSelf && (
                     <MemberAccountActions
                       member={{ id: m.id, name: m.user.name, email: m.user.email, status: m.status }}

@@ -35,6 +35,7 @@ export interface InboxAction {
     | "ASSIGN_SHIPPER"
     | "CANCELLATION_FOLLOW_UP"
     | "PRODUCT_PROPOSALS"
+    | "MISSING_INFO"
   title: string
   detail: string
   orderId: string | null

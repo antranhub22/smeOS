@@ -5,7 +5,8 @@ import { UserRepository, getUserRepository } from "@/modules/organization/infra/
 
 export type MemberSummary = {
   id: string
-  user: { id: string; name: string | null; email: string }
+  /** `phone` chỉ có khi người xem quản lý tài khoản nhân viên (A3). */
+  user: { id: string; name: string | null; email: string; phone?: string | null }
   role: { id: string; key: string; name: string } | null
   branch_id: string | null
   /** Chi nhánh chuỗi của tài khoản cửa hàng nhận gia công (null = chưa gắn) */
@@ -29,7 +30,9 @@ export async function listMembers(ctx: TenantContext): Promise<MemberSummary[]> 
       ])
       return {
         id: membership.id,
-        user: user ? { id: user.id, name: user.name, email: user.email } : { id: membership.user_id, name: null, email: "" },
+        user: user
+          ? { id: user.id, name: user.name, email: user.email, ...(ctx.capabilities.has("A3") ? { phone: user.phone } : {}) }
+          : { id: membership.user_id, name: null, email: "" },
         role: role ? { id: role.id, key: role.key, name: role.name } : null,
         branch_id: membership.branch_id,
         chain_branch_code: membership.chain_branch_code,
