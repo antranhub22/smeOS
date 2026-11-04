@@ -14,12 +14,22 @@ import {
 import { useSession } from "@/lib/session"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
 import { Dialog } from "@/components/ui/dialog"
 import { SkeletonBlock } from "@/components/ui/skeleton"
 import { FeatureGuidanceCard } from "@/components/templates/shared/feature-guidance-card"
 import { PageHeader } from "@/components/ui/page-header"
 import { EmptyState } from "@/components/ui/empty-state"
+
+/** Bộ lọc loại thao tác gửi lên máy chủ (khớp đầu mã hành động — checklist ALG 1.17). */
+const ACTION_FILTERS = [
+  { value: "ALL", label: "Tất cả" },
+  { value: "api.mutation", label: "Thao tác ghi dữ liệu" },
+  { value: "security.access_denied", label: "Cố thao tác ngoài quyền" },
+  { value: "member.", label: "Thành viên và vai trò" },
+  { value: "product.", label: "Sản phẩm" },
+] as const
 
 interface AuditLogRow {
   id: string
@@ -151,20 +161,15 @@ export default function AuditLogsPage() {
       </div>
 
       <div className="flex flex-wrap items-end gap-3" aria-label="Bộ lọc nhật ký">
-        <label className="flex flex-col gap-1 text-caption text-text-muted">
+        <div className="flex flex-col gap-1 text-caption text-text-muted">
           Loại thao tác
-          <select
-            value={actionFilter}
-            onChange={(e) => setActionFilter(e.target.value)}
-            className="h-9 rounded-md border border-border bg-surface px-2 text-body-sm text-text"
-          >
-            <option value="">Tất cả</option>
-            <option value="api.mutation">Thao tác ghi dữ liệu</option>
-            <option value="security.access_denied">Cố thao tác ngoài quyền</option>
-            <option value="member.">Thành viên và vai trò</option>
-            <option value="product.">Sản phẩm</option>
-          </select>
-        </label>
+          <Select value={actionFilter || "ALL"} onValueChange={(v: string) => setActionFilter(v === "ALL" ? "" : v)}>
+            <SelectTrigger className="w-56"><SelectValue /></SelectTrigger>
+            <SelectContent>
+              {ACTION_FILTERS.map((f) => <SelectItem key={f.value} value={f.value}>{f.label}</SelectItem>)}
+            </SelectContent>
+          </Select>
+        </div>
         <label className="flex flex-col gap-1 text-caption text-text-muted">
           Từ ngày
           <Input type="date" value={fromDate} onChange={(e) => setFromDate(e.target.value)} className="w-40" />
