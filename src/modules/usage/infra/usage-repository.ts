@@ -106,11 +106,12 @@ export class UsageRepository implements IUsageRepository {
    * đã ghi từ P2, chỉ thành vấn đề khi bảng lớn.
    */
   async summaryByFeature(
-    ctx: TenantContext
+    ctx: TenantContext,
+    range?: { from: Date; to: Date }
   ): Promise<Array<{ feature: string; quantity: number; costCredit: number }>> {
     const rows = await this.db.usage.groupBy({
       by: ["feature"],
-      where: scopedWhere(ctx, { status: { not: "REFUNDED" } }),
+      where: scopedWhere(ctx, { status: { not: "REFUNDED" }, ...(range ? { created_at: { gte: range.from, lt: range.to } } : {}) }),
       _sum: { quantity: true, cost_credit: true },
     })
     return rows.map((row: { feature: string; _sum: { quantity: number | null; cost_credit: number | null } }) => ({

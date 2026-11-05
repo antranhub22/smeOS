@@ -6,5 +6,5 @@ import { getUsageSummary } from "@/modules/usage/use-cases/get-usage-summary"
 export const GET = handle(async (request) => {
   const { ctx } = await requireTenantContext(request)
   requireCapability(ctx, "G8")
-  return jsonResponse(await getUsageSummary(ctx))
+  return jsonResponse(await getUsageSummary(ctx, undefined, undefined, new URL(request.url).searchParams.get("period")))
 })

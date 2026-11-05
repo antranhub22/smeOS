@@ -109,8 +109,12 @@ export interface MonthlySnapshot {
   ai: { used: number; limit: number | null }
 }
 
-export async function monthlySnapshot(orgId: string): Promise<MonthlySnapshot> {
-  const period = creditPeriod()
+export function monthlySnapshot(orgId: string): Promise<MonthlySnapshot> {
+  return monthlySnapshotFor(orgId, creditPeriod())
+}
+
+/** Hạn mức và lượng đã dùng của một kỳ YYYY-MM bất kỳ (báo cáo theo kỳ, checklist ALG 6.9). */
+export async function monthlySnapshotFor(orgId: string, period: string): Promise<MonthlySnapshot> {
   const [rows, pricing] = await Promise.all([
     prisma.usage_limits.findMany({ where: { organization_id: orgId, period: { in: [period, DEFAULT_PERIOD] } } }),
     readCreditPricing(),
