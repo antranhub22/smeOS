@@ -17,6 +17,7 @@
  * - Hành trình 14 bước Product-to-Market SSOT: Chặng 05 CHOOSE
  */
 
+import { Dialog } from "@/components/ui/dialog"
 import React, { useState, useMemo, useEffect } from "react";
 import { ProviderSelect } from "@/components/creative-studio/provider-select";
 import { useRouter } from "next/navigation";
@@ -25,7 +26,6 @@ import { Leaf } from "@/components/ui/icon-set/leaf"
 import { Image as ImageIcon } from "@/components/ui/icon-set/image"
 import { Video } from "@/components/ui/icon-set/video"
 import { ArrowRight } from "@/components/ui/icon-set/arrow-right"
-import { X } from "@/components/ui/icon-set/x"
 import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
 import { Quote } from "@/components/ui/icon-set/quote"
 import { Target } from "@/components/ui/icon-set/target"
@@ -93,27 +93,27 @@ export interface CreativeHandoffModalProps {
 const ANGLE_LABELS: Record<string, { label: string; colorClass: string }> = {
   PRODUCT_SHOWCASE: {
     label: "Giới thiệu sản phẩm & Giá",
-    colorClass: "bg-ocean-50 text-ocean-700 border-ocean-200",
+    colorClass: "bg-info-bg text-info-text border-info-border",
   },
   EDUCATIONAL: {
     label: "Chia sẻ bí quyết & Cẩm nang",
-    colorClass: "bg-mint-50 text-mint-700 border-mint-200",
+    colorClass: "bg-success-bg text-success-text border-success-border",
   },
   PROBLEM_SOLUTION: {
     label: "Gỡ rối tình huống tặng quà",
-    colorClass: "bg-sand-50 text-sand-700 border-sand-200",
+    colorClass: "bg-warning-bg text-warning-text border-warning-border",
   },
   EMOTIONAL: {
     label: "Chạm cảm xúc & Tình cảm",
-    colorClass: "bg-blush-50 text-blush-700 border-blush-200",
+    colorClass: "bg-primary-muted text-primary border-primary-border",
   },
   TREND: {
     label: "Bắt sóng trào lưu thịnh hành",
-    colorClass: "bg-orchid-50 text-orchid-700 border-orchid-200",
+    colorClass: "bg-accent-bg text-accent-text border-accent-border",
   },
   PRICE_VALUE: {
     label: "Phân khúc giá & Giá trị",
-    colorClass: "bg-azure-50 text-azure-700 border-azure-200",
+    colorClass: "bg-info-bg text-info-text border-info-border",
   },
 };
 
@@ -143,7 +143,7 @@ const MODE_OPTIONS: Array<{
     tagline: "Đột phá & Lan tỏa",
     description: "Ghép bối cảnh Studio AI, cung kịch bản 5 nhịp, video viral tự động",
     activeBorder: "border-primary ring-2 ring-primary/15",
-    activeBg: "bg-gradient-to-br from-blush-50/80 to-white",
+    activeBg: "bg-gradient-to-br from-primary-muted/80 to-white",
     badgeClass: "bg-primary/10 text-primary border-primary/20",
   },
   {
@@ -235,7 +235,7 @@ export function CreativeHandoffModal({
     return (
       ANGLE_LABELS[key] || {
         label: key.replace(/_/g, " "),
-        colorClass: "bg-cool-100 text-cool-700 border-cool-200",
+        colorClass: "bg-surface-alt text-text border-border",
       }
     );
   }, [selectedTopic.angleCategory]);
@@ -344,45 +344,10 @@ export function CreativeHandoffModal({
   if (!open) return null;
 
   return (
-    <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-cool-900/60 backdrop-blur-xs animate-in fade-in duration-200"
-      onClick={(e) => {
-        if (e.target === e.currentTarget) onClose();
-      }}
-    >
-      <div
-              role="button"
-              tabIndex={0}
-        className="w-full max-w-[560px] rounded-2xl border border-border bg-surface shadow-2xl overflow-hidden flex flex-col max-h-[90vh] animate-in zoom-in-95 duration-200"
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* ── Top accent stripe ── */}
-        <div className="h-1.5 w-full bg-gradient-to-r from-primary via-[var(--color-gold)] to-[var(--color-secondary-text)]" />
-
-        {/* ── Header ── */}
-        <div className="flex items-start justify-between px-6 pt-5 pb-3 border-b border-border bg-surface">
-          <div>
-            <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-blush-50 text-primary border border-blush-200/70 text-caption font-bold tracking-wider uppercase mb-1">
-              <Sparkles size={11} className="text-primary" />
-              Chặng 05 — CHOOSE 🎯
-            </div>
-            <h2 className="text-title font-extrabold text-cool-900 leading-tight">
-              Chọn định hướng sáng tạo chiến dịch
-            </h2>
-            <p className="text-meta text-cool-500 mt-0.5">
-              Xác nhận chủ đề truyền thông & chế độ sản xuất trước khi vào Creative Studio
-            </p>
-          </div>
-          <button
-            type="button"
-            onClick={onClose}
-            className="rounded-full p-1.5 text-text-muted hover:bg-cool-100 hover:text-cool-700 transition"
-            aria-label="Đóng"
-          >
-            <X size={18} />
-          </button>
-        </div>
-
+    <Dialog open onOpenChange={(o) => { if (!o) onClose() }} size="md"
+      title="Chọn định hướng sáng tạo chiến dịch"
+      description="Xác nhận chủ đề truyền thông & chế độ sản xuất trước khi vào Creative Studio">
+      <div className="-m-5 sm:-m-6 flex flex-col">
         {/* ── Modal Body (Scrollable) ── */}
         <div className="px-6 py-4 flex flex-col gap-4 overflow-y-auto no-scrollbar">
           {preview ? (
@@ -390,24 +355,24 @@ export function CreativeHandoffModal({
           ) : (
           <>
           {/* 1. Thẻ Chủ Đề Đã Chọn */}
-          <div className="rounded-xl border border-blush-200/80 bg-blush-50/40 p-4 space-y-2.5">
+          <div className="rounded-xl border border-primary-border/80 bg-primary-muted/40 p-4 space-y-2.5">
             <div className="flex items-center justify-between">
               <span className="text-caption font-bold uppercase tracking-wider text-primary">
                 Chủ đề đã chọn (Chặng 04)
               </span>
-              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-white border border-blush-200 text-caption font-semibold text-primary shadow-xs">
+              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-white border border-primary-border text-caption font-semibold text-primary shadow-xs">
                 🎬 {formatLabel}
               </span>
             </div>
 
-            <h3 className="text-body font-bold text-cool-900 leading-snug">
+            <h3 className="text-body font-bold text-text leading-snug">
               {selectedTopic.title}
             </h3>
 
             {selectedTopic.hook && (
-              <div className="flex items-start gap-2 rounded-lg bg-white/80 border border-blush-100 p-2.5">
+              <div className="flex items-start gap-2 rounded-lg bg-white/80 border border-primary-border p-2.5">
                 <Quote size={13} className="text-primary/60 mt-0.5 flex-shrink-0" />
-                <p className="text-meta italic text-cool-700 leading-relaxed">
+                <p className="text-meta italic text-text leading-relaxed">
                   &ldquo;{selectedTopic.hook}&rdquo;
                 </p>
               </div>
@@ -420,7 +385,7 @@ export function CreativeHandoffModal({
               >
                 {angleInfo.label}
               </span>
-              <span className="inline-flex items-center px-2 py-0.5 rounded-md border border-cool-200 bg-cool-50 text-cool-700 text-caption font-medium">
+              <span className="inline-flex items-center px-2 py-0.5 rounded-md border border-border bg-bg text-text text-caption font-medium">
                 {formatLabel}
               </span>
             </div>
@@ -436,9 +401,9 @@ export function CreativeHandoffModal({
           </div>
 
           {/* 2. Thẻ Sản Phẩm Liên Kết */}
-          <div className="flex items-center gap-3.5 rounded-xl border border-cool-200 bg-cool-50/60 p-3">
+          <div className="flex items-center gap-3.5 rounded-xl border border-border bg-bg/60 p-3">
             {sourceImageUrl ? (
-              <div className="relative h-12 w-12 flex-shrink-0 overflow-hidden rounded-lg border border-cool-200 bg-white">
+              <div className="relative h-12 w-12 flex-shrink-0 overflow-hidden rounded-lg border border-border bg-white">
                 <img
                   src={safeImageSrc(sourceImageUrl)}
                   alt={productName}
@@ -446,27 +411,27 @@ export function CreativeHandoffModal({
                 />
               </div>
             ) : (
-              <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg border border-cool-200 bg-cool-100 text-text-muted">
+              <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-lg border border-border bg-surface-alt text-text-muted">
                 <ImageIcon size={20} />
               </div>
             )}
             <div className="flex-1 min-w-0">
-              <p className="text-body-sm font-bold text-cool-900 truncate">
+              <p className="text-body-sm font-bold text-text truncate">
                 {productName}
               </p>
-              <p className="text-caption text-cool-500 mt-0.5 flex items-center gap-1.5">
+              <p className="text-caption text-text-muted mt-0.5 flex items-center gap-1.5">
                 <span>📸 Dữ liệu thị giác Chặng 01–02</span>
               </p>
             </div>
-            <div className="flex items-center gap-1 rounded-full bg-mint-50 border border-mint-200 px-2 py-0.5">
+            <div className="flex items-center gap-1 rounded-full bg-success-bg border border-success-border px-2 py-0.5">
               <CheckCircle2 size={11} className="text-success" />
-              <span className="text-caption font-semibold text-mint-700">Đã khớp</span>
+              <span className="text-caption font-semibold text-success-text">Đã khớp</span>
             </div>
           </div>
 
           {/* 3. Loại Hình Sản Xuất */}
           <div>
-            <label className="text-caption font-bold uppercase tracking-wider text-cool-700 block mb-2">
+            <label className="text-caption font-bold uppercase tracking-wider text-text block mb-2">
               Loại hình sản xuất
             </label>
             <div className="grid grid-cols-2 gap-2.5">
@@ -474,29 +439,28 @@ export function CreativeHandoffModal({
                 const Icon = opt.icon;
                 const isSelected = mode === opt.value;
                 return (
-                  <button
+                  <Button variant="ghost"
                     key={opt.value}
                     type="button"
                     onClick={() => setMode(opt.value)}
-                    className={`relative flex flex-col p-3 rounded-xl border text-left transition-all ${
+                    className={`relative flex h-auto flex-col items-stretch justify-start gap-0 font-[inherit] p-3 rounded-xl border text-left transition-all ${
                       isSelected
                         ? `${opt.activeBorder} ${opt.activeBg} shadow-xs`
-                        : "border-cool-200 bg-white hover:border-cool-300 hover:bg-cool-50/50"
-                    }`}
-                  >
+                        : "border-border bg-white hover:border-border hover:bg-bg/50"
+                    }`}>
                     <div className="flex items-center justify-between mb-1.5">
                       <div className="flex items-center gap-2">
                         <div
                           className={`flex h-7 w-7 items-center justify-center rounded-lg ${
-                            isSelected ? "bg-white shadow-xs" : "bg-cool-100"
+                            isSelected ? "bg-white shadow-xs" : "bg-surface-alt"
                           }`}
                         >
                           <Icon
                             size={14}
-                            className={isSelected ? "text-primary" : "text-cool-600"}
+                            className={isSelected ? "text-primary" : "text-text-muted"}
                           />
                         </div>
-                        <span className="text-meta font-bold text-cool-900">
+                        <span className="text-meta font-bold text-text">
                           {opt.label}
                         </span>
                       </div>
@@ -511,10 +475,10 @@ export function CreativeHandoffModal({
                     >
                       {opt.badge}
                     </span>
-                    <p className="text-caption text-cool-600 leading-relaxed">
+                    <p className="text-caption text-text-muted leading-relaxed">
                       {opt.description}
                     </p>
-                  </button>
+                  </Button>
                 );
               })}
             </div>
@@ -522,7 +486,7 @@ export function CreativeHandoffModal({
 
           {/* 3b. Phạm vi sản xuất — nền tảng + loại kết quả (PO 24/09/2026) */}
           <div>
-            <label className="text-caption font-bold uppercase tracking-wider text-cool-700 block mb-2">
+            <label className="text-caption font-bold uppercase tracking-wider text-text block mb-2">
               Phạm vi sản xuất
             </label>
             <ProductionScopePicker value={scope} onChange={setScope} compact />
@@ -530,7 +494,7 @@ export function CreativeHandoffModal({
 
           {/* 4. Chọn Phân Hệ Đích Đến (Direct Jump) */}
           <div>
-            <label className="text-caption font-bold uppercase tracking-wider text-cool-700 block mb-2">
+            <label className="text-caption font-bold uppercase tracking-wider text-text block mb-2">
               Đích đến trực tiếp trong Creative Studio
             </label>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
@@ -538,24 +502,24 @@ export function CreativeHandoffModal({
                 const Icon = area.icon;
                 const isSelected = selectedArea === area.id;
                 return (
-                  <button
+                  <Button variant="outline"
                     key={area.id}
                     type="button"
                     onClick={() => setSelectedArea(area.id)}
-                    className={`flex flex-col items-center justify-center p-2.5 rounded-xl border text-center transition-all ${
+                    className={`gap-0 flex flex-col items-center justify-center p-2.5 rounded-xl border text-center transition-all ${
                       isSelected
-                        ? "border-primary bg-blush-50/70 text-primary font-bold ring-1 ring-primary/20 shadow-xs"
-                        : "border-cool-200 bg-white text-cool-700 hover:border-cool-300 hover:bg-cool-50"
+                        ? "border-primary bg-primary-muted/70 text-primary font-bold ring-1 ring-primary/20 shadow-xs hover:bg-primary-muted/70"
+                        : "border-border bg-white text-text hover:border-border hover:bg-bg"
                     }`}
                   >
-                    <Icon size={16} className={isSelected ? "text-primary" : "text-cool-500"} />
+                    <Icon size={16} className={isSelected ? "text-primary" : "text-text-muted"} />
                     <span className="text-caption mt-1 font-semibold leading-tight">
                       {area.label}
                     </span>
                     <span className="text-caption text-text-muted mt-0.5">
                       {area.description}
                     </span>
-                  </button>
+                  </Button>
                 );
               })}
             </div>
@@ -564,7 +528,7 @@ export function CreativeHandoffModal({
           {/* 5. Đầu Vào Sáng Tạo (chỉ hiện khi có video) */}
           {hasVideo && (
             <div>
-              <label className="text-caption font-bold uppercase tracking-wider text-cool-700 block mb-2">
+              <label className="text-caption font-bold uppercase tracking-wider text-text block mb-2">
                 Nguồn media đầu vào
               </label>
               <div className="flex gap-2">
@@ -572,19 +536,19 @@ export function CreativeHandoffModal({
                   const Icon = opt.icon;
                   const isSelected = sourceType === opt.value;
                   return (
-                    <button
+                    <Button variant="outline"
                       key={opt.value}
                       type="button"
                       onClick={() => setSourceType(opt.value)}
-                      className={`flex flex-1 items-center justify-center gap-1.5 py-2 px-3 rounded-lg border text-xs font-semibold transition ${
+                      className={`flex flex-1 items-center justify-center gap-1.5 py-2 px-3 rounded-lg border text-caption font-semibold transition ${
                         isSelected
-                          ? "border-primary bg-primary text-white shadow-xs"
-                          : "border-cool-200 bg-white text-cool-700 hover:bg-cool-50"
+                          ? "border-primary bg-primary text-white shadow-xs hover:bg-primary"
+                          : "border-border bg-white text-text hover:bg-bg"
                       }`}
                     >
                       <Icon size={14} />
                       {opt.label}
-                    </button>
+                    </Button>
                   );
                 })}
               </div>
@@ -596,8 +560,8 @@ export function CreativeHandoffModal({
 
         {/* ── Footer ── */}
         {(!canStart || handoffError) && (
-          <div className="flex items-start gap-2 px-6 py-2.5 border-t border-sand-200 bg-sand-50/70 text-caption text-sand-800">
-            <AlertTriangle size={14} className="text-sand-600 mt-0.5 flex-shrink-0" />
+          <div className="flex items-start gap-2 px-6 py-2.5 border-t border-warning-border bg-warning-bg/70 text-caption text-warning-text">
+            <AlertTriangle size={14} className="text-warning-text mt-0.5 flex-shrink-0" />
             <span>
               {!canStart
                 ? "Ảnh chưa được lưu vào kho — quay lại Chặng 01 và tải lại ảnh trước khi sáng tạo."
@@ -606,42 +570,42 @@ export function CreativeHandoffModal({
           </div>
         )}
 
-        <div className="flex items-center justify-between px-6 py-3.5 border-t border-border bg-cool-50/80">
-          <div className="flex items-center gap-2 text-caption text-cool-500">
-            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-mint-100 text-mint-700">
+        <div className="flex items-center justify-between px-6 py-3.5 border-t border-border bg-bg/80">
+          <div className="flex items-center gap-2 text-caption text-text-muted">
+            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-success-bg text-success-text">
               <CheckCircle2 size={12} />
             </span>
-            <span className="font-semibold text-cool-700">Chặng 01–04 hoàn tất</span>
+            <span className="font-semibold text-text">Chặng 01–04 hoàn tất</span>
           </div>
 
           <div className="flex items-center gap-2">
-            <button
+            <Button variant="outline"
               type="button"
               onClick={onClose}
-              className="px-3 py-1.5 rounded-lg border border-cool-200 text-xs font-semibold text-cool-600 hover:bg-white transition"
+              className="gap-0 px-3 py-1.5 rounded-lg border border-border text-caption font-semibold text-text-muted hover:bg-white transition"
             >
               Hủy
-            </button>
+            </Button>
             {preview ? (
               <>
-                <button
+                <Button variant="outline"
                   type="button"
                   onClick={() => setPreview(null)}
-                  className="px-3 py-1.5 rounded-lg border border-cool-200 text-xs font-semibold text-cool-700 hover:bg-white transition"
+                  className="gap-0 px-3 py-1.5 rounded-lg border border-border text-caption font-semibold text-text hover:bg-white transition"
                 >
                   ← Chỉnh lựa chọn
-                </button>
-                <button
+                </Button>
+                <Button variant="outline"
                   type="button"
                   onClick={() => void handleStart(true)}
                   disabled={writingPlan}
-                  className="px-3 py-1.5 rounded-lg border border-cool-200 text-xs font-semibold text-cool-700 hover:bg-white transition disabled:opacity-50"
+                  className="gap-0 px-3 py-1.5 rounded-lg border border-border text-caption font-semibold text-text hover:bg-white transition disabled:opacity-50"
                 >
                   {writingPlan ? "Đang viết lại..." : "↻ AI viết lại (1 credit)"}
-                </button>
+                </Button>
                 <Button
                   onClick={() => goToStudio(preview.jobId ?? RULE_PLAN_REF)}
-                  className="gap-1.5 bg-primary hover:bg-primary-dark text-white text-xs font-bold px-4 py-2 shadow-xs"
+                  className="gap-1.5 bg-primary hover:bg-primary-dark text-white text-caption font-bold px-4 py-2 shadow-xs"
                 >
                   Dùng kịch bản này · vào Creative Studio
                   <ArrowRight size={14} />
@@ -653,20 +617,20 @@ export function CreativeHandoffModal({
               <ProviderSelect kind="content" value={contentProvider} onChange={setContentProvider} label="AI viết kịch bản" disabled={writingPlan} />
             </div>
                         {planFailed && (
-              <button
+              <Button variant="outline"
                 type="button"
                 onClick={handleStartWithRulePlan}
                 disabled={!canStart || writingPlan}
-                className="px-3 py-1.5 rounded-lg border border-cool-200 text-xs font-semibold text-cool-700 hover:bg-white transition disabled:opacity-50"
+                className="gap-0 px-3 py-1.5 rounded-lg border border-border text-caption font-semibold text-text hover:bg-white transition disabled:opacity-50"
               >
                 Dùng kịch bản cơ bản
-              </button>
+              </Button>
             )}
             <Button
               onClick={() => void handleStart()}
               disabled={!canStart || writingPlan}
               title="AI viết kịch bản bối cảnh cho chủ đề này (1 credit, chỉ tính lần đầu) rồi mở Creative Studio"
-              className="gap-1.5 bg-primary hover:bg-primary-dark text-white text-xs font-bold px-4 py-2 shadow-xs transition disabled:opacity-50 disabled:cursor-not-allowed"
+              className="gap-1.5 bg-primary hover:bg-primary-dark text-white text-caption font-bold px-4 py-2 shadow-xs transition disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {writingPlan ? "AI đang viết kịch bản sản xuất..." : "Lên kịch bản sản xuất · AI (1 credit)"}
               <ArrowRight size={14} />
@@ -676,6 +640,6 @@ export function CreativeHandoffModal({
           </div>
         </div>
       </div>
-    </div>
+    </Dialog>
   );
 }

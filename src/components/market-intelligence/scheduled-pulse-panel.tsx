@@ -1,5 +1,8 @@
 "use client";
 
+import { Button } from "@/components/ui/button"
+import { Checkbox } from "@/components/ui/checkbox"
+import { Input } from "@/components/ui/input"
 import React, { useState } from "react";
 import { Clock } from "@/components/ui/icon-set/clock"
 import { Settings } from "@/components/ui/icon-set/settings"
@@ -79,24 +82,24 @@ export function ScheduledPulsePanel({
   return (
     <div className="space-y-6">
       {/* 1. Khu vực Thiết lập Lịch Quét Tự Động */}
-      <div className="rounded-2xl border border-cool-200 bg-white p-5 shadow-sm space-y-4">
-        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-cool-100 pb-3">
+      <div className="rounded-2xl border border-border bg-white p-5 shadow-sm space-y-4">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border pb-3">
           <div className="flex items-center gap-2.5">
-            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-sand-50 text-sand-600 border border-sand-200/60">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-warning-bg text-warning-text border border-warning-border/60">
               <Clock size={20} />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="font-bold text-cool-900 text-sm">
+                <h3 className="font-bold text-text text-body-sm">
                   {isSaaSAdmin
                     ? "Cấu hình lịch quét cho từng cửa hàng"
                     : "Lịch quét sáng của tiệm"}
                 </h3>
-                <span className="text-caption font-bold px-2 py-0.5 rounded-full bg-mint-50 text-mint-700 border border-mint-200/80">
+                <span className="text-caption font-bold px-2 py-0.5 rounded-full bg-success-bg text-success-text border border-success-border/80">
                   {isEnabled ? "Đang kích hoạt" : "Đã tạm dừng"}
                 </span>
               </div>
-              <p className="text-xs text-cool-500 mt-0.5">
+              <p className="text-caption text-text-muted mt-0.5">
                 {isSaaSAdmin
                   ? "Điều phối cron job toàn hệ thống và thiết lập lịch quét riêng cho từng cửa hàng"
                   : "Mỗi sáng AI tự động quét thị trường theo danh mục hoa của tiệm và gửi bản tin tóm tắt lúc mở cửa"}
@@ -104,12 +107,11 @@ export function ScheduledPulsePanel({
             </div>
           </div>
 
-          <label className="flex items-center gap-2 text-xs font-semibold text-cool-700 cursor-pointer select-none">
-            <input
-              type="checkbox"
+          <label className="flex items-center gap-2 text-caption font-semibold text-text cursor-pointer select-none">
+            <Checkbox
               checked={isEnabled}
-              onChange={(e) => setIsEnabled(e.target.checked)}
-              className="h-4 w-4 rounded accent-rose-600"
+              onCheckedChange={(checked) => setIsEnabled((checked === true))}
+              className="h-4 w-4 rounded accent-primary"
             />
             Bật tự động quét mỗi ngày
           </label>
@@ -119,15 +121,15 @@ export function ScheduledPulsePanel({
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {/* Giờ quét */}
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-cool-800 flex items-center gap-1.5">
-                <Clock size={14} className="text-sand-600" />
+              <label className="text-caption font-bold text-text flex items-center gap-1.5">
+                <Clock size={14} className="text-warning-text" />
                 Giờ quét tự động mỗi sáng
               </label>
-              <input
+              <Input
                 type="time"
                 value={scheduleTime}
                 onChange={(e) => setScheduleTime(e.target.value)}
-                className="h-10 w-full rounded-xl border border-cool-200 bg-cool-50/50 px-3 text-xs font-semibold text-cool-900 outline-none focus:border-blush-500 focus:bg-white transition"
+                className="h-10 w-full rounded-xl border border-border bg-bg/50 px-3 text-caption font-semibold text-text outline-none focus:border-primary focus:bg-white transition"
               />
               <span className="text-caption text-text-muted block">
                 Khuyến nghị: 06:00 - 07:00 sáng trước giờ mở cửa tiệm
@@ -136,26 +138,24 @@ export function ScheduledPulsePanel({
 
             {/* Thông báo */}
             <div className="space-y-1.5 md:col-span-2">
-              <label className="text-xs font-bold text-cool-800 flex items-center gap-1.5">
-                <Bell size={14} className="text-sand-600" />
+              <label className="text-caption font-bold text-text flex items-center gap-1.5">
+                <Bell size={14} className="text-warning-text" />
                 Kênh nhận bản tin sau khi quét
               </label>
               <div className="flex flex-wrap gap-4 pt-2">
-                <label className="flex items-center gap-2 text-xs text-cool-700 cursor-pointer">
-                  <input
-                    type="checkbox"
+                <label className="flex items-center gap-2 text-caption text-text cursor-pointer">
+                  <Checkbox
                     checked={notifyCopilot}
-                    onChange={(e) => setNotifyCopilot(e.target.checked)}
-                    className="h-4 w-4 rounded accent-rose-600"
+                    onCheckedChange={(checked) => setNotifyCopilot((checked === true))}
+                    className="h-4 w-4 rounded accent-primary"
                   />
                   <span>smeOS Copilot chào buổi sáng</span>
                 </label>
-                <label className="flex items-center gap-2 text-xs text-cool-700 cursor-pointer">
-                  <input
-                    type="checkbox"
+                <label className="flex items-center gap-2 text-caption text-text cursor-pointer">
+                  <Checkbox
                     checked={notifyEmail}
-                    onChange={(e) => setNotifyEmail(e.target.checked)}
-                    className="h-4 w-4 rounded accent-rose-600"
+                    onCheckedChange={(checked) => setNotifyEmail((checked === true))}
+                    className="h-4 w-4 rounded accent-primary"
                   />
                   <span>Gửi email báo cáo hàng ngày</span>
                 </label>
@@ -166,8 +166,8 @@ export function ScheduledPulsePanel({
           {/* Danh mục từ khóa tiệm theo dõi */}
           <div className="space-y-2 pt-1">
             <div className="flex items-center justify-between">
-              <label className="text-xs font-bold text-cool-800 flex items-center gap-1.5">
-                <Layers size={14} className="text-sand-600" />
+              <label className="text-caption font-bold text-text flex items-center gap-1.5">
+                <Layers size={14} className="text-warning-text" />
                 Từ khóa & Chủ đề hoa tiệm theo dõi thường trực ({trackedKeywords.length}/10)
               </label>
               <span className="text-caption text-text-muted">
@@ -175,31 +175,31 @@ export function ScheduledPulsePanel({
               </span>
             </div>
 
-            <div className="flex flex-wrap gap-1.5 p-3 rounded-xl border border-cool-200 bg-cool-50/50 min-h-[50px]">
+            <div className="flex flex-wrap gap-1.5 p-3 rounded-xl border border-border bg-bg/50 min-h-[50px]">
               {trackedKeywords.map((kw) => (
                 <span
                   key={kw}
-                  className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white border border-cool-200 text-xs font-semibold text-cool-800 shadow-2xs"
+                  className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white border border-border text-caption font-semibold text-text shadow-2xs"
                 >
                   {kw}
-                  <button
+                  <Button variant="ghost"
                     type="button"
                     onClick={() => handleRemoveKeyword(kw)}
-                    className="text-text-muted hover:text-blush-600 transition"
+                    className="h-auto p-0 font-[inherit] gap-0 text-text-muted hover:text-primary transition"
                   >
                     ×
-                  </button>
+                  </Button>
                 </span>
               ))}
             </div>
 
             <div className="flex gap-2">
-              <input
+              <Input
                 type="text"
                 value={newKeyword}
                 onChange={(e) => setNewKeyword(e.target.value)}
                 placeholder="Thêm từ khóa hoa riêng của tiệm (VD: Hoa cúc tana, Hoa baby bó lớn)..."
-                className="h-9 flex-1 rounded-xl border border-cool-200 bg-white px-3 text-xs text-cool-900 outline-none focus:border-blush-500 transition"
+                className="h-9 flex-1 rounded-xl border border-border bg-white px-3 text-caption text-text outline-none focus:border-primary transition"
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
                     e.preventDefault();
@@ -207,45 +207,45 @@ export function ScheduledPulsePanel({
                   }
                 }}
               />
-              <button
+              <Button variant="outline"
                 type="button"
                 onClick={handleAddKeyword}
-                className="px-4 py-1.5 rounded-xl border border-cool-200 bg-cool-100 text-xs font-bold text-cool-700 hover:bg-blush-50 hover:text-blush-700 transition"
+                className="gap-0 px-4 py-1.5 rounded-xl border border-border bg-surface-alt text-caption font-bold text-text hover:bg-primary-muted hover:text-primary transition"
               >
                 + Thêm
-              </button>
+              </Button>
             </div>
           </div>
 
-          <div className="flex items-center justify-between pt-2 border-t border-cool-100">
+          <div className="flex items-center justify-between pt-2 border-t border-border">
             {isSaved ? (
-              <span className="inline-flex items-center gap-1.5 text-xs font-bold text-mint-700">
+              <span className="inline-flex items-center gap-1.5 text-caption font-bold text-success-text">
                 <CheckCircle2 size={15} />
                 Đã lưu lịch quét tự động thành công!
               </span>
             ) : <span />}
 
-            <button
+            <Button variant="ghost"
               type="submit"
-              className="inline-flex items-center gap-1.5 rounded-xl bg-cool-900 px-4 py-2 text-xs font-bold text-white hover:bg-cool-800 shadow-sm transition"
+              className="inline-flex items-center gap-1.5 rounded-xl bg-text px-4 py-2 text-caption font-bold text-white hover:bg-text shadow-sm transition"
             >
               <Settings size={14} />
               Lưu thiết lập lịch quét
-            </button>
+            </Button>
           </div>
         </form>
       </div>
 
       {/* 2. Bản Tin Nhịp Đập Buổi Sáng (Morning Daily Pulse Brief) */}
-      <div className="rounded-2xl border border-sand-200/80 bg-gradient-to-br from-sand-50/50 via-white to-blush-50/40 p-5 shadow-sm space-y-3.5">
+      <div className="rounded-2xl border border-warning-border/80 bg-gradient-to-br from-warning-bg/50 via-white to-primary-muted/40 p-5 shadow-sm space-y-3.5">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-sand-500 text-white">
+            <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-warning text-white">
               <Sparkles size={16} />
             </span>
             <div>
-              <h4 className="text-sm font-extrabold text-cool-900">Bản tin sáng: Gợi ý hôm nay</h4>
-              <span className="text-caption text-cool-500">
+              <h4 className="text-body-sm font-extrabold text-text">Bản tin sáng: Gợi ý hôm nay</h4>
+              <span className="text-caption text-text-muted">
                 Cập nhật tự động lúc {scheduleTime} sáng hôm nay
               </span>
             </div>
@@ -253,34 +253,34 @@ export function ScheduledPulsePanel({
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-          <div className="rounded-xl border border-blush-200/70 bg-white p-3.5 space-y-1">
-            <div className="flex items-center gap-1.5 text-xs font-bold text-blush-700">
+          <div className="rounded-xl border border-primary-border/70 bg-white p-3.5 space-y-1">
+            <div className="flex items-center gap-1.5 text-caption font-bold text-primary">
               <Flame size={14} />
               <span>3 Xu hướng tăng vọt 24h</span>
             </div>
-            <ul className="text-xs text-cool-700 space-y-1 pt-1">
+            <ul className="text-caption text-text space-y-1 pt-1">
               <li>• <strong>Hoa tulip pastel</strong> (+45% tìm kiếm)</li>
               <li>• <strong>Tone cam cháy vintage</strong> (+32% Reels)</li>
               <li>• <strong>Bó tốt nghiệp Hàn Quốc</strong> (+28% Group FB)</li>
             </ul>
           </div>
 
-          <div className="rounded-xl border border-cool-200 bg-white p-3.5 space-y-1">
-            <div className="flex items-center gap-1.5 text-xs font-bold text-cool-700">
-              <AlertTriangle size={14} className="text-sand-500" />
+          <div className="rounded-xl border border-border bg-white p-3.5 space-y-1">
+            <div className="flex items-center gap-1.5 text-caption font-bold text-text">
+              <AlertTriangle size={14} className="text-warning-text" />
               <span>Cảnh báo mẫu hạ nhiệt</span>
             </div>
-            <p className="text-xs text-cool-600 leading-relaxed pt-1">
+            <p className="text-caption text-text-muted leading-relaxed pt-1">
               Các sản phẩm giấy gói màu đậm truyền thống đang giảm tương tác 18%. Khách hàng trẻ chuyển dịch mạnh sang <strong>giấy mờ phong cách Pháp</strong>.
             </p>
           </div>
 
-          <div className="rounded-xl border border-mint-200/70 bg-white p-3.5 space-y-1">
-            <div className="flex items-center gap-1.5 text-xs font-bold text-mint-800">
+          <div className="rounded-xl border border-success-border/70 bg-white p-3.5 space-y-1">
+            <div className="flex items-center gap-1.5 text-caption font-bold text-success-text">
               <TrendingUp size={14} />
               <span>Đề xuất cắm & đăng bán hôm nay</span>
             </div>
-            <p className="text-xs text-cool-600 leading-relaxed pt-1">
+            <p className="text-caption text-text-muted leading-relaxed pt-1">
               Ưu tiên cắm 1 bó mẫu <strong>Hoa Tulip phối Thủy tiên tone kem</strong> chụp cận cảnh đăng lúc 11:30 trưa để đón đầu nhu cầu sinh nhật cuối tuần.
             </p>
           </div>
@@ -288,28 +288,28 @@ export function ScheduledPulsePanel({
       </div>
 
       {/* 3. Lịch Sử Các Phiên Quét Tự Động */}
-      <div className="rounded-2xl border border-cool-200 bg-white p-5 shadow-sm space-y-3">
-        <div className="flex items-center justify-between border-b border-cool-100 pb-3">
-          <div className="flex items-center gap-2 text-cool-900 font-bold text-sm">
-            <History size={16} className="text-cool-500" />
+      <div className="rounded-2xl border border-border bg-white p-5 shadow-sm space-y-3">
+        <div className="flex items-center justify-between border-b border-border pb-3">
+          <div className="flex items-center gap-2 text-text font-bold text-body-sm">
+            <History size={16} className="text-text-muted" />
             <span>Lịch Sử Các Phiên Quét Tự Động & Hàng Đợi Hệ Thống</span>
           </div>
-          <span className="text-xs text-text-muted">
+          <span className="text-caption text-text-muted">
             Tổng cộng: {runs.length} phiên đã lưu
           </span>
         </div>
 
         {runs.length === 0 ? (
-          <p className="text-center py-8 text-xs text-text-muted">
+          <p className="text-center py-8 text-caption text-text-muted">
             Chưa có phiên quét tự động nào được ghi nhận.
           </p>
         ) : (
-          <div className="divide-y divide-cool-100 text-xs">
+          <div className="divide-y divide-border text-caption">
             {runs.slice(0, 5).map((r) => (
               <div key={r.id} className="py-2.5 flex items-center justify-between">
                 <div className="space-y-0.5">
-                  <div className="flex items-center gap-2 font-semibold text-cool-800">
-                    <span className="px-2 py-0.5 rounded bg-cool-100 text-caption font-mono">
+                  <div className="flex items-center gap-2 font-semibold text-text">
+                    <span className="px-2 py-0.5 rounded bg-surface-alt text-caption font-mono">
                       {r.run_type}
                     </span>
                     <span>Lượt quét lúc {new Date(r.created_at).toLocaleString("vi-VN")}</span>
@@ -320,8 +320,8 @@ export function ScheduledPulsePanel({
                 </div>
                 <span className={`px-2 py-0.5 rounded-full text-caption font-bold ${
                   r.status === "COMPLETED"
-                    ? "bg-mint-50 text-mint-700"
-                    : "bg-sand-50 text-sand-700"
+                    ? "bg-success-bg text-success-text"
+                    : "bg-warning-bg text-warning-text"
                 }`}>
                   {r.status === "COMPLETED" ? "Thành công" : r.status}
                 </span>

@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@/components/ui/button"
 import React, { useState, useMemo } from "react";
 import { Sparkles } from "@/components/ui/icon-set/sparkles"
 import { Activity } from "@/components/ui/icon-set/activity"
@@ -140,29 +141,29 @@ export function MarketIntelligenceView({
 
       {/* Thông báo nếu mốc thời gian đang chọn không có kết quả */}
       {filteredByTime.length === 0 && (
-        <div className="rounded-2xl border border-dashed border-cool-200 bg-cool-50/60 p-8 text-center space-y-3">
-          <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-xl bg-sand-50 text-sand-600">
+        <div className="rounded-2xl border border-dashed border-border bg-bg/60 p-8 text-center space-y-3">
+          <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-xl bg-warning-bg text-warning-text">
             <Clock size={20} />
           </div>
           <div className="max-w-md mx-auto">
-            <h4 className="text-sm font-bold text-cool-800">
+            <h4 className="text-body-sm font-bold text-text">
               {opportunities.length === 0 ? "Chưa có tín hiệu thị trường" : <>Không có cơ hội nào trong &ldquo;{currentFilterLabel}&rdquo;</>}
             </h4>
-            <p className="text-xs text-cool-500 mt-1">
+            <p className="text-caption text-text-muted mt-1">
               {opportunities.length === 0 ? "Bấm “Làm mới” ở đầu trang để quét xu hướng mới nhất." : <>Hãy chọn mốc khác hoặc chọn &ldquo;Tất cả&rdquo; để xem toàn bộ {opportunities.length} cơ hội.</>}
             </p>
           </div>
-          {opportunities.length > 0 && <button
+          {opportunities.length > 0 && <Button variant="primary"
             type="button"
             onClick={() => {
               setSelectedTimeframe("ALL");
               setSelectedBucket(null);
             }}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-blush-600 text-white hover:bg-blush-700 shadow-xs transition"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-caption font-bold bg-primary text-white hover:bg-primary-dark shadow-xs transition"
           >
             <RefreshCw size={13} />
             Xem tất cả ({opportunities.length})
-          </button>}
+          </Button>}
         </div>
       )}
 
@@ -198,31 +199,31 @@ export function MarketIntelligenceView({
       {/* 4. Chế Độ Toàn Cảnh (ALL) - Hiển thị toàn bộ cơ hội & Hàng đợi worker */}
       {filteredByTime.length > 0 && activeFilter === "ALL" && (
         <div className="space-y-4">
-          <div id="research-results-section" className="flex border-b border-cool-200 gap-6 text-sm font-medium pt-2">
-            <button
+          <div id="research-results-section" className="flex border-b border-border gap-6 text-body-sm font-medium pt-2">
+            <Button variant="ghost"
               type="button"
               onClick={() => setActiveTab("opportunities")}
-              className={`pb-3 flex items-center gap-2 border-b-2 transition ${
+              className={`h-auto p-0 pb-3 flex items-center gap-2 border-b-2 transition ${
                 activeTab === "opportunities"
-                  ? "border-blush-600 text-blush-600 font-semibold"
-                  : "border-transparent text-cool-500 hover:text-cool-800"
+                  ? "border-primary text-primary font-semibold"
+                  : "border-transparent text-text-muted hover:text-text"
               }`}
             >
               <Sparkles className="h-4 w-4" />
               Cơ hội bán ({filteredByTime.length})
-            </button>
-            <button
+            </Button>
+            <Button variant="ghost"
               type="button"
               onClick={() => setActiveTab("monitoring")}
-              className={`pb-3 flex items-center gap-2 border-b-2 transition ${
+              className={`h-auto p-0 pb-3 flex items-center gap-2 border-b-2 transition ${
                 activeTab === "monitoring"
-                  ? "border-blush-600 text-blush-600 font-semibold"
-                  : "border-transparent text-cool-500 hover:text-cool-800"
+                  ? "border-primary text-primary font-semibold"
+                  : "border-transparent text-text-muted hover:text-text"
               }`}
             >
               <Activity className="h-4 w-4" />
               Lịch sử quét ({runs.length})
-            </button>
+            </Button>
           </div>
 
           {activeTab === "opportunities" ? (

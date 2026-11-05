@@ -36,44 +36,44 @@ interface PeriodTheme {
 
 const PERIOD_THEMES: Record<ChampionPeriodKey, PeriodTheme> = {
   WEEK: {
-    gradient: "from-blush-500/10 via-blush-50/30 to-white",
-    border: "border-blush-200/90 hover:border-blush-400",
-    badgeBg: "bg-blush-100 text-blush-800 border-blush-300",
-    badgeText: "text-blush-700",
-    ringColor: "ring-blush-200",
-    accentScore: "text-blush-600",
+    gradient: "from-primary/10 via-primary-muted/30 to-white",
+    border: "border-primary-border/90 hover:border-primary",
+    badgeBg: "bg-primary-muted text-primary border-primary-border",
+    badgeText: "text-primary",
+    ringColor: "ring-primary-border",
+    accentScore: "text-primary",
   },
   MONTH: {
-    gradient: "from-sand-500/10 via-sand-50/30 to-white",
-    border: "border-sand-200/90 hover:border-sand-400",
-    badgeBg: "bg-sand-100 text-sand-900 border-sand-300",
-    badgeText: "text-sand-700",
-    ringColor: "ring-sand-200",
-    accentScore: "text-sand-600",
+    gradient: "from-warning/10 via-warning-bg/30 to-white",
+    border: "border-warning-border/90 hover:border-warning",
+    badgeBg: "bg-warning-bg text-warning-text border-warning-border",
+    badgeText: "text-warning-text",
+    ringColor: "ring-warning-border",
+    accentScore: "text-warning-text",
   },
   QUARTER: {
-    gradient: "from-orchid-500/10 via-orchid-50/30 to-white",
-    border: "border-orchid-200/90 hover:border-orchid-400",
-    badgeBg: "bg-orchid-100 text-orchid-900 border-orchid-300",
-    badgeText: "text-orchid-700",
-    ringColor: "ring-orchid-200",
-    accentScore: "text-orchid-600",
+    gradient: "from-accent/10 via-accent-bg/30 to-white",
+    border: "border-accent-border/90 hover:border-accent",
+    badgeBg: "bg-accent-bg text-accent-text border-accent-border",
+    badgeText: "text-accent-text",
+    ringColor: "ring-accent-border",
+    accentScore: "text-accent-text",
   },
   HALF_YEAR: {
-    gradient: "from-ocean-500/10 via-ocean-50/30 to-white",
-    border: "border-ocean-200/90 hover:border-ocean-400",
-    badgeBg: "bg-ocean-100 text-ocean-900 border-ocean-300",
-    badgeText: "text-ocean-700",
-    ringColor: "ring-ocean-200",
-    accentScore: "text-ocean-600",
+    gradient: "from-info/10 via-info-bg/30 to-white",
+    border: "border-info-border/90 hover:border-info",
+    badgeBg: "bg-info-bg text-info-text border-info-border",
+    badgeText: "text-info-text",
+    ringColor: "ring-info-border",
+    accentScore: "text-info-text",
   },
   YEAR: {
-    gradient: "from-mint-500/10 via-mint-50/30 to-white",
-    border: "border-mint-200/90 hover:border-mint-400",
-    badgeBg: "bg-mint-100 text-mint-900 border-mint-300",
-    badgeText: "text-mint-700",
-    ringColor: "ring-mint-200",
-    accentScore: "text-mint-600",
+    gradient: "from-success/10 via-success-bg/30 to-white",
+    border: "border-success-border/90 hover:border-success",
+    badgeBg: "bg-success-bg text-success-text border-success-border",
+    badgeText: "text-success-text",
+    ringColor: "ring-success-border",
+    accentScore: "text-success-text",
   },
 };
 
@@ -97,31 +97,31 @@ export function TopChampionsBlock({
   return (
     <>
       <div
-        className={`rounded-2xl border border-cool-200/90 bg-gradient-to-br from-cool-50 via-white to-blush-50/20 p-4 sm:p-5 shadow-xs space-y-4 ${className}`}
+        className={`rounded-2xl border border-border/90 bg-gradient-to-br from-bg via-white to-primary-muted/20 p-4 sm:p-5 shadow-xs space-y-4 ${className}`}
       >
         {/* Header bar: Bảng Vàng Quán Quân */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-cool-100 pb-3">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-border pb-3">
           <div className="flex items-center gap-2.5">
-            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-sand-500 to-blush-600 text-white shadow-xs">
+            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-warning to-primary text-white shadow-xs">
               <Trophy size={16} />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h2 className="text-xs sm:text-sm font-extrabold uppercase tracking-wider text-cool-900 flex items-center gap-1.5">
+                <h2 className="text-caption sm:text-body-sm font-extrabold uppercase tracking-wider text-text flex items-center gap-1.5">
                   Bảng Vàng Xu Hướng: Quán Quân Chu Kỳ
                 </h2>
-                <span className="text-caption font-black px-2 py-0.5 rounded-full bg-sand-100 text-sand-800 border border-sand-300">
+                <span className="text-caption font-black px-2 py-0.5 rounded-full bg-warning-bg text-warning-text border border-warning-border">
                   Top 1 Hall of Fame
                 </span>
               </div>
-              <p className="text-caption text-cool-500 font-medium">
+              <p className="text-caption text-text-muted font-medium">
                 Cơ hội đứng đầu bảng xếp hạng theo từng mốc: Tuần · Tháng · 3 Tháng · 6 Tháng · 1 Năm
               </p>
             </div>
           </div>
 
-          <div className="flex items-center gap-1.5 text-caption font-bold text-cool-500 bg-white px-3 py-1 rounded-full border border-cool-200 shadow-2xs">
-            <Crown size={12} className="text-sand-500" />
+          <div className="flex items-center gap-1.5 text-caption font-bold text-text-muted bg-white px-3 py-1 rounded-full border border-border shadow-2xs">
+            <Crown size={12} className="text-warning-text" />
             <span>Điểm cơ hội cao nhất</span>
           </div>
         </div>
@@ -136,10 +136,10 @@ export function TopChampionsBlock({
               return (
                 <div
                   key={champ.key}
-                  className="rounded-xl border border-dashed border-cool-200 bg-cool-50/50 p-4 text-center flex flex-col justify-center items-center min-h-[220px]"
+                  className="rounded-xl border border-dashed border-border bg-bg/50 p-4 text-center flex flex-col justify-center items-center min-h-[220px]"
                 >
                   <div className="text-caption font-bold text-text-muted mb-1">{champ.label}</div>
-                  <p className="text-xs text-text-muted font-medium">Chưa có cơ hội trong {champ.subLabel}</p>
+                  <p className="text-caption text-text-muted font-medium">Chưa có cơ hội trong {champ.subLabel}</p>
                 </div>
               );
             }
@@ -191,7 +191,7 @@ export function TopChampionsBlock({
               tabIndex={0}
                   onClick={handlePlayVideo}
                   title="Nhấp để xem video trực tiếp"
-                  className="group/thumb relative aspect-[16/10] w-full overflow-hidden rounded-lg bg-cool-900 mb-2.5 cursor-pointer"
+                  className="group/thumb relative aspect-[16/10] w-full overflow-hidden rounded-lg bg-text mb-2.5 cursor-pointer"
                 >
                   <img
                     src={evidence.thumbnailUrl}
@@ -203,7 +203,7 @@ export function TopChampionsBlock({
 
                   {/* Play Button Overlay ở trung tâm */}
                   <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                    <div className="h-9 w-9 sm:h-10 sm:w-10 rounded-full bg-blush-600/90 text-white flex items-center justify-center shadow-lg transform transition-all duration-200 group-hover/thumb:scale-115 group-hover/thumb:bg-blush-600 backdrop-blur-xs">
+                    <div className="h-9 w-9 sm:h-10 sm:w-10 rounded-full bg-primary/90 text-white flex items-center justify-center shadow-lg transform transition-all duration-200 group-hover/thumb:scale-115 group-hover/thumb:bg-primary backdrop-blur-xs">
                       <Play size={16} className="fill-current translate-x-0.5" />
                     </div>
                   </div>
@@ -217,30 +217,30 @@ export function TopChampionsBlock({
                   </div>
 
                   <div className="absolute right-2 top-2 bg-black/75 px-1.5 py-0.5 rounded-md text-right text-white">
-                    <span className="text-xs font-black">{Math.round(item.contentOpportunityScore)}</span>
+                    <span className="text-caption font-black">{Math.round(item.contentOpportunityScore)}</span>
                     <span className="text-caption opacity-70 block -mt-0.5">ĐIỂM</span>
                   </div>
 
-                  <div className="absolute left-2 bottom-1.5 text-white/90 text-caption font-bold flex items-center gap-1 group-hover/thumb:text-blush-300 transition-colors">
-                    <Play size={10} className="fill-current text-blush-400" />
+                  <div className="absolute left-2 bottom-1.5 text-white/90 text-caption font-bold flex items-center gap-1 group-hover/thumb:text-primary transition-colors">
+                    <Play size={10} className="fill-current text-primary" />
                     <span className="truncate max-w-[130px]">{item.topicName}</span>
                   </div>
                 </div>
 
                 {/* Title & Headline */}
                 <div className="space-y-1 flex-1">
-                  <h3 className="font-bold text-cool-900 text-xs leading-snug line-clamp-2 group-hover:text-blush-600 transition-colors">
+                  <h3 className="font-bold text-text text-caption leading-snug line-clamp-2 group-hover:text-primary transition-colors">
                     {headline}
                   </h3>
                 </div>
 
                 {/* Mini Metrics Bar & Chi tiết */}
-                <div className="mt-2.5 pt-2 border-t border-cool-100 flex items-center justify-between text-caption">
-                  <div className="flex items-center gap-2 text-cool-500 font-semibold">
-                    <span>Nóng: <strong className="text-cool-800">{Math.round(item.trendScore)}</strong></span>
+                <div className="mt-2.5 pt-2 border-t border-border flex items-center justify-between text-caption">
+                  <div className="flex items-center gap-2 text-text-muted font-semibold">
+                    <span>Nóng: <strong className="text-text">{Math.round(item.trendScore)}</strong></span>
                     <span>Viral: <strong className={theme.accentScore}>{Math.round(item.viralScore)}</strong></span>
                   </div>
-                  <span className="font-bold text-blush-600 group-hover:translate-x-0.5 transition-transform flex items-center gap-0.5">
+                  <span className="font-bold text-primary group-hover:translate-x-0.5 transition-transform flex items-center gap-0.5">
                     Chi tiết →
                   </span>
                 </div>

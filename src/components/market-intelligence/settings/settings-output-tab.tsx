@@ -1,5 +1,6 @@
 "use client";
 
+import { Checkbox } from "@/components/ui/checkbox"
 import React from "react";
 import { FeatureKey } from "./settings-schedule-tab";
 
@@ -66,47 +67,42 @@ export function SettingsOutputTab({
 }: SettingsOutputTabProps) {
   return (
     <div className="space-y-3">
-      <p className="text-cool-600">Chọn nội dung muốn hiển thị trong báo cáo:</p>
+      <p className="text-text-muted">Chọn nội dung muốn hiển thị trong báo cáo:</p>
 
       {activeFeature === "market" && (
-        <div className="space-y-2 bg-cool-50 p-3.5 rounded-xl border border-cool-200">
-          <label className="flex items-center gap-2 text-cool-700 font-medium cursor-pointer">
-            <input
-              type="checkbox"
+        <div className="space-y-2 bg-bg p-3.5 rounded-xl border border-border">
+          <label className="flex items-center gap-2 text-text font-medium cursor-pointer">
+            <Checkbox
               checked={marketOutput.executiveSummary}
-              onChange={(e) => setMarketOutput({ ...marketOutput, executiveSummary: e.target.checked })}
+              onCheckedChange={(checked) => setMarketOutput({ ...marketOutput, executiveSummary: (checked === true) })}
             />
             Tóm tắt điều hành (Executive Summary)
           </label>
-          <label className="flex items-center gap-2 text-cool-700 font-medium cursor-pointer">
-            <input
-              type="checkbox"
+          <label className="flex items-center gap-2 text-text font-medium cursor-pointer">
+            <Checkbox
               checked={marketOutput.trendLifecycle}
-              onChange={(e) => setMarketOutput({ ...marketOutput, trendLifecycle: e.target.checked })}
+              onCheckedChange={(checked) => setMarketOutput({ ...marketOutput, trendLifecycle: (checked === true) })}
             />
             Nhãn vòng đời xu hướng (Rising, Peaking, Maturing)
           </label>
-          <label className="flex items-center gap-2 text-cool-700 font-medium cursor-pointer">
-            <input
-              type="checkbox"
+          <label className="flex items-center gap-2 text-text font-medium cursor-pointer">
+            <Checkbox
               checked={marketOutput.threeScores}
-              onChange={(e) => setMarketOutput({ ...marketOutput, threeScores: e.target.checked })}
+              onCheckedChange={(checked) => setMarketOutput({ ...marketOutput, threeScores: (checked === true) })}
             />
             3 Trục điểm số (Độ nóng, Lan tỏa, Thương mại)
           </label>
-          <label className="flex items-center gap-2 text-cool-700 font-medium cursor-pointer">
-            <input
-              type="checkbox"
+          <label className="flex items-center gap-2 text-text font-medium cursor-pointer">
+            <Checkbox
               checked={marketOutput.recommendedHooks}
-              onChange={(e) => setMarketOutput({ ...marketOutput, recommendedHooks: e.target.checked })}
+              onCheckedChange={(checked) => setMarketOutput({ ...marketOutput, recommendedHooks: (checked === true) })}
             />
             Gợi ý câu mở đầu giật tít (Hook)
           </label>
-          <label className="flex items-center gap-2 text-cool-700 font-medium cursor-pointer">
-            <input
-              type="checkbox"
+          <label className="flex items-center gap-2 text-text font-medium cursor-pointer">
+            <Checkbox
               checked={marketOutput.evidenceReferences}
-              onChange={(e) => setMarketOutput({ ...marketOutput, evidenceReferences: e.target.checked })}
+              onCheckedChange={(checked) => setMarketOutput({ ...marketOutput, evidenceReferences: (checked === true) })}
             />
             Dẫn chứng kèm link nguồn (5 nguồn)
           </label>
@@ -114,36 +110,32 @@ export function SettingsOutputTab({
       )}
 
       {activeFeature === "keyword" && (
-        <div className="space-y-2 bg-cool-50 p-3.5 rounded-xl border border-cool-200">
-          <label className="flex items-center gap-2 text-cool-700 font-medium cursor-pointer">
-            <input
-              type="checkbox"
+        <div className="space-y-2 bg-bg p-3.5 rounded-xl border border-border">
+          <label className="flex items-center gap-2 text-text font-medium cursor-pointer">
+            <Checkbox
               checked={keywordOutput.commercialAdvice}
-              onChange={(e) => setKeywordOutput({ ...keywordOutput, commercialAdvice: e.target.checked })}
+              onCheckedChange={(checked) => setKeywordOutput({ ...keywordOutput, commercialAdvice: (checked === true) })}
             />
             Lời khuyên thương mại và định vị sản phẩm
           </label>
-          <label className="flex items-center gap-2 text-cool-700 font-medium cursor-pointer">
-            <input
-              type="checkbox"
+          <label className="flex items-center gap-2 text-text font-medium cursor-pointer">
+            <Checkbox
               checked={keywordOutput.audiencePersona}
-              onChange={(e) => setKeywordOutput({ ...keywordOutput, audiencePersona: e.target.checked })}
+              onCheckedChange={(checked) => setKeywordOutput({ ...keywordOutput, audiencePersona: (checked === true) })}
             />
             Tệp khách hàng mục tiêu & tâm lý mua
           </label>
-          <label className="flex items-center gap-2 text-cool-700 font-medium cursor-pointer">
-            <input
-              type="checkbox"
+          <label className="flex items-center gap-2 text-text font-medium cursor-pointer">
+            <Checkbox
               checked={keywordOutput.hooks}
-              onChange={(e) => setKeywordOutput({ ...keywordOutput, hooks: e.target.checked })}
+              onCheckedChange={(checked) => setKeywordOutput({ ...keywordOutput, hooks: (checked === true) })}
             />
             Hook tiêu đề video / bài đăng
           </label>
-          <label className="flex items-center gap-2 text-cool-700 font-medium cursor-pointer">
-            <input
-              type="checkbox"
+          <label className="flex items-center gap-2 text-text font-medium cursor-pointer">
+            <Checkbox
               checked={keywordOutput.recommendedFormats}
-              onChange={(e) => setKeywordOutput({ ...keywordOutput, recommendedFormats: e.target.checked })}
+              onCheckedChange={(checked) => setKeywordOutput({ ...keywordOutput, recommendedFormats: (checked === true) })}
             />
             Gợi ý định dạng sản phẩm (Bó, Giỏ, Kệ, Bình)
           </label>
@@ -151,36 +143,32 @@ export function SettingsOutputTab({
       )}
 
       {activeFeature === "product" && (
-        <div className="space-y-2 bg-cool-50 p-3.5 rounded-xl border border-cool-200">
-          <label className="flex items-center gap-2 text-cool-700 font-medium cursor-pointer">
-            <input
-              type="checkbox"
+        <div className="space-y-2 bg-bg p-3.5 rounded-xl border border-border">
+          <label className="flex items-center gap-2 text-text font-medium cursor-pointer">
+            <Checkbox
               checked={productOutput.matrixScores}
-              onChange={(e) => setProductOutput({ ...productOutput, matrixScores: e.target.checked })}
+              onCheckedChange={(checked) => setProductOutput({ ...productOutput, matrixScores: (checked === true) })}
             />
             Ma trận đối soát Trend Fit 3 chiều
           </label>
-          <label className="flex items-center gap-2 text-cool-700 font-medium cursor-pointer">
-            <input
-              type="checkbox"
+          <label className="flex items-center gap-2 text-text font-medium cursor-pointer">
+            <Checkbox
               checked={productOutput.threeZonesKeepImproveTest}
-              onChange={(e) => setProductOutput({ ...productOutput, threeZonesKeepImproveTest: e.target.checked })}
+              onCheckedChange={(checked) => setProductOutput({ ...productOutput, threeZonesKeepImproveTest: (checked === true) })}
             />
             Khuyến nghị cải tiến 3 vùng (GIỮ hoa / CẢI TIẾN giấy gói / THỬ NGHIỆM)
           </label>
-          <label className="flex items-center gap-2 text-cool-700 font-medium cursor-pointer">
-            <input
-              type="checkbox"
+          <label className="flex items-center gap-2 text-text font-medium cursor-pointer">
+            <Checkbox
               checked={productOutput.exportVideoStudio}
-              onChange={(e) => setProductOutput({ ...productOutput, exportVideoStudio: e.target.checked })}
+              onCheckedChange={(checked) => setProductOutput({ ...productOutput, exportVideoStudio: (checked === true) })}
             />
             Tạo sẵn kịch bản xuất sang Video Studio
           </label>
-          <label className="flex items-center gap-2 text-cool-700 font-medium cursor-pointer">
-            <input
-              type="checkbox"
+          <label className="flex items-center gap-2 text-text font-medium cursor-pointer">
+            <Checkbox
               checked={productOutput.exportMediaStudio}
-              onChange={(e) => setProductOutput({ ...productOutput, exportMediaStudio: e.target.checked })}
+              onCheckedChange={(checked) => setProductOutput({ ...productOutput, exportMediaStudio: (checked === true) })}
             />
             Tạo sẵn biến thể xuất sang Media Studio
           </label>

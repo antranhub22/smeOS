@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@/components/ui/button"
 import React, { useMemo } from "react";
 import { Zap } from "@/components/ui/icon-set/zap"
 import { Calendar } from "@/components/ui/icon-set/calendar"
@@ -46,45 +47,45 @@ const SCOPE_BUTTONS: Array<{
     label: "Theo Ngày",
     subLabel: "Từng ngày",
     icon: Zap,
-    activeBg: "bg-sand-600",
+    activeBg: "bg-warning hover:bg-warning",
     activeText: "text-white",
-    ringColor: "ring-sand-300/70 border-sand-600",
+    ringColor: "ring-warning-border/70 border-warning",
   },
   {
     key: "WEEK",
     label: "Theo Tuần",
     subLabel: "Từng tuần",
     icon: Calendar,
-    activeBg: "bg-blush-600",
+    activeBg: "bg-primary hover:bg-primary",
     activeText: "text-white",
-    ringColor: "ring-blush-300/70 border-blush-600",
+    ringColor: "ring-primary-border/70 border-primary",
   },
   {
     key: "MONTH",
     label: "Theo Tháng",
     subLabel: "Từng tháng",
     icon: CalendarDays,
-    activeBg: "bg-ocean-600",
+    activeBg: "bg-info hover:bg-info",
     activeText: "text-white",
-    ringColor: "ring-ocean-300/70 border-ocean-600",
+    ringColor: "ring-info-border/70 border-info",
   },
   {
     key: "QUARTER",
     label: "Theo 3 Tháng",
     subLabel: "Từng quý",
     icon: TrendingUp,
-    activeBg: "bg-orchid-600",
+    activeBg: "bg-accent hover:bg-accent",
     activeText: "text-white",
-    ringColor: "ring-orchid-300/70 border-orchid-600",
+    ringColor: "ring-accent-border/70 border-accent",
   },
   {
     key: "ALL",
     label: "Tất Cả",
     subLabel: "Toàn bộ",
     icon: Layers,
-    activeBg: "bg-cool-800",
+    activeBg: "bg-text hover:bg-text",
     activeText: "text-white",
-    ringColor: "ring-cool-400/70 border-cool-800",
+    ringColor: "ring-text-muted/70 border-text",
   },
 ];
 
@@ -145,32 +146,32 @@ export function TimeframeDistributionBar({
 
   return (
     <div
-      className={`rounded-2xl border border-cool-200/90 bg-white p-3.5 sm:p-4 shadow-xs space-y-3 ${className}`}
+      className={`rounded-2xl border border-border/90 bg-white p-3.5 sm:p-4 shadow-xs space-y-3 ${className}`}
     >
       {/* TẦNG 1: Thanh chọn chế độ xem (Scope Selector) */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2.5">
         <div className="flex items-center gap-2">
-          <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-blush-50 text-blush-600">
+          <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-primary-muted text-primary">
             <Clock size={15} />
           </div>
           <div>
             <div className="flex items-center gap-1.5">
-              <span className="text-xs sm:text-sm font-extrabold text-cool-900">
+              <span className="text-caption sm:text-body-sm font-extrabold text-text">
                 Chế độ phân bổ:
               </span>
-              <span className="text-xs font-bold text-blush-700 bg-blush-50 px-2 py-0.5 rounded-full border border-blush-200">
+              <span className="text-caption font-bold text-primary bg-primary-muted px-2 py-0.5 rounded-full border border-primary-border">
                 {activeConfig.label}
               </span>
               {selectedBucket && (
                 <>
                   <ChevronRight size={12} className="text-text-muted" />
-                  <span className="text-xs font-bold text-sand-800 bg-sand-50 px-2 py-0.5 rounded-full border border-sand-200">
+                  <span className="text-caption font-bold text-warning-text bg-warning-bg px-2 py-0.5 rounded-full border border-warning-border">
                     {selectedBucket.label}
                   </span>
                 </>
               )}
             </div>
-            <p className="text-caption text-cool-500 font-medium">
+            <p className="text-caption text-text-muted font-medium">
               {selectedBucket
                 ? `Đang lọc hiển thị các cơ hội thuộc ${selectedBucket.label}`
                 : activeConfig.description}
@@ -179,33 +180,32 @@ export function TimeframeDistributionBar({
         </div>
 
         {/* 5 Nút bấm chọn Chế độ xem */}
-        <div className="flex items-center gap-1 overflow-x-auto no-scrollbar bg-cool-100/90 p-1 rounded-xl border border-cool-200/60">
+        <div className="flex items-center gap-1 overflow-x-auto no-scrollbar bg-surface-alt/90 p-1 rounded-xl border border-border/60">
           {SCOPE_BUTTONS.map((btn) => {
             const Icon = btn.icon;
             const count = getScopeTotal(btn.key);
             const isSelected = activeTimeframe === btn.key;
 
             return (
-              <button
+              <Button variant="ghost"
                 key={btn.key}
                 type="button"
                 onClick={() => handleScopeChange(btn.key)}
-                className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-bold transition duration-150 flex-shrink-0 cursor-pointer ${
+                className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-caption font-bold transition duration-150 flex-shrink-0 cursor-pointer ${
                   isSelected
                     ? `${btn.activeBg} ${btn.activeText} shadow-xs border ring-2 ${btn.ringColor}`
-                    : "text-cool-600 hover:text-cool-900 hover:bg-white/80"
-                }`}
-              >
+                    : "text-text-muted hover:text-text hover:bg-white/80"
+                }`}>
                 <Icon size={13} className={isSelected ? "animate-pulse motion-reduce:animate-none" : "text-text-muted"} />
                 <span>{btn.label}</span>
                 <span
                   className={`ml-0.5 px-1.5 py-0.2 rounded-full text-caption font-black ${
-                    isSelected ? "bg-white/20 text-white" : "bg-cool-200/90 text-cool-700"
+                    isSelected ? "bg-white/20 text-white" : "bg-border/90 text-text"
                   }`}
                 >
                   {count}
                 </span>
-              </button>
+              </Button>
             );
           })}
         </div>
@@ -213,36 +213,36 @@ export function TimeframeDistributionBar({
 
       {/* TẦNG 2: Thanh chọn Mốc Rời Rạc Cụ Thể (Discrete Period Picker) */}
       {activeTimeframe !== "ALL" && currentBuckets.length > 0 && (
-        <div className="pt-2 border-t border-cool-100 space-y-2">
+        <div className="pt-2 border-t border-border space-y-2">
           <div className="flex items-center justify-between text-caption">
-            <span className="font-bold text-cool-600 flex items-center gap-1">
-              <Filter size={12} className="text-blush-600" />
+            <span className="font-bold text-text-muted flex items-center gap-1">
+              <Filter size={12} className="text-primary" />
               Chọn mốc {activeConfig.shortLabel.toLowerCase()} muốn xem:
             </span>
             {selectedBucket && (
-              <button
+              <Button variant="ghost"
                 type="button"
                 onClick={() => onSelectBucket(null)}
-                className="text-caption font-semibold text-blush-600 hover:text-blush-800 underline transition"
+                className="h-auto p-0 gap-0 text-caption font-semibold text-primary hover:text-primary underline transition"
               >
                 Xóa lọc mốc (Xem gộp {activeConfig.shortLabel.toLowerCase()})
-              </button>
+              </Button>
             )}
           </div>
 
           <div className="flex items-center gap-1.5 overflow-x-auto no-scrollbar pb-0.5">
             {/* Nút Xem Gộp Toàn Bộ Khung */}
-            <button
+            <Button variant="outline"
               type="button"
               onClick={() => onSelectBucket(null)}
-              className={`flex-shrink-0 px-2.5 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer border ${
+              className={`gap-0 flex-shrink-0 px-2.5 py-1.5 rounded-lg text-caption font-bold transition cursor-pointer border ${
                 selectedBucket === null
-                  ? "bg-blush-600 text-white border-blush-600 shadow-xs"
-                  : "bg-cool-50 text-cool-600 border-cool-200 hover:bg-cool-100 hover:text-cool-900"
+                  ? "bg-primary text-white border-primary shadow-xs hover:bg-primary"
+                  : "bg-bg text-text-muted border-border hover:bg-surface-alt hover:text-text"
               }`}
             >
               Toàn bộ {activeConfig.shortLabel.toLowerCase()} ({getScopeTotal(activeTimeframe)})
-            </button>
+            </Button>
 
             {/* Các nút bấm từng ngày/tuần/tháng cụ thể */}
             {currentBuckets.map((bucket) => {
@@ -250,31 +250,31 @@ export function TimeframeDistributionBar({
               const hasItems = bucket.count > 0;
 
               return (
-                <button
+                <Button variant="outline"
                   key={bucket.id}
                   type="button"
                   onClick={() => onSelectBucket(bucket)}
-                  className={`flex-shrink-0 flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs transition cursor-pointer border ${
+                  className={`flex-shrink-0 flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-caption transition cursor-pointer border ${
                     isSelected
-                      ? "bg-sand-600 text-white border-sand-600 font-bold shadow-xs ring-2 ring-sand-300/60"
+                      ? "bg-warning text-white border-warning font-bold shadow-xs ring-2 ring-warning-border/60 hover:bg-warning"
                       : hasItems
-                      ? "bg-white text-cool-800 border-cool-200 hover:border-sand-400 hover:bg-sand-50/40 font-semibold"
-                      : "bg-cool-50 text-text-muted border-cool-200/60 hover:bg-cool-100"
+                      ? "bg-white text-text border-border hover:border-warning hover:bg-warning-bg/40 font-semibold"
+                      : "bg-bg text-text-muted border-border/60 hover:bg-surface-alt"
                   }`}
                 >
                   <span>{bucket.label}</span>
                   <span
                     className={`px-1.5 py-0.2 rounded-full text-caption font-black ${
                       isSelected
-                        ? "bg-sand-700 text-white"
+                        ? "bg-warning-text text-white"
                         : hasItems
-                        ? "bg-sand-100 text-sand-800"
-                        : "bg-cool-200 text-cool-500"
+                        ? "bg-warning-bg text-warning-text"
+                        : "bg-border text-text-muted"
                     }`}
                   >
                     {bucket.count}
                   </span>
-                </button>
+                </Button>
               );
             })}
           </div>

@@ -1030,6 +1030,8 @@ Ba quyết định dưới đây chặn go-live, không chặn việc dựng lư
 
 ## 6. Việc kế tiếp
 
+**Đợt B — `market-intelligence` theo ADR-011 (05/11/2026, PO duyệt: chỉ giao diện, chấp nhận màu đổi nhẹ).** 12 thang màu đổi tên (cool, blush, mint, sand, orchid…) ánh xạ theo vai trò sang token ngữ nghĩa (1.356 lớp; R1 1.275 → 0), cỡ chữ Tailwind → thang hệ thống (R21 240 → 0), 158 điều khiển thô → thành phần chuẩn, 7 overlay → `Dialog`/`Drawer`. Vi phạm module 1.703 → 21 (còn ô thanh trượt, tệp, kiểu động); baseline toàn repo 3.652 → 1.970. Không đổi luồng Chặng 01–05, API hay cách tải ảnh. Cần kiểm tay các màn nghiên cứu thị trường trước khi hợp nhất.
+
 **Đợt giảm nợ UI thứ hai của nhánh Enterprise — Creative Studio XONG, Thẻ chào chờ PR riêng (05/11/2026).** 4 commit mới của nhánh `Hoan_Thien_Kien_Truc_He_Thong_UI_UX_Tieu_Chuan_Enterprise` không merge nguyên trạng (sửa 73 tệp Thẻ chào khoá, thêm lại `div role="button"`, cắt mất gợi ý phí credit). Phần Creative Studio dựng lại trên `main`, chỉ đổi giao diện: baseline UX lint 3.948 → 3.652, ESLint 58 → 57, ratchet `Intl` 173 → 172, không tệp mới nào quá 350 dòng. Thẻ chào (PO duyệt 05/11) làm ở PR riêng có E2E. Chi tiết: `docs/kien-truc/HANDOVER_READINESS_PLAN.md` §7b.
 
 **Hiệu năng và trợ năng sau bàn giao — XONG, chờ PR #115 vào `main` (04/11/2026).** Icon import theo từng module (`src/components/ui/icon-set/`), chunk icon dùng chung 836 KB không còn; TBT di động 133–233 ms, LCP di động cao nhất 1,77 s ở 6/6 tuyến (`docs/audit/ui-architecture-audit/12_PERFORMANCE_REPORT.md`). `UiSystemProvider` giữ nguyên context khi hydrate. Bộ kiểm trợ năng có trang `/subcontract` với lời mời gia công thật. Còn lại: kiểm bằng trình đọc màn hình, ảnh mốc `-darwin`, các lỗi đã biết trong vùng Thẻ chào chờ PO duyệt.

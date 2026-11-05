@@ -1,14 +1,11 @@
 "use client";
 
+import { Button } from "@/components/ui/button"
+import { NativeSelect } from "@/components/ui/select"
+import { Input } from "@/components/ui/input"
 import React, { useState, useEffect } from "react";
 import { CheckCircle2, Edit3, Sparkles, Plus, Trash2, Tag, Layers, Gift, Target, Check } from "@/components/ui/icons";
-import type {
-  ProductFlowerComponent,
-  ProductVisualAttributes,
-  ProductPackaging,
-  ProductInferredContext,
-  CommercialPassport,
-} from "@/modules/market-intelligence/domain/product-intelligence-types";
+import type { ProductFlowerComponent, ProductVisualAttributes, ProductPackaging, ProductInferredContext, CommercialPassport } from "@/modules/market-intelligence/domain/product-intelligence-types";
 import { synthesizeProductResearchQueries } from "@/modules/market-intelligence/domain/synthesize-product-queries";
 import { buildCommercialPassport } from "@/modules/market-intelligence/domain/trend-fit";
 import { CommercialPassportCard } from "./commercial-passport-card";
@@ -110,7 +107,7 @@ export function ProductConfirmationCard({
             <CheckCircle2 size={18} />
           </span>
           <div>
-            <h2 className="text-sm font-bold text-text">
+            <h2 className="text-body-sm font-bold text-text">
               2. Xác nhận & tinh chỉnh thuộc tính sản phẩm
             </h2>
             <p className="text-meta text-text-muted">
@@ -124,31 +121,31 @@ export function ProductConfirmationCard({
         {/* Khối 1: Danh sách loài hoa & lá cấu thành */}
         <div className="rounded-xl border border-border bg-surface p-4 space-y-3">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-text flex items-center gap-1.5">
+            <span className="text-caption font-bold text-text flex items-center gap-1.5">
               <Layers size={14} className="text-primary" />
               Thành phần hoa & lá ({components.length})
             </span>
             <div className="flex items-center gap-1.5">
-              <button
+              <Button variant="outline"
                 type="button"
                 onClick={handleAddComponent}
-                className="inline-flex items-center gap-0.5 text-caption font-bold text-primary hover:text-primary-dark bg-primary-muted px-1.5 py-0.5 rounded border border-primary-border"
+                className="inline-flex items-center gap-0.5 text-caption font-bold text-primary hover:text-primary-dark bg-primary-muted px-1.5 py-0.5 rounded border border-primary-border hover:bg-primary-muted"
               >
                 <Plus size={11} /> Hoa
-              </button>
-              <button
+              </Button>
+              <Button variant="outline"
                 type="button"
                 onClick={handleAddFoliage}
-                className="inline-flex items-center gap-0.5 text-caption font-bold text-success-text hover:text-success bg-success-bg px-1.5 py-0.5 rounded border border-success-border"
+                className="inline-flex items-center gap-0.5 text-caption font-bold text-success-text hover:text-success bg-success-bg px-1.5 py-0.5 rounded border border-success-border hover:bg-success-bg"
               >
                 <Plus size={11} /> Lá đệm
-              </button>
+              </Button>
             </div>
           </div>
 
           <div className="space-y-2 max-h-60 overflow-y-auto pr-1">
             {components.map((comp, idx) => (
-              <div key={idx} className="flex items-center gap-1.5 p-1.5 rounded-lg bg-surface-alt border border-border text-xs">
+              <div key={idx} className="flex items-center gap-1.5 p-1.5 rounded-lg bg-surface-alt border border-border text-caption">
                 <span
                   className={`text-caption font-bold px-1 py-0.2 rounded shrink-0 ${
                     comp.role === "foliage"
@@ -160,27 +157,27 @@ export function ProductConfirmationCard({
                 >
                   {comp.role === "foliage" ? "Lá" : comp.role === "dominant" ? "Chính" : "Phụ"}
                 </span>
-                <input
+                <Input
                   type="text"
                   value={comp.flowerType}
                   onChange={(e) => handleUpdateComponent(idx, "flowerType", e.target.value)}
                   className="flex-1 bg-transparent px-1 font-medium text-text outline-none text-meta"
                 />
-                <input
+                <Input
                   type="number"
                   value={comp.quantityEstimate}
                   onChange={(e) => handleUpdateComponent(idx, "quantityEstimate", parseInt(e.target.value) || 1)}
                   className="w-11 text-center bg-surface border border-border rounded px-1 text-caption font-bold"
                 />
                 <span className="text-caption text-text-muted shrink-0">{comp.unit}</span>
-                <button
+                <Button variant="ghost"
               aria-label="Xóa"
                   type="button"
                   onClick={() => handleRemoveComponent(idx)}
-                  className="text-text-muted hover:text-danger p-0.5 shrink-0"
+                  className="font-[inherit] gap-0 text-text-muted hover:text-danger p-0.5 shrink-0"
                 >
                   <Trash2 size={12} />
-                </button>
+                </Button>
               </div>
             ))}
           </div>
@@ -188,43 +185,43 @@ export function ProductConfirmationCard({
 
         {/* Khối 2: Màu sắc & Phong cách thiết kế */}
         <div className="rounded-xl border border-border bg-surface p-4 space-y-3">
-          <span className="text-xs font-bold text-text flex items-center gap-1.5">
+          <span className="text-caption font-bold text-text flex items-center gap-1.5">
             <Tag size={14} className="text-primary" />
             Màu sắc & Phong cách cắm
           </span>
 
-          <div className="space-y-2.5 text-xs">
+          <div className="space-y-2.5 text-caption">
             <div>
               <label className="text-caption font-semibold text-text-muted block mb-1">Tone màu chủ đạo</label>
-              <input
+              <Input
                 type="text"
                 value={attributes.mainColors.join(", ")}
                 onChange={(e) => setAttributes({ ...attributes, mainColors: e.target.value.split(",").map((s) => s.trim()) })}
-                className="h-8 w-full rounded-lg border border-border bg-surface-alt/50 px-2.5 text-xs text-text outline-none focus:border-primary"
+                className="h-8 w-full rounded-lg border border-border bg-surface-alt/50 px-2.5 text-caption text-text outline-none focus:border-primary"
               />
             </div>
 
             <div>
               <label className="text-caption font-semibold text-text-muted block mb-1">Phong cách thiết kế</label>
-              <select
+              <NativeSelect
                 value={attributes.style}
                 onChange={(e) => setAttributes({ ...attributes, style: e.target.value })}
-                className="h-8 w-full rounded-lg border border-border bg-surface-alt/50 px-2 text-xs text-text outline-none focus:border-primary"
+                className="h-8 w-full rounded-lg border border-border bg-surface-alt/50 px-2 text-caption text-text outline-none focus:border-primary"
               >
                 <option value="Romantic & Tinh tế">Romantic & Tinh tế (Hàn Quốc)</option>
                 <option value="Vintage Cổ điển">Vintage Cổ điển (Tone ấm)</option>
                 <option value="Hiện đại Tối giản">Hiện đại Tối giản (Minimalism)</option>
                 <option value="Sang trọng Quý phái">Sang trọng Quý phái (Luxury)</option>
-              </select>
+              </NativeSelect>
             </div>
 
             <div>
               <label className="text-caption font-semibold text-text-muted block mb-1">Dáng cắm & Khối</label>
-              <input
+              <Input
                 type="text"
                 value={attributes.shape}
                 onChange={(e) => setAttributes({ ...attributes, shape: e.target.value })}
-                className="h-8 w-full rounded-lg border border-border bg-surface-alt/50 px-2.5 text-xs text-text outline-none focus:border-primary"
+                className="h-8 w-full rounded-lg border border-border bg-surface-alt/50 px-2.5 text-caption text-text outline-none focus:border-primary"
               />
             </div>
           </div>
@@ -232,39 +229,39 @@ export function ProductConfirmationCard({
 
         {/* Khối 3: Bối cảnh, Dịp & Giá bán đề xuất */}
         <div className="rounded-xl border border-border bg-surface p-4 space-y-3">
-          <span className="text-xs font-bold text-text flex items-center gap-1.5">
+          <span className="text-caption font-bold text-text flex items-center gap-1.5">
             <Gift size={14} className="text-primary" />
             Dịp tặng & Phân khúc giá
           </span>
 
-          <div className="space-y-2.5 text-xs">
+          <div className="space-y-2.5 text-caption">
             <div>
               <label className="text-caption font-semibold text-text-muted block mb-1">Dịp phù hợp nhất</label>
-              <input
+              <Input
                 type="text"
                 value={context.likelyOccasions.join(", ")}
                 onChange={(e) => setContext({ ...context, likelyOccasions: e.target.value.split(",").map((s) => s.trim()) })}
-                className="h-8 w-full rounded-lg border border-border bg-surface-alt/50 px-2.5 text-xs text-text outline-none focus:border-primary"
+                className="h-8 w-full rounded-lg border border-border bg-surface-alt/50 px-2.5 text-caption text-text outline-none focus:border-primary"
               />
             </div>
 
             <div>
               <label className="text-caption font-semibold text-text-muted block mb-1">Tệp khách hàng mục tiêu</label>
-              <input
+              <Input
                 type="text"
                 value={context.likelyAudience}
                 onChange={(e) => setContext({ ...context, likelyAudience: e.target.value })}
-                className="h-8 w-full rounded-lg border border-border bg-surface-alt/50 px-2.5 text-xs text-text outline-none focus:border-primary"
+                className="h-8 w-full rounded-lg border border-border bg-surface-alt/50 px-2.5 text-caption text-text outline-none focus:border-primary"
               />
             </div>
 
             <div>
               <label className="text-caption font-semibold text-text-muted block mb-1">Giá bán đề xuất (VNĐ)</label>
-              <input
+              <Input
                 type="number"
                 value={context.suggestedPrice}
                 onChange={(e) => setContext({ ...context, suggestedPrice: parseInt(e.target.value) || 0 })}
-                className="h-8 w-full rounded-lg border border-border bg-surface-alt/50 px-2.5 text-xs text-text font-bold outline-none focus:border-primary"
+                className="h-8 w-full rounded-lg border border-border bg-surface-alt/50 px-2.5 text-caption text-text font-bold outline-none focus:border-primary"
               />
             </div>
           </div>
@@ -286,7 +283,7 @@ export function ProductConfirmationCard({
       {/* Khối Lựa Chọn Hướng Nghiên Cứu Xu Hướng */}
       <div className="rounded-xl border border-primary-border bg-surface p-4 space-y-3">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5">
-          <span className="text-xs font-bold text-text flex items-center gap-1.5">
+          <span className="text-caption font-bold text-text flex items-center gap-1.5">
             <Target size={14} className="text-primary" />
             Chọn các hướng nghiên cứu bạn muốn AI đối soát thị trường:
           </span>
@@ -303,7 +300,7 @@ export function ProductConfirmationCard({
           {synthesized.primaryKeywords.map((keyword) => {
             const isChecked = selectedQueries.includes(keyword);
             return (
-              <button
+              <Button variant="outline"
                 key={keyword}
                 type="button"
                 onClick={() => {
@@ -315,15 +312,15 @@ export function ProductConfirmationCard({
                     setSelectedQueries([...selectedQueries, keyword]);
                   }
                 }}
-                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-xs font-bold transition ${
+                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-caption font-bold transition ${
                   isChecked
-                    ? "bg-primary-muted text-primary border-primary-border shadow-xs"
+                    ? "bg-primary-muted text-primary border-primary-border shadow-xs hover:bg-primary-muted"
                     : "bg-surface-alt text-text-muted border-border hover:bg-surface"
                 }`}
               >
                 <Check size={13} className={isChecked ? "text-primary" : "opacity-0"} />
                 <span>{keyword}</span>
-              </button>
+              </Button>
             );
           })}
         </div>
@@ -336,15 +333,15 @@ export function ProductConfirmationCard({
           Nguồn: <strong className="text-success-text">{components.length > 0 && context.confidence > 0 ? "Vision AI — kiểm lại từng dòng trước khi đối soát" : "Nhập tay"}</strong>
         </div>
 
-        <button
+        <Button variant="primary"
           type="button"
           onClick={() => onConfirm({ components, attributes, packaging, context, commercialPassport, selectedQueries })}
           disabled={isSubmitting || selectedQueries.length === 0}
-          className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-6 py-2.5 text-xs font-bold text-white hover:bg-primary-dark shadow-sm transition disabled:opacity-50"
+          className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-6 py-2.5 text-caption font-bold text-white hover:bg-primary-dark shadow-sm transition disabled:opacity-50"
         >
           <Sparkles size={15} />
           {isSubmitting ? "Đang đối soát xu hướng thị trường..." : "Tiến hành Khám phá Trend Fit (Bước 3) →"}
-        </button>
+        </Button>
       </div>
     </div>
   );

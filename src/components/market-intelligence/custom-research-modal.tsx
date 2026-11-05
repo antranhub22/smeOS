@@ -1,7 +1,10 @@
 "use client";
 
+import { Button } from "@/components/ui/button"
+import { Dialog } from "@/components/ui/dialog"
+import { NativeSelect } from "@/components/ui/select"
+import { Input } from "@/components/ui/input"
 import React, { useState } from "react";
-import { X } from "@/components/ui/icon-set/x"
 import { Sparkles } from "@/components/ui/icon-set/sparkles"
 import { Search } from "@/components/ui/icon-set/search"
 import { Zap } from "@/components/ui/icon-set/zap"
@@ -59,55 +62,36 @@ export function CustomResearchModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="w-full max-w-lg rounded-2xl border border-border bg-surface p-6 shadow-2xl space-y-5">
-        {/* Header */}
-        <div className="flex items-center justify-between border-b border-border pb-3">
-          <div className="flex items-center gap-2">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-blush-50 text-blush-600">
-              <Compass size={18} strokeWidth={2.2} />
-            </div>
-            <div>
-              <h2 className="text-base font-bold text-text">Thiết lập nghiên cứu</h2>
-              <p className="text-xs text-text-muted">Chọn từ khóa, khu vực và kênh muốn quét</p>
-            </div>
-          </div>
-          <button
-              aria-label="Đóng"
-            type="button"
-            onClick={onClose}
-            className="flex h-8 w-8 items-center justify-center rounded-full text-text-muted hover:bg-surface-alt transition"
-          >
-            <X size={16} strokeWidth={2} />
-          </button>
-        </div>
-
+    <Dialog open onOpenChange={(o) => { if (!o) onClose() }} size="md"
+      title={<span className="flex items-center gap-2"><Compass size={18} strokeWidth={2.2} className="text-primary" />Thiết lập nghiên cứu</span>}
+      description="Chọn từ khóa, khu vực và kênh muốn quét">
+      <div className="space-y-4">
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Keyword Input */}
           <div className="space-y-1.5">
-            <label className="text-xs font-bold text-text flex items-center gap-1.5">
-              <Search size={14} className="text-blush-600" />
+            <label className="text-caption font-bold text-text flex items-center gap-1.5">
+              <Search size={14} className="text-primary" />
               Chủ đề / Từ khóa hoa cần nghiên cứu
             </label>
-            <input
+            <Input
               type="text"
               value={keyword}
               onChange={(e) => setKeyword(e.target.value)}
               placeholder="VD: Hoa tulip pastel, Sản phẩm tốt nghiệp, Lan hồ điệp..."
-              className="h-10 w-full rounded-xl border border-border bg-surface px-3 text-xs text-text outline-none focus:border-primary transition"
+              className="h-10 w-full rounded-xl border border-border bg-surface px-3 text-caption text-text outline-none focus:border-primary transition"
             />
             {/* Quick Suggestions */}
             <div className="flex flex-wrap gap-1.5 pt-1">
               <span className="text-caption text-text-muted self-center">Gợi ý nhanh:</span>
               {QUICK_SUGGESTIONS.map((sug) => (
-                <button
+                <Button variant="ghost"
                   key={sug}
                   type="button"
                   onClick={() => setKeyword(sug)}
-                  className="rounded-full bg-surface-alt px-2.5 py-0.5 text-caption font-medium text-text-muted hover:bg-blush-50 hover:text-blush-700 transition"
+                  className="gap-0 rounded-full bg-surface-alt px-2.5 py-0.5 text-caption font-medium text-text-muted hover:bg-primary-muted hover:text-primary transition"
                 >
                   + {sug}
-                </button>
+                </Button>
               ))}
             </div>
           </div>
@@ -121,48 +105,48 @@ export function CustomResearchModal({
               onTimeframeChange={setTimeframe}
               channel={channel}
               onChannelChange={setChannel}
-              selectClassName="h-10 w-full rounded-xl border border-border bg-surface px-3 text-xs text-text outline-none focus:border-primary transition"
+              selectClassName="h-10 w-full rounded-xl border border-border bg-surface px-3 text-caption text-text outline-none focus:border-primary transition"
             />
 
             <div className="space-y-1.5">
-              <label className="text-xs font-bold text-text flex items-center gap-1.5">
-                <Zap size={14} className="text-blush-600" />
+              <label className="text-caption font-bold text-text flex items-center gap-1.5">
+                <Zap size={14} className="text-primary" />
                 Chế độ phân tích
               </label>
-              <select
+              <NativeSelect
                 value={runType}
                 onChange={(e) => setRunType(e.target.value as CustomResearchParams["runType"])}
-                className="h-10 w-full rounded-xl border border-border bg-surface px-3 text-xs text-text outline-none focus:border-primary transition"
+                className="h-10 w-full rounded-xl border border-border bg-surface px-3 text-caption text-text outline-none focus:border-primary transition"
               >
                 <option value="MANUAL">Quét nhanh theo yêu cầu</option>
                 <option value="INTRADAY_PULSE">Bắt sóng trong ngày (Pulse)</option>
                 <option value="DAILY_DEEP">Nghiên cứu sâu (Deep Research)</option>
                 <option value="WEEKLY_DEEP">Tổng hợp tuần (Weekly)</option>
-              </select>
+              </NativeSelect>
             </div>
           </div>
 
           {/* Action Buttons */}
           <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-border">
-            <button
+            <Button variant="outline"
               type="button"
               onClick={onClose}
               disabled={isSubmitting}
-              className="rounded-xl border border-border px-4 py-2 text-xs font-semibold text-text hover:bg-surface-alt transition"
+              className="gap-0 rounded-xl border border-border px-4 py-2 text-caption font-semibold text-text hover:bg-surface-alt transition"
             >
               Hủy
-            </button>
-            <button
+            </Button>
+            <Button variant="primary"
               type="submit"
               disabled={isSubmitting}
-              className="inline-flex items-center gap-1.5 rounded-xl bg-primary px-4 py-2 text-xs font-bold text-white hover:bg-primary/90 shadow-sm transition disabled:opacity-50"
+              className="inline-flex items-center gap-1.5 rounded-xl bg-primary px-4 py-2 text-caption font-bold text-white hover:bg-primary/90 shadow-sm transition disabled:opacity-50"
             >
               <Sparkles size={14} />
               {isSubmitting ? "Đang nạp vào hàng đợi AI..." : "Bắt đầu nghiên cứu"}
-            </button>
+            </Button>
           </div>
         </form>
       </div>
-    </div>
+    </Dialog>
   );
 }

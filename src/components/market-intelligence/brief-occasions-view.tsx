@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@/components/ui/button"
 import React, { useState } from "react";
 import { CalendarDays } from "@/components/ui/icon-set/calendar-days"
 import { Tag } from "@/components/ui/icon-set/tag"
@@ -27,7 +28,7 @@ const OCCASION_SECTIONS = [
     stockAdvice: "Nên nhập: Hoa hồng kem dâu, Tulip pastel, Baby trắng, Cẩm chướng",
     colorAdvice: "Tông pastel dịu ngọt, tươi vui, trẻ trung",
     keywords: ["sinh nhật", "mẹ", "chúc mừng", "tặng"],
-    badgeClass: "bg-blush-50 text-blush-700 border-blush-200",
+    badgeClass: "bg-primary-muted text-primary border-primary-border",
   },
   {
     id: "wedding",
@@ -37,7 +38,7 @@ const OCCASION_SECTIONS = [
     stockAdvice: "Nên nhập: Hồng đỏ Ecuador, Cẩm tú cầu, Lan hồ điệp trắng, Mẫu đơn",
     colorAdvice: "Tông đỏ nhung lãng mạn, hồng phấn tinh tế, trắng ngọc",
     keywords: ["cưới", "kỷ niệm", "yêu", "tình"],
-    badgeClass: "bg-orchid-50 text-orchid-700 border-orchid-200",
+    badgeClass: "bg-accent-bg text-accent-text border-accent-border",
   },
   {
     id: "graduation",
@@ -47,7 +48,7 @@ const OCCASION_SECTIONS = [
     stockAdvice: "Nên nhập: Hoa hướng dương, Cúc tana, Cúc họa mi, Hồng vàng",
     colorAdvice: "Tông vàng rực rỡ, cam nhiệt huyết, trắng hy vọng",
     keywords: ["tốt nghiệp", "cử nhân", "sản phẩm"],
-    badgeClass: "bg-sand-50 text-sand-700 border-sand-200",
+    badgeClass: "bg-warning-bg text-warning-text border-warning-border",
   },
   {
     id: "grand_opening",
@@ -57,7 +58,7 @@ const OCCASION_SECTIONS = [
     stockAdvice: "Nên nhập: Lan hồ điệp chậu, Hồng môn đỏ, Đồng tiền, Thiên điểu",
     colorAdvice: "Tông đỏ tài lộc, vàng phát tài, kệ hoa đứng uy nghi",
     keywords: ["khai trương", "công ty", "đối tác"],
-    badgeClass: "bg-mint-50 text-mint-700 border-mint-200",
+    badgeClass: "bg-success-bg text-success-text border-success-border",
   },
 ];
 
@@ -89,63 +90,63 @@ export function BriefOccasionsView({
           const isActive = activeOccasionId === sec.id;
 
           return (
-            <button
+            <Button variant="outline"
               key={sec.id}
               type="button"
               onClick={() => setActiveOccasionId(sec.id)}
-              className={`p-3.5 rounded-2xl border text-left transition-all duration-200 cursor-pointer flex flex-col justify-between space-y-2 ${
+              className={`font-[inherit] gap-0 p-3.5 rounded-2xl border text-left transition-all duration-200 cursor-pointer flex flex-col justify-between space-y-2 ${
                 isActive
-                  ? "border-orchid-500 bg-orchid-50/80 ring-2 ring-orchid-400/50 shadow-xs"
-                  : "border-cool-200 bg-white hover:border-orchid-300 hover:shadow-xs"
+                  ? "border-accent bg-accent-bg/80 ring-2 ring-accent/50 shadow-xs hover:bg-accent-bg/80"
+                  : "border-border bg-white hover:border-accent-border hover:shadow-xs hover:bg-white"
               }`}
             >
               <div className="flex items-center justify-between">
-                <span className="text-xs font-extrabold text-cool-900">{sec.title}</span>
-                {isActive && <CheckCircle2 size={14} className="text-orchid-600" />}
+                <span className="text-caption font-extrabold text-text">{sec.title}</span>
+                {isActive && <CheckCircle2 size={14} className="text-accent-text" />}
               </div>
               <div className="flex items-baseline justify-between pt-1">
-                <span className="text-caption text-cool-500">{sec.timeframe}</span>
-                <span className="text-xs font-black text-orchid-700 bg-white px-2 py-0.5 rounded-md border border-orchid-100">
+                <span className="text-caption text-text-muted">{sec.timeframe}</span>
+                <span className="text-caption font-black text-accent-text bg-white px-2 py-0.5 rounded-md border border-accent-border">
                   {count} sản phẩm
                 </span>
               </div>
-            </button>
+            </Button>
           );
         })}
       </div>
 
       {/* Chi Tiết Hướng Dẫn Nhập Kho Cho Sự Kiện Đang Chọn */}
-      <div className="rounded-2xl border border-orchid-200/90 bg-gradient-to-br from-orchid-50/60 via-white to-cool-50 p-4 sm:p-5 space-y-3 shadow-2xs">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-orchid-100 pb-3">
+      <div className="rounded-2xl border border-accent-border/90 bg-gradient-to-br from-accent-bg/60 via-white to-bg p-4 sm:p-5 space-y-3 shadow-2xs">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-accent-border pb-3">
           <div>
-            <h3 className="text-sm font-extrabold text-cool-900 flex items-center gap-2">
+            <h3 className="text-body-sm font-extrabold text-text flex items-center gap-2">
               Kế Hoạch Chuẩn Bị: {currentSection.title}
             </h3>
-            <p className="text-xs text-cool-500 mt-0.5">
-              Khách hàng mục tiêu: <strong className="text-cool-700">{currentSection.audience}</strong>
+            <p className="text-caption text-text-muted mt-0.5">
+              Khách hàng mục tiêu: <strong className="text-text">{currentSection.audience}</strong>
             </p>
           </div>
-          <span className="text-xs font-bold text-orchid-700 bg-orchid-100/80 px-3 py-1 rounded-full self-start sm:self-auto">
+          <span className="text-caption font-bold text-accent-text bg-accent-bg/80 px-3 py-1 rounded-full self-start sm:self-auto">
             {matchingItems.length} sản phẩm gợi ý trong kho
           </span>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs text-cool-700">
-          <div className="bg-white p-3 rounded-xl border border-orchid-100 space-y-1">
-            <span className="font-bold text-orchid-900 block text-caption">📦 Loài hoa chủ lực nên nhập:</span>
-            <p className="text-cool-600">{currentSection.stockAdvice}</p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-caption text-text">
+          <div className="bg-white p-3 rounded-xl border border-accent-border space-y-1">
+            <span className="font-bold text-accent-text block text-caption">📦 Loài hoa chủ lực nên nhập:</span>
+            <p className="text-text-muted">{currentSection.stockAdvice}</p>
           </div>
-          <div className="bg-white p-3 rounded-xl border border-orchid-100 space-y-1">
-            <span className="font-bold text-orchid-900 block text-caption">🎨 Tông màu thiết kế gợi ý:</span>
-            <p className="text-cool-600">{currentSection.colorAdvice}</p>
+          <div className="bg-white p-3 rounded-xl border border-accent-border space-y-1">
+            <span className="font-bold text-accent-text block text-caption">🎨 Tông màu thiết kế gợi ý:</span>
+            <p className="text-text-muted">{currentSection.colorAdvice}</p>
           </div>
         </div>
       </div>
 
       {/* Grid Các Mẫu Hoa Cho Dịp Này */}
       <div className="space-y-2">
-        <h4 className="text-xs font-bold uppercase tracking-wider text-cool-600 flex items-center gap-1.5">
-          <Sparkles size={13} className="text-orchid-600" />
+        <h4 className="text-caption font-bold uppercase tracking-wider text-text-muted flex items-center gap-1.5">
+          <Sparkles size={13} className="text-accent-text" />
           Sản phẩm gợi ý ({matchingItems.length})
         </h4>
 
@@ -163,9 +164,9 @@ export function BriefOccasionsView({
               tabIndex={0}
                 key={item.id}
                 onClick={() => onSelectOpportunity(item)}
-                className="group rounded-2xl border border-cool-200/90 bg-white shadow-2xs hover:border-orchid-400 hover:shadow-md transition-all duration-200 cursor-pointer flex flex-col overflow-hidden"
+                className="group rounded-2xl border border-border/90 bg-white shadow-2xs hover:border-accent hover:shadow-md transition-all duration-200 cursor-pointer flex flex-col overflow-hidden"
               >
-                <div className="relative aspect-[16/9] w-full overflow-hidden bg-cool-900">
+                <div className="relative aspect-[16/9] w-full overflow-hidden bg-text">
                   <img
                     src={evidence.thumbnailUrl}
                     alt={evidence.alt}
@@ -183,9 +184,9 @@ export function BriefOccasionsView({
                       rel="noopener noreferrer"
                       onClick={(e) => e.stopPropagation()}
                       title={`Mở TikTok: ${dualEvidence.tiktok.title}`}
-                      className="inline-flex items-center gap-1 text-caption font-black px-2 py-0.5 rounded-full bg-black/80 text-petal-400 border border-petal-500/30 backdrop-blur-xs shadow-xs hover:scale-105 transition"
+                      className="inline-flex items-center gap-1 text-caption font-black px-2 py-0.5 rounded-full bg-black/80 text-primary border border-primary/30 backdrop-blur-xs shadow-xs hover:scale-105 transition"
                     >
-                      <Video className="h-2.5 w-2.5 text-petal-400" />
+                      <Video className="h-2.5 w-2.5 text-primary" />
                       TikTok
                     </a>
                     <a
@@ -194,7 +195,7 @@ export function BriefOccasionsView({
                       rel="noopener noreferrer"
                       onClick={(e) => e.stopPropagation()}
                       title={`Mở YouTube: ${dualEvidence.youtube.title}`}
-                      className="inline-flex items-center gap-1 text-caption font-black px-2 py-0.5 rounded-full bg-alert-600/90 text-white border border-alert-500/30 backdrop-blur-xs shadow-xs hover:scale-105 transition"
+                      className="inline-flex items-center gap-1 text-caption font-black px-2 py-0.5 rounded-full bg-danger/90 text-white border border-danger/30 backdrop-blur-xs shadow-xs hover:scale-105 transition"
                     >
                       <Play className="h-2.5 w-2.5 fill-current" />
                       YT
@@ -207,15 +208,15 @@ export function BriefOccasionsView({
                 </div>
 
                 <div className="p-4 flex flex-col justify-between flex-1 space-y-3">
-                  <h5 className="font-bold text-cool-900 text-sm leading-snug group-hover:text-orchid-700 transition line-clamp-2">
+                  <h5 className="font-bold text-text text-body-sm leading-snug group-hover:text-accent-text transition line-clamp-2">
                     {headline}
                   </h5>
 
-                  <div className="pt-2 border-t border-cool-100 flex items-center justify-between text-xs">
-                    <span className="text-cool-500 text-caption truncate max-w-[70%]">
+                  <div className="pt-2 border-t border-border flex items-center justify-between text-caption">
+                    <span className="text-text-muted text-caption truncate max-w-[70%]">
                       {item.audience || currentSection.audience}
                     </span>
-                    <span className="text-orchid-700 font-bold group-hover:translate-x-0.5 transition inline-flex items-center gap-0.5">
+                    <span className="text-accent-text font-bold group-hover:translate-x-0.5 transition inline-flex items-center gap-0.5">
                       Xem mẫu <ArrowRight size={12} />
                     </span>
                   </div>
