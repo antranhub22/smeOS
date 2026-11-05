@@ -14,6 +14,7 @@ import { CreativeResultViewer, type CreativeResultViewerProps } from "./creative
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 import type { ConcreteTopic } from "@/modules/market-intelligence/domain/product-intelligence-types"
@@ -228,37 +229,37 @@ export function ContentsWorkspace() {
         </div>
       </Card>
       <Card className="p-5">
-        <h3 className="text-sm font-bold text-text mb-3">Chủ đề từ Chặng 4 ({selectedTopics.length} đã chọn)</h3>
+        <h3 className="text-body-sm font-bold text-text mb-3">Chủ đề từ Chặng 4 ({selectedTopics.length} đã chọn)</h3>
         {topics.length === 0 ? (
-          <p className="text-xs text-text-muted">Chưa có chủ đề nào được truyền từ Chặng 4</p>
+          <p className="text-caption text-text-muted">Chưa có chủ đề nào được truyền từ Chặng 4</p>
         ) : (
           <div className="flex flex-col gap-2">
             {topics.map((topic) => (
-              <div
-              role="button"
-              tabIndex={0}
+              <Button
+                variant="ghost"
+                aria-pressed={topic.selected}
                 key={topic.topicId}
                 onClick={() => toggleTopic(topic.topicId)}
-                className={`p-3 rounded-xl border flex items-center gap-3 cursor-pointer transition-all ${
+                className={`h-auto whitespace-normal font-normal w-full justify-start p-3 rounded-xl border flex items-center gap-3 cursor-pointer transition-all ${
                   topic.selected ? "border-primary bg-primary/5" : "border-border hover:border-border-hover"
                 }`}
               >
                 <div className={`h-5 w-5 rounded border flex items-center justify-center shrink-0 ${topic.selected ? "bg-primary border-primary" : "border-border"}`}>
                   {topic.selected && <CheckCircle2 size={12} className="text-white" />}
                 </div>
-                <div className="flex-1 min-w-0"><p className="text-xs font-bold text-text truncate">{topic.topicTitle}</p><p className="text-caption text-text-muted">{topic.topicCategory} · {topic.topicAngle}</p></div>
+                <div className="flex-1 min-w-0"><p className="text-caption font-bold text-text truncate">{topic.topicTitle}</p><p className="text-caption text-text-muted">{topic.topicCategory} · {topic.topicAngle}</p></div>
                 <Badge tone={topic.selected ? "success" : "neutral"} className="text-caption">{topic.selected ? "Đã chọn" : "Chưa chọn"}</Badge>
-              </div>
+              </Button>
             ))}
           </div>
         )}
       </Card>
       <Card className="p-5">
-        <h3 className="text-sm font-bold text-text mb-3">Cấu hình phụ</h3>
+        <h3 className="text-body-sm font-bold text-text mb-3">Cấu hình phụ</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
             <label className="text-caption font-semibold text-text-muted block mb-1">Giọng đọc</label>
-            <input type="text" value={voiceId} onChange={(e) => setVoiceId(e.target.value)} placeholder="vi-VN-Standard-A" className="w-full rounded-lg border border-border px-3 py-2 text-xs focus:border-primary focus:outline-none" />
+            <Input value={voiceId} onChange={(e) => setVoiceId(e.target.value)} placeholder="vi-VN-Standard-A" inputSize="sm" />
           </div>
           <div>
             <label className="text-caption font-semibold text-text-muted block mb-1">Âm nhạc</label>
@@ -272,12 +273,12 @@ export function ContentsWorkspace() {
         </div>
       </Card>
       <div className="flex items-center justify-between">
-        <p className="text-caption text-text-muted">Gọi <code className="bg-surface px-1.5 py-0.5 rounded text-xs">POST /api/v1/creative-production/produce</code></p>
+        <p className="text-caption text-text-muted">Gọi <code className="bg-surface px-1.5 py-0.5 rounded text-caption">POST /api/v1/creative-production/produce</code></p>
         <Button onClick={handleProduce} disabled={loading || selectedTopics.length === 0} className="gap-2">
           {loading ? <><Loader2 size={14} className="animate-spin motion-reduce:animate-none" /> Đang sản xuất...</> : <><Send size={14} /> Sản xuất {mode}</>}
         </Button>
       </div>
-      {error && <Card className="border-danger/30 bg-danger/10 p-4 flex items-center gap-3"><AlertCircle size={16} className="text-danger shrink-0" /><p className="text-xs text-danger">{error}</p></Card>}
+      {error && <Card className="border-danger/30 bg-danger/10 p-4 flex items-center gap-3"><AlertCircle size={16} className="text-danger shrink-0" /><p className="text-caption text-danger">{error}</p></Card>}
       {result && (
         <CreativeResultViewer
           mode={mode}

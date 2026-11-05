@@ -2,98 +2,21 @@
 
 import React, { useState, useContext, useMemo, useEffect } from "react"
 import { Sparkles } from "@/components/ui/icon-set/sparkles"
-import { Copy } from "@/components/ui/icon-set/copy"
-import { Check } from "@/components/ui/icon-set/check"
-import { Film } from "@/components/ui/icon-set/film"
-import { FileText } from "@/components/ui/icon-set/file-text"
-import { Volume2 } from "@/components/ui/icon-set/volume2"
-import { Share2 } from "@/components/ui/icon-set/share2"
-import { ArrowRight } from "@/components/ui/icon-set/arrow-right"
-import { Layers } from "@/components/ui/icon-set/layers"
-import { Wand2 } from "@/components/ui/icon-set/wand2"
 import { Clock } from "@/components/ui/icon-set/clock"
-import { Quote } from "@/components/ui/icon-set/quote"
-import { Hash } from "@/components/ui/icon-set/hash"
-import { Edit3 } from "@/components/ui/icon-set/edit3"
-import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
-import { Eye } from "@/components/ui/icon-set/eye"
-import { Globe } from "@/components/ui/icon-set/globe"
-import { Grid } from "@/components/ui/icon-set/grid"
-import { Heart } from "@/components/ui/icon-set/heart"
-import { MessageCircle } from "@/components/ui/icon-set/message-circle"
-import { Send } from "@/components/ui/icon-set/send"
-import { Calendar } from "@/components/ui/icon-set/calendar"
 import { Button } from "@/components/ui/button"
 import { StageGateApprovalBar } from "@/components/ui/stage-gate-approval-bar"
 import { CreativeStudioContext } from "@/app/(app)/creative-studio/page"
 import { ProviderSelect } from "./provider-select"
+import { type PackagePostDto } from "./package-client"
+import { generateAllPlatformPosts } from "@/modules/creative-production/domain/social-post-generator"
 import {
-  resolveApprovedMaster,
-  savePostsToPackage,
-  contentDraftKey,
-  saveContentDraft,
-  sceneTwoPresetFor,
-  type PackagePostDto,
-} from "./package-client"
-import {
-  generateAllPlatformPosts,
-  type GeneratedSocialPost,
-} from "@/modules/creative-production/domain/social-post-generator"
-
-interface NarrativeScene {
-  sceneIndex: number
-  beat?: string
-  beatTitle?: string
-  sceneDescription?: string
-  voiceScript: string
-  textOverlay: string
-  durationSeconds: number
-  motionEffect?: string
-}
-
-interface CaptionRequest {
-  platform: "facebook" | "tiktok" | "instagram" | "zalo"
-  tone: string
-  hook: string
-  cta: string
-  productName?: string
-  maxLength?: number
-}
-
-interface CreativeTopicResultItem {
-  topicId: string
-  topicTitle: string
-  /** Bài đăng do KỊCH BẢN SẢN XUẤT TỔNG (Chặng 05, v2) viết — ưu tiên hơn khuôn dự phòng.
-   * Giữ lại để đọc bản ghi cũ (P27, 25/09/2026): kịch bản mới không còn tự viết
-   * bài nữa, xem `contentEnginePosts` bên dưới. */
-  planPosts?: Array<{ channel: "facebook" | "instagram" | "tiktok" | "zalo"; text: string; hashtags: readonly string[] }>
-  /** Mã kịch bản Chặng 05 (`generation_jobs.id`) — dùng để tra/khởi bài Content Engine (P27). */
-  scenePlanId?: string | null
-  arc?: {
-    emotionalTone?: string
-    narrativeReasoning?: string
-    totalDurationSeconds?: number
-    scenes: NarrativeScene[]
-  }
-  briefs?: {
-    contentBrief?: {
-      captionRequests?: CaptionRequest[]
-      hashtagSuggestions?: string[]
-    }
-    videoBrief?: {
-      videoFormat?: string
-      totalDurationSeconds?: number
-    }
-    imageBrief?: {
-      variantRequests?: Array<{
-        prompt: string
-        preset: string
-        lighting: string
-        surface: string
-      }>
-    }
-  }
-}
+  CreativeSocialPosts,
+  type PlatformKey,
+  type FullPostRecord,
+} from "./creative-social-posts"
+import { CreativeNarrativeScenes } from "./creative-narrative-scenes"
+import { useCreativeResultActions } from "./use-creative-result-actions"
+import type { CreativeTopicResultItem } from "./creative-result-types"
 
 export interface CreativeResultViewerProps {
   mode: "CREATIVE" | "AUTHENTIC"
@@ -103,22 +26,15 @@ export interface CreativeResultViewerProps {
   onGoToPackage?: () => void
 }
 
-const PLATFORMS: Array<"facebook" | "instagram" | "tiktok" | "zalo"> = [
-  "facebook",
-  "instagram",
-  "tiktok",
-  "zalo",
-]
+const PLATFORMS: PlatformKey[] = ["facebook", "instagram", "tiktok", "zalo"]
 
-const PLATFORM_LABELS: Record<"facebook" | "instagram" | "tiktok" | "zalo", { label: string; icon: string; bgActive: string }> = {
+const PLATFORM_LABELS: Record<PlatformKey, { label: string; icon: string; bgActive: string }> = {
   facebook: { label: "Facebook Fanpage", icon: "📘", bgActive: "bg-primary text-primary-foreground" },
   instagram: { label: "Instagram Reels & Feed", icon: "📸", bgActive: "bg-primary text-primary-foreground" },
   tiktok: { label: "TikTok Video (9:16)", icon: "🎵", bgActive: "bg-primary text-primary-foreground" },
   zalo: { label: "Zalo OA Bán hàng", icon: "💬", bgActive: "bg-primary text-primary-foreground" },
 }
 
-// Tách vỏ/thân (23/09/2026): bản trước gọi `useMemo` SAU `return null` sớm —
-// vi phạm rules-of-hooks, sập "Rendered more hooks" khi kết quả xuất hiện.
 export function CreativeResultViewer(props: CreativeResultViewerProps) {
   const currentResult = props.topicResults[0]
   if (!currentResult) return null
@@ -134,10 +50,8 @@ function CreativeResultViewerBody({
 }: CreativeResultViewerProps & { currentResult: CreativeTopicResultItem }) {
   const ctx = useContext(CreativeStudioContext)
   const [copiedKey, setCopiedKey] = useState<string | null>(null)
-  const [selectedPlatform, setSelectedPlatform] = useState<"facebook" | "instagram" | "tiktok" | "zalo">("facebook")
-  const [viewMode, setViewMode] = useState<"tabbed" | "grid">("tabbed")
   const [customEdits, setCustomEdits] = useState<Record<string, string>>({})
-  const [editingPlatform, setEditingPlatform] = useState<string | null>(null)
+  const [editingPlatform, setEditingPlatform] = useState<PlatformKey | null>(null)
 
   const arc = currentResult.arc
   const briefs = currentResult.briefs
@@ -147,7 +61,6 @@ function CreativeResultViewerBody({
     [briefs]
   )
 
-  // Trích xuất thông tin sản phẩm và topic
   const productName = ctx?.productName || currentResult.topicTitle || "Sản phẩm thiết kế"
   const components =
     ctx?.commercialPassport?.components ||
@@ -168,74 +81,11 @@ function CreativeResultViewerBody({
   const hook = captions[0]?.hook || currentResult.topicTitle
   const cta = captions[0]?.cta || "Nhắn tin cho tiệm để nhận ưu đãi ngay hôm nay!"
 
-  // Bài viết Content Engine (Phiên bản hiện tại, 25/09/2026): Chặng 05 không còn tự viết bài
-  // nữa — chuỗi Strategist→Writer→Critic→Rewriter (`generateContent()`) chạy
-  // NGƯỜI DÙNG BẤM (`handleWriteWithContentEngine`), hoặc đã chạy sẵn làm bước
-  // làm giàu thứ hai ngay sau khi kịch bản này thành công
-  // (`generate-scene-plan.ts`) — tra lại bằng `GET .../generations?scene_plan_id`
-  // (đọc, không trừ credit) rồi hiển thị nếu có.
-  const scenePlanId = currentResult.scenePlanId ?? null
-  const [contentEnginePosts, setContentEnginePosts] = useState<
-    Array<{ channel: "facebook" | "instagram" | "tiktok" | "zalo"; text: string; hashtags: readonly string[] }> | null
-  >(null)
-  const [ceStatus, setCeStatus] = useState<"idle" | "writing" | "error">("idle")
-  const [ceProvider, setCeProvider] = useState<string>("")
-  const [ceError, setCeError] = useState<string | null>(null)
-
-  // Tra bản đã có — chỉ ĐỌC, không tạo job, không trừ credit — nên chạy tự
-  // động khi mở kết quả, KHÔNG cần người dùng bấm.
-  useEffect(() => {
-    if (!scenePlanId) return
-    let cancelled = false
-    fetch(`/api/v1/content-engine/generations?scene_plan_id=${encodeURIComponent(scenePlanId)}`)
-      .then((r) => (r.ok ? r.json() : null))
-      .then((body) => {
-        if (cancelled || !body?.generation) return
-        const posts = (body.generation.posts ?? []) as Array<{ channel: string; text: string; hashtags: readonly string[] }>
-        setContentEnginePosts(posts.filter((p): p is typeof posts[number] & { channel: "facebook" | "instagram" | "tiktok" | "zalo" } => PLATFORMS.includes(p.channel as never)))
-      })
-      .catch(() => undefined)
-    return () => {
-      cancelled = true
-    }
-  }, [scenePlanId])
-
-  // Bấm mới GỌI THẬT (trừ credit) — không tự chạy khi mở/khi render.
-  const handleWriteWithContentEngine = async () => {
-    if (!scenePlanId) return
-    setCeStatus("writing")
-    setCeError(null)
-    try {
-      const idempotencyKey =
-        typeof window !== "undefined" && "randomUUID" in window.crypto
-          ? window.crypto.randomUUID()
-          : `content-engine-ui:${scenePlanId}:${Date.now()}`
-      const res = await fetch("/api/v1/content-engine/generations", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "Idempotency-Key": idempotencyKey },
-        body: JSON.stringify({
-          scene_plan_id: scenePlanId,
-          asset_id: ctx?.assetId ?? null,
-          product_id: ctx?.productId ?? null,
-          channels: PLATFORMS,
-          ...(ceProvider ? { content_provider: ceProvider } : {}),
-        }),
-      })
-      const body = await res.json().catch(() => null)
-      if (!res.ok) throw new Error(body?.error?.message || `Lỗi máy chủ (${res.status})`)
-      const posts = (body?.posts ?? []) as Array<{ channel: string; text: string; hashtags: readonly string[] }>
-      setContentEnginePosts(posts.filter((p): p is typeof posts[number] & { channel: "facebook" | "instagram" | "tiktok" | "zalo" } => PLATFORMS.includes(p.channel as never)))
-      setCeStatus("idle")
-    } catch (e) {
-      setCeError(e instanceof Error ? e.message : "Không viết được bài bằng Content Engine")
-      setCeStatus("error")
-    }
-  }
-
-  // Sinh trọn bộ 4 bài viết hoàn chỉnh đa kênh — ưu tiên bài Content Engine
-  // (P27), sau đó tới `planPosts` (bản ghi cũ, tương thích ngược), cuối cùng
-  // mới dùng khuôn dự phòng cho kênh còn thiếu.
   const planPosts = currentResult.planPosts
+  const [contentEnginePosts, setContentEnginePosts] = useState<
+    Array<{ channel: PlatformKey; text: string; hashtags: readonly string[] }> | null
+  >(null)
+
   const effectivePlanPosts = contentEnginePosts ?? planPosts
   const generatedPosts = useMemo(() => {
     const base = generateAllPlatformPosts({
@@ -271,7 +121,7 @@ function CreativeResultViewerBody({
     handleCopy(text, "all-hashtags")
   }
 
-  const getPostContent = (platform: "facebook" | "instagram" | "tiktok" | "zalo") => {
+  const getPostContent = (platform: PlatformKey) => {
     return customEdits[platform] ?? generatedPosts[platform]?.fullContent ?? ""
   }
 
@@ -285,63 +135,52 @@ function CreativeResultViewerBody({
       return { channel: p, text, hashtags: gen?.hashtags ?? [] }
     })
 
-  // TỰ LƯU bài (kể cả phần sửa) theo ảnh + chủ đề + mode (24/09/2026) — Chặng 07
-  // đưa sẵn vào gói mà không cần bấm "Lưu bài vào gói". Chờ 1,2 giây sau lần sửa cuối.
-  const [autoSaved, setAutoSaved] = useState<{ at: string | null; error: string | null }>({ at: null, error: null })
-  const draftKey = ctx ? contentDraftKey({ assetId: ctx.assetId, selectedTopic: ctx.selectedTopic, mode: ctx.mode }) : null
-  const draftKeyStr = draftKey ? `${draftKey.asset_id}|${draftKey.topic_id}|${draftKey.mode}` : null
-  useEffect(() => {
-    if (!draftKey) return
-    const t = window.setTimeout(() => {
-      saveContentDraft(draftKey, buildPosts(), ctx?.selectedTopic?.title ?? currentResult.topicTitle ?? null)
-        .then((d) => setAutoSaved({ at: d.updated_at, error: null }))
-        .catch((e) => setAutoSaved({ at: null, error: e instanceof Error ? e.message : "Không tự lưu được" }))
-    }, 1200)
-    return () => window.clearTimeout(t)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [draftKeyStr, generatedPosts, customEdits])
+  const {
+    ceStatus,
+    ceProvider,
+    setCeProvider,
+    ceError,
+    handleWriteWithContentEngine,
+    autoSaved,
+    savingToPackage,
+    packageNotice,
+    handleSaveToPackage,
+  } = useCreativeResultActions({
+    scenePlanId: currentResult.scenePlanId ?? null,
+    ctx,
+    currentResultTopicTitle: currentResult.topicTitle,
+    mode,
+    platforms: PLATFORMS,
+    buildPosts,
+    generatedPosts: generatedPosts as Record<string, unknown>,
+    customEdits,
+    setContentEnginePosts,
+  })
 
-  // Lưu 4 bài vào gói chiến dịch của Master hiện tại (Chiến dịch đọc lại qua API)
-  // — thay cho việc kết quả Nội dung mất khi chuyển tab (23/09/2026).
-  const [savingToPackage, setSavingToPackage] = useState(false)
-  const [packageNotice, setPackageNotice] = useState<string | null>(null)
-  const handleSaveToPackage = async () => {
-    setSavingToPackage(true)
-    setPackageNotice(null)
-    try {
-      const masterId = await resolveApprovedMaster(ctx?.assetId)
-      if (!masterId) {
-        throw new Error(
-          "Chưa có Master Image đã duyệt cho ảnh này — vào Khu vực F bấm 'Skip — Dùng ảnh gốc làm Master' trước."
-        )
-      }
-      const posts = buildPosts()
-      const topic = ctx?.selectedTopic
-      const saved = await savePostsToPackage({
-        masterAssetId: masterId,
-        name: `${ctx?.productName || "Sản phẩm"}${topic ? ` — ${topic.title}` : ""}`.slice(0, 200),
-        mode,
-        topic: topic
-          ? {
-              id: topic.id,
-              title: topic.title,
-              angleCategory: topic.angleCategory,
-              scene2Preset: sceneTwoPresetFor(topic.angleCategory),
-            }
-          : null,
-        posts,
-      })
-      setPackageNotice(`Đã lưu ${posts.length} bài vào gói "${saved.name}" (trạng thái: nháp, cần chạy lại QA).`)
-    } catch (e) {
-      setPackageNotice(e instanceof Error ? e.message : "Không lưu được vào gói chiến dịch")
-    } finally {
-      setSavingToPackage(false)
-    }
-  }
-
-  const handleUpdateContent = (platform: string, newText: string) => {
+  const handleUpdateContent = (platform: PlatformKey, newText: string) => {
     setCustomEdits((prev) => ({ ...prev, [platform]: newText }))
   }
+
+  const fullPostsRecord = useMemo(() => {
+    const record: Record<PlatformKey, FullPostRecord> = {} as Record<PlatformKey, FullPostRecord>
+    for (const p of PLATFORMS) {
+      const post = generatedPosts[p]
+      if (post) {
+        record[p] = {
+          platform: p,
+          platformLabel: post.platformLabel,
+          icon: post.icon,
+          characterCount: post.characterCount,
+          targetAudience: post.targetAudience,
+          recommendedPostingTime: post.recommendedPostingTime,
+          hashtags: [...post.hashtags],
+          content: getPostContent(p),
+        }
+      }
+    }
+    return record
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [generatedPosts, customEdits])
 
   return (
     <div className="space-y-6 animate-in fade-in duration-300">
@@ -362,7 +201,7 @@ function CreativeResultViewerBody({
             </div>
           </div>
 
-          <div className="flex items-center gap-2 text-xs">
+          <div className="flex items-center gap-2 text-caption">
             {arc?.totalDurationSeconds && (
               <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-surface-alt text-text-muted font-semibold">
                 <Clock size={12} /> Thời lượng video: {arc.totalDurationSeconds}s
@@ -375,7 +214,7 @@ function CreativeResultViewerBody({
         </div>
 
         {arc?.narrativeReasoning && (
-          <div className="pt-3 text-xs text-text-muted leading-relaxed">
+          <div className="pt-3 text-caption text-text-muted leading-relaxed">
             <span className="font-bold text-text">Ý đồ kịch bản: </span>
             {arc.narrativeReasoning}
           </div>
@@ -383,303 +222,41 @@ function CreativeResultViewerBody({
       </div>
 
       {/* ── Cung truyện 5 nhịp (Narrative Arc) ── */}
-      {arc && arc.scenes && arc.scenes.length > 0 && (
-        <div className="rounded-2xl border border-border bg-surface p-5 space-y-4 shadow-xs">
-          <div className="flex items-center justify-between border-b border-border/60 pb-3">
-            <div className="flex items-center gap-2">
-              <Film size={18} className="text-primary" />
-              <h4 className="text-sm font-bold text-text">
-                1. Kịch bản video cốt truyện 5 nhịp ({arc.scenes.length} cảnh)
-              </h4>
-            </div>
-            <span className="text-caption text-text-muted font-medium">
-              Tone cảm xúc: <strong className="text-primary">{arc.emotionalTone || "Chạm cảm xúc"}</strong>
-            </span>
-          </div>
-
-          <div className="space-y-3">
-            {arc.scenes.map((scene) => {
-              const sceneKey = `scene-${scene.sceneIndex}`
-              return (
-                <div
-                  key={scene.sceneIndex}
-                  className="rounded-xl border border-border/60 bg-surface-alt/60 p-3.5 space-y-2 text-xs hover:border-primary/30 transition-colors"
-                >
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <span className="flex h-5 w-5 items-center justify-center rounded-full bg-primary text-primary-foreground text-caption font-extrabold">
-                        {scene.sceneIndex}
-                      </span>
-                      <span className="font-bold text-text">
-                        {scene.beatTitle || `Nhịp ${scene.sceneIndex}`}
-                      </span>
-                      {scene.beat && (
-                        <span className="px-1.5 py-0.5 rounded text-caption font-bold bg-primary/10 text-primary uppercase">
-                          {scene.beat}
-                        </span>
-                      )}
-                    </div>
-                    <span className="text-caption text-text-muted font-mono flex items-center gap-1">
-                      <Clock size={11} /> {scene.durationSeconds}s
-                    </span>
-                  </div>
-
-                  {scene.sceneDescription && (
-                    <div className="text-caption text-text-muted leading-relaxed">
-                      <span className="font-semibold text-text">Bối cảnh: </span>
-                      {scene.sceneDescription}
-                    </div>
-                  )}
-
-                  {/* Lời thoại lồng tiếng */}
-                  <div className="rounded-lg bg-surface p-2.5 border border-border/60 text-xs space-y-1">
-                    <div className="flex items-center justify-between text-text-muted text-caption font-semibold">
-                      <span className="flex items-center gap-1 text-primary">
-                        <Volume2 size={12} /> Giọng đọc lồng tiếng (Voiceover):
-                      </span>
-                      <button
-                        type="button"
-                        onClick={() => handleCopy(scene.voiceScript, sceneKey)}
-                        className="text-text-muted hover:text-text flex items-center gap-1 transition"
-                      >
-                        {copiedKey === sceneKey ? (
-                          <><Check size={11} className="text-success" /> Đã chép</>
-                        ) : (
-                          <><Copy size={11} /> Chép lời</>
-                        )}
-                      </button>
-                    </div>
-                    <p className="text-text leading-relaxed font-medium">
-                      “{scene.voiceScript}”
-                    </p>
-                  </div>
-
-                  {/* Text Overlay & Góc quay */}
-                  <div className="flex flex-wrap items-center gap-3 text-caption text-text-muted pt-0.5">
-                    {scene.textOverlay && (
-                      <div>
-                        Chữ video: <strong className="text-text">“{scene.textOverlay}”</strong>
-                      </div>
-                    )}
-                    {scene.motionEffect && (
-                      <div>
-                        Chuyển động: <span className="font-mono text-text">{scene.motionEffect}</span>
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )
-            })}
-          </div>
-        </div>
+      {arc && (
+        <CreativeNarrativeScenes
+          arc={arc}
+          copiedKey={copiedKey}
+          handleCopy={handleCopy}
+        />
       )}
 
-      {/* ══════════════════════════════════════════════════════════════════
-          2. BÀI VIẾT MẠNG XÃ HỘI ĐA KÊNH HOÀN CHỈNH (FULL POST COPY)
-      ══════════════════════════════════════════════════════════════════ */}
-      <div className="rounded-2xl border border-border bg-surface p-5 space-y-4 shadow-xs">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-border/60 pb-3">
-          <div className="flex items-center gap-2">
-            <FileText size={18} className="text-primary" />
-            <div>
-              <h4 className="text-sm font-bold text-text">
-                2. Bài viết mạng xã hội hoàn chỉnh đa kênh (Facebook, Instagram, TikTok, Zalo)
-              </h4>
-              <p className="text-caption text-text-muted">
-                Nội dung đã được biên soạn và tối ưu cấu trúc riêng biệt cho từng nền tảng bán hoa.
-              </p>
-            </div>
-          </div>
-
-          {/* Toggle View Mode: Tabbed vs Grid */}
-          <div className="flex items-center gap-1.5 self-start sm:self-center">
-            <button
-              type="button"
-              onClick={() => setViewMode("tabbed")}
-              className={`px-2.5 py-1 rounded-lg text-xs font-bold transition flex items-center gap-1 ${
-                viewMode === "tabbed" ? "bg-primary text-primary-foreground" : "bg-surface-alt text-text-muted hover:bg-surface-alt/80"
-              }`}
-            >
-              <Eye size={12} /> Xem từng kênh
-            </button>
-            <button
-              type="button"
-              onClick={() => setViewMode("grid")}
-              className={`px-2.5 py-1 rounded-lg text-xs font-bold transition flex items-center gap-1 ${
-                viewMode === "grid" ? "bg-primary text-primary-foreground" : "bg-surface-alt text-text-muted hover:bg-surface-alt/80"
-              }`}
-            >
-              <Grid size={12} /> Xem cả 4 kênh
-            </button>
-          </div>
-        </div>
-
-        {/* Platform Switcher Tabs (khi ở chế độ tabbed) */}
-        {viewMode === "tabbed" && (
-          <div className="flex items-center gap-2 overflow-x-auto pb-1">
-            {PLATFORMS.map((p) => {
-              const info = PLATFORM_LABELS[p]
-              const isSelected = selectedPlatform === p
-              return (
-                <button
-                  key={p}
-                  type="button"
-                  onClick={() => setSelectedPlatform(p)}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition flex items-center gap-2 shrink-0 ${
-                    isSelected
-                      ? info.bgActive + " shadow-sm scale-102"
-                      : "bg-surface-alt text-text hover:bg-surface-alt/80"
-                  }`}
-                >
-                  <span className="text-sm">{info.icon}</span>
-                  <span>{info.label}</span>
-                </button>
-              )
-            })}
-          </div>
-        )}
-
-        {/* ── RENDER NỘI DUNG BÀI VIẾT (TABBED HOẶC GRID) ── */}
-        <div className={viewMode === "grid" ? "grid grid-cols-1 md:grid-cols-2 gap-4" : "space-y-4"}>
-          {(viewMode === "grid" ? PLATFORMS : [selectedPlatform]).map((platform) => {
-            const post = generatedPosts[platform]
-            if (!post) return null
-            const content = getPostContent(platform)
-            const isEditing = editingPlatform === platform
-            const copyKey = `post-${platform}`
-
-            return (
-              <div
-                key={platform}
-                className="rounded-xl border border-border bg-surface-alt/60 p-4 space-y-3 flex flex-col justify-between transition-all hover:border-border-hover"
-              >
-                {/* Header thẻ bài viết */}
-                <div className="space-y-2 border-b border-border/80 pb-3">
-                  <div className="flex items-center justify-between gap-2">
-                    <div className="flex items-center gap-2">
-                      <span className="text-lg">{post.icon}</span>
-                      <div>
-                        <div className="flex items-center gap-1.5">
-                          <span className="text-xs font-bold text-text">{post.platformLabel}</span>
-                          <span className="text-caption text-primary font-bold bg-primary/10 px-1.5 py-0.2 rounded-full border border-primary/20">
-                            ✓ Đã tối ưu
-                          </span>
-                        </div>
-                        <span className="text-caption text-text-muted block">
-                          Khung giờ vàng: <strong className="text-text">{post.recommendedPostingTime}</strong>
-                        </span>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center gap-1 shrink-0">
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => setEditingPlatform(isEditing ? null : platform)}
-                        className="text-text-muted hover:text-text text-xs font-semibold h-7 px-2 gap-1"
-                      >
-                        <Edit3 size={12} />
-                        {isEditing ? "Đóng sửa" : "Chỉnh sửa"}
-                      </Button>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleCopy(content, copyKey)}
-                        className="text-xs font-bold gap-1 h-7 px-2.5 bg-surface shadow-2xs hover:bg-success/10 hover:text-success hover:border-success/30"
-                      >
-                        {copiedKey === copyKey ? (
-                          <><Check size={12} className="text-success" /> Đã sao chép</>
-                        ) : (
-                          <><Copy size={12} /> Sao chép bài</>
-                        )}
-                      </Button>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-2 text-caption text-text-muted flex-wrap">
-                    <span className="bg-surface px-2 py-0.5 rounded border border-border">
-                      {post.characterCount} ký tự
-                    </span>
-                    <span className="bg-surface px-2 py-0.5 rounded border border-border truncate max-w-xs">
-                      {post.targetAudience}
-                    </span>
-                  </div>
-                </div>
-
-                {/* Body bài viết (Social Post Preview) */}
-                <div className="rounded-lg bg-surface p-3.5 border border-border text-xs text-text shadow-2xs leading-relaxed">
-                  {isEditing ? (
-                    <div className="space-y-2">
-                      <textarea
-                        value={content}
-                        onChange={(e) => handleUpdateContent(platform, e.target.value)}
-                        rows={12}
-                        className="w-full rounded-lg border border-border p-2.5 text-xs text-text focus:border-primary focus:outline-none font-mono"
-                      />
-                      <div className="flex justify-end">
-                        <Button
-                          type="button"
-                          size="sm"
-                          onClick={() => setEditingPlatform(null)}
-                          className="bg-success hover:bg-success-dark text-white text-xs font-bold h-7 px-3"
-                        >
-                          <Check size={12} className="mr-1" /> Lưu chỉnh sửa
-                        </Button>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="whitespace-pre-line font-sans text-text space-y-1">
-                      {content}
-                    </div>
-                  )}
-                </div>
-
-                {/* Footer thẻ: Hashtags */}
-                {post.hashtags.length > 0 && (
-                  <div className="pt-2 flex flex-wrap gap-1">
-                    {Array.from(new Set(post.hashtags)).map((tag, tagIdx) => (
-                      <span
-                        key={`${platform}-${tag}-${tagIdx}`}
-                        className="inline-block px-2 py-0.5 rounded-full bg-surface-alt text-text-muted text-caption font-medium"
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                )}
-              </div>
-            )
-          })}
-        </div>
-
-        {/* Nút sao chép toàn bộ tất cả bài viết */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-2 pt-2 border-t border-border/60 text-xs text-text-muted">
-          <span>💡 Bạn có thể nhấp <strong>“Sao chép bài”</strong> ở từng kênh để dán trực tiếp lên Facebook Fanpage, TikTok Shop hoặc Zalo OA.</span>
-          <button
-            type="button"
-            onClick={handleCopyAllHashtags}
-            className="text-xs font-bold text-primary hover:text-primary-dark flex items-center gap-1 transition shrink-0"
-          >
-            {copiedKey === "all-hashtags" ? "✓ Đã sao chép tất cả hashtags" : "Sao chép tất cả hashtags →"}
-          </button>
-        </div>
-      </div>
+      {/* ── BÀI VIẾT MẠNG XÃ HỘI ĐA KÊNH HOÀN CHỈNH ── */}
+      <CreativeSocialPosts
+        fullPosts={fullPostsRecord}
+        editedContent={customEdits as Record<PlatformKey, string>}
+        editingPlatform={editingPlatform}
+        setEditingPlatform={setEditingPlatform}
+        handleUpdateContent={handleUpdateContent}
+        handleCopy={handleCopy}
+        copiedKey={copiedKey}
+        handleCopyAllHashtags={handleCopyAllHashtags}
+        platforms={PLATFORMS}
+        platformLabels={PLATFORM_LABELS}
+      />
 
       {contentEnginePosts && contentEnginePosts.length > 0 ? (
         <p className="rounded-lg border border-success/30 bg-success/10 px-3 py-2 text-meta text-success">
-          Bài {contentEnginePosts.map((p) => PLATFORM_LABELS[p.channel]?.label ?? p.channel).join(", ")} do Content Engine (Phiên bản hiện tại) viết
-          (Strategist→Writer→Critic→Rewriter, cùng câu chuyện Chặng 05). Kênh khác dùng khuôn dự phòng — hãy đọc lại trước khi đăng.
+          Bài {contentEnginePosts.map((p) => PLATFORM_LABELS[p.channel]?.label ?? p.channel).join(", ")} do Content Engine viết
+          (cùng câu chuyện Chặng 05). Kênh khác dùng khuôn dự phòng — hãy đọc lại trước khi đăng.
         </p>
       ) : planPosts && planPosts.length > 0 ? (
         <p className="rounded-lg border border-success/30 bg-success/10 px-3 py-2 text-meta text-success">
-          Bài {planPosts.map((p) => PLATFORM_LABELS[p.channel]?.label ?? p.channel).join(", ")} lấy từ kịch bản sản xuất Chặng 05
-          (cùng câu chuyện với ảnh, âm thanh, video). Kênh khác dùng khuôn dự phòng — hãy đọc lại trước khi đăng.
+          Bài {planPosts.map((p) => PLATFORM_LABELS[p.channel]?.label ?? p.channel).join(", ")} lấy từ kịch bản sản xuất Chặng 05.
+          Kênh khác dùng khuôn dự phòng — hãy đọc lại trước khi đăng.
         </p>
       ) : null}
 
-      {scenePlanId && (
+      {currentResult.scenePlanId && (
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 rounded-xl border border-border bg-surface p-3">
           <div className="text-meta text-text-muted">
             {contentEnginePosts && contentEnginePosts.length > 0
@@ -690,18 +267,19 @@ function CreativeResultViewerBody({
           <div className="w-full sm:w-60 shrink-0">
             <ProviderSelect kind="content" value={ceProvider} onChange={setCeProvider} label="AI viết bài" disabled={ceStatus === "writing"} />
           </div>
-          <button
+          <Button
             type="button"
+            variant="outline"
             onClick={handleWriteWithContentEngine}
             disabled={ceStatus === "writing"}
-            className="shrink-0 rounded-lg bg-primary hover:bg-primary-dark px-3 py-1.5 text-meta font-bold text-white disabled:opacity-60"
+            className="shrink-0 h-auto py-1.5 px-3 text-caption font-bold"
           >
             {ceStatus === "writing"
               ? "Đang viết..."
               : contentEnginePosts && contentEnginePosts.length > 0
                 ? "Viết lại bằng Content Engine"
                 : "Viết bằng Content Engine"}
-          </button>
+          </Button>
         </div>
       )}
 
@@ -710,14 +288,15 @@ function CreativeResultViewerBody({
         <span className="text-meta text-text-muted">
           Lưu 4 bài (kể cả phần bạn đã sửa) vào gói chiến dịch để Chiến dịch chạy QA và duyệt.
         </span>
-        <button
+        <Button
           type="button"
+          variant="outline"
           onClick={handleSaveToPackage}
           disabled={savingToPackage}
-          className="shrink-0 rounded-lg bg-primary hover:bg-primary-dark px-3 py-1.5 text-meta font-bold text-white disabled:opacity-60"
+          className="shrink-0 h-auto py-1.5 px-3 text-caption font-bold"
         >
           {savingToPackage ? "Đang lưu..." : "Lưu bài vào gói chiến dịch"}
-        </button>
+        </Button>
       </div>
       {packageNotice && <p className="text-meta text-text">{packageNotice}</p>}
       <p className={`text-caption ${autoSaved.error ? "text-danger" : "text-text-muted"}`}>
@@ -746,13 +325,15 @@ function CreativeResultViewerBody({
           />
           {onGoToPackage && (
             <div className="flex justify-end">
-              <button
+              <Button
                 type="button"
+                variant="ghost"
+                size="sm"
                 onClick={onGoToPackage}
-                className="text-caption font-semibold text-text-muted hover:text-text flex items-center gap-1 transition underline decoration-dotted"
+                className="text-caption font-semibold text-text-muted hover:text-text h-auto p-0 flex items-center gap-1 transition underline decoration-dotted"
               >
                 ⚡ Bỏ qua tạo Audio/Ảnh/Video, đi thẳng đến Đóng gói chiến dịch (Chặng 07) →
-              </button>
+              </Button>
             </div>
           )}
         </div>

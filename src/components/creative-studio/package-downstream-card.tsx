@@ -1,14 +1,6 @@
 "use client"
 /**
- * PackageDownstreamCard — Chặng 10 LAUNCH → 14 NEXT BEST ACTION (23/09/2026).
- *
- * Bản trước hiển thị "34 đơn", "20.366.000đ", "Độ tin cậy 96%" gõ cứng trong mã
- * — chủ tiệm sẽ đọc như số của chính mình. Nay:
- *   10 — lưu kế hoạch đăng + mã bài đã đăng bên Lịch đăng (SocialFlow M07)
- *        qua `PUT /packages/:id/launch`. Việc đăng thật diễn ra ở Lịch đăng.
- *   11–14 — `GET /packages/:id/performance`: đơn hàng/doanh thu của sản phẩm kể
- *        từ ngày duyệt, hội thoại, `content_metrics` của bài đã gắn, mẫu thắng
- *        (chỉ khi đủ ≥ 3 gói có số liệu), đề xuất dựa trên dữ kiện thật.
+ * PackageDownstreamCard — Chặng 10 LAUNCH → 14 NEXT BEST ACTION.
  */
 
 import React, { useCallback, useEffect, useState } from "react"
@@ -22,9 +14,11 @@ import { Rocket } from "@/components/ui/icon-set/rocket"
 import { Save } from "@/components/ui/icon-set/save"
 import { Target } from "@/components/ui/icon-set/target"
 import { Trash2 } from "@/components/ui/icon-set/trash2"
-
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { Checkbox } from "@/components/ui/checkbox"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { apiJson, type CampaignPackageDto, type PackageChannel } from "./package-client"
 
 const CHANNELS: { id: PackageChannel; label: string }[] = [
@@ -164,63 +158,76 @@ export function PackageDownstreamCard({ pkg, onUpdated }: PackageDownstreamCardP
         </p>
         <div className="flex flex-wrap gap-3">
           {CHANNELS.map((c) => (
-            <label key={c.id} className="flex items-center gap-1.5 text-meta">
-              <input
-                type="checkbox"
+            <label key={c.id} className="flex items-center gap-1.5 text-meta cursor-pointer">
+              <Checkbox
                 checked={channels.includes(c.id)}
-                onChange={(e) =>
-                  setChannels((prev) => (e.target.checked ? [...prev, c.id] : prev.filter((x) => x !== c.id)))
+                onCheckedChange={(checked) =>
+                  setChannels((prev) => (checked ? [...prev, c.id] : prev.filter((x) => x !== c.id)))
                 }
               />
-              {c.label}
+              <span>{c.label}</span>
             </label>
           ))}
         </div>
         <label className="block text-meta">
           Giờ đăng dự kiến
-          <input
+          <Input
             type="datetime-local"
             value={scheduledAt}
             onChange={(e) => setScheduledAt(e.target.value)}
-            className="mt-1 block rounded border border-border px-2 py-1 text-xs"
+            inputSize="sm"
+            className="mt-1 w-64 text-caption"
           />
         </label>
         <div className="space-y-2">
           <div className="text-meta font-bold">Mã bài đã đăng</div>
           {refs.map((r, i) => (
             <div key={i} className="flex items-center gap-2">
-              <select
+              <Select
                 value={r.platform}
-                onChange={(e) =>
-                  setRefs((prev) => prev.map((x, j) => (j === i ? { ...x, platform: e.target.value as PackageChannel } : x)))
+                onValueChange={(val) =>
+                  setRefs((prev) => prev.map((x, j) => (j === i ? { ...x, platform: val as PackageChannel } : x)))
                 }
-                className="rounded border border-border px-2 py-1 text-xs"
               >
-                {CHANNELS.map((c) => (
-                  <option key={c.id} value={c.id}>
-                    {c.label}
-                  </option>
-                ))}
-              </select>
-              <input
+                <SelectTrigger className="h-9 w-32 text-caption">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {CHANNELS.map((c) => (
+                    <SelectItem key={c.id} value={c.id}>
+                      {c.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Input
                 value={r.contentId}
                 onChange={(e) => setRefs((prev) => prev.map((x, j) => (j === i ? { ...x, contentId: e.target.value } : x)))}
                 placeholder="Mã bài (content_id)"
-                className="flex-1 rounded border border-border px-2 py-1 text-xs font-mono"
+                inputSize="sm"
+                className="flex-1 font-mono text-caption"
               />
-              <button
-              aria-label="Xóa" type="button" onClick={() => setRefs((prev) => prev.filter((_, j) => j !== i))} className="text-danger">
+              <Button
+                aria-label="Xóa"
+                type="button"
+                variant="ghost"
+                size="xs"
+                onClick={() => setRefs((prev) => prev.filter((_, j) => j !== i))}
+                className="text-danger p-1 h-8 w-8"
+              >
                 <Trash2 size={14} />
-              </button>
+              </Button>
             </div>
           ))}
-          <button
+          <Button
             type="button"
+            variant="ghost"
+            size="xs"
             onClick={() => setRefs((prev) => [...prev, { platform: channels[0] ?? "facebook", contentId: "" }])}
             className="inline-flex items-center gap-1 text-meta text-primary font-bold"
           >
             <Plus size={13} /> Thêm mã bài
-          </button>
+          </Button>
         </div>
         <div className="flex gap-2">
           <Button size="sm" onClick={saveLaunch} disabled={saving || channels.length === 0} className="gap-1.5">
@@ -249,19 +256,19 @@ export function PackageDownstreamCard({ pkg, onUpdated }: PackageDownstreamCardP
                 <div className="text-caption text-text-muted flex items-center justify-center gap-1">
                   <MessageCircle size={11} /> Hội thoại mới
                 </div>
-                <div className="text-lg font-black">{m.conversations.toLocaleString("vi-VN")}</div>
+                <div className="text-title-sm font-black">{m.conversations.toLocaleString("vi-VN")}</div>
               </div>
               <div className="rounded-lg border border-border p-3">
                 <div className="text-caption text-text-muted">Đơn có sản phẩm</div>
-                <div className="text-lg font-black">{m.orders.count.toLocaleString("vi-VN")}</div>
+                <div className="text-title-sm font-black">{m.orders.count.toLocaleString("vi-VN")}</div>
               </div>
               <div className="rounded-lg border border-border p-3">
                 <div className="text-caption text-text-muted">Doanh thu sản phẩm</div>
-                <div className="text-lg font-black">{m.orders.revenueVnd.toLocaleString("vi-VN")}đ</div>
+                <div className="text-title-sm font-black">{m.orders.revenueVnd.toLocaleString("vi-VN")}đ</div>
               </div>
               <div className="rounded-lg border border-border p-3">
                 <div className="text-caption text-text-muted">Bài có số liệu kênh</div>
-                <div className="text-lg font-black">
+                <div className="text-title-sm font-black">
                   {m.channel.postsWithData}/{m.channel.linkedPosts}
                 </div>
               </div>

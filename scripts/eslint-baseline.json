@@ -1,5 +1,5 @@
 {
-  "total": 58,
+  "total": 57,
   "files": {
     "scripts/check-industry.ts": {
       "@typescript-eslint/no-explicit-any": 5
@@ -104,7 +104,7 @@
       "react/no-unescaped-entities": 2
     },
     "src/components/products/use-create-product-form.ts": {
-      "react-hooks/set-state-in-effect": 2
+      "react-hooks/set-state-in-effect": 1
     },
     "src/components/products/use-normalize-image.ts": {
       "react-hooks/immutability": 1

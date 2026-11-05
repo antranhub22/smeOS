@@ -131,7 +131,7 @@ export function PlanVideoAssembly({
   return (
     <Card className="p-5 border-primary/30">
       <div className="mb-2 flex flex-wrap items-center justify-between gap-2">
-        <h3 className="flex items-center gap-2 text-sm font-bold text-text">
+        <h3 className="flex items-center gap-2 text-body-sm font-bold text-text">
           <Clapperboard size={14} /> Dựng video từ bộ tài sản của kịch bản
         </h3>
         <Badge tone="neutral" className="text-caption">
@@ -143,19 +143,19 @@ export function PlanVideoAssembly({
           {ratios.map((r) => {
             const v = variantOf(r)
             return (
-              <button
+              <Button
                 key={r}
                 type="button"
                 role="tab"
+                size="xs"
+                variant={r === ratio ? "primary" : "outline"}
                 aria-selected={r === ratio}
                 onClick={() => setRatio(r)}
-                className={`rounded-lg border px-3 py-1.5 text-caption font-bold cursor-pointer ${
-                  r === ratio ? "border-primary bg-primary text-white" : "border-border bg-surface text-text-muted"
-                }`}
+                className="font-bold"
               >
                 Video {r}
                 {v ? ` · ~${v.targetSeconds}s` : ""}
-              </button>
+              </Button>
             )
           })}
         </div>
@@ -179,13 +179,13 @@ export function PlanVideoAssembly({
                   <AlertTriangle size={13} /> {p.message}
                 </span>
                 {p.kind === "missing_image" ? (
-                  <button type="button" onClick={() => onGoArea("d", p.sceneIndex, ratio)} className="font-bold underline cursor-pointer">
+                  <Button type="button" variant="ghost" size="xs" onClick={() => onGoArea("d", p.sceneIndex, ratio)} className="font-bold underline text-danger">
                     Sinh cảnh {p.sceneIndex} khung {ratio} →
-                  </button>
+                  </Button>
                 ) : p.kind !== "duration" && p.kind !== "ratio_out_of_scope" ? (
-                  <button type="button" onClick={() => onGoArea("c")} className="font-bold underline cursor-pointer">
+                  <Button type="button" variant="ghost" size="xs" onClick={() => onGoArea("c")} className="font-bold underline text-danger">
                     Mở Âm thanh →
-                  </button>
+                  </Button>
                 ) : null}
               </div>
             ))
@@ -204,7 +204,7 @@ export function PlanVideoAssembly({
         <Button size="sm" className="gap-1.5" disabled={busy !== null || !report?.ready} onClick={() => void build()}>
           {busy === "build" ? <Loader2 size={13} className="animate-spin motion-reduce:animate-none" /> : <Clapperboard size={13} />} Dựng video {ratio}
         </Button>
-        <span className="text-caption text-text-muted">Tạo bản nháp miễn phí → duyệt kịch bản (P3) → render 5 credit → duyệt video (P4).</span>
+        <span className="text-caption text-text-muted">Tạo bản nháp miễn phí → duyệt kịch bản (bước 3) → dựng 5 credit → duyệt video (bước 4).</span>
       </div>
     </Card>
   )

@@ -8,7 +8,7 @@ import { readdirSync, readFileSync, statSync } from "node:fs"
 import { join, relative } from "node:path"
 
 const ROOT = join(process.cwd(), "src")
-const BASELINE = 173
+const BASELINE = 172
 const PATTERN = /new Intl\.(Number|DateTime)Format|\.toLocale(Date|Time)?String\(/
 const EXCLUDED = [/^lib\/i18n\//, /^generated\//, /\.test\.tsx?$/, /__tests__\//]
 

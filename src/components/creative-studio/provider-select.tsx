@@ -1,6 +1,13 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 
 /**
  * Ô chọn nhà cung cấp cho MỘT lượt tạo (PO 25/09/2026 — nhà cung cấp trước,
@@ -57,26 +64,31 @@ export function ProviderSelect({
 }) {
   const view = useProviderKind(kind)
   const theoTiem = view?.order.map((k) => view.providers.find((p) => p.key === k)?.label ?? k).join(" → ")
+
   return (
-    <label className="flex w-full flex-col gap-1 text-caption text-text-muted">
+    <div className="flex w-full flex-col gap-1 text-caption text-text-muted">
       <span className="font-bold text-text">{label}</span>
-      <select
-        className="w-full rounded-lg border border-border bg-surface px-2.5 py-2 text-xs text-text"
-        value={value}
+      <Select
+        value={value || "DEFAULT"}
         disabled={disabled || !view}
-        onChange={(e) => onChange(e.target.value)}
+        onValueChange={(val) => onChange(val === "DEFAULT" ? "" : val)}
       >
-        <option value="">Theo thứ tự của tiệm{theoTiem ? ` (${theoTiem})` : ""}</option>
-        {view?.providers.map((p) => (
-          <option key={p.key} value={p.key}>
-            {p.label} — {p.vendor}
-            {p.configured ? "" : " (chưa cấu hình khoá)"}
-          </option>
-        ))}
-      </select>
+        <SelectTrigger className="w-full text-caption">
+          <SelectValue placeholder={`Theo thứ tự của tiệm${theoTiem ? ` (${theoTiem})` : ""}`} />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="DEFAULT">Theo thứ tự của tiệm{theoTiem ? ` (${theoTiem})` : ""}</SelectItem>
+          {view?.providers.map((p) => (
+            <SelectItem key={p.key} value={p.key}>
+              {p.label} — {p.vendor}
+              {p.configured ? "" : " (chưa cấu hình khoá)"}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
       {view?.local_fallback && (
         <span>Mọi bên lỗi → dự phòng: {view.local_fallback.label} (hoàn phần chênh credit).</span>
       )}
-    </label>
+    </div>
   )
 }

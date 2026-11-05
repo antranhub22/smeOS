@@ -2,15 +2,18 @@
 
 import { useState, useCallback, useContext, useEffect } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
-import { Film, Sparkles, Send, Loader2, CheckCircle2, AlertCircle, Play, Clock, Coins } from "@/components/ui/icons"
+import { Film } from "@/components/ui/icon-set/film"
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
+import { Loader2 } from "@/components/ui/icon-set/loader2"
+import { AlertCircle } from "@/components/ui/icon-set/alert-circle"
+import { Play } from "@/components/ui/icon-set/play"
 import { CreativeStudioContext } from "@/app/(app)/creative-studio/page"
 import { StoryboardEditor } from "@/components/video-studio/storyboard-editor"
 import { VideoJobList, type VideoJobSummary } from "@/components/video-studio/video-job-list"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { VideoFormat, VIDEO_FORMAT_SPECS, CaptionStyle, CAPTION_STYLE_SPECS, VideoSceneItem } from "@/modules/video-studio/domain/video-types"
+import { VideoFormat, VIDEO_FORMAT_SPECS, CaptionStyle, type VideoSceneItem } from "@/modules/video-studio/domain/video-types"
 import { StageGateApprovalBar } from "@/components/ui/stage-gate-approval-bar"
 import { resolveSceneImages } from "./scene-images-client"
 import { buildStoryboardFromPlan, buildStoryboardFromTopic, type SceneImage } from "./video-storyboard-builder"
@@ -18,21 +21,10 @@ import { findScenePlan, type LoadedScenePlan, type ScenePlan } from "./scene-pla
 import { PlanVideoAssembly } from "./plan-video-assembly"
 import { VideoJobLifecycle, type VideoJobDetail } from "./video-job-lifecycle"
 import { costCreditForFeature } from "@/modules/usage/domain/pricing"
+import { VideoConfigCard, VIDEO_VOICES } from "./video-config-card"
 
 /** Credit THẬT trừ khi render (`enqueueJob` feature `video.render`) — không phải `defaultCreditCost` của khuôn. */
 const RENDER_CREDIT = costCreditForFeature("video.render")
-
-/**
- * Giọng đọc cho video (24/09/2026). Trước đây Khu vực E KHÔNG gửi `voiceCode`
- * nên worker bỏ qua bước lồng tiếng — video chỉ có nhạc nền. Mã khớp
- * `VOICE_MAPPING` của `workers/media_ai/video/audio_engine.py`.
- */
-const VIDEO_VOICES: Array<{ code: string; label: string }> = [
-  { code: "vi-VN-Standard-A", label: "Nữ truyền cảm" },
-  { code: "vi-VN-Standard-C", label: "Nữ trẻ trung" },
-  { code: "vi-VN-Standard-B", label: "Nam ấm áp" },
-  { code: "none", label: "Không lồng tiếng (chỉ nhạc)" },
-]
 
 export function VideoWorkspace() {
   const router = useRouter()
@@ -244,71 +236,22 @@ export function VideoWorkspace() {
           Hoặc chỉnh storyboard tay bên dưới (nâng cao) — video tạo theo cách này tự đọc lại lời thoại, không dùng bản phối Âm thanh.
         </p>
       )}
-      <Card className="p-5">
-        <h3 className="text-sm font-bold text-text mb-3 flex items-center gap-2"><Film size={14} /> Khuôn định dạng</h3>
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-          {(Object.keys(VIDEO_FORMAT_SPECS) as VideoFormat[]).map((fmtKey) => {
-            const s = VIDEO_FORMAT_SPECS[fmtKey]
-            const sel = format === fmtKey
-            return (
-              <button
-                key={fmtKey}
-                type="button"
-                aria-pressed={sel}
-                onClick={() => { setFormat(fmtKey); setScenes([]) }}
-                className={`w-full text-left rounded-xl border p-3 transition-all focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${sel ? "border-primary bg-primary/5 shadow-xs" : "border-border bg-background hover:border-border-hover"}`}
-              >
-                <div className="flex items-start justify-between gap-1">
-                  <span className="text-xs font-bold text-text">{s.label}</span>
-                  <Badge tone={sel ? "success" : "neutral"} className="text-caption px-1.5 py-0">{s.aspectRatio}</Badge>
-                </div>
-                <div className="flex items-center justify-between text-caption text-text-muted mt-1">
-                  <span className="flex items-center gap-1"><Clock size={11} /> ~{s.targetDurationSeconds}s</span>
-                  <span className="font-semibold text-warning flex items-center gap-0.5" title="Credit ghép khi bấm Render — cộng giá clip nhà cung cấp mỗi cảnh"><Coins size={11} /> từ {RENDER_CREDIT} cr</span>
-                </div>
-              </button>
-            )
-          })}
-        </div>
-      </Card>
-      <Card className="p-5">
-        <h3 className="text-sm font-bold text-text mb-3">Cấu hình cơ bản</h3>
-        <div className="flex flex-col gap-3">
-          <div>
-            <label className="text-caption font-semibold text-text-muted block mb-1">Tiêu đề</label>
-            <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} className="w-full rounded-lg border border-border px-3 py-2 text-xs focus:border-primary focus:outline-none" />
-          </div>
-          <div>
-            <label className="text-caption font-semibold text-text-muted block mb-1">Giọng đọc lồng tiếng</label>
-            <Select value={voiceCode} onValueChange={(v: string) => setVoiceCode(v)}>
-              <SelectTrigger><SelectValue /></SelectTrigger>
-              <SelectContent>
-                {VIDEO_VOICES.map((v) => <SelectItem key={v.code} value={v.code}>{v.label}</SelectItem>)}
-              </SelectContent>
-            </Select>
-            <p className="mt-1 text-caption text-text-muted">Đọc đúng lời thoại từng cảnh của storyboard (cùng kịch bản với Âm thanh), khớp thời lượng từng cảnh; nhạc nền tự hạ âm lượng khi có giọng.</p>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            <div>
-              <label className="text-caption font-semibold text-text-muted block mb-1">Phụ đề</label>
-              <Select value={captionStyle} onValueChange={(v: CaptionStyle) => setCaptionStyle(v)}>
-                <SelectTrigger><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  {(Object.keys(CAPTION_STYLE_SPECS) as CaptionStyle[]).map((cs) => <SelectItem key={cs} value={cs}>{CAPTION_STYLE_SPECS[cs].label}</SelectItem>)}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="flex items-center gap-2">
-              <input type="checkbox" checked={hasSubtitle} onChange={(e) => setHasSubtitle(e.target.checked)} />
-              <span className="text-xs text-text">Phụ đề</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <input type="checkbox" checked={hasWatermark} onChange={(e) => setHasWatermark(e.target.checked)} />
-              <span className="text-xs text-text">Watermark</span>
-            </div>
-          </div>
-        </div>
-      </Card>
+      <VideoConfigCard
+        format={format}
+        setFormat={setFormat}
+        setScenes={setScenes}
+        title={title}
+        setTitle={setTitle}
+        voiceCode={voiceCode}
+        setVoiceCode={setVoiceCode}
+        captionStyle={captionStyle}
+        setCaptionStyle={setCaptionStyle}
+        hasSubtitle={hasSubtitle}
+        setHasSubtitle={setHasSubtitle}
+        hasWatermark={hasWatermark}
+        setHasWatermark={setHasWatermark}
+        renderCredit={RENDER_CREDIT}
+      />
       {(buildingStoryboard || storyboardNote || scenePlan || scenes.length > 0) && (
         <Card className="p-4 text-meta text-text-muted flex flex-col gap-1">
           {buildingStoryboard && <span>Đang dựng storyboard từ kịch bản bối cảnh và ảnh Biến thể marketing...</span>}
@@ -324,9 +267,16 @@ export function VideoWorkspace() {
           {storyboardNote && <span className="text-warning">{storyboardNote}</span>}
           {scenes.length > 0 && (
             <span>
-              <button type="button" disabled={refreshingImages} onClick={() => void refreshImagesFromD()} className="font-bold text-primary hover:underline cursor-pointer">
+              <Button
+                type="button"
+                variant="ghost"
+                size="xs"
+                disabled={refreshingImages}
+                onClick={() => void refreshImagesFromD()}
+                className="font-bold text-primary hover:underline cursor-pointer p-0 h-auto text-caption"
+              >
                 {refreshingImages ? "Đang lấy ảnh..." : "↻ Lấy ảnh mới nhất từ Khu vực D"}
-              </button>
+              </Button>
             </span>
           )}
         </Card>
@@ -344,7 +294,7 @@ export function VideoWorkspace() {
         </Card>
       )}
       <div className="flex items-center justify-between">
-        <p className="text-caption text-text-muted">Gọi <code className="bg-surface px-1.5 py-0.5 rounded text-xs">POST /api/v1/video/jobs</code></p>
+        <p className="text-caption text-text-muted">Gọi <code className="bg-surface px-1.5 py-0.5 rounded text-caption">POST /api/v1/video/jobs</code></p>
         <div className="flex items-center gap-2">
           <Button variant="secondary" onClick={loadJobs} className="gap-2"><Play size={14} /> Danh sách</Button>
           <Button onClick={handleCreate} disabled={loading || !title.trim()} className="gap-2">
@@ -352,7 +302,7 @@ export function VideoWorkspace() {
           </Button>
         </div>
       </div>
-      {error && <Card className="border-danger/30 bg-danger/10 p-4 flex items-center gap-3"><AlertCircle size={16} className="text-danger shrink-0" /><p className="text-xs text-danger">{error}</p></Card>}
+      {error && <Card className="border-danger/30 bg-danger/10 p-4 flex items-center gap-3"><AlertCircle size={16} className="text-danger shrink-0" /><p className="text-caption text-danger">{error}</p></Card>}
       {activeVideoJobId && (
         <VideoJobLifecycle
           key={activeVideoJobId}
@@ -364,7 +314,7 @@ export function VideoWorkspace() {
       )}
       {videoJobs.length > 0 && (
         <Card className="p-5">
-          <h3 className="text-sm font-bold text-text mb-4"><Film size={14} /> Danh sách video ({videoJobs.length})</h3>
+          <h3 className="text-body-sm font-bold text-text mb-4"><Film size={14} /> Danh sách video ({videoJobs.length})</h3>
           <VideoJobList jobs={videoJobs} loading={jobsLoading} onSelectJob={() => {}} onCreateNew={() => setVideoJobs([])} />
         </Card>
       )}
@@ -374,7 +324,7 @@ export function VideoWorkspace() {
         <StageGateApprovalBar
           stageCode="Chặng 06d — SẢN XUẤT VIDEO MARKETING"
           title="Phê duyệt Kịch bản Storyboard & Video Clip (Video marketing)"
-          description={`Storyboard ${scenes.length} phân cảnh theo khuôn ${spec.aspectRatio}, ~${spec.targetDurationSeconds}s. "Tạo video" lập BẢN NHÁP; duyệt kịch bản (P3), render (${RENDER_CREDIT} credit ghép + giá clip nhà cung cấp mỗi cảnh) và duyệt video thành phẩm (P4) ngay trong khung video job ở trên. Chỉ khi video đã duyệt P4 mới được coi là đạt.`}
+          description={`Storyboard ${scenes.length} phân cảnh theo khuôn ${spec.aspectRatio}, ~${spec.targetDurationSeconds}s. "Tạo video" lập BẢN NHÁP; duyệt kịch bản, dựng video (${RENDER_CREDIT} credit ghép + giá clip nhà cung cấp mỗi cảnh) và duyệt video thành phẩm ngay trong khung tác vụ video ở trên. Chỉ khi video đã được duyệt mới được coi là đạt.`}
           isApproved={videoJob?.video_approval === "APPROVED"}
           approveLabel="Phê duyệt Video & Tiến đến Đóng gói chiến dịch (Chặng 07) →"
           onApprove={() => navigateToArea("f")}
@@ -385,21 +335,13 @@ export function VideoWorkspace() {
             { label: "Phụ đề", value: hasSubtitle ? "Có" : "Không" },
           ]}
         />
-        <div className="flex justify-between items-center text-xs text-text-muted pt-1">
-          <button
-            type="button"
-            onClick={() => navigateToArea("d")}
-            className="hover:text-text transition"
-          >
+        <div className="flex justify-between items-center text-caption text-text-muted pt-1">
+          <Button type="button" variant="ghost" size="xs" onClick={() => navigateToArea("d")} className="hover:text-text transition p-0 h-auto text-caption">
             ← Quay lại Biến thể marketing (Tạo ảnh biến thể)
-          </button>
-          <button
-            type="button"
-            onClick={() => navigateToArea("f")}
-            className="font-medium text-text-muted hover:text-text transition underline decoration-dotted"
-          >
+          </Button>
+          <Button type="button" variant="ghost" size="xs" onClick={() => navigateToArea("f")} className="font-medium text-text-muted hover:text-text transition underline decoration-dotted p-0 h-auto text-caption">
             ⚡ Đóng gói chiến dịch ngay (Chặng 07) →
-          </button>
+          </Button>
         </div>
       </div>
     </div>

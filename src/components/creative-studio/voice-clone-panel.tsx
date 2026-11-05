@@ -9,6 +9,8 @@ import { Upload } from "@/components/ui/icon-set/upload"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { Checkbox } from "@/components/ui/checkbox"
 import { SkeletonBlock } from "@/components/ui/skeleton"
 import { useConfirmDialog } from "@/components/ui/confirm-dialog"
 import { VOICE_CLONE_CONSENT_TEXT } from "@/modules/audio-studio/domain/audio-task-rules"
@@ -65,12 +67,12 @@ export function VoiceClonePanel({ value, onChange }: { value: string | null; onC
 
   return (
     <Card className="p-5">
-      <h3 className="mb-1 flex items-center gap-2 text-sm font-bold text-text">
+      <h3 className="mb-1 flex items-center gap-2 text-body-sm font-bold text-text">
         <Headphones size={14} /> Giọng nhân bản của tiệm
       </h3>
       <p className="mb-3 text-meta text-text-muted">
         Đọc lời thoại bằng chính giọng chủ tiệm (ElevenLabs). Giọng nhân bản không bao giờ bị thay bằng giọng khác — nhà
-        cung cấp lỗi thì job dừng và hoàn credit.
+        cung cấp lỗi thì tác vụ dừng và hoàn credit.
       </p>
       {error && <p className="mb-2 text-meta text-danger">{error}</p>}
       {!clones && !error && (
@@ -82,14 +84,25 @@ export function VoiceClonePanel({ value, onChange }: { value: string | null; onC
         {(clones ?? []).map((c) => (
           <div key={c.id} className={`rounded-lg border px-3 py-2 ${value === c.id ? "border-primary bg-primary/5" : "border-border"}`}>
             <div className="flex flex-wrap items-center justify-between gap-2">
-              <label className="flex cursor-pointer items-center gap-2 text-meta font-semibold text-text">
-                <input type="radio" disabled={c.status !== "READY"} checked={value === c.id} onChange={() => onChange(c.id, c)} />
+              <label
+                className={`flex cursor-pointer items-center gap-2 text-meta font-semibold text-text ${c.status !== "READY" ? "opacity-50 cursor-not-allowed" : ""}`}
+                onClick={() => c.status === "READY" && onChange(c.id, c)}
+              >
+                <div
+                  className={`h-4 w-4 rounded-full border flex items-center justify-center flex-shrink-0 ${
+                    value === c.id ? "border-primary bg-primary" : "border-border bg-surface"
+                  }`}
+                >
+                  {value === c.id && <div className="h-1.5 w-1.5 rounded-full bg-white" />}
+                </div>
                 {c.name}
               </label>
               <div className="flex items-center gap-2">
                 <Badge tone={STATUS[c.status].tone}>{STATUS[c.status].label}</Badge>
-                <button
+                <Button
                   type="button"
+                  variant="ghost"
+                  size="xs"
                   title="Xoá giọng (gỡ cả trên ElevenLabs)"
                   onClick={async () => {
                     if (
@@ -106,10 +119,10 @@ export function VoiceClonePanel({ value, onChange }: { value: string | null; onC
                     if (value === c.id) onChange(null, null)
                     setReloadKey((k) => k + 1)
                   }}
-                  className="text-danger cursor-pointer"
+                  className="text-danger p-1 h-7 w-7"
                 >
                   <Trash2 size={13} />
-                </button>
+                </Button>
               </div>
             </div>
             {c.status === "FAILED" && c.error && <p className="mt-1 text-caption text-danger">{c.error}</p>}
@@ -162,11 +175,11 @@ function CreateCloneForm({ onDone }: { onDone: () => void }) {
         <li>Tệp MP3/WAV/M4A dài 1–3 phút (tối thiểu 20 giây), một người nói, rõ, không nhạc nền, không tiếng vang.</li>
         <li>Đọc tự nhiên như khi tư vấn khách — giọng nhân bản sẽ giữ nhịp và ngữ điệu này.</li>
       </ul>
-      <input className="w-full rounded border border-border px-2 py-1.5 text-xs" placeholder="Tên giọng (vd. Chị Lan chủ tiệm)" value={name} onChange={(e) => setName(e.target.value)} />
-      <input type="file" accept="audio/mpeg,audio/mp3,audio/wav,audio/x-wav,audio/mp4,audio/x-m4a" onChange={(e) => setFile(e.target.files?.[0] ?? null)} className="text-xs" />
-      <label className="flex items-start gap-2 text-caption text-text">
-        <input type="checkbox" checked={consent} onChange={(e) => setConsent(e.target.checked)} className="mt-0.5" />
-        {VOICE_CLONE_CONSENT_TEXT}
+      <Input inputSize="sm" placeholder="Tên giọng (vd. Chị Lan chủ tiệm)" value={name} onChange={(e) => setName(e.target.value)} />
+      <input type="file" accept="audio/mpeg,audio/mp3,audio/wav,audio/x-wav,audio/mp4,audio/x-m4a" onChange={(e) => setFile(e.target.files?.[0] ?? null)} className="text-caption" />
+      <label className="flex items-start gap-2 text-caption text-text cursor-pointer">
+        <Checkbox checked={consent} onCheckedChange={(checked) => setConsent(checked === true)} className="mt-0.5" />
+        <span>{VOICE_CLONE_CONSENT_TEXT}</span>
       </label>
       {error && <p className="text-meta text-danger">{error}</p>}
       <Button size="sm" onClick={submit} disabled={busy || !consent || name.trim().length < 2} className="gap-1.5">
