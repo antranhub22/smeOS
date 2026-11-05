@@ -5,6 +5,7 @@
 
 import { prisma } from "@/core/tenancy/infra/prisma"
 import type { GovernanceTier } from "@/core/governance/layered-resolver"
+import { resolveTierChain } from "@/modules/organization/infra/tier-chain-repository"
 import type { GovernanceMode, GovernanceRow, OrgGovernanceScope } from "../domain/integration-governance"
 
 export class GovernanceRepository {
@@ -30,17 +31,8 @@ export class GovernanceRepository {
 
   /** Ngành (organizations.settings.industry) và chuỗi đang liên kết ACTIVE của một tổ chức. */
   async scopeOf(organizationId: string): Promise<OrgGovernanceScope> {
-    const [org, link] = await Promise.all([
-      prisma.organizations.findUnique({ where: { id: organizationId }, select: { settings: true } }),
-      prisma.chain_partnerships.findFirst({
-        where: { partner_org_id: organizationId, status: "ACTIVE" },
-        orderBy: { created_at: "asc" },
-        select: { chain_org_id: true },
-      }),
-    ])
-    const settings = (org?.settings as Record<string, unknown> | null) ?? {}
-    const industry = typeof settings["industry"] === "string" ? (settings["industry"] as string) : null
-    return { industryKey: industry, parentChainOrgId: link?.chain_org_id ?? null }
+    const chain = await resolveTierChain(organizationId)
+    return { industryKey: chain?.industryKey ?? null, parentChainOrgId: chain?.primaryChain?.organizationId ?? null }
   }
 
   /** Cửa hàng đối tác ACTIVE của một chuỗi — để báo khi chuỗi đổi khoá. */

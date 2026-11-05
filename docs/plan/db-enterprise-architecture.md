@@ -65,16 +65,16 @@ cần test khoá hành vi trước.
 | ☐ | Mục | ADR | Thay | Gate thêm |
 |---|---|---|---|---|
 | [ ] | O-1 [SCHEMA] Index cột con của 34 khoá ngoại + test CI "FK phải có index" | 015 | P2-F3 (một phần) | `migrate diff` sạch |
-| [ ] | O-2 Khai `max` pool từng dịch vụ (web, 3 worker, cron) | 015 | — | Bảng tổng kết nối trong runbook |
+| [x] | O-2 Khai `max` pool từng dịch vụ (web, 3 worker, cron) | 015 | — | Bảng tổng kết nối trong runbook — PR #135 |
 | [ ] | O-3 [VẬN HÀNH] Nâng gói CSDL (I-7) + `pg_stat_statements` + cảnh báo D-O8 | 015 | P1-02 | Cảnh báo thử tới người nhận I-5 |
 | [ ] | O-4 [VẬN HÀNH] Migration ở pre-deploy; production chỉ seed hệ thống | 015 | P1-01 | Build không chạm CSDL |
 | [ ] | O-5 Script CI kiểm expand/contract trên `migration.sql` mới | 015 | — | Ca thử: `DROP COLUMN` không chú thích → đỏ |
 | [ ] | O-6 [VẬN HÀNH] Export đêm ra kho ngoài nhà cung cấp, giữ 35 ngày + 12 tháng | 015 | — | 7 bản liên tiếp |
 | [ ] | O-7 [VẬN HÀNH] Diễn tập PITR lần đầu + biên bản | 015 | P1-02 | RTO đo được ≤ 1 giờ |
 | [ ] | Dọn khoá `NOT VALID` còn sót của PR #127 (`VAN_HANH_CAP_NHAT_CSDL.md` §7) | 015 | — | 0 dòng `NOT convalidated` |
-| [ ] | S-1 Sổ bảng-thuộc-tenant sinh từ schema; `TENANT_TABLES` đọc sổ | 016 | — | `check:docs` + test sổ khớp schema |
+| [x] | S-1 Sổ bảng-thuộc-tenant sinh từ schema; `TENANT_TABLES` đọc sổ | 016 | — | `check:docs` + test sổ khớp schema — PR #135 |
 | [ ] | P-1 Nhãn `@pii` + `pii-registry` + test CI | 014 | — | Cột cá nhân không nhãn → đỏ |
-| [ ] | T-1 `resolveTierChain` trên bảng hiện tại; thay 9 tệp truy vấn trực tiếp | 012 | P2-A2 (phần hàm) | Tenant test khoá công cụ, ma trận, thông báo |
+| [x] | T-1 `resolveTierChain` trên bảng hiện tại; thay 4 bản tra chuỗi cha (CRUD quan hệ, kiểm liên kết, danh sách đối tác chuyển ở T-3) | 012 | P2-A2 (phần hàm) | Tenant test khoá công cụ, ma trận, thông báo — PR #135 |
 | [ ] | I-3 Job đối soát `paid_vnd` / `credit_balance` | 013 | — | Tenant test dữ liệu lệch được phát hiện |
 
 ### GĐ2 — Mô hình tầng (ADR-012)

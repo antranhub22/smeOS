@@ -6,6 +6,8 @@
  */
 import type { Prisma } from "@/generated/prisma/client"
 import { prisma } from "@/core/tenancy/infra/prisma"
+
+import { findPrimaryChainLink } from "./tier-chain-repository"
 import {
   decisionsFromSettings,
   parseDecisions,
@@ -55,12 +57,8 @@ export async function saveMotherGovernance(system: GovernanceSystem, decisions: 
 export async function getUpperLayers(organizationId: string, system: GovernanceSystem, includeChain: boolean): Promise<UpperLayer[]> {
   const layers: UpperLayer[] = withBuiltInLocks(system, [{ tier: "MOTHER", decisions: await getMotherGovernance(system) }])
   if (!includeChain) return layers
-  const link = await prisma.chain_partnerships.findFirst({
-    where: { partner_org_id: organizationId, status: "ACTIVE" },
-    orderBy: { created_at: "asc" },
-    select: { chain_organization: { select: { settings: true } } },
-  })
-  if (link) layers.push({ tier: "CHAIN", decisions: decisionsFromSettings(link.chain_organization.settings, system) })
+  const link = await findPrimaryChainLink(organizationId)
+  if (link) layers.push({ tier: "CHAIN", decisions: decisionsFromSettings(link.chainSettings, system) })
   return layers
 }
 
@@ -71,17 +69,13 @@ export async function getUpperLayers(organizationId: string, system: GovernanceS
 export async function getPolicyGovernanceUpper(organizationId: string, systems: readonly PolicySystem[]): Promise<PolicyGovernanceUpper> {
   const [motherRows, link] = await Promise.all([
     prisma.platform_settings.findMany({ where: { key: { in: systems.map(motherKey) } } }),
-    prisma.chain_partnerships.findFirst({
-      where: { partner_org_id: organizationId, status: "ACTIVE" },
-      orderBy: { created_at: "asc" },
-      select: { chain_organization: { select: { settings: true } } },
-    }),
+    findPrimaryChainLink(organizationId),
   ])
   const out: PolicyGovernanceUpper = {}
   for (const system of systems) {
     const mother = motherRows.find((r) => r.key === motherKey(system))
     const layers: UpperLayer[] = withBuiltInLocks(system, [{ tier: "MOTHER", decisions: parseDecisions(mother?.value) }])
-    if (link) layers.push({ tier: "CHAIN", decisions: decisionsFromSettings(link.chain_organization.settings, system) })
+    if (link) layers.push({ tier: "CHAIN", decisions: decisionsFromSettings(link.chainSettings, system) })
     out[system] = layers
   }
   return out

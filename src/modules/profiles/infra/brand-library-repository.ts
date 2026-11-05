@@ -1,5 +1,6 @@
 import { prisma } from "@/core/tenancy/infra/prisma"
 import type { TenantContext } from "@/core/tenancy"
+import { findPrimaryChainLink } from "@/modules/organization/infra/tier-chain-repository"
 import type { DbClient } from "./db-client"
 import type { BrandLibraryCategory, BrandLibraryStatus } from "../domain/brand-library"
 import type {
@@ -120,12 +121,8 @@ export class BrandLibraryRepository implements IBrandLibraryRepository {
   }
 
   async chainOf(organizationId: string): Promise<{ chainOrgId: string; chainName: string } | null> {
-    const link = await this.db.chain_partnerships.findFirst({
-      where: { partner_org_id: organizationId, status: "ACTIVE" },
-      orderBy: { created_at: "asc" },
-      select: { chain_org_id: true, chain_organization: { select: { name: true } } },
-    })
-    return link ? { chainOrgId: link.chain_org_id, chainName: link.chain_organization.name } : null
+    const link = await findPrimaryChainLink(organizationId, this.db)
+    return link ? { chainOrgId: link.chainOrgId, chainName: link.chainName } : null
   }
 
   async listSharedBy(chainOrgId: string): Promise<BrandLibraryItemRow[]> {

@@ -29,7 +29,12 @@ if (globalForPrisma.schemaVersion !== CURRENT_SCHEMA_VERSION) {
 export const prisma: PrismaClient =
   globalForPrisma.smeosPrisma ??
   new PrismaClient({
-    adapter: new PrismaPg({ connectionString: env.DATABASE_URL }),
+    adapter: new PrismaPg({
+      connectionString: env.DATABASE_URL,
+      // ADR-015 D-O5: pool có trần rõ ràng và tên ứng dụng để `pg_stat_activity` phân biệt dịch vụ.
+      max: env.DATABASE_POOL_MAX,
+      application_name: "smeos-web",
+    }),
   })
 
 if (process.env.NODE_ENV !== "production") {

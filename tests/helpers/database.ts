@@ -1,167 +1,27 @@
 import { prisma } from "@/core/tenancy/infra/prisma"
+import { TENANT_SCOPED_TABLES } from "@/core/tenancy/tenant-table-registry"
 import { Prisma } from "@/generated/prisma/client"
 import { env } from "@/lib/env"
 import { ensureSystemRoles } from "@/modules/organization/use-cases/ensure-system-roles"
 import { seedAiCapabilities, seedVisionModels } from "@/core/ai/infra/seed-ai-registry"
 
-const TENANT_TABLES = [
-  // Đơn hàng đa nguồn P3 (31/10/2026) — yêu cầu duyệt theo đơn (con của orders)
-  "order_approval_requests",
-  // Trung tâm Tích hợp GĐ1 (30/10/2026) + GĐ4A kênh bán (31/10/2026) — con trước cha; integration_governance là bảng nền tảng
-  "sales_channel_orders",
-  "sales_channel_listings",
-  "integration_sync_cursors",
-  "integration_events",
-  "integration_connections",
-  "integration_governance",
-  // Bước 4 — thu hút khách (30/10/2026) — con trước cha
-  "link_events",
-  "leads",
-  "short_links",
-  // Công cụ 11 — link hồ sơ cửa hàng công khai (30/10/2026)
-  "store_share_links",
-  // Công cụ 45 — thư viện thương hiệu (30/10/2026) — con trước cha
-  "brand_library_versions",
-  "brand_library_items",
-  // SDAGF P1 (29/10/2026) — hàng đợi xoá payload kho tệp
-  "storage_outbox",
-  // Kho dữ liệu v2 (29/10/2026) — landing page đã sinh
-  "landing_pages",
-  // Đánh giá khách do chủ tiệm nhập (30/10/2026)
-  "shop_reviews",
-  // Nhóm công cụ 6 — tính giá (29/10/2026) — con trước cha
-  "product_recipe_items",
-  "product_recipes",
-  "material_price_history",
-  "materials",
-  // Chat nội bộ (26/10/2026) — con trước cha để TRUNCATE gọn
-  "internal_chat_messages",
-  "internal_chat_participants",
-  "internal_chat_conversations",
-  // Thông báo đa tầng (27/10/2026) — bảng tenant + bảng cấu hình nền tảng dùng chung
-  "notification_inbox",
-  "notification_user_preferences",
-  "notification_store_defaults",
-  "notification_org_policies",
-  "notification_hard_locks",
-  "notification_event_visibility",
-  "notification_channel_activations",
-  // Phân hệ Market Intelligence — Đợt A
-  "content_opportunities",
-  // Product Intelligence (Quét theo ảnh sản phẩm) — nợ #113, đã trả 21/09/2026
-  "product_analysis_runs",
-  // Journey Engine — chưa có đường ghi, dọn sẵn để ca thử tương lai không sót dữ liệu
-  "journey_runs",
-  // Thẻ Chào / Swipe Brochure — 03/10/2026 (+ tích hợp/đối soát/thông báo 05/10/2026)
-  "staff_notifications",
-  "greeting_notifications",
-  "greeting_payment_events",
-  "greeting_integrations",
-  "greeting_share_links",
-  "greeting_message_reads",
-  "greeting_messages",
-  "greeting_catalog_events",
-  "greeting_journey_events",
-  "greeting_sessions",
-  "greeting_catalog_products",
-  "greeting_catalogs",
-  // Gói chiến dịch Creative Studio (Khu vực F, Chặng 07–14) — 23/09/2026
-  "campaign_packages",
-  // Bài Khu vực B tự lưu — 24/09/2026
-  "content_drafts",
-  "voice_clones",
-  "music_tracks",
-  // Content Engine (P27) — 25/09/2026
-  "content_generations",
-  // Nền AI — AI-1. `ai_capabilities` và `ai_models` KHÔNG nằm ở đây: chúng là
-  // sổ đăng ký cấp nền tảng, không phải dữ liệu thử của một tổ chức, và
-  // `ensureSystemRoles` phía dưới cũng không dựng lại chúng.
-  "chat_messages",
-  "chat_conversations",
-  "chat_channel_integrations",
-  // Phát hành mã giảm giá (30/10/2026) — con trước cha
-  "voucher_redemptions",
-  "vouchers",
-  "voucher_batches",
-  // Marketing & Sales Center (01/11/2026) — con trước cha
-  "quotation_items",
-  "quotation_revisions",
-  "quotations",
-  "customer_interactions",
-  "print_renditions",
-  "asset_usages",
-  "campaigns",
-  "customer_segments",
-  // Sáu bảng dưới đây có `organization_id` nhưng thiếu ở TRUNCATE cho tới
-  // RS-2 18/09 (`check-docs.mjs` bắt được) — dữ liệu thử của chúng có thể
-  // sót lại giữa các ca thử. `occasions` và `product_copies` đã có ca thử
-  // cách ly ở nơi khác; bốn bảng còn lại có ca thử mới trong
-  // `tests/tenant/scoping-gaps-18-09.test.ts`.
-  "occasions",
-  "product_copies",
-  "content_metrics",
-  "template_overrides",
-  "catalog_links",
-  "product_inventory",
-  "product_bookings",
-  "chain_branches",
-  "customer_consents",
-  "customer_occasions",
-  // Chức năng 12 — Điều phối đơn hàng (25/09/2026)
-  "order_exceptions",
-  "order_qc_records",
-  "order_coordinations",
-  "order_payments",
-  "order_info_requests",
-  "order_change_requests",
-  "partners",
-  // ĐP-3 — Nền quản trị trường (26/09/2026). Có organization_id (ghi đè
-  // theo tổ chức); field_definitions/field_catalogs/field_catalog_values
-  // là bảng nền tảng, KHÔNG có ở đây, giống platform_operators/ai_models.
-  "field_config_overrides",
-  "order_events",
-  "order_assignments",
-  "order_items",
-  "orders",
-  "customers",
-  "video_scenes",
-  "video_jobs",
-  "ai_evaluations",
-  "ai_requests",
-  "ai_policies",
-  "integration_tokens",
-  "product_analyses",
-  "product_images",
-  "product_variants",
-  "pricing_rules",
-  "product_change_requests",
-  "product_revisions",
-  "product_import_batches",
-  "products",
-  "audit_logs",
-  "usage",
-  // Checklist ALG 10.6 — sổ cái credit
-  "credit_transactions",
-  "usage_limits",
-  "provider_cost_entries",
-  "subscription_invoices",
-  "subscriptions",
-  "job_events",
-  "generation_jobs",
-  "idempotency_keys",
-  "assets",
-  "business_profiles",
-  "brand_profiles",
-  "capability_overrides",
-  "role_capabilities",
-  "memberships",
-  "roles",
-  "branches",
-  "workspaces",
+/**
+ * Bảng dọn giữa các ca thử. Bảng có `organization_id` lấy từ sổ sinh tự động (ADR-016 S-1) —
+ * thêm bảng tenant mới không phải sửa ở đây. TRUNCATE … CASCADE nên thứ tự không quan trọng.
+ */
+const TEST_EXTRA_TABLES = [
+  // Bảng không có organization_id nhưng ca thử nào cũng tạo dòng mới
   "organizations",
-  "sessions",
   "users",
+  "role_capabilities",
+  // Bảng cấu hình nền tảng dùng chung mà ca thử thông báo 4 tầng / tích hợp ghi vào
+  "notification_channel_activations",
+  "notification_event_visibility",
+  "notification_hard_locks",
+  "integration_governance",
 ] as const
+
+const TENANT_TABLES: readonly string[] = [...TENANT_SCOPED_TABLES, ...TEST_EXTRA_TABLES]
 
 /**
  * Chốt chặn: bộ test này XOÁ SẠCH database nó trỏ tới, nên nó chỉ được phép

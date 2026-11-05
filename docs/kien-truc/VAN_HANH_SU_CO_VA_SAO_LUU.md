@@ -41,6 +41,20 @@ chép chéo vùng ở nhà cung cấp kho.
 - Đối soát registry ↔ kho, **chỉ đọc**: `npm run storage:reconcile` (thêm `-- --json` cho toàn bộ
   báo cáo). Chạy hằng tuần và trước mỗi lần bàn giao; tệp mồ côi và bản ghi thiếu tệp ghi vào biên bản.
 
+### 1.1 Ngân sách kết nối CSDL (ADR-015 D-O5, bước O-2)
+
+| Dịch vụ | Kết nối tối đa | Nguồn |
+|---|---|---|
+| `smeos-web` (pool Prisma) | `DATABASE_POOL_MAX`, mặc định 10 | `src/core/tenancy/infra/prisma.ts` |
+| Worker nghiên cứu thị trường trong web (LISTEN) | 1 | `src/modules/market-intelligence/infra/worker.ts` |
+| `smeos-worker-media`, `-video`, `-vision` | 1 mỗi worker (`psycopg.connect`) | `workers/*/jobs/worker.py`, `workers/media_ai/video/video_worker.py` |
+| `pre-deploy` / `db:deploy` | 1, chỉ lúc deploy | `scripts/db-deploy.mjs` |
+| **Tổng lúc chạy, 1 instance web** | **≈ 15** | |
+
+Luật: tổng ≤ 70% giới hạn kết nối của gói CSDL. Chạy nhiều instance web (D-17) → nhân dòng web theo số
+instance, hoặc thêm PgBouncer (ADR-015 D-O5). Xem kết nối theo dịch vụ:
+`SELECT application_name, count(*) FROM pg_stat_activity GROUP BY 1;`
+
 ## 2. Quan trắc
 
 Mọi log máy chủ là một dòng JSON (`src/core/observability/log.ts`): `ts`, `level`, `event` và
