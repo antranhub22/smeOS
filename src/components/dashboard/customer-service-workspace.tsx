@@ -205,12 +205,12 @@ export function CustomerServiceWorkspace() {
           {daTai && !loi && activeConvs.length > 0 && (
             <div className="flex flex-col gap-2">
               {activeConvs.slice(0, 5).map((conv) => (
-                <button
+                <Button variant="ghost"
                   type="button"
                   key={conv.id}
                   aria-label={`Mở hội thoại với ${conv.customer_name ?? "khách"}`}
                   onClick={() => router.push(`/hoi-thoai?id=${conv.id}` as Route)}
-                  className="w-full text-left"
+                  className="text-[length:inherit] h-auto p-0 justify-start font-[inherit] gap-0 w-full text-left"
                 >
                   <Card className="flex items-center gap-3 p-3 hover:border-primary/40 transition-colors cursor-pointer">
                     <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-primary/10">
@@ -236,7 +236,7 @@ export function CustomerServiceWorkspace() {
                     </div>
                     <ChevronRight size={14} className="flex-shrink-0 text-text-muted" />
                   </Card>
-                </button>
+                </Button>
               ))}
             </div>
           )}

@@ -77,14 +77,14 @@ export function ToolkitPicker({
           entries.map((entry) => {
             const Icon = ICONS[entry.iconKey]
             return (
-              <button
+              <Button variant="ghost"
                 type="button"
                 key={entry.navKey}
                 onClick={() => {
                   onPin(entry.navKey)
                   onClose()
                 }}
-                className={cn(
+                className={cn("h-auto", "justify-start font-[inherit]", 
                   "flex w-full cursor-pointer items-center gap-2.5 px-3 py-2 text-meta text-left",
                   "hover:bg-surface-alt transition-colors duration-100"
                 )}
@@ -94,7 +94,7 @@ export function ToolkitPicker({
                 )}
                 <span className="flex-1 truncate text-text">{entry.label}</span>
                 <PinOff size={11} className="shrink-0 text-text-muted/60" aria-hidden />
-              </button>
+              </Button>
             )
           })
         )}

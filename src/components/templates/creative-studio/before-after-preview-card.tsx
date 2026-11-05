@@ -133,7 +133,7 @@ export function BeforeAfterPreviewCard({
     <Card className="overflow-hidden rounded-2xl border border-border bg-surface p-5 shadow-sm flex flex-col gap-4 w-full">
       <div className="flex items-center justify-between">
         <div>
-          <div className="text-xs font-semibold text-text-muted">Tối ưu ảnh Studio Preview</div>
+          <div className="text-caption font-semibold text-text-muted">Tối ưu ảnh Studio Preview</div>
           <div className="text-title font-extrabold text-text">{title}</div>
         </div>
         <Badge tone={badgeTone} className="gap-1">
@@ -144,67 +144,67 @@ export function BeforeAfterPreviewCard({
 
       {/* Thanh chọn trực quan 4 Tab so sánh bằng mắt - Luôn hiển thị đầy đủ */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 p-1.5 bg-surface-alt rounded-xl border border-border">
-        <button
+        <Button variant="ghost"
           type="button"
           onClick={() => {
             setActiveMode("studio")
             onSelectVariant?.("studio")
           }}
-          className={`flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+          className={`h-auto flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-caption font-bold transition-all cursor-pointer ${
             activeMode === "studio"
-              ? "bg-surface text-primary border border-primary/25 shadow-sm"
+              ? "bg-surface text-primary border border-primary/25 shadow-sm hover:bg-surface"
               : "text-text-muted hover:text-text hover:bg-surface/60"
           }`}
         >
           <Sparkles size={13} className={activeMode === "studio" ? "text-primary" : "text-text-muted"} />
           ✨ Studio
-        </button>
-        <button
+        </Button>
+        <Button variant="ghost"
           type="button"
           onClick={() => {
             setActiveMode("lifestyle")
             onSelectVariant?.("lifestyle")
           }}
-          className={`flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+          className={`h-auto flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-caption font-bold transition-all cursor-pointer ${
             activeMode === "lifestyle"
-              ? "bg-surface text-secondary-text border border-secondary/30 shadow-sm"
+              ? "bg-surface text-secondary-text border border-secondary/30 shadow-sm hover:bg-surface"
               : "text-text-muted hover:text-text hover:bg-surface/60"
           }`}
         >
           <Camera size={13} className={activeMode === "lifestyle" ? "text-secondary-text" : "text-text-muted"} />
           🌿 Ảnh Mộc
-        </button>
-        <button
+        </Button>
+        <Button variant="ghost"
           type="button"
           onClick={() => {
             setActiveMode("bokeh")
             onSelectVariant?.("bokeh")
           }}
-          className={`flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+          className={`h-auto flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-caption font-bold transition-all cursor-pointer ${
             activeMode === "bokeh"
-              ? "bg-surface text-warning border border-warning/30 shadow-sm"
+              ? "bg-surface text-warning border border-warning/30 shadow-sm hover:bg-surface"
               : "text-text-muted hover:text-text hover:bg-surface/60"
           }`}
         >
           <Coffee size={13} className={activeMode === "bokeh" ? "text-warning" : "text-text-muted"} />
           ☕ Bokeh
-        </button>
-        <button
+        </Button>
+        <Button variant="ghost"
           type="button"
           onClick={() => setActiveMode("original")}
-          className={`flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+          className={`h-auto flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-caption font-bold transition-all cursor-pointer ${
             activeMode === "original"
-              ? "bg-surface text-text border border-border shadow-sm"
+              ? "bg-surface text-text border border-border shadow-sm hover:bg-surface"
               : "text-text-muted hover:text-text hover:bg-surface/60"
           }`}
         >
           <ImageIcon size={13} className="text-text-muted" />
           📷 Ảnh Gốc
-        </button>
+        </Button>
       </div>
 
       {/* Chú giải nhanh phương án đang xem */}
-      <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-surface-alt/70 border border-border text-xs">
+      <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-surface-alt/70 border border-border text-caption">
         <VariantIcon className="h-4 w-4 text-primary flex-shrink-0" />
         <span className="font-bold text-text flex-shrink-0">
           {currentVariantInfo.title}:
@@ -228,12 +228,12 @@ export function BeforeAfterPreviewCard({
             {isRejected ? (
               <>
                 <Sparkles size={32} className="text-danger opacity-60" />
-                <span className="text-xs font-bold text-danger">Ảnh AI bị từ chối — Chuyển sang xem &quot;Ảnh gốc&quot;</span>
+                <span className="text-caption font-bold text-danger">Ảnh AI bị từ chối — Chuyển sang xem &quot;Ảnh gốc&quot;</span>
               </>
             ) : (
               <>
                 <Sparkles size={32} className="opacity-40" />
-                <span className="text-xs">Đang nạp ảnh xem trước...</span>
+                <span className="text-caption">Đang nạp ảnh xem trước...</span>
               </>
             )}
           </div>
@@ -243,28 +243,28 @@ export function BeforeAfterPreviewCard({
       {/* Selector tỷ lệ Smart Reframe nếu có */}
       {availableRatios.length > 0 && onRatioChange && (
         <div className="flex items-center justify-center gap-2 pt-1">
-          <span className="text-xs font-medium text-text-muted">Tỷ lệ:</span>
+          <span className="text-caption font-medium text-text-muted">Tỷ lệ:</span>
           <div className="flex gap-1">
             {(["1:1", "4:5", "9:16", "16:9"] as const).map((r) => (
-              <button
+              <Button variant="outline"
                 type="button"
                 key={r}
                 onClick={() => onRatioChange(r)}
-                className={`px-2.5 py-1 text-xs font-bold rounded-lg border transition cursor-pointer ${
+                className={`h-auto gap-0 px-2.5 py-1 text-caption font-bold rounded-lg border transition cursor-pointer ${
                   aspectRatio === r
-                    ? "border-primary bg-primary/10 text-primary"
+                    ? "border-primary bg-primary/10 text-primary hover:bg-primary/10"
                     : "border-border text-text-muted hover:border-text-muted"
                 }`}
               >
                 {r}
-              </button>
+              </Button>
             ))}
           </div>
         </div>
       )}
 
       <div className="flex items-center justify-between border-t border-border pt-4">
-        <div className="text-xs text-text-muted">
+        <div className="text-caption text-text-muted">
           Đang xem: <strong className="text-text font-semibold">{currentVariantInfo.title}</strong> • Tỷ lệ: {aspectRatio}
         </div>
         <div className="flex items-center gap-2">

@@ -52,12 +52,12 @@ export function DesktopNavHeader({
       <span className={cn("absolute inset-x-0 top-0 h-0.5", theme.accent)} aria-hidden />
 
       {collapsed ? (
-        <button
+        <Button variant="ghost"
           type="button"
           onClick={onToggleCollapse}
           aria-label="Mở rộng menu (⌘B)"
           title="Mở rộng menu (⌘B)"
-          className={cn(
+          className={cn("font-[inherit] gap-0", 
             "group relative flex h-9 w-9 items-center justify-center rounded-lg text-primary-foreground shadow-xs",
             "transition-transform duration-150 hover:scale-105 active:scale-95",
             "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-offset-2",
@@ -76,7 +76,7 @@ export function DesktopNavHeader({
             className="absolute opacity-0 transition-opacity duration-150 group-hover:opacity-100"
             aria-hidden
           />
-        </button>
+        </Button>
       ) : (
         <>
           <div

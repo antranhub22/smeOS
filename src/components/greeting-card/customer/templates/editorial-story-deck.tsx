@@ -61,14 +61,14 @@ export function EditorialStoryDeck({ products, catalogName, onSelectProduct }: E
                       <Button variant="ghost"
                         type="button"
                         onClick={() => onSelectProduct(p)}
-                        className="gap-0 h-11 flex-1 rounded-full bg-text text-body-sm font-bold text-surface active:scale-[0.99] hover:bg-text"
+                        className="px-0 py-0 gap-0 h-11 flex-1 rounded-full bg-text text-body-sm font-bold text-surface active:scale-[0.99] hover:bg-text"
                       >
                         Đặt mẫu này
                       </Button>
                       <Button variant="outline"
                         type="button"
                         onClick={() => setOpen(p)}
-                        className="gap-0 h-11 rounded-full border border-border px-5 text-body-sm font-semibold"
+                        className="py-0 gap-0 h-11 rounded-full border border-border px-5 text-body-sm font-semibold"
                       >
                         Chi tiết
                       </Button>

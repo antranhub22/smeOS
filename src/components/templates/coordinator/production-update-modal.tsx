@@ -115,7 +115,7 @@ export function ProductionUpdateModal({
               <span className="px-2 py-0.5 rounded bg-cool-100 text-cool-700 text-caption font-black uppercase border border-cool-200">
                 BƯỚC 4 • GIA CÔNG
               </span>
-              <h3 className="text-base font-extrabold text-text">
+              <h3 className="text-body font-extrabold text-text">
                 Tiến Độ & Ảnh Thành Phẩm (T08/T10)
               </h3>
             </div>
@@ -154,12 +154,12 @@ export function ProductionUpdateModal({
         </div>
       }
     >
-      <div className="p-1 flex flex-col gap-4 text-xs">
+      <div className="p-1 flex flex-col gap-4 text-caption">
         {/* Thanh trượt tiến độ */}
         <div className="p-4 rounded-xl border border-border bg-surface-alt flex flex-col gap-2">
           <div className="flex items-center justify-between">
             <label className="font-bold text-text">Tiến độ hoàn thiện sản phẩm:</label>
-            <span className="font-extrabold text-alert-700 text-base">{progress}%</span>
+            <span className="font-extrabold text-alert-700 text-body">{progress}%</span>
           </div>
           <Input
             type="range"
@@ -171,34 +171,34 @@ export function ProductionUpdateModal({
             className="w-full accent-red-600 cursor-pointer h-2 bg-surface rounded-lg p-0 border-0"
           />
           <div className="flex justify-between text-caption font-semibold text-text-muted mt-1">
-            <button
+            <Button variant="ghost"
               type="button"
               onClick={() => setProgress(25)}
-              className="hover:text-text cursor-pointer"
+              className="text-[length:inherit] h-auto p-0 font-[inherit] gap-0 hover:text-text cursor-pointer"
             >
               25% Lên cốt
-            </button>
-            <button
+            </Button>
+            <Button variant="ghost"
               type="button"
               onClick={() => setProgress(50)}
-              className="hover:text-text cursor-pointer"
+              className="text-[length:inherit] h-auto p-0 font-[inherit] gap-0 hover:text-text cursor-pointer"
             >
               50% Cắm hoa chính
-            </button>
-            <button
+            </Button>
+            <Button variant="ghost"
               type="button"
               onClick={() => setProgress(75)}
-              className="hover:text-text cursor-pointer"
+              className="text-[length:inherit] h-auto p-0 font-[inherit] gap-0 hover:text-text cursor-pointer"
             >
               75% Điểm lá & nơ
-            </button>
-            <button
+            </Button>
+            <Button variant="ghost"
               type="button"
               onClick={() => setProgress(100)}
-              className="text-alert-700 font-bold hover:underline cursor-pointer"
+              className="text-[length:inherit] h-auto p-0 gap-0 text-alert-700 font-bold hover:underline cursor-pointer"
             >
               100% Cắm xong ➔
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -206,7 +206,7 @@ export function ProductionUpdateModal({
         {progress >= 80 && (
           <div className="p-4 rounded-xl border-2 border-mint-200 bg-mint-50/40 flex flex-col gap-3">
             <div className="flex items-center justify-between">
-              <span className="font-extrabold text-mint-950 text-xs flex items-center gap-1.5">
+              <span className="font-extrabold text-mint-950 text-caption flex items-center gap-1.5">
                 <Camera size={14} className="text-mint-700" />
                 Ảnh Hoa Thành Phẩm Thực Tế (Bắt buộc cho Bước 5 Kiểm định QC):
               </span>
@@ -226,25 +226,25 @@ export function ProductionUpdateModal({
                       className="w-full h-full object-cover"
                     />
                     <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-1">
-                      <button
+                      <Button variant="ghost"
                         type="button"
                         aria-label="Hiển thị thông tin"
                         onClick={() => window.open(finishedImageUrl, "_blank")}
-                        className="p-1 rounded bg-surface text-text hover:bg-white text-xs shadow cursor-pointer"
+                        className="h-auto font-[inherit] gap-0 p-1 rounded bg-surface text-text hover:bg-white text-caption shadow cursor-pointer"
                       >
                         <Eye size={12} />
-                      </button>
-                      <button
+                      </Button>
+                      <Button variant="ghost"
                         type="button"
                         aria-label="Xóa ảnh"
                         onClick={() => {
                           setFinishedImageUrl("")
                           setFinishedAssetId(null)
                         }}
-                        className="p-1 rounded bg-alert-600 text-white hover:bg-alert-700 text-xs shadow cursor-pointer"
+                        className="h-auto font-[inherit] gap-0 p-1 rounded bg-alert-600 text-white hover:bg-alert-700 text-caption shadow cursor-pointer"
                       >
                         <Trash2 size={12} />
-                      </button>
+                      </Button>
                     </div>
                     <span className="absolute bottom-0 inset-x-0 bg-black/60 text-white text-caption font-bold text-center py-0.5">
                       Thành phẩm
@@ -264,7 +264,7 @@ export function ProductionUpdateModal({
                   placeholder="Tải ảnh thợ chụp lên (nút bên dưới)"
                   value={finishedAssetId ? "(ảnh đã tải lên kho của tiệm)" : ""}
                   readOnly
-                  className="w-full px-2.5 py-1.5 rounded-lg border border-border bg-surface text-text text-xs focus:outline-none focus:border-mint-500"
+                  className="w-full px-2.5 py-1.5 rounded-lg border border-border bg-surface text-text text-caption focus:outline-none focus:border-mint-500"
                 />
                 <div className="flex items-center gap-2">
                   <input
@@ -279,7 +279,7 @@ export function ProductionUpdateModal({
                     variant="outline"
                     size="sm"
                     onClick={() => fileInputRef.current?.click()}
-                    className="text-xs h-7 gap-1 border-mint-300 text-mint-800 bg-mint-100 hover:bg-mint-200 font-bold"
+                    className="text-caption h-7 gap-1 border-mint-300 text-mint-800 bg-mint-100 hover:bg-mint-200 font-bold"
                   >
                     <Upload size={12} />
                     <span>Tải ảnh thành phẩm thợ gửi</span>
@@ -310,14 +310,14 @@ export function ProductionUpdateModal({
               placeholder="Mô tả sự cố (ví dụ: Thiếu 3 cành Hồng Ohara kem, xin đổi sang Hồng Juliet cùng tone màu...)"
               value={issueNote}
               onChange={(e) => setIssueNote(e.target.value)}
-              className="w-full p-2.5 rounded-lg border border-sand-200 bg-surface text-text text-xs focus:outline-none focus:border-alert-500 mt-1"
+              className="w-full p-2.5 rounded-lg border border-sand-200 bg-surface text-text text-caption focus:outline-none focus:border-alert-500 mt-1"
             />
           )}
         </div>
       </div>
 
       {error && (
-        <div role="alert" className="mx-5 mb-3 p-3 rounded-xl border border-alert-300 bg-alert-50 text-alert-800 text-xs font-semibold">
+        <div role="alert" className="mx-5 mb-3 p-3 rounded-xl border border-alert-300 bg-alert-50 text-alert-800 text-caption font-semibold">
           {error}
         </div>
       )}

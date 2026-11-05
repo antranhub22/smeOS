@@ -109,7 +109,7 @@ export function CatalogProductPicker({ catalogId, compact = false, onItemCountCh
                 onClick={() => handleRemove(item.product.id, item.product.name)}
                 disabled={removingId === item.product.id}
                 aria-label={`Xóa ${item.product.name}`}
-                className="font-[inherit] gap-0 absolute top-1.5 right-1.5 p-1.5 rounded-lg bg-black/50 hover:bg-danger/80 text-white"
+                className="text-[length:inherit] h-auto font-[inherit] gap-0 absolute top-1.5 right-1.5 p-1.5 rounded-lg bg-black/50 hover:bg-danger/80 text-white"
               >
                 {removingId === item.product.id ? (
                   <Loader2 size={11} className="animate-spin motion-reduce:animate-none" />
@@ -189,7 +189,7 @@ export function CatalogProductPicker({ catalogId, compact = false, onItemCountCh
                           : [...ci.selectedBudgets, b.id]
                       )
                     }
-                    className={`gap-0 px-2 py-0.5 rounded-lg text-caption font-medium transition border ${
+                    className={`h-auto gap-0 px-2 py-0.5 rounded-lg text-caption font-medium transition border ${
                       isSelected
                         ? "border-primary bg-primary text-white font-bold hover:bg-primary"
                         : "border-border bg-surface text-text-muted hover:border-primary/40 hover:bg-surface"
@@ -211,7 +211,7 @@ export function CatalogProductPicker({ catalogId, compact = false, onItemCountCh
                     type="button"
                     key={occ}
                     onClick={() => ci.setFilterOccasion(isSelected ? "" : occ)}
-                    className={`gap-0 px-2 py-0.5 rounded-lg text-caption font-medium transition border ${
+                    className={`h-auto gap-0 px-2 py-0.5 rounded-lg text-caption font-medium transition border ${
                       isSelected
                         ? "border-primary bg-primary text-white font-bold hover:bg-primary"
                         : "border-border bg-surface text-text-muted hover:border-primary/40 hover:bg-surface"
@@ -233,7 +233,7 @@ export function CatalogProductPicker({ catalogId, compact = false, onItemCountCh
                     type="button"
                     key={cat}
                     onClick={() => ci.setFilterCategory(isSelected ? "" : cat)}
-                    className={`gap-0 px-2 py-0.5 rounded-lg text-caption font-medium transition border ${
+                    className={`h-auto gap-0 px-2 py-0.5 rounded-lg text-caption font-medium transition border ${
                       isSelected
                         ? "border-primary bg-primary/10 text-primary font-bold hover:bg-primary/10"
                         : "border-border bg-surface text-text-muted hover:border-primary/40 hover:bg-surface"
@@ -270,7 +270,7 @@ export function CatalogProductPicker({ catalogId, compact = false, onItemCountCh
                       type="button"
                       key={fl}
                       onClick={() => ci.setFilterFlowerType(isSelected ? "" : fl)}
-                      className={`gap-0 px-2 py-0.5 rounded-lg text-caption font-medium transition border ${
+                      className={`h-auto gap-0 px-2 py-0.5 rounded-lg text-caption font-medium transition border ${
                         isSelected
                           ? "border-primary bg-primary/10 text-primary font-bold hover:bg-primary/10"
                           : "border-border bg-surface text-text-muted hover:border-primary/40 hover:bg-surface"
@@ -293,7 +293,7 @@ export function CatalogProductPicker({ catalogId, compact = false, onItemCountCh
                         type="button"
                         key={col}
                         onClick={() => ci.setFilterColorTone(isSelected ? "" : col)}
-                        className={`gap-0 px-2 py-0.5 rounded-lg text-caption font-medium transition border ${
+                        className={`h-auto gap-0 px-2 py-0.5 rounded-lg text-caption font-medium transition border ${
                           isSelected
                             ? "border-primary bg-primary/10 text-primary font-bold hover:bg-primary/10"
                             : "border-border bg-surface text-text-muted hover:border-primary/40 hover:bg-surface"
@@ -348,7 +348,7 @@ export function CatalogProductPicker({ catalogId, compact = false, onItemCountCh
                     onClick={() => void handleAdd(product.id)}
                     disabled={addingId === product.id}
                     aria-label={`Thêm ${product.name} vào bộ sưu tập`}
-                    className="font-[inherit] gap-0 p-2 rounded-lg bg-primary/10 hover:bg-primary/20 text-primary transition-colors shrink-0"
+                    className="text-[length:inherit] h-auto font-[inherit] gap-0 p-2 rounded-lg bg-primary/10 hover:bg-primary/20 text-primary transition-colors shrink-0"
                   >
                     {addingId === product.id ? (
                       <Loader2 size={15} className="animate-spin motion-reduce:animate-none" />

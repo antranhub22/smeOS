@@ -1,5 +1,6 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
 import React from "react"
 import { Sparkles } from "@/components/ui/icon-set/sparkles"
 import { ArrowRight } from "@/components/ui/icon-set/arrow-right"
@@ -23,7 +24,7 @@ export function FeaturedSpotlightCard({
   const { organization } = useSession()
   const terms = getIndustryTerminology(organization?.industry)
   return (
-    <button
+    <Button variant="ghost"
       type="button"
       disabled={disabled}
       onClick={() => {
@@ -31,10 +32,10 @@ export function FeaturedSpotlightCard({
       }}
       aria-disabled={disabled || undefined}
       title={disabled ? COMING_SOON_LABEL : undefined}
-      className={`group relative w-full text-left p-5 sm:p-6 md:p-7 rounded-2xl border-2 transition-all duration-200 cursor-pointer overflow-hidden focus:outline-none focus:ring-2 focus:ring-primary ${
+      className={`text-[length:inherit] h-auto justify-start font-[inherit] gap-0 group relative w-full text-left p-5 sm:p-6 md:p-7 rounded-2xl border-2 transition-all duration-200 cursor-pointer overflow-hidden focus:outline-none focus:ring-2 focus:ring-primary ${
         disabled
-          ? "opacity-50 cursor-not-allowed bg-surface-alt border-border"
-          : "bg-surface border-primary/30 hover:border-primary hover:shadow-xl hover:-translate-y-0.5"
+          ? "opacity-50 cursor-not-allowed bg-surface-alt border-border hover:bg-surface-alt"
+          : "bg-surface border-primary/30 hover:border-primary hover:shadow-xl hover:-translate-y-0.5 hover:bg-surface"
       }`}
     >
       {/* Lớp nền tinh tế và ánh sáng viền */}
@@ -146,6 +147,6 @@ export function FeaturedSpotlightCard({
           </span>
         </div>
       </div>
-    </button>
+    </Button>
   )
 }

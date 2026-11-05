@@ -34,7 +34,7 @@ export function OrderHistorySheet({ members, currentSendCode }: { members: Famil
         <Button variant="outline"
           type="button"
           onClick={() => setOpen(true)}
-          className="inline-flex h-11 items-center gap-1.5 rounded-xl border border-border bg-surface px-3.5 text-body-sm font-semibold text-text hover:bg-surface-muted"
+          className="py-0 inline-flex h-11 items-center gap-1.5 rounded-xl border border-border bg-surface px-3.5 text-body-sm font-semibold text-text hover:bg-surface-muted"
         >
           <History size={16} aria-hidden="true" />
           Lịch sử đơn hàng ({orderCount})

@@ -197,10 +197,10 @@ export function ProductManagerWorkspace() {
             <ul className="flex flex-col divide-y divide-border">
               {unready.slice(0, 8).map(({ product, readiness }) => (
                 <li key={product.id}>
-                  <button
+                  <Button variant="ghost"
                     type="button"
                     onClick={() => router.push("/san-pham" as Route)}
-                    className="flex cursor-pointer min-h-12 w-full items-center gap-3 rounded-lg px-2 py-2 text-left hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-primary"
+                    className="text-[length:inherit] justify-start font-[inherit] flex cursor-pointer min-h-12 w-full items-center gap-3 rounded-lg px-2 py-2 text-left hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-primary"
                   >
                     {product.masterImageUrl ? (
                       // eslint-disable-next-line @next/next/no-img-element
@@ -240,7 +240,7 @@ export function ProductManagerWorkspace() {
                       </span>
                       <ChevronRight size={16} className="text-text-muted" aria-hidden="true" />
                     </div>
-                  </button>
+                  </Button>
                 </li>
               ))}
             </ul>

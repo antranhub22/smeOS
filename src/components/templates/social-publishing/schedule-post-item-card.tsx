@@ -59,14 +59,14 @@ export function SchedulePostItemCard({
       )}
       <div className="flex-1 min-w-0">
         {/* Nút chính phủ cả thẻ (after:inset-0) — ô chọn và nút Thử lại nằm trên lớp phủ */}
-        <button
+        <Button variant="ghost"
           type="button"
           onClick={onSelect}
           aria-current={isActive || undefined}
-          className="block w-full truncate text-left text-body font-bold text-text after:absolute after:inset-0 after:rounded-[inherit] after:content-[''] focus-visible:outline-none focus-visible:after:ring-2 focus-visible:after:ring-ring"
+          className="h-auto p-0 justify-start gap-0 block w-full truncate text-left text-body font-bold text-text after:absolute after:inset-0 after:rounded-[inherit] after:content-[''] focus-visible:outline-none focus-visible:after:ring-2 focus-visible:after:ring-ring"
         >
           {item.title}
-        </button>
+        </Button>
         <div className="text-caption text-text-muted flex items-center gap-2 mt-0.5">
           <span className="font-semibold text-primary">{item.channel_label}</span>
           <span>·</span>
@@ -102,7 +102,7 @@ export function SchedulePostItemCard({
               e.stopPropagation()
               onRetry()
             }}
-            className="text-xs text-danger hover:bg-danger/10 gap-1 h-7 px-2"
+            className="text-caption text-danger hover:bg-danger/10 gap-1 h-7 px-2"
           >
             <RefreshCw size={12} /> Thử lại
           </Button>

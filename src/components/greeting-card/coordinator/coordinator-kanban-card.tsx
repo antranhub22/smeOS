@@ -102,7 +102,7 @@ export function CoordinatorKanbanCard({
       <Button variant="ghost"
         type="button"
         onClick={onOpenDetail}
-        className="h-auto p-0 justify-start font-[inherit] flex flex-col gap-2 text-left w-full cursor-pointer group"
+        className="text-[length:inherit] h-auto p-0 justify-start font-[inherit] flex flex-col gap-2 text-left w-full cursor-pointer group"
       >
         <div className="flex items-start justify-between gap-1 border-b border-border/60 pb-1.5 w-full">
           <div className="flex items-center gap-1.5 min-w-0">

@@ -58,7 +58,7 @@ export function ShopProfileReadiness() {
             type="button"
             onClick={handleConfirm}
             disabled={isConfirming}
-            className="flex items-center gap-1.5 rounded-lg border border-warning-border bg-surface px-3 py-2 text-body-sm font-bold text-text hover:bg-surface-alt disabled:opacity-50"
+            className="h-auto flex items-center gap-1.5 rounded-lg border border-warning-border bg-surface px-3 py-2 text-body-sm font-bold text-text hover:bg-surface-alt disabled:opacity-50"
           >
             {isConfirming ? <Loader2 size={14} className="animate-spin motion-reduce:animate-none" /> : <Check size={14} className="text-success" />}
             <span>Xác nhận dùng thông tin này</span>

@@ -290,17 +290,17 @@ export function CustomerDetailModal({ customerId, onClose, onUpdated }: Customer
                           <div className="font-semibold text-text">{c.label}</div>
                           <div className="text-text-muted">Kênh: {c.channel}</div>
                         </div>
-                        <button
+                        <Button variant="ghost"
                           type="button"
                           onClick={() => !actionLoading && handleToggleConsent(c.channel, isGranted)}
-                          className={`px-3 py-1.5 rounded-full font-bold transition-colors cursor-pointer ${
+                          className={`text-[length:inherit] h-auto gap-0 px-3 py-1.5 rounded-full font-bold transition-colors cursor-pointer ${
                             actionLoading ? "opacity-50 cursor-not-allowed" : ""
                           } ${
-                            isGranted ? "bg-success-bg text-success hover:opacity-85" : "bg-surface-alt text-text-muted hover:bg-surface-alt/80"
+                            isGranted ? "bg-success-bg text-success hover:opacity-85 hover:bg-success-bg" : "bg-surface-alt text-text-muted hover:bg-surface-alt/80"
                           }`}
                         >
                           {isGranted ? "✓ Đã đồng ý" : "✕ Chưa cấp phép"}
-                        </button>
+                        </Button>
                       </div>
                     )
                   })}

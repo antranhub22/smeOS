@@ -58,7 +58,7 @@ export function SplitCompareDeck({ products, catalogName, onSelectProduct }: Spl
               setRight(left)
             }}
             aria-label="Đổi chỗ hai mẫu"
-            className="font-[inherit] gap-0 flex h-10 w-10 items-center justify-center rounded-full border border-border bg-surface hover:bg-surface"
+            className="px-0 py-0 text-[length:inherit] font-[inherit] gap-0 flex h-10 w-10 items-center justify-center rounded-full border border-border bg-surface hover:bg-surface"
           >
             <ArrowLeftRight size={16} aria-hidden="true" />
           </Button>
@@ -69,14 +69,14 @@ export function SplitCompareDeck({ products, catalogName, onSelectProduct }: Spl
       <div className="grid grid-cols-2 gap-3">
         {pair.map((p, i) => (
           <article key={`${p.id}-${i}`} className="flex flex-col">
-            <Button variant="ghost" type="button" onClick={() => setOpen(p)} className="h-auto p-0 font-[inherit] gap-0 aspect-[3/4] overflow-hidden rounded-2xl bg-surface-alt hover:bg-surface-alt" aria-label={`Chi tiết ${p.name}`}>
+            <Button variant="ghost" type="button" onClick={() => setOpen(p)} className="text-[length:inherit] h-auto p-0 font-[inherit] gap-0 aspect-[3/4] overflow-hidden rounded-2xl bg-surface-alt hover:bg-surface-alt" aria-label={`Chi tiết ${p.name}`}>
               <ProductImage product={p} />
             </Button>
             <ProductInfo product={p} level="compact" size="sm" as="h2" titleClassName="min-h-[2.5em] font-semibold" className="mt-2" />
             <Button variant="primary"
               type="button"
               onClick={() => onSelectProduct(p)}
-              className="gap-0 mt-2 h-11 rounded-xl bg-primary text-body-sm font-bold text-white active:scale-[0.99] hover:bg-primary"
+              className="px-0 py-0 gap-0 mt-2 h-11 rounded-xl bg-primary text-body-sm font-bold text-white active:scale-[0.99] hover:bg-primary"
             >
               Chọn mẫu này
             </Button>

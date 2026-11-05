@@ -145,7 +145,7 @@ export function PaymentProofUploader({
           type="button"
           onClick={() => fileInputRef.current?.click()}
           disabled={disabled || uploading}
-          className="font-[inherit] w-full p-4 rounded-xl border-2 border-dashed border-primary/40 hover:border-primary bg-primary/5 hover:bg-primary/10 transition-colors flex flex-col items-center justify-center gap-2 cursor-pointer disabled:opacity-50 text-center"
+          className="text-[length:inherit] h-auto font-[inherit] w-full p-4 rounded-xl border-2 border-dashed border-primary/40 hover:border-primary bg-primary/5 hover:bg-primary/10 transition-colors flex flex-col items-center justify-center gap-2 cursor-pointer disabled:opacity-50 text-center"
         >
           <div className="w-10 h-10 rounded-full bg-primary/15 text-primary flex items-center justify-center">
             <ImageIcon size={20} />

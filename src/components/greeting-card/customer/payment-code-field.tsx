@@ -52,7 +52,7 @@ export function PaymentCodeField({
         <Button variant="outline"
           type="button"
           onClick={() => onApply(input.trim())}
-          className="h-10 px-3 rounded-lg border border-primary text-primary font-bold text-body-sm whitespace-nowrap flex items-center gap-1.5 hover:bg-primary/5 transition"
+          className="py-0 h-10 px-3 rounded-lg border border-primary text-primary font-bold text-body-sm whitespace-nowrap flex items-center gap-1.5 hover:bg-primary/5 transition"
         >
           <Wallet size={14} /> {t("greetingCard.customer.options.apply")}
         </Button>

@@ -1,5 +1,6 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
 import React from "react"
 import { Wand2 } from "@/components/ui/icon-set/wand2"
 import { Sliders } from "@/components/ui/icon-set/sliders"
@@ -78,12 +79,12 @@ export const OptimizationModeSelector: React.FC<OptimizationModeSelectorProps> =
 
       {/* Mode Switcher Tabs */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-        <button
+        <Button variant="outline"
           type="button"
           onClick={() => onModeChange("auto")}
-          className={`flex items-start gap-3 rounded-xl border p-3.5 text-left transition-all cursor-pointer ${
+          className={`text-[length:inherit] h-auto justify-start font-[inherit] flex items-start gap-3 rounded-xl border p-3.5 text-left transition-all cursor-pointer ${
             mode === "auto"
-              ? "border-primary bg-primary/5 shadow-xs ring-1 ring-primary/20"
+              ? "border-primary bg-primary/5 shadow-xs ring-1 ring-primary/20 hover:bg-primary/5"
               : "border-border bg-surface hover:bg-surface-alt/60"
           }`}
         >
@@ -103,14 +104,14 @@ export const OptimizationModeSelector: React.FC<OptimizationModeSelectorProps> =
               1-Click Studio: Tự động tách nền studio, xóa watermark, cân bằng sáng và tăng nét cánh hoa đạt chuẩn bán hàng.
             </p>
           </div>
-        </button>
+        </Button>
 
-        <button
+        <Button variant="outline"
           type="button"
           onClick={() => onModeChange("custom")}
-          className={`flex items-start gap-3 rounded-xl border p-3.5 text-left transition-all cursor-pointer ${
+          className={`text-[length:inherit] h-auto justify-start font-[inherit] flex items-start gap-3 rounded-xl border p-3.5 text-left transition-all cursor-pointer ${
             mode === "custom"
-              ? "border-primary bg-primary/5 shadow-xs ring-1 ring-primary/20"
+              ? "border-primary bg-primary/5 shadow-xs ring-1 ring-primary/20 hover:bg-primary/5"
               : "border-border bg-surface hover:bg-surface-alt/60"
           }`}
         >
@@ -130,12 +131,12 @@ export const OptimizationModeSelector: React.FC<OptimizationModeSelectorProps> =
               Tùy biến từng tác vụ: Chỉ chọn các năng lực bạn muốn hệ thống can thiệp trên ảnh (chỉ xóa watermark, v.v.).
             </p>
           </div>
-        </button>
+        </Button>
       </div>
 
       {/* Content for Auto Mode */}
       {mode === "auto" && (
-        <div className="rounded-xl border border-primary/20 bg-primary/[0.03] p-3.5 flex items-center justify-between text-xs text-text-muted">
+        <div className="rounded-xl border border-primary/20 bg-primary/[0.03] p-3.5 flex items-center justify-between text-caption text-text-muted">
           <div className="flex items-center gap-2.5">
             <div className="flex h-6 w-6 items-center justify-center rounded-full bg-primary/10 text-primary">
               <Check size={14} strokeWidth={2.5} />
@@ -156,21 +157,21 @@ export const OptimizationModeSelector: React.FC<OptimizationModeSelectorProps> =
               Chọn các tác vụ bạn muốn thực thi:
             </span>
             <div className="flex items-center gap-2 text-caption">
-              <button
+              <Button variant="ghost"
                 type="button"
                 onClick={selectAllSupported}
-                className="text-primary hover:underline font-medium cursor-pointer"
+                className="text-[length:inherit] h-auto p-0 gap-0 text-primary hover:underline font-medium cursor-pointer"
               >
                 Chọn tất cả khả dụng
-              </button>
+              </Button>
               <span className="text-border">•</span>
-              <button
+              <Button variant="ghost"
                 type="button"
                 onClick={clearAll}
-                className="text-text-muted hover:text-text cursor-pointer"
+                className="text-[length:inherit] h-auto p-0 font-[inherit] gap-0 text-text-muted hover:text-text cursor-pointer"
               >
                 Bỏ chọn
-              </button>
+              </Button>
             </div>
           </div>
 

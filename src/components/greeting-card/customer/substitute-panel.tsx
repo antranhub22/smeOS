@@ -98,7 +98,7 @@ export function SubstitutePanel({
           return (
             <li key={o.productId}>
               <Button variant="outline" type="button" aria-pressed={on} disabled={busy} onClick={() => pick("OPTION", o.productId)}
-                className={`justify-start font-[inherit] relative flex w-full flex-col gap-1 rounded-xl border bg-surface p-2 text-left hover:bg-surface ${on ? "border-primary ring-2 ring-primary/40" : "border-border"}`}>
+                className={`text-[length:inherit] h-auto justify-start font-[inherit] relative flex w-full flex-col gap-1 rounded-xl border bg-surface p-2 text-left hover:bg-surface ${on ? "border-primary ring-2 ring-primary/40" : "border-border"}`}>
                 <FlowerImage src={o.imageUrl} driveLink={o.driveLink} alt={o.name} className="aspect-square w-full rounded-lg" sizes="(max-width: 640px) 50vw, 200px" fallback="icon" />
                 <span className="text-body-sm font-bold text-text line-clamp-2">{o.name}</span>
                 {on && <Check size={18} className="absolute right-3 top-3 rounded-full bg-primary text-primary-foreground" aria-hidden="true" />}

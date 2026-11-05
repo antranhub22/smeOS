@@ -31,7 +31,7 @@ export function UnavailablePanel({ theme, product, products, onJump, onContact }
             type="button"
             onClick={() => setOpen((v) => !v)}
             aria-expanded={open}
-            className="flex h-12 items-center justify-center gap-2 rounded-2xl text-body-sm font-bold"
+            className="px-0 py-0 flex h-12 items-center justify-center gap-2 rounded-2xl text-body-sm font-bold"
             style={{ background: theme.ctaBg, color: theme.ctaText }}
           >
             <Sparkles size={16} aria-hidden="true" />
@@ -42,7 +42,7 @@ export function UnavailablePanel({ theme, product, products, onJump, onContact }
           <Button variant="outline"
             type="button"
             onClick={onContact}
-            className={`flex h-12 items-center justify-center gap-2 rounded-2xl border text-body-sm font-semibold ${similar.length === 0 ? "col-span-2" : ""}`}
+            className={`px-0 py-0 flex h-12 items-center justify-center gap-2 rounded-2xl border text-body-sm font-semibold ${similar.length === 0 ? "col-span-2" : ""}`}
             style={{ borderColor: theme.controlBorder, background: theme.controlBg }}
           >
             <MessageCircle size={16} aria-hidden="true" />
@@ -57,7 +57,7 @@ export function UnavailablePanel({ theme, product, products, onJump, onContact }
               <Button variant="outline"
                 type="button"
                 onClick={() => onJump(p.id)}
-                className="font-[inherit] flex h-11 w-full items-center justify-between gap-3 rounded-xl border px-3 text-body-sm"
+                className="py-0 font-[inherit] flex h-11 w-full items-center justify-between gap-3 rounded-xl border px-3 text-body-sm"
                 style={{ borderColor: theme.controlBorder, background: theme.controlBg }}
               >
                 <span className="truncate font-semibold">{p.name}</span>

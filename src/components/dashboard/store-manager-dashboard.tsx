@@ -214,22 +214,22 @@ export function StoreManagerDashboard() {
 
           {/* P2 — Lối tắt */}
           <nav aria-label="Lối tắt" className="grid grid-cols-2 gap-2.5">
-            <button
+            <Button variant="outline"
               type="button"
               onClick={() => router.push("/market-intelligence" as never)}
-              className="flex cursor-pointer min-h-11 items-center gap-2 rounded-xl border border-border bg-surface px-3 py-2.5 text-left text-body-sm font-semibold hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-primary"
+              className="justify-start flex cursor-pointer min-h-11 items-center gap-2 rounded-xl border border-border bg-surface px-3 py-2.5 text-left text-body-sm font-semibold hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-primary"
             >
               <TrendingUp size={16} className="text-text-muted" aria-hidden="true" />
               Nghiên cứu thị trường
-            </button>
-            <button
+            </Button>
+            <Button variant="outline"
               type="button"
               onClick={() => router.push("/bo-may" as never)}
-              className="flex cursor-pointer min-h-11 items-center gap-2 rounded-xl border border-border bg-surface px-3 py-2.5 text-left text-body-sm font-semibold hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-primary"
+              className="justify-start flex cursor-pointer min-h-11 items-center gap-2 rounded-xl border border-border bg-surface px-3 py-2.5 text-left text-body-sm font-semibold hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-primary"
             >
               <Cpu size={16} className="text-text-muted" aria-hidden="true" />
               Bộ máy phân tích ảnh
-            </button>
+            </Button>
           </nav>
         </div>
 
@@ -240,13 +240,13 @@ export function StoreManagerDashboard() {
             <Card className="flex flex-col gap-3 p-4">
               <div className="flex items-center justify-between">
                 <h2 className="text-title-sm font-bold">Sản phẩm mới</h2>
-                <button
+                <Button variant="ghost"
                   type="button"
                   onClick={() => router.push("/san-pham" as never)}
-                  className="cursor-pointer text-caption font-semibold text-primary hover:underline focus-visible:outline-2 focus-visible:outline-primary"
+                  className="h-auto p-0 gap-0 cursor-pointer text-caption font-semibold text-primary hover:underline focus-visible:outline-2 focus-visible:outline-primary"
                 >
                   Xem tất cả →
-                </button>
+                </Button>
               </div>
               {!daTai || products === null ? (
                 <SkeletonBlock lines={3} />

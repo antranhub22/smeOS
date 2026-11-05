@@ -1,5 +1,6 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
 import React, { useCallback, useEffect, useState } from "react"
 import { Dialog } from "@/components/ui/dialog"
 import type { UsageDestination } from "@/modules/marketing-center/domain/asset-type"
@@ -115,28 +116,28 @@ export function UseAssetSheet({
     >
       {/* Tab Switcher */}
       <div className="flex border-b border-border mb-4">
-        <button
+        <Button variant="ghost"
           type="button"
           onClick={() => setActiveTab("NEW")}
-          className={`px-4 py-2 text-body-sm font-semibold border-b-2 cursor-pointer transition-colors ${
+          className={`h-auto gap-0 px-4 py-2 text-body-sm font-semibold border-b-2 cursor-pointer transition-colors ${
             activeTab === "NEW"
               ? "border-primary text-primary"
               : "border-transparent text-text-muted hover:text-text"
           }`}
         >
           Tạo nơi dùng mới
-        </button>
-        <button
+        </Button>
+        <Button variant="ghost"
           type="button"
           onClick={() => setActiveTab("LIST")}
-          className={`px-4 py-2 text-body-sm font-semibold border-b-2 cursor-pointer transition-colors ${
+          className={`h-auto gap-0 px-4 py-2 text-body-sm font-semibold border-b-2 cursor-pointer transition-colors ${
             activeTab === "LIST"
               ? "border-primary text-primary"
               : "border-transparent text-text-muted hover:text-text"
           }`}
         >
           Nơi dùng đã tạo ({usages.length})
-        </button>
+        </Button>
       </div>
 
       {statusMessage && (

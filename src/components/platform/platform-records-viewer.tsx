@@ -364,18 +364,18 @@ export function PlatformRecordsViewer({
                 {Array.from({ length: Math.min(data.totalPages, 7) }, (_, i) => {
                   const p = i + 1
                   return (
-                    <button
+                    <Button variant="ghost"
                       type="button"
                       key={p}
                       onClick={() => void loadPage(p)}
-                      className={`cursor-pointer inline-flex items-center justify-center h-8 w-8 rounded-lg text-caption font-bold transition-colors ${
+                      className={`px-0 py-0 gap-0 cursor-pointer inline-flex items-center justify-center h-8 w-8 rounded-lg text-caption font-bold transition-colors ${
                         p === page
-                          ? "bg-primary text-white"
+                          ? "bg-primary text-white hover:bg-primary"
                           : "hover:bg-surface-alt text-text-muted"
                       }`}
                     >
                       {p}
-                    </button>
+                    </Button>
                   )
                 })}
                 {data.totalPages > 7 && (

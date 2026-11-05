@@ -201,10 +201,10 @@ export function StoreGrowthCenter() {
           <Card className="p-5">
             <h2 className="mb-4 text-title-sm font-bold text-text">Đòn bẩy Tăng trưởng Doanh số</h2>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <button
+              <Button variant="outline"
                 type="button"
                 onClick={() => router.push("/market-intelligence" as never)}
-                className="flex items-start gap-3.5 rounded-lg border border-border bg-surface-alt p-4 text-left transition hover:border-primary/50 cursor-pointer"
+                className="text-[length:inherit] h-auto justify-start font-[inherit] flex items-start gap-3.5 rounded-lg border border-border bg-surface-alt p-4 text-left transition hover:border-primary/50 cursor-pointer hover:bg-surface-alt"
               >
                 <div className="rounded-md bg-primary/10 p-2 text-primary">
                   <TrendingUp className="h-5 w-5" />
@@ -215,12 +215,12 @@ export function StoreGrowthCenter() {
                     Bắt trend hoa hot, cơ hội nội dung & mẫu video tuần này
                   </div>
                 </div>
-              </button>
+              </Button>
 
-              <button
+              <Button variant="outline"
                 type="button"
                 onClick={() => router.push("/creative-studio" as never)}
-                className="flex items-start gap-3.5 rounded-lg border border-border bg-surface-alt p-4 text-left transition hover:border-primary/50 cursor-pointer"
+                className="text-[length:inherit] h-auto justify-start font-[inherit] flex items-start gap-3.5 rounded-lg border border-border bg-surface-alt p-4 text-left transition hover:border-primary/50 cursor-pointer hover:bg-surface-alt"
               >
                 <div className="rounded-md bg-primary/10 p-2 text-primary">
                   <Sparkles className="h-5 w-5" />
@@ -231,7 +231,7 @@ export function StoreGrowthCenter() {
                     Biến ảnh thô thành bộ ảnh marketing & video triệu view
                   </div>
                 </div>
-              </button>
+              </Button>
             </div>
           </Card>
 

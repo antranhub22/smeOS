@@ -41,7 +41,7 @@ export function StoryboardScriptCard({
     <Card className="rounded-2xl border border-border bg-surface p-5 shadow-sm flex flex-col gap-4">
       <div className="flex items-center justify-between">
         <div>
-          <div className="text-xs font-semibold text-text-muted">Video Studio Storyboard Script</div>
+          <div className="text-caption font-semibold text-text-muted">Video Studio Storyboard Script</div>
           <div className="text-title font-extrabold text-text">{title}</div>
         </div>
         <div className="flex items-center gap-2">
@@ -62,15 +62,15 @@ export function StoryboardScriptCard({
             key={scene.sceneNumber}
             className="flex items-start gap-3 rounded-xl border border-border bg-surface-alt/40 p-3"
           >
-            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-bold text-primary">
+            <div className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary/10 text-caption font-bold text-primary">
               #{scene.sceneNumber}
             </div>
             <div className="flex-1">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-bold text-text">{scene.visualCue}</span>
+                <span className="text-caption font-bold text-text">{scene.visualCue}</span>
                 <span className="text-caption text-text-muted">{scene.durationSeconds}s</span>
               </div>
-              <p className="mt-1 text-xs text-text-muted leading-relaxed italic">
+              <p className="mt-1 text-caption text-text-muted leading-relaxed italic">
                 &ldquo;{scene.voiceoverText}&rdquo;
               </p>
             </div>

@@ -76,7 +76,7 @@ export function ProductInquiryForm({ inquiryUrl, product, variantName }: Props) 
       {/* Ô bẫy: người thật không thấy, máy tự điền */}
       <Input type="text" tabIndex={-1} autoComplete="off" aria-hidden="true" value={website} onChange={(e) => setWebsite(e.target.value)} className="hidden" />
       {errors.form && <span className="text-caption text-danger">{errors.form}</span>}
-      <Button variant="primary" type="submit" disabled={sending} className="gap-0 h-11 rounded-xl bg-primary font-bold text-white disabled:opacity-50 hover:bg-primary">
+      <Button variant="primary" type="submit" disabled={sending} className="px-0 py-0 text-[length:inherit] gap-0 h-11 rounded-xl bg-primary font-bold text-white disabled:opacity-50 hover:bg-primary">
         {sending ? "Đang gửi…" : "Gửi tin nhắn"}
       </Button>
     </form>

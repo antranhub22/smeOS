@@ -137,7 +137,7 @@ export function DeliveryDispatchModal({ isOpen, order, onClose, onSubmit }: Deli
               <span className="px-2 py-0.5 rounded bg-cool-100 text-cool-700 text-caption font-black uppercase border border-cool-200">
                 BƯỚC 6 • GIAO HÀNG
               </span>
-              <h3 className="text-base font-extrabold text-text">Giao Hàng & Bằng Chứng Giao (T20/T21)</h3>
+              <h3 className="text-body font-extrabold text-text">Giao Hàng & Bằng Chứng Giao (T20/T21)</h3>
             </div>
           </div>
         </div>
@@ -156,7 +156,7 @@ export function DeliveryDispatchModal({ isOpen, order, onClose, onSubmit }: Deli
         </div>
       }
     >
-      <div className="p-1 flex flex-col gap-4 text-xs">
+      <div className="p-1 flex flex-col gap-4 text-caption">
         <div className="p-3 rounded-xl bg-surface-alt border border-border">
           <div className="font-bold text-text">
             Người nhận: {order.recipientName} · {order.recipientPhone}

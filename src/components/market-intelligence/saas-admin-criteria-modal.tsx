@@ -1,7 +1,11 @@
 "use client";
 
+import { Button } from "@/components/ui/button"
+import { Dialog } from "@/components/ui/dialog"
+import { NativeSelect } from "@/components/ui/select"
+import { Checkbox } from "@/components/ui/checkbox"
+import { Input } from "@/components/ui/input"
 import React, { useState, useMemo } from "react";
-import { X } from "@/components/ui/icon-set/x"
 import { Shield } from "@/components/ui/icon-set/shield"
 import { Sparkles } from "@/components/ui/icon-set/sparkles"
 import { Sliders } from "@/components/ui/icon-set/sliders"
@@ -126,111 +130,83 @@ export function SaaSAdminCriteriaModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
-      <div className="relative w-full max-w-3xl rounded-2xl border border-cool-200 bg-white p-5 sm:p-6 shadow-2xl space-y-4 max-h-[92vh] overflow-y-auto">
-        {/* Header */}
-        <div className="flex items-center justify-between border-b border-cool-100 pb-3">
-          <div className="flex items-center gap-2.5">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-orchid-100 text-orchid-700 shadow-2xs">
-              <Shield size={18} />
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <h2 className="text-base font-bold text-cool-900">
-                  Thiết Lập Tiêu Chí Xu Hướng Thị Trường Vĩ Mô
-                </h2>
-                <span className="text-caption font-extrabold uppercase tracking-wide px-2 py-0.5 rounded-full bg-orchid-100 text-orchid-800 border border-orchid-200">
-                  SaaS Admin Cẩm nang hệ thống
-                </span>
-              </div>
-              <p className="text-xs text-cool-500">
-                Kho 210 Core Keywords phân loại 9 nhóm nghiệp vụ & thư viện ý định thương mại
-              </p>
-            </div>
-          </div>
-          <button
-              aria-label="Đóng"
-            type="button"
-            onClick={onClose}
-            className="flex h-8 w-8 items-center justify-center rounded-full text-text-muted hover:bg-cool-100 transition"
-          >
-            <X size={16} />
-          </button>
-        </div>
-
+    <Dialog open onOpenChange={(o) => { if (!o) onClose() }} size="lg"
+      title={<span className="flex items-center gap-2"><Shield size={18} className="text-accent-text" />Thiết Lập Tiêu Chí Xu Hướng Thị Trường Vĩ Mô</span>}
+      description="Kho 210 Core Keywords phân loại 9 nhóm nghiệp vụ & thư viện ý định thương mại">
+      <div className="space-y-4">
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Thanh công cụ chọn nhanh theo nhóm */}
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <label className="text-xs font-bold text-cool-800 flex items-center gap-1.5">
-                <Layers size={14} className="text-orchid-600" />
+              <label className="text-caption font-bold text-text flex items-center gap-1.5">
+                <Layers size={14} className="text-accent-text" />
                 Danh mục phân nhóm nghiệp vụ (Đang chọn:{" "}
-                <span className="text-orchid-700 font-extrabold">{selectedTopics.length}</span> / 210)
+                <span className="text-accent-text font-extrabold">{selectedTopics.length}</span> / 210)
               </label>
 
               <div className="flex items-center gap-1.5 text-caption">
-                <button
+                <Button variant="outline"
                   type="button"
                   onClick={handleSelectAll210}
-                  className="px-2 py-0.5 rounded-md bg-orchid-50 text-orchid-700 font-semibold hover:bg-orchid-100 border border-orchid-200/70 transition"
+                  className="text-[length:inherit] h-auto gap-0 px-2 py-0.5 rounded-md bg-accent-bg text-accent-text font-semibold hover:bg-accent-bg border border-accent-border/70 transition"
                 >
                   Chọn cả 210
-                </button>
-                <button
+                </Button>
+                <Button variant="ghost"
                   type="button"
                   onClick={handleResetToSeasonal}
-                  className="px-2 py-0.5 rounded-md bg-cool-100 text-cool-700 font-medium hover:bg-cool-200 transition"
+                  className="text-[length:inherit] h-auto gap-0 px-2 py-0.5 rounded-md bg-surface-alt text-text font-medium hover:bg-border transition"
                   title="Gợi ý mùa thu: 20/10, tốt nghiệp, quà tặng cưới"
                 >
                   Đề xuất mùa này
-                </button>
-                <button
+                </Button>
+                <Button variant="ghost"
                   type="button"
                   onClick={() => setSelectedTopics([])}
-                  className="px-2 py-0.5 rounded-md text-cool-500 hover:text-alert-600 transition"
+                  className="text-[length:inherit] h-auto font-[inherit] gap-0 px-2 py-0.5 rounded-md text-text-muted hover:text-danger-text transition"
                 >
                   Xóa hết
-                </button>
+                </Button>
               </div>
             </div>
 
             {/* Tabs danh mục */}
-            <div className="flex gap-1.5 overflow-x-auto pb-1 text-xs no-scrollbar">
-              <button
+            <div className="flex gap-1.5 overflow-x-auto pb-1 text-caption no-scrollbar">
+              <Button variant="ghost"
                 type="button"
                 onClick={() => setActiveCategory("recommended")}
-                className={`flex-shrink-0 px-2.5 py-1 rounded-lg font-bold transition ${
+                className={`text-[length:inherit] h-auto gap-0 flex-shrink-0 px-2.5 py-1 rounded-lg font-bold transition ${
                   activeCategory === "recommended"
-                    ? "bg-orchid-600 text-white shadow-xs"
-                    : "bg-cool-100 text-cool-600 hover:bg-cool-200"
+                    ? "bg-accent text-white shadow-xs hover:bg-accent"
+                    : "bg-surface-alt text-text-muted hover:bg-border"
                 }`}
               >
                 ✨ Đề xuất mùa thu ({getSeasonalRecommendedKeywords().length})
-              </button>
-              <button
+              </Button>
+              <Button variant="ghost"
                 type="button"
                 onClick={() => setActiveCategory("all")}
-                className={`flex-shrink-0 px-2.5 py-1 rounded-lg font-bold transition ${
+                className={`text-[length:inherit] h-auto gap-0 flex-shrink-0 px-2.5 py-1 rounded-lg font-bold transition ${
                   activeCategory === "all"
-                    ? "bg-orchid-600 text-white shadow-xs"
-                    : "bg-cool-100 text-cool-600 hover:bg-cool-200"
+                    ? "bg-accent text-white shadow-xs hover:bg-accent"
+                    : "bg-surface-alt text-text-muted hover:bg-border"
                 }`}
               >
                 Tất cả (210)
-              </button>
+              </Button>
               {MARKET_TAXONOMY_CATEGORIES.map((cat) => (
-                <button
+                <Button variant="ghost"
                   key={cat.id}
                   type="button"
                   onClick={() => setActiveCategory(cat.id)}
-                  className={`flex-shrink-0 px-2.5 py-1 rounded-lg font-medium transition ${
+                  className={`text-[length:inherit] h-auto gap-0 flex-shrink-0 px-2.5 py-1 rounded-lg font-medium transition ${
                     activeCategory === cat.id
-                      ? "bg-orchid-600 text-white shadow-xs"
-                      : "bg-cool-100 text-cool-600 hover:bg-cool-200"
+                      ? "bg-accent text-white shadow-xs hover:bg-accent"
+                      : "bg-surface-alt text-text-muted hover:bg-border"
                   }`}
                 >
                   {cat.shortName} ({cat.keywords.length})
-                </button>
+                </Button>
               ))}
             </div>
 
@@ -238,53 +214,53 @@ export function SaaSAdminCriteriaModal({
             <div className="flex items-center gap-2">
               <div className="relative flex-1">
                 <Search size={13} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-text-muted" />
-                <input
+                <Input
                   type="text"
                   value={filterQuery} aria-label="Lọc từ khóa trong nhóm"
                   onChange={(e) => setFilterQuery(e.target.value)}
                   placeholder="Lọc từ khóa trong nhóm này..."
-                  className="h-8 w-full rounded-lg border border-cool-200 bg-cool-50/70 pl-7 pr-3 text-xs outline-none focus:border-orchid-600 focus:bg-white transition"
+                  className="h-8 w-full rounded-lg border border-border bg-bg/70 pl-7 pr-3 text-caption outline-none focus:border-accent focus:bg-white transition"
                 />
               </div>
-              <button
+              <Button variant="outline"
                 type="button"
                 onClick={handleSelectAllInView}
-                className="inline-flex items-center gap-1 text-caption font-semibold text-orchid-700 bg-orchid-50 hover:bg-orchid-100 px-2.5 h-8 rounded-lg border border-orchid-200 transition"
+                className="py-0 inline-flex items-center gap-1 text-caption font-semibold text-accent-text bg-accent-bg hover:bg-accent-bg px-2.5 h-8 rounded-lg border border-accent-border transition"
               >
                 <CheckSquare size={13} />
                 Chọn nhóm này
-              </button>
-              <button
+              </Button>
+              <Button variant="ghost"
                 type="button"
                 onClick={handleDeselectAllInView}
-                className="text-caption font-medium text-cool-500 hover:text-cool-700 px-2 h-8 rounded-lg hover:bg-cool-100 transition"
+                className="py-0 gap-0 text-caption font-medium text-text-muted hover:text-text px-2 h-8 rounded-lg hover:bg-surface-alt transition"
               >
                 Bỏ chọn
-              </button>
+              </Button>
             </div>
 
             {/* Lưới chọn Keywords */}
-            <div className="flex flex-wrap gap-1.5 p-3 rounded-xl border border-cool-200 bg-cool-50/50 max-h-48 overflow-y-auto">
+            <div className="flex flex-wrap gap-1.5 p-3 rounded-xl border border-border bg-bg/50 max-h-48 overflow-y-auto">
               {displayKeywords.map((k, idx) => {
                 const isSelected = selectedTopics.includes(k);
                 return (
-                  <button
+                  <Button variant="ghost"
                     key={`${k}-${idx}`}
                     type="button"
                     onClick={() => toggleTopic(k)}
-                    className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-xs font-medium transition ${
+                    className={`h-auto inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-caption font-medium transition ${
                       isSelected
-                        ? "bg-orchid-600 text-white shadow-2xs"
-                        : "bg-white border border-cool-200 text-cool-700 hover:border-orchid-300 hover:bg-orchid-50/50"
+                        ? "bg-accent text-white shadow-2xs hover:bg-accent"
+                        : "bg-white border border-border text-text hover:border-accent-border hover:bg-accent-bg/50"
                     }`}
                   >
                     {isSelected ? <Check size={12} className="stroke-[3]" /> : null}
                     <span>{k}</span>
-                  </button>
+                  </Button>
                 );
               })}
               {displayKeywords.length === 0 && (
-                <p className="text-xs text-text-muted py-3 text-center w-full">
+                <p className="text-caption text-text-muted py-3 text-center w-full">
                   Không tìm thấy từ khóa phù hợp với bộ lọc
                 </p>
               )}
@@ -292,12 +268,12 @@ export function SaaSAdminCriteriaModal({
 
             {/* Nhập từ khóa tùy biến thủ công nếu cần */}
             <div className="flex gap-2 pt-1">
-              <input
+              <Input
                 type="text"
                 value={newCustomInput} aria-label="Thêm từ khóa tùy chỉnh"
                 onChange={(e) => setNewCustomInput(e.target.value)}
                 placeholder="Thêm từ khóa tùy chỉnh khác ngoài 210 từ SSOT..."
-                className="h-8 flex-1 rounded-lg border border-cool-200 bg-white px-3 text-xs text-cool-800 outline-none focus:border-orchid-600 transition"
+                className="h-8 flex-1 rounded-lg border border-border bg-white px-3 text-caption text-text outline-none focus:border-accent transition"
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
                     e.preventDefault();
@@ -305,31 +281,31 @@ export function SaaSAdminCriteriaModal({
                   }
                 }}
               />
-              <button
+              <Button variant="outline"
                 type="button"
                 onClick={handleAddCustom}
-                className="px-3 h-8 rounded-lg border border-cool-200 bg-cool-100 text-xs font-semibold text-cool-700 hover:bg-orchid-50 hover:text-orchid-700 transition"
+                className="py-0 gap-0 px-3 h-8 rounded-lg border border-border bg-surface-alt text-caption font-semibold text-text hover:bg-accent-bg hover:text-accent-text transition"
               >
                 + Thêm
-              </button>
+              </Button>
             </div>
           </div>
 
           {/* 2. Trọng số đánh giá 3 trục */}
-          <div className="space-y-2 rounded-xl border border-cool-200 bg-cool-50/60 p-3.5 text-xs">
+          <div className="space-y-2 rounded-xl border border-border bg-bg/60 p-3.5 text-caption">
             <div className="flex items-center justify-between">
-              <span className="font-bold text-cool-800 flex items-center gap-1.5">
-                <Sliders size={14} className="text-orchid-600" />
+              <span className="font-bold text-text flex items-center gap-1.5">
+                <Sliders size={14} className="text-accent-text" />
                 Cân bằng trọng số tính Điểm Cơ Hội Thị Trường:
               </span>
-              <span className="text-caption font-bold text-orchid-700">
+              <span className="text-caption font-bold text-accent-text">
                 Tổng: {trendWeight + viralWeight + commercialWeight}%
               </span>
             </div>
 
             <div className="grid grid-cols-3 gap-3 pt-1">
               <div>
-                <label className="text-caption text-cool-500 block mb-1">
+                <label className="text-caption text-text-muted block mb-1">
                   Độ nóng tìm kiếm ({trendWeight}%)
                 </label>
                 <input
@@ -338,11 +314,11 @@ export function SaaSAdminCriteriaModal({
                   max={80}
                   value={trendWeight} aria-label="Trọng số độ nóng tìm kiếm"
                   onChange={(e) => setTrendWeight(Number(e.target.value))}
-                  className="w-full accent-purple-600"
+                  className="w-full accent-accent"
                 />
               </div>
               <div>
-                <label className="text-caption text-cool-500 block mb-1">
+                <label className="text-caption text-text-muted block mb-1">
                   Lan tỏa TikTok/Reels ({viralWeight}%)
                 </label>
                 <input
@@ -351,11 +327,11 @@ export function SaaSAdminCriteriaModal({
                   max={80}
                   value={viralWeight} aria-label="Trọng số lan truyền"
                   onChange={(e) => setViralWeight(Number(e.target.value))}
-                  className="w-full accent-purple-600"
+                  className="w-full accent-accent"
                 />
               </div>
               <div>
-                <label className="text-caption text-cool-500 block mb-1">
+                <label className="text-caption text-text-muted block mb-1">
                   Thương mại chốt đơn ({commercialWeight}%)
                 </label>
                 <input
@@ -364,7 +340,7 @@ export function SaaSAdminCriteriaModal({
                   max={80}
                   value={commercialWeight} aria-label="Trọng số thương mại"
                   onChange={(e) => setCommercialWeight(Number(e.target.value))}
-                  className="w-full accent-purple-600"
+                  className="w-full accent-accent"
                 />
               </div>
             </div>
@@ -373,58 +349,57 @@ export function SaaSAdminCriteriaModal({
           {/* 3. Phạm vi & Tự động phát hành */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div className="space-y-1">
-              <label className="text-xs font-bold text-cool-800 flex items-center gap-1.5">
-                <Globe size={14} className="text-orchid-600" />
+              <label className="text-caption font-bold text-text flex items-center gap-1.5">
+                <Globe size={14} className="text-accent-text" />
                 Khu vực địa lý tổng thể
               </label>
-              <select
+              <NativeSelect
                 value={geoScope} aria-label="Khu vực địa lý tổng thể"
                 onChange={(e) => setGeoScope(e.target.value)}
-                className="h-8 w-full rounded-lg border border-cool-200 bg-white px-2.5 text-xs text-cool-800 outline-none focus:border-orchid-600 transition"
+                className="h-8 w-full rounded-lg border border-border bg-white px-2.5 text-caption text-text outline-none focus:border-accent transition"
               >
                 <option value="VN">Toàn quốc (Việt Nam)</option>
                 <option value="VN-HN">Trọng điểm Hà Nội & Miền Bắc</option>
                 <option value="VN-SG">Trọng điểm TP.HCM & Miền Nam</option>
-              </select>
+              </NativeSelect>
             </div>
 
             <div className="flex items-center gap-2 pt-3 sm:pt-5">
-              <input
-                type="checkbox"
+              <Checkbox
                 id="autoBroadcast"
                 checked={autoBroadcast}
-                onChange={(e) => setAutoBroadcast(e.target.checked)}
-                className="h-4 w-4 rounded accent-purple-600"
+                onCheckedChange={(checked) => setAutoBroadcast((checked === true))}
+                className="h-4 w-4 rounded accent-accent"
               />
-              <label htmlFor="autoBroadcast" className="text-xs text-cool-700 select-none cursor-pointer">
+              <label htmlFor="autoBroadcast" className="text-caption text-text select-none cursor-pointer">
                 Tự động đồng bộ báo cáo cho tất cả Tenant sau khi quét
               </label>
             </div>
           </div>
 
           {/* Footer Actions */}
-          <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-cool-100">
-            <button
+          <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-border">
+            <Button variant="outline"
               type="button"
               onClick={onClose}
               disabled={isSaving}
-              className="rounded-xl border border-cool-200 px-4 py-2 text-xs font-semibold text-cool-700 hover:bg-cool-100 transition"
+              className="h-auto gap-0 rounded-xl border border-border px-4 py-2 text-caption font-semibold text-text hover:bg-surface-alt transition"
             >
               Đóng
-            </button>
-            <button
+            </Button>
+            <Button variant="ghost"
               type="submit"
               disabled={isSaving}
-              className="inline-flex items-center gap-1.5 rounded-xl bg-orchid-600 px-4 py-2 text-xs font-bold text-white hover:bg-orchid-700 shadow-sm transition disabled:opacity-50"
+              className="h-auto inline-flex items-center gap-1.5 rounded-xl bg-accent px-4 py-2 text-caption font-bold text-white hover:bg-accent-text shadow-sm transition disabled:opacity-50"
             >
               <Sparkles size={14} />
               {isSaving
                 ? "Đang lưu & phát lệnh quét..."
                 : `Lưu ${selectedTopics.length} tiêu chí & Kích hoạt quét vĩ mô`}
-            </button>
+            </Button>
           </div>
         </form>
       </div>
-    </div>
+    </Dialog>
   );
 }

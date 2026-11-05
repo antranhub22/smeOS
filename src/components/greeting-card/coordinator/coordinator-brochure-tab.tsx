@@ -119,7 +119,7 @@ export function CoordinatorBrochureTab({ canDecideInTransitCancel = false }: { c
           <div className="flex flex-wrap gap-2" role="group" aria-label="Lọc việc">
             {BUCKETS.map((b) => (
               <Button variant="outline" key={b} type="button" aria-pressed={bucket === b} onClick={() => setBucket(bucket === b ? null : b)}
-                className={`gap-0 h-9 rounded-xl border px-3 text-caption font-bold ${
+                className={`py-0 gap-0 h-9 rounded-xl border px-3 text-caption font-bold ${
                   bucket === b ? "border-primary bg-primary text-white hover:bg-primary" : b === "ACTION" && counts.ACTION > 0 ? "border-danger/40 bg-danger-bg text-danger hover:bg-danger-bg" : "border-border text-text-muted hover:bg-surface-muted"
                 }`}>
                 {WORK_BUCKET_LABEL[b]} ({counts[b]})
@@ -142,7 +142,7 @@ export function CoordinatorBrochureTab({ canDecideInTransitCancel = false }: { c
                 type="button"
                 aria-label="Xoá tìm kiếm"
                 onClick={() => setSearch("")}
-                className="h-auto p-0 font-[inherit] gap-0 absolute right-2.5 top-1/2 -translate-y-1/2 text-text-muted hover:text-text"
+                className="text-[length:inherit] h-auto p-0 font-[inherit] gap-0 absolute right-2.5 top-1/2 -translate-y-1/2 text-text-muted hover:text-text"
               >
                 <X size={13} aria-hidden="true" />
               </Button>
@@ -160,7 +160,7 @@ export function CoordinatorBrochureTab({ canDecideInTransitCancel = false }: { c
               <>
                 {dayChips.map((c) => (
                   <Button variant="outline" key={c.label} type="button" aria-pressed={day === c.id} onClick={() => setDay(c.id)}
-                    className={`gap-0 h-9 rounded-xl border px-3 text-caption font-bold ${day === c.id ? "border-primary bg-primary text-white hover:bg-primary" : "border-border text-text-muted hover:bg-surface-muted"}`}>
+                    className={`py-0 gap-0 h-9 rounded-xl border px-3 text-caption font-bold ${day === c.id ? "border-primary bg-primary text-white hover:bg-primary" : "border-border text-text-muted hover:bg-surface-muted"}`}>
                     {c.label}
                   </Button>
                 ))}
@@ -175,7 +175,7 @@ export function CoordinatorBrochureTab({ canDecideInTransitCancel = false }: { c
             <Button variant="ghost"
               type="button"
               onClick={() => setViewMode("kanban")}
-              className={`gap-0 px-3 py-1 text-caption font-bold rounded-lg transition-colors ${
+              className={`h-auto gap-0 px-3 py-1 text-caption font-bold rounded-lg transition-colors ${
                 viewMode === "kanban" ? "bg-primary text-white hover:bg-primary" : "text-text-muted hover:text-text"
               }`}
             >
@@ -184,7 +184,7 @@ export function CoordinatorBrochureTab({ canDecideInTransitCancel = false }: { c
             <Button variant="ghost"
               type="button"
               onClick={() => setViewMode("grid")}
-              className={`gap-0 px-3 py-1 text-caption font-bold rounded-lg transition-colors ${
+              className={`h-auto gap-0 px-3 py-1 text-caption font-bold rounded-lg transition-colors ${
                 viewMode === "grid" ? "bg-primary text-white hover:bg-primary" : "text-text-muted hover:text-text"
               }`}
             >

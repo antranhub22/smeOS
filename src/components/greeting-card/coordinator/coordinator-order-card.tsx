@@ -169,7 +169,7 @@ export function CoordinatorOrderCard({
           <Button variant="ghost"
             type="button"
             onClick={() => onOpen({ type: "detail", order })}
-            className="h-auto p-0 justify-start font-[inherit] flex items-center gap-2 text-left group cursor-pointer"
+            className="text-[length:inherit] h-auto p-0 justify-start font-[inherit] flex items-center gap-2 text-left group cursor-pointer"
           >
             <span className="text-title-sm font-extrabold text-text group-hover:text-primary transition-colors">
               #{order.code}

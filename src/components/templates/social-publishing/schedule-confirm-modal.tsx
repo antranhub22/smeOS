@@ -95,7 +95,7 @@ export function ScheduleConfirmModal({
             size="sm"
             onClick={onClose}
             disabled={isLoading}
-            className="text-xs"
+            className="text-caption"
           >
             Hủy bỏ
           </Button>
@@ -103,7 +103,7 @@ export function ScheduleConfirmModal({
             size="sm"
             onClick={handleSubmit}
             disabled={isLoading || selectedPosts.length === 0}
-            className="text-xs font-bold gap-1.5 shadow-xs"
+            className="text-caption font-bold gap-1.5 shadow-xs"
           >
             {isLoading && <RefreshCw size={13} className="animate-spin motion-reduce:animate-none" />}
             Xác nhận lên lịch ({selectedPosts.length})
@@ -111,7 +111,7 @@ export function ScheduleConfirmModal({
         </div>
       }
     >
-      <div className="flex flex-col gap-4 text-xs">
+      <div className="flex flex-col gap-4 text-caption">
         {/* Danh sách bài viết được chọn */}
         <div>
           <div className="text-caption font-bold uppercase tracking-wider text-text-muted mb-2">
@@ -149,14 +149,14 @@ export function ScheduleConfirmModal({
 
           <div className="grid grid-cols-1 gap-2">
             {/* Option 1: Đăng ngay */}
-            <button
+            <Button variant="outline"
               type="button"
               aria-pressed={mode === "now"}
               onClick={() => setMode("now")}
-              className={`flex items-center justify-between p-3 rounded-xl border text-left transition-all cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
+              className={`text-[length:inherit] h-auto font-[inherit] gap-0 flex items-center justify-between p-3 rounded-xl border text-left transition-all cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
                 mode === "now"
-                  ? "border-primary bg-primary/5 shadow-xs ring-1 ring-primary"
-                  : "border-border bg-surface hover:border-border-hover"
+                  ? "border-primary bg-primary/5 shadow-xs ring-1 ring-primary hover:bg-primary/5"
+                  : "border-border bg-surface hover:border-border-hover hover:bg-surface"
               }`}
             >
               <div className="flex items-center gap-3">
@@ -169,17 +169,17 @@ export function ScheduleConfirmModal({
                 </div>
               </div>
               {mode === "now" && <CheckCircle2 size={16} className="text-primary" />}
-            </button>
+            </Button>
 
             {/* Option 2: Giờ trưa vàng */}
-            <button
+            <Button variant="outline"
               type="button"
               aria-pressed={mode === "lunch"}
               onClick={() => setMode("lunch")}
-              className={`flex items-center justify-between p-3 rounded-xl border text-left transition-all cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
+              className={`text-[length:inherit] h-auto font-[inherit] gap-0 flex items-center justify-between p-3 rounded-xl border text-left transition-all cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
                 mode === "lunch"
-                  ? "border-primary bg-primary/5 shadow-xs ring-1 ring-primary"
-                  : "border-border bg-surface hover:border-border-hover"
+                  ? "border-primary bg-primary/5 shadow-xs ring-1 ring-primary hover:bg-primary/5"
+                  : "border-border bg-surface hover:border-border-hover hover:bg-surface"
               }`}
             >
               <div className="flex items-center gap-3">
@@ -192,17 +192,17 @@ export function ScheduleConfirmModal({
                 </div>
               </div>
               {mode === "lunch" && <CheckCircle2 size={16} className="text-primary" />}
-            </button>
+            </Button>
 
             {/* Option 3: Giờ tối vàng */}
-            <button
+            <Button variant="outline"
               type="button"
               aria-pressed={mode === "evening"}
               onClick={() => setMode("evening")}
-              className={`flex items-center justify-between p-3 rounded-xl border text-left transition-all cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
+              className={`text-[length:inherit] h-auto font-[inherit] gap-0 flex items-center justify-between p-3 rounded-xl border text-left transition-all cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
                 mode === "evening"
-                  ? "border-primary bg-primary/5 shadow-xs ring-1 ring-primary"
-                  : "border-border bg-surface hover:border-border-hover"
+                  ? "border-primary bg-primary/5 shadow-xs ring-1 ring-primary hover:bg-primary/5"
+                  : "border-border bg-surface hover:border-border-hover hover:bg-surface"
               }`}
             >
               <div className="flex items-center gap-3">
@@ -215,17 +215,17 @@ export function ScheduleConfirmModal({
                 </div>
               </div>
               {mode === "evening" && <CheckCircle2 size={16} className="text-primary" />}
-            </button>
+            </Button>
 
             {/* Option 4: Tùy chỉnh ngày & giờ */}
-            <button
+            <Button variant="outline"
               type="button"
               aria-pressed={mode === "custom"}
               onClick={() => setMode("custom")}
-              className={`flex items-center justify-between p-3 rounded-xl border text-left transition-all cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
+              className={`text-[length:inherit] h-auto font-[inherit] gap-0 flex items-center justify-between p-3 rounded-xl border text-left transition-all cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
                 mode === "custom"
-                  ? "border-primary bg-primary/5 shadow-xs ring-1 ring-primary"
-                  : "border-border bg-surface hover:border-border-hover"
+                  ? "border-primary bg-primary/5 shadow-xs ring-1 ring-primary hover:bg-primary/5"
+                  : "border-border bg-surface hover:border-border-hover hover:bg-surface"
               }`}
             >
               <div className="flex items-center gap-3">
@@ -238,18 +238,18 @@ export function ScheduleConfirmModal({
                 </div>
               </div>
               {mode === "custom" && <CheckCircle2 size={16} className="text-primary" />}
-            </button>
+            </Button>
           </div>
 
           {/* Input ngày giờ tùy chỉnh */}
           {mode === "custom" && (
             <div className="mt-3 p-3 rounded-xl border border-primary/30 bg-primary/5 flex items-center justify-between gap-3">
-              <label className="text-xs font-semibold text-text">Thời gian phát bài:</label>
+              <label className="text-caption font-semibold text-text">Thời gian phát bài:</label>
               <Input
                 type="datetime-local"
                 value={customTime}
                 onChange={(e) => setCustomTime(e.target.value)}
-                className="px-3 py-1.5 rounded-lg border border-border bg-surface text-xs font-bold text-text focus:outline-none focus:ring-1 focus:ring-primary w-auto"
+                className="px-3 py-1.5 rounded-lg border border-border bg-surface text-caption font-bold text-text focus:outline-none focus:ring-1 focus:ring-primary w-auto"
               />
             </div>
           )}

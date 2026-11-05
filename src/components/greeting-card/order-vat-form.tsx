@@ -73,7 +73,7 @@ export function OrderVatForm({ vat, onSaved }: { vat: OrderVatData; onSaved: (ne
                 key={r}
                 type="button"
                 onClick={() => setRate(r)}
-                className={`gap-0 rounded-full border px-3 py-1 font-semibold ${rate === r ? "border-primary bg-primary/10 text-primary hover:bg-primary/10" : "border-border text-text-muted"}`}
+                className={`text-[length:inherit] h-auto gap-0 rounded-full border px-3 py-1 font-semibold ${rate === r ? "border-primary bg-primary/10 text-primary hover:bg-primary/10" : "border-border text-text-muted"}`}
               >
                 {r}%
               </Button>

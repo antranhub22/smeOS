@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@/components/ui/button"
 import React from "react";
 import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
 import { AlertTriangle } from "@/components/ui/icon-set/alert-triangle"
@@ -19,43 +20,43 @@ export function ProductImprovementCard({
   onCreateVariation,
 }: ProductImprovementCardProps) {
   return (
-    <div className="rounded-2xl border border-cool-200 bg-white p-5 shadow-sm space-y-4">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-cool-100 pb-3">
+    <div className="rounded-2xl border border-border bg-white p-5 shadow-sm space-y-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-border pb-3">
         <div className="flex items-center gap-2">
-          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-sand-50 text-sand-700">
+          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-warning-bg text-warning-text">
             <Lightbulb size={18} />
           </span>
           <div>
-            <h3 className="text-sm font-bold text-cool-900">4. Khuyến nghị cải tiến sản phẩm</h3>
-            <p className="text-caption text-cool-500">
+            <h3 className="text-body-sm font-bold text-text">4. Khuyến nghị cải tiến sản phẩm</h3>
+            <p className="text-caption text-text-muted">
               Định hướng cải tiến thẩm mỹ và bao gói nhằm tối đa hóa tỷ lệ chốt đơn và chia sẻ mạng xã hội
             </p>
           </div>
         </div>
 
         {onCreateVariation && (
-          <button
+          <Button variant="ghost"
             type="button"
             onClick={onCreateVariation}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-lg bg-cool-100 hover:bg-cool-200 text-cool-800 transition"
+            className="h-auto inline-flex items-center gap-1.5 px-3 py-1.5 text-caption font-bold rounded-lg bg-surface-alt hover:bg-border text-text transition"
           >
-            <Sparkles size={13} className="text-blush-600" />
+            <Sparkles size={13} className="text-primary" />
             Tạo biến thể marketing
-          </button>
+          </Button>
         )}
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {/* Cột 1: KEEP (Nên giữ lại) */}
-        <div className="rounded-xl border border-mint-200 bg-mint-50/40 p-4 space-y-2.5">
-          <div className="flex items-center gap-2 text-mint-900 font-bold text-xs">
+        <div className="rounded-xl border border-success-border bg-success-bg/40 p-4 space-y-2.5">
+          <div className="flex items-center gap-2 text-success-text font-bold text-caption">
             <CheckCircle2 size={16} className="text-success" />
             <span>Giữ — Điểm mạnh nên giữ lại</span>
           </div>
-          <ul className="space-y-2 text-xs text-mint-950 font-medium leading-relaxed">
+          <ul className="space-y-2 text-caption text-success-text font-medium leading-relaxed">
             {improvements.keep.map((item, i) => (
               <li key={i} className="flex items-start gap-1.5">
-                <span className="text-mint-600 font-bold">•</span>
+                <span className="text-success-text font-bold">•</span>
                 <span>{item}</span>
               </li>
             ))}
@@ -63,15 +64,15 @@ export function ProductImprovementCard({
         </div>
 
         {/* Cột 2: IMPROVE (Cần cải thiện) */}
-        <div className="rounded-xl border border-sand-200 bg-sand-50/40 p-4 space-y-2.5">
-          <div className="flex items-center gap-2 text-sand-900 font-bold text-xs">
-            <AlertTriangle size={16} className="text-sand-600" />
+        <div className="rounded-xl border border-warning-border bg-warning-bg/40 p-4 space-y-2.5">
+          <div className="flex items-center gap-2 text-warning-text font-bold text-caption">
+            <AlertTriangle size={16} className="text-warning-text" />
             <span>Cải tiến — Điểm cần khắc phục</span>
           </div>
-          <ul className="space-y-2 text-xs text-sand-950 font-medium leading-relaxed">
+          <ul className="space-y-2 text-caption text-warning-text font-medium leading-relaxed">
             {improvements.improve.map((item, i) => (
               <li key={i} className="flex items-start gap-1.5">
-                <span className="text-sand-600 font-bold">•</span>
+                <span className="text-warning-text font-bold">•</span>
                 <span>{item}</span>
               </li>
             ))}
@@ -79,15 +80,15 @@ export function ProductImprovementCard({
         </div>
 
         {/* Cột 3: TEST (Nên thử nghiệm) */}
-        <div className="rounded-xl border border-orchid-200 bg-orchid-50/40 p-4 space-y-2.5">
-          <div className="flex items-center gap-2 text-orchid-900 font-bold text-xs">
-            <FlaskConical size={16} className="text-orchid-600" />
+        <div className="rounded-xl border border-accent-border bg-accent-bg/40 p-4 space-y-2.5">
+          <div className="flex items-center gap-2 text-accent-text font-bold text-caption">
+            <FlaskConical size={16} className="text-accent-text" />
             <span>Thử nghiệm — Biến thể nên thử</span>
           </div>
-          <ul className="space-y-2 text-xs text-orchid-950 font-medium leading-relaxed">
+          <ul className="space-y-2 text-caption text-accent-text font-medium leading-relaxed">
             {improvements.test.map((item, i) => (
               <li key={i} className="flex items-start gap-1.5">
-                <span className="text-orchid-600 font-bold">•</span>
+                <span className="text-accent-text font-bold">•</span>
                 <span>{item}</span>
               </li>
             ))}

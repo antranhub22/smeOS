@@ -45,7 +45,7 @@ export function ChainBranchCard({ branch, isSelected, onToggle }: ChainBranchCar
     <Button variant="outline"
       type="button"
       onClick={() => onToggle(branch.branchId)}
-      className={`font-[inherit] p-2.5 rounded-xl border text-caption text-left transition-all cursor-pointer flex flex-col justify-between gap-2 ${
+      className={`h-auto font-[inherit] p-2.5 rounded-xl border text-caption text-left transition-all cursor-pointer flex flex-col justify-between gap-2 ${
         isSelected
           ? "border-primary bg-surface shadow-xs hover:bg-surface"
           : "border-border/70 bg-surface/60 opacity-60 hover:opacity-100 hover:bg-surface/60"

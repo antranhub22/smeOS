@@ -61,7 +61,7 @@ export function SwipeCard({ product, theme, brand, index, total, onInfo }: Swipe
       onPointerDown={(e) => e.stopPropagation()}
       onClick={onInfo}
       aria-label={`Xem chi tiết ${product.name}`}
-      className="font-[inherit] gap-0 flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-current/30 backdrop-blur-sm transition-transform active:scale-90"
+      className="px-0 py-0 text-[length:inherit] font-[inherit] gap-0 flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-current/30 backdrop-blur-sm transition-transform active:scale-90"
     >
       <Info size={18} aria-hidden="true" />
     </Button>

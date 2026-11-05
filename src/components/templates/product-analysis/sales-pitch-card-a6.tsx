@@ -90,7 +90,7 @@ export const SalesPitchCardA6 = forwardRef<HTMLDivElement, SalesPitchCardA6Props
           ) : (
             <div className="flex h-full w-full flex-col items-center justify-center text-text-muted gap-2">
               <Sparkles size={32} className="opacity-40" />
-              <span className="text-xs">Ảnh sản phẩm chất lượng cao</span>
+              <span className="text-caption">Ảnh sản phẩm chất lượng cao</span>
             </div>
           )}
 
@@ -120,10 +120,10 @@ export const SalesPitchCardA6 = forwardRef<HTMLDivElement, SalesPitchCardA6Props
           <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-4 text-white flex items-end justify-between">
             <div>
               <div className="text-caption text-white/80 font-medium uppercase tracking-wider">Giá</div>
-              <div className="text-2xl font-black tracking-tight text-white flex items-baseline gap-2">
+              <div className="text-display font-black tracking-tight text-white flex items-baseline gap-2">
                 {activePitch.priceVnd ? formatCurrencyVnd(activePitch.priceVnd) : <span className="text-body font-bold">Liên hệ để báo giá</span>}
                 {activePitch.originalPriceVnd && activePitch.priceVnd && activePitch.originalPriceVnd > activePitch.priceVnd && (
-                  <span className="text-xs text-white/60 line-through font-normal">
+                  <span className="text-caption text-white/60 line-through font-normal">
                     {formatCurrencyVnd(activePitch.originalPriceVnd)}
                   </span>
                 )}
@@ -133,7 +133,7 @@ export const SalesPitchCardA6 = forwardRef<HTMLDivElement, SalesPitchCardA6Props
             {/* Chỉ hiện kích thước khi tiệm đã nhập — không in "~ × cm" */}
             {activePitch.dimensions.heightCm && activePitch.dimensions.widthCm ? <div className="text-right">
               <div className="text-caption text-white/70 font-mono">Kích thước</div>
-              <div className="text-xs font-bold text-white/95">
+              <div className="text-caption font-bold text-white/95">
                 ~{activePitch.dimensions.heightCm} × {activePitch.dimensions.widthCm} cm
               </div>
             </div> : null}
@@ -144,7 +144,7 @@ export const SalesPitchCardA6 = forwardRef<HTMLDivElement, SalesPitchCardA6Props
         <div className="p-5 flex flex-col gap-4">
           {/* Title & Occasions */}
           <div>
-            <h3 className="text-lg font-extrabold text-text tracking-tight leading-snug">
+            <h3 className="text-title-sm font-extrabold text-text tracking-tight leading-snug">
               {activePitch.productName}
             </h3>
             <div className="mt-1.5 flex flex-wrap gap-1">

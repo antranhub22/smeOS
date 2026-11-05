@@ -253,7 +253,7 @@ export function HomestayOrderFields({
                   type="button"
                   key={opt.key}
                   onClick={() => onTransitChange(active ? "" : opt.key)}
-                  className={`justify-start p-2.5 rounded-lg border text-caption font-bold flex items-center gap-2 transition text-left ${
+                  className={`h-auto justify-start p-2.5 rounded-lg border text-caption font-bold flex items-center gap-2 transition text-left ${
                     active
                       ? "border-primary bg-primary/10 text-primary hover:bg-primary/10"
                       : "border-border bg-bg text-text hover:border-primary/40 hover:bg-bg"

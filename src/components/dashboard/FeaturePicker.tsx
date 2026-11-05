@@ -344,10 +344,10 @@ function CreditEstimateBadge({
                     warning === "warning" ? "text-warning" : "text-primary";
 
   return (
-    <button
+    <Button variant="ghost"
       type="button"
       onClick={onClick}
-      className={cn(
+      className={cn("h-auto", "font-[inherit]", 
         "flex cursor-pointer items-center gap-1.5 rounded-xl px-3 py-1.5 transition-colors hover:opacity-80",
         bgClass,
         textClass
@@ -358,7 +358,7 @@ function CreditEstimateBadge({
       <span className="font-bold text-meta">{formatCredits(totalCredits)}</span>
       <span className="text-caption opacity-70">/ {formatCredits(userBalance)}</span>
       <Info size={12} strokeWidth={1.8} className="ml-0.5" />
-    </button>
+    </Button>
   );
 }
 

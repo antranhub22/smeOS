@@ -67,7 +67,7 @@ export function SwipeDeckEnd({
               <Button variant="ghost"
                 type="button"
                 onClick={() => onOrder(p)}
-                className="gap-0 h-11 shrink-0 rounded-xl px-4 text-body-sm font-bold"
+                className="py-0 gap-0 h-11 shrink-0 rounded-xl px-4 text-body-sm font-bold"
                 style={{ background: theme.ctaBg, color: theme.ctaText }}
               >
                 Đặt mẫu
@@ -90,7 +90,7 @@ export function SwipeDeckEnd({
                   key={r.key}
                   type="button"
                   onClick={() => onPickPriceRange?.(r.key)}
-                  className="gap-0 h-10 rounded-full border px-3 text-body-sm font-semibold"
+                  className="py-0 gap-0 h-10 rounded-full border px-3 text-body-sm font-semibold"
                   style={{ borderColor: line, background: panel }}
                 >
                   {r.label} · {r.count}
@@ -107,7 +107,7 @@ export function SwipeDeckEnd({
         <Button variant="outline"
           type="button"
           onClick={onRewind}
-          className="flex h-12 items-center justify-center gap-2 rounded-2xl border text-body-sm font-semibold"
+          className="px-0 py-0 flex h-12 items-center justify-center gap-2 rounded-2xl border text-body-sm font-semibold"
           style={{ borderColor: line }}
         >
           <RotateCcw size={16} aria-hidden="true" />
@@ -116,7 +116,7 @@ export function SwipeDeckEnd({
         <Button variant="outline"
           type="button"
           onClick={onRestart}
-          className="flex h-12 items-center justify-center gap-2 rounded-2xl border text-body-sm font-semibold"
+          className="px-0 py-0 flex h-12 items-center justify-center gap-2 rounded-2xl border text-body-sm font-semibold"
           style={{ borderColor: line }}
         >
           <RefreshCw size={16} aria-hidden="true" />
@@ -133,7 +133,7 @@ function EndOption(props: { label: string; icon: typeof Heart; line: string; pan
     <Button variant="outline"
       type="button"
       onClick={props.onClick}
-      className="flex h-12 items-center gap-3 rounded-2xl border px-4 text-body-sm font-semibold"
+      className="py-0 flex h-12 items-center gap-3 rounded-2xl border px-4 text-body-sm font-semibold"
       style={{ borderColor: props.line, background: props.panel }}
     >
       <Icon size={18} aria-hidden="true" />

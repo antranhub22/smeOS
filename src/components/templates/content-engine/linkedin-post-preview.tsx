@@ -1,5 +1,6 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
 import React from "react"
 import { ThumbsUp } from "@/components/ui/icon-set/thumbs-up"
 import { MessageSquare } from "@/components/ui/icon-set/message-square"
@@ -24,12 +25,12 @@ export function LinkedInPreview({
       {/* Header bài đăng LinkedIn */}
       <div className="p-3.5 flex items-start justify-between">
         <div className="flex items-start gap-2.5">
-          <div className="w-11 h-11 rounded-full bg-[var(--color-linkedin)]/10 border border-[var(--color-linkedin)]/20 text-[var(--color-linkedin)] flex items-center justify-center font-black text-sm shadow-xs flex-shrink-0">
+          <div className="w-11 h-11 rounded-full bg-[var(--color-linkedin)]/10 border border-[var(--color-linkedin)]/20 text-[var(--color-linkedin)] flex items-center justify-center font-black text-body-sm shadow-xs flex-shrink-0">
             <Building2 size={20} />
           </div>
           <div>
             <div className="flex items-center gap-1.5">
-              <span className="text-sm font-bold text-cool-900 leading-tight">
+              <span className="text-body-sm font-bold text-cool-900 leading-tight">
                 {shopName}
               </span>
               <span className="text-caption text-cool-400 font-normal">• 1st</span>
@@ -48,19 +49,19 @@ export function LinkedInPreview({
         </div>
 
         <div className="flex items-center gap-1">
-          <button
+          <Button variant="ghost"
             type="button"
             aria-label="Thêm tùy chọn"
-            className="text-cool-400 hover:text-cool-600 p-1 transition-colors cursor-pointer"
+            className="text-[length:inherit] h-auto font-[inherit] gap-0 text-cool-400 hover:text-cool-600 p-1 transition-colors cursor-pointer"
             onClick={() => undefined}
           >
             <MoreHorizontal size={18} />
-          </button>
+          </Button>
         </div>
       </div>
 
       {/* Nội dung bài viết */}
-      <div className="px-3.5 pb-3 text-xs leading-relaxed space-y-2">
+      <div className="px-3.5 pb-3 text-caption leading-relaxed space-y-2">
         {post.headline && (
           <div className="font-extrabold text-body text-cool-900 leading-snug">
             {post.headline}
@@ -100,10 +101,10 @@ export function LinkedInPreview({
           />
         ) : (
           <div className="flex flex-col items-center gap-2 p-6 text-center">
-            <div className="w-14 h-14 rounded-2xl bg-white shadow-md flex items-center justify-center text-2xl border border-cool-100">
+            <div className="w-14 h-14 rounded-2xl bg-white shadow-md flex items-center justify-center text-display border border-cool-100">
               💐
             </div>
-            <div className="font-extrabold text-sm text-cool-900">
+            <div className="font-extrabold text-body-sm text-cool-900">
               {productName}
             </div>
             <span className="text-caption font-semibold text-[var(--color-linkedin)] bg-ocean-50 px-3 py-1 rounded-full border border-ocean-200/50">
@@ -140,38 +141,38 @@ export function LinkedInPreview({
 
       {/* Thanh hành động LinkedIn (Like, Comment, Repost, Send) */}
       <div className="px-2 py-1.5 grid grid-cols-4 gap-1 text-caption font-semibold text-cool-600">
-        <button
+        <Button variant="ghost"
           type="button"
-          className="flex items-center justify-center gap-1.5 py-2 rounded-lg hover:bg-cool-100 transition-colors cursor-pointer"
+          className="px-0 text-[length:inherit] h-auto font-[inherit] flex items-center justify-center gap-1.5 py-2 rounded-lg hover:bg-cool-100 transition-colors cursor-pointer"
           onClick={() => undefined}
         >
           <ThumbsUp size={15} />
           <span>Thích</span>
-        </button>
-        <button
+        </Button>
+        <Button variant="ghost"
           type="button"
-          className="flex items-center justify-center gap-1.5 py-2 rounded-lg hover:bg-cool-100 transition-colors cursor-pointer"
+          className="px-0 text-[length:inherit] h-auto font-[inherit] flex items-center justify-center gap-1.5 py-2 rounded-lg hover:bg-cool-100 transition-colors cursor-pointer"
           onClick={() => undefined}
         >
           <MessageSquare size={15} />
           <span>Bình luận</span>
-        </button>
-        <button
+        </Button>
+        <Button variant="ghost"
           type="button"
-          className="flex items-center justify-center gap-1.5 py-2 rounded-lg hover:bg-cool-100 transition-colors cursor-pointer"
+          className="px-0 text-[length:inherit] h-auto font-[inherit] flex items-center justify-center gap-1.5 py-2 rounded-lg hover:bg-cool-100 transition-colors cursor-pointer"
           onClick={() => undefined}
         >
           <Repeat size={15} />
           <span>Đăng lại</span>
-        </button>
-        <button
+        </Button>
+        <Button variant="ghost"
           type="button"
-          className="flex items-center justify-center gap-1.5 py-2 rounded-lg hover:bg-cool-100 transition-colors cursor-pointer"
+          className="px-0 text-[length:inherit] h-auto font-[inherit] flex items-center justify-center gap-1.5 py-2 rounded-lg hover:bg-cool-100 transition-colors cursor-pointer"
           onClick={() => undefined}
         >
           <Send size={15} />
           <span>Gửi</span>
-        </button>
+        </Button>
       </div>
     </div>
   )

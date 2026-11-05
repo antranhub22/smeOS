@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@/components/ui/button"
 import React, { useState, useMemo } from "react";
 import { Sparkles } from "@/components/ui/icon-set/sparkles"
 import { Activity } from "@/components/ui/icon-set/activity"
@@ -111,12 +112,12 @@ export function KeywordResearchWorkspace({
       />
 
       {/* 4. Sub Tabs & Filter Bar */}
-      <div id="keyword-results-section" className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-cool-200 pb-2">
-        <div className="flex gap-4 text-xs font-bold">
-          <button
+      <div id="keyword-results-section" className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-border pb-2">
+        <div className="flex gap-4 text-caption font-bold">
+          <Button variant="ghost"
             type="button"
             onClick={() => setActiveSubTab("results")}
-            className={`pb-2 flex items-center gap-1.5 border-b-2 transition ${
+            className={`text-[length:inherit] h-auto p-0 pb-2 flex items-center gap-1.5 border-b-2 transition ${
               activeSubTab === "results"
                 ? "border-primary text-primary font-extrabold"
                 : "border-transparent text-text-muted hover:text-text"
@@ -124,11 +125,11 @@ export function KeywordResearchWorkspace({
           >
             <Sparkles size={14} />
             Cơ hội ({filtered.length})
-          </button>
-          <button
+          </Button>
+          <Button variant="ghost"
             type="button"
             onClick={() => setActiveSubTab("runs")}
-            className={`pb-2 flex items-center gap-1.5 border-b-2 transition ${
+            className={`text-[length:inherit] h-auto p-0 pb-2 flex items-center gap-1.5 border-b-2 transition ${
               activeSubTab === "runs"
                 ? "border-primary text-primary font-extrabold"
                 : "border-transparent text-text-muted hover:text-text"
@@ -136,45 +137,45 @@ export function KeywordResearchWorkspace({
           >
             <Activity size={14} />
             Lịch sử quét ({runs.length})
-          </button>
+          </Button>
         </div>
 
         {activeSubTab === "results" && (
           <div className="flex items-center gap-1.5 text-caption font-bold">
             <span className="text-text-muted">Lọc nhanh:</span>
-            <button
+            <Button variant="ghost"
               type="button"
               onClick={() => setActiveFilter("ALL")}
-              className={`px-2.5 py-0.5 rounded-full transition ${
+              className={`text-[length:inherit] h-auto font-[inherit] gap-0 px-2.5 py-0.5 rounded-full transition ${
                 activeFilter === "ALL"
-                  ? "bg-blush-600 text-white"
-                  : "bg-cool-100 text-cool-600 hover:bg-cool-200"
+                  ? "bg-primary text-white hover:bg-primary"
+                  : "bg-surface-alt text-text-muted hover:bg-border"
               }`}
             >
               Tất cả ({filteredByTime.length})
-            </button>
-            <button
+            </Button>
+            <Button variant="ghost"
               type="button"
               onClick={() => setActiveFilter("IMPORTANT")}
-              className={`px-2.5 py-0.5 rounded-full transition ${
+              className={`text-[length:inherit] h-auto font-[inherit] gap-0 px-2.5 py-0.5 rounded-full transition ${
                 activeFilter === "IMPORTANT"
-                  ? "bg-blush-600 text-white"
-                  : "bg-cool-100 text-cool-600 hover:bg-cool-200"
+                  ? "bg-primary text-white hover:bg-primary"
+                  : "bg-surface-alt text-text-muted hover:bg-border"
               }`}
             >
               🔥 Điểm &gt; 75
-            </button>
-            <button
+            </Button>
+            <Button variant="ghost"
               type="button"
               onClick={() => setActiveFilter("RISING")}
-              className={`px-2.5 py-0.5 rounded-full transition ${
+              className={`text-[length:inherit] h-auto font-[inherit] gap-0 px-2.5 py-0.5 rounded-full transition ${
                 activeFilter === "RISING"
-                  ? "bg-blush-600 text-white"
-                  : "bg-cool-100 text-cool-600 hover:bg-cool-200"
+                  ? "bg-primary text-white hover:bg-primary"
+                  : "bg-surface-alt text-text-muted hover:bg-border"
               }`}
             >
               📈 Xu hướng bứt phá
-            </button>
+            </Button>
           </div>
         )}
       </div>
@@ -182,32 +183,32 @@ export function KeywordResearchWorkspace({
       {/* 5. Tab Content */}
       {activeSubTab === "results" ? (
         filtered.length === 0 ? (
-          <div className="text-center py-12 border-2 border-dashed border-cool-200 rounded-xl bg-cool-50/50 space-y-3">
-            <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-xl bg-cool-100 text-cool-500">
+          <div className="text-center py-12 border-2 border-dashed border-border rounded-xl bg-bg/50 space-y-3">
+            <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-xl bg-surface-alt text-text-muted">
               <Clock size={20} />
             </div>
             <div className="max-w-md mx-auto">
-              <p className="text-cool-700 text-sm font-bold">
+              <p className="text-text text-body-sm font-bold">
                 Chưa có kết quả quét trong &ldquo;{currentFilterLabel}&rdquo;
               </p>
-              <p className="text-text-muted text-xs mt-1">
+              <p className="text-text-muted text-caption mt-1">
                 {selectedBucket || selectedTimeframe !== "ALL"
                   ? "Hãy chọn mốc ngày/tuần khác hoặc chọn 'Tất cả' để xem toàn bộ kết quả đã quét."
                   : "Hãy nhập từ khóa hoa ở khung trên và nhấn 'Quét Xu Hướng'."}
               </p>
             </div>
             {(selectedBucket || selectedTimeframe !== "ALL") && (
-              <button
+              <Button variant="primary"
                 type="button"
                 onClick={() => {
                   setSelectedTimeframe("ALL");
                   setSelectedBucket(null);
                 }}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-blush-600 text-white hover:bg-blush-700 shadow-xs transition"
+                className="h-auto inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-caption font-bold bg-primary text-white hover:bg-primary-dark shadow-xs transition"
               >
                 <RefreshCw size={13} />
                 Xem tất cả ({opportunities.length})
-              </button>
+              </Button>
             )}
           </div>
         ) : (

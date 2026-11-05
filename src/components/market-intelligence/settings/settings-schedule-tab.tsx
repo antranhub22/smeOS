@@ -1,5 +1,8 @@
 "use client";
 
+import { Button } from "@/components/ui/button"
+import { Checkbox } from "@/components/ui/checkbox"
+import { Input } from "@/components/ui/input"
 import React from "react";
 import { Plus } from "@/components/ui/icon-set/plus"
 import { Trash2 } from "@/components/ui/icon-set/trash2"
@@ -81,83 +84,81 @@ export function SettingsScheduleTab({
   return (
     <div className="space-y-4">
       {activeFeature === "market" && (
-        <div className="space-y-3 bg-cool-50 p-4 rounded-xl border border-cool-200">
+        <div className="space-y-3 bg-bg p-4 rounded-xl border border-border">
           <div className="flex items-center justify-between">
             <div>
-              <span className="font-bold text-cool-900 block text-sm">Tự động quét mỗi sáng</span>
-              <span className="text-cool-500 text-caption">Cập nhật xu hướng thị trường trước giờ mở cửa</span>
+              <span className="font-bold text-text block text-body-sm">Tự động quét mỗi sáng</span>
+              <span className="text-text-muted text-caption">Cập nhật xu hướng thị trường trước giờ mở cửa</span>
             </div>
-            <input
-              type="checkbox"
+            <Checkbox
               checked={marketSchedule.enabled}
-              onChange={(e) => setMarketSchedule({ ...marketSchedule, enabled: e.target.checked })}
-              aria-label="Bật quét xu hướng tự động" className="h-6 w-6 rounded text-blush-600 focus:ring-blush-500"
+              onCheckedChange={(checked) => setMarketSchedule({ ...marketSchedule, enabled: (checked === true) })}
+              aria-label="Bật quét xu hướng tự động" className="h-6 w-6 rounded text-primary focus:ring-primary"
             />
           </div>
-          <div className="pt-2 border-t border-cool-200 flex items-center gap-3">
-            <label className="font-semibold text-cool-700">Giờ quét tự động:</label>
-            <input
+          <div className="pt-2 border-t border-border flex items-center gap-3">
+            <label className="font-semibold text-text">Giờ quét tự động:</label>
+            <Input
               type="time"
               value={marketSchedule.time} aria-label="Giờ quét xu hướng tự động"
               onChange={(e) => setMarketSchedule({ ...marketSchedule, time: e.target.value })}
-              className="h-8 rounded-lg border border-cool-300 px-2 font-bold text-cool-800 bg-white"
+              className="h-8 rounded-lg border border-border px-2 font-bold text-text bg-white"
             />
           </div>
         </div>
       )}
 
       {activeFeature === "keyword" && (
-        <div className="space-y-3 bg-cool-50 p-4 rounded-xl border border-cool-200">
+        <div className="space-y-3 bg-bg p-4 rounded-xl border border-border">
           <div className="flex items-center justify-between">
             <div>
-              <span className="font-bold text-cool-900 block text-sm">Tự động quét từ khóa đã ghim</span>
-              <span className="text-cool-500 text-caption">Chạy ngầm mỗi sáng cho danh sách từ khóa chủ lực của tiệm</span>
+              <span className="font-bold text-text block text-body-sm">Tự động quét từ khóa đã ghim</span>
+              <span className="text-text-muted text-caption">Chạy ngầm mỗi sáng cho danh sách từ khóa chủ lực của tiệm</span>
             </div>
-            <input
-              type="checkbox"
+            <Checkbox
               checked={keywordSchedule.enabled}
-              onChange={(e) => setKeywordSchedule({ ...keywordSchedule, enabled: e.target.checked })}
-              aria-label="Bật quét từ khóa tự động" className="h-6 w-6 rounded text-blush-600 focus:ring-blush-500"
+              onCheckedChange={(checked) => setKeywordSchedule({ ...keywordSchedule, enabled: (checked === true) })}
+              aria-label="Bật quét từ khóa tự động" className="h-6 w-6 rounded text-primary focus:ring-primary"
             />
           </div>
-          <div className="pt-2 border-t border-cool-200 flex items-center gap-3">
-            <label className="font-semibold text-cool-700">Giờ quét mở cửa:</label>
-            <input
+          <div className="pt-2 border-t border-border flex items-center gap-3">
+            <label className="font-semibold text-text">Giờ quét mở cửa:</label>
+            <Input
               type="time"
               value={keywordSchedule.time} aria-label="Giờ quét từ khóa tự động"
               onChange={(e) => setKeywordSchedule({ ...keywordSchedule, time: e.target.value })}
-              className="h-8 rounded-lg border border-cool-300 px-2 font-bold text-cool-800 bg-white"
+              className="h-8 rounded-lg border border-border px-2 font-bold text-text bg-white"
             />
           </div>
-          <div className="space-y-1.5 pt-2 border-t border-cool-200">
-            <label className="font-semibold text-cool-700">Danh mục từ khóa ghim theo dõi thường trực:</label>
+          <div className="space-y-1.5 pt-2 border-t border-border">
+            <label className="font-semibold text-text">Danh mục từ khóa ghim theo dõi thường trực:</label>
             <div className="flex gap-2">
-              <input
+              <Input
                 type="text"
                 value={newKeywordInput}
                 onChange={(e) => setNewKeywordInput(e.target.value)}
                 placeholder="Thêm từ khóa hoa (vd: Lan hồ điệp vàng)..."
-                className="h-8 flex-1 rounded-lg border border-cool-300 px-2.5 bg-white text-xs"
+                className="h-8 flex-1 rounded-lg border border-border px-2.5 bg-white text-caption"
               />
-              <button
+              <Button variant="primary"
                 type="button"
                 onClick={handleAddKeyword}
-                className="px-3 h-8 rounded-lg bg-blush-600 text-white font-bold inline-flex items-center gap-1 hover:bg-blush-700"
+                className="py-0 text-[length:inherit] px-3 h-8 rounded-lg bg-primary text-white font-bold inline-flex items-center gap-1 hover:bg-primary-dark"
               >
                 <Plus size={13} /> Thêm
-              </button>
+              </Button>
             </div>
             <div className="flex flex-wrap gap-1.5 pt-1">
               {keywordSchedule.trackedKeywords.map((kw) => (
                 <span
                   key={kw}
-                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-white border border-cool-200 text-cool-700 font-medium"
+                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-white border border-border text-text font-medium"
                 >
                   {kw}
-                  <button
-              aria-label="Xóa" type="button" onClick={() => handleRemoveKeyword(kw)} className="text-text-muted hover:text-blush-600">
+                  <Button variant="ghost"
+              aria-label="Xóa" type="button" onClick={() => handleRemoveKeyword(kw)} className="text-[length:inherit] h-auto p-0 font-[inherit] gap-0 text-text-muted hover:text-primary">
                     <Trash2 size={11} />
-                  </button>
+                  </Button>
                 </span>
               ))}
             </div>
@@ -166,12 +167,12 @@ export function SettingsScheduleTab({
       )}
 
       {activeFeature === "product" && (
-        <div className="space-y-3 bg-cool-50 p-4 rounded-xl border border-cool-200">
-          <span className="font-bold text-cool-900 block text-sm">Tự động ghép sản phẩm với xu hướng</span>
+        <div className="space-y-3 bg-bg p-4 rounded-xl border border-border">
+          <span className="font-bold text-text block text-body-sm">Tự động ghép sản phẩm với xu hướng</span>
           <div className="space-y-2 pt-1">
             <div className="flex items-center justify-between">
-              <label className="font-semibold text-cool-700">Ngưỡng điểm Trend Fit đạt chuẩn:</label>
-              <span className="font-black text-blush-600 text-sm">{productMatching.fitThreshold}/100</span>
+              <label className="font-semibold text-text">Ngưỡng điểm Trend Fit đạt chuẩn:</label>
+              <span className="font-black text-primary text-body-sm">{productMatching.fitThreshold}/100</span>
             </div>
             <input
               type="range"
@@ -180,7 +181,7 @@ export function SettingsScheduleTab({
               step={5}
               value={productMatching.fitThreshold}
               onChange={(e) => setProductMatching({ ...productMatching, fitThreshold: Number(e.target.value) })}
-              className="w-full accent-rose-600"
+              className="w-full accent-primary"
             />
           </div>
         </div>

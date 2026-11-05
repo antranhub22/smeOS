@@ -3,6 +3,7 @@
 // Menu tài khoản dùng chung cho Header và Sidebar Navigation.
 // Cung cấp avatar viết tắt, thông tin người dùng, chuyển đổi vai trò và nút Đăng xuất.
 
+import { Button } from "@/components/ui/button"
 import { useEffect, useRef, useState } from "react"
 import { useRouter } from "next/navigation"
 import { KeyRound } from "@/components/ui/icon-set/key-round"
@@ -60,29 +61,29 @@ export function UserMenu({ initials, direction = "down", size = "md" }: UserMenu
 
   return (
     <div className="relative">
-      <button
+      <Button variant="ghost"
         ref={buttonRef}
         type="button"
         onClick={() => setMo((v) => !v)}
         aria-label="Menu tài khoản"
         aria-expanded={mo}
-        className={cn(
-          "flex items-center justify-center rounded-full bg-primary font-bold text-white shadow-xs transition-opacity hover:opacity-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary cursor-pointer",
+        className={cn("h-auto p-0 gap-0", 
+          "flex items-center justify-center rounded-full bg-primary font-bold text-white shadow-xs transition-opacity hover:opacity-95 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary cursor-pointer hover:bg-primary",
           size === "sm" ? "h-9 w-9 text-caption" : "h-10 w-10 text-body-sm"
         )}
       >
         {initials}
-      </button>
+      </Button>
 
       {mo && (
         <>
           {/* Lớp phủ để bấm ra ngoài là đóng menu */}
-          <button
+          <Button variant="ghost"
             type="button"
             aria-label="Đóng menu"
             tabIndex={-1}
             onClick={() => setMo(false)}
-            className="fixed inset-0 z-40 bg-transparent cursor-default border-0"
+            className="text-[length:inherit] h-auto p-0 font-[inherit] gap-0 fixed inset-0 z-40 bg-transparent cursor-default border-0"
           />
 
           {/* Menu popover */}
@@ -104,13 +105,13 @@ export function UserMenu({ initials, direction = "down", size = "md" }: UserMenu
 
             {/* Lối tắt vào Console Vận hành dành riêng cho Super Admin / Operator */}
             {isSuperUser && (
-              <button
+              <Button variant="ghost"
                 type="button"
                 onClick={() => {
                   setMo(false)
                   router.push("/van-hanh" as never)
                 }}
-                className="flex w-full items-center gap-2 border-b border-border bg-primary/5 px-3.5 py-2.5 text-left text-body-sm font-semibold text-primary hover:bg-primary/10 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary cursor-pointer"
+                className="h-auto justify-start flex w-full items-center gap-2 border-b border-border bg-primary/5 px-3.5 py-2.5 text-left text-body-sm font-semibold text-primary hover:bg-primary/10 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary cursor-pointer"
               >
                 <ShieldCheck size={16} strokeWidth={2} className="text-primary shrink-0" aria-hidden="true" />
                 <span className="min-w-0">
@@ -119,17 +120,17 @@ export function UserMenu({ initials, direction = "down", size = "md" }: UserMenu
                     Quản trị SaaS nền tảng
                   </span>
                 </span>
-              </button>
+              </Button>
             )}
 
             {/* Vai trải nghiệm hiện tại + danh mục 14 vai (đặc tả 03b §3) */}
-            <button
+            <Button variant="ghost"
               type="button"
               onClick={() => {
                 setMo(false)
                 router.push("/vai-tro" as never)
               }}
-              className="flex w-full items-center gap-2 border-b border-border px-3.5 py-2.5 text-left text-body-sm font-semibold text-text hover:bg-surface-alt transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary cursor-pointer"
+              className="h-auto justify-start flex w-full items-center gap-2 border-b border-border px-3.5 py-2.5 text-left text-body-sm font-semibold text-text hover:bg-surface-alt transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary cursor-pointer"
             >
               <UserRound size={16} strokeWidth={1.8} aria-hidden="true" />
               <span className="min-w-0">
@@ -140,17 +141,17 @@ export function UserMenu({ initials, direction = "down", size = "md" }: UserMenu
                   </span>
                 )}
               </span>
-            </button>
+            </Button>
 
             {/* Mở UI Studio — chỉ khi shell hiện tại có gắn ngăn UI Studio (ADR-011 D-UI-01) */}
             {uiStudioAvailable && (
-              <button
+              <Button variant="ghost"
                 type="button"
                 onClick={() => {
                   setMo(false)
                   window.dispatchEvent(new CustomEvent("open-ui-studio"))
                 }}
-                className="flex w-full items-center gap-2 border-b border-border px-3.5 py-2.5 text-left text-body-sm font-semibold text-text hover:bg-surface-alt transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary cursor-pointer"
+                className="h-auto justify-start flex w-full items-center gap-2 border-b border-border px-3.5 py-2.5 text-left text-body-sm font-semibold text-text hover:bg-surface-alt transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary cursor-pointer"
               >
                 <span className="flex h-4 w-4 items-center justify-center rounded-full bg-primary text-primary-fg text-caption font-bold">
                   🎨
@@ -161,33 +162,33 @@ export function UserMenu({ initials, direction = "down", size = "md" }: UserMenu
                     Đổi Theme, Font, Mật độ
                   </span>
                 </span>
-              </button>
+              </Button>
             )}
 
             {can("A2") && (
-              <button
+              <Button variant="ghost"
                 type="button"
                 onClick={() => {
                   setMo(false)
                   setDoiMatKhau(true)
                 }}
-                className="flex w-full items-center gap-2 border-b border-border px-3.5 py-2.5 text-left text-body-sm font-semibold text-text hover:bg-surface-alt transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary cursor-pointer"
+                className="h-auto justify-start flex w-full items-center gap-2 border-b border-border px-3.5 py-2.5 text-left text-body-sm font-semibold text-text hover:bg-surface-alt transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary cursor-pointer"
               >
                 <KeyRound size={16} strokeWidth={1.8} aria-hidden="true" />
                 <span>Đổi mật khẩu</span>
-              </button>
+              </Button>
             )}
 
             {/* Nút đăng xuất */}
-            <button
+            <Button variant="ghost"
               type="button"
               onClick={handleLogout}
               disabled={dangXuat}
-              className="flex w-full items-center gap-2 px-3.5 py-2.5 text-left text-body-sm font-semibold text-danger hover:bg-danger-bg transition-colors disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary cursor-pointer"
+              className="h-auto justify-start flex w-full items-center gap-2 px-3.5 py-2.5 text-left text-body-sm font-semibold text-danger hover:bg-danger-bg transition-colors disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary cursor-pointer"
             >
               <LogOut size={16} strokeWidth={1.8} aria-hidden="true" />
               <span>{dangXuat ? "Đang đăng xuất…" : t("layout.userMenu.logout")}</span>
-            </button>
+            </Button>
           </div>
         </>
       )}

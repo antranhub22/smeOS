@@ -66,7 +66,7 @@ export function SubcontractQcGallery({ photos, onDeletePhoto }: SubcontractQcGal
                 type="button"
                 onClick={() => onDeletePhoto(url)}
                 title="Xóa ảnh này"
-                className="font-[inherit] gap-0 absolute top-1 right-1 p-1 rounded-md bg-black/60 hover:bg-danger text-white transition-colors opacity-80 hover:opacity-100 z-10 cursor-pointer"
+                className="text-[length:inherit] h-auto font-[inherit] gap-0 absolute top-1 right-1 p-1 rounded-md bg-black/60 hover:bg-danger text-white transition-colors opacity-80 hover:opacity-100 z-10 cursor-pointer"
               >
                 <Trash2 size={13} />
               </Button>

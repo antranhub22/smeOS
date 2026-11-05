@@ -48,8 +48,8 @@ export function SalesOrderIntakeCard({
       <div className="flex items-center justify-between border-b border-dashed border-border pb-3">
         <div className="flex items-center gap-2">
           <ShoppingCart size={16} className="text-alert-600" />
-          <span className="text-xs font-bold text-text-muted">HỒ SƠ TIẾP NHẬN SALES (T01)</span>
-          <span className="text-sm font-extrabold text-text">#{orderCode}</span>
+          <span className="text-caption font-bold text-text-muted">HỒ SƠ TIẾP NHẬN SALES (T01)</span>
+          <span className="text-body-sm font-extrabold text-text">#{orderCode}</span>
         </div>
         <div className="flex items-center gap-2">
           <Badge tone="neutral" className="text-caption">
@@ -61,7 +61,7 @@ export function SalesOrderIntakeCard({
         </div>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-caption">
         <div className="p-3 rounded-xl bg-surface-alt border border-border flex flex-col gap-1">
           <span className="text-text-muted flex items-center gap-1 font-semibold">
             <User size={12} />
@@ -98,9 +98,9 @@ export function SalesOrderIntakeCard({
                 <Tag size={12} />
                 Sản phẩm & Giá báo:
               </span>
-              <div className="font-extrabold text-text text-sm mt-0.5 line-clamp-2">{productTitle}</div>
+              <div className="font-extrabold text-text text-body-sm mt-0.5 line-clamp-2">{productTitle}</div>
             </div>
-            <div className="text-blush-700 font-extrabold text-sm mt-1">
+            <div className="text-blush-700 font-extrabold text-body-sm mt-1">
               {unitPriceVnd.toLocaleString("vi-VN")} đ
             </div>
           </div>
@@ -108,7 +108,7 @@ export function SalesOrderIntakeCard({
       </div>
 
       {/* Khối Địa Chỉ Phân Cấp 5 Tầng */}
-      <div className="flex flex-col gap-2 text-xs p-3.5 rounded-xl bg-surface-alt border border-border">
+      <div className="flex flex-col gap-2 text-caption p-3.5 rounded-xl bg-surface-alt border border-border">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-1.5 text-text-muted font-bold">
             <MapPin size={14} className="text-alert-600 shrink-0" />

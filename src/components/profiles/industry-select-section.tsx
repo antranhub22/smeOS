@@ -172,15 +172,15 @@ export function IndustrySelectSection({
                 <div>
                   <div className="flex items-center justify-between w-full mb-1">
                     {/* Nút chọn ngành phủ cả thẻ (after:inset-0); nút "Nạp" nằm trên lớp phủ */}
-                    <button
+                    <Button variant="ghost"
                       type="button"
                       aria-pressed={isSelected}
                       disabled={!isUnlocked || loadingMockKey !== null}
                       onClick={() => handleSelect(ind.key)}
-                      className="text-left text-body-sm font-bold text-text after:absolute after:inset-0 after:rounded-xl after:content-[''] focus-visible:outline-none focus-visible:after:ring-2 focus-visible:after:ring-ring disabled:cursor-not-allowed"
+                      className="h-auto p-0 justify-start gap-0 text-left text-body-sm font-bold text-text after:absolute after:inset-0 after:rounded-xl after:content-[''] focus-visible:outline-none focus-visible:after:ring-2 focus-visible:after:ring-ring disabled:cursor-not-allowed"
                     >
                       {ind.name}
-                    </button>
+                    </Button>
                     {isSelected && <Check size={14} className="text-primary font-bold" />}
                   </div>
                   <p className="text-caption text-text-muted line-clamp-2 leading-relaxed">

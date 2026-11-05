@@ -6,6 +6,7 @@
  * nhóm đóng hiển thị số mục bên trong để người dùng biết còn gì phía sau.
  */
 
+import { Button } from "@/components/ui/button"
 import { ChevronDown } from "@/components/ui/icon-set/chevron-down"
 import { cn } from "@/lib/utils"
 import { formatNavGroupLabel } from "./nav-group-label"
@@ -33,12 +34,12 @@ export function NavSectionHeader({ label, expanded, count, onToggle }: NavSectio
   }
 
   return (
-    <button
+    <Button variant="ghost"
       type="button"
       aria-expanded={expanded}
       onClick={onToggle}
       title={label}
-      className={cn(
+      className={cn("justify-start font-[inherit]", 
         "group/section flex h-7 w-full select-none items-center gap-1.5 rounded-md px-2.5 text-left",
         "transition-colors duration-150 hover:bg-surface-alt",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
@@ -60,6 +61,6 @@ export function NavSectionHeader({ label, expanded, count, onToggle }: NavSectio
             : "-rotate-90 opacity-100"
         )}
       />
-    </button>
+    </Button>
   )
 }

@@ -93,14 +93,14 @@ export function CareCardDesigner({
               const tpl = CARE_CARD_TEMPLATES[code]
               const isSelected = selectedCode === code
               return (
-                <button
+                <Button variant="outline"
                   type="button"
                   key={code}
                   onClick={() => handleSwitchTemplate(code)}
-                  className={`cursor-pointer p-3 rounded-xl border text-left transition-all focus:outline-none focus:ring-2 focus:ring-primary ${
+                  className={`text-[length:inherit] h-auto justify-start font-[inherit] gap-0 cursor-pointer p-3 rounded-xl border text-left transition-all focus:outline-none focus:ring-2 focus:ring-primary ${
                     isSelected
-                      ? "border-primary bg-primary/5 text-primary ring-2 ring-primary/20 shadow-xs"
-                      : "border-border hover:border-border-hover bg-surface-alt/40 text-text"
+                      ? "border-primary bg-primary/5 text-primary ring-2 ring-primary/20 shadow-xs hover:bg-primary/5"
+                      : "border-border hover:border-border-hover bg-surface-alt/40 text-text hover:bg-surface-alt/40"
                   }`}
                 >
                   <div className="flex items-center gap-1.5 mb-1">
@@ -114,7 +114,7 @@ export function CareCardDesigner({
                     <span className="text-caption font-bold truncate">{tpl.name}</span>
                   </div>
                   <p className="text-caption text-text-muted line-clamp-1">#{tpl.assetCode}</p>
-                </button>
+                </Button>
               )
             })}
           </div>
