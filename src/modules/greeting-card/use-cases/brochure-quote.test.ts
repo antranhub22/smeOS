@@ -1,6 +1,9 @@
 import { describe, expect, it, vi } from "vitest"
 
 vi.mock("../infra/brochure-checkout-repository", () => ({ BrochureCheckoutRepository: class {} }))
+vi.mock("../infra/tier-peak-facts-repository", () => ({
+  TierPeakFactsRepository: class { latestRules = async () => ({ tierDiscount: null, peakHours: null }); customerTierByPhone = async () => null },
+}))
 import { quoteForProduct } from "./brochure-quote"
 import type { GreetingCatalogProduct } from "../domain/greeting-card-types"
 import type { BrochureCheckoutRepository } from "../infra/brochure-checkout-repository"

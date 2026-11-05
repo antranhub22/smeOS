@@ -11,6 +11,7 @@
  */
 
 import type { PartnerTierBonus, PricingConfig, SurchargeGroup } from "./pricing"
+import { MAX_TIER_DISCOUNT_RATIO, isCustomerTier, parsePeakHours } from "./customer-tier-pricing"
 
 export const PRICING_RULE_KEYS = [
   "partner_tier_bonus",
@@ -22,6 +23,9 @@ export const PRICING_RULE_KEYS = [
   "overhead_percent",
   "default_packaging_vnd",
   "price_change_alert_percent",
+  // Checklist ALG 3.1 — chiết khấu theo hạng khách, phụ phí giờ cao điểm (customer-tier-pricing.ts)
+  "customer_tier_discount",
+  "peak_hour_surcharge",
 ] as const
 
 export type PricingRuleKey = (typeof PRICING_RULE_KEYS)[number]
@@ -196,6 +200,17 @@ export function validatePricingRuleValue(key: PricingRuleKey, value: unknown): s
       return typeof value === "number" && value >= 0 && value <= 100 ? "" : "overhead_percent phải trong khoảng [0, 100]"
     case "price_change_alert_percent":
       return typeof value === "number" && value >= 1 && value <= 100 ? "" : "price_change_alert_percent phải trong khoảng [1, 100]"
+    case "customer_tier_discount": {
+      if (typeof value !== "object" || value === null || Array.isArray(value)) return "customer_tier_discount phải là object { hạng: tỷ lệ }"
+      for (const [tier, ratio] of Object.entries(value as Record<string, unknown>)) {
+        if (!isCustomerTier(tier)) return `Hạng khách không hợp lệ: ${tier}`
+        if (typeof ratio !== "number" || ratio < 0 || ratio > MAX_TIER_DISCOUNT_RATIO) return `customer_tier_discount.${tier} phải trong khoảng [0, ${MAX_TIER_DISCOUNT_RATIO}]`
+      }
+      return ""
+    }
+    case "peak_hour_surcharge":
+      if (!Array.isArray(value)) return "peak_hour_surcharge phải là một mảng khung giờ"
+      return parsePeakHours(value).length === value.length ? "" : "Mỗi khung giờ cần startHour < endHour (0–24) và vnd dương"
     default:
       return `Khoá không nhận diện được`
   }

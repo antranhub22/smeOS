@@ -8,6 +8,7 @@ import { resolveProductPriceVnd } from "./brochure-commerce-rules"
 import { DELIVERY_SLOT_IDS } from "./delivery-schedule"
 import { promotionDiscountVnd, promotionWaivesShipping, type PromotionPricing } from "./promotion-pricing"
 import { parseSlotCapacity, type SlotCapacityConfig } from "./slot-capacity"
+import { tierDiscountVnd } from "@/modules/products/domain/customer-tier-pricing"
 import { parsePaymentPlans, paymentCodesEnabled, type PaymentPlanSnapshot } from "./payment-plan"
 
 export const MAX_ORDER_QUANTITY = 20
@@ -197,6 +198,10 @@ export interface QuoteInput {
   promotion?: PromotionPricing | null | undefined
   /** Phụ phí ngày lễ (bộ sưu tập bật áp dụng + ngày giao là ngày lễ có phụ phí) */
   surcharge?: { vnd: number; name: string } | null | undefined
+  /** Chiết khấu theo hạng khách đã nhận diện (checklist ALG 3.1) — tỷ lệ trên tiền hàng */
+  tierDiscount?: { ratio: number; label: string } | null | undefined
+  /** Phụ phí giờ cao điểm theo khung giờ giao (checklist ALG 3.1) */
+  peakHour?: { vnd: number; label: string } | null | undefined
 }
 
 export interface BrochureQuote {
@@ -214,6 +219,11 @@ export interface BrochureQuote {
   awaitingQuote?: boolean
   /** Phí chế tác theo kiểu dáng (PO Q8) — đã gộp trong đơn giá, chỉ để sổ nội bộ tách tiền hoa và phí. */
   craftFee?: import("./craft-style-fee").CraftFeeBreakdown
+  /** Chiết khấu hạng khách và phụ phí giờ cao điểm — mỗi khoản một dòng (checklist ALG 3.1). */
+  tierDiscountVnd?: number
+  tierLabel?: string
+  peakHourSurchargeVnd?: number
+  peakHourLabel?: string
   /** Phụ phí ngày lễ đã cộng vào tổng (không bị mã giảm giá trừ). */
   holidaySurchargeVnd?: number
   holidayName?: string
@@ -228,7 +238,8 @@ export function computeQuote(input: QuoteInput): BrochureQuote {
   const quantity = Math.min(Math.max(Math.round(input.quantity), 1), MAX_ORDER_QUANTITY)
   const subtotalVnd = input.unitPriceVnd * quantity
   const discountVnd = input.voucher ? voucherDiscountVnd(input.voucher, subtotalVnd) : 0
-  const afterDiscount = subtotalVnd - discountVnd
+  const tierVnd = input.tierDiscount ? Math.min(subtotalVnd - discountVnd, tierDiscountVnd(subtotalVnd, input.tierDiscount.ratio)) : 0
+  const afterDiscount = subtotalVnd - discountVnd - tierVnd
   const free =
     input.shipping.freeShippingAll === true ||
     promotionWaivesShipping(input.promotion) ||
@@ -237,17 +248,20 @@ export function computeQuote(input: QuoteInput): BrochureQuote {
   // PO 08/10/2026: "Giảm %" tính trên TỔNG đơn (tiền hoa sau mã giảm giá + phí giao)
   const promoVnd = promotionDiscountVnd(input.promotion, afterDiscount + shippingFeeVnd)
   const surchargeVnd = input.surcharge && input.surcharge.vnd > 0 ? input.surcharge.vnd : 0
+  const peakVnd = input.peakHour && input.peakHour.vnd > 0 ? input.peakHour.vnd : 0
   return {
     unitPriceVnd: input.unitPriceVnd,
     quantity,
     subtotalVnd,
     discountVnd,
     shippingFeeVnd,
-    totalVnd: afterDiscount + shippingFeeVnd - promoVnd + surchargeVnd,
+    totalVnd: afterDiscount + shippingFeeVnd - promoVnd + surchargeVnd + peakVnd,
     ...(promoVnd > 0 ? { promotionDiscountVnd: promoVnd } : {}),
     shippingZone: input.zone ? { id: input.zone.id, name: input.zone.name } : null,
     voucherCode: input.voucher?.code ?? null,
     ...(surchargeVnd > 0 && input.surcharge ? { holidaySurchargeVnd: surchargeVnd, holidayName: input.surcharge.name } : {}),
+    ...(tierVnd > 0 && input.tierDiscount ? { tierDiscountVnd: tierVnd, tierLabel: input.tierDiscount.label } : {}),
+    ...(peakVnd > 0 && input.peakHour ? { peakHourSurchargeVnd: peakVnd, peakHourLabel: input.peakHour.label } : {}),
   }
 }
 

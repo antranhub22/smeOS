@@ -26,7 +26,7 @@ Ký hiệu đường dẫn rút gọn: `org/` = `src/modules/organization/`, `gc
 |---|---|---:|---:|---:|---:|
 | 1 | Nền tảng chung & phân quyền | 19 | 17 | 2 | 0 |
 | 2 | Quản lý sản phẩm, mẫu hoa & hình ảnh | 9 | 9 | 0 | 0 |
-| 3 | Tạo & quản lý báo giá | 13 | 12 | 1 | 0 |
+| 3 | Tạo & quản lý báo giá | 13 | 13 | 0 | 0 |
 | 4 | Tiếp nhận, quản lý & xử lý đơn hàng | 32 | 32 | 0 | 0 |
 | 5 | Thẻ Chào mẫu hoa & trang khách hàng | 15 | 10 | 5 | 0 |
 | 6 | Báo cáo hoạt động & tài chính | 9 | 3 | 6 | 0 |
@@ -34,7 +34,7 @@ Ký hiệu đường dẫn rút gọn: `org/` = `src/modules/organization/`, `gc
 | 8 | Landing page bán hàng | 1 | 1 | 0 | 0 |
 | 9 | Chat nội bộ, đa chuỗi & phân quyền nâng cao | 14 | 10 | 3 | 1 |
 | 10 | Quản lý credit AI, hạn mức & thuê bao SaaS | 8 | 2 | 3 | 3 |
-| | **Tổng cộng** | **123** | **97** | **22** | **4** |
+| | **Tổng cộng** | **123** | **98** | **21** | **4** |
 
 Tỷ lệ: Hoàn thiện 78,9% · Dang dở 17,9% · Chưa hoàn thành 3,3%.
 
@@ -91,7 +91,7 @@ Tỷ lệ: Hoàn thiện 78,9% · Dang dở 17,9% · Chưa hoàn thành 3,3%.
 
 | STT | Chức năng | Trạng thái | Bằng chứng | Còn thiếu |
 |---|---|---|---|---|
-| 3.1 | Cấu hình quy tắc giá 4 nhóm (Thưởng/Sàn/Trần) | Dang dở | `src/modules/products/domain/pricing-rules.ts:6-20` (thưởng hạng đối tác, nhóm phụ phí, tỷ lệ giá tối ưu, Sàn/Trần); `api/pricing-rules/route.ts:30-32` (L6); `tt/products-pricing.test.ts:159-208` | Chiết khấu theo hạng khách Đồng/Bạc/Vàng/VIP (hạng khách chỉ dùng xếp ưu tiên `src/modules/coordinator/domain/priority-suggestion.ts:12`) |
+| 3.1 | Cấu hình quy tắc giá 4 nhóm (Thưởng/Sàn/Trần) | Hoàn thiện | `src/modules/products/domain/pricing-rules.ts` (thưởng hạng đối tác, nhóm phụ phí, tỷ lệ giá tối ưu, Sàn/Trần, chiết khấu hạng khách, giờ cao điểm); chiết khấu theo hạng khách Khách mới/Đồng/Bạc/Vàng/VIP (tối đa 50%) và phụ phí giờ cao điểm theo khung giờ giao `src/modules/products/domain/customer-tier-pricing.ts`; cài đặt ở màn Giá `src/app/(app)/gia/customer-tier-pricing-card.tsx` (L6); báo giá Thẻ Chào nhận diện khách qua SĐT, hiện từng khoản thành dòng riêng `gc/use-cases/tier-and-peak-pricing.ts`, `gc/domain/brochure-pricing.ts`; `api/pricing-rules/route.ts` (L5/L6); `tu/products/customer-tier-pricing.test.ts`, `tt/customer-tier-peak-pricing.test.ts`, `tt/products-pricing.test.ts` | — |
 | 3.2 | Bộ tính giá tự động (hoa + phí cắm + phụ phí) | Hoàn thiện | `gc/domain/brochure-pricing.ts:223-246` trả từng khoản: tiền hàng, mã giảm, phí giao theo khu vực, ưu đãi, phụ phí lễ; `tt/greeting-card-quote.test.ts:70-111`, `tt/greeting-card-holiday.test.ts:60`, `tt/greeting-card-promotion-slot.test.ts:81-107` | Phí cắm nằm trong giá mẫu, không tách dòng |
 | 3.3 | Tính giá vốn thực tế (nguyên liệu + bao bì + thợ) | Hoàn thiện | `src/modules/costing/domain/cost-calculator.ts:11-57`; `api/costing/products/[productId]`; `src/app/(app)/tinh-gia/gia-von`; `src/modules/costing/domain/costing.test.ts:21-67` | — |
 | 3.4 | Kiểm soát cảnh báo & chặn giá dưới sàn | Hoàn thiện | Sàn = giá vốn × hệ số Sàn `src/modules/costing/domain/price-floor.ts`; chặn `BELOW_FLOOR` trừ người có C10 `src/modules/costing/use-cases/price-floor-guard.ts`, áp ở báo giá đơn `src/modules/orders/use-cases/quote-order.ts`, báo giá bán hàng `src/modules/sales/use-cases/create-quotation.use-case.ts`, `update-quotation.use-case.ts`, duyệt giảm giá Thẻ Chào `gc/use-cases/discount-requests.ts`; cảnh báo ở máy tính giá `src/app/(app)/gia/pricing-calculator-card.tsx`; `tt/below-floor.test.ts`, `src/modules/costing/domain/price-floor.test.ts` | — |

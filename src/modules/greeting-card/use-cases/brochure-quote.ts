@@ -21,6 +21,7 @@ import { resolvePaymentPlan } from "./payment-plan-quote"
 import { listActiveShopPromotions } from "./active-shop-promotions"
 import { isWeekend, unitPriceFor } from "@/modules/products/domain/product-pricing"
 import { craftFeeForProduct } from "./craft-fee-for-product"
+import { tierAndPeakFor } from "./tier-and-peak-pricing"
 
 export interface QuoteRequest {
   variantId?: string | undefined
@@ -34,6 +35,8 @@ export interface QuoteRequest {
   selectedPromotionId?: string | undefined
   /** Ngày giao khách đang chọn — để báo các khung giờ đã kín (`fullSlots`) và tính phụ phí ngày lễ. */
   deliveryDate?: string | undefined
+  /** Khung giờ giao — tính phụ phí giờ cao điểm (checklist ALG 3.1) */
+  deliveryTimeSlot?: string | undefined
 }
 
 export interface QuoteResult {
@@ -175,6 +178,8 @@ async function priceProduct(
 
   // Đã tính giá cao điểm riêng của sản phẩm thì không cộng thêm phụ phí ngày lễ (tránh thu hai lần)
   const surcharge = peakApplied ? null : holidaySurcharge(holiday, catalogFilters)
-  const quote = computeQuote({ unitPriceVnd, quantity, zone, shipping, voucher, promotion, surcharge })
+  // Chiết khấu hạng khách (khách nhận diện qua SĐT) và phụ phí giờ cao điểm (checklist ALG 3.1)
+  const { tierDiscount, peakHour } = await tierAndPeakFor(organizationId, req.customerPhone, req.deliveryTimeSlot)
+  const quote = computeQuote({ unitPriceVnd, quantity, zone, shipping, voucher, promotion, surcharge, tierDiscount, peakHour })
   return { quote: craft ? { ...quote, craftFee: craft } : quote, variant, voucher, errors }
 }

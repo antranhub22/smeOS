@@ -17,7 +17,6 @@ describe("trang báo giá công khai", () => {
     await resetDatabase()
     a = await createTenant("alpha")
     b = await createTenant("beta")
-    for (const t of [a, b]) t.ctx.capabilities.add("R15")
   })
 
   afterAll(async () => {
