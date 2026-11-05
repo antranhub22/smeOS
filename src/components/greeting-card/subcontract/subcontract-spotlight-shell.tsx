@@ -183,7 +183,7 @@ export function SubcontractSpotlightShell({
       {/* Header Bar */}
       <div className="bg-primary/10 border-b border-border p-4 flex items-center justify-between">
         <div>
-          <span className="text-caption font-bold uppercase tracking-wider text-primary flex items-center gap-1">
+          <span className="text-caption font-bold uppercase tracking-wider text-primary-dark flex items-center gap-1">
             <Sparkles size={13} /> Thẻ Gia Công Đơn Hàng Chuỗi
           </span>
           <h2 className="text-title font-extrabold text-foreground">
@@ -192,7 +192,7 @@ export function SubcontractSpotlightShell({
         </div>
         <div className="text-right">
           <span className="text-caption font-semibold text-text block">Thù lao gia công</span>
-          <span className="text-title font-black text-primary">
+          <span className="text-title font-black text-primary-dark">
             {subcontractPriceVnd.toLocaleString("vi-VN")} đ
           </span>
           {craftFeeDeductions.map((d) => (

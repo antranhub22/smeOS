@@ -615,9 +615,9 @@ b806ebcc45ed7fafc3e858106d1794f132e274fc4db2684d2adcd3eacf2cd27a  src/components
 6aacfaca7e4386fd8116d9e338287a4f1d2de7766c457723dff67cb77a1f630c  src/components/greeting-card/subcontract/subcontract-qc-gallery.tsx
 653941cb81852b3a9a70874d33e73c65dde27164162af7dfee386640cd80efbd  src/components/greeting-card/subcontract/subcontract-qc-preview.tsx
 be8886116942a61877ebf8f55acb5632a3d65da098892e030463f664142e5591  src/components/greeting-card/subcontract/subcontract-recipient-contact.tsx
-457907a8b33c1ab547140810d92b51fefb00e219151306790e9cc931c593e4be  src/components/greeting-card/subcontract/subcontract-spotlight-shell.tsx
-5a74983c1996fb20b867f201f931ddcda09c1334e4bdf9fec78bfa40b0dfb9f7  src/components/greeting-card/subcontract/subcontract-spotlight-stepper.tsx
-d33c0bb264ffce9f5b745f99742d5efaac2be5c7efb0873496f0b6f3c25ff737  src/components/greeting-card/subcontract/subcontract-step-claim.tsx
+a960d84ea0ce45435529919184fa5c7a55acdc5c8633dda7e14a3dbcb90f5555  src/components/greeting-card/subcontract/subcontract-spotlight-shell.tsx
+b3e36ed2b2fa82ea3a9f36059000638697291f4bccdac5882f3e7e793127392a  src/components/greeting-card/subcontract/subcontract-spotlight-stepper.tsx
+2d8538eab8a475b79a3db661baad08b2d58017a81100336e88001e6497026e8f  src/components/greeting-card/subcontract/subcontract-step-claim.tsx
 df15188c063d2f48603985c0d88a4d59b097059f6189f6e1fbd981c44a04125b  src/components/greeting-card/subcontract/subcontract-step-proof.tsx
 855c5e4a7ad1f9e8f0055996ebb006b4468c5d1ad8fb6f381f4d0b1bd614836b  src/components/greeting-card/subcontract/subcontract-step-qc.tsx
 4032104ac0b25bbc0016e406aad505f75aad3c66c86ac9681ee6ea4107fe7306  src/components/greeting-card/subcontract/subcontract-step-shipper.tsx
@@ -653,7 +653,7 @@ d3d5f36b83184059d025136d9a68064110884aa9d10be251e711073896112250  src/app/bst/no
 35e9c5e5ede5bc16f817b36ea0ca7330287f0013de78a7b9884b202c129ff0ce  src/app/s/[code]/opengraph-image.tsx
 d4a67860c2eafd54d8e7b39e875be38fc0b313c94cd7fcca2f5a41402d2f6067  src/app/s/[code]/page.tsx
 eef6504ba676a0008d50c7d190c3b432fe50b9ccd59c0ad890691ec5fe48d522  src/app/s/not-found.tsx
-a277331f1b4932868a78aac283833ecbcf6cc94d7dff64284988c15b10ed2b03  src/app/subcontract/[orderCode]/page.tsx
+56bf0e9d8b67eafada2e2aa2bd230c459958174eed817a002f751f9f52884a26  src/app/subcontract/[orderCode]/page.tsx
 1c98835c6fc4ee0b097c89e39917e072eeda32d0913e4ade2e3d723a4a741186  src/app/api/v1/greeting-card/cancellation-requests/[id]/decision/route.ts
 6bc0cdd22417fa0ea40baad0b753298869a0e4446228db2dcf1dd622fe896118  src/app/api/v1/greeting-card/cancellation-requests/[id]/follow-up/route.ts
 82dbf33ca7450f82ebd1fd850f6825e8f8c9fe93381e60261733d487a8b990a9  src/app/api/v1/greeting-card/cancellation-requests/route.ts
