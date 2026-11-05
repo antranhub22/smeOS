@@ -79,7 +79,7 @@ export function BrochureOrderOptions({ variants, priceDimensions, basePrice, shi
               aria-label="Giảm số lượng"
               disabled={selection.quantity <= 1}
               onClick={() => onChange({ quantity: selection.quantity - 1 })}
-              className="font-[inherit] gap-0 h-10 w-10 rounded-lg border border-border flex items-center justify-center disabled:opacity-40"
+              className="px-0 py-0 text-[length:inherit] font-[inherit] gap-0 h-10 w-10 rounded-lg border border-border flex items-center justify-center disabled:opacity-40"
             >
               <Minus size={16} />
             </Button>
@@ -89,7 +89,7 @@ export function BrochureOrderOptions({ variants, priceDimensions, basePrice, shi
               aria-label="Tăng số lượng"
               disabled={selection.quantity >= MAX_ORDER_QUANTITY}
               onClick={() => onChange({ quantity: selection.quantity + 1 })}
-              className="font-[inherit] gap-0 h-10 w-10 rounded-lg border border-border flex items-center justify-center disabled:opacity-40"
+              className="px-0 py-0 text-[length:inherit] font-[inherit] gap-0 h-10 w-10 rounded-lg border border-border flex items-center justify-center disabled:opacity-40"
             >
               <Plus size={16} />
             </Button>
@@ -134,7 +134,7 @@ export function BrochureOrderOptions({ variants, priceDimensions, basePrice, shi
           <Button variant="outline"
             type="button"
             onClick={() => onChange({ voucherCode: voucherInput.trim() })}
-            className="h-10 px-3 rounded-lg border border-primary text-primary font-bold text-body-sm whitespace-nowrap flex items-center gap-1.5 hover:bg-primary/5 transition"
+            className="py-0 h-10 px-3 rounded-lg border border-primary text-primary font-bold text-body-sm whitespace-nowrap flex items-center gap-1.5 hover:bg-primary/5 transition"
           >
             <Ticket size={14} /> Áp dụng
           </Button>

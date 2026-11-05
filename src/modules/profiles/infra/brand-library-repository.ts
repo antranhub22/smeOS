@@ -76,7 +76,7 @@ export class BrandLibraryRepository implements IBrandLibraryRepository {
         description: meta.description, created_by: ctx.userId,
         versions: {
           create: {
-            organization_id: ctx.organizationId, version: 1, asset_id: content.assetId,
+            version: 1, asset_id: content.assetId,
             text_value: content.textValue, note: content.note, created_by: ctx.userId,
           },
         },

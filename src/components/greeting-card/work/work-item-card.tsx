@@ -69,7 +69,7 @@ export function WorkItemCard({ item, me, onOpenNotes, actions, now }: Props) {
           <Button variant="outline"
             type="button"
             onClick={() => onOpenNotes(item, item.currentStepId)}
-            className="inline-flex h-9 items-center gap-1 rounded-lg border border-border px-2.5 text-caption font-bold text-text hover:bg-surface-muted"
+            className="py-0 inline-flex h-9 items-center gap-1 rounded-lg border border-border px-2.5 text-caption font-bold text-text hover:bg-surface-muted"
           >
             <MessageSquare size={13} className="text-primary" aria-hidden="true" />
             Nhắn tin

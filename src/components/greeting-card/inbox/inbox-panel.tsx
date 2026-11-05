@@ -65,7 +65,7 @@ export function InboxPanel({ onClose, onOpenTarget }: { onClose: () => void; onO
                   key={r.id}
                   type="button"
                   onClick={() => setRoleOverride(r.id)}
-                  className={`gap-0 rounded-md px-2.5 py-1 text-caption font-bold transition-colors ${
+                  className={`h-auto gap-0 rounded-md px-2.5 py-1 text-caption font-bold transition-colors ${
                     active ? "bg-primary text-white shadow-xs hover:bg-primary" : "text-text-muted hover:text-text"
                   }`}
                 >
@@ -79,7 +79,7 @@ export function InboxPanel({ onClose, onOpenTarget }: { onClose: () => void; onO
       <div role="tablist" aria-label="Nhóm trong Hộp việc" className="sticky top-0 z-10 grid grid-cols-3 gap-1 border-b border-border bg-surface p-2">
         {tabs.map((t) => (
           <Button variant="ghost" key={t.id} type="button" role="tab" aria-selected={group === t.id} onClick={() => setGroup(t.id)}
-            className={`flex h-11 items-center justify-center gap-1.5 rounded-xl text-body-sm font-bold ${group === t.id ? "bg-primary text-white hover:bg-primary" : "text-text-muted hover:bg-surface-muted"}`}>
+            className={`px-0 py-0 flex h-11 items-center justify-center gap-1.5 rounded-xl text-body-sm font-bold ${group === t.id ? "bg-primary text-white hover:bg-primary" : "text-text-muted hover:bg-surface-muted"}`}>
             {t.label}
             {t.count > 0 && <span className={`min-w-5 rounded-full px-1.5 text-caption ${group === t.id ? "bg-white/25" : "bg-danger text-white"}`}>{t.count}</span>}
           </Button>
@@ -89,7 +89,7 @@ export function InboxPanel({ onClose, onOpenTarget }: { onClose: () => void; onO
       {inbox.error ? (
         <div role="alert" className="m-4 rounded-xl bg-danger-bg p-4 text-body-sm text-danger">
           {(inbox.error as Error).message}
-          <Button variant="ghost" type="button" onClick={() => void inbox.mutate()} className="h-auto p-0 gap-0 ml-2 font-bold underline">Thử lại</Button>
+          <Button variant="ghost" type="button" onClick={() => void inbox.mutate()} className="text-[length:inherit] h-auto p-0 gap-0 ml-2 font-bold underline">Thử lại</Button>
         </div>
       ) : !data ? (
         <div className="flex flex-col gap-2 p-4" aria-busy="true">{[0, 1, 2, 3].map((i) => <div key={i} className="h-16 animate-pulse motion-reduce:animate-none rounded-xl bg-surface-muted" />)}</div>
@@ -105,7 +105,7 @@ export function InboxPanel({ onClose, onOpenTarget }: { onClose: () => void; onO
           <ul className="divide-y divide-border bg-surface">
             {data.threads.map((t) => (
               <li key={t.key}>
-                <Button variant="ghost" type="button" className={`justify-start font-[inherit] ${ROW}`} onClick={() => setThread({ orderId: t.orderId, sessionId: t.sessionId, title: t.title })}>
+                <Button variant="ghost" type="button" className={`px-0 py-0 text-[length:inherit] h-auto justify-start font-[inherit] ${ROW}`} onClick={() => setThread({ orderId: t.orderId, sessionId: t.sessionId, title: t.title })}>
                   <MessageSquare size={20} className={t.unread ? "shrink-0 text-primary" : "shrink-0 text-text-muted"} aria-hidden="true" />
                   <span className="min-w-0 flex-1">
                     <span className={`block truncate text-body-sm ${t.unread ? "font-extrabold text-text" : "font-semibold text-text"}`}>{t.title}</span>
@@ -124,7 +124,7 @@ export function InboxPanel({ onClose, onOpenTarget }: { onClose: () => void; onO
         <ul className="divide-y divide-border bg-surface">
           {data.updates.map((u) => (
             <li key={u.id}>
-              <Button variant="ghost" type="button" className={`justify-start font-[inherit] ${ROW}`} onClick={() => open({ tab: "tracking", orderId: u.orderId, sessionId: u.sessionId })}>
+              <Button variant="ghost" type="button" className={`px-0 py-0 text-[length:inherit] h-auto justify-start font-[inherit] ${ROW}`} onClick={() => open({ tab: "tracking", orderId: u.orderId, sessionId: u.sessionId })}>
                 <span className="min-w-0 flex-1">
                   <span className="block truncate text-body-sm font-semibold text-text">{u.customerName} — {u.title}</span>
                   <span className="block text-caption text-text-muted">{u.code} · {timeAgo(u.at, now)}</span>
@@ -198,12 +198,12 @@ function ActionRow({ action, onOpen, onMessage, onDecided }: { action: InboxActi
       {done && <p role="status" className="rounded-xl bg-success-bg px-3 py-2 text-body-sm text-success">{done}</p>}
       <div className="flex gap-2 pl-15">
         {!action.discount && !action.change && !action.followUp && (
-          <Button variant="primary" type="button" onClick={onOpen} className="gap-0 h-11 flex-1 rounded-xl bg-primary px-3 text-body-sm font-bold text-white hover:bg-primary-dark sm:flex-none">
+          <Button variant="primary" type="button" onClick={onOpen} className="py-0 gap-0 h-11 flex-1 rounded-xl bg-primary px-3 text-body-sm font-bold text-white hover:bg-primary-dark sm:flex-none">
             {ACTION_LABEL[action.kind] ?? "Xử lý"}
           </Button>
         )}
         {onMessage && (
-          <Button variant="outline" type="button" onClick={onMessage} className="gap-0 h-11 flex-1 rounded-xl border border-border px-3 text-body-sm font-bold text-text hover:bg-surface-muted sm:flex-none">
+          <Button variant="outline" type="button" onClick={onMessage} className="py-0 gap-0 h-11 flex-1 rounded-xl border border-border px-3 text-body-sm font-bold text-text hover:bg-surface-muted sm:flex-none">
             Nhắn tin
           </Button>
         )}

@@ -80,7 +80,7 @@ describe("cách ly tenant — hàng đợi lead, lead Sale nhập, nút trang kh
       data: {
         organization_id: a.organizationId, code: "TC-0001", customer_id: customer.id, status: "CANCELLED",
         total_vnd: 500_000, balance_vnd: 500_000, created_by: a.userId, source: "BROCHURE",
-        events: { create: { organization_id: a.organizationId, axis: "order", from_value: "DRAFT", to_value: "CANCELLED", reason: PAYMENT_TIMEOUT_REASON } },
+        events: { create: { axis: "order", from_value: "DRAFT", to_value: "CANCELLED", reason: PAYMENT_TIMEOUT_REASON } },
       },
     })
     expect((await recoverPaymentTimeoutLeads()).created).toBe(1)

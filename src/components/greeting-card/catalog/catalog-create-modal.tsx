@@ -110,7 +110,7 @@ export function CatalogCreateModal({ onClose, onCreated }: { onClose: () => void
             <Button variant="primary"
               type="submit"
               disabled={creating}
-              className="inline-flex items-center justify-center rounded-xl bg-primary hover:bg-primary-dark text-white font-bold h-10 px-5 gap-1.5 text-body-sm shadow-sm transition-colors disabled:opacity-50"
+              className="py-0 inline-flex items-center justify-center rounded-xl bg-primary hover:bg-primary-dark text-white font-bold h-10 px-5 gap-1.5 text-body-sm shadow-sm transition-colors disabled:opacity-50"
             >
               {creating ? <Loader2 size={15} className="animate-spin motion-reduce:animate-none" /> : <Check size={15} />}
               {creating ? "Đang tạo..." : "Tạo ngay"}

@@ -97,7 +97,7 @@ export function EnhancerProviderSelector({
   return (
     <div className="w-full flex flex-col gap-2.5">
       <div className="flex items-center justify-between">
-        <div className="text-xs font-bold text-text uppercase tracking-wider flex items-center gap-1.5">
+        <div className="text-caption font-bold text-text uppercase tracking-wider flex items-center gap-1.5">
           <Sparkles size={14} className="text-primary" />
           <span>Phương thức & Nhà cung cấp AI (Provider)</span>
         </div>

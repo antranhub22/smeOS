@@ -42,7 +42,7 @@ export function ColorMoodboardDeck({ products, catalogName, selectedProductId, o
                 type="button"
                 aria-pressed={active}
                 onClick={() => setMoodId(m.id)}
-                className="h-auto p-0 font-[inherit] flex w-16 shrink-0 flex-col items-center gap-1.5"
+                className="text-[length:inherit] h-auto p-0 font-[inherit] flex w-16 shrink-0 flex-col items-center gap-1.5"
               >
                 <span
                   className={`h-14 w-14 rounded-full border border-black/10 transition-transform ${active ? "scale-105 ring-2 ring-text ring-offset-2 ring-offset-bg" : ""}`}

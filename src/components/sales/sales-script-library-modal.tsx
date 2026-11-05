@@ -117,18 +117,18 @@ export function SalesScriptLibraryModal({
         <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 border-b border-border pb-3">
           <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
             {CATEGORY_TABS.map((tab) => (
-              <button
+              <Button variant="ghost"
                 type="button"
                 key={tab.id}
                 onClick={() => setSelectedCategory(tab.id)}
-                className={`whitespace-nowrap rounded-lg px-2.5 py-1 text-caption font-semibold transition-colors cursor-pointer ${
+                className={`h-auto gap-0 whitespace-nowrap rounded-lg px-2.5 py-1 text-caption font-semibold transition-colors cursor-pointer ${
                   selectedCategory === tab.id
-                    ? "bg-primary text-white"
+                    ? "bg-primary text-white hover:bg-primary"
                     : "bg-surface-alt text-text-muted hover:text-text hover:bg-surface-alt"
                 }`}
               >
                 {tab.label}
-              </button>
+              </Button>
             ))}
           </div>
 
@@ -151,13 +151,13 @@ export function SalesScriptLibraryModal({
             {filteredScripts.map((script) => {
               const isSelected = activeScript?.id === script.id
               return (
-                <button
+                <Button variant="outline"
                   type="button"
                   key={script.id}
                   onClick={() => setSelectedScriptId(script.id)}
-                  className={`flex flex-col text-left p-3 rounded-xl border transition-all cursor-pointer ${
+                  className={`text-[length:inherit] h-auto justify-start font-[inherit] gap-0 flex flex-col text-left p-3 rounded-xl border transition-all cursor-pointer ${
                     isSelected
-                      ? "border-primary bg-selected/40 shadow-xs"
+                      ? "border-primary bg-selected/40 shadow-xs hover:bg-selected/40"
                       : "border-border bg-surface hover:bg-surface-alt"
                   }`}
                 >
@@ -174,7 +174,7 @@ export function SalesScriptLibraryModal({
                   <p className="text-caption text-text-muted mt-1 line-clamp-2 leading-relaxed">
                     {script.summary}
                   </p>
-                </button>
+                </Button>
               )
             })}
             {filteredScripts.length === 0 && (

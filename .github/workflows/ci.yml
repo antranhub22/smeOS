@@ -194,15 +194,19 @@ jobs:
           path: test-results/
           retention-days: 7
 
-  # KHÔNG có job deploy ở đây (PO 05/11/2026). `render.yaml` đặt `autoDeploy: true` cho cả 5
-  # dịch vụ, nên Render tự deploy mỗi khi `main` đổi — chạy blueprint một lần là xong, không
-  # cần deploy hook hay secret `RENDER_DEPLOY_HOOK_*` nào (thay cơ chế của P0-02).
+  # KHÔNG có job deploy ở đây (PO 05/11/2026). `render.yaml` đặt `autoDeployTrigger: checksPass`
+  # cho cả 5 dịch vụ: Render theo dõi check CI của commit trên `main` và chỉ deploy khi chúng
+  # xanh. Chạy blueprint một lần là xong — không deploy hook, không secret `RENDER_DEPLOY_HOOK_*`.
   #
-  # Hệ quả: Render deploy SONG SONG với CI trên `main`, không chờ CI xanh. Cổng "chỉ phát hành
-  # bản đã qua kiểm" vì vậy chuyển sang ruleset của GitHub (P0-03):
-  #   Settings → Rules → Rulesets → `main`: bắt buộc pull request + 5 check bắt buộc
-  #   (`web`, `worker`, `e2e-ux`, `security`, `industry-terms`), chặn push trực tiếp và force push.
-  # Có ruleset thì mọi commit vào `main` đều đã xanh trước khi merge. THIẾU ruleset thì một
-  # push trực tiếp vào `main` sẽ lên production mà không qua cổng nào.
+  # Cổng "chỉ phát hành bản đã qua kiểm" (P0-02, D-14) được GIỮ, chỉ đổi nơi thực thi: từ job
+  # `deploy` ở đây sang chính Render. Hệ quả cho CI:
+  #   • Tên 5 job dưới đây (`web`, `worker`, `e2e-ux`, `security`, `industry-terms`) giờ là thứ
+  #     Render đọc để quyết định có deploy hay không. ĐỔI TÊN hoặc XOÁ một job là nới cổng
+  #     production, không chỉ là sửa CI.
+  #   • Commit trên `main` KHÔNG sinh check nào thì Render KHÔNG deploy (hỏng theo hướng an toàn).
+  #     Vì vậy `on.push.branches: ["main"]` ở đầu tệp là một phần của cổng deploy, không được bỏ.
+  #
+  # Ruleset `main` (bắt buộc PR + 5 check, chặn force push) vẫn nên bật — giờ là lớp phòng vệ
+  # thứ hai (chặn merge bản đỏ), không còn là cổng duy nhất.
   #
   # Quay lui: Render → dịch vụ → Deploys → Rollback (xem docs/handover/OPERATIONS_RUNBOOK.md §3–4).

@@ -40,7 +40,7 @@ export function ExceptionResolutionCard({
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <AlertCircle size={16} className="text-alert-600" />
-          <span className="text-xs font-bold text-alert-900">SỰ CỐ #{exceptionCode} (ĐƠN #{orderCode})</span>
+          <span className="text-caption font-bold text-alert-900">SỰ CỐ #{exceptionCode} (ĐƠN #{orderCode})</span>
           <Badge tone={tone} className="text-caption font-extrabold">
             {severity}
           </Badge>
@@ -51,7 +51,7 @@ export function ExceptionResolutionCard({
         </div>
       </div>
 
-      <div className="text-xs">
+      <div className="text-caption">
         <div className="font-bold text-text mb-0.5">Loại sự cố: <span className="text-alert-700">{type}</span></div>
         <p className="text-text-muted leading-relaxed bg-surface p-3 rounded-xl border border-border">
           {description}
@@ -59,7 +59,7 @@ export function ExceptionResolutionCard({
       </div>
 
       {resolutionPlan && (
-        <div className="p-3 rounded-xl bg-surface border border-mint-200 text-xs">
+        <div className="p-3 rounded-xl bg-surface border border-mint-200 text-caption">
           <div className="font-bold text-mint-950 flex items-center gap-1 mb-1">
             <Wrench size={13} className="text-mint-600" />
             <span>Phương án xử lý đề xuất:</span>
@@ -69,11 +69,11 @@ export function ExceptionResolutionCard({
       )}
 
       <div className="flex items-center justify-between pt-2 border-t border-dashed border-alert-200">
-        <Badge tone={isResolved ? "success" : "warning"} className="text-xs">
+        <Badge tone={isResolved ? "success" : "warning"} className="text-caption">
           {isResolved ? "ĐÃ XỬ LÝ XONG" : "ĐANG CHỜ ĐIỀU PHỐI XỬ LÝ"}
         </Badge>
         {!isResolved && onResolve && (
-          <Button size="sm" onClick={onResolve} className="bg-mint-600 hover:bg-mint-700 text-white gap-1 text-xs">
+          <Button size="sm" onClick={onResolve} className="bg-mint-600 hover:bg-mint-700 text-white gap-1 text-caption">
             <CheckCircle2 size={13} />
             <span>Chốt Xử Lý & Tiếp Tục Đơn</span>
           </Button>

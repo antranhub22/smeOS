@@ -27,7 +27,7 @@ export function TierCollapsibleSection({
         <Button variant="ghost"
           type="button"
           onClick={() => setExpanded(!expanded)}
-          className="gap-0 flex w-full items-center justify-between rounded-lg px-2 py-1.5 text-caption font-bold text-danger hover:bg-danger-bg/40 transition-colors"
+          className="h-auto gap-0 flex w-full items-center justify-between rounded-lg px-2 py-1.5 text-caption font-bold text-danger hover:bg-danger-bg/40 transition-colors"
           aria-expanded={expanded}
         >
           <div className="flex items-center gap-1.5">
@@ -53,7 +53,7 @@ export function TierCollapsibleSection({
       <Button variant="ghost"
         type="button"
         onClick={() => setExpanded(!expanded)}
-        className="gap-0 flex w-full items-center justify-between rounded-lg px-2 py-1.5 text-caption font-medium text-text-muted hover:bg-surface-muted transition-colors"
+        className="h-auto gap-0 flex w-full items-center justify-between rounded-lg px-2 py-1.5 text-caption font-medium text-text-muted hover:bg-surface-muted transition-colors"
         aria-expanded={expanded}
       >
         <div className="flex items-center gap-1.5">

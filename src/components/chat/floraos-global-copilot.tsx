@@ -239,14 +239,14 @@ export function FloraOSGlobalCopilot() {
                   <div className="text-caption font-medium text-text-muted">Trợ lý Vận hành & Hướng dẫn</div>
                 </div>
               </div>
-              <button
+              <Button variant="ghost"
                 type="button"
                 aria-label="Đóng trợ lý"
                 onClick={() => setIsOpen(false)}
-                className="rounded-lg p-1.5 text-text-muted hover:bg-surface hover:text-text transition-colors cursor-pointer"
+                className="text-[length:inherit] h-auto font-[inherit] gap-0 rounded-lg p-1.5 text-text-muted hover:bg-surface hover:text-text transition-colors cursor-pointer"
               >
                 <X className="h-4 w-4" />
-              </button>
+              </Button>
             </div>
 
             {/* Vùng nội dung tin nhắn */}
@@ -266,15 +266,15 @@ export function FloraOSGlobalCopilot() {
                   <div className="space-y-1.5 w-full pt-2">
                     <div className="text-caption font-bold text-text-muted text-left px-1">💡 Hướng dẫn thao tác nhanh:</div>
                     {QUICK_PROMPTS.map((q, idx) => (
-                      <button
+                      <Button variant="outline"
                         type="button"
                         key={idx}
                         onClick={() => handleSendMessage(q)}
-                        className="w-full text-left rounded-xl border border-border bg-surface-alt p-2 text-caption font-medium text-text hover:bg-border/30 transition-colors flex items-center justify-between cursor-pointer"
+                        className="h-auto gap-0 w-full text-left rounded-xl border border-border bg-surface-alt p-2 text-caption font-medium text-text hover:bg-border/30 transition-colors flex items-center justify-between cursor-pointer"
                       >
                         <span className="truncate">{q}</span>
                         <ArrowRight className="h-3 w-3 text-primary shrink-0 ml-1" />
-                      </button>
+                      </Button>
                     ))}
                   </div>
                 </div>

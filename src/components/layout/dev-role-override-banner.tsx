@@ -101,17 +101,17 @@ export function DevRoleOverrideBanner({ activeRoleKey, isDev }: Props) {
               const isLoading = loading === preset.roleKey
               return (
                 <li key={preset.roleKey}>
-                  <button
+                  <Button variant="ghost"
                     type="button"
                     disabled={isLoading}
                     onClick={() => {
                       if (!isLoading) applyOverride(preset)
                     }}
                     aria-disabled={isLoading}
-                    className={cn(
+                    className={cn("h-auto", "justify-start", 
                       "flex w-full items-center gap-2 px-3 py-2 text-left text-meta transition-colors cursor-pointer",
                       isActive
-                        ? "bg-surface-alt font-bold text-text"
+                        ? "bg-surface-alt font-bold text-text hover:bg-surface-alt"
                         : "text-text hover:bg-surface-alt",
                       isLoading && "opacity-50 cursor-not-allowed"
                     )}
@@ -129,7 +129,7 @@ export function DevRoleOverrideBanner({ activeRoleKey, isDev }: Props) {
                         ACTIVE
                       </span>
                     )}
-                  </button>
+                  </Button>
                 </li>
               )
             })}
@@ -154,12 +154,12 @@ export function DevRoleOverrideBanner({ activeRoleKey, isDev }: Props) {
       )}
 
       {/* Toggle button */}
-      <button
+      <Button variant="outline"
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className={cn(
+        className={cn("h-auto", 
           "flex items-center gap-1.5 rounded-full border border-border bg-surface-alt px-3 py-1.5 text-caption font-bold text-text shadow-md transition-all hover:bg-surface cursor-pointer",
-          open && "bg-surface"
+          open && "bg-surface hover:bg-surface"
         )}
         aria-expanded={open}
         aria-haspopup="dialog"
@@ -171,7 +171,7 @@ export function DevRoleOverrideBanner({ activeRoleKey, isDev }: Props) {
           aria-hidden
           className={cn("transition-transform", open && "rotate-180")}
         />
-      </button>
+      </Button>
     </div>
   )
 }

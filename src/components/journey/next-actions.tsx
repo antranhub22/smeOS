@@ -1,5 +1,6 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
 import React from "react"
 import { ArrowRight } from "@/components/ui/icon-set/arrow-right"
 import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
@@ -43,11 +44,11 @@ export function NextActions({
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 pt-2">
         {actions.map((act) => (
-          <button
+          <Button variant="outline"
             type="button"
             key={act.id}
             onClick={act.onClick}
-            className={`flex flex-col text-left p-3.5 rounded-lg border transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary ${
+            className={`text-[length:inherit] h-auto justify-start gap-0 flex flex-col text-left p-3.5 rounded-lg border transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary ${
               act.isPrimary
                 ? "bg-selected text-primary border-primary hover:bg-surface-alt font-semibold"
                 : "bg-surface border-border text-text hover:bg-surface-alt hover:border-primary/40"
@@ -64,7 +65,7 @@ export function NextActions({
                 {act.description}
               </span>
             )}
-          </button>
+          </Button>
         ))}
       </div>
     </div>

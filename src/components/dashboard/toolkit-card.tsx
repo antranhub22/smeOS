@@ -1,5 +1,6 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
 import React from "react"
 import { useRouter } from "next/navigation"
 import type { ToolDefinition, ToolStatus } from "@/modules/toolkit/domain/toolkit-catalog"
@@ -76,13 +77,13 @@ export function ToolCard({ tool, isDev, tone = "plum" }: ToolCardProps) {
 
       <h3 className={`text-body-sm sm:text-title-sm font-bold leading-snug ${isClickable ? "text-text group-hover:text-primary" : "text-text-muted"}`}>
         {isClickable ? (
-          <button
+          <Button variant="ghost"
             type="button"
             onClick={handleClick}
-            className="after:absolute after:inset-0 after:rounded-2xl after:content-[''] focus-visible:outline-none focus-visible:after:ring-2 focus-visible:after:ring-ring cursor-pointer transition-colors"
+            className="text-[length:inherit] h-auto p-0 font-[inherit] gap-0 after:absolute after:inset-0 after:rounded-2xl after:content-[''] focus-visible:outline-none focus-visible:after:ring-2 focus-visible:after:ring-ring cursor-pointer transition-colors"
           >
             {shortName}
-          </button>
+          </Button>
         ) : (
           shortName
         )}

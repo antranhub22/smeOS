@@ -32,7 +32,7 @@ export function SalesFunnelStats() {
               type="button"
               onClick={() => setDays(p)}
               aria-pressed={days === p}
-              className={`gap-0 px-3 h-8 rounded-lg text-caption font-bold border ${
+              className={`py-0 gap-0 px-3 h-8 rounded-lg text-caption font-bold border ${
                 days === p ? "bg-primary text-white border-primary hover:bg-primary" : "border-border text-text-muted hover:bg-surface-muted"
               }`}
             >

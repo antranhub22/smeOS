@@ -63,7 +63,7 @@ function HistoryContent({ refQs }: { refQs: string }) {
           ))}
         </ul>
         {events.hasMore && (
-          <Button variant="outline" type="button" onClick={() => void events.loadMore()} className="gap-0 min-h-11 rounded-xl border border-border bg-surface text-body-sm font-semibold hover:bg-surface">
+          <Button variant="outline" type="button" onClick={() => void events.loadMore()} className="px-0 py-0 gap-0 min-h-11 rounded-xl border border-border bg-surface text-body-sm font-semibold hover:bg-surface">
             {events.isLoadingMore ? "Đang tải..." : "Tải thêm"}
           </Button>
         )}

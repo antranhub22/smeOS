@@ -1,7 +1,10 @@
 "use client";
 
+import { Button } from "@/components/ui/button"
+import { Dialog } from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
 import React, { useState, useEffect } from "react";
-import { Upload, Image as ImageIcon, Sparkles, Check, Flower2, Library, Loader2, X } from "@/components/ui/icons";
+import { Upload, Image as ImageIcon, Sparkles, Check, Flower2, Library, Loader2 } from "@/components/ui/icons";
 import { useI18n } from "@/lib/i18n/context";
 import { safeImageSrc } from "@/lib/safe-image-src"
 
@@ -206,46 +209,46 @@ export function ProductUploadCard({
   };
 
   return (
-    <div className="rounded-2xl border border-cool-200 bg-white p-5 shadow-sm space-y-4">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-cool-100 pb-3">
+    <div className="rounded-2xl border border-border bg-white p-5 shadow-sm space-y-4">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-border pb-3">
         <div className="flex items-center gap-2">
-          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-blush-50 text-blush-600">
+          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary-muted text-primary">
             <Flower2 size={18} />
           </span>
           <div>
-            <h2 className="text-sm font-bold text-cool-900">1. Tải ảnh & Nhận diện {ti("sampleProduct")} (Chặng 01 & 02)</h2>
-            <p className="text-caption text-cool-500">
+            <h2 className="text-body-sm font-bold text-text">1. Tải ảnh & Nhận diện {ti("sampleProduct")} (Chặng 01 & 02)</h2>
+            <p className="text-caption text-text-muted">
               Tải ảnh thực tế của tiệm, chọn mẫu từ Catalog hoặc thử nghiệm nhanh mẫu tiêu biểu
             </p>
           </div>
         </div>
 
-        <button
+        <Button variant="outline"
           type="button"
           onClick={handleOpenCatalog}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-blush-200 bg-blush-50/50 hover:bg-blush-100/70 text-blush-700 text-xs font-bold transition"
+          className="h-auto inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-primary-border bg-primary-muted/50 hover:bg-primary-muted/70 text-primary text-caption font-bold transition"
         >
           <Library size={14} />
           Chọn từ Catalog tiệm
-        </button>
+        </Button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {/* Upload Box */}
         <div className="md:col-span-2 space-y-3">
-          <label className="text-xs font-bold text-cool-800 block">
+          <label className="text-caption font-bold text-text block">
             Tên {ti("sampleProduct")} đang nghiên cứu
           </label>
-          <input
+          <Input
             type="text"
             value={productTitle}
             onChange={(e) => onUpdateProductTitle(e.target.value)}
             placeholder={`VD: ${demoItems[0]?.name ?? ti("sampleProduct")}...`}
-            className="h-10 w-full rounded-xl border border-cool-200 bg-cool-50/50 px-3 text-xs text-cool-900 outline-none focus:border-blush-500 focus:bg-white transition"
+            className="h-10 w-full rounded-xl border border-border bg-bg/50 px-3 text-caption text-text outline-none focus:border-primary focus:bg-white transition"
           />
 
           {/* Drag and Drop Zone */}
-          <div className="relative border-2 border-dashed border-cool-200 hover:border-blush-300 rounded-2xl p-6 text-center bg-cool-50/30 hover:bg-blush-50/20 transition cursor-pointer group">
+          <div className="relative border-2 border-dashed border-border hover:border-primary-border rounded-2xl p-6 text-center bg-bg/30 hover:bg-primary-muted/20 transition cursor-pointer group">
             <input
               type="file"
               accept="image/*"
@@ -257,15 +260,15 @@ export function ProductUploadCard({
               }}
             />
             <div className="flex flex-col items-center justify-center gap-2">
-              <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-white shadow-xs text-blush-600 group-hover:scale-110 transition">
+              <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-white shadow-xs text-primary group-hover:scale-110 transition">
                 {isUploading ? <Loader2 size={18} className="animate-spin motion-reduce:animate-none" /> : <Upload size={18} />}
               </span>
-              <p className="text-xs font-bold text-cool-700">
+              <p className="text-caption font-bold text-text">
                 {isUploading ? (
                   "Đang đồng bộ hóa ảnh lên hệ thống..."
                 ) : (
                   <>
-                    Kéo thả ảnh vào đây, hoặc <span className="text-blush-600 underline">chọn tệp từ máy</span>
+                    Kéo thả ảnh vào đây, hoặc <span className="text-primary underline">chọn tệp từ máy</span>
                   </>
                 )}
               </p>
@@ -275,21 +278,21 @@ export function ProductUploadCard({
 
           {/* Quick Demo Selector */}
           <div>
-            <span className="text-caption font-bold text-cool-500 block mb-1.5">
+            <span className="text-caption font-bold text-text-muted block mb-1.5">
               Hoặc thử nghiệm nhanh với mẫu {ti("sampleProduct")} tiêu biểu:
             </span>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
               {demoItems.map((flower) => {
                 const isSelected = selectedImage === flower.url;
                 return (
-                  <button
+                  <Button variant="outline"
                     key={flower.name}
                     type="button"
                     onClick={() => handleSelectDemo(flower)}
-                    className={`flex items-center gap-2 p-2 rounded-xl border text-left text-xs transition ${
+                    className={`h-auto justify-start flex items-center gap-2 p-2 rounded-xl border text-left text-caption transition ${
                       isSelected
-                        ? "border-blush-500 bg-blush-50/60 text-blush-900 font-semibold"
-                        : "border-cool-200 hover:bg-cool-50 text-cool-700"
+                        ? "border-primary bg-primary-muted/60 text-primary font-semibold hover:bg-primary-muted/60"
+                        : "border-border hover:bg-bg text-text"
                     }`}
                   >
                     <img
@@ -301,8 +304,8 @@ export function ProductUploadCard({
                       <p className="text-caption font-bold truncate leading-tight">{flower.name}</p>
                       <p className="text-caption text-text-muted truncate mt-0.5">{flower.style}</p>
                     </div>
-                    {isSelected && <Check size={14} className="text-blush-600 shrink-0" />}
-                  </button>
+                    {isSelected && <Check size={14} className="text-primary shrink-0" />}
+                  </Button>
                 );
               })}
             </div>
@@ -310,17 +313,17 @@ export function ProductUploadCard({
         </div>
 
         {/* Selected Image Preview & Trigger Button */}
-        <div className="flex flex-col justify-between rounded-xl border border-cool-100 bg-cool-50/50 p-3.5 space-y-3">
+        <div className="flex flex-col justify-between rounded-xl border border-border bg-bg/50 p-3.5 space-y-3">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-cool-700">Ảnh {ti("sampleProduct")} đã chọn</span>
+            <span className="text-caption font-bold text-text">Ảnh {ti("sampleProduct")} đã chọn</span>
             {selectedAssetId && (
-              <span className="text-caption font-bold px-2 py-0.5 rounded bg-mint-50 text-mint-700 border border-mint-200">
+              <span className="text-caption font-bold px-2 py-0.5 rounded bg-success-bg text-success-text border border-success-border">
                 Asset Đã Đăng Ký
               </span>
             )}
           </div>
 
-          <div className="relative aspect-square w-full rounded-xl overflow-hidden bg-white border border-cool-200">
+          <div className="relative aspect-square w-full rounded-xl overflow-hidden bg-white border border-border">
             {selectedImage ? (
               <img
                 src={safeImageSrc(selectedImage)}
@@ -328,7 +331,7 @@ export function ProductUploadCard({
                 className="h-full w-full object-cover"
               />
             ) : (
-              <div className="h-full w-full flex flex-col items-center justify-center text-text-muted gap-1 text-xs">
+              <div className="h-full w-full flex flex-col items-center justify-center text-text-muted gap-1 text-caption">
                 <ImageIcon size={24} />
                 <span>Chưa chọn ảnh</span>
               </div>
@@ -338,11 +341,11 @@ export function ProductUploadCard({
           {uploadError && (
             <p role="alert" className="text-caption leading-snug text-danger">{uploadError}</p>
           )}
-          <button
+          <Button variant="primary"
             type="button"
             onClick={onAnalyze}
             disabled={isAnalyzing || !selectedImage || !selectedAssetId || isUploading}
-            className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-blush-600 py-2.5 px-4 text-xs font-bold text-white hover:bg-blush-700 shadow-sm transition disabled:opacity-50"
+            className="h-auto w-full inline-flex items-center justify-center gap-2 rounded-xl bg-primary py-2.5 px-4 text-caption font-bold text-white hover:bg-primary-dark shadow-sm transition disabled:opacity-50"
           >
             {isAnalyzing ? (
               <>
@@ -355,37 +358,23 @@ export function ProductUploadCard({
                 <span>{ti("scanButtonLabel")} (Vision AI · 1 credit)</span>
               </>
             )}
-          </button>
+          </Button>
         </div>
       </div>
 
       {/* Modal Chọn từ Catalog tiệm */}
       {isCatalogModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 animate-in fade-in">
-          <div className="w-full max-w-xl rounded-2xl bg-white p-5 shadow-xl space-y-4 max-h-[85vh] flex flex-col">
-            <div className="flex items-center justify-between border-b pb-3">
-              <div className="flex items-center gap-2">
-                <Library className="h-5 w-5 text-blush-600" />
-                <h3 className="text-sm font-bold text-cool-900">Chọn {ti("sampleProduct")} từ Catalog của tiệm</h3>
-              </div>
-              <button
-              aria-label="Đóng"
-                type="button"
-                onClick={() => setIsCatalogModalOpen(false)}
-                className="rounded-lg p-1 text-text-muted hover:bg-cool-100"
-              >
-                <X size={18} />
-              </button>
-            </div>
-
+        <Dialog open onOpenChange={(o) => { if (!o) setIsCatalogModalOpen(false) }} size="md"
+          title={<span className="flex items-center gap-2"><Library className="h-5 w-5 text-primary" />Chọn {ti("sampleProduct")} từ Catalog của tiệm</span>}>
+          <div className="space-y-4">
             <div className="flex-1 overflow-y-auto space-y-2 pr-1">
               {loadingCatalog ? (
-                <div className="flex flex-col items-center justify-center py-12 gap-2 text-cool-500 text-xs">
-                  <Loader2 size={20} className="animate-spin motion-reduce:animate-none text-blush-600" />
+                <div className="flex flex-col items-center justify-center py-12 gap-2 text-text-muted text-caption">
+                  <Loader2 size={20} className="animate-spin motion-reduce:animate-none text-primary" />
                   <span>Đang tải danh sách sản phẩm tiệm...</span>
                 </div>
               ) : catalogProducts.length === 0 ? (
-                <div className="text-center py-12 text-text-muted text-xs">
+                <div className="text-center py-12 text-text-muted text-caption">
                   Chưa có {ti("sampleProduct")} nào trong Catalog. Bạn có thể kéo thả ảnh mới từ máy tính.
                 </div>
               ) : (
@@ -396,19 +385,19 @@ export function ProductUploadCard({
               tabIndex={0}
                       key={p.id}
                       onClick={() => void handleSelectCatalogProduct(p)}
-                      className="flex items-center gap-2.5 p-2 rounded-xl border border-cool-200 hover:border-blush-500 hover:bg-blush-50/40 cursor-pointer transition text-left"
+                      className="flex items-center gap-2.5 p-2 rounded-xl border border-border hover:border-primary hover:bg-primary-muted/40 cursor-pointer transition text-left"
                     >
                       {p.imageUrl ? (
                         <img src={p.imageUrl} alt={p.title} className="h-12 w-12 rounded-lg object-cover flex-shrink-0" />
                       ) : (
-                        <span className="flex h-12 w-12 items-center justify-center rounded-lg bg-cool-100 text-text-muted flex-shrink-0">
+                        <span className="flex h-12 w-12 items-center justify-center rounded-lg bg-surface-alt text-text-muted flex-shrink-0">
                           <ImageIcon size={18} />
                         </span>
                       )}
-                      <div className="min-w-0 flex-1 text-xs">
-                        <p className="font-bold text-cool-900 truncate">{p.title}</p>
+                      <div className="min-w-0 flex-1 text-caption">
+                        <p className="font-bold text-text truncate">{p.title}</p>
                         {p.price && (
-                          <p className="text-caption font-semibold text-blush-600 mt-0.5">
+                          <p className="text-caption font-semibold text-primary mt-0.5">
                             {p.price.toLocaleString("vi-VN")}đ
                           </p>
                         )}
@@ -419,7 +408,7 @@ export function ProductUploadCard({
               )}
             </div>
           </div>
-        </div>
+        </Dialog>
       )}
     </div>
   );

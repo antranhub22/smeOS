@@ -154,6 +154,7 @@ export class VideoJobRepository implements IVideoJobRepository {
     await this.db.video_scenes.createMany({
       data: scenes.map((s, idx) => ({
         video_job_id: jobId,
+        organization_id: ctx.organizationId,
         scene_index: idx + 1,
         duration_seconds: s.durationSeconds || 3.0,
         image_asset_id: s.imageAssetId || s.imageUrl || null,

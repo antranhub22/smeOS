@@ -159,7 +159,7 @@ export function BrochureOrderDetailModal({ target: inputTarget, onClose, onOpenN
                   role="tab"
                   aria-selected={activeTab === t.key}
                   onClick={() => setActiveTab(t.key)}
-                  className={`gap-0 -mb-px inline-flex min-h-11 shrink-0 items-center whitespace-nowrap border-b-2 px-3 text-body-sm font-bold leading-none transition-colors ${
+                  className={`py-0 gap-0 -mb-px inline-flex min-h-11 shrink-0 items-center whitespace-nowrap border-b-2 px-3 text-body-sm font-bold leading-none transition-colors ${
                     activeTab === t.key ? "border-primary text-primary" : "border-transparent text-text-muted hover:text-text"
                   }`}
                 >

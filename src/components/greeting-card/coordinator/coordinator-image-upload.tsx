@@ -155,7 +155,7 @@ export function CoordinatorImageUpload({ orderId, endpoint, label, allowSkip = t
               aria-label={`Bỏ tệp ${i + 1}`}
               onClick={() => setPicked((list) => list.filter((x) => x !== p))}
               disabled={state === "uploading"}
-              className="font-[inherit] gap-0 absolute right-1 top-1 rounded-full bg-text/70 p-1 text-surface hover:bg-text/70"
+              className="text-[length:inherit] h-auto font-[inherit] gap-0 absolute right-1 top-1 rounded-full bg-text/70 p-1 text-surface hover:bg-text/70"
             >
               <X size={12} aria-hidden="true" />
             </Button>
@@ -167,7 +167,7 @@ export function CoordinatorImageUpload({ orderId, endpoint, label, allowSkip = t
               type="button"
               onClick={() => inputRef.current?.click()}
               disabled={state === "uploading"}
-              className="h-auto p-0 font-[inherit] flex aspect-square w-full flex-col items-center justify-center gap-1 rounded-xl border-2 border-dashed border-border text-text-muted hover:border-primary/50 hover:bg-primary/5"
+              className="text-[length:inherit] h-auto p-0 font-[inherit] flex aspect-square w-full flex-col items-center justify-center gap-1 rounded-xl border-2 border-dashed border-border text-text-muted hover:border-primary/50 hover:bg-primary/5"
             >
               {picked.length === 0 ? <Upload size={22} aria-hidden="true" /> : <ImagePlus size={22} aria-hidden="true" />}
               <span className="text-caption font-medium">{picked.length === 0 ? "Chọn ảnh/video" : "Thêm"}</span>

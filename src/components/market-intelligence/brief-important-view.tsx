@@ -35,12 +35,12 @@ export function BriefImportantView({
 
   if (topItems.length === 0) {
     return (
-      <div className="rounded-2xl border border-cool-200/80 bg-white p-12 text-center shadow-2xs">
-        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-blush-50 text-blush-600 mb-3">
+      <div className="rounded-2xl border border-border/80 bg-white p-12 text-center shadow-2xs">
+        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-primary-muted text-primary mb-3">
           <Flame size={24} />
         </div>
-        <h3 className="font-bold text-cool-800 text-base">Chưa có cơ hội thị trường nào</h3>
-        <p className="text-xs text-cool-500 mt-1 max-w-sm mx-auto">
+        <h3 className="font-bold text-text text-body">Chưa có cơ hội thị trường nào</h3>
+        <p className="text-caption text-text-muted mt-1 max-w-sm mx-auto">
           Kích hoạt quét tín hiệu xu hướng để hệ thống phân tích và đề xuất cơ hội kinh doanh cho cửa hàng của bạn.
         </p>
       </div>
@@ -52,15 +52,15 @@ export function BriefImportantView({
       {/* Header chỉ mục */}
       <div className="flex items-center justify-between">
         <div>
-          <h3 className="text-sm font-extrabold uppercase tracking-wider text-cool-800 flex items-center gap-2">
-            <Flame className="h-4 w-4 text-blush-600" />
+          <h3 className="text-body-sm font-extrabold uppercase tracking-wider text-text flex items-center gap-2">
+            <Flame className="h-4 w-4 text-primary" />
             Cơ hội nổi bật nhất
           </h3>
-          <p className="text-xs text-cool-500 mt-0.5">
+          <p className="text-caption text-text-muted mt-0.5">
             Xếp hạng theo tín hiệu thị trường kết hợp tệp khách hàng của tiệm
           </p>
         </div>
-        <span className="text-xs font-bold text-text-muted">
+        <span className="text-caption font-bold text-text-muted">
           Top {topItems.length} cơ hội
         </span>
       </div>
@@ -73,10 +73,10 @@ export function BriefImportantView({
           const evidence = getDualOpportunityEvidencePreview(item);
           const headline = getOpportunityHeadline(item);
           const rankColors = [
-            "bg-sand-500 text-white shadow-xs", // #1
-            "bg-cool-400 text-white shadow-xs", // #2
-            "bg-sand-700 text-white shadow-xs", // #3
-            "bg-cool-200 text-cool-700",       // #4+
+            "bg-warning text-white shadow-xs", // #1
+            "bg-text-muted text-white shadow-xs", // #2
+            "bg-warning-text text-white shadow-xs", // #3
+            "bg-border text-text",       // #4+
           ];
           const rankClass = rankColors[idx] || rankColors[3];
 
@@ -86,12 +86,12 @@ export function BriefImportantView({
               tabIndex={0}
               key={`${item.id}-${idx}`}
               onClick={() => onSelectOpportunity(item)}
-              className="group rounded-2xl border border-cool-200/90 bg-white p-4 shadow-2xs hover:border-blush-400 hover:shadow-md transition-all duration-200 cursor-pointer flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+              className="group rounded-2xl border border-border/90 bg-white p-4 shadow-2xs hover:border-primary hover:shadow-md transition-all duration-200 cursor-pointer flex flex-col sm:flex-row sm:items-center justify-between gap-4"
             >
               {/* Cột trái: Rank, Khung Dual Thumbnail (TikTok & YouTube) & Tên cơ hội */}
               <div className="flex items-start sm:items-center gap-3.5 flex-1 min-w-0">
                 <span
-                  className={`flex h-8 w-8 items-center justify-center rounded-xl text-xs font-black flex-shrink-0 ${rankClass}`}
+                  className={`flex h-8 w-8 items-center justify-center rounded-xl text-caption font-black flex-shrink-0 ${rankClass}`}
                 >
                   #{idx + 1}
                 </span>
@@ -109,7 +109,7 @@ export function BriefImportantView({
                       }
                     }}
                     title={`Mở xem dẫn chứng video thật trên TikTok: ${evidence.tiktok.title}`}
-                    className="relative h-16 w-16 sm:w-20 rounded-xl overflow-hidden flex-shrink-0 bg-cool-950 group/tiktok shadow-xs border border-cool-200/90 cursor-pointer hover:border-petal-400 transition-all hover:scale-[1.03]"
+                    className="relative h-16 w-16 sm:w-20 rounded-xl overflow-hidden flex-shrink-0 bg-text group/tiktok shadow-xs border border-border/90 cursor-pointer hover:border-primary transition-all hover:scale-[1.03]"
                   >
                     <img
                       src={evidence.tiktok.thumbnailUrl}
@@ -121,16 +121,16 @@ export function BriefImportantView({
 
                     {/* Platform Badge TikTok */}
                     <div className="absolute top-1 left-1">
-                      <span className="inline-flex items-center gap-0.5 px-1 py-0.5 rounded bg-black/85 text-petal-400 text-caption font-black uppercase tracking-wider backdrop-blur-xs border border-petal-500/30">
-                        <Video className="h-2 w-2 text-petal-400" />
+                      <span className="inline-flex items-center gap-0.5 px-1 py-0.5 rounded bg-black/85 text-primary text-caption font-black uppercase tracking-wider backdrop-blur-xs border border-primary/30">
+                        <Video className="h-2 w-2 text-primary" />
                         TikTok
                       </span>
                     </div>
 
                     {/* Play icon overlay on hover */}
                     <div className="absolute inset-0 flex items-center justify-center opacity-70 group-hover/tiktok:opacity-100 transition-opacity">
-                      <div className="h-5 w-5 rounded-full bg-black/60 text-petal-400 flex items-center justify-center border border-petal-400/40">
-                        <Play className="h-2.5 w-2.5 fill-current translate-x-0.2 text-petal-400" />
+                      <div className="h-5 w-5 rounded-full bg-black/60 text-primary flex items-center justify-center border border-primary/40">
+                        <Play className="h-2.5 w-2.5 fill-current translate-x-0.2 text-primary" />
                       </div>
                     </div>
 
@@ -153,7 +153,7 @@ export function BriefImportantView({
                       }
                     }}
                     title={`Mở xem dẫn chứng video thật trên YouTube: ${evidence.youtube.title}`}
-                    className="relative h-16 w-20 sm:w-24 rounded-xl overflow-hidden flex-shrink-0 bg-cool-950 group/yt shadow-xs border border-cool-200/90 cursor-pointer hover:border-alert-400 transition-all hover:scale-[1.03]"
+                    className="relative h-16 w-20 sm:w-24 rounded-xl overflow-hidden flex-shrink-0 bg-text group/yt shadow-xs border border-border/90 cursor-pointer hover:border-danger transition-all hover:scale-[1.03]"
                   >
                     <img
                       src={evidence.youtube.thumbnailUrl}
@@ -165,7 +165,7 @@ export function BriefImportantView({
 
                     {/* Platform Badge YouTube */}
                     <div className="absolute top-1 left-1">
-                      <span className="inline-flex items-center gap-0.5 px-1 py-0.5 rounded bg-alert-600/90 text-white text-caption font-black uppercase tracking-wider backdrop-blur-xs">
+                      <span className="inline-flex items-center gap-0.5 px-1 py-0.5 rounded bg-danger/90 text-white text-caption font-black uppercase tracking-wider backdrop-blur-xs">
                         <Play className="h-2 w-2 fill-current" />
                         YT
                       </span>
@@ -192,46 +192,46 @@ export function BriefImportantView({
                     <span className={`inline-flex items-center gap-1 text-caption font-bold px-2 py-0.5 rounded-full border ${spec.bgClass} ${spec.colorClass} ${spec.borderClass}`}>
                       {spec.shortLabel}
                     </span>
-                    <span className="inline-flex items-center gap-1 text-caption font-bold text-mint-800 bg-mint-50/90 px-2 py-0.5 rounded-full border border-mint-200/80 shadow-2xs">
+                    <span className="inline-flex items-center gap-1 text-caption font-bold text-success-text bg-success-bg/90 px-2 py-0.5 rounded-full border border-success-border/80 shadow-2xs">
                       ⚡ {evidence.primary.metrics}
                     </span>
                   </div>
 
-                  <h4 className="font-bold text-cool-900 text-sm group-hover:text-blush-700 transition truncate">
+                  <h4 className="font-bold text-text text-body-sm group-hover:text-primary transition truncate">
                     {headline}
                   </h4>
                 </div>
               </div>
 
               {/* Cột giữa: 3 chỉ số thương mại */}
-              <div className="flex items-center gap-3.5 text-xs flex-shrink-0 bg-cool-50/80 px-3.5 py-2 rounded-xl border border-cool-100">
+              <div className="flex items-center gap-3.5 text-caption flex-shrink-0 bg-bg/80 px-3.5 py-2 rounded-xl border border-border">
                 <div>
                   <span className="text-caption text-text-muted block font-semibold">Độ nóng</span>
-                  <div className="font-bold text-cool-800">{Math.round(item.trendScore)}/100</div>
+                  <div className="font-bold text-text">{Math.round(item.trendScore)}/100</div>
                 </div>
 
-                <div className="border-l border-cool-200 pl-3.5">
+                <div className="border-l border-border pl-3.5">
                   <span className="text-caption text-text-muted block font-semibold">Lan tỏa</span>
-                  <div className="font-bold text-blush-600">{Math.round(item.viralScore)}/100</div>
+                  <div className="font-bold text-primary">{Math.round(item.viralScore)}/100</div>
                 </div>
 
-                <div className="border-l border-cool-200 pl-3.5">
+                <div className="border-l border-border pl-3.5">
                   <span className="text-caption text-text-muted block font-semibold">Sức mua</span>
-                  <div className="font-bold text-mint-700">{Math.round(item.commercialScore)}/100</div>
+                  <div className="font-bold text-success-text">{Math.round(item.commercialScore)}/100</div>
                 </div>
               </div>
 
               {/* Cột phải: Điểm cơ hội & CTA */}
               <div className="flex items-center justify-between sm:justify-start gap-3 flex-shrink-0">
                 <div className="text-right">
-                  <span className="text-lg font-black text-blush-600 leading-none block">
+                  <span className="text-title-sm font-black text-primary leading-none block">
                     {Math.round(item.contentOpportunityScore)}
                   </span>
                   <span className="text-caption text-text-muted uppercase font-bold tracking-wider">
                     Điểm cơ hội
                   </span>
                 </div>
-                <div className="flex items-center gap-1 text-xs font-bold text-blush-700 group-hover:translate-x-0.5 transition">
+                <div className="flex items-center gap-1 text-caption font-bold text-primary group-hover:translate-x-0.5 transition">
                   <span>Chi tiết</span>
                   <ArrowRight size={13} />
                 </div>

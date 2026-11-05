@@ -176,7 +176,7 @@ export function OrderDetailInfoTab({ target, onCustomerSaved }: OrderDetailInfoT
                   : `Dạ chào anh/chị, ${terms.sampleProduct.toLowerCase()} cho đơn #${target.orderCode || target.sendCode} đã ${terms.makerAction.toLowerCase()} hoàn tất ạ! Anh/chị mở link kiểm tra ${terms.completedProductPhoto.toLowerCase()} và thanh toán phần còn lại ${(target.balanceVnd ?? 0).toLocaleString("vi-VN")} đ để cửa hàng tiến hành bàn giao nhé ạ:${url ? ` ${url}` : ""}`
                 void navigator.clipboard.writeText(msg)
               }}
-              className="gap-0 rounded-lg border border-border bg-surface px-2.5 py-1 text-caption font-bold text-text hover:bg-surface-muted transition-colors"
+              className="h-auto gap-0 rounded-lg border border-border bg-surface px-2.5 py-1 text-caption font-bold text-text hover:bg-surface-muted transition-colors"
             >
               📋 Chép tin nhắc khách
             </Button>

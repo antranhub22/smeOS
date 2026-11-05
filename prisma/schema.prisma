@@ -5,6 +5,8 @@
 //   1. Mọi bản ghi thuộc tenant mang organization_id, có index. Không ngoại lệ.
 //   2. Đặt tên snake_case tiếng Anh.
 //   3. generation_jobs tách ba trục: status / stage / result.
+//   4. Cột thời gian khai @db.Timestamptz(3). Bảng con của bảng tenant trỏ về cha bằng
+//      khoá ghép (cha_id, organization_id) — hoàn thiện CSDL 05/11/2026.
 //
 // `users` là bảng duy nhất không có organization_id — một người thuộc nhiều
 // tổ chức qua `memberships`.
@@ -91,22 +93,22 @@ enum user_approval_status {
 }
 
 model users {
-  id                  String               @id @default(uuid())
-  email               String               @unique
-  password_hash       String?
-  name                String?
-  avatar_url          String?
-  phone               String?
-  locale              String               @default("vi")
+  id                   String               @id @default(uuid())
+  email                String               @unique
+  password_hash        String?
+  name                 String?
+  avatar_url           String?
+  phone                String?
+  locale               String               @default("vi")
   // Mặc định APPROVED: tài khoản có sẵn, nhân viên được mời, tài khoản tạo bằng script vận hành
-  approval_status     user_approval_status @default(APPROVED)
-  approval_decided_at DateTime?
-  approval_decided_by String? // user_id của superadmin
+  approval_status      user_approval_status @default(APPROVED)
+  approval_decided_at  DateTime?            @db.Timestamptz(3)
+  approval_decided_by  String? // user_id của superadmin
   /// Tài khoản đang dùng mật khẩu tạm (Điều hành tạo hoặc đặt lại) — phải tự đổi trước khi dùng hệ
   /// thống (PO 04/11/2026, checklist ALG 1.4). Tự đổi mật khẩu thì về false.
-  must_change_password Boolean @default(false)
-  created_at          DateTime             @default(now())
-  updated_at          DateTime             @updatedAt
+  must_change_password Boolean              @default(false)
+  created_at           DateTime             @default(now()) @db.Timestamptz(3)
+  updated_at           DateTime             @updatedAt @db.Timestamptz(3)
 
   memberships memberships[]
   sessions    sessions[]
@@ -126,13 +128,16 @@ model sessions {
   user_id         String
   token_hash      String    @unique
   organization_id String? // tổ chức đang hoạt động của phiên
-  created_at      DateTime  @default(now())
-  expires_at      DateTime
-  revoked_at      DateTime?
+  created_at      DateTime  @default(now()) @db.Timestamptz(3)
+  expires_at      DateTime  @db.Timestamptz(3)
+  revoked_at      DateTime? @db.Timestamptz(3)
 
-  user users @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  updated_at   DateTime       @default(now()) @updatedAt @db.Timestamptz(3)
+  user         users          @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  organization organizations? @relation(fields: [organization_id], references: [id], onDelete: SetNull)
 
   @@index([user_id])
+  @@index([organization_id])
 }
 
 model organizations {
@@ -146,126 +151,135 @@ model organizations {
   data_region      String?           @default("vn") // ADR-006: Vùng dữ liệu tenant
   // SDAGF D-04 — legal hold cấp tổ chức: còn hạn thì không xoá vĩnh viễn dữ
   // liệu nào của tổ chức (asset, sản phẩm trong thùng rác, dọn bàn giao).
-  legal_hold_until DateTime?
-  created_at       DateTime          @default(now())
-  updated_at       DateTime          @updatedAt
+  legal_hold_until DateTime?         @db.Timestamptz(3)
+  created_at       DateTime          @default(now()) @db.Timestamptz(3)
+  updated_at       DateTime          @updatedAt @db.Timestamptz(3)
 
   // Khoá ngoại tới organizations mở lại ở P3 (TECHNICAL_DEBT #8) — bốn bảng
   // dưới đây là bốn bảng nợ đó; assets/generation_jobs/usage/audit_logs khai
   // khoá ngoại ngay từ khi tạo, không nợ.
-  workspaces                    workspaces[]
-  branches                      branches[]
-  chain_branches                chain_branches[]
-  capability_overrides          capability_overrides[]
-  memberships                   memberships[]
-  assets                        assets[]
-  storage_outbox                storage_outbox[]
-  landing_pages                 landing_pages[]
-  shop_reviews                  shop_reviews[]
-  generation_jobs               generation_jobs[]
-  idempotency_keys              idempotency_keys[]
-  usage                         usage[]
-  audit_logs                    audit_logs[]
-  business_profile              business_profiles?
-  brand_profile                 brand_profiles?
-  products                      products[]
-  product_variants              product_variants[]
-  product_images                product_images[]
-  product_analyses              product_analyses[]
-  product_inventory             product_inventory[]
-  product_bookings              product_bookings[]
-  pricing_rules                 pricing_rules[]
-  integration_tokens            integration_tokens[]
-  integration_connections       integration_connections[]
-  integration_events            integration_events[]
-  integration_sync_cursors      integration_sync_cursors[]
-  sales_channel_listings        sales_channel_listings[]
-  sales_channel_orders          sales_channel_orders[]
-  ai_policies                   ai_policies[]
-  ai_requests                   ai_requests[]
-  ai_evaluations                ai_evaluations[]
-  occasions                     occasions[]
-  template_overrides            template_overrides[]
-  catalog_links                 catalog_links[]
-  store_share_links             store_share_links[]
-  brand_library_items           brand_library_items[]
-  product_copies                product_copies[]
-  content_metrics               content_metrics[]
-  video_jobs                    video_jobs[]
-  orders                        orders[]
-  order_items                   order_items[]
-  order_assignments             order_assignments[]
-  order_events                  order_events[]
-  customers                     customers[]
-  customer_occasions            customer_occasions[]
-  journey_runs                  journey_runs[]
-  customer_consents             customer_consents[]
-  vouchers                      vouchers[]
-  voucher_batches               voucher_batches[]
-  voucher_redemptions           voucher_redemptions[]
-  chat_conversations            chat_conversations[]
-  chat_messages                 chat_messages[]
-  chat_channel_integrations     chat_channel_integrations[]
-  content_opportunities         content_opportunities[]
-  product_analysis_runs         product_analysis_runs[]
-  campaign_packages             campaign_packages[]
-  content_drafts                content_drafts[]
-  content_generations           content_generations[]
-  voice_clones                  voice_clones[]
-  music_tracks                  music_tracks[]
-  partners                      partners[]
-  order_coordinations           order_coordinations[]
-  order_qc_records              order_qc_records[]
-  order_payments                order_payments[]
-  order_exceptions              order_exceptions[]
-  field_config_overrides        field_config_overrides[]
-  credit_transactions           credit_transactions[]
-  usage_limits                  usage_limits[]
-  provider_cost_entries         provider_cost_entries[]
-  subscription                  subscriptions?
-  subscription_invoices         subscription_invoices[]
-  owned_field_definitions       field_definitions[]      @relation("field_definition_owner")
-  order_info_requests           order_info_requests[]
-  order_change_requests         order_change_requests[]
-  product_change_requests       product_change_requests[]
-  product_revisions             product_revisions[]
-  product_import_batches        product_import_batches[]
-  greeting_catalogs             greeting_catalogs[]
-  greeting_catalog_products     greeting_catalog_products[]
-  greeting_sessions             greeting_sessions[]
-  greeting_journey_events       greeting_journey_events[]
-  greeting_integration          greeting_integrations?
-  greeting_payment_events       greeting_payment_events[]
-  greeting_notifications        greeting_notifications[]
-  greeting_catalog_events       greeting_catalog_events[]
-  greeting_messages             greeting_messages[]
-  greeting_share_links          greeting_share_links[]
-  greeting_message_reads        greeting_message_reads[]
-  staff_notifications           staff_notifications[]
-  chain_partnerships_as_chain   chain_partnerships[]            @relation("ChainOrg")
-  chain_partnerships_as_partner chain_partnerships[]            @relation("PartnerOrg")
-  internal_chat_conversations   internal_chat_conversations[]
-  internal_chat_participations  internal_chat_participants[]
-  notification_org_policies     notification_org_policies[]
-  notification_store_defaults   notification_store_defaults[]
-  notification_user_preferences notification_user_preferences[]
-  notification_inbox            notification_inbox[]
-  materials                     materials[]
-  material_price_history        material_price_history[]
-  product_recipes               product_recipes[]
-  product_recipe_items          product_recipe_items[]
-  leads                         leads[]
-  order_approval_requests       order_approval_requests[]
-  short_links                   short_links[]
-  link_events                   link_events[]
-  asset_usages                  asset_usages[]
-  campaigns                     campaigns[]
-  quotations                    quotations[]
-  quotation_items               quotation_items[]
-  quotation_revisions           quotation_revisions[]
-  customer_segments             customer_segments[]
-  customer_interactions         customer_interactions[]
-  print_renditions              print_renditions[]
+  workspaces                                       workspaces[]
+  branches                                         branches[]
+  chain_branches                                   chain_branches[]
+  capability_overrides                             capability_overrides[]
+  memberships                                      memberships[]
+  assets                                           assets[]
+  storage_outbox                                   storage_outbox[]
+  landing_pages                                    landing_pages[]
+  shop_reviews                                     shop_reviews[]
+  generation_jobs                                  generation_jobs[]
+  idempotency_keys                                 idempotency_keys[]
+  usage                                            usage[]
+  audit_logs                                       audit_logs[]
+  business_profile                                 business_profiles?
+  brand_profile                                    brand_profiles?
+  products                                         products[]
+  product_variants                                 product_variants[]
+  product_images                                   product_images[]
+  product_analyses                                 product_analyses[]
+  product_inventory                                product_inventory[]
+  product_bookings                                 product_bookings[]
+  pricing_rules                                    pricing_rules[]
+  integration_tokens                               integration_tokens[]
+  integration_connections                          integration_connections[]
+  integration_events                               integration_events[]
+  integration_sync_cursors                         integration_sync_cursors[]
+  sales_channel_listings                           sales_channel_listings[]
+  sales_channel_orders                             sales_channel_orders[]
+  ai_policies                                      ai_policies[]
+  ai_requests                                      ai_requests[]
+  ai_evaluations                                   ai_evaluations[]
+  occasions                                        occasions[]
+  template_overrides                               template_overrides[]
+  catalog_links                                    catalog_links[]
+  store_share_links                                store_share_links[]
+  brand_library_items                              brand_library_items[]
+  product_copies                                   product_copies[]
+  content_metrics                                  content_metrics[]
+  video_jobs                                       video_jobs[]
+  orders                                           orders[]
+  order_items                                      order_items[]
+  order_assignments                                order_assignments[]
+  order_events                                     order_events[]
+  customers                                        customers[]
+  customer_occasions                               customer_occasions[]
+  journey_runs                                     journey_runs[]
+  customer_consents                                customer_consents[]
+  vouchers                                         vouchers[]
+  voucher_batches                                  voucher_batches[]
+  voucher_redemptions                              voucher_redemptions[]
+  chat_conversations                               chat_conversations[]
+  chat_messages                                    chat_messages[]
+  chat_channel_integrations                        chat_channel_integrations[]
+  content_opportunities                            content_opportunities[]
+  product_analysis_runs                            product_analysis_runs[]
+  campaign_packages                                campaign_packages[]
+  content_drafts                                   content_drafts[]
+  content_generations                              content_generations[]
+  voice_clones                                     voice_clones[]
+  music_tracks                                     music_tracks[]
+  partners                                         partners[]
+  order_coordinations                              order_coordinations[]
+  order_qc_records                                 order_qc_records[]
+  order_payments                                   order_payments[]
+  order_exceptions                                 order_exceptions[]
+  field_config_overrides                           field_config_overrides[]
+  credit_transactions                              credit_transactions[]
+  usage_limits                                     usage_limits[]
+  provider_cost_entries                            provider_cost_entries[]
+  subscription                                     subscriptions?
+  subscription_invoices                            subscription_invoices[]
+  owned_field_definitions                          field_definitions[]             @relation("field_definition_owner")
+  order_info_requests                              order_info_requests[]
+  order_change_requests                            order_change_requests[]
+  product_change_requests                          product_change_requests[]
+  product_revisions                                product_revisions[]
+  product_import_batches                           product_import_batches[]
+  greeting_catalogs                                greeting_catalogs[]
+  greeting_catalog_products                        greeting_catalog_products[]
+  greeting_sessions                                greeting_sessions[]
+  greeting_journey_events                          greeting_journey_events[]
+  greeting_integration                             greeting_integrations?
+  greeting_payment_events                          greeting_payment_events[]
+  greeting_notifications                           greeting_notifications[]
+  greeting_catalog_events                          greeting_catalog_events[]
+  greeting_messages                                greeting_messages[]
+  greeting_share_links                             greeting_share_links[]
+  greeting_message_reads                           greeting_message_reads[]
+  staff_notifications                              staff_notifications[]
+  chain_partnerships_as_chain                      chain_partnerships[]            @relation("ChainOrg")
+  chain_partnerships_as_partner                    chain_partnerships[]            @relation("PartnerOrg")
+  internal_chat_conversations                      internal_chat_conversations[]
+  internal_chat_participations                     internal_chat_participants[]
+  notification_org_policies                        notification_org_policies[]
+  notification_store_defaults                      notification_store_defaults[]
+  notification_user_preferences                    notification_user_preferences[]
+  notification_inbox                               notification_inbox[]
+  materials                                        materials[]
+  material_price_history                           material_price_history[]
+  product_recipes                                  product_recipes[]
+  product_recipe_items                             product_recipe_items[]
+  leads                                            leads[]
+  order_approval_requests                          order_approval_requests[]
+  short_links                                      short_links[]
+  link_events                                      link_events[]
+  asset_usages                                     asset_usages[]
+  campaigns                                        campaigns[]
+  quotations                                       quotations[]
+  quotation_items                                  quotation_items[]
+  quotation_revisions                              quotation_revisions[]
+  customer_segments                                customer_segments[]
+  customer_interactions                            customer_interactions[]
+  print_renditions                                 print_renditions[]
+  // Quan hệ ngược thêm ở đợt hoàn thiện CSDL 05/11/2026
+  sessions_active                                  sessions[]
+  roles                                            roles[]
+  brand_library_versions                           brand_library_versions[]
+  job_events                                       job_events[]
+  video_scenes                                     video_scenes[]
+  internal_chat_messages                           internal_chat_messages[]
+  // Quan hệ ngược của khoá ngoại thêm 05/11/2026
+  integration_connections_by_inherited_from_org_id integration_connections[]       @relation("fk_integration_connections_inherited_from_org_id")
 }
 
 model workspaces {
@@ -275,11 +289,16 @@ model workspaces {
   kind            workspace_kind @default(PRODUCTION)
   trial_count     Int            @default(0)
   trial_limit     Int?
-  trial_reset_at  DateTime?
+  trial_reset_at  DateTime?      @db.Timestamptz(3)
   trial_status    trial_status?
-  created_at      DateTime       @default(now())
+  created_at      DateTime       @default(now()) @db.Timestamptz(3)
 
   organization organizations @relation(fields: [organization_id], references: [id])
+
+  // Quan hệ ngược của khoá ngoại thêm 05/11/2026
+  generation_jobs_by_workspace_id generation_jobs[] @relation("fk_generation_jobs_workspace_id")
+  usage_by_workspace_id           usage[]           @relation("fk_usage_workspace_id")
+  journey_runs_by_workspace_id    journey_runs[]    @relation("fk_journey_runs_workspace_id")
 
   @@index([organization_id])
 }
@@ -291,10 +310,18 @@ model branches {
   code            String
   address         String?
   is_active       Boolean  @default(true)
-  created_at      DateTime @default(now())
+  created_at      DateTime @default(now()) @db.Timestamptz(3)
 
+  updated_at   DateTime            @default(now()) @updatedAt @db.Timestamptz(3)
   organization organizations       @relation(fields: [organization_id], references: [id])
   inventory    product_inventory[]
+
+  // Quan hệ ngược của khoá ngoại thêm 05/11/2026
+  memberships_by_branch_id     memberships[]     @relation("fk_memberships_branch_id")
+  generation_jobs_by_branch_id generation_jobs[] @relation("fk_generation_jobs_branch_id")
+  products_by_branch_id        products[]        @relation("fk_products_branch_id")
+  pricing_rules_by_branch_id   pricing_rules[]   @relation("fk_pricing_rules_branch_id")
+  orders_by_branch_id          orders[]          @relation("fk_orders_branch_id")
 
   @@unique([organization_id, code])
   @@index([organization_id])
@@ -330,8 +357,8 @@ model chain_branches {
   bypass_count         Int      @default(0)
   cancellation_history Json? // tối đa 50 mục gần nhất
   bypass_history       Json?
-  created_at           DateTime @default(now())
-  updated_at           DateTime @updatedAt
+  created_at           DateTime @default(now()) @db.Timestamptz(3)
+  updated_at           DateTime @updatedAt @db.Timestamptz(3)
 
   organization organizations @relation(fields: [organization_id], references: [id])
 
@@ -345,9 +372,14 @@ model roles {
   key             String // dieu_hanh · sale · dieu_phoi · experience_user
   name            String
   is_system       Boolean  @default(false)
-  created_at      DateTime @default(now())
+  created_at      DateTime @default(now()) @db.Timestamptz(3)
 
+  organization organizations?      @relation(fields: [organization_id], references: [id], onDelete: Cascade)
   capabilities role_capabilities[]
+
+  // Quan hệ ngược của khoá ngoại thêm 05/11/2026
+  memberships_by_role_id          memberships[]          @relation("fk_memberships_role_id")
+  capability_overrides_by_role_id capability_overrides[] @relation("fk_capability_overrides_role_id")
 
   @@unique([organization_id, key])
   @@index([organization_id])
@@ -368,7 +400,8 @@ model role_capabilities {
   capability_code String // A1 … L6, xem đặc tả 02
   scope           capability_scope @default(ORGANIZATION)
 
-  role roles @relation(fields: [role_id], references: [id], onDelete: Cascade)
+  created_at DateTime @default(now()) @db.Timestamptz(3)
+  role       roles    @relation(fields: [role_id], references: [id], onDelete: Cascade)
 
   @@unique([role_id, capability_code])
 }
@@ -389,9 +422,13 @@ model capability_overrides {
   capability_code String
   allowed         Boolean
   updated_by      String
-  updated_at      DateTime @updatedAt
+  updated_at      DateTime @updatedAt @db.Timestamptz(3)
 
+  created_at   DateTime      @default(now()) @db.Timestamptz(3)
   organization organizations @relation(fields: [organization_id], references: [id])
+
+  // Khoá ngoại thêm ở đợt hoàn thiện CSDL 05/11/2026
+  fk_role roles @relation("fk_capability_overrides_role_id", fields: [role_id], references: [id], onDelete: Cascade)
 
   @@unique([organization_id, role_id, capability_code])
   @@index([organization_id])
@@ -407,11 +444,16 @@ model memberships {
   /// hiện đơn gia công của chi nhánh này. Khác `branch_id` (bảng `branches`, dùng cho giá/tồn kho).
   chain_branch_code String?
   status            membership_status @default(INVITED)
-  invited_at        DateTime          @default(now())
-  joined_at         DateTime?
+  invited_at        DateTime          @default(now()) @db.Timestamptz(3)
+  joined_at         DateTime?         @db.Timestamptz(3)
 
+  updated_at   DateTime      @default(now()) @updatedAt @db.Timestamptz(3)
   user         users         @relation(fields: [user_id], references: [id], onDelete: Cascade)
   organization organizations @relation(fields: [organization_id], references: [id])
+
+  // Khoá ngoại thêm ở đợt hoàn thiện CSDL 05/11/2026
+  fk_role   roles     @relation("fk_memberships_role_id", fields: [role_id], references: [id], onDelete: Restrict)
+  fk_branch branches? @relation("fk_memberships_branch_id", fields: [branch_id], references: [id], onDelete: SetNull)
 
   @@unique([organization_id, user_id])
   @@index([organization_id])
@@ -503,20 +545,27 @@ model assets {
   // audit log trả lời "chuyện gì đã xảy ra", hai cột này trả lời "ảnh này
   // hiện do ai chịu trách nhiệm" mà không phải quét lịch sử.
   approved_by String?
-  approved_at DateTime?
+  approved_at DateTime? @db.Timestamptz(3)
 
   metadata   Json?
   created_by String
-  created_at DateTime @default(now())
+  created_at DateTime @default(now()) @db.Timestamptz(3)
 
   // SDAGF P1 (audit docs/audit/sdagf-2026-10): vòng đời thùng rác thành cột
   // (trước chỉ nằm trong `metadata` JSON, không index, không quét được) và
   // legal hold — còn hạn giữ thì không xoá vĩnh viễn, kể cả cron dọn rác.
-  trashed_at       DateTime?
-  purge_after      DateTime?
-  legal_hold_until DateTime?
+  trashed_at       DateTime? @db.Timestamptz(3)
+  purge_after      DateTime? @db.Timestamptz(3)
+  legal_hold_until DateTime? @db.Timestamptz(3)
 
+  updated_at   DateTime      @default(now()) @updatedAt @db.Timestamptz(3)
   organization organizations @relation(fields: [organization_id], references: [id])
+
+  // Khoá ngoại thêm ở đợt hoàn thiện CSDL 05/11/2026
+  fk_product                products? @relation("fk_assets_product_id", fields: [product_id], references: [id], onDelete: SetNull)
+  fk_parent_asset           assets?   @relation("fk_assets_parent_asset_id", fields: [parent_asset_id], references: [id], onDelete: SetNull)
+  // Quan hệ ngược của khoá ngoại thêm 05/11/2026
+  assets_by_parent_asset_id assets[]  @relation("fk_assets_parent_asset_id")
 
   @@index([organization_id])
   @@index([purge_after])
@@ -540,7 +589,7 @@ model landing_pages {
   input           Json
   content         Json
   created_by      String
-  created_at      DateTime @default(now())
+  created_at      DateTime @default(now()) @db.Timestamptz(3)
 
   organization organizations @relation(fields: [organization_id], references: [id])
 
@@ -562,8 +611,8 @@ model shop_reviews {
   comment         String
   is_visible      Boolean  @default(true)
   created_by      String
-  created_at      DateTime @default(now())
-  updated_at      DateTime @updatedAt
+  created_at      DateTime @default(now()) @db.Timestamptz(3)
+  updated_at      DateTime @updatedAt @db.Timestamptz(3)
 
   organization organizations @relation(fields: [organization_id], references: [id])
 
@@ -585,9 +634,10 @@ model storage_outbox {
   asset_id        String?
   attempts        Int       @default(0)
   last_error      String?
-  created_at      DateTime  @default(now())
-  done_at         DateTime?
+  created_at      DateTime  @default(now()) @db.Timestamptz(3)
+  done_at         DateTime? @db.Timestamptz(3)
 
+  updated_at   DateTime      @default(now()) @updatedAt @db.Timestamptz(3)
   organization organizations @relation(fields: [organization_id], references: [id])
 
   @@unique([op, storage_key])
@@ -609,7 +659,7 @@ model idempotency_keys {
   organization_id String
   scope           String // vd "webhook.facebook", "webhook.zalo", "payment.<provider>"
   key             String // mã sự kiện của nguồn gửi (message id, transaction id…)
-  created_at      DateTime @default(now())
+  created_at      DateTime @default(now()) @db.Timestamptz(3)
 
   organization organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
 
@@ -644,7 +694,7 @@ model generation_jobs {
 
   // E5.1 — lỗi tạm thời được worker tự thử lại sau `run_after` (backoff có ngẫu nhiên, tối đa 3 lần);
   // NULL = chạy ngay. `failure_kind`: RETRYABLE | NEEDS_ACTION (khớp TaskFailureKind phía UI).
-  run_after    DateTime?
+  run_after    DateTime? @db.Timestamptz(3)
   failure_kind String?
 
   payload  Json
@@ -652,15 +702,22 @@ model generation_jobs {
   error    String?
   attempts Int     @default(0)
 
-  created_at   DateTime  @default(now())
-  started_at   DateTime?
-  completed_at DateTime?
-  cancelled_at DateTime?
+  created_at   DateTime  @default(now()) @db.Timestamptz(3)
+  started_at   DateTime? @db.Timestamptz(3)
+  completed_at DateTime? @db.Timestamptz(3)
+  cancelled_at DateTime? @db.Timestamptz(3)
 
+  updated_at   DateTime      @default(now()) @updatedAt @db.Timestamptz(3)
   organization organizations @relation(fields: [organization_id], references: [id])
   events       job_events[]
 
+  // Khoá ngoại thêm ở đợt hoàn thiện CSDL 05/11/2026
+  fk_branch    branches?  @relation("fk_generation_jobs_branch_id", fields: [branch_id], references: [id], onDelete: SetNull)
+  fk_workspace workspaces @relation("fk_generation_jobs_workspace_id", fields: [workspace_id], references: [id], onDelete: Restrict)
+  fk_product   products?  @relation("fk_generation_jobs_product_id", fields: [product_id], references: [id], onDelete: SetNull)
+
   @@unique([organization_id, feature, idempotency_key])
+  @@unique([id, organization_id])
   @@index([organization_id])
   @@index([status, created_at]) // worker quét bằng index này
   @@index([status, run_after]) // job hẹn thử lại (E5.1)
@@ -676,17 +733,20 @@ model generation_jobs {
  * client nối tiếp qua `Last-Event-ID` (`YC-J9`).
  */
 model job_events {
-  id         String   @id @default(uuid())
-  job_id     String
-  seq        Int
-  event      String // stage · log · done
-  payload    Json
-  created_at DateTime @default(now())
+  id              String   @id @default(uuid())
+  job_id          String
+  /// Sao từ generation_jobs; trigger điền khi bên ghi (worker cũ) bỏ trống.
+  organization_id String
+  seq             Int
+  event           String // stage · log · done
+  payload         Json
+  created_at      DateTime @default(now()) @db.Timestamptz(3)
 
-  job generation_jobs @relation(fields: [job_id], references: [id], onDelete: Cascade)
+  job          generation_jobs @relation(fields: [job_id, organization_id], references: [id, organization_id], onDelete: Cascade)
+  organization organizations   @relation(fields: [organization_id], references: [id], onDelete: Cascade)
 
   @@unique([job_id, seq])
-  @@index([job_id, seq])
+  @@index([organization_id])
 }
 
 /**
@@ -720,7 +780,7 @@ model credit_transactions {
   /// job_id, mã hoá đơn… để đối soát ngược
   reference       String?
   actor_id        String?
-  created_at      DateTime                @default(now())
+  created_at      DateTime                @default(now()) @db.Timestamptz(3)
 
   organization organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
 
@@ -756,17 +816,18 @@ model subscriptions {
   price_vnd                Int
   included_credits_monthly Int                 @default(0)
   status                   subscription_status @default(ACTIVE)
-  current_period_start     DateTime
-  current_period_end       DateTime
+  current_period_start     DateTime @db.Timestamptz(3)
+  current_period_end       DateTime @db.Timestamptz(3)
   plan_credit_period       String?
   plan_credit_granted      Int                 @default(0)
   created_by               String?
-  created_at               DateTime            @default(now())
-  updated_at               DateTime            @updatedAt
+  created_at               DateTime            @default(now()) @db.Timestamptz(3)
+  updated_at               DateTime            @updatedAt @db.Timestamptz(3)
 
   organization organizations           @relation(fields: [organization_id], references: [id], onDelete: Cascade)
   invoices     subscription_invoices[]
 
+  @@unique([id, organization_id])
   @@index([organization_id])
 }
 
@@ -776,21 +837,22 @@ model subscription_invoices {
   subscription_id   String
   /// Mã ghi trong nội dung chuyển khoản để SePay đối soát
   code              String                      @unique
-  period_start      DateTime
-  period_end        DateTime
+  period_start      DateTime @db.Timestamptz(3)
+  period_end        DateTime @db.Timestamptz(3)
   amount_vnd        Int
   status            subscription_invoice_status @default(PENDING)
-  due_at            DateTime
-  paid_at           DateTime?
+  due_at            DateTime @db.Timestamptz(3)
+  paid_at           DateTime? @db.Timestamptz(3)
   /// Mã giao dịch (SePay hoặc xác nhận tay) — chống ghi trùng
   payment_reference String?                     @unique
   reminded_7d       Boolean                     @default(false)
   reminded_1d       Boolean                     @default(false)
-  created_at        DateTime                    @default(now())
-  updated_at        DateTime                    @updatedAt
+  created_at        DateTime                    @default(now()) @db.Timestamptz(3)
+  updated_at        DateTime                    @updatedAt @db.Timestamptz(3)
 
   organization organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
-  subscription subscriptions @relation(fields: [subscription_id], references: [id], onDelete: Cascade)
+  // Khoá ghép: hoá đơn và thuê bao cùng tổ chức, Postgres từ chối dòng lệch tổ chức
+  subscription subscriptions @relation(fields: [subscription_id, organization_id], references: [id, organization_id], onDelete: Cascade)
 
   @@unique([subscription_id, period_start])
   @@index([organization_id])
@@ -807,7 +869,7 @@ model provider_cost_entries {
   cost_usd        Float?
   cost_vnd        Int
   reference       String?
-  occurred_at     DateTime @default(now())
+  occurred_at     DateTime @default(now()) @db.Timestamptz(3)
 
   organization organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
 
@@ -827,8 +889,8 @@ model usage_limits {
   used            Int      @default(0)
   alerted_near    Boolean  @default(false)
   alerted_low     Boolean  @default(false)
-  created_at      DateTime @default(now())
-  updated_at      DateTime @updatedAt
+  created_at      DateTime @default(now()) @db.Timestamptz(3)
+  updated_at      DateTime @updatedAt @db.Timestamptz(3)
 
   organization organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
 
@@ -848,9 +910,12 @@ model usage {
   cost_usd        Float? // chi phí thật phía nhà cung cấp, để đối soát
   status          String // ENQUEUED · COMPLETED · REFUNDED
   metadata        Json?
-  created_at      DateTime @default(now())
+  created_at      DateTime @default(now()) @db.Timestamptz(3)
 
   organization organizations @relation(fields: [organization_id], references: [id])
+
+  // Khoá ngoại thêm ở đợt hoàn thiện CSDL 05/11/2026
+  fk_workspace workspaces @relation("fk_usage_workspace_id", fields: [workspace_id], references: [id], onDelete: Restrict)
 
   @@index([organization_id, created_at])
   @@index([job_id])
@@ -875,7 +940,7 @@ model audit_logs {
   decision_id     String? // Patch v2.3 / P2: Id quyết định theo Decision Registry
   ownership       String? // USER | SYSTEM | SHARED
   decided_by      String? // user_override | user_confirm | system_default | system_rule
-  created_at      DateTime @default(now())
+  created_at      DateTime @default(now()) @db.Timestamptz(3)
 
   organization organizations @relation(fields: [organization_id], references: [id])
 
@@ -905,8 +970,8 @@ model business_profiles {
   tax_code        String?
   description     String?
   operating_hours Json?
-  created_at      DateTime @default(now())
-  updated_at      DateTime @updatedAt
+  created_at      DateTime @default(now()) @db.Timestamptz(3)
+  updated_at      DateTime @updatedAt @db.Timestamptz(3)
 
   organization organizations @relation(fields: [organization_id], references: [id])
 
@@ -940,8 +1005,8 @@ model brand_profiles {
   // liệu cũ trong cta_templates cho tổ chức đã lưu trước 17/09 — xem sales-defaults-form.tsx.
   forbidden_styles Json?
   brand_assets     Json? // { storefront_photos?: string[], intro_video?: string, qr_code?: string } — Nguyên liệu thương hiệu cấp Tiệm (Master Assets, đặc tả FLORAOS_BUSINESS_PROFILE_AND_INPUT_SPEC mục 4.1)
-  created_at       DateTime @default(now())
-  updated_at       DateTime @updatedAt
+  created_at       DateTime @default(now()) @db.Timestamptz(3)
+  updated_at       DateTime @updatedAt @db.Timestamptz(3)
 
   organization organizations @relation(fields: [organization_id], references: [id])
 
@@ -999,8 +1064,8 @@ model products {
   vat_percent         Int?
   weight_grams        Int?
   tags                String[]       @default([])
-  created_at          DateTime       @default(now())
-  updated_at          DateTime       @updatedAt
+  created_at          DateTime       @default(now()) @db.Timestamptz(3)
+  updated_at          DateTime       @updatedAt @db.Timestamptz(3)
 
   organization              organizations               @relation(fields: [organization_id], references: [id])
   variants                  product_variants[]
@@ -1014,7 +1079,22 @@ model products {
   recipes                   product_recipes[]
   quotation_items           quotation_items[]
 
+  // Khoá ngoại thêm ở đợt hoàn thiện CSDL 05/11/2026
+  fk_branch                                branches?                 @relation("fk_products_branch_id", fields: [branch_id], references: [id], onDelete: SetNull)
+  // Quan hệ ngược của khoá ngoại thêm 05/11/2026
+  assets_by_product_id                     assets[]                  @relation("fk_assets_product_id")
+  generation_jobs_by_product_id            generation_jobs[]         @relation("fk_generation_jobs_product_id")
+  product_copies_by_product_id             product_copies[]          @relation("fk_product_copies_product_id")
+  video_jobs_by_product_id                 video_jobs[]              @relation("fk_video_jobs_product_id")
+  order_items_by_product_id                order_items[]             @relation("fk_order_items_product_id")
+  campaign_packages_by_product_id          campaign_packages[]       @relation("fk_campaign_packages_product_id")
+  content_generations_by_product_id        content_generations[]     @relation("fk_content_generations_product_id")
+  greeting_sessions_by_selected_product_id greeting_sessions[]       @relation("fk_greeting_sessions_selected_product_id")
+  greeting_catalog_events_by_product_id    greeting_catalog_events[] @relation("fk_greeting_catalog_events_product_id")
+  sales_channel_listings_by_product_id     sales_channel_listings[]  @relation("fk_sales_channel_listings_product_id")
+
   @@unique([organization_id, code])
+  @@unique([id, organization_id]) // đích của khoá ghép tenant (05/11/2026)
   @@index([organization_id])
   @@index([organization_id, barcode])
 }
@@ -1028,18 +1108,18 @@ model product_change_requests {
   product_id      String
   proposed_by     String
   changes         Json // tập con trường của PATCH /products/:id (đã bỏ khoá chỉ máy chủ ghi)
-  base_updated_at DateTime
+  base_updated_at DateTime  @db.Timestamptz(3)
   status          String    @default("PENDING") // PENDING | APPROVED | PARTIAL | REJECTED | EXPIRED
   applied_fields  Json? // các trường Điều hành chọn áp dụng khi duyệt một phần
   reviewed_by     String?
-  reviewed_at     DateTime?
+  reviewed_at     DateTime? @db.Timestamptz(3)
   note            String?
-  expires_at      DateTime
-  created_at      DateTime  @default(now())
-  updated_at      DateTime  @updatedAt
+  expires_at      DateTime  @db.Timestamptz(3)
+  created_at      DateTime  @default(now()) @db.Timestamptz(3)
+  updated_at      DateTime  @updatedAt @db.Timestamptz(3)
 
   organization organizations @relation(fields: [organization_id], references: [id])
-  product      products      @relation(fields: [product_id], references: [id], onDelete: Cascade)
+  product      products      @relation(fields: [product_id, organization_id], references: [id, organization_id], onDelete: Cascade)
 
   @@index([organization_id])
   @@index([organization_id, status])
@@ -1056,10 +1136,13 @@ model product_revisions {
   reason          String // EDIT | CHANGE_REQUEST | IMPORT | RESTORE
   actor_id        String
   import_batch_id String?
-  created_at      DateTime @default(now())
+  created_at      DateTime @default(now()) @db.Timestamptz(3)
 
   organization organizations @relation(fields: [organization_id], references: [id])
-  product      products      @relation(fields: [product_id], references: [id], onDelete: Cascade)
+  product      products      @relation(fields: [product_id, organization_id], references: [id, organization_id], onDelete: Cascade)
+
+  // Khoá ngoại thêm ở đợt hoàn thiện CSDL 05/11/2026
+  fk_import_batch product_import_batches? @relation("fk_product_revisions_import_batch_id", fields: [import_batch_id], references: [id], onDelete: SetNull)
 
   @@index([organization_id])
   @@index([organization_id, product_id, created_at])
@@ -1074,11 +1157,15 @@ model product_import_batches {
   created_by      String
   created_ids     Json // string[]
   updated_ids     Json // string[]
-  undone_at       DateTime?
+  undone_at       DateTime? @db.Timestamptz(3)
   undone_by       String?
-  created_at      DateTime  @default(now())
+  created_at      DateTime  @default(now()) @db.Timestamptz(3)
 
+  updated_at   DateTime      @default(now()) @updatedAt @db.Timestamptz(3)
   organization organizations @relation(fields: [organization_id], references: [id])
+
+  // Quan hệ ngược của khoá ngoại thêm 05/11/2026
+  product_revisions_by_import_batch_id product_revisions[] @relation("fk_product_revisions_import_batch_id")
 
   @@index([organization_id])
   @@index([organization_id, created_at])
@@ -1096,8 +1183,12 @@ model product_variants {
   sku             String?
   barcode         String?
 
+  created_at   DateTime      @default(now()) @db.Timestamptz(3)
   organization organizations @relation(fields: [organization_id], references: [id])
-  product      products      @relation(fields: [product_id], references: [id])
+  product      products      @relation(fields: [product_id, organization_id], references: [id, organization_id])
+
+  // Quan hệ ngược của khoá ngoại thêm 05/11/2026
+  order_items_by_variant_id order_items[] @relation("fk_order_items_variant_id")
 
   @@unique([organization_id, sku])
   @@index([organization_id, product_id])
@@ -1111,8 +1202,10 @@ model product_images {
   role            String // MAIN · GALLERY · CATALOG · SOCIAL
   position        Int    @default(0)
 
+  created_at   DateTime      @default(now()) @db.Timestamptz(3)
+  updated_at   DateTime      @default(now()) @updatedAt @db.Timestamptz(3)
   organization organizations @relation(fields: [organization_id], references: [id])
-  product      products      @relation(fields: [product_id], references: [id])
+  product      products      @relation(fields: [product_id, organization_id], references: [id, organization_id])
 
   @@unique([organization_id, product_id, asset_id, role])
   @@index([organization_id, product_id])
@@ -1133,10 +1226,11 @@ model product_inventory {
   branch_id          String
   status             stock_status @default(IN_STOCK)
   quantity_available Int?
-  updated_at         DateTime     @updatedAt
+  updated_at         DateTime     @updatedAt @db.Timestamptz(3)
 
+  created_at   DateTime      @default(now()) @db.Timestamptz(3)
   organization organizations @relation(fields: [organization_id], references: [id])
-  product      products      @relation(fields: [product_id], references: [id])
+  product      products      @relation(fields: [product_id, organization_id], references: [id, organization_id])
   branch       branches      @relation(fields: [branch_id], references: [id])
 
   @@unique([organization_id, product_id, branch_id])
@@ -1163,8 +1257,9 @@ model product_bookings {
   check_out_date  DateTime       @db.Date // exclusive — ngày check-out không được tính
   note            String? // "Bảo trì", "Sửa chữa", null = đặt từ đơn khách
   status          booking_status @default(ACTIVE)
-  created_at      DateTime       @default(now())
+  created_at      DateTime       @default(now()) @db.Timestamptz(3)
 
+  updated_at   DateTime      @default(now()) @updatedAt @db.Timestamptz(3)
   organization organizations @relation(fields: [organization_id], references: [id])
   product      products      @relation(fields: [product_id], references: [id])
   // Xoá đơn (chỉ khi dọn tenant bàn giao) thì xoá luôn đặt chỗ sinh từ đơn đó
@@ -1204,10 +1299,11 @@ model product_analyses {
   edited         Json? // bản người sửa, lưu tách biệt
   approval_state approval_state @default(PENDING)
   approved_by    String?
-  approved_at    DateTime?
+  approved_at    DateTime?      @db.Timestamptz(3)
 
-  created_at DateTime @default(now())
+  created_at DateTime @default(now()) @db.Timestamptz(3)
 
+  updated_at   DateTime      @default(now()) @updatedAt @db.Timestamptz(3)
   organization organizations @relation(fields: [organization_id], references: [id])
   product      products?     @relation(fields: [product_id], references: [id])
 
@@ -1234,10 +1330,14 @@ model pricing_rules {
   branch_id       String?
   key             String // san · tran · muc_thu · lam_tron …
   value           Json
-  effective_from  DateTime @default(now())
+  effective_from  DateTime @default(now()) @db.Timestamptz(3)
   created_by      String
 
+  created_at   DateTime      @default(now()) @db.Timestamptz(3)
   organization organizations @relation(fields: [organization_id], references: [id])
+
+  // Khoá ngoại thêm ở đợt hoàn thiện CSDL 05/11/2026
+  fk_branch branches? @relation("fk_pricing_rules_branch_id", fields: [branch_id], references: [id], onDelete: SetNull)
 
   @@index([organization_id, key])
 }
@@ -1269,12 +1369,18 @@ model integration_tokens {
   client          integration_client
   token_hash      String             @unique
   created_by      String
-  created_at      DateTime           @default(now())
-  expires_at      DateTime
-  revoked_at      DateTime?
+  created_at      DateTime           @default(now()) @db.Timestamptz(3)
+  expires_at      DateTime           @db.Timestamptz(3)
+  revoked_at      DateTime?          @db.Timestamptz(3)
   rotated_from_id String?
 
+  updated_at   DateTime      @default(now()) @updatedAt @db.Timestamptz(3)
   organization organizations @relation(fields: [organization_id], references: [id])
+
+  // Khoá ngoại thêm ở đợt hoàn thiện CSDL 05/11/2026
+  fk_rotated_from                       integration_tokens?  @relation("fk_integration_tokens_rotated_from_id", fields: [rotated_from_id], references: [id], onDelete: SetNull)
+  // Quan hệ ngược của khoá ngoại thêm 05/11/2026
+  integration_tokens_by_rotated_from_id integration_tokens[] @relation("fk_integration_tokens_rotated_from_id")
 
   @@index([organization_id])
   @@index([organization_id, client])
@@ -1296,8 +1402,8 @@ model content_metrics {
   conversions Int?
   spend_usd   Float?
 
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  created_at DateTime @default(now()) @db.Timestamptz(3)
+  updated_at DateTime @updatedAt @db.Timestamptz(3)
 
   organization organizations @relation(fields: [organization_id], references: [id])
 
@@ -1320,9 +1426,10 @@ model ai_capabilities {
   accept_threshold Float? // null = chưa đo được (D20). Cổng AI chấm, ghi, KHÔNG chặn.
   measure_channels Json
   enabled          Boolean          @default(true)
-  updated_at       DateTime         @updatedAt
+  updated_at       DateTime         @updatedAt @db.Timestamptz(3)
 
-  policies ai_policies[]
+  created_at DateTime      @default(now()) @db.Timestamptz(3)
+  policies   ai_policies[]
 }
 
 /// Sổ đăng ký mô hình. Bốn cột giấy phép KHÔNG cho phép rỗng vì lý do pháp lý,
@@ -1346,8 +1453,8 @@ model ai_models {
   enabled        Boolean          @default(false)
   version        String
   registered_by  String?
-  created_at     DateTime         @default(now())
-  updated_at     DateTime         @updatedAt
+  created_at     DateTime         @default(now()) @db.Timestamptz(3)
+  updated_at     DateTime         @updatedAt @db.Timestamptz(3)
 }
 
 /// Chính sách của tổ chức — TRẦN mà bộ định tuyến được chọn trong đó (D17),
@@ -1361,8 +1468,9 @@ model ai_policies {
   cost_ceiling    Int? // credit mỗi lượt
   privacy_floor   ai_privacy_level
   updated_by      String
-  updated_at      DateTime         @updatedAt
+  updated_at      DateTime         @updatedAt @db.Timestamptz(3)
 
+  created_at   DateTime        @default(now()) @db.Timestamptz(3)
   organization organizations   @relation(fields: [organization_id], references: [id])
   capability   ai_capabilities @relation(fields: [capability_code], references: [code])
 
@@ -1392,7 +1500,7 @@ model ai_requests {
   latency_ms       Int?
   quality_score    Float?
   outcome          String // ACCEPTED · ESCALATED · FAILED · NEEDS_REVIEW
-  created_at       DateTime @default(now())
+  created_at       DateTime @default(now()) @db.Timestamptz(3)
 
   organization organizations @relation(fields: [organization_id], references: [id])
 
@@ -1414,7 +1522,7 @@ model ai_evaluations {
   threshold_used  Float?
   needs_review    Boolean  @default(false)
   reason          String?
-  created_at      DateTime @default(now())
+  created_at      DateTime @default(now()) @db.Timestamptz(3)
 
   organization organizations @relation(fields: [organization_id], references: [id])
 
@@ -1457,8 +1565,8 @@ model occasions {
    * Tông giọng khi dịp này được dùng để sinh kịch bản Zalo (nợ #104).
    */
   register        occasion_register @default(FESTIVE)
-  created_at      DateTime          @default(now())
-  updated_at      DateTime          @updatedAt
+  created_at      DateTime          @default(now()) @db.Timestamptz(3)
+  updated_at      DateTime          @updatedAt @db.Timestamptz(3)
 
   organization organizations @relation(fields: [organization_id], references: [id])
 
@@ -1494,8 +1602,8 @@ model template_overrides {
   field_key       String
   value           String
   updated_by      String
-  created_at      DateTime        @default(now())
-  updated_at      DateTime        @updatedAt
+  created_at      DateTime        @default(now()) @db.Timestamptz(3)
+  updated_at      DateTime        @updatedAt @db.Timestamptz(3)
 
   organization organizations @relation(fields: [organization_id], references: [id])
 
@@ -1513,11 +1621,11 @@ model catalog_links {
   description     String?
   filters         Json?
   is_revoked      Boolean   @default(false)
-  revoked_at      DateTime?
+  revoked_at      DateTime? @db.Timestamptz(3)
   revoked_by      String?
   created_by      String
-  created_at      DateTime  @default(now())
-  updated_at      DateTime  @updatedAt
+  created_at      DateTime  @default(now()) @db.Timestamptz(3)
+  updated_at      DateTime  @updatedAt @db.Timestamptz(3)
 
   organization organizations @relation(fields: [organization_id], references: [id])
 
@@ -1533,12 +1641,12 @@ model store_share_links {
   organization_id String
   slug            String    @unique
   is_revoked      Boolean   @default(false)
-  revoked_at      DateTime?
+  revoked_at      DateTime? @db.Timestamptz(3)
   revoked_by      String?
   view_count      Int       @default(0)
   created_by      String
-  created_at      DateTime  @default(now())
-  updated_at      DateTime  @updatedAt
+  created_at      DateTime  @default(now()) @db.Timestamptz(3)
+  updated_at      DateTime  @updatedAt @db.Timestamptz(3)
 
   organization organizations @relation(fields: [organization_id], references: [id])
 
@@ -1559,12 +1667,13 @@ model brand_library_items {
   status             String   @default("ACTIVE") // ACTIVE | ARCHIVED
   current_version    Int      @default(1)
   created_by         String
-  created_at         DateTime @default(now())
-  updated_at         DateTime @updatedAt
+  created_at         DateTime @default(now()) @db.Timestamptz(3)
+  updated_at         DateTime @updatedAt @db.Timestamptz(3)
 
   organization organizations            @relation(fields: [organization_id], references: [id])
   versions     brand_library_versions[]
 
+  @@unique([id, organization_id])
   @@index([organization_id])
   @@index([organization_id, status])
 }
@@ -1579,9 +1688,11 @@ model brand_library_versions {
   text_value      String? // mã màu, tên phông, câu chữ, hướng dẫn
   note            String?
   created_by      String
-  created_at      DateTime @default(now())
+  created_at      DateTime @default(now()) @db.Timestamptz(3)
 
-  item brand_library_items @relation(fields: [item_id], references: [id], onDelete: Cascade)
+  organization organizations       @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+  // Khoá ghép: phiên bản luôn cùng tổ chức với mục cha (rà soát CSDL 05/11/2026).
+  item         brand_library_items @relation(fields: [item_id, organization_id], references: [id, organization_id], onDelete: Cascade)
 
   @@unique([item_id, version])
   @@index([organization_id])
@@ -1604,7 +1715,7 @@ model product_copies {
   edited         Json?
   approval_state approval_state @default(PENDING)
   approved_by    String?
-  approved_at    DateTime?
+  approved_at    DateTime?      @db.Timestamptz(3)
 
   // Phiên bản hồ sơ phong cách đã dùng (learning_profiles.version), để truy xuất
   profile_version String?
@@ -1623,9 +1734,13 @@ model product_copies {
   cost_usd   Float?
   latency_ms Int?
 
-  created_at DateTime @default(now())
+  created_at DateTime @default(now()) @db.Timestamptz(3)
 
+  updated_at   DateTime      @default(now()) @updatedAt @db.Timestamptz(3)
   organization organizations @relation(fields: [organization_id], references: [id])
+
+  // Khoá ngoại thêm ở đợt hoàn thiện CSDL 05/11/2026
+  fk_product products? @relation("fk_product_copies_product_id", fields: [product_id], references: [id], onDelete: SetNull)
 
   @@unique([analysis_id]) // một lượt phân tích chỉ tạo một product_copy
   @@index([organization_id])
@@ -1666,12 +1781,12 @@ model video_jobs {
 
   // Cổng duyệt 1: Kịch bản (Script / Storyboard)
   script_approval    approval_state @default(PENDING)
-  script_approved_at DateTime?
+  script_approved_at DateTime?      @db.Timestamptz(3)
   script_approved_by String?
 
   // Cổng duyệt 2: Video kết quả (Final Render)
   video_approval    approval_state @default(PENDING)
-  video_approved_at DateTime?
+  video_approved_at DateTime?      @db.Timestamptz(3)
   video_approved_by String?
 
   // Cấu hình video
@@ -1698,12 +1813,16 @@ model video_jobs {
   cost_credits    Int     @default(0)
   error_message   String?
 
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  created_at DateTime @default(now()) @db.Timestamptz(3)
+  updated_at DateTime @updatedAt @db.Timestamptz(3)
 
   organization organizations  @relation(fields: [organization_id], references: [id])
   scenes       video_scenes[]
 
+  // Khoá ngoại thêm ở đợt hoàn thiện CSDL 05/11/2026
+  fk_product products? @relation("fk_video_jobs_product_id", fields: [product_id], references: [id], onDelete: SetNull)
+
+  @@unique([id, organization_id])
   @@index([organization_id])
   @@index([organization_id, product_id])
   @@index([stage])
@@ -1714,6 +1833,8 @@ model video_jobs {
 model video_scenes {
   id                String   @id @default(uuid())
   video_job_id      String
+  /// Sao từ video_jobs; trigger điền khi bên ghi bỏ trống.
+  organization_id   String
   scene_index       Int
   duration_seconds  Float    @default(3.0)
   image_asset_id    String?
@@ -1723,12 +1844,15 @@ model video_scenes {
   /// Ken Burns (ZOOM_IN | ZOOM_OUT | PAN_UP | PAN_RIGHT | STATIC) — 23/09/2026:
   /// trước đó lựa chọn ở Khu vực E không được lưu, worker luôn tự xoay vòng.
   motion_effect     String?
-  created_at        DateTime @default(now())
+  created_at        DateTime @default(now()) @db.Timestamptz(3)
 
-  job video_jobs @relation(fields: [video_job_id], references: [id], onDelete: Cascade)
+  updated_at   DateTime      @default(now()) @updatedAt @db.Timestamptz(3)
+  job          video_jobs    @relation(fields: [video_job_id, organization_id], references: [id, organization_id], onDelete: Cascade)
+  organization organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
 
   @@unique([video_job_id, scene_index])
   @@index([video_job_id])
+  @@index([organization_id])
 }
 
 // ── M10 — Đơn hàng và vận hành (P22) ────────────────────────────────────────
@@ -1797,8 +1921,8 @@ model orders {
   vat_email           String?
 
   created_by String
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  created_at DateTime @default(now()) @db.Timestamptz(3)
+  updated_at DateTime @updatedAt @db.Timestamptz(3)
 
   organization      organizations           @relation(fields: [organization_id], references: [id])
   customer          customers?              @relation(fields: [customer_id], references: [id])
@@ -1819,17 +1943,33 @@ model orders {
   /// Đơn hàng đa nguồn (PO 31/10/2026, KIEN_TRUC_SSOT_DON_HANG_DA_NGUON.md §4.1). Chỉ THÊM —
   /// đơn Thẻ chào không đọc các cột này (sale phụ trách vẫn suy từ greeting_sessions.sale_id).
   /// Sale phụ trách đơn nguồn mới (user thuộc memberships của tổ chức — kiểm ở use-case).
-  owner_sale_id     String?
+  owner_sale_id        String?
   /// Lead gốc khi đơn sinh từ lead (cổng nhận đơn `ingestOrder`).
-  lead_id           String?
-  lead              leads?                    @relation("order_origin_lead", fields: [lead_id], references: [id], onDelete: SetNull)
-  converted_leads   leads[]                   @relation("lead_converted_order")
-  converted_quotations quotations[]            @relation("quotation_converted_order")
+  lead_id              String?
+  lead                 leads?                    @relation("order_origin_lead", fields: [lead_id], references: [id], onDelete: SetNull)
+  converted_leads      leads[]                   @relation("lead_converted_order")
+  converted_quotations quotations[]              @relation("quotation_converted_order")
   /// `LEGACY` (kanban cũ, mặc định — mọi đơn hiện có) · `STANDARD` (quy trình chuẩn đa nguồn, P3).
-  workflow          String                    @default("LEGACY")
-  approval_requests order_approval_requests[]
+  workflow             String                    @default("LEGACY")
+  approval_requests    order_approval_requests[]
+
+  // Khoá ngoại thêm ở đợt hoàn thiện CSDL 05/11/2026
+  fk_branch                               branches?                     @relation("fk_orders_branch_id", fields: [branch_id], references: [id], onDelete: SetNull)
+  fk_voucher                              vouchers?                     @relation("fk_orders_voucher_id", fields: [voucher_id], references: [id], onDelete: SetNull)
+  fk_source_session                       greeting_sessions?            @relation("fk_orders_source_session_id", fields: [source_session_id], references: [id], onDelete: SetNull)
+  // Quan hệ ngược của khoá ngoại thêm 05/11/2026
+  vouchers_by_order_id                    vouchers[]                    @relation("fk_vouchers_order_id")
+  greeting_payment_events_by_order_id     greeting_payment_events[]     @relation("fk_greeting_payment_events_order_id")
+  staff_notifications_by_order_id         staff_notifications[]         @relation("fk_staff_notifications_order_id")
+  greeting_messages_by_order_id           greeting_messages[]           @relation("fk_greeting_messages_order_id")
+  greeting_catalog_events_by_order_id     greeting_catalog_events[]     @relation("fk_greeting_catalog_events_order_id")
+  internal_chat_conversations_by_order_id internal_chat_conversations[] @relation("fk_internal_chat_conversations_order_id")
+  sales_channel_orders_by_order_id        sales_channel_orders[]        @relation("fk_sales_channel_orders_order_id")
+  voucher_redemptions_by_order_id         voucher_redemptions[]         @relation("fk_voucher_redemptions_order_id")
+  greeting_notifications_by_order_id      greeting_notifications[]      @relation("fk_greeting_notifications_order_id")
 
   @@unique([organization_id, code])
+  @@unique([id, organization_id]) // đích của khoá ghép tenant (05/11/2026)
   @@index([organization_id, status])
   @@index([organization_id, production_status])
   @@index([organization_id, source])
@@ -1848,8 +1988,14 @@ model order_items {
   unit_price_vnd  Decimal @db.Decimal(14, 2)
   metadata        Json? // BOM có cấu trúc (FlowerBomItem[]), wrapStyle/ribbon, ảnh mẫu — từ Product Master Index lúc chọn mẫu, để phiếu cắm hoa (florist ticket) không phải bịa dữ liệu
 
+  created_at   DateTime      @default(now()) @db.Timestamptz(3)
+  updated_at   DateTime      @default(now()) @updatedAt @db.Timestamptz(3)
   organization organizations @relation(fields: [organization_id], references: [id])
   order        orders        @relation(fields: [order_id], references: [id], onDelete: Cascade)
+
+  // Khoá ngoại thêm ở đợt hoàn thiện CSDL 05/11/2026
+  fk_product products?         @relation("fk_order_items_product_id", fields: [product_id], references: [id], onDelete: SetNull)
+  fk_variant product_variants? @relation("fk_order_items_variant_id", fields: [variant_id], references: [id], onDelete: SetNull)
 
   @@index([organization_id, order_id])
 }
@@ -1861,11 +2007,12 @@ model order_assignments {
   assignee_id     String // thành viên nhận việc cắm
   assigned_by     String
   difficulty      String? // định mức tiền công theo độ khó
-  assigned_at     DateTime  @default(now())
-  released_at     DateTime?
+  assigned_at     DateTime  @default(now()) @db.Timestamptz(3)
+  released_at     DateTime? @db.Timestamptz(3)
 
+  updated_at   DateTime      @default(now()) @updatedAt @db.Timestamptz(3)
   organization organizations @relation(fields: [organization_id], references: [id])
-  order        orders        @relation(fields: [order_id], references: [id], onDelete: Cascade)
+  order        orders        @relation(fields: [order_id, organization_id], references: [id, organization_id], onDelete: Cascade)
 
   @@index([organization_id, assignee_id])
   @@index([organization_id, order_id])
@@ -1880,10 +2027,10 @@ model order_events {
   to_value        String
   actor_id        String?
   reason          String?
-  created_at      DateTime @default(now())
+  created_at      DateTime @default(now()) @db.Timestamptz(3)
 
   organization organizations @relation(fields: [organization_id], references: [id])
-  order        orders        @relation(fields: [order_id], references: [id], onDelete: Cascade)
+  order        orders        @relation(fields: [order_id, organization_id], references: [id, organization_id], onDelete: Cascade)
 
   @@index([organization_id, order_id, created_at])
 }
@@ -1926,12 +2073,12 @@ model customers {
 
   total_spent   Decimal   @default(0) @db.Decimal(14, 2)
   order_count   Int       @default(0)
-  last_order_at DateTime?
+  last_order_at DateTime? @db.Timestamptz(3)
 
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  created_at DateTime @default(now()) @db.Timestamptz(3)
+  updated_at DateTime @updatedAt @db.Timestamptz(3)
 
-  organization  organizations        @relation(fields: [organization_id], references: [id])
+  organization  organizations           @relation(fields: [organization_id], references: [id])
   orders        orders[]
   occasions     customer_occasions[]
   consents      customer_consents[]
@@ -1941,8 +2088,12 @@ model customers {
   quotations    quotations[]
   interactions  customer_interactions[]
 
+  // Quan hệ ngược của khoá ngoại thêm 05/11/2026
+  voucher_redemptions_by_customer_id voucher_redemptions[] @relation("fk_voucher_redemptions_customer_id")
+
   @@unique([organization_id, phone])
   @@unique([organization_id, code])
+  @@unique([id, organization_id]) // đích của khoá ghép tenant (05/11/2026)
   @@index([organization_id, tier])
   @@index([organization_id, name])
 }
@@ -1957,10 +2108,10 @@ model customer_occasions {
   reminder_days_before Int      @default(7)
   recipient_name       String?
   notes                String?
-  created_at           DateTime @default(now())
+  created_at           DateTime @default(now()) @db.Timestamptz(3)
 
   organization organizations @relation(fields: [organization_id], references: [id])
-  customer     customers     @relation(fields: [customer_id], references: [id], onDelete: Cascade)
+  customer     customers     @relation(fields: [customer_id, organization_id], references: [id, organization_id], onDelete: Cascade)
 
   @@index([organization_id, customer_id])
   @@index([organization_id, date])
@@ -1972,12 +2123,13 @@ model customer_consents {
   customer_id     String
   channel         consent_channel
   granted         Boolean         @default(true)
-  granted_at      DateTime        @default(now())
-  revoked_at      DateTime?
-  created_at      DateTime        @default(now())
+  granted_at      DateTime        @default(now()) @db.Timestamptz(3)
+  revoked_at      DateTime?       @db.Timestamptz(3)
+  created_at      DateTime        @default(now()) @db.Timestamptz(3)
 
+  updated_at   DateTime      @default(now()) @updatedAt @db.Timestamptz(3)
   organization organizations @relation(fields: [organization_id], references: [id])
-  customer     customers     @relation(fields: [customer_id], references: [id], onDelete: Cascade)
+  customer     customers     @relation(fields: [customer_id, organization_id], references: [id, organization_id], onDelete: Cascade)
 
   @@unique([customer_id, channel])
   @@index([organization_id, customer_id])
@@ -1992,16 +2144,16 @@ model vouchers {
   discount_value     Decimal               @db.Decimal(14, 2)
   min_order_vnd      Decimal               @default(0) @db.Decimal(14, 2)
   max_discount_vnd   Decimal?              @db.Decimal(14, 2)
-  expires_at         DateTime?
+  expires_at         DateTime?             @db.Timestamptz(3)
   is_used            Boolean               @default(false)
-  used_at            DateTime?
+  used_at            DateTime?             @db.Timestamptz(3)
   order_id           String?
-  created_at         DateTime              @default(now())
+  created_at         DateTime              @default(now()) @db.Timestamptz(3)
   /// Phát hành mã giảm giá (PO 30/10/2026): mã thuộc một đợt phát hành; null = mã lẻ cũ.
   batch_id           String?
   /// Ưu đãi trong danh mục `store_policies` mà mã thuộc về — tắt/khoá ưu đãi là mã ngừng nhận.
   promotion_id       String?
-  starts_at          DateTime?
+  starts_at          DateTime?             @db.Timestamptz(3)
   /// Tổng lượt dùng tối đa; null = không giới hạn. Mã cũ = 1 lượt.
   usage_limit        Int?                  @default(1)
   /// Lượt tối đa cho mỗi khách; null = không giới hạn.
@@ -2009,10 +2161,16 @@ model vouchers {
   used_count         Int                   @default(0)
   is_active          Boolean               @default(true)
 
+  updated_at   DateTime              @default(now()) @updatedAt @db.Timestamptz(3)
   organization organizations         @relation(fields: [organization_id], references: [id])
   customer     customers?            @relation(fields: [customer_id], references: [id])
   batch        voucher_batches?      @relation(fields: [batch_id], references: [id])
   redemptions  voucher_redemptions[]
+
+  // Khoá ngoại thêm ở đợt hoàn thiện CSDL 05/11/2026
+  fk_order             orders?  @relation("fk_vouchers_order_id", fields: [order_id], references: [id], onDelete: SetNull)
+  // Quan hệ ngược của khoá ngoại thêm 05/11/2026
+  orders_by_voucher_id orders[] @relation("fk_orders_voucher_id")
 
   @@unique([organization_id, code])
   @@index([organization_id, customer_id])
@@ -2031,14 +2189,15 @@ model voucher_batches {
   discount_value     Decimal               @db.Decimal(14, 2)
   min_order_vnd      Decimal               @default(0) @db.Decimal(14, 2)
   max_discount_vnd   Decimal?              @db.Decimal(14, 2)
-  starts_at          DateTime?
-  expires_at         DateTime?
+  starts_at          DateTime?             @db.Timestamptz(3)
+  expires_at         DateTime?             @db.Timestamptz(3)
   usage_limit        Int?
   per_customer_limit Int?
   is_active          Boolean               @default(true)
   created_by         String
-  created_at         DateTime              @default(now())
+  created_at         DateTime              @default(now()) @db.Timestamptz(3)
 
+  updated_at   DateTime      @default(now()) @updatedAt @db.Timestamptz(3)
   organization organizations @relation(fields: [organization_id], references: [id])
   vouchers     vouchers[]
 
@@ -2052,11 +2211,16 @@ model voucher_redemptions {
   voucher_id      String
   order_id        String
   customer_id     String?
-  redeemed_at     DateTime  @default(now())
-  released_at     DateTime?
+  redeemed_at     DateTime  @default(now()) @db.Timestamptz(3)
+  released_at     DateTime? @db.Timestamptz(3)
 
+  updated_at   DateTime      @default(now()) @updatedAt @db.Timestamptz(3)
   organization organizations @relation(fields: [organization_id], references: [id])
   voucher      vouchers      @relation(fields: [voucher_id], references: [id])
+
+  // Khoá ngoại thêm ở đợt hoàn thiện CSDL 05/11/2026
+  fk_order    orders     @relation("fk_voucher_redemptions_order_id", fields: [order_id, organization_id], references: [id, organization_id], onDelete: Cascade)
+  fk_customer customers? @relation("fk_voucher_redemptions_customer_id", fields: [customer_id], references: [id], onDelete: SetNull)
 
   @@unique([voucher_id, order_id])
   @@index([organization_id])
@@ -2089,8 +2253,8 @@ model chat_conversations {
   title           String       @default("Hội thoại tư vấn hoa")
   channel         chat_channel @default(WEB_WIDGET)
   status          String       @default("ACTIVE") // ACTIVE, CLOSED
-  created_at      DateTime     @default(now())
-  updated_at      DateTime     @updatedAt
+  created_at      DateTime     @default(now()) @db.Timestamptz(3)
+  updated_at      DateTime     @updatedAt @db.Timestamptz(3)
 
   organization organizations   @relation(fields: [organization_id], references: [id])
   customer     customers?      @relation(fields: [customer_id], references: [id])
@@ -2108,7 +2272,7 @@ model chat_messages {
   content         String
   metadata        Json? // Gợi ý hoa từ Master Index, Draft Order ID
 
-  created_at DateTime @default(now())
+  created_at DateTime @default(now()) @db.Timestamptz(3)
 
   organization organizations      @relation(fields: [organization_id], references: [id])
   conversation chat_conversations @relation(fields: [conversation_id], references: [id], onDelete: Cascade)
@@ -2122,9 +2286,9 @@ model chat_channel_integrations {
   channel                 chat_channel
   is_enabled              Boolean      @default(false)
   config                  Json         @default("{}")
-  subscription_expires_at DateTime?
-  created_at              DateTime     @default(now())
-  updated_at              DateTime     @updatedAt
+  subscription_expires_at DateTime?    @db.Timestamptz(3)
+  created_at              DateTime     @default(now()) @db.Timestamptz(3)
+  updated_at              DateTime     @updatedAt @db.Timestamptz(3)
 
   organization organizations @relation(fields: [organization_id], references: [id])
 
@@ -2162,8 +2326,8 @@ model flower_taxonomy {
   mua_vu               String?
   trang_thai           String  @default("Đang dùng")
 
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  created_at DateTime @default(now()) @db.Timestamptz(3)
+  updated_at DateTime @updatedAt @db.Timestamptz(3)
 
   cap_a flower_confusable_pairs[] @relation("loai_a")
   cap_b flower_confusable_pairs[] @relation("loai_b")
@@ -2185,8 +2349,9 @@ model flower_confusable_pairs {
   dau_hieu_tach_b String
   muc_do_nham     String // Cao · Trung bình · Thấp
 
-  loai_a flower_taxonomy @relation("loai_a", fields: [ma_loai_a], references: [ma_loai])
-  loai_b flower_taxonomy @relation("loai_b", fields: [ma_loai_b], references: [ma_loai])
+  created_at DateTime        @default(now()) @db.Timestamptz(3)
+  loai_a     flower_taxonomy @relation("loai_a", fields: [ma_loai_a], references: [ma_loai])
+  loai_b     flower_taxonomy @relation("loai_b", fields: [ma_loai_b], references: [ma_loai])
 
   @@index([ma_loai_a])
   @@index([ma_loai_b])
@@ -2211,10 +2376,11 @@ model platform_operators {
   id         String    @id @default(uuid())
   user_id    String    @unique
   granted_by String? // user_id của người gán, null nếu tự gán qua script lần đầu
-  created_at DateTime  @default(now())
-  revoked_at DateTime?
+  created_at DateTime  @default(now()) @db.Timestamptz(3)
+  revoked_at DateTime? @db.Timestamptz(3)
 
-  user users @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  updated_at DateTime @default(now()) @updatedAt @db.Timestamptz(3)
+  user       users    @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
   capabilities platform_role_capabilities[]
 
@@ -2230,7 +2396,9 @@ model platform_role_capabilities {
   operator_id     String
   capability_code String // N1 … N8
 
-  operator platform_operators @relation(fields: [operator_id], references: [id], onDelete: Cascade)
+  created_at DateTime           @default(now()) @db.Timestamptz(3)
+  updated_at DateTime           @default(now()) @updatedAt @db.Timestamptz(3)
+  operator   platform_operators @relation(fields: [operator_id], references: [id], onDelete: Cascade)
 
   @@unique([operator_id, capability_code])
 }
@@ -2241,7 +2409,8 @@ model platform_role_capabilities {
 model platform_secrets {
   key          String   @id // vd. zalo_oa_tokens
   sealed_value String
-  updated_at   DateTime @updatedAt
+  updated_at   DateTime @updatedAt @db.Timestamptz(3)
+  created_at   DateTime @default(now()) @db.Timestamptz(3)
 }
 
 /// Nhật ký cho hành động KHÔNG thuộc một tổ chức cụ thể (xem sức khoẻ hệ
@@ -2259,7 +2428,7 @@ model platform_audit_logs {
   after       Json?
   ip          String?
   user_agent  String?
-  created_at  DateTime @default(now())
+  created_at  DateTime @default(now()) @db.Timestamptz(3)
 
   @@index([created_at])
   @@index([entity_type, entity_id])
@@ -2272,7 +2441,8 @@ model platform_settings {
   key        String   @id
   value      Json
   updated_by String?
-  updated_at DateTime @updatedAt
+  updated_at DateTime @updatedAt @db.Timestamptz(3)
+  created_at DateTime @default(now()) @db.Timestamptz(3)
 }
 
 // ─────────────────────────────────────────────────────────────────────────
@@ -2325,40 +2495,40 @@ enum field_override_target {
 /// bằng seed 3.6) và trường tự tạo (`origin = CUSTOM`, tạo thẳng từ Console
 /// theo 3.7). `key` không đổi sau khi tạo (luật 3.4).
 model field_definitions {
-  id                  String                  @id @default(uuid())
-  key                 String                  @unique
-  entity              String // ORDER · PARTNER (ĐP-4 mở thêm QC_RECORD/EXCEPTION/PAYMENT)
-  origin              field_origin            @default(CORE)
-  data_type           String
-  label               String
-  description         String?
-  placeholder         String?
+  id                    String                  @id @default(uuid())
+  key                   String                  @unique
+  entity                String // ORDER · PARTNER (ĐP-4 mở thêm QC_RECORD/EXCEPTION/PAYMENT)
+  origin                field_origin            @default(CORE)
+  data_type             String
+  label                 String
+  description           String?
+  placeholder           String?
   /// { placements: [{ placement: "T01.delivery", order: 3 }, …] }
-  placements          Json?
-  requirement         field_requirement_level @default(OPTIONAL)
-  required_at_stage   String?
+  placements            Json?
+  requirement           field_requirement_level @default(OPTIONAL)
+  required_at_stage     String?
   /// { INTERNAL: true, PARTNER: false, SHIPPER: false, CUSTOMER: false }
-  visibility          Json?
+  visibility            Json?
   /// Ràng buộc bổ sung ngoài `data_type` (độ dài, min/max, regex…).
-  validation          Json?
-  catalog_key         String?
-  sensitivity         field_sensitivity       @default(NORMAL)
+  validation            Json?
+  catalog_key           String?
+  sensitivity           field_sensitivity       @default(NORMAL)
   /// Mức sàn §16.2 mục 1: true thì KHÔNG tổ chức nào, cấu hình nào mở được
   /// hiển thị ra ngoài INTERNAL (giá bán, giá vốn…). Đọc CÙNG với
   /// `sensitivity` ở `field-rules.ts` — hai cờ độc lập, cùng mục đích khoá sàn.
-  floor_internal_only Boolean                 @default(false)
-  status              field_status            @default(ACTIVE)
+  floor_internal_only   Boolean                 @default(false)
+  status                field_status            @default(ACTIVE)
   /// Trường tự tạo mặc định áp cho tổ chức nào: true = mọi tổ chức trừ khi
   /// bị tắt qua `field_config_overrides`; false = "trường tự tạo chỉ áp
   /// cho tổ chức này" — cần override `is_enabled = true` mới thấy (6.1).
-  default_enabled     Boolean                 @default(true)
+  default_enabled       Boolean                 @default(true)
   /// Checklist ALG 1.9: null = trường của nền tảng (lõi hoặc quản trị nền tảng
   /// tạo); có giá trị = trường cửa hàng tự tạo, chỉ tổ chức đó thấy và ghi.
   owner_organization_id String?
-  created_by          String?
-  updated_by          String?
-  created_at          DateTime                @default(now())
-  updated_at          DateTime                @updatedAt
+  created_by            String?
+  updated_by            String?
+  created_at            DateTime                @default(now()) @db.Timestamptz(3)
+  updated_at            DateTime                @updatedAt @db.Timestamptz(3)
 
   owner_organization organizations? @relation("field_definition_owner", fields: [owner_organization_id], references: [id], onDelete: Cascade)
 
@@ -2379,8 +2549,8 @@ model field_catalogs {
   label         String
   governance    field_catalog_governance @default(OPEN)
   behavior_kind String?
-  created_at    DateTime                 @default(now())
-  updated_at    DateTime                 @updatedAt
+  created_at    DateTime                 @default(now()) @db.Timestamptz(3)
+  updated_at    DateTime                 @updatedAt @db.Timestamptz(3)
 
   values field_catalog_values[]
 }
@@ -2397,8 +2567,8 @@ model field_catalog_values {
   /// `catalog.governance = BEHAVIOR`. Null cho danh mục `OPEN`/`CLOSED`.
   behavior    String?
   params      Json?
-  created_at  DateTime @default(now())
-  updated_at  DateTime @updatedAt
+  created_at  DateTime @default(now()) @db.Timestamptz(3)
+  updated_at  DateTime @updatedAt @db.Timestamptz(3)
 
   catalog field_catalogs @relation(fields: [catalog_key], references: [key], onDelete: Cascade)
 
@@ -2421,8 +2591,8 @@ model field_config_overrides {
   is_enabled      Boolean?
   created_by      String?
   updated_by      String?
-  created_at      DateTime                 @default(now())
-  updated_at      DateTime                 @updatedAt
+  created_at      DateTime                 @default(now()) @db.Timestamptz(3)
+  updated_at      DateTime                 @updatedAt @db.Timestamptz(3)
 
   organization organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
 
@@ -2478,10 +2648,10 @@ model market_sources {
   platform        String
   source_type     String
   status          market_source_status @default(ACTIVE)
-  last_success_at DateTime?
-  last_error_at   DateTime?
-  created_at      DateTime             @default(now())
-  updated_at      DateTime             @updatedAt
+  last_success_at DateTime?            @db.Timestamptz(3)
+  last_error_at   DateTime?            @db.Timestamptz(3)
+  created_at      DateTime             @default(now()) @db.Timestamptz(3)
+  updated_at      DateTime             @updatedAt @db.Timestamptz(3)
 
   trend_signals trend_signals[]
   topic_signals topic_signals[]
@@ -2503,8 +2673,8 @@ model trend_signals {
   metric_value Float
   growth_rate  Float?
   confidence   Float    @default(1.0)
-  captured_at  DateTime @default(now())
-  created_at   DateTime @default(now())
+  captured_at  DateTime @default(now()) @db.Timestamptz(3)
+  created_at   DateTime @default(now()) @db.Timestamptz(3)
 
   source market_sources @relation(fields: [source_id], references: [id], onDelete: Cascade)
 
@@ -2521,7 +2691,7 @@ model trend_timeseries {
   topic_id     String
   platform     String
   geo_scope    String   @default("VN")
-  date         DateTime
+  date         DateTime @db.Timestamptz(3)
   value        Float
   growth_rate  Float?
   velocity     Float?
@@ -2543,8 +2713,8 @@ model topics {
   language       String             @default("vi")
   industry       String             @default("florist")
   status         trend_topic_status @default(EMERGING)
-  first_seen_at  DateTime           @default(now())
-  last_seen_at   DateTime           @default(now())
+  first_seen_at  DateTime           @default(now()) @db.Timestamptz(3)
+  last_seen_at   DateTime           @default(now()) @db.Timestamptz(3)
 
   timeseries            trend_timeseries[]
   signals               topic_signals[]
@@ -2565,7 +2735,7 @@ model topic_signals {
   external_reference String?
   signal_type        String
   signal_value       Float
-  captured_at        DateTime @default(now())
+  captured_at        DateTime @default(now()) @db.Timestamptz(3)
 
   topic  topics         @relation(fields: [topic_id], references: [id], onDelete: Cascade)
   source market_sources @relation(fields: [source_id], references: [id], onDelete: Cascade)
@@ -2586,7 +2756,7 @@ model topic_scores {
   commercial_score          Float
   content_opportunity_score Float
   confidence                Float    @default(1.0)
-  calculated_at             DateTime @default(now())
+  calculated_at             DateTime @default(now()) @db.Timestamptz(3)
   model_version             String   @default("v1_florist")
 
   topic topics @relation(fields: [topic_id], references: [id], onDelete: Cascade)
@@ -2611,9 +2781,9 @@ model content_opportunities {
   commercial_score          Float
   content_opportunity_score Float
   confidence                Float     @default(1.0)
-  expires_at                DateTime?
-  created_at                DateTime  @default(now())
-  updated_at                DateTime  @updatedAt
+  expires_at                DateTime? @db.Timestamptz(3)
+  created_at                DateTime  @default(now()) @db.Timestamptz(3)
+  updated_at                DateTime  @updatedAt @db.Timestamptz(3)
 
   organization organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
   topic        topics        @relation(fields: [topic_id], references: [id], onDelete: Cascade)
@@ -2648,7 +2818,7 @@ model product_analysis_runs {
   content_fit_score  Float
   overall_fit        String
   report             Json
-  created_at         DateTime @default(now())
+  created_at         DateTime @default(now()) @db.Timestamptz(3)
 
   organization organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
 
@@ -2660,8 +2830,8 @@ model research_runs {
   id                    String              @id @default(uuid())
   run_type              research_run_type   @default(DAILY_DEEP)
   status                research_run_status @default(PENDING)
-  started_at            DateTime?
-  completed_at          DateTime?
+  started_at            DateTime?           @db.Timestamptz(3)
+  completed_at          DateTime?           @db.Timestamptz(3)
   sources_attempted     Int                 @default(0)
   sources_succeeded     Int                 @default(0)
   sources_failed        Int                 @default(0)
@@ -2669,7 +2839,9 @@ model research_runs {
   topics_created        Int                 @default(0)
   opportunities_created Int                 @default(0)
   error_summary         String?
-  created_at            DateTime            @default(now())
+  created_at            DateTime            @default(now()) @db.Timestamptz(3)
+
+  updated_at DateTime @default(now()) @updatedAt @db.Timestamptz(3)
 
   @@index([status, created_at])
 }
@@ -2682,7 +2854,9 @@ model provider_health {
   latency_ms      Int?
   error_rate      Float?
   quota_status    String?
-  last_checked_at DateTime               @default(now())
+  last_checked_at DateTime               @default(now()) @db.Timestamptz(3)
+
+  updated_at DateTime @default(now()) @updatedAt @db.Timestamptz(3)
 
   @@index([status])
 }
@@ -2713,16 +2887,19 @@ model campaign_packages {
   /// DRAFT | QA_PASSED | QA_NEEDS_REVIEW | QA_REJECTED | APPROVED
   status            String    @default("DRAFT")
   qa_report         Json?
-  qa_checked_at     DateTime?
+  qa_checked_at     DateTime? @db.Timestamptz(3)
   approved_by       String?
-  approved_at       DateTime?
+  approved_at       DateTime? @db.Timestamptz(3)
   /// Kế hoạch đăng (Chặng 10): { channels[], scheduled_at, post_refs[{platform, content_id}] }.
   launch_plan       Json?
   created_by        String
-  created_at        DateTime  @default(now())
-  updated_at        DateTime  @updatedAt
+  created_at        DateTime  @default(now()) @db.Timestamptz(3)
+  updated_at        DateTime  @updatedAt @db.Timestamptz(3)
 
   organization organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+
+  // Khoá ngoại thêm ở đợt hoàn thiện CSDL 05/11/2026
+  fk_product products? @relation("fk_campaign_packages_product_id", fields: [product_id], references: [id], onDelete: SetNull)
 
   @@index([organization_id, created_at])
   @@index([organization_id, master_asset_id])
@@ -2744,8 +2921,8 @@ model content_drafts {
   posts           Json
   created_by      String
   updated_by      String
-  created_at      DateTime @default(now())
-  updated_at      DateTime @updatedAt
+  created_at      DateTime @default(now()) @db.Timestamptz(3)
+  updated_at      DateTime @updatedAt @db.Timestamptz(3)
 
   organization organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
 
@@ -2795,10 +2972,13 @@ model content_generations {
   created_by      String
   approved_by     String?
 
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  created_at DateTime @default(now()) @db.Timestamptz(3)
+  updated_at DateTime @updatedAt @db.Timestamptz(3)
 
   organization organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+
+  // Khoá ngoại thêm ở đợt hoàn thiện CSDL 05/11/2026
+  fk_product products? @relation("fk_content_generations_product_id", fields: [product_id], references: [id], onDelete: SetNull)
 
   @@index([organization_id, asset_id, topic_id, mode])
   @@index([organization_id, created_at])
@@ -2821,12 +3001,12 @@ model voice_clones {
   /// Câu cam kết người dùng đã tick (lưu nguyên văn để đối soát).
   consent_text       String
   consented_by       String
-  consented_at       DateTime
+  consented_at       DateTime  @db.Timestamptz(3)
   job_id             String?
   error              String?
-  created_at         DateTime  @default(now())
-  updated_at         DateTime  @updatedAt
-  deleted_at         DateTime?
+  created_at         DateTime  @default(now()) @db.Timestamptz(3)
+  updated_at         DateTime  @updatedAt @db.Timestamptz(3)
+  deleted_at         DateTime? @db.Timestamptz(3)
 
   organization organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
 
@@ -2851,10 +3031,11 @@ model music_tracks {
   license_source   String
   license_note     String?
   attested_by      String
-  attested_at      DateTime
-  created_at       DateTime  @default(now())
-  deleted_at       DateTime?
+  attested_at      DateTime  @db.Timestamptz(3)
+  created_at       DateTime  @default(now()) @db.Timestamptz(3)
+  deleted_at       DateTime? @db.Timestamptz(3)
 
+  updated_at   DateTime      @default(now()) @updatedAt @db.Timestamptz(3)
   organization organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
 
   @@index([organization_id, mood])
@@ -2946,8 +3127,8 @@ model partners {
   is_active       Boolean  @default(true)
   /// ĐP-3 — giá trị trường tự tạo (entity = PARTNER).
   custom_fields   Json?
-  created_at      DateTime @default(now())
-  updated_at      DateTime @updatedAt
+  created_at      DateTime @default(now()) @db.Timestamptz(3)
+  updated_at      DateTime @updatedAt @db.Timestamptz(3)
 
   organization  organizations         @relation(fields: [organization_id], references: [id], onDelete: Cascade)
   coordinations order_coordinations[]
@@ -2967,9 +3148,9 @@ model order_coordinations {
   risk_level            coordination_risk_level @default(NORMAL)
   risk_reason           String?
   next_action           String?
-  next_action_due       DateTime?
-  estimated_delivery_at DateTime?
-  actual_delivery_at    DateTime?
+  next_action_due       DateTime?               @db.Timestamptz(3)
+  estimated_delivery_at DateTime?               @db.Timestamptz(3)
+  actual_delivery_at    DateTime?               @db.Timestamptz(3)
   /// Bước quay về khi mọi sự cố của đơn đã xử lý xong (stage = EXCEPTION).
   resume_stage          coordinator_stage?
   production_progress   Int                     @default(0)
@@ -2984,12 +3165,12 @@ model order_coordinations {
   delivery_state        String?
   pod_asset_id          String?
   pod_recipient_name    String?
-  pod_captured_at       DateTime?
+  pod_captured_at       DateTime?               @db.Timestamptz(3)
   partner_payout_vnd    Decimal?                @db.Decimal(14, 2)
   partner_rating        Int?
   closure_notes         String?
   closed_by             String?
-  closed_at             DateTime?
+  closed_at             DateTime?               @db.Timestamptz(3)
   cancelled_reason      String?
   metadata              Json?
   /// ĐP-3 — giá trị trường tự tạo (Console Vận hành > Trường dữ liệu), theo
@@ -3015,21 +3196,21 @@ model order_coordinations {
   /// `cardMessage` bắt buộc khi cột này = true (kiểm ở `http-schemas.ts`).
   card_required          Boolean   @default(false)
   /// Thời điểm đơn THỰC SỰ đến (khác `created_at` khi đơn đến từ kênh ngoài có độ trễ nhập liệu).
-  received_at            DateTime?
+  received_at            DateTime? @db.Timestamptz(3)
   /// Dùng khi `service_level = TIME_SLOT` (§2.15.2).
-  delivery_window_start  DateTime?
-  delivery_window_end    DateTime?
+  delivery_window_start  DateTime? @db.Timestamptz(3)
+  delivery_window_end    DateTime? @db.Timestamptz(3)
   /// Hạn sản xuất xong — tính ngược từ SLA giao (ĐP-4a.2/4a.9), CHƯA tính ở đợt 4a.1.
-  production_deadline_at DateTime?
+  production_deadline_at DateTime? @db.Timestamptz(3)
   /// Hạn lấy hàng đi giao — tính ngược từ SLA giao (ĐP-4a.2/4a.9), CHƯA tính ở đợt 4a.1.
-  pickup_target_at       DateTime?
+  pickup_target_at       DateTime? @db.Timestamptz(3)
   /// Người phụ trách bán (§2.1) — gán = người tạo đơn lúc tiếp nhận, giống `coordinator_id`;
   /// chưa có API đổi người phụ trách (cùng tình trạng "MỘT PHẦN" như `coordinator_id`).
   sales_owner_id         String?
   /// Người phụ trách hành động kế tiếp — CHƯA gán ở đợt 4a.1 (thuộc luồng bàn giao T02, ĐP-4a.5).
   next_action_owner_id   String?
   /// Mốc bàn giao Sales → Điều phối (T02) — CHƯA ghi ở đợt 4a.1 (ĐP-4a.5).
-  handoff_at             DateTime?
+  handoff_at             DateTime? @db.Timestamptz(3)
 
   // ── ĐP-4a.5 (27/09/2026) — T02: xác nhận bàn giao Sales → Điều phối ──────
   /// true khi Điều phối đã nhận bàn giao (đặt cùng lúc với `handoff_at`, lúc rời INTAKE).
@@ -3038,27 +3219,28 @@ model order_coordinations {
   // ── ĐP-4a.3 bù (27/09/2026) — Điều phối đặt cách thu + hạn thu phần còn lại ──
   /// Danh mục §2.15.7 (MỞ) — mã chuỗi kiểm active ở tầng ứng dụng (D12).
   collection_method String?
-  collection_due_at DateTime?
+  collection_due_at DateTime? @db.Timestamptz(3)
 
   // ── ĐP-4a.9 (27/09/2026) — Form Lập kế hoạch đơn (Đặc tả trường §4.2) ────
   /// Mốc điều phối viên lập kế hoạch xong (khác `created_at`/`handoff_at`).
-  planned_at                    DateTime?
+  planned_at                    DateTime? @db.Timestamptz(3)
   production_buffer_minutes     Int?
   pickup_buffer_minutes         Int?
   planned_production_minutes    Int?
   planned_qc_buffer_minutes     Int?
   planned_pickup_minutes        Int?
   planned_delivery_minutes      Int?
-  partner_selection_deadline_at DateTime?
+  partner_selection_deadline_at DateTime? @db.Timestamptz(3)
   technical_instruction         String?
 
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  created_at DateTime @default(now()) @db.Timestamptz(3)
+  updated_at DateTime @updatedAt @db.Timestamptz(3)
 
   organization organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
-  order        orders        @relation(fields: [order_id], references: [id], onDelete: Cascade)
+  order        orders        @relation(fields: [order_id, organization_id], references: [id, organization_id], onDelete: Cascade)
   partner      partners?     @relation(fields: [partner_id], references: [id])
 
+  @@unique([order_id, organization_id]) // khoá ghép 1-1 về orders (05/11/2026)
   @@index([organization_id, stage])
   @@index([organization_id, risk_level])
 }
@@ -3080,17 +3262,18 @@ model order_payments {
   /// Ảnh chuyển khoản/biên nhận — id `assets` cùng tổ chức.
   evidence_asset_id String?
   collected_by      String
-  collected_at      DateTime           @default(now())
+  collected_at      DateTime           @default(now()) @db.Timestamptz(3)
   note              String?
   /// ĐP-3 — trường tự tạo (entity = ORDER, đặt trên dòng sổ thu — dự phòng cho tương lai).
   custom_fields     Json?
   /// PENDING (Sale/Điều phối ghi, chờ Điều hành xác nhận — chưa cộng vào paid_vnd) · CONFIRMED · REJECTED.
   /// PO 04/11/2026, checklist ALG 1.16 (Q3 phương án b). Dòng cũ: CONFIRMED.
   status            String             @default("CONFIRMED")
-  created_at        DateTime           @default(now())
+  created_at        DateTime           @default(now()) @db.Timestamptz(3)
 
+  updated_at   DateTime      @default(now()) @updatedAt @db.Timestamptz(3)
   organization organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
-  order        orders        @relation(fields: [order_id], references: [id], onDelete: Cascade)
+  order        orders        @relation(fields: [order_id, organization_id], references: [id, organization_id], onDelete: Cascade)
 
   @@index([organization_id, order_id])
   @@index([organization_id, status])
@@ -3112,21 +3295,21 @@ model order_info_requests {
   /// Hỏi ai — mô tả tự do (khách qua Zalo, SĐT khách…), KHÔNG phải id có cấu trúc.
   requested_from       String
   requested_by         String
-  requested_at         DateTime                  @default(now())
-  due_at               DateTime?
+  requested_at         DateTime                  @default(now()) @db.Timestamptz(3)
+  due_at               DateTime?                 @db.Timestamptz(3)
   /// Danh mục §2.15.3 (kênh hỏi lại — có thể khác kênh nhận đơn gốc).
   channel              String?
   message_template     String?
   response_required    Boolean                   @default(true)
   response_value       String?
-  response_received_at DateTime?
+  response_received_at DateTime?                 @db.Timestamptz(3)
   status               order_info_request_status @default(OPEN)
   cancelled_reason     String?
-  created_at           DateTime                  @default(now())
-  updated_at           DateTime                  @updatedAt
+  created_at           DateTime                  @default(now()) @db.Timestamptz(3)
+  updated_at           DateTime                  @updatedAt @db.Timestamptz(3)
 
   organization organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
-  order        orders        @relation(fields: [order_id], references: [id], onDelete: Cascade)
+  order        orders        @relation(fields: [order_id, organization_id], references: [id, organization_id], onDelete: Cascade)
 
   @@index([organization_id, order_id])
   @@index([organization_id, status])
@@ -3140,7 +3323,7 @@ model order_change_requests {
   organization_id    String
   order_id           String
   requested_by       String
-  requested_at       DateTime                    @default(now())
+  requested_at       DateTime                    @default(now()) @db.Timestamptz(3)
   change_type        order_change_type
   /// Đường dẫn trường bị đổi (khớp khoá `field-registry.ts` khi có, hoặc `bom.flowers[…]`…).
   field_changed      String
@@ -3157,19 +3340,19 @@ model order_change_requests {
   /// PRICE/QUANTITY luôn cần duyệt trước khi áp dụng — xem `create-order-change-request.ts`.
   requires_approval  Boolean                     @default(false)
   approved_by        String?
-  approved_at        DateTime?
+  approved_at        DateTime?                   @db.Timestamptz(3)
   /// true khi đã báo đối tác — mặc định false; nếu đơn đã phân công lúc tạo yêu cầu,
   /// view tính cờ DERIVED `needsPartnerNotice = partnerId != null && !partnerNotified`.
   partner_notified   Boolean                     @default(false)
   customer_confirmed Boolean                     @default(false)
-  effective_at       DateTime?
+  effective_at       DateTime?                   @db.Timestamptz(3)
   status             order_change_request_status @default(PENDING)
   rejected_reason    String?
-  created_at         DateTime                    @default(now())
-  updated_at         DateTime                    @updatedAt
+  created_at         DateTime                    @default(now()) @db.Timestamptz(3)
+  updated_at         DateTime                    @updatedAt @db.Timestamptz(3)
 
   organization organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
-  order        orders        @relation(fields: [order_id], references: [id], onDelete: Cascade)
+  order        orders        @relation(fields: [order_id, organization_id], references: [id, organization_id], onDelete: Cascade)
 
   @@index([organization_id, order_id])
   @@index([organization_id, status])
@@ -3189,11 +3372,11 @@ model order_qc_records {
   image_asset_ids  Json?
   checklist_result Json?
   notes            String?
-  created_at       DateTime         @default(now())
-  updated_at       DateTime         @updatedAt
+  created_at       DateTime         @default(now()) @db.Timestamptz(3)
+  updated_at       DateTime         @updatedAt @db.Timestamptz(3)
 
   organization organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
-  order        orders        @relation(fields: [order_id], references: [id], onDelete: Cascade)
+  order        orders        @relation(fields: [order_id, organization_id], references: [id, organization_id], onDelete: Cascade)
 
   @@index([organization_id, order_id])
 }
@@ -3211,12 +3394,12 @@ model order_exceptions {
   status          String    @default("OPEN")
   reported_by     String?
   resolved_by     String?
-  resolved_at     DateTime?
-  created_at      DateTime  @default(now())
-  updated_at      DateTime  @updatedAt
+  resolved_at     DateTime? @db.Timestamptz(3)
+  created_at      DateTime  @default(now()) @db.Timestamptz(3)
+  updated_at      DateTime  @updatedAt @db.Timestamptz(3)
 
   organization organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
-  order        orders        @relation(fields: [order_id], references: [id], onDelete: Cascade)
+  order        orders        @relation(fields: [order_id, organization_id], references: [id, organization_id], onDelete: Cascade)
 
   @@unique([organization_id, code])
   @@index([organization_id, order_id])
@@ -3237,10 +3420,13 @@ model journey_runs {
   context_snapshot Json?
   degraded_steps   Json?
   created_by       String
-  created_at       DateTime @default(now())
-  updated_at       DateTime @updatedAt
+  created_at       DateTime @default(now()) @db.Timestamptz(3)
+  updated_at       DateTime @updatedAt @db.Timestamptz(3)
 
   organization organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+
+  // Khoá ngoại thêm ở đợt hoàn thiện CSDL 05/11/2026
+  fk_workspace workspaces? @relation("fk_journey_runs_workspace_id", fields: [workspace_id], references: [id], onDelete: SetNull)
 
   @@index([organization_id, manifest_id])
   @@index([organization_id, status])
@@ -3254,8 +3440,8 @@ model decision_registry {
   description String
   spec_ref    String?
 
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  created_at DateTime @default(now()) @db.Timestamptz(3)
+  updated_at DateTime @updatedAt @db.Timestamptz(3)
 }
 
 // ── Module Thẻ Chào / Swipe Brochure (greeting-card) ─────────────────────────
@@ -3271,8 +3457,8 @@ model greeting_catalogs {
   filters         Json? // Bộ lọc dịp, mức giá, màu sắc khi tạo Client Catalog
   is_active       Boolean  @default(true)
   created_by      String
-  created_at      DateTime @default(now())
-  updated_at      DateTime @updatedAt
+  created_at      DateTime @default(now()) @db.Timestamptz(3)
+  updated_at      DateTime @updatedAt @db.Timestamptz(3)
 
   organization organizations               @relation(fields: [organization_id], references: [id], onDelete: Cascade)
   items        greeting_catalog_products[]
@@ -3292,11 +3478,12 @@ model greeting_catalog_products {
   catalog_id      String
   product_id      String
   sort_order      Int      @default(0)
-  created_at      DateTime @default(now())
+  created_at      DateTime @default(now()) @db.Timestamptz(3)
 
+  updated_at   DateTime          @default(now()) @updatedAt @db.Timestamptz(3)
   organization organizations     @relation(fields: [organization_id], references: [id], onDelete: Cascade)
   catalog      greeting_catalogs @relation(fields: [catalog_id], references: [id], onDelete: Cascade)
-  product      products          @relation(fields: [product_id], references: [id], onDelete: Cascade)
+  product      products          @relation(fields: [product_id, organization_id], references: [id, organization_id], onDelete: Cascade)
 
   @@unique([catalog_id, product_id])
   @@index([organization_id, catalog_id])
@@ -3320,22 +3507,29 @@ model greeting_sessions {
   payment_proof_asset_id         String?
   /// Ảnh chuyển khoản lần 2 (phần còn lại) do khách tải lên
   payment_proof_balance_asset_id String?
-  opened_at                      DateTime?
-  selected_at                    DateTime?
+  opened_at                      DateTime? @db.Timestamptz(3)
+  selected_at                    DateTime? @db.Timestamptz(3)
   /// Hết hạn link (null = không hết hạn). Hết hạn/thu hồi mà chưa có đơn → link trả 404.
-  expires_at                     DateTime?
-  revoked_at                     DateTime?
+  expires_at                     DateTime? @db.Timestamptz(3)
+  revoked_at                     DateTime? @db.Timestamptz(3)
   revoked_by                     String?
-  last_active_at                 DateTime  @default(now())
-  created_at                     DateTime  @default(now())
-  updated_at                     DateTime  @updatedAt
+  last_active_at                 DateTime  @default(now()) @db.Timestamptz(3)
+  created_at                     DateTime  @default(now()) @db.Timestamptz(3)
+  updated_at                     DateTime  @updatedAt @db.Timestamptz(3)
 
   organization organizations             @relation(fields: [organization_id], references: [id], onDelete: Cascade)
   catalog      greeting_catalogs         @relation(fields: [catalog_id], references: [id], onDelete: Cascade)
   order        orders?                   @relation(fields: [order_id], references: [id], onDelete: SetNull)
   events       greeting_journey_events[]
 
+  // Khoá ngoại thêm ở đợt hoàn thiện CSDL 05/11/2026
+  fk_selected_product             products?           @relation("fk_greeting_sessions_selected_product_id", fields: [selected_product_id], references: [id], onDelete: SetNull)
+  // Quan hệ ngược của khoá ngoại thêm 05/11/2026
+  orders_by_source_session_id     orders[]            @relation("fk_orders_source_session_id")
+  greeting_messages_by_session_id greeting_messages[] @relation("fk_greeting_messages_session_id")
+
   @@unique([organization_id, send_code])
+  @@unique([id, organization_id]) // đích của khoá ghép tenant (05/11/2026)
   @@index([organization_id, catalog_id])
   @@index([organization_id, sale_id])
   @@index([send_code])
@@ -3359,8 +3553,8 @@ model greeting_integrations {
   staff_notify_channels         Json? // Mảng kênh đã bật: ["TELEGRAM", "ZALO", ...]
   staff_notify_config_encrypted String? // Thông tin kết nối mã hoá (Bot Token, Chat ID, App Secret...)
   staff_notify_events           Json? // Bật/tắt theo sự kiện
-  created_at                    DateTime @default(now())
-  updated_at                    DateTime @updatedAt
+  created_at                    DateTime @default(now()) @db.Timestamptz(3)
+  updated_at                    DateTime @updatedAt @db.Timestamptz(3)
 
   organization organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
 
@@ -3377,14 +3571,17 @@ model greeting_payment_events {
   amount_vnd      Decimal   @db.Decimal(14, 2)
   content         String
   account_no      String?
-  transaction_at  DateTime?
+  transaction_at  DateTime? @db.Timestamptz(3)
   status          String // MATCHED | UNMATCHED | IGNORED
   order_id        String?
   payment_id      String?
   note            String?
-  created_at      DateTime  @default(now())
+  created_at      DateTime  @default(now()) @db.Timestamptz(3)
 
   organization organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+
+  // Khoá ngoại thêm ở đợt hoàn thiện CSDL 05/11/2026
+  fk_order orders? @relation("fk_greeting_payment_events_order_id", fields: [order_id], references: [id], onDelete: SetNull)
 
   @@unique([organization_id, provider, external_id])
   @@index([organization_id, status])
@@ -3402,10 +3599,13 @@ model greeting_notifications {
   status              String // SENT | FAILED | SKIPPED
   provider_message_id String?
   error               String?
-  created_at          DateTime @default(now())
-  updated_at          DateTime @updatedAt
+  created_at          DateTime @default(now()) @db.Timestamptz(3)
+  updated_at          DateTime @updatedAt @db.Timestamptz(3)
 
   organization organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+
+  // Khoá ngoại thêm ở đợt hoàn thiện CSDL 05/11/2026
+  fk_order orders @relation("fk_greeting_notifications_order_id", fields: [order_id, organization_id], references: [id, organization_id], onDelete: Cascade)
 
   @@unique([organization_id, order_id, event_key])
   @@index([organization_id, order_id])
@@ -3426,9 +3626,12 @@ model staff_notifications {
   status          String   @default("SENT") // SENT | FAILED | SKIPPED
   provider_msg_id String?
   error           String?
-  created_at      DateTime @default(now())
+  created_at      DateTime @default(now()) @db.Timestamptz(3)
 
   organization organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+
+  // Khoá ngoại thêm ở đợt hoàn thiện CSDL 05/11/2026
+  fk_order orders? @relation("fk_staff_notifications_order_id", fields: [order_id], references: [id], onDelete: SetNull)
 
   @@index([organization_id, event_key])
   @@index([organization_id, recipient_id])
@@ -3450,8 +3653,8 @@ model greeting_share_links {
   catalog_id      String
   owner_id        String // người đã bấm Sao chép
   channel         String? // ?kenh= lúc sao chép
-  created_at      DateTime  @default(now()) // = lúc sao chép
-  revoked_at      DateTime?
+  created_at      DateTime  @default(now()) @db.Timestamptz(3) // = lúc sao chép
+  revoked_at      DateTime? @db.Timestamptz(3)
 
   organization organizations     @relation(fields: [organization_id], references: [id], onDelete: Cascade)
   catalog      greeting_catalogs @relation(fields: [catalog_id], references: [id], onDelete: Cascade)
@@ -3479,10 +3682,18 @@ model greeting_messages {
   body            String
   payload         Json?
   reply_to_id     String?
-  created_at      DateTime @default(now())
+  created_at      DateTime @default(now()) @db.Timestamptz(3)
 
+  updated_at   DateTime                 @default(now()) @updatedAt @db.Timestamptz(3)
   organization organizations            @relation(fields: [organization_id], references: [id], onDelete: Cascade)
   reads        greeting_message_reads[]
+
+  // Khoá ngoại thêm ở đợt hoàn thiện CSDL 05/11/2026
+  fk_order                         orders?             @relation("fk_greeting_messages_order_id", fields: [order_id], references: [id], onDelete: SetNull)
+  fk_session                       greeting_sessions?  @relation("fk_greeting_messages_session_id", fields: [session_id], references: [id], onDelete: SetNull)
+  fk_reply_to                      greeting_messages?  @relation("fk_greeting_messages_reply_to_id", fields: [reply_to_id], references: [id], onDelete: SetNull)
+  // Quan hệ ngược của khoá ngoại thêm 05/11/2026
+  greeting_messages_by_reply_to_id greeting_messages[] @relation("fk_greeting_messages_reply_to_id")
 
   @@index([organization_id, order_id])
   @@index([organization_id, session_id])
@@ -3498,7 +3709,7 @@ model greeting_message_reads {
   organization_id String
   message_id      String
   user_id         String
-  read_at         DateTime @default(now())
+  read_at         DateTime @default(now()) @db.Timestamptz(3)
 
   organization organizations     @relation(fields: [organization_id], references: [id], onDelete: Cascade)
   message      greeting_messages @relation(fields: [message_id], references: [id], onDelete: Cascade)
@@ -3516,10 +3727,14 @@ model greeting_catalog_events {
   visitor_hash    String // sha256(catalog_id:mã khách ngẫu nhiên) — không lưu IP
   order_id        String?
   product_id      String? // LIKE/UNLIKE: mẫu được thả/bỏ tim (07/10/2026)
-  created_at      DateTime @default(now())
+  created_at      DateTime @default(now()) @db.Timestamptz(3)
 
   organization organizations     @relation(fields: [organization_id], references: [id], onDelete: Cascade)
   catalog      greeting_catalogs @relation(fields: [catalog_id], references: [id], onDelete: Cascade)
+
+  // Khoá ngoại thêm ở đợt hoàn thiện CSDL 05/11/2026
+  fk_product products? @relation("fk_greeting_catalog_events_product_id", fields: [product_id], references: [id], onDelete: SetNull)
+  fk_order   orders?   @relation("fk_greeting_catalog_events_order_id", fields: [order_id], references: [id], onDelete: SetNull)
 
   @@index([organization_id, catalog_id, created_at])
   @@index([organization_id, channel])
@@ -3532,10 +3747,10 @@ model greeting_journey_events {
   session_id      String
   event_type      String // OPEN | SWIPE_NEXT | SWIPE_PREV | SELECT_PRODUCT | OPEN_ORDER_FORM | SUBMIT_ORDER | CLICK_PAID | TRACK_VIEW
   metadata        Json?
-  created_at      DateTime @default(now())
+  created_at      DateTime @default(now()) @db.Timestamptz(3)
 
   organization organizations     @relation(fields: [organization_id], references: [id], onDelete: Cascade)
-  session      greeting_sessions @relation(fields: [session_id], references: [id], onDelete: Cascade)
+  session      greeting_sessions @relation(fields: [session_id, organization_id], references: [id, organization_id], onDelete: Cascade)
 
   @@index([organization_id, session_id])
 }
@@ -3556,8 +3771,8 @@ model chain_partnerships {
   address          String?
   province         String?
   district         String?
-  created_at       DateTime @default(now())
-  updated_at       DateTime @updatedAt
+  created_at       DateTime @default(now()) @db.Timestamptz(3)
+  updated_at       DateTime @updatedAt @db.Timestamptz(3)
 
   chain_organization   organizations @relation("ChainOrg", fields: [chain_org_id], references: [id], onDelete: Cascade)
   partner_organization organizations @relation("PartnerOrg", fields: [partner_org_id], references: [id], onDelete: Cascade)
@@ -3577,14 +3792,18 @@ model internal_chat_conversations {
   order_id          String?
   metadata          Json     @default("{}")
   created_by        String // user_id of creator
-  last_message_at   DateTime @default(now())
-  created_at        DateTime @default(now())
-  updated_at        DateTime @updatedAt
+  last_message_at   DateTime @default(now()) @db.Timestamptz(3)
+  created_at        DateTime @default(now()) @db.Timestamptz(3)
+  updated_at        DateTime @updatedAt @db.Timestamptz(3)
 
   organization organizations                @relation(fields: [organization_id], references: [id], onDelete: Cascade)
   participants internal_chat_participants[]
   messages     internal_chat_messages[]
 
+  // Khoá ngoại thêm ở đợt hoàn thiện CSDL 05/11/2026
+  fk_order orders? @relation("fk_internal_chat_conversations_order_id", fields: [order_id], references: [id], onDelete: SetNull)
+
+  @@unique([id, organization_id])
   @@index([organization_id, conversation_type])
   @@index([order_id])
 }
@@ -3595,34 +3814,42 @@ model internal_chat_participants {
   user_id         String
   organization_id String
   role_in_chat    String   @default("MEMBER") // OWNER | ADMIN | MEMBER | GUEST_PARTNER
-  last_read_at    DateTime @default(now())
+  last_read_at    DateTime @default(now()) @db.Timestamptz(3)
   is_muted        Boolean  @default(false)
-  joined_at       DateTime @default(now())
+  joined_at       DateTime @default(now()) @db.Timestamptz(3)
 
+  updated_at   DateTime                    @default(now()) @updatedAt @db.Timestamptz(3)
   conversation internal_chat_conversations @relation(fields: [conversation_id], references: [id], onDelete: Cascade)
   organization organizations               @relation(fields: [organization_id], references: [id], onDelete: Cascade)
   user         users                       @relation(fields: [user_id], references: [id], onDelete: Cascade)
 
   @@unique([conversation_id, user_id])
   @@index([user_id, organization_id])
+  @@index([organization_id])
 }
 
 model internal_chat_messages {
-  id              String   @id @default(uuid())
+  id              String    @id @default(uuid())
   conversation_id String
+  /// Sao từ internal_chat_conversations; trigger điền khi bên ghi bỏ trống.
+  organization_id String
   sender_user_id  String
   sender_role     String
-  message_type    String   @default("TEXT") // TEXT | IMAGE | ACTION_CARD_ORDER | ACTION_CARD_QC | SYSTEM_NOTICE
-  content         String   @default("")
-  attachments     String[] @default([])
+  message_type    String    @default("TEXT") // TEXT | IMAGE | ACTION_CARD_ORDER | ACTION_CARD_QC | SYSTEM_NOTICE
+  content         String    @default("")
+  attachments     String[]  @default([])
   action_payload  Json?
-  is_deleted      Boolean  @default(false)
-  created_at      DateTime @default(now())
+  /// Xoá mềm thống nhất bằng mốc thời gian (thay is_deleted, 05/11/2026).
+  deleted_at      DateTime? @db.Timestamptz(3)
+  created_at      DateTime  @default(now()) @db.Timestamptz(3)
 
-  conversation internal_chat_conversations @relation(fields: [conversation_id], references: [id], onDelete: Cascade)
+  updated_at   DateTime                    @default(now()) @updatedAt @db.Timestamptz(3)
+  conversation internal_chat_conversations @relation(fields: [conversation_id, organization_id], references: [id, organization_id], onDelete: Cascade)
+  organization organizations               @relation(fields: [organization_id], references: [id], onDelete: Cascade)
   sender       users                       @relation("ChatSender", fields: [sender_user_id], references: [id], onDelete: Cascade)
 
   @@index([conversation_id, created_at])
+  @@index([organization_id])
 }
 
 // ─── Notification System (Multi-Tier, Multi-Role) ──────────────────────────
@@ -3630,7 +3857,9 @@ model notification_channel_activations {
   channel    String // APP_INBOX | EMAIL | PUSH | TELEGRAM | ZALO | SMS | WHATSAPP | MESSENGER
   activated  Boolean  @default(false)
   updated_by String // platform_admin user_id
-  updated_at DateTime @updatedAt
+  updated_at DateTime @updatedAt @db.Timestamptz(3)
+
+  created_at DateTime @default(now()) @db.Timestamptz(3)
 
   @@id([channel])
 }
@@ -3640,7 +3869,9 @@ model notification_event_visibility {
   tier       String // INDUSTRY | CHAIN | STORE
   visible    Boolean  @default(true)
   updated_by String
-  updated_at DateTime @updatedAt
+  updated_at DateTime @updatedAt @db.Timestamptz(3)
+
+  created_at DateTime @default(now()) @db.Timestamptz(3)
 
   @@id([event_key, tier])
 }
@@ -3654,8 +3885,8 @@ model notification_hard_locks {
   enabled    Boolean // true = bắt buộc BẬT | false = bắt buộc TẮT
   locked_by  String // user_id người đặt khóa
   reason     String? // Lý do khóa
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  created_at DateTime @default(now()) @db.Timestamptz(3)
+  updated_at DateTime @updatedAt @db.Timestamptz(3)
 
   @@unique([event_key, channel, tier, scope_id])
   @@index([tier, scope_id])
@@ -3669,8 +3900,8 @@ model notification_org_policies {
   role_key          String // RoleUxKey hoặc "*" cho all roles
   enabled           Boolean  @default(true)
   priority_override String? // NORMAL | URGENT | CRITICAL
-  created_at        DateTime @default(now())
-  updated_at        DateTime @updatedAt
+  created_at        DateTime @default(now()) @db.Timestamptz(3)
+  updated_at        DateTime @updatedAt @db.Timestamptz(3)
 
   organization organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
 
@@ -3687,8 +3918,8 @@ model notification_store_defaults {
   enabled         Boolean  @default(true)
   schedule_start  String? // "08:00"
   schedule_end    String? // "22:00"
-  created_at      DateTime @default(now())
-  updated_at      DateTime @updatedAt
+  created_at      DateTime @default(now()) @db.Timestamptz(3)
+  updated_at      DateTime @updatedAt @db.Timestamptz(3)
 
   organization organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
 
@@ -3703,9 +3934,9 @@ model notification_user_preferences {
   event_key       String
   channel         String
   enabled         Boolean
-  mute_until      DateTime?
-  created_at      DateTime  @default(now())
-  updated_at      DateTime  @updatedAt
+  mute_until      DateTime? @db.Timestamptz(3)
+  created_at      DateTime  @default(now()) @db.Timestamptz(3)
+  updated_at      DateTime  @updatedAt @db.Timestamptz(3)
 
   organization organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
 
@@ -3724,9 +3955,10 @@ model notification_inbox {
   deep_link       String?
   priority        String    @default("NORMAL")
   is_read         Boolean   @default(false)
-  read_at         DateTime?
-  created_at      DateTime  @default(now())
+  read_at         DateTime? @db.Timestamptz(3)
+  created_at      DateTime  @default(now()) @db.Timestamptz(3)
 
+  updated_at   DateTime      @default(now()) @updatedAt @db.Timestamptz(3)
   organization organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
 
   @@index([user_id, organization_id, is_read])
@@ -3752,8 +3984,8 @@ model materials {
   on_hand_qty     Decimal? @db.Decimal(14, 3) // tồn nhập tay (#35)
   active          Boolean  @default(true)
   created_by      String
-  created_at      DateTime @default(now())
-  updated_at      DateTime @updatedAt
+  created_at      DateTime @default(now()) @db.Timestamptz(3)
+  updated_at      DateTime @updatedAt @db.Timestamptz(3)
 
   organization  organizations            @relation(fields: [organization_id], references: [id])
   price_history material_price_history[]
@@ -3771,7 +4003,7 @@ model material_price_history {
   material_id     String
   unit_cost_vnd   Decimal  @db.Decimal(14, 2)
   source          String // MANUAL · IMPORT · PURCHASE
-  effective_at    DateTime @default(now())
+  effective_at    DateTime @default(now()) @db.Timestamptz(3)
   created_by      String
 
   organization organizations @relation(fields: [organization_id], references: [id])
@@ -3791,11 +4023,11 @@ model product_recipes {
   labor_minutes   Int? // dùng khi ngành tính công theo phút
   note            String?
   updated_by      String
-  created_at      DateTime @default(now())
-  updated_at      DateTime @updatedAt
+  created_at      DateTime @default(now()) @db.Timestamptz(3)
+  updated_at      DateTime @updatedAt @db.Timestamptz(3)
 
   organization organizations          @relation(fields: [organization_id], references: [id])
-  product      products               @relation(fields: [product_id], references: [id], onDelete: Cascade)
+  product      products               @relation(fields: [product_id, organization_id], references: [id, organization_id], onDelete: Cascade)
   items        product_recipe_items[]
 
   @@unique([organization_id, product_id])
@@ -3810,6 +4042,7 @@ model product_recipe_items {
   material_id     String
   quantity        Decimal @db.Decimal(14, 3)
 
+  created_at   DateTime        @default(now()) @db.Timestamptz(3)
   organization organizations   @relation(fields: [organization_id], references: [id])
   recipe       product_recipes @relation(fields: [recipe_id], references: [id], onDelete: Cascade)
   material     materials       @relation(fields: [material_id], references: [id])
@@ -3865,18 +4098,21 @@ model integration_connections {
   credential_hint       String?
   connection_ref        String                        @unique
   inherited_from_org_id String?
-  expires_at            DateTime?
-  last_health_at        DateTime?
+  expires_at            DateTime?                     @db.Timestamptz(3)
+  last_health_at        DateTime?                     @db.Timestamptz(3)
   last_error_code       String?
   created_by            String
-  created_at            DateTime                      @default(now())
-  updated_at            DateTime                      @updatedAt
+  created_at            DateTime                      @default(now()) @db.Timestamptz(3)
+  updated_at            DateTime                      @updatedAt @db.Timestamptz(3)
 
   organization   organizations              @relation(fields: [organization_id], references: [id])
   events         integration_events[]
   cursors        integration_sync_cursors[]
   listings       sales_channel_listings[]
   channel_orders sales_channel_orders[]
+
+  // Khoá ngoại thêm ở đợt hoàn thiện CSDL 05/11/2026
+  fk_inherited_from_org organizations? @relation("fk_integration_connections_inherited_from_org_id", fields: [inherited_from_org_id], references: [id], onDelete: SetNull)
 
   @@unique([organization_id, connector_key, external_account_id])
   @@index([organization_id])
@@ -3894,11 +4130,11 @@ model integration_events {
   external_event_id String?
   status            integration_event_status    @default(PENDING)
   attempts          Int                         @default(0)
-  next_retry_at     DateTime?
+  next_retry_at     DateTime?                   @db.Timestamptz(3)
   error_code        String?
   payload_redacted  Json                        @default("{}")
-  created_at        DateTime                    @default(now())
-  updated_at        DateTime                    @updatedAt
+  created_at        DateTime                    @default(now()) @db.Timestamptz(3)
+  updated_at        DateTime                    @updatedAt @db.Timestamptz(3)
 
   organization organizations           @relation(fields: [organization_id], references: [id])
   connection   integration_connections @relation(fields: [connection_id], references: [id], onDelete: Cascade)
@@ -3916,8 +4152,9 @@ model integration_sync_cursors {
   connection_id   String
   resource        String
   cursor          String
-  updated_at      DateTime @updatedAt
+  updated_at      DateTime @updatedAt @db.Timestamptz(3)
 
+  created_at   DateTime                @default(now()) @db.Timestamptz(3)
   organization organizations           @relation(fields: [organization_id], references: [id])
   connection   integration_connections @relation(fields: [connection_id], references: [id], onDelete: Cascade)
 
@@ -3934,8 +4171,8 @@ model integration_governance {
   scope_id      String
   mode          integration_governance_mode
   updated_by    String
-  created_at    DateTime                    @default(now())
-  updated_at    DateTime                    @updatedAt
+  created_at    DateTime                    @default(now()) @db.Timestamptz(3)
+  updated_at    DateTime                    @updatedAt @db.Timestamptz(3)
 
   @@unique([connector_key, tier, scope_id])
   @@index([scope_id])
@@ -3964,12 +4201,15 @@ model sales_channel_listings {
   external_id     String?
   status          sales_listing_status @default(PENDING)
   last_error      String?
-  last_synced_at  DateTime?
-  created_at      DateTime             @default(now())
-  updated_at      DateTime             @updatedAt
+  last_synced_at  DateTime?            @db.Timestamptz(3)
+  created_at      DateTime             @default(now()) @db.Timestamptz(3)
+  updated_at      DateTime             @updatedAt @db.Timestamptz(3)
 
   organization organizations           @relation(fields: [organization_id], references: [id])
   connection   integration_connections @relation(fields: [connection_id], references: [id], onDelete: Cascade)
+
+  // Khoá ngoại thêm ở đợt hoàn thiện CSDL 05/11/2026
+  fk_product products @relation("fk_sales_channel_listings_product_id", fields: [product_id, organization_id], references: [id, organization_id], onDelete: Cascade)
 
   @@unique([connection_id, product_id])
   @@index([organization_id])
@@ -3985,11 +4225,14 @@ model sales_channel_orders {
   order_id          String?
   status            sales_channel_order_status
   error_code        String?
-  created_at        DateTime                   @default(now())
-  updated_at        DateTime                   @updatedAt
+  created_at        DateTime                   @default(now()) @db.Timestamptz(3)
+  updated_at        DateTime                   @updatedAt @db.Timestamptz(3)
 
   organization organizations           @relation(fields: [organization_id], references: [id])
   connection   integration_connections @relation(fields: [connection_id], references: [id], onDelete: Cascade)
+
+  // Khoá ngoại thêm ở đợt hoàn thiện CSDL 05/11/2026
+  fk_order orders? @relation("fk_sales_channel_orders_order_id", fields: [order_id], references: [id], onDelete: SetNull)
 
   @@unique([connection_id, external_order_id])
   @@index([organization_id])
@@ -4012,21 +4255,21 @@ model leads {
   utm_source         String?
   utm_medium         String?
   utm_campaign       String?
-  consent_at         DateTime
+  consent_at         DateTime  @db.Timestamptz(3)
   consent_version    String
   /// 10 trạng thái pipeline: NEW, QUALIFIED, CONTACTED, CONSULTING, RECOMMENDED, QUOTATION_SENT, FOLLOW_UP, WON, LOST, UNQUALIFIED (PO 01/11/2026, PR-3).
   status             String    @default("NEW")
   assignee_user_id   String? // user thuộc memberships của tổ chức — kiểm ở use-case
-  status_changed_at  DateTime?
+  status_changed_at  DateTime? @db.Timestamptz(3)
   /// Đơn hàng đa nguồn (PO 31/10/2026, §3.3–3.4): lý do vào, hạn gọi lại, lý do đóng, đơn đã chuyển thành.
   /// CONTACT | QUOTE_REQUEST | ABANDONED | PAYMENT_TIMEOUT | WALK_IN | CHAT
   reason             String?
-  next_follow_up_at  DateTime?
+  next_follow_up_at  DateTime? @db.Timestamptz(3)
   /// NO_NEED | UNREACHABLE | BOUGHT_ELSEWHERE | INVALID
   closed_reason      String?
   converted_order_id String?
-  created_at         DateTime  @default(now())
-  updated_at         DateTime  @updatedAt
+  created_at         DateTime  @default(now()) @db.Timestamptz(3)
+  updated_at         DateTime  @updatedAt @db.Timestamptz(3)
 
   organization    organizations @relation(fields: [organization_id], references: [id])
   customer        customers?    @relation(fields: [customer_id], references: [id], onDelete: SetNull)
@@ -4055,14 +4298,14 @@ model short_links {
   utm_source      String?
   utm_medium      String?
   utm_campaign    String?
-  expires_at      DateTime?
+  expires_at      DateTime? @db.Timestamptz(3)
   is_active       Boolean   @default(true)
   scan_count      Int       @default(0)
   created_by      String
-  created_at      DateTime  @default(now())
-  updated_at      DateTime  @updatedAt
+  created_at      DateTime  @default(now()) @db.Timestamptz(3)
+  updated_at      DateTime  @updatedAt @db.Timestamptz(3)
 
-  organization organizations @relation(fields: [organization_id], references: [id])
+  organization organizations  @relation(fields: [organization_id], references: [id])
   events       link_events[]
   leads        leads[]
   usages       asset_usages[]
@@ -4079,7 +4322,7 @@ model link_events {
   device          String // MOBILE | TABLET | DESKTOP | UNKNOWN
   referrer_host   String?
   visitor_hash    String?
-  created_at      DateTime @default(now())
+  created_at      DateTime @default(now()) @db.Timestamptz(3)
 
   organization organizations @relation(fields: [organization_id], references: [id])
   short_link   short_links   @relation(fields: [short_link_id], references: [id], onDelete: Cascade)
@@ -4106,8 +4349,8 @@ model partner_marketplace_stores {
   photo_source_ids String[] @default([])
   search_text      String   @default("")
   source           String // SHEET · EXCEL · SEED
-  created_at       DateTime @default(now())
-  updated_at       DateTime @updatedAt
+  created_at       DateTime @default(now()) @db.Timestamptz(3)
+  updated_at       DateTime @updatedAt @db.Timestamptz(3)
 
   @@index([tier])
 }
@@ -4120,12 +4363,14 @@ model partner_marketplace_share_links {
   token_hash     String    @unique
   /// Ghi chú để nhớ link gửi cho ai (vd. "BOD quý 4")
   label          String
-  expires_at     DateTime
-  revoked_at     DateTime?
+  expires_at     DateTime  @db.Timestamptz(3)
+  revoked_at     DateTime? @db.Timestamptz(3)
   created_by     String
   view_count     Int       @default(0)
-  last_viewed_at DateTime?
-  created_at     DateTime  @default(now())
+  last_viewed_at DateTime? @db.Timestamptz(3)
+  created_at     DateTime  @default(now()) @db.Timestamptz(3)
+
+  updated_at DateTime @default(now()) @updatedAt @db.Timestamptz(3)
 
   @@index([created_at])
 }
@@ -4144,17 +4389,17 @@ model order_approval_requests {
   basis           String?
   reason          String
   requested_by    String
-  requested_at    DateTime  @default(now())
+  requested_at    DateTime  @default(now()) @db.Timestamptz(3)
   decided_by      String?
-  decided_at      DateTime?
+  decided_at      DateTime? @db.Timestamptz(3)
   decision_note   String?
   /// Hạn thu tiền sau giao (Điều hành sửa được khi duyệt).
-  collect_due_at  DateTime?
-  created_at      DateTime  @default(now())
-  updated_at      DateTime  @updatedAt
+  collect_due_at  DateTime? @db.Timestamptz(3)
+  created_at      DateTime  @default(now()) @db.Timestamptz(3)
+  updated_at      DateTime  @updatedAt @db.Timestamptz(3)
 
   organization organizations @relation(fields: [organization_id], references: [id])
-  order        orders        @relation(fields: [order_id], references: [id], onDelete: Cascade)
+  order        orders        @relation(fields: [order_id, organization_id], references: [id, organization_id], onDelete: Cascade)
 
   @@index([organization_id])
   @@index([organization_id, status, created_at])
@@ -4194,13 +4439,13 @@ model asset_usages {
   config          Json?             @default("{}")
   status          usage_status      @default(ACTIVE)
   created_by      String
-  created_at      DateTime          @default(now())
-  updated_at      DateTime          @updatedAt
+  created_at      DateTime          @default(now()) @db.Timestamptz(3)
+  updated_at      DateTime          @updatedAt @db.Timestamptz(3)
 
-  organization organizations @relation(fields: [organization_id], references: [id])
-  short_link   short_links?  @relation(fields: [short_link_id], references: [id], onDelete: SetNull)
-  campaign     campaigns?    @relation(fields: [campaign_id], references: [id], onDelete: SetNull)
-  quotations   quotations[]
+  organization          organizations           @relation(fields: [organization_id], references: [id])
+  short_link            short_links?            @relation(fields: [short_link_id], references: [id], onDelete: SetNull)
+  campaign              campaigns?              @relation(fields: [campaign_id], references: [id], onDelete: SetNull)
+  quotations            quotations[]
   customer_interactions customer_interactions[]
   print_renditions      print_renditions[]
 
@@ -4233,12 +4478,12 @@ model campaigns {
   name            String
   objective       campaign_objective
   occasion_code   String?
-  starts_at       DateTime?
-  ends_at         DateTime?
+  starts_at       DateTime?          @db.Timestamptz(3)
+  ends_at         DateTime?          @db.Timestamptz(3)
   status          campaign_status    @default(DRAFT)
   created_by      String
-  created_at      DateTime           @default(now())
-  updated_at      DateTime           @updatedAt
+  created_at      DateTime           @default(now()) @db.Timestamptz(3)
+  updated_at      DateTime           @updatedAt @db.Timestamptz(3)
 
   organization organizations  @relation(fields: [organization_id], references: [id])
   usages       asset_usages[]
@@ -4262,34 +4507,35 @@ enum quotation_status {
 model quotations {
   id                 String           @id @default(uuid())
   organization_id    String
-  code               String           // VD: BG-0001 — mã nội bộ, không dùng cho link công khai
+  code               String // VD: BG-0001 — mã nội bộ, không dùng cho link công khai
   public_token       String           @unique // token ngẫu nhiên của link công khai /bg/<token>
   lead_id            String?
   customer_id        String?
   asset_usage_id     String?
   status             quotation_status @default(DRAFT)
-  valid_until        DateTime?
+  valid_until        DateTime?        @db.Timestamptz(3)
   subtotal           Decimal          @default(0) @db.Decimal(12, 2)
   discount_amount    Decimal          @default(0) @db.Decimal(12, 2)
   /// Phí vận chuyển cộng vào tổng sau ưu đãi (checklist ALG 3.8)
   shipping_fee       Decimal          @default(0) @db.Decimal(12, 2)
   total_amount       Decimal          @default(0) @db.Decimal(12, 2)
-  terms              String?          // Điều kiện & điều khoản báo giá
-  notes              String?          // Ghi chú nội bộ
+  terms              String? // Điều kiện & điều khoản báo giá
+  notes              String? // Ghi chú nội bộ
   converted_order_id String?
   created_by         String
-  created_at         DateTime         @default(now())
-  updated_at         DateTime         @updatedAt
+  created_at         DateTime         @default(now()) @db.Timestamptz(3)
+  updated_at         DateTime         @updatedAt @db.Timestamptz(3)
 
-  organization    organizations    @relation(fields: [organization_id], references: [id])
-  lead            leads?           @relation(fields: [lead_id], references: [id], onDelete: SetNull)
-  customer        customers?       @relation(fields: [customer_id], references: [id], onDelete: SetNull)
-  asset_usage     asset_usages?    @relation(fields: [asset_usage_id], references: [id], onDelete: SetNull)
-  converted_order orders?          @relation("quotation_converted_order", fields: [converted_order_id], references: [id], onDelete: SetNull)
+  organization    organizations         @relation(fields: [organization_id], references: [id])
+  lead            leads?                @relation(fields: [lead_id], references: [id], onDelete: SetNull)
+  customer        customers?            @relation(fields: [customer_id], references: [id], onDelete: SetNull)
+  asset_usage     asset_usages?         @relation(fields: [asset_usage_id], references: [id], onDelete: SetNull)
+  converted_order orders?               @relation("quotation_converted_order", fields: [converted_order_id], references: [id], onDelete: SetNull)
   items           quotation_items[]
   revisions       quotation_revisions[]
 
   @@unique([organization_id, code])
+  @@unique([id, organization_id]) // đích của khoá ghép tenant (05/11/2026)
   @@index([organization_id])
   @@index([organization_id, status])
   @@index([organization_id, created_at])
@@ -4310,11 +4556,11 @@ model quotation_items {
   unit_price      Decimal  @default(0) @db.Decimal(12, 2)
   total_price     Decimal  @default(0) @db.Decimal(12, 2)
   note            String?
-  created_at      DateTime @default(now())
-  updated_at      DateTime @updatedAt
+  created_at      DateTime @default(now()) @db.Timestamptz(3)
+  updated_at      DateTime @updatedAt @db.Timestamptz(3)
 
   organization organizations @relation(fields: [organization_id], references: [id])
-  quotation    quotations    @relation(fields: [quotation_id], references: [id], onDelete: Cascade)
+  quotation    quotations    @relation(fields: [quotation_id, organization_id], references: [id, organization_id], onDelete: Cascade)
   product      products?     @relation(fields: [product_id], references: [id], onDelete: SetNull)
 
   @@index([organization_id])
@@ -4330,10 +4576,10 @@ model quotation_revisions {
   version         Int
   snapshot        Json
   created_by      String
-  created_at      DateTime @default(now())
+  created_at      DateTime @default(now()) @db.Timestamptz(3)
 
   organization organizations @relation(fields: [organization_id], references: [id])
-  quotation    quotations    @relation(fields: [quotation_id], references: [id], onDelete: Cascade)
+  quotation    quotations    @relation(fields: [quotation_id, organization_id], references: [id, organization_id], onDelete: Cascade)
 
   @@unique([quotation_id, version])
   @@index([organization_id])
@@ -4367,10 +4613,10 @@ model customer_segments {
   name            String
   description     String?
   kind            customer_segment_kind @default(DYNAMIC)
-  rules           Json?                 // Zod schema: tier, rfmMin, rfmMax, occasions, lastPurchaseDays, tags, consentChannel
+  rules           Json? // Zod schema: tier, rfmMin, rfmMax, occasions, lastPurchaseDays, tags, consentChannel
   created_by      String
-  created_at      DateTime              @default(now())
-  updated_at      DateTime              @updatedAt
+  created_at      DateTime              @default(now()) @db.Timestamptz(3)
+  updated_at      DateTime              @updatedAt @db.Timestamptz(3)
 
   organization organizations @relation(fields: [organization_id], references: [id])
 
@@ -4381,21 +4627,21 @@ model customer_segments {
 
 /// Nhật ký tương tác & chăm sóc khách hàng (Customer Interactions) — Chăm sóc khách hàng (PO 01/11/2026, PR-5).
 model customer_interactions {
-  id              String                          @id @default(uuid())
+  id              String                         @id @default(uuid())
   organization_id String
   customer_id     String
   channel         customer_interaction_channel
-  direction       customer_interaction_direction  @default(OUTBOUND)
+  direction       customer_interaction_direction @default(OUTBOUND)
   asset_usage_id  String?
   summary         String
   outcome         String?
-  occurred_at     DateTime                        @default(now())
+  occurred_at     DateTime                       @default(now()) @db.Timestamptz(3)
   created_by      String
-  created_at      DateTime                        @default(now())
-  updated_at      DateTime                        @updatedAt
+  created_at      DateTime                       @default(now()) @db.Timestamptz(3)
+  updated_at      DateTime                       @updatedAt @db.Timestamptz(3)
 
   organization organizations @relation(fields: [organization_id], references: [id])
-  customer     customers     @relation(fields: [customer_id], references: [id], onDelete: Cascade)
+  customer     customers     @relation(fields: [customer_id, organization_id], references: [id, organization_id], onDelete: Cascade)
   asset_usage  asset_usages? @relation(fields: [asset_usage_id], references: [id], onDelete: SetNull)
 
   @@index([organization_id])
@@ -4428,8 +4674,8 @@ model print_renditions {
   preflight       Json?
   status          print_rendition_status @default(PENDING)
   created_by      String
-  created_at      DateTime               @default(now())
-  updated_at      DateTime               @updatedAt
+  created_at      DateTime               @default(now()) @db.Timestamptz(3)
+  updated_at      DateTime               @updatedAt @db.Timestamptz(3)
 
   organization organizations @relation(fields: [organization_id], references: [id])
   asset_usage  asset_usages? @relation(fields: [asset_usage_id], references: [id], onDelete: SetNull)
@@ -4440,4 +4686,3 @@ model print_renditions {
   @@index([organization_id, created_at])
   @@index([asset_usage_id])
 }
-

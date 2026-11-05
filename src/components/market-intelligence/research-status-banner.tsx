@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@/components/ui/button"
 import React from "react";
 import { Sparkles } from "@/components/ui/icon-set/sparkles"
 import { Loader2 } from "@/components/ui/icon-set/loader2"
@@ -38,35 +39,35 @@ export function ResearchStatusBanner({
       role={status.state === "failed" ? "alert" : "status"}
       className={`relative overflow-hidden rounded-2xl border p-4 transition-all duration-300 shadow-sm ${
         status.state === "running"
-          ? "border-blush-200 bg-gradient-to-r from-blush-50/90 via-petal-50/70 to-blush-50/90 text-blush-950"
+          ? "border-primary-border bg-gradient-to-r from-primary-muted/90 via-primary-muted/70 to-primary-muted/90 text-primary"
           : status.state === "succeeded"
-          ? "border-mint-200 bg-gradient-to-r from-mint-50/90 via-lagoon-50/70 to-mint-50/90 text-mint-950"
-          : "border-alert-200 bg-alert-50 text-alert-950"
+          ? "border-success-border bg-gradient-to-r from-success-bg/90 via-success-bg/70 to-success-bg/90 text-success-text"
+          : "border-danger-border bg-danger-bg text-danger-text"
       }`}
     >
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
         <div className="flex items-start sm:items-center gap-3">
           {status.state === "running" ? (
-            <div className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-blush-600 text-white shadow-sm">
+            <div className="relative flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-primary text-white shadow-sm">
               <Loader2 className="h-5 w-5 animate-spin motion-reduce:animate-none" />
               <span className="absolute -top-1 -right-1 flex h-3 w-3">
-                <span className="animate-ping motion-reduce:animate-none absolute inline-flex h-full w-full rounded-full bg-blush-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-3 w-3 bg-blush-500"></span>
+                <span className="animate-ping motion-reduce:animate-none absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-3 w-3 bg-primary"></span>
               </span>
             </div>
           ) : status.state === "succeeded" ? (
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-mint-600 text-white shadow-sm">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-success text-white shadow-sm">
               <CheckCircle2 className="h-5 w-5" />
             </div>
           ) : (
-            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-alert-600 text-white shadow-sm">
+            <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-danger text-white shadow-sm">
               <AlertCircle className="h-5 w-5" />
             </div>
           )}
 
           <div className="space-y-0.5">
             <div className="flex items-center gap-2">
-              <h3 className="text-xs font-extrabold tracking-tight">
+              <h3 className="text-caption font-extrabold tracking-tight">
                 {status.state === "running" && "Đang nghiên cứu đa kênh..."}
                 {status.state === "succeeded" && "Nghiên cứu hoàn tất, đã cập nhật dữ liệu"}
                 {status.state === "failed" && "Nghiên cứu chưa xong được"}
@@ -88,38 +89,38 @@ export function ResearchStatusBanner({
 
         <div className="flex items-center gap-2 self-end sm:self-center">
           {status.state === "succeeded" && onViewResults && (
-            <button
+            <Button variant="ghost"
               type="button"
               onClick={onViewResults}
-              className="inline-flex items-center gap-1.5 rounded-xl bg-mint-600 px-3.5 py-1.5 text-xs font-bold text-white shadow-xs hover:bg-mint-700 transition"
+              className="h-auto inline-flex items-center gap-1.5 rounded-xl bg-success px-3.5 py-1.5 text-caption font-bold text-white shadow-xs hover:bg-success-text transition"
             >
               <ArrowDown className="h-3.5 w-3.5" />
               Xem kết quả ngay
-            </button>
+            </Button>
           )}
 
           {status.state === "running" && (
-            <div className="inline-flex items-center gap-1.5 rounded-lg bg-blush-100/80 px-2.5 py-1 text-caption font-bold text-blush-800">
-              <span className="h-1.5 w-1.5 rounded-full bg-blush-600 animate-pulse motion-reduce:animate-none" />
+            <div className="inline-flex items-center gap-1.5 rounded-lg bg-primary-muted/80 px-2.5 py-1 text-caption font-bold text-primary">
+              <span className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse motion-reduce:animate-none" />
               Đang thu thập dữ liệu...
             </div>
           )}
 
           {onDismiss && status.state !== "running" && (
-            <button
+            <Button variant="ghost"
               type="button"
               onClick={onDismiss}
-              className="rounded-lg p-1 text-text-muted hover:text-cool-700 hover:bg-black/5 transition text-xs"
+              className="h-auto font-[inherit] gap-0 rounded-lg p-1 text-text-muted hover:text-text hover:bg-black/5 transition text-caption"
             >
               ✕
-            </button>
+            </Button>
           )}
         </div>
       </div>
 
       {status.state === "running" && (
-        <div className="mt-3 h-1 w-full overflow-hidden rounded-full bg-blush-100">
-          <div className="h-full w-full bg-blush-600 rounded-full animate-pulse motion-reduce:animate-none" />
+        <div className="mt-3 h-1 w-full overflow-hidden rounded-full bg-primary-muted">
+          <div className="h-full w-full bg-primary rounded-full animate-pulse motion-reduce:animate-none" />
         </div>
       )}
     </div>

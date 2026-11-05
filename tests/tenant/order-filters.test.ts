@@ -24,7 +24,7 @@ describe("lọc nâng cao danh sách đơn", () => {
         id, organization_id: a.organizationId, code, source: opts.source ?? "MANUAL", status: "CONFIRMED", created_by: a.userId,
         owner_sale_id: opts.sale ?? null, branch_id: opts.branchId ?? null, total_vnd: 500_000, paid_vnd: 0, balance_vnd: 500_000,
         ...(opts.date ? { delivery_window: { date: opts.date } } : {}),
-        ...(opts.target ? { coordination: { create: { organization_id: a.organizationId, estimated_delivery_at: opts.target } } } : {}),
+        ...(opts.target ? { coordination: { create: { estimated_delivery_at: opts.target } } } : {}),
       },
     })
     return id

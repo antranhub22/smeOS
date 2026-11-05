@@ -68,6 +68,8 @@ describe("không khoá ghi toàn cục", () => {
     // Postgres coi mọi NULL là phân biệt, nên `@@unique([organization_id, key])`
     // không chặn được trùng cho vai hệ thống. Khoá tư vấn trong
     // `ensureSystemRoles` là thứ duy nhất chặn, và đây là test khoá nó.
+    // memberships.role_id có khoá ngoại (RESTRICT): gỡ thành viên trước khi xoá vai hệ thống.
+    await prisma.memberships.deleteMany({})
     await prisma.roles.deleteMany({ where: { organization_id: null } })
 
     await Promise.all([

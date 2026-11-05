@@ -50,19 +50,19 @@ export function AIQCReportCard({
           <div className="text-caption font-bold uppercase tracking-wider text-text-muted">
             Kiểm Định Chất Lượng Thành Phẩm (T14 / T15)
           </div>
-          <h3 className="text-lg font-extrabold text-text">
+          <h3 className="text-title-sm font-extrabold text-text">
             Báo cáo AI QC Đơn #{orderCode}
           </h3>
         </div>
         <div className="flex items-center gap-2">
           <Badge
             tone={isPassed ? "success" : isRework ? "warning" : "neutral"}
-            className="font-bold px-3 py-1 text-xs"
+            className="font-bold px-3 py-1 text-caption"
           >
             {isPassed ? "ĐẠT CHUẨN (PASS)" : isRework ? "YÊU CẦU LÀM LẠI" : "CHỜ KIỂM ĐỊNH"}
           </Badge>
           {aiScore !== null && aiScore !== undefined && (
-            <div className="flex items-center gap-1 px-3 py-1 rounded-full bg-mint-50 border border-mint-200 text-mint-800 font-extrabold text-xs">
+            <div className="flex items-center gap-1 px-3 py-1 rounded-full bg-mint-50 border border-mint-200 text-mint-800 font-extrabold text-caption">
               <Sparkles size={13} className="text-mint-600" />
               <span>{aiScore}/100 Điểm</span>
             </div>
@@ -72,7 +72,7 @@ export function AIQCReportCard({
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
         <div className="flex flex-col gap-3">
-          <span className="text-xs font-bold text-text-muted">ẢNH THÀNH PHẨM (THỢ GỬI)</span>
+          <span className="text-caption font-bold text-text-muted">ẢNH THÀNH PHẨM (THỢ GỬI)</span>
           {finishedImageUrls.length > 0 ? (
             <div className="grid grid-cols-2 gap-2">
               {finishedImageUrls.map((url, i) => (
@@ -82,7 +82,7 @@ export function AIQCReportCard({
               ))}
             </div>
           ) : (
-            <div className="p-8 rounded-xl border border-dashed border-border text-center text-xs text-text-muted">
+            <div className="p-8 rounded-xl border border-dashed border-border text-center text-caption text-text-muted">
               Chưa có ảnh thành phẩm từ thợ
             </div>
           )}
@@ -90,8 +90,8 @@ export function AIQCReportCard({
 
         <div className="flex flex-col gap-4">
           <div>
-            <span className="text-xs font-bold text-text-muted block mb-2">TIÊU CHÍ ĐỐI CHIẾU MẪU CHUẨN</span>
-            <div className="rounded-xl border border-border bg-surface-alt p-3.5 space-y-2.5 text-xs">
+            <span className="text-caption font-bold text-text-muted block mb-2">TIÊU CHÍ ĐỐI CHIẾU MẪU CHUẨN</span>
+            <div className="rounded-xl border border-border bg-surface-alt p-3.5 space-y-2.5 text-caption">
               <div className="flex items-center justify-between">
                 <span className="text-text font-medium">Khớp nguyên phụ liệu & số lượng định mức:</span>
                 <span className="font-bold text-mint-700 flex items-center gap-1">
@@ -124,14 +124,14 @@ export function AIQCReportCard({
           </div>
 
           {aiCritique && (
-            <div className="p-3.5 rounded-xl bg-surface-alt border border-border text-xs">
+            <div className="p-3.5 rounded-xl bg-surface-alt border border-border text-caption">
               <span className="font-bold text-text block mb-1">🤖 Đánh giá của AI Vision:</span>
               <p className="text-text-muted leading-relaxed">{aiCritique}</p>
             </div>
           )}
 
           {reworkInstructions && (
-            <div className="p-3.5 rounded-xl bg-sand-50 border border-sand-200 text-xs text-sand-900">
+            <div className="p-3.5 rounded-xl bg-sand-50 border border-sand-200 text-caption text-sand-900">
               <span className="font-bold block mb-1 flex items-center gap-1 text-sand-950">
                 <AlertTriangle size={14} className="text-sand-600" />
                 Hướng dẫn chỉnh sửa / làm lại:

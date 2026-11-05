@@ -47,7 +47,7 @@ export function AngleSelectorCard({
   return (
     <Card className="rounded-2xl border border-border bg-surface p-5 shadow-sm flex flex-col gap-4">
       <div>
-        <div className="text-xs font-semibold text-text-muted">Bước 2: Chọn góc độ tiếp cận (Đăng mạng xã hội Copywriting Angle)</div>
+        <div className="text-caption font-semibold text-text-muted">Bước 2: Chọn góc độ tiếp cận (Đăng mạng xã hội Copywriting Angle)</div>
         <div className="text-title font-extrabold text-text">Chọn góc tiếp cận bài viết</div>
       </div>
 
@@ -71,7 +71,7 @@ export function AngleSelectorCard({
                 <div className={`p-1.5 rounded-lg ${isSelected ? "bg-primary text-white" : "bg-surface-alt text-text-muted"}`}>
                   <Icon size={16} />
                 </div>
-                <div className="text-xs font-bold text-text">{item.title}</div>
+                <div className="text-caption font-bold text-text">{item.title}</div>
               </div>
               <p className="text-caption text-text-muted leading-relaxed">
                 {item.description}

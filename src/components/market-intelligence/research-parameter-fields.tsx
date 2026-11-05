@@ -1,5 +1,6 @@
 "use client";
 
+import { NativeSelect } from "@/components/ui/select"
 import React from "react";
 import { Globe } from "@/components/ui/icon-set/globe"
 import { Calendar } from "@/components/ui/icon-set/calendar"
@@ -46,10 +47,10 @@ interface ResearchParameterFieldsProps {
   /** Kích thước ô chọn — panel gọn dùng "sm", modal đầy đủ dùng "md" (mặc định). */
   size?: "sm" | "md";
   /**
-   * Class đầy đủ cho mỗi thẻ <select>, THAY THẾ hoàn toàn bộ class mặc định
+   * Class đầy đủ cho mỗi thẻ <NativeSelect>, THAY THẾ hoàn toàn bộ class mặc định
    * (không cộng dồn) — để tránh xung đột khi nơi gọi dùng hệ token màu khác
    * (vd. `custom-research-modal.tsx` dùng `border-border`/`bg-surface` thay
-   * vì `border-stone-200`/`bg-stone-50`). Bỏ trống để dùng giao diện mặc định.
+   * vì `border-border`/`bg-bg`). Bỏ trống để dùng giao diện mặc định.
    */
   selectClassName?: string;
 }
@@ -64,49 +65,49 @@ export function ResearchParameterFields({
   size = "md",
   selectClassName,
 }: ResearchParameterFieldsProps) {
-  const heightClass = size === "sm" ? "h-8.5 text-caption" : "h-10 text-xs";
-  const labelClass = size === "sm" ? "text-caption" : "text-xs";
+  const heightClass = size === "sm" ? "h-8.5 text-caption" : "h-10 text-caption";
+  const labelClass = size === "sm" ? "text-caption" : "text-caption";
   const iconSize = size === "sm" ? 12 : 14;
   const selectClass =
     selectClassName ??
-    `${heightClass} w-full rounded-lg border border-cool-200 bg-cool-50/50 px-2 text-cool-800 outline-none focus:border-blush-500 transition`;
+    `${heightClass} w-full rounded-lg border border-border bg-bg/50 px-2 text-text outline-none focus:border-primary transition`;
 
   return (
     <>
       <div className="space-y-1">
-        <label className={`${labelClass} font-semibold text-cool-700 flex items-center gap-1`}>
-          <Globe size={iconSize} className="text-blush-600" />
+        <label className={`${labelClass} font-semibold text-text flex items-center gap-1`}>
+          <Globe size={iconSize} className="text-primary" />
           Khu vực
         </label>
-        <select value={geo} onChange={(e) => onGeoChange(e.target.value)} className={selectClass}>
+        <NativeSelect value={geo} onChange={(e) => onGeoChange(e.target.value)} className={selectClass}>
           {GEO_OPTIONS.map((o) => (
             <option key={o.value} value={o.value}>{o.label}</option>
           ))}
-        </select>
+        </NativeSelect>
       </div>
 
       <div className="space-y-1">
-        <label className={`${labelClass} font-semibold text-cool-700 flex items-center gap-1`}>
-          <Calendar size={iconSize} className="text-blush-600" />
+        <label className={`${labelClass} font-semibold text-text flex items-center gap-1`}>
+          <Calendar size={iconSize} className="text-primary" />
           Khung thời gian
         </label>
-        <select value={timeframe} onChange={(e) => onTimeframeChange(e.target.value)} className={selectClass}>
+        <NativeSelect value={timeframe} onChange={(e) => onTimeframeChange(e.target.value)} className={selectClass}>
           {TIMEFRAME_OPTIONS.map((o) => (
             <option key={o.value} value={o.value}>{o.label}</option>
           ))}
-        </select>
+        </NativeSelect>
       </div>
 
       <div className="space-y-1">
-        <label className={`${labelClass} font-semibold text-cool-700 flex items-center gap-1`}>
-          <Layers size={iconSize} className="text-blush-600" />
+        <label className={`${labelClass} font-semibold text-text flex items-center gap-1`}>
+          <Layers size={iconSize} className="text-primary" />
           Kênh nghiên cứu
         </label>
-        <select value={channel} onChange={(e) => onChannelChange(e.target.value)} className={selectClass}>
+        <NativeSelect value={channel} onChange={(e) => onChannelChange(e.target.value)} className={selectClass}>
           {CHANNEL_OPTIONS.map((o) => (
             <option key={o.value} value={o.value}>{o.label}</option>
           ))}
-        </select>
+        </NativeSelect>
       </div>
     </>
   );

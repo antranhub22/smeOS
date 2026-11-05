@@ -165,10 +165,16 @@ export class PrismaInternalChatRepository implements IInternalChatRepository {
 
   async sendMessage(params: SendMessageParams): Promise<InternalChatMessage> {
     const now = new Date()
+    // organization_id sao từ hội thoại cha — khoá ghép giữ tin nhắn cùng tổ chức với hội thoại.
+    const conversation = await this.prisma.internal_chat_conversations.findUniqueOrThrow({
+      where: { id: params.conversationId },
+      select: { organization_id: true },
+    })
     const [msgRow] = await this.prisma.$transaction([
       this.prisma.internal_chat_messages.create({
         data: {
           conversation_id: params.conversationId,
+          organization_id: conversation.organization_id,
           sender_user_id: params.senderUserId,
           sender_role: params.senderRole,
           message_type: params.messageType ?? "TEXT",
@@ -206,7 +212,7 @@ export class PrismaInternalChatRepository implements IInternalChatRepository {
   async listMessages(conversationId: string, limit = 50, before?: Date | undefined): Promise<InternalChatMessage[]> {
     const where: Prisma.internal_chat_messagesWhereInput = {
       conversation_id: conversationId,
-      is_deleted: false,
+      deleted_at: null,
     }
     if (before) {
       where.created_at = { lt: before }
@@ -279,7 +285,7 @@ export class PrismaInternalChatRepository implements IInternalChatRepository {
       content: row.content,
       attachments: (row.attachments as string[]) ?? [],
       actionPayload: (row.action_payload as Record<string, unknown> | null) ?? {},
-      isDeleted: row.is_deleted,
+      isDeleted: row.deleted_at !== null,
       createdAt: row.created_at,
     }
   }

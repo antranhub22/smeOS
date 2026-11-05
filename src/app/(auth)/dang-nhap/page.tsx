@@ -6,6 +6,7 @@
 // 3. Đăng ký dùng thử, chờ quản trị viên duyệt (POST /api/v1/auth/instant-trial)
 // Cấp session cookie và điều hướng vào Dashboard ("/").
 
+import { Button } from "@/components/ui/button"
 import { useI18n } from "@/lib/i18n"
 import { Suspense, useState, useEffect } from "react"
 import { useSearchParams } from "next/navigation"
@@ -57,42 +58,42 @@ export default function DangNhapPage() {
 
         {/* Tab 3 chế độ trực quan */}
         <div className="grid grid-cols-3 rounded-2xl border border-border bg-surface-alt/80 p-1 shadow-xs">
-          <button
+          <Button variant="ghost"
             type="button"
             onClick={() => setCheDo("dang-nhap")}
-            className={`cursor-pointer py-2 text-center text-body-sm font-bold rounded-xl transition-all ${
+            className={`px-0 h-auto gap-0 cursor-pointer py-2 text-center text-body-sm font-bold rounded-xl transition-all ${
               cheDo === "dang-nhap"
-                ? "bg-surface text-primary shadow-xs border border-border/60"
+                ? "bg-surface text-primary shadow-xs border border-border/60 hover:bg-surface"
                 : "text-text hover:text-primary"
             }`}
           >
             Đăng nhập
-          </button>
+          </Button>
 
-          <button
+          <Button variant="ghost"
             type="button"
             onClick={() => setCheDo("dang-ky")}
-            className={`cursor-pointer py-2 text-center text-body-sm font-bold rounded-xl transition-all ${
+            className={`px-0 h-auto gap-0 cursor-pointer py-2 text-center text-body-sm font-bold rounded-xl transition-all ${
               cheDo === "dang-ky"
-                ? "bg-surface text-primary shadow-xs border border-border/60"
+                ? "bg-surface text-primary shadow-xs border border-border/60 hover:bg-surface"
                 : "text-text hover:text-primary"
             }`}
           >
             Đăng ký mới
-          </button>
+          </Button>
 
-          <button
+          <Button variant="ghost"
             type="button"
             onClick={() => setCheDo("dung-thu")}
-            className={`cursor-pointer py-2 text-center text-body-sm font-bold rounded-xl transition-all flex items-center justify-center gap-1.5 ${
+            className={`px-0 h-auto cursor-pointer py-2 text-center text-body-sm font-bold rounded-xl transition-all flex items-center justify-center gap-1.5 ${
               cheDo === "dung-thu"
-                ? "bg-primary text-text-inverse shadow-xs font-extrabold"
+                ? "bg-primary text-text-inverse shadow-xs font-extrabold hover:bg-primary"
                 : "text-primary hover:text-primary-hover font-semibold"
             }`}
           >
             <Zap size={14} className={cheDo === "dung-thu" ? "text-text-inverse" : "text-primary"} />
             <span>Dùng thử</span>
-          </button>
+          </Button>
         </div>
 
         <Suspense fallback={null}>

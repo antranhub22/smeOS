@@ -38,7 +38,7 @@ export function AiCreditUsageCard({
     <Card className="rounded-2xl border border-border bg-surface p-5 shadow-sm flex flex-col gap-4">
       <div className="flex items-center justify-between">
         <div>
-          <div className="text-xs font-semibold text-text-muted">Tín dụng AI Aegis AI Governance</div>
+          <div className="text-caption font-semibold text-text-muted">Tín dụng AI Aegis AI Governance</div>
           <div className="text-title font-extrabold text-text">Giám sát hạn mức AI tháng</div>
         </div>
         <Badge tone={percentUsed > 80 ? "warning" : "success"} className="gap-1">
@@ -48,7 +48,7 @@ export function AiCreditUsageCard({
       </div>
 
       <div className="rounded-xl bg-surface-alt/50 p-4 flex flex-col gap-2">
-        <div className="flex items-center justify-between text-xs">
+        <div className="flex items-center justify-between text-caption">
           <span className="font-semibold text-text">
             Đã dùng: {usedTokens.toLocaleString()} / {totalTokens.toLocaleString()} Credits
           </span>
@@ -69,12 +69,12 @@ export function AiCreditUsageCard({
       </div>
 
       <div className="flex flex-col gap-2">
-        <div className="text-xs font-bold text-text">Chi tiêu theo năng lực AI:</div>
+        <div className="text-caption font-bold text-text">Chi tiêu theo năng lực AI:</div>
         <div className="flex flex-col gap-1.5">
           {capabilities.map((cap, idx) => (
             <div
               key={idx}
-              className="flex items-center justify-between rounded-lg border border-border bg-surface-alt/40 p-2.5 text-xs"
+              className="flex items-center justify-between rounded-lg border border-border bg-surface-alt/40 p-2.5 text-caption"
             >
               <div className="flex items-center gap-2">
                 <Cpu size={14} className="text-text-muted" />

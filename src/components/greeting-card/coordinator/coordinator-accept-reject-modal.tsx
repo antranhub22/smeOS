@@ -144,7 +144,7 @@ export function CoordinatorAcceptRejectModal({
                   key={r}
                   type="button"
                   onClick={() => setReason(r)}
-                  className={`justify-start gap-0 text-caption px-2.5 py-1 rounded-lg border text-left transition-colors ${
+                  className={`h-auto justify-start gap-0 text-caption px-2.5 py-1 rounded-lg border text-left transition-colors ${
                     reason === r
                       ? "border-danger bg-danger-bg text-danger font-semibold hover:bg-danger-bg"
                       : "border-border bg-surface text-text-muted hover:border-border-strong hover:text-text hover:bg-surface"

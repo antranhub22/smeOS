@@ -118,7 +118,7 @@ export function SalesSessionTable({ sessions, hasMore, isLoadingMore, onLoadMore
                         type="button"
                         disabled={!active}
                         onClick={() => copyLink(row.send_code)}
-                        className={`${ACTION_BTN} px-2.5 gap-1 text-caption font-semibold`}
+                        className={`py-0 h-auto ${ACTION_BTN} px-2.5 gap-1 text-caption font-semibold`}
                       >
                         {copiedCode === row.send_code ? <Check size={13} className="text-success" /> : <Copy size={13} />}
                         <span>{copiedCode === row.send_code ? "Đã copy" : "Copy link"}</span>
@@ -139,7 +139,7 @@ export function SalesSessionTable({ sessions, hasMore, isLoadingMore, onLoadMore
                           onClick={() => void revoke(row)}
                           aria-label={`Thu hồi link ${row.send_code}`}
                           title="Thu hồi link"
-                          className={`h-auto p-0 font-[inherit] gap-0 ${ACTION_BTN} w-8 text-danger`}
+                          className={`text-[length:inherit] h-auto p-0 font-[inherit] gap-0 ${ACTION_BTN} w-8 text-danger`}
                         >
                           <Ban size={14} />
                         </Button>

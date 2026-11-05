@@ -32,7 +32,7 @@ export function StudioVariantCard({
     <Card className="rounded-2xl border border-border bg-surface p-5 shadow-sm flex flex-col gap-4">
       <div className="flex items-center justify-between">
         <div>
-          <div className="text-xs font-semibold text-text-muted">Biến thể marketing Background Presets</div>
+          <div className="text-caption font-semibold text-text-muted">Biến thể marketing Background Presets</div>
           <div className="text-title font-extrabold text-text">Chọn bối cảnh không gian</div>
         </div>
         <Badge tone="neutral" className="gap-1">
@@ -74,7 +74,7 @@ export function StudioVariantCard({
                 )}
               </div>
               <div className="mt-2">
-                <div className="text-xs font-bold text-text truncate">{item.name}</div>
+                <div className="text-caption font-bold text-text truncate">{item.name}</div>
                 <div className="text-caption text-text-muted truncate">{item.description}</div>
               </div>
             </div>

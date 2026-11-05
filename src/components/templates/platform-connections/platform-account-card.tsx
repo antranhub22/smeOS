@@ -75,7 +75,7 @@ export function PlatformAccountCard({
         {/* Card Header: Icon, Name & Status Badge */}
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-center gap-3">
-            <div className="w-12 h-12 rounded-2xl bg-surface-alt border border-border flex items-center justify-center text-2xl shadow-2xs flex-shrink-0">
+            <div className="w-12 h-12 rounded-2xl bg-surface-alt border border-border flex items-center justify-center text-display shadow-2xs flex-shrink-0">
               {platform.icon}
             </div>
             <div>
@@ -124,7 +124,7 @@ export function PlatformAccountCard({
 
         {/* Account Details Box if connected */}
         {account && (
-          <div className="mt-3.5 p-3 rounded-xl bg-surface-alt/80 border border-border/80 text-xs space-y-1.5">
+          <div className="mt-3.5 p-3 rounded-xl bg-surface-alt/80 border border-border/80 text-caption space-y-1.5">
             <div className="flex items-center justify-between">
               <span className="text-text-muted font-medium">Tài khoản liên kết:</span>
               <span className="font-bold text-text truncate max-w-[190px]">
@@ -157,7 +157,7 @@ export function PlatformAccountCard({
                   size="sm"
                   onClick={() => onLogin(platform.id)}
                   disabled={isCurrentLoading}
-                  className="text-xs font-bold gap-1 bg-primary text-white"
+                  className="text-caption font-bold gap-1 bg-primary text-white"
                 >
                   <LogIn size={13} />
                   {isCurrentLoading ? "Đang mở trình duyệt..." : "Đăng nhập ngay"}
@@ -169,7 +169,7 @@ export function PlatformAccountCard({
                 variant="outline"
                 onClick={() => onCheck(platform.id)}
                 disabled={isCurrentLoading}
-                className="text-xs gap-1"
+                className="text-caption gap-1"
                 title="Kiểm tra lại tính hợp lệ của phiên đăng nhập"
               >
                 <RefreshCw size={12} className={isCurrentLoading ? "animate-spin motion-reduce:animate-none" : ""} />
@@ -182,7 +182,7 @@ export function PlatformAccountCard({
                   variant="outline"
                   onClick={() => onEdit(platform.id, account.username)}
                   disabled={isCurrentLoading}
-                  className="text-xs gap-1 hover:border-primary/50"
+                  className="text-caption gap-1 hover:border-primary/50"
                   title="Cập nhật mật khẩu mới hoặc cấu hình tài khoản"
                 >
                   <KeyRound size={12} className="text-primary" />
@@ -196,7 +196,7 @@ export function PlatformAccountCard({
               variant="ghost"
               onClick={() => onDisconnect(platform.id)}
               disabled={isCurrentLoading}
-              className="text-xs text-danger hover:bg-danger/10 gap-1 h-8 px-2"
+              className="text-caption text-danger hover:bg-danger/10 gap-1 h-8 px-2"
               title="Ngắt kết nối tài khoản này"
             >
               <Trash2 size={13} />
@@ -211,7 +211,7 @@ export function PlatformAccountCard({
             <Button
               size="sm"
               onClick={() => onConnect(platform.id)}
-              className="text-xs font-bold gap-1"
+              className="text-caption font-bold gap-1"
             >
               + Thêm tài khoản
             </Button>

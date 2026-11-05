@@ -43,13 +43,13 @@ export function DeliveryReceiptCard({
     <Card className="rounded-2xl border border-border bg-surface p-5 shadow-sm flex flex-col gap-4">
       <div className="flex items-center justify-between">
         <div>
-          <div className="text-xs font-semibold text-text-muted">Đơn hàng Delivery Slip</div>
+          <div className="text-caption font-semibold text-text-muted">Đơn hàng Delivery Slip</div>
           <div className="text-title font-extrabold text-text">Phiếu giao hàng #{orderCode}</div>
         </div>
         <Badge tone="neutral">Khổ A6 Giao Vận</Badge>
       </div>
 
-      <div className="flex flex-col gap-2 rounded-xl border border-border bg-surface-alt/40 p-3.5 text-xs">
+      <div className="flex flex-col gap-2 rounded-xl border border-border bg-surface-alt/40 p-3.5 text-caption">
         <div className="flex items-center gap-2">
           <User size={14} className="text-text-muted" />
           <span className="font-bold text-text">{recipientName}</span>
@@ -66,19 +66,19 @@ export function DeliveryReceiptCard({
       </div>
 
       <div className="rounded-xl border border-primary/20 bg-primary/5 p-3 flex flex-col gap-1">
-        <div className="flex items-center gap-1.5 text-xs font-bold text-primary">
+        <div className="flex items-center gap-1.5 text-caption font-bold text-primary">
           <MessageSquare size={13} />
           Nội dung thiệp chúc mừng:
         </div>
-        <p className="text-xs italic text-text leading-relaxed font-serif">
+        <p className="text-caption italic text-text leading-relaxed font-serif">
           &quot;{cardMessage}&quot;
         </p>
       </div>
 
       <div className="flex items-center justify-between border-t border-border pt-4">
         <div>
-          <div className="text-xs text-text-muted">Phí ship: {shippingFee}</div>
-          <div className="text-sm font-extrabold text-text">Thu hộ: {totalAmount}</div>
+          <div className="text-caption text-text-muted">Phí ship: {shippingFee}</div>
+          <div className="text-body-sm font-extrabold text-text">Thu hộ: {totalAmount}</div>
         </div>
 
         <div className="flex items-center gap-2">

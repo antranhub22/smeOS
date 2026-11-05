@@ -18,12 +18,12 @@ interface ResearchRunsTableProps {
 
 export function ResearchRunsTable({ runs }: ResearchRunsTableProps) {
   return (
-    <div className="rounded-xl border border-cool-200 bg-white overflow-hidden shadow-sm">
-      <div className="px-4 py-3 bg-cool-50 border-b border-cool-200 font-semibold text-xs text-cool-700 uppercase tracking-wider">
+    <div className="rounded-xl border border-border bg-white overflow-hidden shadow-sm">
+      <div className="px-4 py-3 bg-bg border-b border-border font-semibold text-caption text-text uppercase tracking-wider">
         Nhật ký quét
       </div>
-      <table className="min-w-full divide-y divide-cool-200 text-xs text-left">
-        <thead className="bg-cool-50 text-cool-500">
+      <table className="min-w-full divide-y divide-border text-caption text-left">
+        <thead className="bg-bg text-text-muted">
           <tr>
             <th className="px-4 py-3 font-medium">Mã lượt chạy</th>
             <th className="px-4 py-3 font-medium">Loại</th>
@@ -33,28 +33,28 @@ export function ResearchRunsTable({ runs }: ResearchRunsTableProps) {
             <th className="px-4 py-3 font-medium">Thời gian</th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-cool-100 bg-white">
+        <tbody className="divide-y divide-border bg-white">
           {runs.map((r) => (
-            <tr key={r.id} className="hover:bg-cool-50/50">
-              <td className="px-4 py-3 font-mono text-caption text-cool-600">{r.id.slice(0, 8)}...</td>
-              <td className="px-4 py-3 font-medium text-cool-800">{r.run_type}</td>
+            <tr key={r.id} className="hover:bg-bg/50">
+              <td className="px-4 py-3 font-mono text-caption text-text-muted">{r.id.slice(0, 8)}...</td>
+              <td className="px-4 py-3 font-medium text-text">{r.run_type}</td>
               <td className="px-4 py-3">
                 <span
                   className={`inline-flex px-2 py-0.5 rounded text-caption font-bold ${
                     r.status === "COMPLETED"
-                      ? "bg-mint-50 text-mint-700"
+                      ? "bg-success-bg text-success-text"
                       : r.status === "RUNNING"
-                      ? "bg-azure-50 text-azure-700 animate-pulse motion-reduce:animate-none"
+                      ? "bg-info-bg text-info-text animate-pulse motion-reduce:animate-none"
                       : r.status === "FAILED"
-                      ? "bg-alert-50 text-alert-700"
-                      : "bg-sand-50 text-sand-700"
+                      ? "bg-danger-bg text-danger-text"
+                      : "bg-warning-bg text-warning-text"
                   }`}
                 >
                   {r.status}
                 </span>
               </td>
-              <td className="px-4 py-3 text-cool-600">{r.records_collected}</td>
-              <td className="px-4 py-3 text-cool-600">{r.opportunities_created}</td>
+              <td className="px-4 py-3 text-text-muted">{r.records_collected}</td>
+              <td className="px-4 py-3 text-text-muted">{r.opportunities_created}</td>
               <td className="px-4 py-3 text-text-muted">
                 {new Date(r.created_at).toLocaleTimeString("vi-VN", {
                   hour: "2-digit",

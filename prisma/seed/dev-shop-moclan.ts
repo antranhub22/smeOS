@@ -183,24 +183,6 @@ export async function seedDevShopMoclan(): Promise<void> {
     const p = MOCLAN_SAMPLE_PRODUCTS[i]!
     const assetId = `dev-moclan-ast-prd-000${i + 1}`
 
-    // Upsert Asset ảnh sản phẩm
-    await prisma.assets.upsert({
-      where: { id: assetId },
-      update: { state: "READY", approval_state: "APPROVED" },
-      create: {
-        id: assetId,
-        organization_id: MOCLAN_CONSTANTS.ORG_ID,
-        product_id: p.id,
-        kind: "ORIGINAL",
-        state: "READY",
-        storage_key: `org/${MOCLAN_CONSTANTS.ORG_ID}/products/${p.code}.jpeg`,
-        thumb_key: p.imagePath,
-        mime_type: "image/jpeg",
-        approval_state: "APPROVED",
-        created_by: MOCLAN_CONSTANTS.USER_ID,
-      },
-    })
-
     // Upsert Product
     await prisma.products.upsert({
       where: {
@@ -239,6 +221,24 @@ export async function seedDevShopMoclan(): Promise<void> {
           description: p.description,
           image_url: p.imagePath,
         },
+      },
+    })
+
+    // Upsert Asset ảnh sản phẩm — sau sản phẩm: assets.product_id có khoá ngoại
+    await prisma.assets.upsert({
+      where: { id: assetId },
+      update: { state: "READY", approval_state: "APPROVED" },
+      create: {
+        id: assetId,
+        organization_id: MOCLAN_CONSTANTS.ORG_ID,
+        product_id: p.id,
+        kind: "ORIGINAL",
+        state: "READY",
+        storage_key: `org/${MOCLAN_CONSTANTS.ORG_ID}/products/${p.code}.jpeg`,
+        thumb_key: p.imagePath,
+        mime_type: "image/jpeg",
+        approval_state: "APPROVED",
+        created_by: MOCLAN_CONSTANTS.USER_ID,
       },
     })
 

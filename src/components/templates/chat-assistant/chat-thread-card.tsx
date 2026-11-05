@@ -62,7 +62,7 @@ export function ChatThreadCard({
             AI đang hỗ trợ
           </Badge>
           {onTakeover && (
-            <Button variant="secondary" size="sm" onClick={onTakeover} className="h-7 text-xs">
+            <Button variant="secondary" size="sm" onClick={onTakeover} className="h-7 text-caption">
               Tiếp quản chat
             </Button>
           )}
@@ -78,7 +78,7 @@ export function ChatThreadCard({
               className={`flex flex-col ${isUser ? "items-end" : "items-start"}`}
             >
               <div
-                className={`max-w-[80%] rounded-2xl px-3.5 py-2 text-xs leading-relaxed ${
+                className={`max-w-[80%] rounded-2xl px-3.5 py-2 text-caption leading-relaxed ${
                   isUser
                     ? "bg-primary text-white rounded-br-none"
                     : "bg-surface-alt text-text rounded-bl-none border border-border"

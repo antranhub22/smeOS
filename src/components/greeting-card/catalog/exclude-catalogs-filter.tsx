@@ -40,7 +40,7 @@ export function ExcludeCatalogsFilter({ currentCatalogId, selected, onChange, lo
                 onClick={() => setOpen((o) => !o)}
                 aria-expanded={open}
                 aria-label={`Không trùng mẫu với bộ sưu tập khác. ${HINT}`}
-                className={`inline-flex min-h-9 items-center gap-1.5 rounded-lg border px-2.5 text-caption font-semibold transition ${
+                className={`py-0 inline-flex min-h-9 items-center gap-1.5 rounded-lg border px-2.5 text-caption font-semibold transition ${
                   active ? "border-primary bg-primary/10 text-primary hover:bg-primary/10" : "border-border bg-surface text-text-muted hover:border-primary/40 hover:bg-surface"
                 }`}
               >
@@ -55,7 +55,7 @@ export function ExcludeCatalogsFilter({ currentCatalogId, selected, onChange, lo
           <span className="flex items-center gap-1 text-caption text-text-muted">
             {loading ? <Loader2 size={12} className="animate-spin motion-reduce:animate-none" aria-hidden="true" /> : null}
             {loading ? "Đang lọc..." : `Đã ẩn ${hiddenCount} mẫu trùng`}
-            <Button variant="ghost" type="button" onClick={() => onChange([])} className="h-auto p-0 gap-0 ml-1 font-medium text-primary hover:underline">
+            <Button variant="ghost" type="button" onClick={() => onChange([])} className="text-[length:inherit] h-auto p-0 gap-0 ml-1 font-medium text-primary hover:underline">
               Bỏ chọn
             </Button>
           </span>

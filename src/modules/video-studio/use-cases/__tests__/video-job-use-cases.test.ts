@@ -49,6 +49,7 @@ function createMockJob(overrides: Partial<VideoJobWithScenes> = {}): VideoJobWit
       {
         id: "sc_1",
         video_job_id: "job_video_1",
+        organization_id: "org_video_test",
         scene_index: 1,
         duration_seconds: 5,
         image_asset_id: "ast_1",
@@ -57,10 +58,12 @@ function createMockJob(overrides: Partial<VideoJobWithScenes> = {}): VideoJobWit
         transition_effect: "fade",
         motion_effect: "zoom_in",
         created_at: new Date(),
+        updated_at: new Date(),
       },
       {
         id: "sc_2",
         video_job_id: "job_video_1",
+        organization_id: "org_video_test",
         scene_index: 2,
         duration_seconds: 10,
         image_asset_id: "ast_2",
@@ -69,6 +72,7 @@ function createMockJob(overrides: Partial<VideoJobWithScenes> = {}): VideoJobWit
         transition_effect: "fade",
         motion_effect: "pan_right",
         created_at: new Date(),
+        updated_at: new Date(),
       },
     ],
     ...overrides,

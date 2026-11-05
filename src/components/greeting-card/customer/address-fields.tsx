@@ -61,7 +61,7 @@ export function AddressFields(props: {
             role="radio"
             aria-checked={system === s}
             onClick={() => switchSystem(s)}
-            className={`gap-0 min-h-11 flex-1 rounded-xl border px-3 text-body-sm font-semibold transition ${
+            className={`py-0 gap-0 min-h-11 flex-1 rounded-xl border px-3 text-body-sm font-semibold transition ${
               system === s ? "border-primary bg-primary/10 text-primary hover:bg-primary/10" : "border-border bg-surface text-text-muted hover:border-primary/40 hover:bg-surface"
             }`}
           >

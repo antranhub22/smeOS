@@ -31,7 +31,7 @@ export function BrochureClaimGate({ sendCode }: { sendCode: string }) {
       {failed ? (
         <>
           <p className="text-body">Mất kết nối mạng, chưa mở được bộ sưu tập.</p>
-          <Button variant="primary" type="button" onClick={() => window.location.reload()} className="gap-0 h-11 rounded-xl bg-primary px-5 text-body font-bold text-surface hover:bg-primary">
+          <Button variant="primary" type="button" onClick={() => window.location.reload()} className="py-0 gap-0 h-11 rounded-xl bg-primary px-5 text-body font-bold text-surface hover:bg-primary">
             Thử lại
           </Button>
         </>

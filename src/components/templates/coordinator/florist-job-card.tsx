@@ -1,5 +1,6 @@
 "use client"
 
+import { Input } from "@/components/ui/input"; import { Button } from "@/components/ui/button"
 import React, { useRef, useState } from "react"
 import { Clock } from "@/components/ui/icon-set/clock"
 import { Printer } from "@/components/ui/icon-set/printer"
@@ -15,7 +16,6 @@ import { Ban } from "@/components/ui/icon-set/ban"
 import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
 import { FileText } from "@/components/ui/icon-set/file-text"
 import { Card } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import type { FlowerBomItem, FoliageBomItem, WrappingLayer, AccessoryBomItem, StructuredAddress } from "@/modules/products/domain/product-master-index"
 import type { VisibleCustomField } from "@/components/coordinator/custom-fields-section"
@@ -157,9 +157,9 @@ export function FloristJobCard({
             </span>
             <span className="text-caption font-bold text-text-muted">Đơn #{orderCode}</span>
           </div>
-          <h3 className="text-lg font-extrabold text-text mt-1">{recipeTitle}</h3>
+          <h3 className="text-title-sm font-extrabold text-text mt-1">{recipeTitle}</h3>
           {partnerName && (
-            <div className="text-xs text-text-muted mt-0.5">
+            <div className="text-caption text-text-muted mt-0.5">
               Xưởng / Thợ phụ trách: <strong className="text-text">{partnerName}</strong>
             </div>
           )}
@@ -171,7 +171,7 @@ export function FloristJobCard({
             variant="outline"
             size="sm"
             onClick={handleCopyText}
-            className="text-xs gap-1.5 h-8 font-semibold text-text"
+            className="text-caption gap-1.5 h-8 font-semibold text-text"
           >
             {copiedText ? <Check size={13} className="text-primary" /> : <Copy size={13} />}
             <span>{copiedText ? "Đã chép text" : "Copy text Zalo"}</span>
@@ -181,14 +181,14 @@ export function FloristJobCard({
             variant="outline"
             size="sm"
             onClick={handleCopyImage}
-            className="text-xs gap-1.5 h-8 font-semibold text-text"
+            className="text-caption gap-1.5 h-8 font-semibold text-text"
           >
             {copiedImage ? <Check size={13} className="text-primary" /> : <Sparkles size={13} className="text-primary" />}
             <span>{copiedImage ? "Đã chép ảnh" : "Copy ảnh thẻ"}</span>
           </Button>
 
           {onPrint && (
-            <Button variant="ghost" size="sm" onClick={onPrint} className="h-8 text-xs gap-1 text-text-muted">
+            <Button variant="ghost" size="sm" onClick={onPrint} className="h-8 text-caption gap-1 text-text-muted">
               <Printer size={13} />
               <span className="hidden sm:inline">In PDF</span>
             </Button>
@@ -201,7 +201,7 @@ export function FloristJobCard({
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
           {/* Sample Image */}
           <div className="flex flex-col gap-2">
-            <span className="text-xs font-bold text-text-muted flex items-center justify-between">
+            <span className="text-caption font-bold text-text-muted flex items-center justify-between">
               <span>ẢNH MẪU THAM CHIẾU</span>
               {deliveryTargetTime && (
                 <span className="text-caption font-normal text-text-muted">Giao: {deliveryTargetTime}</span>
@@ -211,14 +211,14 @@ export function FloristJobCard({
               {sampleImageUrl ? (
                 <img src={sampleImageUrl} alt={ti.sampleProduct} crossOrigin="anonymous" className="h-full w-full object-cover" />
               ) : (
-                <div className="h-full w-full flex items-center justify-center text-text-muted text-xs">
+                <div className="h-full w-full flex items-center justify-center text-text-muted text-caption">
                   Chưa có ảnh mẫu
                 </div>
               )}
             </div>
 
             {/* Target Ready Time Badge */}
-            <div className="p-2.5 rounded-xl bg-danger/10 border border-danger/20 flex items-center justify-between text-xs">
+            <div className="p-2.5 rounded-xl bg-danger/10 border border-danger/20 flex items-center justify-between text-caption">
               <span className="font-bold text-danger flex items-center gap-1.5">
                 <Clock size={14} />
                 Hạn cắm xong:
@@ -232,7 +232,7 @@ export function FloristJobCard({
                 <span className="text-caption font-bold text-text">Giá gia công trên thẻ:</span>
               </div>
               <div className="relative">
-                <input
+                <Input
                   type="number"
                   step={10000}
                   value={suggestedCraftFee || ""}
@@ -251,7 +251,7 @@ export function FloristJobCard({
 
           {/* Card Message */}
           {cardMessage && (
-            <div className="p-3 rounded-xl bg-surface-alt/70 border border-border text-xs">
+            <div className="p-3 rounded-xl bg-surface-alt/70 border border-border text-caption">
               <div className="font-bold text-text flex items-center gap-1.5 mb-1">
                 <MessageSquare size={13} className="text-primary" />
                 <span>Nội dung thiệp / Banner (In nguyên văn):</span>
@@ -261,20 +261,20 @@ export function FloristJobCard({
           )}
 
           {/* Delivery & Recipient Information */}
-          <div className="p-3 rounded-xl bg-surface-alt/70 border border-border text-xs space-y-1.5">
+          <div className="p-3 rounded-xl bg-surface-alt/70 border border-border text-caption space-y-1.5">
             <div className="flex items-center justify-between font-bold text-text">
               <span className="flex items-center gap-1.5">
                 <MapPin size={13} className="text-primary" />
                 <span>Thông tin giao nhận cho bộ phận {ti.makerTitle}:</span>
               </span>
-              <button
+              <Button variant="ghost"
                 type="button"
                 onClick={() => setMaskPhone(!maskPhone)}
-                className="inline-flex items-center gap-1 text-caption text-text-muted hover:text-text font-medium"
+                className="h-auto p-0 inline-flex items-center gap-1 text-caption text-text-muted hover:text-text font-medium"
               >
                 {maskPhone ? <Eye size={12} /> : <EyeOff size={12} />}
                 <span>{maskPhone ? "Hiện số đầy đủ" : "Che số ĐT"}</span>
-              </button>
+              </Button>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-text">
               <div>
@@ -294,14 +294,14 @@ export function FloristJobCard({
 
           {/* Special Instructions & Custom Fields */}
           {partnerInstruction && (
-            <div className="p-2.5 rounded-xl bg-warning/10 border border-warning/20 text-xs">
+            <div className="p-2.5 rounded-xl bg-warning/10 border border-warning/20 text-caption">
               <span className="font-bold text-warning">Lưu ý kỹ thuật cho thợ:</span>{" "}
               <span className="text-text font-medium">{partnerInstruction}</span>
             </div>
           )}
 
           {customFields.length > 0 && (
-            <div className="p-2.5 rounded-xl bg-surface-alt border border-border text-xs">
+            <div className="p-2.5 rounded-xl bg-surface-alt border border-border text-caption">
               <span className="font-bold text-text-muted uppercase text-caption block mb-1">Thông tin bổ sung</span>
               <div className="space-y-0.5 text-text">
                 {customFields.map((f) => (
@@ -326,7 +326,7 @@ export function FloristJobCard({
               variant="outline"
               size="sm"
               onClick={onCancelOrder}
-              className="text-xs h-8 text-danger border-danger/30 hover:bg-danger/10 gap-1.5 font-bold"
+              className="text-caption h-8 text-danger border-danger/30 hover:bg-danger/10 gap-1.5 font-bold"
             >
               <Ban size={13} />
               <span>Hủy không nhận đơn</span>
@@ -337,7 +337,7 @@ export function FloristJobCard({
             <Button
               size="sm"
               onClick={() => onConfirmAcceptance(suggestedCraftFee)}
-              className="bg-primary hover:bg-primary-dark text-white text-xs h-8 gap-1.5 font-bold shadow-sm"
+              className="bg-primary hover:bg-primary-dark text-white text-caption h-8 gap-1.5 font-bold shadow-sm"
             >
               <CheckCircle2 size={14} />
               <span>Xác nhận nhận đơn</span>

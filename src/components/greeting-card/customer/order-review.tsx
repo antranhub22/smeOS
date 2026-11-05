@@ -137,7 +137,7 @@ export function OrderReview(props: {
         <Button variant="outline"
           type="button"
           onClick={() => openShopInfo("commitments")}
-          className="justify-start flex min-h-11 w-full items-center gap-2 rounded-xl border border-success/20 bg-success/5 px-3.5 text-left text-body-sm font-bold text-success hover:bg-success/5"
+          className="py-0 justify-start flex min-h-11 w-full items-center gap-2 rounded-xl border border-success/20 bg-success/5 px-3.5 text-left text-body-sm font-bold text-success hover:bg-success/5"
         >
           <ShieldCheck size={16} aria-hidden="true" />
           <span>{isEn ? "View store commitments & guarantees" : "Xem cam kết của cửa hàng"}</span>

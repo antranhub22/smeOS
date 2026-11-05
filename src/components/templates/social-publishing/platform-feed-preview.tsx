@@ -1,5 +1,6 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
 import React, { useState } from "react"
 import { Sparkles } from "@/components/ui/icon-set/sparkles"
 import { Card } from "@/components/ui/card"
@@ -165,7 +166,7 @@ export function PlatformFeedPreview({
         ].map((item) => {
           const isSelected = activePlatform === item.key
           return (
-            <button
+            <Button variant="outline"
               type="button"
               key={item.key}
               onClick={() =>
@@ -174,10 +175,10 @@ export function PlatformFeedPreview({
                   platform: item.key as PlatformKey,
                 })
               }
-              className={`p-2.5 rounded-xl border text-center transition-all cursor-pointer ${
+              className={`text-[length:inherit] h-auto gap-0 p-2.5 rounded-xl border text-center transition-all cursor-pointer ${
                 isSelected
-                  ? "border-primary bg-primary/5 shadow-xs text-primary font-bold"
-                  : "border-border bg-surface hover:border-primary/40 text-text"
+                  ? "border-primary bg-primary/5 shadow-xs text-primary font-bold hover:bg-primary/5"
+                  : "border-border bg-surface hover:border-primary/40 text-text hover:bg-surface"
               }`}
             >
               <div className="text-meta font-bold flex items-center justify-center gap-1.5">
@@ -185,14 +186,14 @@ export function PlatformFeedPreview({
                 {isSelected && <Badge tone="success" className="text-caption px-1 py-0">Đang xem</Badge>}
               </div>
               <div className="mt-0.5 text-caption text-text-muted">{item.desc}</div>
-            </button>
+            </Button>
           )
         })}
       </div>
 
       {/* Khung mô phỏng hiển thị thực tế kèm ảnh theo template SSOT */}
       <div className="p-4 border border-border rounded-xl bg-surface/60 shadow-xs max-w-2xl mx-auto w-full space-y-2.5">
-        <div className="flex items-center justify-between text-xs pb-2 border-b border-border/60">
+        <div className="flex items-center justify-between text-caption pb-2 border-b border-border/60">
           <span className="text-caption font-bold text-text-muted flex items-center gap-1.5">
             <Sparkles size={13} className="text-primary" />
             Mô phỏng hiển thị trên mạng xã hội

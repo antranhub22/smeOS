@@ -85,7 +85,7 @@ export function PostStatusReportCard({
 
   if (!post) {
     return (
-      <Card className="border border-border bg-surface p-6 text-center text-text-muted text-xs">
+      <Card className="border border-border bg-surface p-6 text-center text-text-muted text-caption">
         Chọn một bài viết từ danh sách lịch để xem báo cáo trạng thái và hiệu suất chi tiết.
       </Card>
     )
@@ -154,25 +154,25 @@ export function PostStatusReportCard({
         {/* Badge trạng thái tổng thể */}
         <div className="flex items-center gap-2">
           {isPublished && (
-            <Badge tone="success" className="text-xs px-2.5 py-1 gap-1">
+            <Badge tone="success" className="text-caption px-2.5 py-1 gap-1">
               <CheckCircle2 size={13} />
               Đã xuất bản thành công
             </Badge>
           )}
           {isScheduled && (
-            <Badge tone="neutral" className="text-xs px-2.5 py-1 gap-1 border-primary/30 text-primary">
+            <Badge tone="neutral" className="text-caption px-2.5 py-1 gap-1 border-primary/30 text-primary">
               <Clock size={13} />
               Đang chờ phát sóng
             </Badge>
           )}
           {isFailed && (
-            <Badge tone="danger" className="text-xs px-2.5 py-1 gap-1">
+            <Badge tone="danger" className="text-caption px-2.5 py-1 gap-1">
               <AlertCircle size={13} />
               Lỗi xuất bản
             </Badge>
           )}
           {isDraft && (
-            <Badge tone="neutral" className="text-xs px-2.5 py-1 gap-1">
+            <Badge tone="neutral" className="text-caption px-2.5 py-1 gap-1">
               Bản nháp
             </Badge>
           )}
@@ -182,7 +182,7 @@ export function PostStatusReportCard({
       {/* Thông báo kết quả trực tiếp tại chỗ */}
       {feedback && (
         <div
-          className={`p-3.5 rounded-xl border text-xs flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 transition-all ${
+          className={`p-3.5 rounded-xl border text-caption flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 transition-all ${
             feedback.type === "success"
               ? "bg-success-bg border-success/30 text-success"
               : feedback.type === "error"
@@ -202,7 +202,7 @@ export function PostStatusReportCard({
               href={feedback.url}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold bg-primary text-white hover:bg-primary/90 shadow-xs flex-shrink-0 self-start sm:self-auto cursor-pointer"
+              className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg text-caption font-bold bg-primary text-white hover:bg-primary/90 shadow-xs flex-shrink-0 self-start sm:self-auto cursor-pointer"
             >
               <ExternalLink size={12} /> Xem bài viết thực tế
             </a>
@@ -214,8 +214,8 @@ export function PostStatusReportCard({
       <div className="rounded-xl border border-border bg-surface-alt/50 p-4 space-y-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span className="text-xs font-bold text-text">Tiến Trình Thực Thi:</span>
-            <span className="text-xs font-extrabold text-primary">
+            <span className="text-caption font-bold text-text">Tiến Trình Thực Thi:</span>
+            <span className="text-caption font-extrabold text-primary">
               {isPublished
                 ? "100% · Đã xuất bản thành công"
                 : publishing
@@ -254,7 +254,7 @@ export function PostStatusReportCard({
 
         {/* Thông tin điều phối thời gian */}
         {isScheduled && !isPublished && (
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pt-1 text-xs text-text-muted">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 pt-1 text-caption text-text-muted">
             <div className="flex items-center gap-1.5 text-text">
               <span className="inline-block w-2 h-2 rounded-full bg-primary animate-ping motion-reduce:animate-none" />
               <span>
@@ -266,7 +266,7 @@ export function PostStatusReportCard({
                 size="sm"
                 onClick={handlePublishClick}
                 disabled={publishing}
-                className="text-xs font-bold gap-1 bg-primary text-white flex-shrink-0"
+                className="text-caption font-bold gap-1 bg-primary text-white flex-shrink-0"
               >
                 {publishing ? <RefreshCw size={12} className="animate-spin motion-reduce:animate-none" /> : <Send size={12} />}
                 {publishing ? "Đang phát..." : "⚡ Phát ngay lập tức"}
@@ -279,7 +279,7 @@ export function PostStatusReportCard({
       {/* Tiến trình vòng đời phát hành (Lifecycle Stepper) */}
       <div className="grid grid-cols-4 gap-2 bg-surface-alt/50 p-3 rounded-xl border border-border">
         <div className="flex flex-col items-center text-center">
-          <div className="w-6 h-6 rounded-full bg-success-bg text-success border border-success/30 flex items-center justify-center text-xs font-bold mb-1">
+          <div className="w-6 h-6 rounded-full bg-success-bg text-success border border-success/30 flex items-center justify-center text-caption font-bold mb-1">
             ✓
           </div>
           <div className="text-caption font-bold text-text">1. Soạn thảo</div>
@@ -288,7 +288,7 @@ export function PostStatusReportCard({
 
         <div className="flex flex-col items-center text-center">
           <div
-            className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold mb-1 border ${
+            className={`w-6 h-6 rounded-full flex items-center justify-center text-caption font-bold mb-1 border ${
               isScheduled || isPublished || isFailed
                 ? "bg-success-bg text-success border-success/30"
                 : "bg-surface text-text-muted border-border"
@@ -304,7 +304,7 @@ export function PostStatusReportCard({
 
         <div className="flex flex-col items-center text-center">
           <div
-            className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold mb-1 border ${
+            className={`w-6 h-6 rounded-full flex items-center justify-center text-caption font-bold mb-1 border ${
               isScheduled || isPublished
                 ? "bg-success-bg text-success border-success/30"
                 : isFailed
@@ -322,7 +322,7 @@ export function PostStatusReportCard({
 
         <div className="flex flex-col items-center text-center">
           <div
-            className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold mb-1 border ${
+            className={`w-6 h-6 rounded-full flex items-center justify-center text-caption font-bold mb-1 border ${
               isPublished
                 ? "bg-success-bg text-success border-success/30"
                 : isFailed
@@ -342,7 +342,7 @@ export function PostStatusReportCard({
       </div>
 
       {/* Thông tin kỹ thuật & Kênh xuất bản */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-caption">
         <div className="p-3 rounded-xl border border-border bg-surface-alt/40 flex flex-col gap-1.5">
           <div className="text-caption font-semibold text-text-muted uppercase">Thông số kỹ thuật</div>
           <div className="flex justify-between">
@@ -442,7 +442,7 @@ export function PostStatusReportCard({
       {/* Lỗi và nút thử lại */}
       {isFailed && (
         <div className="p-3.5 rounded-xl bg-danger-bg border border-danger/30 flex items-center justify-between gap-3">
-          <div className="text-xs text-danger flex items-center gap-2">
+          <div className="text-caption text-danger flex items-center gap-2">
             <AlertCircle size={16} className="flex-shrink-0" />
             <div>
               <div className="font-bold">Gặp sự cố khi xuất bản bài viết</div>
@@ -456,7 +456,7 @@ export function PostStatusReportCard({
               size="sm"
               variant="outline"
               onClick={() => onRetry(post.id)}
-              className="text-xs font-bold gap-1 flex-shrink-0"
+              className="text-caption font-bold gap-1 flex-shrink-0"
             >
               <RefreshCw size={12} /> Thử lại ngay
             </Button>
@@ -467,7 +467,7 @@ export function PostStatusReportCard({
       {/* Tác vụ cho bài chưa xuất bản */}
       {!isPublished && (
         <div className="flex flex-col sm:flex-row sm:items-center justify-between pt-2 border-t border-border gap-2">
-          <div className="text-xs text-text-muted flex items-center gap-1.5">
+          <div className="text-caption text-text-muted flex items-center gap-1.5">
             <Clock size={13} className="text-primary" />
             {isScheduled ? (
               <span>Lịch phát tự động: <strong>{post.scheduledTime} ({post.dateStr || "Hôm nay"})</strong></span>
@@ -477,7 +477,7 @@ export function PostStatusReportCard({
           </div>
           <div className="flex items-center gap-2 self-end sm:self-auto">
             {onReschedule && (
-              <Button size="sm" variant="outline" onClick={() => onReschedule(post.id)} className="text-xs">
+              <Button size="sm" variant="outline" onClick={() => onReschedule(post.id)} className="text-caption">
                 Đổi giờ đăng
               </Button>
             )}
@@ -486,7 +486,7 @@ export function PostStatusReportCard({
                 size="sm"
                 onClick={handlePublishClick}
                 disabled={publishing}
-                className="text-xs font-bold gap-1.5"
+                className="text-caption font-bold gap-1.5"
               >
                 {publishing ? (
                   <>
@@ -506,7 +506,7 @@ export function PostStatusReportCard({
       {/* Tác vụ khi bài ĐÃ XUẤT BẢN THÀNH CÔNG */}
       {isPublished && (
         <div className="flex flex-col sm:flex-row sm:items-center justify-between pt-2 border-t border-border gap-2">
-          <div className="text-xs text-text-muted flex items-center gap-1.5">
+          <div className="text-caption text-text-muted flex items-center gap-1.5">
             <CheckCircle2 size={13} className="text-success" />
             <span>Đã xuất bản thành công trên <strong>{post.channelLabel || post.channel}</strong></span>
           </div>
@@ -515,7 +515,7 @@ export function PostStatusReportCard({
             href={realPostUrl(post.postUrl) ?? undefined}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold bg-primary text-white hover:bg-primary/90 shadow-xs self-end sm:self-auto"
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-caption font-bold bg-primary text-white hover:bg-primary/90 shadow-xs self-end sm:self-auto"
           >
             <ExternalLink size={12} /> Xem bài viết trên {post.channelLabel || post.channel}
           </a>
