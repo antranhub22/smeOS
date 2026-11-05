@@ -3,7 +3,7 @@
  * (`docs/kien-truc/KIEN_TRUC_SSOT_DON_HANG_DA_NGUON.md` §3.1 mục 7). Chạy lặp an toàn: đơn đã có lead
  * cứu đơn thì bỏ qua; khách đã có lead đang mở thì không tạo thêm.
  *
- * Lý do huỷ đọc từ hằng số của luồng huỷ hiện hành (chỉ import, không sửa — Thẻ chào đóng băng).
+ * Lý do huỷ đọc từ hằng số của luồng huỷ hiện hành (chỉ import, không sửa luồng huỷ).
  */
 
 import { log } from "@/core/observability/log"

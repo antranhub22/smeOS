@@ -6,7 +6,13 @@
 
 ---
 
-## 0. Nguyên tắc tối thượng — Thẻ chào ĐÓNG BĂNG
+## 0. Nguyên tắc tối thượng — Thẻ chào ĐÓNG BĂNG (đã gỡ 05/11/2026)
+
+> **PO 05/11/2026 (D-47): gỡ đóng băng Thẻ chào** để hợp nhất mô hình đơn hàng và khách hàng
+> (audit kiến trúc CSDL 4 tầng). Đã bỏ `tests/unit/architecture/the-chao-freeze.test.ts` và tệp mốc.
+> B1–B4 không còn là bất biến chặn merge: thay đổi hành vi Thẻ chào được phép, nhưng PR phải liệt kê
+> hành vi nào đổi. **B5 vẫn áp dụng:** có test khoá hành vi cho đường sắp sửa, và test Thẻ chào sẵn có
+> chạy xanh (sửa test cũ chỉ khi hành vi đổi có chủ đích và được ghi trong PR).
 
 PO 31/10/2026: *quy trình Thẻ chào đang đúng và tốt, tuyệt đối không thay đổi.*
 
@@ -219,7 +225,7 @@ Một mục sidebar `/don-hang`; mỗi tab là **hàng đợi lọc trên cùng 
 Mỗi pha ship kèm test + cập nhật tài liệu này và `TRANG_THAI.md` trong cùng commit.
 
 **Tiến độ (31/10/2026):**
-- **P0 xong.** `tests/unit/architecture/the-chao-freeze.test.ts` băm toàn bộ tệp Thẻ chào (miền, giao diện, `/the-chao`, trang khách `/b` `/g` `/bst` `/s` `/subcontract`, API `greeting-card` + công khai + SePay) và định nghĩa các mã năng lực Thẻ chào dùng (vai mặc định, trần cứng), so với `the-chao-freeze.manifest.txt`. Bất kỳ thay đổi nào → đỏ. Chỉ cập nhật mốc khi PO duyệt: `UPDATE_THE_CHAO_FREEZE=1 npm test -- tests/unit/architecture/the-chao-freeze.test.ts`. Test hành vi Thẻ chào sẵn có (~96 tệp) giữ nguyên, xanh.
+- **P0 xong** (khoá băm gỡ 05/11/2026, D-47). `tests/unit/architecture/the-chao-freeze.test.ts` băm toàn bộ tệp Thẻ chào (miền, giao diện, `/the-chao`, trang khách `/b` `/g` `/bst` `/s` `/subcontract`, API `greeting-card` + công khai + SePay) và định nghĩa các mã năng lực Thẻ chào dùng (vai mặc định, trần cứng), so với `the-chao-freeze.manifest.txt`. Bất kỳ thay đổi nào → đỏ. Chỉ cập nhật mốc khi PO duyệt: `UPDATE_THE_CHAO_FREEZE=1 npm test -- tests/unit/architecture/the-chao-freeze.test.ts`. Test hành vi Thẻ chào sẵn có (~96 tệp) giữ nguyên, xanh.
 - **P1 (phần thuần) xong.** `src/modules/orders/domain/order-source.ts` (danh mục nguồn §2.2) · `src/modules/orders/domain/entry-actions.ts` (§3.2) + test.
 - **P1 xong (PO duyệt schema 31/10).** Migration `20261031133749_orders_multi_source_lead_link`: `orders` + `owner_sale_id`, `lead_id` (FK `leads`, SET NULL), `workflow` (mặc định `LEGACY`); `leads` + `reason`, `next_follow_up_at`, `closed_reason`, `converted_order_id` (FK `orders`, SET NULL); dữ liệu `CONTACTED → IN_PROGRESS`. Cổng `src/modules/orders/use-cases/ingest-order.ts` (từ chối `BROCHURE` và mã lạ; kiểm sale phụ trách là thành viên đang hoạt động) + `infra/order-lead-link.ts` (lead → đơn cùng giao dịch: khác tổ chức 404, đã thành đơn 409). Adapter đã nối: nhập tay `POST /orders` (`MANUAL`), chat (`CHAT` — trước đây ghi nhầm `MANUAL`), kênh bán ngoài (`CHANNEL`). Gác: `tests/unit/architecture/order-ingestion-guard.test.ts`; cách ly: `tests/tenant/order-lead-link.test.ts`.
 - **P2 xong (31/10).**
