@@ -432,6 +432,7 @@ model capability_overrides {
 
   @@unique([organization_id, role_id, capability_code])
   @@index([organization_id])
+  @@index([role_id]) // khoá ngoại cần index (ADR-015 O-1)
 }
 
 model memberships {
@@ -459,6 +460,8 @@ model memberships {
   @@index([organization_id])
   @@index([user_id])
   @@index([organization_id, chain_branch_code])
+  @@index([branch_id]) // khoá ngoại cần index (ADR-015 O-1)
+  @@index([role_id]) // khoá ngoại cần index (ADR-015 O-1)
 }
 
 // ── Asset · Job · Usage · Audit — P3 ────────────────────────────────────────
@@ -573,6 +576,7 @@ model assets {
   @@index([parent_asset_id])
   @@index([output_sha256])
   @@index([organization_id, product_id, kind, approval_state])
+  @@index([product_id]) // khoá ngoại cần index (ADR-015 O-1)
 }
 
 /**
@@ -723,6 +727,9 @@ model generation_jobs {
   @@index([status, run_after]) // job hẹn thử lại (E5.1)
   @@index([organization_id, user_id])
   @@index([organization_id, job_group_id]) // gom màn tiến độ bộ, nợ #108
+  @@index([branch_id]) // khoá ngoại cần index (ADR-015 O-1)
+  @@index([product_id]) // khoá ngoại cần index (ADR-015 O-1)
+  @@index([workspace_id]) // khoá ngoại cần index (ADR-015 O-1)
 }
 
 /**
@@ -816,8 +823,8 @@ model subscriptions {
   price_vnd                Int
   included_credits_monthly Int                 @default(0)
   status                   subscription_status @default(ACTIVE)
-  current_period_start     DateTime @db.Timestamptz(3)
-  current_period_end       DateTime @db.Timestamptz(3)
+  current_period_start     DateTime            @db.Timestamptz(3)
+  current_period_end       DateTime            @db.Timestamptz(3)
   plan_credit_period       String?
   plan_credit_granted      Int                 @default(0)
   created_by               String?
@@ -837,12 +844,12 @@ model subscription_invoices {
   subscription_id   String
   /// Mã ghi trong nội dung chuyển khoản để SePay đối soát
   code              String                      @unique
-  period_start      DateTime @db.Timestamptz(3)
-  period_end        DateTime @db.Timestamptz(3)
+  period_start      DateTime                    @db.Timestamptz(3)
+  period_end        DateTime                    @db.Timestamptz(3)
   amount_vnd        Int
   status            subscription_invoice_status @default(PENDING)
-  due_at            DateTime @db.Timestamptz(3)
-  paid_at           DateTime? @db.Timestamptz(3)
+  due_at            DateTime                    @db.Timestamptz(3)
+  paid_at           DateTime?                   @db.Timestamptz(3)
   /// Mã giao dịch (SePay hoặc xác nhận tay) — chống ghi trùng
   payment_reference String?                     @unique
   reminded_7d       Boolean                     @default(false)
@@ -919,6 +926,7 @@ model usage {
 
   @@index([organization_id, created_at])
   @@index([job_id])
+  @@index([workspace_id]) // khoá ngoại cần index (ADR-015 O-1)
 }
 
 /**
@@ -1097,6 +1105,7 @@ model products {
   @@unique([id, organization_id]) // đích của khoá ghép tenant (05/11/2026)
   @@index([organization_id])
   @@index([organization_id, barcode])
+  @@index([branch_id]) // khoá ngoại cần index (ADR-015 O-1)
 }
 
 /// Đề xuất sửa một mẫu CHÍNH THỨC của người không có `H3` (quản trị danh mục, giai đoạn 3 —
@@ -1147,6 +1156,7 @@ model product_revisions {
   @@index([organization_id])
   @@index([organization_id, product_id, created_at])
   @@index([organization_id, import_batch_id])
+  @@index([import_batch_id]) // khoá ngoại cần index (ADR-015 O-1)
 }
 
 /// Một lần Điều hành nhập Excel — hoàn tác được trong 24 giờ (mẫu tạo ra vào thùng rác,
@@ -1235,6 +1245,7 @@ model product_inventory {
 
   @@unique([organization_id, product_id, branch_id])
   @@index([organization_id, branch_id])
+  @@index([branch_id]) // khoá ngoại cần index (ADR-015 O-1)
 }
 
 /**
@@ -1268,6 +1279,8 @@ model product_bookings {
   @@index([organization_id, product_id, check_in_date])
   @@index([organization_id, product_id, status])
   @@index([organization_id, order_id])
+  @@index([order_id]) // khoá ngoại cần index (ADR-015 O-1)
+  @@index([product_id]) // khoá ngoại cần index (ADR-015 O-1)
 }
 
 /**
@@ -1316,6 +1329,7 @@ model product_analyses {
   @@index([organization_id])
   @@index([organization_id, product_id])
   @@index([job_id])
+  @@index([product_id]) // khoá ngoại cần index (ADR-015 O-1)
 }
 
 /**
@@ -1340,6 +1354,7 @@ model pricing_rules {
   fk_branch branches? @relation("fk_pricing_rules_branch_id", fields: [branch_id], references: [id], onDelete: SetNull)
 
   @@index([organization_id, key])
+  @@index([branch_id]) // khoá ngoại cần index (ADR-015 O-1)
 }
 
 // ── Integration Layer — P7 ───────────────────────────────────────────────
@@ -1384,6 +1399,7 @@ model integration_tokens {
 
   @@index([organization_id])
   @@index([organization_id, client])
+  @@index([rotated_from_id]) // khoá ngoại cần index (ADR-015 O-1)
 }
 
 /// Số liệu hiệu quả nội dung — ghi từ engine ngoài (SocialFlow/LocalBudd) qua Integration API.
@@ -1476,6 +1492,7 @@ model ai_policies {
 
   @@unique([organization_id, capability_code])
   @@index([organization_id])
+  @@index([capability_code]) // khoá ngoại cần index (ADR-015 O-1)
 }
 
 /// Sổ chi phí và chất lượng mỗi LỜI GỌI mô hình. Chỉ ghi thêm. Không giữ
@@ -1746,6 +1763,7 @@ model product_copies {
   @@index([organization_id])
   @@index([organization_id, product_id])
   @@index([approval_state])
+  @@index([product_id]) // khoá ngoại cần index (ADR-015 O-1)
 }
 
 // ── M04c — AI Video Studio (Reel, TikTok, Story, Slideshow) ─────────────────
@@ -1828,6 +1846,7 @@ model video_jobs {
   @@index([stage])
   @@index([script_approval])
   @@index([video_approval])
+  @@index([product_id]) // khoá ngoại cần index (ADR-015 O-1)
 }
 
 model video_scenes {
@@ -1975,6 +1994,11 @@ model orders {
   @@index([organization_id, source])
   @@index([organization_id, owner_sale_id])
   @@index([organization_id, lead_id])
+  @@index([branch_id]) // khoá ngoại cần index (ADR-015 O-1)
+  @@index([customer_id]) // khoá ngoại cần index (ADR-015 O-1)
+  @@index([lead_id]) // khoá ngoại cần index (ADR-015 O-1)
+  @@index([source_session_id]) // khoá ngoại cần index (ADR-015 O-1)
+  @@index([voucher_id]) // khoá ngoại cần index (ADR-015 O-1)
 }
 
 model order_items {
@@ -1998,6 +2022,9 @@ model order_items {
   fk_variant product_variants? @relation("fk_order_items_variant_id", fields: [variant_id], references: [id], onDelete: SetNull)
 
   @@index([organization_id, order_id])
+  @@index([order_id]) // khoá ngoại cần index (ADR-015 O-1)
+  @@index([product_id]) // khoá ngoại cần index (ADR-015 O-1)
+  @@index([variant_id]) // khoá ngoại cần index (ADR-015 O-1)
 }
 
 model order_assignments {
@@ -2175,6 +2202,9 @@ model vouchers {
   @@unique([organization_id, code])
   @@index([organization_id, customer_id])
   @@index([organization_id, batch_id])
+  @@index([batch_id]) // khoá ngoại cần index (ADR-015 O-1)
+  @@index([customer_id]) // khoá ngoại cần index (ADR-015 O-1)
+  @@index([order_id]) // khoá ngoại cần index (ADR-015 O-1)
 }
 
 /// Một đợt phát hành mã giảm giá — cùng điều kiện cho mọi mã trong đợt.
@@ -2225,6 +2255,7 @@ model voucher_redemptions {
   @@unique([voucher_id, order_id])
   @@index([organization_id])
   @@index([organization_id, order_id])
+  @@index([customer_id]) // khoá ngoại cần index (ADR-015 O-1)
 }
 
 // ── M08 — AI Chat Assistant & Hội thoại (P23) ──────────────────────────────
@@ -2262,6 +2293,7 @@ model chat_conversations {
 
   @@index([organization_id, status])
   @@index([organization_id, customer_id])
+  @@index([customer_id]) // khoá ngoại cần index (ADR-015 O-1)
 }
 
 model chat_messages {
@@ -2278,6 +2310,7 @@ model chat_messages {
   conversation chat_conversations @relation(fields: [conversation_id], references: [id], onDelete: Cascade)
 
   @@index([organization_id, conversation_id, created_at])
+  @@index([conversation_id]) // khoá ngoại cần index (ADR-015 O-1)
 }
 
 model chat_channel_integrations {
@@ -2904,6 +2937,7 @@ model campaign_packages {
   @@index([organization_id, created_at])
   @@index([organization_id, master_asset_id])
   @@index([organization_id, status])
+  @@index([product_id]) // khoá ngoại cần index (ADR-015 O-1)
 }
 
 /// Bài đăng Khu vực B (Chặng 06a) TỰ LƯU theo ảnh + chủ đề + mode (24/09/2026) —
@@ -2982,6 +3016,7 @@ model content_generations {
 
   @@index([organization_id, asset_id, topic_id, mode])
   @@index([organization_id, created_at])
+  @@index([product_id]) // khoá ngoại cần index (ADR-015 O-1)
 }
 
 /// Giọng nhân bản của chủ tiệm (Khu vực C — Voice Clone, 24/09/2026). TENANT.
@@ -3243,6 +3278,7 @@ model order_coordinations {
   @@unique([order_id, organization_id]) // khoá ghép 1-1 về orders (05/11/2026)
   @@index([organization_id, stage])
   @@index([organization_id, risk_level])
+  @@index([partner_id]) // khoá ngoại cần index (ADR-015 O-1)
 }
 
 /// Sổ thu (ĐP-4a, 26/09/2026, PO D2). Mỗi lần thu/hoàn tiền là MỘT DÒNG.
@@ -3430,6 +3466,7 @@ model journey_runs {
 
   @@index([organization_id, manifest_id])
   @@index([organization_id, status])
+  @@index([workspace_id]) // khoá ngoại cần index (ADR-015 O-1)
 }
 
 /// Sổ đăng ký quyết định (Decision Registry - 19 dòng chuẩn D-*)
@@ -3533,6 +3570,9 @@ model greeting_sessions {
   @@index([organization_id, catalog_id])
   @@index([organization_id, sale_id])
   @@index([send_code])
+  @@index([catalog_id]) // khoá ngoại cần index (ADR-015 O-1)
+  @@index([order_id]) // khoá ngoại cần index (ADR-015 O-1)
+  @@index([selected_product_id]) // khoá ngoại cần index (ADR-015 O-1)
 }
 
 /// Tích hợp ngoài của Thẻ chào theo tiệm: webhook đối soát ngân hàng + kênh
@@ -3585,6 +3625,7 @@ model greeting_payment_events {
 
   @@unique([organization_id, provider, external_id])
   @@index([organization_id, status])
+  @@index([order_id]) // khoá ngoại cần index (ADR-015 O-1)
 }
 
 /// Nhật ký tin đã gửi cho khách (Zalo ZNS / SMS) theo từng mốc đơn. Unique
@@ -3635,6 +3676,7 @@ model staff_notifications {
 
   @@index([organization_id, event_key])
   @@index([organization_id, recipient_id])
+  @@index([order_id]) // khoá ngoại cần index (ADR-015 O-1)
 }
 
 /// Ghi nhật ký hành trình tương tác của khách trên Thẻ chào (Swipe, Select, Checkout...)
@@ -3661,6 +3703,7 @@ model greeting_share_links {
 
   @@index([organization_id, owner_id, created_at])
   @@index([organization_id, catalog_id])
+  @@index([catalog_id]) // khoá ngoại cần index (ADR-015 O-1)
 }
 
 /**
@@ -3699,6 +3742,9 @@ model greeting_messages {
   @@index([organization_id, session_id])
   @@index([organization_id, to_user_id, created_at])
   @@index([organization_id, to_role, created_at])
+  @@index([order_id]) // khoá ngoại cần index (ADR-015 O-1)
+  @@index([reply_to_id]) // khoá ngoại cần index (ADR-015 O-1)
+  @@index([session_id]) // khoá ngoại cần index (ADR-015 O-1)
 }
 
 /**
@@ -3739,6 +3785,9 @@ model greeting_catalog_events {
   @@index([organization_id, catalog_id, created_at])
   @@index([organization_id, channel])
   @@index([organization_id, catalog_id, product_id])
+  @@index([catalog_id]) // khoá ngoại cần index (ADR-015 O-1)
+  @@index([order_id]) // khoá ngoại cần index (ADR-015 O-1)
+  @@index([product_id]) // khoá ngoại cần index (ADR-015 O-1)
 }
 
 model greeting_journey_events {
@@ -3850,6 +3899,7 @@ model internal_chat_messages {
 
   @@index([conversation_id, created_at])
   @@index([organization_id])
+  @@index([sender_user_id]) // khoá ngoại cần index (ADR-015 O-1)
 }
 
 // ─── Notification System (Multi-Tier, Multi-Role) ──────────────────────────
@@ -4011,6 +4061,7 @@ model material_price_history {
 
   @@index([organization_id])
   @@index([organization_id, material_id, effective_at])
+  @@index([material_id]) // khoá ngoại cần index (ADR-015 O-1)
 }
 
 /// #31 — Công thức (định mức) của một sản phẩm tại cửa hàng; một công thức hiện hành mỗi sản phẩm.
@@ -4049,6 +4100,7 @@ model product_recipe_items {
 
   @@unique([recipe_id, material_id])
   @@index([organization_id])
+  @@index([material_id]) // khoá ngoại cần index (ADR-015 O-1)
 }
 
 // ─── Trung tâm Tích hợp (Integration Hub, GĐ1 — 30/10/2026) ─────────────────
@@ -4117,6 +4169,7 @@ model integration_connections {
   @@unique([organization_id, connector_key, external_account_id])
   @@index([organization_id])
   @@index([status, last_health_at])
+  @@index([inherited_from_org_id]) // khoá ngoại cần index (ADR-015 O-1)
 }
 
 /// Nhật ký sự kiện vào (webhook) / ra (lệnh gọi) của một kết nối. Chống trùng theo
@@ -4237,6 +4290,7 @@ model sales_channel_orders {
   @@unique([connection_id, external_order_id])
   @@index([organization_id])
   @@index([organization_id, created_at])
+  @@index([order_id]) // khoá ngoại cần index (ADR-015 O-1)
 }
 
 // ─── Thu hút khách hàng (Bước 4 — công cụ 12, 13, 21, 25) ─────────────────────
@@ -4283,6 +4337,9 @@ model leads {
   @@index([organization_id, phone, created_at])
   @@index([organization_id, next_follow_up_at])
   @@index([organization_id, converted_order_id])
+  @@index([converted_order_id]) // khoá ngoại cần index (ADR-015 O-1)
+  @@index([customer_id]) // khoá ngoại cần index (ADR-015 O-1)
+  @@index([short_link_id]) // khoá ngoại cần index (ADR-015 O-1)
 }
 
 // Link/QR động: in một lần, đổi đích sau; mỗi điểm đặt (quầy, tờ rơi…) một mã để
@@ -4329,6 +4386,7 @@ model link_events {
 
   @@index([organization_id])
   @@index([organization_id, short_link_id, created_at])
+  @@index([short_link_id]) // khoá ngoại cần index (ADR-015 O-1)
 }
 
 /// Chợ đối tác (SaaS Mẹ) — hồ sơ khảo sát cửa hàng tiềm năng, CẤP NỀN TẢNG:
@@ -4453,6 +4511,7 @@ model asset_usages {
   @@index([organization_id, source_type, source_id])
   @@index([organization_id, destination, status])
   @@index([campaign_id])
+  @@index([short_link_id]) // khoá ngoại cần index (ADR-015 O-1)
 }
 
 enum campaign_objective {
@@ -4541,6 +4600,8 @@ model quotations {
   @@index([organization_id, created_at])
   @@index([lead_id])
   @@index([customer_id])
+  @@index([asset_usage_id]) // khoá ngoại cần index (ADR-015 O-1)
+  @@index([converted_order_id]) // khoá ngoại cần index (ADR-015 O-1)
 }
 
 /// Chi tiết từng dòng sản phẩm trong báo giá (Quotation Items).
