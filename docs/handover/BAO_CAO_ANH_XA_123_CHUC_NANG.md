@@ -33,8 +33,8 @@ Ký hiệu đường dẫn rút gọn: `org/` = `src/modules/organization/`, `gc
 | 7 | AI phân tích, nội dung & marketing | 3 | 1 | 2 | 0 |
 | 8 | Landing page bán hàng | 1 | 1 | 0 | 0 |
 | 9 | Chat nội bộ, đa chuỗi & phân quyền nâng cao | 14 | 10 | 3 | 1 |
-| 10 | Quản lý credit AI, hạn mức & thuê bao SaaS | 8 | 2 | 3 | 3 |
-| | **Tổng cộng** | **123** | **99** | **20** | **4** |
+| 10 | Quản lý credit AI, hạn mức & thuê bao SaaS | 8 | 3 | 2 | 3 |
+| | **Tổng cộng** | **123** | **100** | **19** | **4** |
 
 Tỷ lệ: Hoàn thiện 78,9% · Dang dở 17,9% · Chưa hoàn thành 3,3%.
 
@@ -218,7 +218,7 @@ Tỷ lệ: Hoàn thiện 78,9% · Dang dở 17,9% · Chưa hoàn thành 3,3%.
 | 10.3 | Thiết lập hạn mức dịch vụ (trần AI, SMS, Zalo) | Chưa hoàn thành | `src/modules/usage/domain/quota.ts:1-17` chỉ trừ credit; AI dừng khi hết credit (`tt/retry-recharge-credit.test.ts:79`) | Hạn mức tháng cho AI, SMS, Zalo và thông báo khi chạm hạn mức |
 | 10.4 | Ghi nhận chi phí thật (USD/VND) đo lợi nhuận | Dang dở | `src/core/ai/gateway.ts:214-225` ghi `cost_usd`; `src/modules/ai-governance/use-cases/list-ai-requests.ts:95-116` | Quy đổi VND; chi phí SMS/ZNS; so với credit đã thu và lợi nhuận nền tảng |
 | 10.5 | Cảnh báo khi credit AI còn dưới 20% | Chưa hoàn thành | Không sự kiện nào về credit trong `src/modules/notification/domain/events` | Toàn bộ chức năng |
-| 10.6 | Admin nạp / hoàn / tặng credit khuyến mãi | Dang dở | Nạp qua script `scripts/nap-credit.ts:86` → `org/infra/organization-repository.ts:117-130` | Màn hình Console nạp, hoàn, tặng credit (`src/components/platform/vietqr-topup-modal.tsx` không gọi API) |
+| 10.6 | Admin nạp / hoàn / tặng credit khuyến mãi | Hoàn thiện | Sổ cái `credit_transactions` (migration `20261105150000_credit_transactions`, dòng `OPENING` cho số dư sẵn có); mọi thay đổi số dư đi qua `org/infra/organization-repository.ts` và ghi sổ cùng giao dịch `org/infra/credit-ledger.ts` (trừ khi chạy job, hoàn job, phí kênh chat, credit khởi tạo, script nạp); Console nạp/tặng/hoàn có lý do `api/platform/organizations/[id]/credits/route.ts` (N1 đọc, N3 ghi, nhật ký nền tảng), `src/components/platform/credit-ledger-panel.tsx`, mã VietQR nạp ghi thật `src/components/platform/vietqr-topup-modal.tsx`; `tp/credit-ledger.test.ts`, `tt/credit-ledger-isolation.test.ts` | — |
 | 10.7 | Quản lý & thu phí thuê bao SaaS | Dang dở | Gói định nghĩa tĩnh `src/modules/platform/domain/vietqr-billing.ts:31-64`; quyền theo gói `src/core/entitlements/entitlement-service.ts:9-130`; `vietqr-billing.test.ts`, `entitlement-service.test.ts` | Gán gói cho tổ chức, theo dõi kỳ gia hạn tháng/năm, thu phí |
 | 10.8 | Cấu hình trỏ tên miền riêng (Custom Domain) | Chưa hoàn thành | Không có mã xử lý tên miền riêng (`src/proxy.ts` không đọc host) | Toàn bộ chức năng |
 

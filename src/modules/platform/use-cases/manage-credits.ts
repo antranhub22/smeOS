@@ -4,6 +4,7 @@ import { notFound, validationFailed } from "@/core/http/errors"
 import { runInTransaction } from "@/modules/organization/infra/transaction"
 import { OrganizationRepository } from "@/modules/organization/infra/organization-repository"
 import { listCreditEntries, type CreditEntryView } from "@/modules/organization/infra/credit-ledger"
+import { formatNumber } from "@/lib/i18n/formatters"
 import { recordPlatformAuditLog } from "@/modules/platform/infra/platform-audit-repository"
 
 /**
@@ -30,7 +31,7 @@ export interface AdjustCreditsInput {
 export async function adjustOrganizationCredits(pctx: PlatformContext, input: AdjustCreditsInput): Promise<{ balance: number }> {
   requirePlatformCapability(pctx, "N3")
   if (!Number.isInteger(input.amount) || input.amount <= 0 || input.amount > MAX_CREDIT_ADJUSTMENT) {
-    throw validationFailed({ amount: `Số credit là số nguyên từ 1 đến ${MAX_CREDIT_ADJUSTMENT.toLocaleString("vi-VN")}` })
+    throw validationFailed({ amount: `Số credit là số nguyên từ 1 đến ${formatNumber(MAX_CREDIT_ADJUSTMENT)}` })
   }
   const reason = input.reason.trim()
   if (reason.length < 3) throw validationFailed({ reason: "Cần ghi lý do" })

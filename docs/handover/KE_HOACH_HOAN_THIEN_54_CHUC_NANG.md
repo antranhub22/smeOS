@@ -18,18 +18,18 @@ Căn cứ: `docs/handover/BAO_CAO_ANH_XA_123_CHUC_NANG.md` (mã nguồn tại `0
 | Mã | Nội dung cần chốt | Chức năng chịu ảnh hưởng | Thời điểm cần chốt | Quyết định |
 |---|---|---|---|---|
 | Q1 | Mở khoá Thẻ Chào (`tests/unit/architecture/the-chao-freeze.test.ts`) cho từng PR được liệt kê; mốc băm cập nhật sau khi PO duyệt PR | 2.8, 3.1, 3.4, 3.6, 4.3, 4.9, 4.14, 4.18, 4.26, 5.4, 5.5, 5.9, 5.14, 5.15, 9.11 | Trước Đợt 1 | Mở khoá |
-| Q2 | Thay đổi lược đồ CSDL theo danh sách mục 6 | 1.4, 2.3, 3.8, 3.10, 9.3, 10.3, 10.4, 10.6, 10.7, 10.8, 1.18 | Trước đợt chứa chức năng | Đã duyệt `users.must_change_password`, `order_payments.status` (1.4, 1.16), giá trị `PAUSED` cho `product_status` (2.3); các thay đổi khác chờ chốt theo đợt |
+| Q2 | Thay đổi lược đồ CSDL theo danh sách mục 6 | 1.4, 2.3, 3.8, 3.10, 9.3, 10.3, 10.4, 10.6, 10.7, 10.8, 1.18 | Trước đợt chứa chức năng | Đã duyệt `users.must_change_password`, `order_payments.status` (1.4, 1.16), giá trị `PAUSED` cho `product_status` (2.3), lược đồ 3.8, 3.10, `field_definitions.owner_organization_id` (1.9), và các bảng Đợt 4: `subscriptions`, `subscription_invoices`, `credit_transactions`, `usage_limits`, `provider_cost_entries` |
 | Q3 | Quyền thu tiền R9: (a) trần cứng Điều hành, hoặc (b) Sale/Điều phối chỉ "ghi nhận chờ xác nhận", Điều hành xác nhận mới vào sổ thu | 1.16 | Trước Đợt 1 | Phương án (b): Sale/Điều phối ghi nhận chờ xác nhận, Điều hành xác nhận mới vào sổ thu |
 | Q4 | Tắt mặc định công tắc tự duyệt (`cho_phep_tu_duyet = false`) | 9.12 | Trước Đợt 1 | Tắt mặc định |
 | Q5 | Ảnh giao hàng bắt buộc ở mọi gói chính sách | 4.18 | Trước Đợt 1 | Bắt buộc mặc định; Điều hành cửa hàng được tắt yêu cầu ảnh giao trong Cài đặt |
 | Q6 | Vòng đời đơn: giao xong còn nợ ở trạng thái "Đã giao — chờ thu đủ", chỉ "Hoàn tất" khi số dư bằng 0 | 4.26 | Trước Đợt 1 | Áp dụng |
 | Q7 | Bộ quyền mặc định cho ba vai mới: Thợ cắm hoa, Shipper, Kế toán | 1.12, 4.5, 4.13, 6.5, 6.6 | Trước Đợt 2 | Thợ cắm hoa: chỉ việc được giao, công thức, ảnh mẫu, báo xong, tải ảnh thành phẩm · Shipper: chỉ đơn được giao, thông tin người nhận (không giá), cập nhật giao, ảnh giao · Kế toán: xem đơn, sổ thu, đối soát, xuất Excel, báo cáo, mức dùng; không xác nhận tiền |
 | Q8 | Danh sách 6 kiểu dáng, đơn giá phí cắm từng kiểu, hệ số ngày lễ mặc định, cách hiện phí cắm trên báo giá | 3.6 | Trước Đợt 3 | 6 kiểu dáng, đơn giá mặc định (cửa hàng sửa được): bó hoa cầm tay 80.000đ, hộp hoa 120.000đ, giỏ hoa 150.000đ, bình hoa 180.000đ, lẵng/kệ khai trương 300.000đ, hoa sự kiện/cưới 500.000đ · hệ số ngày lễ ×1,5 (cửa hàng sửa được) · phí cắm gộp vào giá mẫu khách thấy, tách riêng trong sổ nội bộ; giá niêm yết đã gồm phí cắm — ngày lễ cộng phần chênh phí cắm × (hệ số − 1); mẫu chưa gắn kiểu dáng giữ nguyên giá · lược đồ 3.8 (`quotations.shipping_fee`, `quotation_items.variant_label`) và 3.10 (`quotation_revisions`) đã duyệt |
-| Q9 | Gói thuê bao: giá theo năm, chu kỳ gia hạn, kênh thu phí (VietQR + đối soát SePay), xử lý quá hạn | 10.7, 9.8, 9.10 | Trước Đợt 4 | Chờ chốt |
-| Q10 | Đơn vị hạn mức tháng cho AI (credit), SMS (tin), Zalo ZNS (tin) và giá vốn tham chiếu | 10.3, 10.4 | Trước Đợt 4 | Chờ chốt |
-| Q11 | Hạ tầng tên miền riêng: dịch vụ cấp chứng chỉ và cách thêm tên miền trên Render (thay đổi `render.yaml` hoặc API Render) | 10.8 | Trước Đợt 4 | Chờ chốt |
-| Q12 | Các chặng của hành trình 14 chặng được chạy khi người dùng tải ảnh | 5.14, 7.2 | Trước Đợt 6 | Chờ chốt |
-| Q13 | Phạm vi và lộ trình Row Level Security (bảng nào, chế độ `FORCE`, ngân sách hiệu năng) | 1.18 | Trước Đợt 7 | Chờ chốt |
+| Q9 | Gói thuê bao: giá theo năm, chu kỳ gia hạn, kênh thu phí (VietQR + đối soát SePay), xử lý quá hạn | 10.7, 9.8, 9.10 | Trước Đợt 4 | Chu kỳ tháng và năm; hết kỳ chưa thanh toán thì chuyển ngay sang chỉ xem dữ liệu (không ân hạn), thanh toán xong mở lại; hoá đơn VietQR, SePay tự đối soát theo mã hoá đơn trong nội dung chuyển khoản, Console xác nhận tay khoản lệch; giá từng gói nhập ở Console, lưu theo từng thuê bao; khoá API SePay cấp qua biến môi trường, chưa có khoá thì tắt đối soát tự động |
+| Q10 | Đơn vị hạn mức tháng cho AI (credit), SMS (tin), Zalo ZNS (tin) và giá vốn tham chiếu | 10.3, 10.4 | Trước Đợt 4 | Mọi dịch vụ quy đổi về credit, một số dư chung; tỷ lệ 1 tin SMS / 1 tin ZNS ra credit lưu ở Console; credit tặng theo gói hết hạn cuối tháng, credit cửa hàng tự nạp giữ lại; báo Điều hành ở 80% hạn mức, dừng ở 100%; giá vốn tham chiếu (tỷ giá USD→VND, giá mỗi tin) nhập ở Console |
+| Q11 | Hạ tầng tên miền riêng: dịch vụ cấp chứng chỉ và cách thêm tên miền trên Render (thay đổi `render.yaml` hoặc API Render) | 10.8 | Trước Đợt 4 | Hoãn 10.8 sang đợt sau |
+| Q12 | Các chặng của hành trình 14 chặng được chạy khi người dùng tải ảnh | 5.14, 7.2 | Trước Đợt 6 | 5.14: chặng 01 Tải ảnh, 02 Nhận diện, 09 Chủ shop duyệt — không sinh nội dung, không trừ credit · 7.2: chặng 01, 02, 06 (nội dung và ảnh), 08 Kiểm tra, 09 Duyệt, 10 Đăng; bỏ 03–05 và 11–14 |
+| Q13 | Phạm vi và lộ trình Row Level Security (bảng nào, chế độ `FORCE`, ngân sách hiệu năng) | 1.18 | Trước Đợt 7 | Bật RLS theo đợt: trước tiên orders, order_payments, customers, quotations, credit_transactions, sau đó các bảng có `organization_id` còn lại; chế độ `FORCE`; worker và nền tảng dùng vai CSDL riêng; mỗi truy vấn không chậm thêm quá 10% đo trên bộ test tenant |
 
 ## 3. Lộ trình
 
@@ -177,11 +177,11 @@ Mọi bảng mới có `organization_id` + `@@index([organization_id])` (trừ b
 | 1 | 13 | 13 |
 | 2 | 11 | 11 |
 | 3 | 6 | 6 |
-| 4 | 9 | 0 |
+| 4 | 9 | 1 |
 | 5 | 6 | 0 |
 | 6 | 8 | 0 |
 | 7 | 1 | 0 |
-| **Tổng** | **54** | **30** |
+| **Tổng** | **54** | **31** |
 
 Đợt 2 hoàn thiện đủ 11/11 chức năng. Phần mở rộng còn theo dõi: link giao riêng cho shipper thuê ngoài (4.5), đưa đơn Thẻ Chào vào hàng đợi của tài khoản thợ (4.13), giá vốn theo phiên bản (2.4), ẩn mẫu bị khoá khỏi danh sách trên link theo ngày khách chọn trước (2.8). Shipper nội bộ được gắn đơn theo số điện thoại Điều phối ghi khi điều xe; Điều hành nhập số điện thoại nhân viên ở màn Thành viên.
 

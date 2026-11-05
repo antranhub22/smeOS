@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input"
 import { InlineError } from "@/components/ui/inline-error"
 import { SkeletonBlock } from "@/components/ui/skeleton"
 import { QrCode } from "@/components/ui/icon-set/qr-code"
-import { formatDateTime } from "@/lib/i18n/formatters"
+import { formatDateTime, formatNumber } from "@/lib/i18n/formatters"
 import { VietQrTopupModal } from "./vietqr-topup-modal"
 
 type Kind = "TOPUP" | "GIFT" | "REFUND"
@@ -71,7 +71,7 @@ export function CreditLedgerPanel({ organizationId, orgCode, onChanged }: { orga
       {!data && !error && <SkeletonBlock lines={3} label="Đang tải sổ credit" />}
       {data && (
         <>
-          <p className="text-title-sm font-extrabold text-text">{data.balance.toLocaleString("vi-VN")} credit</p>
+          <p className="text-title-sm font-extrabold text-text">{formatNumber(data.balance)} credit</p>
           <div className="flex flex-wrap items-center gap-2">
             {(["TOPUP", "GIFT", "REFUND"] as const).map((k) => (
               <Button key={k} type="button" size="sm" variant={kind === k ? "primary" : "outline"} onClick={() => setKind(k)}>{KIND_LABEL[k]}</Button>
@@ -86,8 +86,8 @@ export function CreditLedgerPanel({ organizationId, orgCode, onChanged }: { orga
               <li key={e.id} className="flex flex-wrap items-center justify-between gap-2 py-2">
                 <span className="text-text">{KIND_LABEL[e.kind]} · {e.reason ?? "—"}</span>
                 <span className="text-text-muted">{formatDateTime(e.createdAt)}</span>
-                <span className={e.amount < 0 ? "font-semibold text-danger-text" : "font-semibold text-success-text"}>{e.amount > 0 ? "+" : ""}{e.amount.toLocaleString("vi-VN")}</span>
-                <span className="text-text-muted">Còn {e.balanceAfter.toLocaleString("vi-VN")}</span>
+                <span className={e.amount < 0 ? "font-semibold text-danger-text" : "font-semibold text-success-text"}>{e.amount > 0 ? "+" : ""}{formatNumber(e.amount)}</span>
+                <span className="text-text-muted">Còn {formatNumber(e.balanceAfter)}</span>
               </li>
             ))}
           </ul>
