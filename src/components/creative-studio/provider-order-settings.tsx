@@ -91,7 +91,7 @@ export function ProviderOrderSettings({ canEdit }: { canEdit: boolean }) {
     <div className="flex flex-col gap-4">
       {message && (
         <div
-          className={`flex items-center gap-2 rounded-xl border p-3 text-xs ${message.ok ? "border-success/30 bg-success/10 text-success" : "border-danger/30 bg-danger/10 text-danger"}`}
+          className={`flex items-center gap-2 rounded-xl border p-3 text-xs ${message.ok ? "border-success/30 bg-success/10 text-success" : "border-danger/30 bg-danger/10 text-danger-text"}`}
         >
           {message.ok ? <CheckCircle2 size={15} /> : <AlertCircle size={15} />}
           <span>{message.text}</span>
@@ -131,10 +131,10 @@ export function ProviderOrderSettings({ canEdit }: { canEdit: boolean }) {
                       )}
                       {canEdit && (
                         <span className="flex shrink-0 gap-0.5">
-                          <button type="button" aria-label="Lên" disabled={i === 0} onClick={() => move(kind, i, -1)} className="rounded p-1 text-text-muted hover:bg-surface disabled:opacity-30">
+                          <button type="button" aria-label="Lên" disabled={i === 0} onClick={() => move(kind, i, -1)} className="inline-flex h-8 w-8 items-center justify-center rounded text-text-muted hover:bg-surface disabled:opacity-30">
                             <ArrowUp size={13} />
                           </button>
-                          <button type="button" aria-label="Xuống" disabled={i === order.length - 1} onClick={() => move(kind, i, 1)} className="rounded p-1 text-text-muted hover:bg-surface disabled:opacity-30">
+                          <button type="button" aria-label="Xuống" disabled={i === order.length - 1} onClick={() => move(kind, i, 1)} className="inline-flex h-8 w-8 items-center justify-center rounded text-text-muted hover:bg-surface disabled:opacity-30">
                             <ArrowDown size={13} />
                           </button>
                         </span>

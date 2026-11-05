@@ -104,7 +104,7 @@ export function BrandAssetsUploader({
   return (
     <div className="space-y-6">
       {errorMessage && (
-        <div className="rounded-xl border border-danger-border bg-danger-bg p-3.5 text-body-sm text-danger flex items-center justify-between">
+        <div className="rounded-xl border border-danger-border bg-danger-bg p-3.5 text-body-sm text-danger-text flex items-center justify-between">
           <span>{errorMessage}</span>
           <Button
             type="button"

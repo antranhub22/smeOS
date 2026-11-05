@@ -175,7 +175,7 @@ Chưa kiểm thủ công: bàn phím, phóng to 200%, trình đọc màn hình; 
 | Dự toán | Không còn báo "Tồn kho đã đủ" khi các mẫu chưa có công thức (`noPurchaseMessage`) |
 
 ### Còn lưu lại
-- `/cai-dat`: 8 lỗi tương phản + 2 ô thiếu nhãn — làm ở đợt rollout nhóm Cài đặt (PO 29/10/2026).
+- `/cai-dat`: 8 lỗi tương phản + 2 ô thiếu nhãn — đã xử lý 04/11/2026, xem mục "Nhóm Cài đặt" bên dưới.
 - Hồ sơ tiệm chưa lưu chính sách thì bộ ưu đãi mặc định (gồm "Giảm 10%") được coi là đang bật — tiệm tắt trong Cài đặt → Ưu đãi.
 - Ngoài phạm vi: `generate-banner-copy` gọi LLM trực tiếp, chưa qua `callCapability`.
 
@@ -201,3 +201,22 @@ Kịch bản `scripts/ux-audit/scenarios/hang-doi-loi.mjs` (rỗng; có 2 job l�
 
 Chưa kiểm: bàn phím, zoom 200%, đọc màn hình.
 
+
+## Nhóm Cài đặt — `/cai-dat` (10 tab), thành viên, thông báo, 5 ma trận, `/cai-dat-ai`, `/tich-hop` (04/11/2026)
+
+Đợt A-6 còn dở của kế hoạch PD 29/10, nay thuộc Đợt 1 StoreOS lõi (M4-01, ADR-011). Kịch bản `scripts/ux-audit/scenarios/cai-dat.mjs`, 21 trạng thái × 390/1280px.
+Trước: 12/21 trang lỗi axe (tương phản, ô không nhãn, vùng bấm nhỏ, tràn ngang). Sau: 20/21 sạch; tab "Luồng thẻ chào" còn lỗi trong tệp Thẻ chào đóng băng.
+
+| ID | Mức | Finding | Đã làm |
+|---|---|---|---|
+| CD-01 | P1 | Lưới chọn ngành phủ `opacity-60` khi đã khoá ngành → chữ 2,4:1 | Bỏ làm mờ, chỉ khoá thao tác |
+| CD-02 | P1 | Chữ `text-warning`/`text-danger` trên nền vàng/đỏ nhạt (2,98–4,25:1) ở 22 tệp | `text-warning-text`/`text-danger-text` (icon giữ nguyên) |
+| CD-03 | P1 | 5 ô chọn màu, 3 `select` phông/giọng, 6 ô chọn Base UI, 20 `select` (dịp, thu thập dữ liệu chuỗi, thông báo), ô số % ưu đãi, ô hướng dẫn thanh toán không có tên truy cập | `aria-label`/`htmlFor`; nhãn đặt trên `SelectTrigger` (trên `Select` gốc bị mất) |
+| CD-04 | P1 | Nút Lên/Xuống thứ tự nhà cung cấp AI 21px, sát nhau | Vùng bấm 32px |
+| CD-05 | P2 | Mã kỹ thuật trên màn: "M0…M5", "NONE/AGGREGATED/MASKED/RAW", "S0/S1/S2", khoá trường, "SuperAdmin", "Admin SaaS", "Proposal Mode", "(SLA)", "Book ship", "POD", "(Heading Font)" | Tiếng Việt; mốc nhắc hiện số thứ tự |
+| CD-06 | P2 | Nút "Mở khóa đổi ngành (Có phí)" chỉ bật `alert` | Dòng hướng dẫn liên hệ quản trị viên |
+| CD-07 | P2 | Xem trước màu thương hiệu: chữ trắng cố định trên nền vàng (2,1:1) | Chọn trắng/đen theo tương phản (`calculateContrastRatio`) |
+| CD-08 | P1 | Tab "Luồng thẻ chào": ô số, checkbox không nhãn, chữ cảnh báo thiếu tương phản, tràn ngang 401px ở 390px (ô nhập `flex-1` thiếu `min-w-0` trong `telegram-dispatch-connector.tsx`) | **Chưa sửa — cần PO:** tệp thuộc `src/components/greeting-card` đang đóng băng (PO 31/10/2026) |
+| CD-09 | P3 | `/cai-dat-ai` hiện tên model (GPT-4o, Gemini…) và từ nội bộ "bộ ảnh vàng", "chưa có khoá" | **Cần PO quyết:** tên model là nội dung chính của trang cấu hình — giữ hay đổi sang tên trung tính |
+
+Kiểm thêm: ảnh mốc `visual-journeys` `/cai-dat` khớp. `a11y-journeys` đỏ ở số đếm thanh điều hướng "06 · QUẢN TRỊ TIỆM" và phím ⌘K — **đỏ y hệt trên `main`** (khung giao diện, lane L3), không do đợt này. Chưa kiểm: bàn phím, zoom 200%, đọc màn hình thủ công.

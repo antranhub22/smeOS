@@ -58,7 +58,7 @@ export function AgreementsSection({
               value={a.internalText || ""}
               onChange={(e) => onUpdate(a.id, { internalText: e.target.value })}
               placeholder="Quy chuẩn xử lý nội bộ..."
-              className="text-caption text-text-muted/70 italic bg-transparent border-t border-border/40 pt-1 focus:outline-none"
+              className="text-caption text-text-muted italic bg-transparent border-t border-border/40 pt-1 focus:outline-none"
             />
           </div>
         ))}

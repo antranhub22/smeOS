@@ -85,7 +85,7 @@ export function LoadMockDataButton({ currentIndustry, onApplied }: LoadMockDataB
           className={`text-caption p-2 rounded-lg flex items-center gap-1.5 ${
             msg.type === "success"
               ? "bg-success-bg text-primary border border-success-border"
-              : "bg-warning-bg text-warning border border-warning/30"
+              : "bg-warning-bg text-warning-text border border-warning/30"
           }`}
         >
           {msg.type === "success" ? <CheckCircle2 size={13} /> : <AlertCircle size={13} />}

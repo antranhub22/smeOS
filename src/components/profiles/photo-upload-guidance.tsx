@@ -52,14 +52,14 @@ export function PhotoUploadGuidance({
   const statusConfig = {
     empty: {
       icon: <Info size={13} />,
-      badgeClass: "bg-warning-bg text-warning border-warning-border",
+      badgeClass: "bg-warning-bg text-warning-text border-warning-border",
       barClass: "bg-warning",
       barWidth: "5%",
       label: `Khuyến nghị ${tier.optimal}–${tier.max} ${categoryLabel}`,
     },
     partial: {
       icon: <AlertCircle size={13} />,
-      badgeClass: "bg-warning-bg text-warning border-warning-border",
+      badgeClass: "bg-warning-bg text-warning-text border-warning-border",
       barClass: "bg-warning",
       barWidth: `${Math.round((currentCount / tier.optimal) * 100)}%`,
       label: `Còn thiếu ${remaining} ${categoryLabel} để đạt tối ưu`,

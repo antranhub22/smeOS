@@ -45,7 +45,7 @@ export function MarketplaceStoreCard({ store, onQuickView, selection }: Marketpl
           aria-pressed={selection.selected}
           aria-label={`${selection.selected ? "Bỏ chọn" : "Chọn"} ${identity.shopName}`}
           onClick={selection.onToggle}
-          className={`absolute inset-0 z-30 h-auto w-auto rounded-2xl p-0 ${selection.selected ? "bg-danger-bg/40 ring-2 ring-inset ring-danger hover:bg-danger-bg/40" : "hover:bg-surface-alt/30"}`}
+          className={`absolute inset-0 z-30 h-auto w-auto rounded-2xl p-0 ${selection.selected ? "bg-danger-bg/40 ring-2 ring-inset ring-danger" : "hover:bg-surface-alt/30"}`}
         >
           <span
             className={`absolute right-3 bottom-3 flex h-8 w-8 items-center justify-center rounded-lg border-2 ${

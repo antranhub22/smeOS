@@ -193,10 +193,10 @@ export function BrandProfileForm({ initialData, onSave, saving }: BrandProfileFo
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           <div>
-            <label className="block text-caption font-semibold text-text mb-1.5">
-              Phông chữ tiêu đề (Heading Font)
+            <label className="block text-caption font-semibold text-text mb-1.5" htmlFor="brand-font-heading">
+              Phông chữ tiêu đề
             </label>
-            <select
+            <select id="brand-font-heading"
               value={fontHeading}
               onChange={(e) => setFontHeading(e.target.value)}
               className="w-full rounded-xl border border-border bg-surface px-3.5 py-2.5 text-body-sm text-text transition-all focus:border-primary focus:outline-none"
@@ -210,10 +210,10 @@ export function BrandProfileForm({ initialData, onSave, saving }: BrandProfileFo
           </div>
 
           <div>
-            <label className="block text-caption font-semibold text-text mb-1.5">
-              Phông chữ nội dung (Body Font)
+            <label className="block text-caption font-semibold text-text mb-1.5" htmlFor="brand-font-body">
+              Phông chữ nội dung
             </label>
-            <select
+            <select id="brand-font-body"
               value={fontBody}
               onChange={(e) => setFontBody(e.target.value)}
               className="w-full rounded-xl border border-border bg-surface px-3.5 py-2.5 text-body-sm text-text transition-all focus:border-primary focus:outline-none"
@@ -231,22 +231,22 @@ export function BrandProfileForm({ initialData, onSave, saving }: BrandProfileFo
       {/* Khối 3: Giọng văn thương hiệu & Rào chắn nội dung AI */}
       <div className="rounded-2xl border border-border bg-surface p-5 sm:p-6 shadow-xs">
         <div className="flex items-center gap-2.5 pb-4 border-b border-border mb-5">
-          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-warning/10 text-warning">
+          <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-warning/10 text-warning-text">
             <Sparkles size={18} />
           </div>
           <div>
-            <h3 className="text-body font-bold text-text">Giọng văn AI & Rào chắn thương hiệu ngành hoa</h3>
-            <p className="text-caption text-text-muted">Khóa chặt phong cách và ngữ từ của AI Gateway khi viết bài tiếp thị & tư vấn khách</p>
+            <h3 className="text-body font-bold text-text">Giọng văn AI & giới hạn nội dung thương hiệu</h3>
+            <p className="text-caption text-text-muted">Giữ đúng phong cách và từ ngữ khi AI viết bài tiếp thị và tư vấn khách</p>
           </div>
         </div>
 
         <div className="space-y-5">
           {/* Dropdown Tông giọng */}
           <div>
-            <label className="block text-body-sm font-bold text-text mb-1.5">
-              Định vị Tông giọng Trợ lý AI (Tone of Voice)
+            <label className="block text-body-sm font-bold text-text mb-1.5" htmlFor="brand-tone">
+              Định vị Tông giọng Trợ lý AI
             </label>
-            <select
+            <select id="brand-tone"
               value={toneOfVoice}
               onChange={(e) => setToneOfVoice(e.target.value)}
               className="w-full rounded-xl border border-border bg-surface px-3.5 py-2.5 text-body-sm text-text transition-all focus:border-primary focus:outline-none"

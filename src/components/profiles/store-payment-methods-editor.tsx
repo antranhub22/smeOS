@@ -92,7 +92,7 @@ export function StorePaymentMethodsEditor() {
             className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-caption font-bold self-start sm:self-auto ${
               currentConfig.accountNo
                 ? "bg-success-bg text-success border border-success/20"
-                : "bg-warning-bg text-warning border border-warning/20"
+                : "bg-warning-bg text-warning-text border border-warning/20"
             }`}
           >
             {currentConfig.accountNo ? "Tài khoản VietQR sẵn sàng" : "Chưa nhập số tài khoản nhận tiền"}
@@ -104,7 +104,7 @@ export function StorePaymentMethodsEditor() {
             className={`mt-4 p-3 rounded-xl text-caption flex items-center gap-2 border ${
               message.kind === "ok"
                 ? "bg-success-bg text-primary border-success-border"
-                : "bg-danger/10 text-danger border-danger/20"
+                : "bg-danger/10 text-danger-text border-danger/20"
             }`}
           >
             {message.kind === "ok" ? <CheckCircle2 size={16} /> : <AlertCircle size={16} />}

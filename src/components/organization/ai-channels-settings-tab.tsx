@@ -23,7 +23,7 @@ export function AiChannelsSettingsTab() {
           </div>
           <h3 className="text-body-sm font-bold text-text">Thiết Lập Trợ Lý AI</h3>
           <p className="text-caption text-text-muted mt-1 leading-relaxed">
-            Quản lý các đề xuất của AI (Proposal Mode), bảo vệ dữ liệu cá nhân và cài đặt giới hạn chi phí.
+            Quản lý đề xuất của AI, bảo vệ dữ liệu cá nhân và đặt giới hạn chi phí.
           </p>
         </div>
         <Link

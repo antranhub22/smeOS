@@ -88,7 +88,7 @@ export function AddStaffDialog({
         </div>
       ) : (
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          {error && <div role="alert" className="rounded-xl border border-warning/30 bg-warning-bg p-3 text-caption text-warning">{error}</div>}
+          {error && <div role="alert" className="rounded-xl border border-warning/30 bg-warning-bg p-3 text-caption text-warning-text">{error}</div>}
           <label className="flex flex-col gap-1.5 text-body-sm font-semibold text-text">
             <span className="flex items-center gap-1.5"><User size={15} className="text-text-muted" />Họ tên nhân viên</span>
             <Input value={name} maxLength={100} placeholder="VD: Nguyễn Thị Lan" onChange={(e) => setName(e.target.value)} disabled={submitting} />

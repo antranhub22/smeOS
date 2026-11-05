@@ -115,7 +115,7 @@ export function IndustrySelectSection({
           {isUnlocked ? (
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-success-bg text-success border border-success/20 text-caption font-bold">
               <Unlock size={13} />
-              <span>{isSuperAdmin ? "SuperAdmin (Toàn quyền đổi ngành)" : "Mở khoá đa ngành"}</span>
+              <span>{isSuperAdmin ? "Quản trị nền tảng — được đổi ngành" : "Được đổi ngành"}</span>
             </span>
           ) : (
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-surface-alt text-text-muted border border-border text-caption font-semibold">
@@ -167,7 +167,7 @@ export function IndustrySelectSection({
                   isSelected
                     ? "border-primary bg-primary/5 ring-2 ring-primary/20 shadow-xs"
                     : "border-border bg-surface hover:border-primary/40"
-                } ${!isUnlocked ? "cursor-not-allowed opacity-60" : "cursor-pointer"}`}
+                } ${!isUnlocked ? "cursor-not-allowed" : "cursor-pointer"}`}
               >
                 <div>
                   <div className="flex items-center justify-between w-full mb-1">
@@ -216,18 +216,10 @@ export function IndustrySelectSection({
         {!isUnlocked && (
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3 rounded-xl bg-surface-alt border border-border mt-3">
             <div className="flex items-center gap-2 text-caption text-text-muted">
-              <Lock size={14} className="text-warning shrink-0" />
+              <Lock size={14} className="text-text-muted shrink-0" />
               <span>Ngành nghề được khóa để bảo vệ toàn vẹn dữ liệu mẫu sản phẩm và catalog đã tạo.</span>
             </div>
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => alert("Vui lòng liên hệ quản trị viên smeOS hoặc nâng cấp gói để chuyển đổi mô hình ngành nghề kinh doanh.")}
-              className="text-caption font-bold shrink-0"
-            >
-              <span>Mở khóa đổi ngành (Có phí)</span>
-            </Button>
+            <p className="text-caption text-text-muted shrink-0">Cần đổi ngành? Liên hệ quản trị viên smeOS.</p>
           </div>
         )}
 

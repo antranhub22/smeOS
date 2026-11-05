@@ -1,5 +1,7 @@
 import type { TenantContext } from "@/core/tenancy"
 import { log } from "@/core/observability/log"
+import type { AssetUsage } from "@/modules/assets/domain/asset-lifecycle"
+import { findAssetUsages } from "@/modules/assets/infra/asset-usage-guard"
 import { deleteAssetAndEnqueuePayloads } from "@/modules/assets/infra/payload-outbox"
 import { processStorageOutbox, type OutboxSummary } from "@/modules/assets/use-cases/process-storage-outbox"
 import { findExpiredTrashedAssets, type ExpiredTrashedAsset } from "../infra/expired-trash-query"
@@ -10,11 +12,13 @@ const TRASH_BATCH_SIZE = 100
 export type TrashSweepDeps = {
   findExpired: (now: Date, limit: number) => Promise<ExpiredTrashedAsset[]>
   remove: (ctx: TenantContext, asset: ExpiredTrashedAsset) => Promise<boolean>
+  usages: (ctx: TenantContext, assetId: string) => Promise<AssetUsage[]>
 }
 
 const defaultTrashDeps: TrashSweepDeps = {
   findExpired: findExpiredTrashedAssets,
   remove: (ctx, asset) => deleteAssetAndEnqueuePayloads(ctx, asset, "trash.auto_purge"),
+  usages: findAssetUsages,
 }
 
 function systemContext(organizationId: string): TenantContext {
@@ -23,12 +27,20 @@ function systemContext(organizationId: string): TenantContext {
 
 /**
  * Xoá vĩnh viễn asset quá hạn thùng rác (30 ngày, SDAGF D-03), bỏ qua asset
- * đang legal hold (lọc ở truy vấn). Thay cơ chế dọn "lười" lúc mở danh sách.
+ * đang legal hold (lọc ở truy vấn) và asset đang được dùng ở nơi khác. Thay
+ * cơ chế dọn "lười" lúc mở danh sách.
  */
 export async function sweepExpiredTrash(now: Date, deps: TrashSweepDeps = defaultTrashDeps): Promise<number> {
   let removed = 0
   for (const asset of await deps.findExpired(now, TRASH_BATCH_SIZE)) {
-    if (await deps.remove(systemContext(asset.organization_id), asset)) removed += 1
+    const ctx = systemContext(asset.organization_id)
+    // Ảnh đang được dùng (vd. chứng từ thanh toán) vẫn ở thùng rác, không xoá (SDAGF-012)
+    const inUse = await deps.usages(ctx, asset.id)
+    if (inUse.length > 0) {
+      log.warn("storage.trash_sweep_skipped_in_use", { organizationId: asset.organization_id, assetId: asset.id, usages: inUse.join(",") })
+      continue
+    }
+    if (await deps.remove(ctx, asset)) removed += 1
   }
   return removed
 }

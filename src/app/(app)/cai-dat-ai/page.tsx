@@ -148,7 +148,7 @@ export default function AiSettingsPage() {
 
       {/* Thông báo trạng thái */}
       {error && (
-        <div className="flex items-center gap-2 p-3 text-caption bg-danger/10 text-danger border border-danger/30 rounded-xl">
+        <div className="flex items-center gap-2 p-3 text-caption bg-danger/10 text-danger-text border border-danger/30 rounded-xl">
           <AlertCircle size={15} />
           <span>{error}</span>
         </div>
@@ -239,7 +239,7 @@ export default function AiSettingsPage() {
                   <div className="flex flex-col items-end">
                     <span className="text-caption text-text-muted uppercase font-bold">Sàn bảo mật</span>
                     {isSensitive ? (
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-warning/10 text-warning text-caption font-bold border border-warning/30">
+                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-warning/10 text-warning-text text-caption font-bold border border-warning/30">
                         <Lock size={10} />
                         SENSITIVE (Khóa cứng)
                       </span>

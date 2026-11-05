@@ -2,6 +2,7 @@ import { afterAll, beforeEach, describe, expect, it } from "vitest"
 
 import type { TenantContext } from "@/core/tenancy"
 import { countPayloadReferences } from "@/modules/assets/infra/payload-references"
+import { findAssetUsages } from "@/modules/assets/infra/asset-usage-guard"
 import { deleteAssetAndEnqueuePayloads, listPendingOutbox } from "@/modules/assets/infra/payload-outbox"
 import { setLegalHoldUntil, setOrganizationLegalHoldUntil } from "@/modules/assets/infra/legal-hold"
 import { loadRegistryKeys } from "@/modules/assets/infra/storage-registry-keys"
@@ -92,6 +93,19 @@ describe("cách ly tenant — vòng đời kho tệp (SDAGF P1)", () => {
     }
     const { registry } = await loadRegistryKeys()
     expect([qc, pod, audio].every((k) => registry.has(k))).toBe(true)
+  })
+
+  it("ảnh là chứng từ thanh toán được nhận là đang dùng — chỉ trong tổ chức của nó (SDAGF-012)", async () => {
+    const proof = await seedAsset(a.ctx)
+    const order = await prisma.orders.create({
+      data: { organization_id: a.organizationId, code: "SDAGF-PAY", source: "BROCHURE", status: "CONFIRMED", total_vnd: 1, paid_vnd: 1, balance_vnd: 0, created_by: "test" },
+    })
+    await prisma.order_payments.create({
+      data: { organization_id: a.organizationId, order_id: order.id, kind: "DEPOSIT", amount_vnd: 1, collected_by: "test", evidence_asset_id: proof.id },
+    })
+    expect(await findAssetUsages(a.ctx, proof.id)).toEqual(["payment_proof"])
+    expect(await findAssetUsages(b.ctx, proof.id)).toEqual([])
+    expect(await findAssetUsages(a.ctx, (await seedAsset(a.ctx)).id)).toEqual([])
   })
 
   it("quét thùng rác: chỉ lấy asset quá hạn và không còn legal hold", async () => {

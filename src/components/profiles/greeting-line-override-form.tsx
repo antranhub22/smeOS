@@ -131,7 +131,7 @@ export function GreetingLineOverrideForm() {
         </div>
       )}
       {error && (
-        <div className="flex items-center gap-2.5 rounded-2xl border border-danger/30 bg-danger/10 p-4 text-body-sm font-medium text-danger shadow-xs">
+        <div className="flex items-center gap-2.5 rounded-2xl border border-danger/30 bg-danger/10 p-4 text-body-sm font-medium text-danger-text shadow-xs">
           <AlertCircle size={18} className="text-danger flex-shrink-0" />
           <span>{error}</span>
         </div>

@@ -35,7 +35,7 @@ interface OccasionRow {
 }
 
 const REGISTER_BADGE_CLASS: Record<OccasionRegisterValue, string> = {
-  FESTIVE: "bg-warning/10 text-warning border-warning/30",
+  FESTIVE: "bg-warning/10 text-warning-text border-warning/30",
   NEUTRAL: "bg-surface-alt text-text-muted border-border",
   SOLEMN: "bg-primary/10 text-primary border-primary/30",
 }
@@ -131,7 +131,7 @@ export function OccasionsSettingsForm() {
         </div>
       )}
       {error && (
-        <div className="flex items-center gap-2.5 rounded-2xl border border-danger/30 bg-danger/10 p-4 text-body-sm font-medium text-danger shadow-xs">
+        <div className="flex items-center gap-2.5 rounded-2xl border border-danger/30 bg-danger/10 p-4 text-body-sm font-medium text-danger-text shadow-xs">
           <AlertCircle size={18} className="text-danger flex-shrink-0" />
           <span>{error}</span>
         </div>
@@ -165,6 +165,7 @@ export function OccasionsSettingsForm() {
             className="text-body-sm"
           />
           <NativeSelect
+            aria-label="Giọng điệu của dịp mới"
             value={newRegister}
             onChange={(e) => setNewRegister(e.target.value as OccasionRegisterValue)}
             className="text-body-sm"
@@ -205,6 +206,7 @@ export function OccasionsSettingsForm() {
                 </div>
 
                 <NativeSelect
+                  aria-label={`Giọng điệu — ${o.name}`}
                   value={o.register}
                   onChange={(e) => patchOccasion(o.id, { register: e.target.value as OccasionRegisterValue })}
                   disabled={saving}

@@ -15,7 +15,7 @@ acceptance:
 
 # Screen Contract — Cài Đặt Tiệm & Cấu Hình Hoạt Động
 
-**Tuyến:** `/cai-dat` · **Tệp chính:** `src/app/(app)/cai-dat/page.tsx` · **Cập nhật:** 27/09/2026 · **Thẻ:** T5.D9
+**Tuyến:** `/cai-dat` · **Tệp chính:** `src/app/(app)/cai-dat/page.tsx` · **Cập nhật:** 04/11/2026 · **Thẻ:** T5.D9
 
 ## 1. Vai và mục đích
 - Vai chính (03b): `store_manager`, `operations_manager`
@@ -65,6 +65,7 @@ acceptance:
 - Form: Toàn bộ input có label rõ ràng, kết hợp icon trực quan.
 - Thẻ liên kết: Dùng thẻ `Link` semantic với `focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary`.
 - Thông báo: Thông báo thành công và lỗi có icon và text rõ nghĩa.
+- Audit 04/11/2026 (`npm run ux:audit -- cai-dat`, 10 tab + 9 trang con, 390/1280px): mọi ô chọn/nhập/chọn màu có tên truy cập; chữ trên nền vàng/đỏ nhạt dùng `text-warning-text`/`text-danger-text`; lưới chọn ngành khi đã khoá **không** làm mờ (chỉ khoá thao tác) và không còn nút "Mở khóa đổi ngành (Có phí)" chỉ bật `alert` — thay bằng dòng hướng dẫn liên hệ quản trị viên; không hiện mã kỹ thuật (mốc nhắc điều phối hiện số thứ tự 1–5, lựa chọn thu thập dữ liệu chuỗi bằng tiếng Việt, không hiện khoá trường). Tab "Luồng thẻ chào" còn lỗi trong tệp Thẻ chào đang đóng băng (PO 31/10/2026) — chờ PO.
 
 ## 9. AI
 - Dữ liệu tên tiệm và hotline từ đây được đồng bộ vào các kịch bản AI Content và AI Chat Sales.
