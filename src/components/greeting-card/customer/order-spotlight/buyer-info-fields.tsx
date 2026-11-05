@@ -21,6 +21,8 @@ export function BuyerInfoFields({
   onSameAsRecipientChange,
   sameAsRecipientLabel = "Tôi cũng là người nhận",
   sameAsRecipientHint = "Dùng họ tên và số điện thoại ở trên để nhận hàng.",
+  rememberBuyer,
+  onRememberBuyerChange,
 }: {
   idPrefix: string
   inputClassName: string
@@ -35,6 +37,9 @@ export function BuyerInfoFields({
   onSameAsRecipientChange?: ((v: boolean) => void) | undefined
   sameAsRecipientLabel?: string | undefined
   sameAsRecipientHint?: string | undefined
+  /** Lưu họ tên, SĐT, email trên máy này cho lần đặt sau — chỉ khi khách đồng ý */
+  rememberBuyer?: boolean | undefined
+  onRememberBuyerChange?: ((v: boolean) => void) | undefined
 }) {
   return (
     <>
@@ -106,6 +111,18 @@ export function BuyerInfoFields({
             <span className="block text-body-sm font-bold text-text">{sameAsRecipientLabel}</span>
             <span className="block text-caption text-text-muted">{sameAsRecipientHint}</span>
           </span>
+        </label>
+      )}
+
+      {rememberBuyer !== undefined && onRememberBuyerChange && (
+        <label htmlFor={`${idPrefix}-rememberBuyer`} className="flex cursor-pointer items-center gap-3 text-body-sm text-text-muted">
+          <Checkbox
+            id={`${idPrefix}-rememberBuyer`}
+            checked={rememberBuyer}
+            onCheckedChange={(checked) => onRememberBuyerChange(checked === true)}
+            className="h-5 w-5 shrink-0 accent-primary"
+          />
+          Lưu thông tin người đặt trên máy này cho lần sau
         </label>
       )}
     </>

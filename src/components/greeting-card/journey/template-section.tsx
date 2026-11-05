@@ -95,6 +95,7 @@ export function TemplateSection({ catalog, onSave, canEditSharedDisplay = true }
           onOpenChange={(o) => !o && setSettingsFor(null)}
           templateId={settingsFor}
           settings={display.settings}
+          shop={display.shop}
           onSave={display.save}
         />
       )}

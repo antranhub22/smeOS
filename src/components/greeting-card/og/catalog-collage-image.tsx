@@ -73,12 +73,45 @@ function LogoMark({ logo, shopName, size, wide }: { logo: string | null; shopNam
   )
 }
 
-/** 1 ảnh: phủ kín · 2 ảnh: chính + 1 phụ · từ 3 ảnh: chính 70% + 2 phụ, nhãn "+N" khi còn mẫu. */
+/** Lưới 2×2 cho bộ sưu tập có từ 4 ảnh (ALG 5.4). */
+function Grid({ images, more }: { images: string[]; more: number }) {
+  const w = (GALLERY.width - GALLERY.gap) / 2
+  const h = (GALLERY.height - GALLERY.gap) / 2
+  return (
+    <div style={{ display: "flex", flexWrap: "wrap", width: GALLERY.width, gap: GALLERY.gap }}>
+      {images.map((src, i) => (
+        <div key={i} style={{ display: "flex", position: "relative" }}>
+          <Photo src={src} width={w} height={h} dim={i > 0} />
+          {i === images.length - 1 && more > 0 && <MoreBadge count={more} />}
+        </div>
+      ))}
+    </div>
+  )
+}
+
+/** Số ô ảnh theo số mẫu có ảnh: 1 → phủ kín, 2 → chính + 1, 3 → chính + 2, từ 4 → lưới 2×2. */
+export function collageCellCount(imageCount: number): number {
+  return Math.min(Math.max(imageCount, 0), 4)
+}
+
+/** Mã QR trong khung sáng — quét để mở đúng link đang chia sẻ. */
+function QrBadge({ src }: { src: string }) {
+  return (
+    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4, padding: 8, borderRadius: 10, background: C.cream, color: C.ink }}>
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img src={src} width={104} height={104} alt="" />
+      <div style={{ fontSize: 14, fontWeight: 700 }}>Quét để xem</div>
+    </div>
+  )
+}
+
+/** 1 ảnh: phủ kín · 2 ảnh: chính + 1 phụ · 3 ảnh: chính 70% + 2 phụ · 4 ảnh: lưới 2×2; nhãn "+N" khi còn mẫu. */
 function Gallery({ images, productCount }: { images: string[]; productCount: number }) {
-  const shown = images.slice(0, 3)
+  const shown = images.slice(0, collageCellCount(images.length))
   const [main, ...sides] = shown
   const more = productCount - shown.length
   if (!main) return null
+  if (shown.length === 4) return <Grid images={shown} more={more} />
   if (sides.length === 0) return <Photo src={main} width={GALLERY.width} height={GALLERY.height} />
   const sideHeight = sides.length === 1 ? GALLERY.height : (GALLERY.height - GALLERY.gap) / 2
   return (
@@ -171,6 +204,11 @@ export function renderCatalogCollage(data: CatalogCollageData, init?: ResponseIn
             <EmptyGallery logo={data.logo} shopName={data.shopName} />
           )}
         </div>
+        {data.qr && (
+          <div style={{ position: "absolute", left: 1200 - 56 - GALLERY.width + 14, top: 74 + GALLERY.height - 150, display: "flex" }}>
+            <QrBadge src={data.qr} />
+          </div>
+        )}
       </div>
     ),
     { ...COLLAGE_SIZE, ...init }

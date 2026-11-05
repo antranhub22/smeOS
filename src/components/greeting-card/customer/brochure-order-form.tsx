@@ -64,7 +64,7 @@ export function BrochureOrderForm({
     customerName, customerPhone, customerEmail, recipientName, recipientPhone, deliveryDate, deliveryTimeSlot, addressParts,
     cardMessage, senderNote, deliveryNote, mapUrl,
     setCustomerName, setCustomerPhone, setCustomerEmail, setRecipientName, setRecipientPhone, setDeliveryDate, setDeliveryTimeSlot, setAddressParts,
-    setNotes, clearDraft,
+    setNotes, clearDraft, rememberBuyer, setRememberBuyer,
   } = useOrderDraft()
 
   const [checkOutDate, setCheckOutDate] = useState(() => {
@@ -229,6 +229,8 @@ export function BrochureOrderForm({
             onCustomerPhoneChange={setCustomerPhone}
             onCustomerEmailChange={setCustomerEmail}
             onSameAsRecipientChange={isHomestay ? setIsSelfBooking : setSameAsRecipient}
+            rememberBuyer={rememberBuyer}
+            onRememberBuyerChange={setRememberBuyer}
             {...(isHomestay
               ? { sameAsRecipientLabel: "Tôi là người nhận phòng", sameAsRecipientHint: "Dùng họ tên và số điện thoại ở trên để nhận phòng." }
               : {})}

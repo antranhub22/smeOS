@@ -132,7 +132,7 @@ Toàn bộ báo cáo dựng ở module mới `src/modules/reporting` (truy vấn
 | 5.14 | Thay một loại hoa phụ: tiệm chụp ảnh hoa thay thế, ghi lý do; khách đồng ý/không trên điện thoại; công thức cắm của đơn cập nhật dòng hoa đó | `gc/use-cases/substitute.ts`, trang khách, kho ảnh | TC, Q12 | `tt/greeting-card-substitute.test.ts`: đề xuất thay hoa có ảnh, khách đồng ý → BOM đơn đổi đúng dòng | 3 |
 | 5.15 | Màn cảm ơn phát mã giảm giá dùng một lần gắn khách (`issueVoucherBatch` dạng một mã); lưu thông tin người đặt cho lần sau (theo đồng ý của khách) | `src/components/greeting-card/customer/customer-thank-you-card.tsx`, `src/modules/promotions` | TC | `tt/thank-you-voucher.test.ts`: hoàn tất đơn → đúng một mã, dùng được ở đơn sau, không dùng được bởi khách khác | 2 |
 | 7.2 | Luồng một bước "Từ 1 ảnh": phân tích ảnh → thẻ sản phẩm nháp → nội dung bán hàng → đề xuất giá vốn từ BOM × đơn giá nguyên liệu → bài đăng Facebook/Zalo (content-engine) → thẻ A6 Thẻ Chào; theo dõi bằng job, trừ credit từng bước, hoàn khi lỗi | `src/modules/journey`, `src/modules/product-copies`, `src/modules/costing`, `src/modules/content-engine` | Q12 | `tt/one-image-kit.test.ts` (AI giả lập): một ảnh sinh đủ 5 đầu ra; lỗi giữa chừng hoàn credit | 5 |
-| 7.3 | Thêm tiêu chí "có bài viết đã duyệt"; chặn chuyển `ACTIVE` khi chưa sẵn sàng (trả danh sách thiếu) | `src/modules/products/domain/product-readiness.ts`, `src/modules/products/use-cases/update-product.ts` | — | `product-readiness.test.ts`; `tt/products-readiness.test.ts`: chưa đủ → 422 kèm lý do | 1,5 |
+| 7.3 | Thêm tiêu chí "có bài viết đã duyệt"; mở bán khi chưa sẵn sàng vẫn lưu và trả danh sách còn thiếu để cảnh báo (PO: chỉ cảnh báo, không chặn) | `src/modules/products/domain/product-readiness.ts`, `src/modules/products/use-cases/update-product.ts` | — | `product-readiness.test.ts`; `tt/products-readiness.test.ts`: chưa đủ → lưu thành công kèm lý do | 1,5 |
 | 9.3 | Thêm trường thông điệp thương hiệu và khách mục tiêu vào hồ sơ kinh doanh; đưa vào ngữ cảnh AI | `prisma/schema.prisma`, `api/business-profile`, `src/modules/content-engine/infra/read-shop-context.ts`, `business-profile-form.tsx` | DB | `tt/cach-ly-endpoint.test.ts` mở rộng; test ngữ cảnh AI có hai trường | 1 |
 
 ### Đợt 7 — Cách ly dữ liệu tầng CSDL
@@ -179,9 +179,9 @@ Mọi bảng mới có `organization_id` + `@@index([organization_id])` (trừ b
 | 3 | 6 | 6 |
 | 4 | 9 | 8 |
 | 5 | 6 | 6 |
-| 6 | 8 | 2 |
+| 6 | 8 | 8 |
 | 7 | 1 | 0 |
-| **Tổng** | **54** | **46** |
+| **Tổng** | **54** | **52** |
 
 Đợt 2 hoàn thiện đủ 11/11 chức năng. Phần mở rộng còn theo dõi: link giao riêng cho shipper thuê ngoài (4.5), đưa đơn Thẻ Chào vào hàng đợi của tài khoản thợ (4.13), giá vốn theo phiên bản (2.4), ẩn mẫu bị khoá khỏi danh sách trên link theo ngày khách chọn trước (2.8). Shipper nội bộ được gắn đơn theo số điện thoại Điều phối ghi khi điều xe; Điều hành nhập số điện thoại nhân viên ở màn Thành viên.
 
@@ -190,5 +190,7 @@ Mọi bảng mới có `organization_id` + `@@index([organization_id])` (trừ b
 Đợt 4 hoàn thiện 8/9 chức năng; 10.8 (tên miền riêng) hoãn theo PO Q11. Sổ cái credit (10.6), hạn mức credit tháng và trần AI (10.3, 9.7), cảnh báo credit (10.5), chi phí thật và biên lợi nhuận (10.4), gói thuê bao với hoá đơn VietQR và SePay (10.7, mã năng lực `N19`), Console tạo tổ chức (9.10) và tổng quan (9.8). Migration: `20261105220000_wave4_credit_usage_subscriptions`. Đối soát SePay bật khi cấu hình `SEPAY_PLATFORM_API_KEY`; Console cần khai tài khoản nhận tiền và giá từng gói. Vòng đời thuê bao xét khi cửa hàng thao tác, không cần lịch chạy nền. Còn theo dõi: đơn đặt qua link công khai vẫn nhận khi cửa hàng quá hạn.
 
 Đợt 5 hoàn thiện đủ 6/6 chức năng: trang Báo cáo theo kỳ `/bao-cao` (mã năng lực `R20`, Điều hành và Kế toán) với báo cáo đơn hàng và tỷ lệ trễ (6.1), doanh thu dự kiến và thực thu kèm danh sách đơn theo kỳ (6.2), sản phẩm, màu và phong cách (6.3), hiệu suất Sale/thợ/shipper (6.5), dòng tiền và đối chiếu ngân hàng (6.6); mức dùng AI theo tháng so với hạn mức gói (6.9). Không đổi lược đồ. Trên production, `/bao-cao` nằm trong nhóm khoá cùng `/so-lieu` và `/muc-dung` tới khi PO mở.
+
+Đợt 6 hoàn thiện đủ 8/8 chức năng: tiêu chí bài viết đã duyệt và cảnh báo khi mở bán (7.3), thông điệp thương hiệu và khách mục tiêu trong hồ sơ kinh doanh và ngữ cảnh AI (9.3, migration `20261105230000_business_profile_brand_audience`), ảnh ghép 3–4 mẫu kèm mã QR (5.4), công tắc giá và thông tin giảm giá (5.5), lọc màu trên mẫu vuốt (5.9), đổi một thành phần phụ kèm ảnh và sự đồng ý của khách (5.14), mã cảm ơn dùng một lần và lưu thông tin người đặt theo đồng ý của khách (5.15), luồng "Từ 1 ảnh" tạo thẻ sản phẩm, nội dung bán hàng, giá vốn đề xuất, bài đăng Facebook/Zalo và thẻ A6 (7.2). Khi cửa hàng tắt thông tin giảm giá, báo giá và đơn qua Thẻ Chào không áp ưu đãi; mã giảm giá khách tự nhập vẫn theo công tắc ô nhập mã.
 
 Khi mọi đợt hoàn tất, báo cáo ánh xạ đạt 123/123 chức năng Hoàn thiện và checklist bàn giao ALG đủ điều kiện nghiệm thu.

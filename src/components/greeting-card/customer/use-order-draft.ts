@@ -1,7 +1,9 @@
 "use client"
 
 import type { AddressParts } from "@/modules/greeting-card/domain/delivery-address"
+import { useEffect } from "react"
 import { useSavedState } from "./use-saved-state"
+import { readSavedBuyer, rememberBuyer } from "./saved-buyer"
 
 const EMPTY = {
   customerName: "",
@@ -16,6 +18,8 @@ const EMPTY = {
   senderNote: "",
   deliveryNote: "",
   mapUrl: "",
+  /** Khách đồng ý lưu thông tin người đặt trên máy này (ALG 5.15) */
+  rememberBuyer: false,
 }
 
 type Draft = typeof EMPTY
@@ -29,6 +33,12 @@ export function useOrderDraft() {
   // Nháp lưu từ bản cũ thiếu các ô mới → lấp bằng giá trị rỗng
   const draft = { ...EMPTY, ...saved }
   const field = <K extends keyof Draft>(k: K) => (v: Draft[K]) => setDraft({ ...draft, [k]: v })
+  // Thông tin người đặt đã lưu lần trước (khách đồng ý) → điền sẵn khi nháp còn trống
+  useEffect(() => {
+    const buyer = readSavedBuyer()
+    if (!buyer) return
+    setDraft((prev) => (prev.customerName || prev.customerPhone ? { ...EMPTY, ...prev, rememberBuyer: true } : { ...EMPTY, ...prev, ...buyer, rememberBuyer: true }))
+  }, [setDraft])
   return {
     ...draft,
     setCustomerName: field("customerName"),
@@ -48,6 +58,11 @@ export function useOrderDraft() {
     setDeliveryTimeSlot: field("deliveryTimeSlot"),
     setAddressParts: field("addressParts"),
     setNotes: (patch: Partial<Pick<Draft, "cardMessage" | "senderNote" | "deliveryNote" | "mapUrl">>) => setDraft({ ...draft, ...patch }),
-    clearDraft,
+    setRememberBuyer: field("rememberBuyer"),
+    /** Đặt thành công: lưu/xoá thông tin người đặt theo lựa chọn của khách, rồi xoá nháp */
+    clearDraft: () => {
+      rememberBuyer(draft.rememberBuyer, draft)
+      clearDraft()
+    },
   }
 }
