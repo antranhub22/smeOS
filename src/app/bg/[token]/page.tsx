@@ -4,6 +4,7 @@ import { Badge } from "@/components/ui/badge"
 import { formatDate, formatCurrency } from "@/lib/i18n/formatters"
 import { isQuotationExpired, QUOTATION_STATUS_LABELS } from "@/modules/sales/domain/quotation"
 import { getQuotationRepository } from "@/modules/sales/infra/quotation-repository"
+import { QuoteExportButtons } from "@/components/sales/quotation/quote-export-buttons"
 
 interface PageProps {
   params: Promise<{ token: string }>
@@ -30,7 +31,10 @@ export default async function PublicQuotationPage({ params }: PageProps) {
 
   return (
     <div className="min-h-screen bg-bg py-8 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-3xl mx-auto bg-surface rounded-2xl border border-border shadow-xs overflow-hidden">
+      <div className="max-w-3xl mx-auto mb-3 flex justify-end">
+        <QuoteExportButtons targetId="quote-card" fileName={`bao-gia-${quotation.code}`} />
+      </div>
+      <div id="quote-card" className="max-w-3xl mx-auto bg-surface rounded-2xl border border-border shadow-xs overflow-hidden">
         {/* Header */}
         <div className="p-6 border-b border-border bg-surface-alt/50">
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -102,10 +106,21 @@ export default async function PublicQuotationPage({ params }: PageProps) {
                   {quotation.items.map((it, idx) => (
                     <tr key={it.id || idx} className="hover:bg-surface-alt/40 transition-colors">
                       <td className="px-4 py-3.5">
-                        <div className="font-bold text-text">{it.name}</div>
-                        {it.note && (
-                          <div className="text-caption text-text-muted mt-0.5">{it.note}</div>
-                        )}
+                        <div className="flex items-start gap-3">
+                          {it.imageUrl && (
+                            // eslint-disable-next-line @next/next/no-img-element
+                            <img src={it.imageUrl} alt={`Ảnh mẫu ${it.name}`} className="h-16 w-16 flex-shrink-0 rounded-lg object-cover" />
+                          )}
+                          <div>
+                            <div className="font-bold text-text">{it.name}{it.variantLabel && !it.name.includes(it.variantLabel) ? ` — ${it.variantLabel}` : ""}</div>
+                            {it.composition.length > 0 && (
+                              <div className="text-caption text-text-muted mt-0.5">Thành phần: {it.composition.join(", ")}</div>
+                            )}
+                            {it.note && (
+                              <div className="text-caption text-text-muted mt-0.5">{it.note}</div>
+                            )}
+                          </div>
+                        </div>
                       </td>
                       <td className="px-4 py-3.5 text-center font-medium text-text">{it.qty}</td>
                       <td className="px-4 py-3.5 text-right font-medium text-text-muted">
@@ -132,6 +147,12 @@ export default async function PublicQuotationPage({ params }: PageProps) {
                 <div className="flex justify-between text-destructive">
                   <span>Ưu đãi / Giảm giá:</span>
                   <span className="font-semibold">-{formatCurrency(quotation.discountAmount)}</span>
+                </div>
+              )}
+              {quotation.shippingFee > 0 && (
+                <div className="flex justify-between text-text-muted">
+                  <span>Phí vận chuyển:</span>
+                  <span className="font-semibold text-text">{formatCurrency(quotation.shippingFee)}</span>
                 </div>
               )}
               <div className="flex justify-between text-title-sm font-extrabold text-primary border-t border-border pt-2">

@@ -1,5 +1,6 @@
 import type { Prisma } from "@/generated/prisma/client"
 import type { PublicQuotationView, Quotation, QuotationStatus } from "../domain/quotation"
+import { readFlowerNames } from "@/modules/products/domain/master-index-fields"
 
 /** Quan hệ nạp kèm mỗi lần đọc báo giá trong phạm vi tổ chức. */
 export const QUOTATION_INCLUDE = {
@@ -12,9 +13,13 @@ export type QuotationRowWithRelations = Prisma.quotationsGetPayload<{
   include: typeof QUOTATION_INCLUDE
 }>
 
-/** Quan hệ nạp kèm cho link công khai — chỉ tên người nhận, không số điện thoại. */
+/** Quan hệ nạp kèm cho link công khai — chỉ tên người nhận, không số điện thoại; mẫu chỉ ảnh và công thức. */
 export const PUBLIC_QUOTATION_INCLUDE = {
-  items: true,
+  items: {
+    include: {
+      product: { select: { category: true, attributes: true, images: { where: { role: "MAIN" }, take: 1, select: { asset_id: true } } } },
+    },
+  },
   lead: { select: { name: true } },
   customer: { select: { name: true } },
 } as const satisfies Prisma.quotationsInclude
@@ -61,7 +66,10 @@ export function toDomain(row: QuotationRowWithRelations): Quotation {
   }
 }
 
-export function toPublicView(row: PublicQuotationRow): PublicQuotationView {
+export type { PublicQuotationRow }
+
+/** `imageUrls`: asset → đường dẫn ký sẵn (chỉ asset của đúng tổ chức sở hữu báo giá). */
+export function toPublicView(row: PublicQuotationRow, imageUrls: ReadonlyMap<string, string> = new Map()): PublicQuotationView {
   return {
     code: row.code,
     status: row.status as QuotationStatus,
@@ -81,6 +89,8 @@ export function toPublicView(row: PublicQuotationRow): PublicQuotationView {
       unitPrice: Number(it.unit_price),
       totalPrice: Number(it.total_price),
       note: it.note,
+      imageUrl: (it.product?.images[0] && imageUrls.get(it.product.images[0].asset_id)) || null,
+      composition: it.product ? readFlowerNames({ category: it.product.category, attributes: it.product.attributes, analysis: null }) : [],
     })),
   }
 }

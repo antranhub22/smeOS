@@ -26,7 +26,7 @@ Ký hiệu đường dẫn rút gọn: `org/` = `src/modules/organization/`, `gc
 |---|---|---:|---:|---:|---:|
 | 1 | Nền tảng chung & phân quyền | 19 | 17 | 2 | 0 |
 | 2 | Quản lý sản phẩm, mẫu hoa & hình ảnh | 9 | 9 | 0 | 0 |
-| 3 | Tạo & quản lý báo giá | 13 | 11 | 2 | 0 |
+| 3 | Tạo & quản lý báo giá | 13 | 12 | 1 | 0 |
 | 4 | Tiếp nhận, quản lý & xử lý đơn hàng | 32 | 32 | 0 | 0 |
 | 5 | Thẻ Chào mẫu hoa & trang khách hàng | 15 | 10 | 5 | 0 |
 | 6 | Báo cáo hoạt động & tài chính | 9 | 3 | 6 | 0 |
@@ -34,9 +34,9 @@ Ký hiệu đường dẫn rút gọn: `org/` = `src/modules/organization/`, `gc
 | 8 | Landing page bán hàng | 1 | 1 | 0 | 0 |
 | 9 | Chat nội bộ, đa chuỗi & phân quyền nâng cao | 14 | 10 | 3 | 1 |
 | 10 | Quản lý credit AI, hạn mức & thuê bao SaaS | 8 | 2 | 3 | 3 |
-| | **Tổng cộng** | **123** | **96** | **23** | **4** |
+| | **Tổng cộng** | **123** | **97** | **22** | **4** |
 
-Tỷ lệ: Hoàn thiện 78,0% · Dang dở 18,7% · Chưa hoàn thành 3,3%.
+Tỷ lệ: Hoàn thiện 78,9% · Dang dở 17,9% · Chưa hoàn thành 3,3%.
 
 ### Bốn chức năng chưa hoàn thành
 
@@ -101,7 +101,7 @@ Tỷ lệ: Hoàn thiện 78,0% · Dang dở 18,7% · Chưa hoàn thành 3,3%.
 | 3.8 | Soạn & xem trước báo giá chuyên nghiệp | Hoàn thiện | `src/components/sales/quotation/customer-quote-builder.tsx`, `quote-preview-card.tsx`; chọn phiên bản kích cỡ cho từng mẫu và nhập phí vận chuyển `quote-line-options.tsx`; cột `quotation_items.variant_label`, `quotations.shipping_fee` (migration `20261105090000_quotation_shipping_variant_revisions`); tổng = tạm tính − ưu đãi + phí vận chuyển `src/modules/sales/domain/quotation.ts`; `api/quotations/route.ts` (R15); `tt/quotation-revisions.test.ts`, `src/modules/sales/use-cases/quotation.test.ts` | — |
 | 3.9 | Lưu & quản lý báo giá theo mã | Hoàn thiện | `schema:4099-4131` (`code`, `valid_until`, `customer_id`); `src/modules/sales/use-cases/quotation.test.ts:200` (tự hết hạn); `tt/quotation-public-link.test.ts:140` | Mã có dạng `BG-0001`, không phải `QUO-…` |
 | 3.10 | Điều chỉnh báo giá & lưu vết phiên bản | Hoàn thiện | Sửa dòng, tính lại tổng `src/modules/sales/use-cases/update-quotation.use-case.ts`; mỗi lần sửa nội dung lưu ảnh chụp bản trước (dòng, tổng, người sửa, thời điểm) vào bảng `quotation_revisions` `src/modules/sales/infra/quotation-revision-repository.ts`; `api/quotations/[id]/revisions` (R15); mục "Lịch sử sửa" trong danh sách báo giá `src/components/sales/quotation/quotation-revisions.tsx`; `tt/quotation-revisions.test.ts` (sửa 2 lần → 2 phiên bản, tổ chức khác → 404) | — |
-| 3.11 | Chia sẻ báo giá qua link / file PDF A6 | Dang dở | Link công khai `src/app/bg/[token]/page.tsx`, `src/modules/sales/infra/quotation-mapper.ts:62`; `tt/quotation-public-link.test.ts:61` (không lộ ghi chú nội bộ) | Xuất ảnh/PDF A6; trang khách không có hình và thành phần (`page.tsx:92-104` chỉ bảng tên–SL–giá) |
+| 3.11 | Chia sẻ báo giá qua link / file PDF A6 | Hoàn thiện | Link công khai `src/app/bg/[token]/page.tsx` hiện ảnh mẫu (ký có hạn, chỉ asset của đúng tổ chức), phiên bản, thành phần hoa, phí vận chuyển — không giá vốn `src/modules/sales/infra/quotation-repository.ts`, `quotation-mapper.ts`; tải ảnh PNG và PDF khổ A6 `src/components/sales/quotation/quote-export-buttons.tsx`; `tt/quotation-public-view.test.ts`, `tt/quotation-public-link.test.ts` (không lộ ghi chú nội bộ) | — |
 | 3.12 | Chuyển báo giá chốt thành đơn hàng 1-click | Hoàn thiện | `api/quotations/[id]/convert/route.ts:6-8` → `src/modules/sales/use-cases/convert-quotation-to-order.use-case.ts:45`; nút "Tạo đơn" `src/components/sales/quotation/quotations-list-view.tsx:59,196`; `quotation.test.ts:236`, `tt/quotation-public-link.test.ts:128` | — |
 | 3.13 | Báo giá tự động realtime trên Thẻ Chào | Hoàn thiện | `api/public/brochure/[sendCode]/quote`, `api/public/greeting-catalog/[id]/quote`; tiền cọc `gc/domain/brochure-pricing.ts:200-220`; `src/components/greeting-card/customer/order-review.tsx:50-93`; `tt/greeting-card-quote.test.ts`, `tt/greeting-card-payments.test.ts:68` | — |
 

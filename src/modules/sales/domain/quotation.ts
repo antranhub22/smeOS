@@ -89,6 +89,9 @@ export interface PublicQuotationView {
     unitPrice: number
     totalPrice: number
     note: string | null
+    /** Ảnh mẫu (đường dẫn ký có hạn) và thành phần hoa của mẫu — không có giá vốn (checklist ALG 3.11) */
+    imageUrl: string | null
+    composition: string[]
   }>
 }
 
