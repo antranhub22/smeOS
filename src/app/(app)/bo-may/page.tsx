@@ -13,11 +13,11 @@ import { useI18n } from "@/lib/i18n"
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { AlertTriangle } from "@/components/ui/icon-set/alert-triangle"
-import { ArrowLeft } from "@/components/ui/icon-set/arrow-left"
 import { Check } from "@/components/ui/icon-set/check"
 import { Cloud } from "@/components/ui/icon-set/cloud"
 import { Server } from "@/components/ui/icon-set/server"
 import { Button } from "@/components/ui/button"
+import { PageHeader } from "@/components/ui/page-header"
 import { Card } from "@/components/ui/card"
 import { Dialog } from "@/components/ui/dialog"
 import { SkeletonBlock } from "@/components/ui/skeleton"
@@ -108,18 +108,8 @@ export default function BoMayPage() {
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
-      <div className="flex flex-shrink-0 items-center gap-2 border-b border-border bg-surface px-[18px] py-4">
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon-sm"
-          onClick={() => router.push("/")}
-          className="rounded-full"
-          aria-label="Quay lại"
-        >
-          <ArrowLeft size={18} strokeWidth={2} />
-        </Button>
-        <div className="text-body font-extrabold text-primary">Bộ máy phân tích ảnh</div>
+      <div className="flex-shrink-0 border-b border-border bg-surface px-[18px] py-4">
+        <PageHeader title="Bộ máy phân tích ảnh" backHref="/" backLabel="Trang chủ" />
       </div>
 
       <div className="flex flex-1 flex-col gap-3.5 overflow-y-auto p-4">

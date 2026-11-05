@@ -1,9 +1,10 @@
 "use client"
  
+import { PageHeader } from "@/components/ui/page-header"
 import { useI18n } from "@/lib/i18n"
 import { useState, useEffect, useCallback } from "react"
 import { useRouter } from "next/navigation"
-import { ArrowLeft, RefreshCw, Sparkles, CheckCircle2, Share2, Calendar } from "@/components/ui/icons"
+import { ArrowLeft, RefreshCw, Sparkles, CheckCircle2, Calendar } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -340,13 +341,7 @@ export default function SocialPublishingPage() {
     <div className="flex h-full flex-col overflow-hidden bg-bg">
       {/* Top Header */}
       <div className="flex flex-shrink-0 items-center justify-between border-b border-border bg-surface px-6 py-3.5">
-        <div>
-          <div className="text-caption font-bold tracking-wider text-text-muted uppercase">Xuất bản & Lịch đăng bài</div>
-          <div className="text-title font-black text-primary flex items-center gap-2">
-            <Share2 size={18} />
-            Social Publishing — Xuất Bản Đa Kênh
-          </div>
-        </div>
+        <PageHeader title="Xuất bản đa kênh" breadcrumbs="Xuất bản & Lịch đăng bài" />
         <div className="flex items-center gap-2">
           <Button
             size="sm"
