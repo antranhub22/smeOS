@@ -14,8 +14,8 @@ import { AddressFields } from "./address-fields"
 import { DeliveryTimePicker } from "./delivery-time-picker"
 import { ViDateInput } from "./vi-date-input"
 
-const INPUT = "w-full min-w-0 h-11 px-3 rounded-lg border border-border bg-background text-title font-normal text-foreground placeholder:text-body placeholder:text-text-muted/70 focus:outline-none focus:ring-2 focus:ring-primary/20"
-const LABEL = "block text-body-sm font-bold text-foreground mb-1"
+const INPUT = "w-full min-w-0 h-11 px-3 rounded-lg border border-border bg-bg text-title font-normal text-text placeholder:text-body placeholder:text-text-muted/70 focus:outline-none focus:ring-2 focus:ring-primary/20"
+const LABEL = "block text-body-sm font-bold text-text mb-1"
 const EMPTY_PARTS: AddressParts = { houseNumber: "", street: "", ward: "", province: "" }
 
 /** Chỉ gửi ô khách thực sự đổi — máy chủ so lại với đơn và báo nếu không có gì đổi. */
@@ -94,7 +94,7 @@ export function OrderChangeForm({
     <form onSubmit={submit} noValidate className="flex flex-col gap-4 rounded-2xl border border-border p-4">
       <div className="flex items-start justify-between gap-2">
         <div>
-          <h3 className="text-body font-extrabold text-foreground">Yêu cầu thay đổi thông tin</h3>
+          <h3 className="text-body font-extrabold text-text">Yêu cầu thay đổi thông tin</h3>
           <p className="text-caption text-text-muted">Sửa ô bạn muốn đổi rồi gửi. Cửa hàng xác nhận xong, đơn mới được cập nhật.</p>
         </div>
         <button type="button" onClick={onClose} aria-label="Đóng" className="p-2 rounded-lg text-text-muted hover:bg-surface-muted"><X size={18} /></button>

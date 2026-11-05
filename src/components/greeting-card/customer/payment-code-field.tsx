@@ -5,7 +5,7 @@ import { CheckCircle2, Wallet } from "@/components/ui/icons"
 import type { BrochureQuote } from "@/modules/greeting-card/domain/brochure-pricing"
 import { useI18n } from "@/lib/i18n"
 
-const FIELD = "w-full h-10 px-3 rounded-lg border border-border bg-background text-body text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20"
+const FIELD = "w-full h-10 px-3 rounded-lg border border-border bg-bg text-body text-text focus:outline-none focus:ring-2 focus:ring-primary/20"
 
 /**
  * Ô nhập mã thanh toán (đặt cọc) — khối RIÊNG, tách khỏi mã giảm giá. Khách chỉ nhập MÃ do tiệm cấp,
@@ -31,7 +31,7 @@ export function PaymentCodeField({
   return (
     <section aria-label={t("greetingCard.customer.options.paymentCodeTitle")} className="flex flex-col gap-1.5 p-3 rounded-xl border border-border bg-surface-muted/30">
       <div className="flex items-center justify-between">
-        <span className="text-caption font-bold text-foreground flex items-center gap-1.5">
+        <span className="text-caption font-bold text-text flex items-center gap-1.5">
           <Wallet size={14} className="text-primary" />
           {t("greetingCard.customer.options.paymentCodeTitle")}
         </span>
@@ -78,7 +78,7 @@ export function PaymentCodeField({
                 : (isEn ? "Deposit code applied" : "Đã áp dụng mã đặt cọc")}
             </p>
             {applied.depositPercent > 0 && applied.dueLaterVnd > 0 && (
-              <p className="text-foreground">
+              <p className="text-text">
                 {isEn
                   ? `You pay ${applied.depositPercent}% today. The remaining ${100 - applied.depositPercent}% will be settled upon check-in or delivery. Total amount remains unchanged.`
                   : `Bạn thanh toán ${applied.depositPercent}% hôm nay. ${100 - applied.depositPercent}% còn lại sẽ được thanh toán khi nhận phòng hoặc nhận bàn giao sản phẩm/dịch vụ. Tổng đơn hàng không thay đổi.`}

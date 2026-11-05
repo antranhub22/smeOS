@@ -52,7 +52,7 @@ export function ChainBranchCard({ branch, isSelected, onToggle }: ChainBranchCar
       <div className="flex items-start justify-between gap-1.5 w-full">
         <div className="min-w-0">
           <div className="flex items-center gap-1">
-            <span className="font-extrabold text-caption text-foreground truncate">
+            <span className="font-extrabold text-caption text-text truncate">
               {branch.branchName}
             </span>
             {branch.rank <= 3 && (

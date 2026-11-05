@@ -65,7 +65,7 @@ export function InboxPanel({ onClose, onOpenTarget }: { onClose: () => void; onO
                   type="button"
                   onClick={() => setRoleOverride(r.id)}
                   className={`rounded-md px-2.5 py-1 text-caption font-bold transition-colors ${
-                    active ? "bg-primary text-white shadow-xs" : "text-text-muted hover:text-foreground"
+                    active ? "bg-primary text-white shadow-xs" : "text-text-muted hover:text-text"
                   }`}
                 >
                   {r.label}
@@ -107,7 +107,7 @@ export function InboxPanel({ onClose, onOpenTarget }: { onClose: () => void; onO
                 <button type="button" className={ROW} onClick={() => setThread({ orderId: t.orderId, sessionId: t.sessionId, title: t.title })}>
                   <MessageSquare size={20} className={t.unread ? "shrink-0 text-primary" : "shrink-0 text-text-muted"} aria-hidden="true" />
                   <span className="min-w-0 flex-1">
-                    <span className={`block truncate text-body-sm ${t.unread ? "font-extrabold text-foreground" : "font-semibold text-foreground"}`}>{t.title}</span>
+                    <span className={`block truncate text-body-sm ${t.unread ? "font-extrabold text-text" : "font-semibold text-text"}`}>{t.title}</span>
                     <span className="block truncate text-caption text-text-muted">{t.lastSender}: {t.lastBody}</span>
                   </span>
                   <span className="flex shrink-0 flex-col items-end gap-1">
@@ -125,7 +125,7 @@ export function InboxPanel({ onClose, onOpenTarget }: { onClose: () => void; onO
             <li key={u.id}>
               <button type="button" className={ROW} onClick={() => open({ tab: "tracking", orderId: u.orderId, sessionId: u.sessionId })}>
                 <span className="min-w-0 flex-1">
-                  <span className="block truncate text-body-sm font-semibold text-foreground">{u.customerName} — {u.title}</span>
+                  <span className="block truncate text-body-sm font-semibold text-text">{u.customerName} — {u.title}</span>
                   <span className="block text-caption text-text-muted">{u.code} · {timeAgo(u.at, now)}</span>
                 </span>
                 <ChevronRight size={18} className="shrink-0 text-text-muted" aria-hidden="true" />
@@ -175,7 +175,7 @@ function ActionRow({ action, onOpen, onMessage, onDecided }: { action: InboxActi
           <AlertTriangle size={22} className="shrink-0 text-danger" aria-hidden="true" />
         )}
         <div className="min-w-0 flex-1">
-          <p className={`text-body-sm font-extrabold ${urgent ? "text-danger" : "text-foreground"}`}>{action.title}</p>
+          <p className={`text-body-sm font-extrabold ${urgent ? "text-danger" : "text-text"}`}>{action.title}</p>
           <p className="truncate text-caption text-text-muted">{[action.customerName, action.detail].filter(Boolean).join(" · ")}</p>
         </div>
       </div>
@@ -202,7 +202,7 @@ function ActionRow({ action, onOpen, onMessage, onDecided }: { action: InboxActi
           </button>
         )}
         {onMessage && (
-          <button type="button" onClick={onMessage} className="h-11 flex-1 rounded-xl border border-border px-3 text-body-sm font-bold text-foreground hover:bg-surface-muted sm:flex-none">
+          <button type="button" onClick={onMessage} className="h-11 flex-1 rounded-xl border border-border px-3 text-body-sm font-bold text-text hover:bg-surface-muted sm:flex-none">
             Nhắn tin
           </button>
         )}

@@ -170,7 +170,7 @@ export function CoordinatorOrderCard({
             onClick={() => onOpen({ type: "detail", order })}
             className="flex items-center gap-2 text-left group cursor-pointer"
           >
-            <span className="text-title-sm font-extrabold text-foreground group-hover:text-primary transition-colors">
+            <span className="text-title-sm font-extrabold text-text group-hover:text-primary transition-colors">
               #{order.code}
             </span>
             {session?.send_code && (
@@ -210,7 +210,7 @@ export function CoordinatorOrderCard({
         />
         <div className="flex-1 min-w-0 flex flex-col gap-1">
           <div className="text-caption text-text-muted font-medium">{terms.sampleProduct.replace(/ chuẩn$/i, "")} khách chọn:</div>
-          <div className="text-body font-bold text-foreground truncate">
+          <div className="text-body font-bold text-text truncate">
             {product.name}
           </div>
           <div className="flex flex-wrap gap-2 mt-0.5">

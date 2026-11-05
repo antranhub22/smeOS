@@ -14,6 +14,9 @@ import { GREETING_CARD_CAPABILITY } from "@/modules/greeting-card/domain/greetin
  * Test băm từng tệp của Thẻ chào + định nghĩa các mã năng lực Thẻ chào dùng (vai mặc định, trần cứng)
  * và so với tệp mốc. Đỏ = có thay đổi chạm Thẻ chào → dừng, hỏi PO.
  *
+ * Lần duyệt gần nhất: PO 05/11/2026 — nâng giao diện Thẻ chào theo ADR-011 (HANDOVER_READINESS_PLAN §7b J-2),
+ * chỉ đổi giao diện, không đổi quy trình hay quyền.
+ *
  * Chỉ khi PO đã duyệt thay đổi Thẻ chào mới cập nhật mốc:
  *   UPDATE_THE_CHAO_FREEZE=1 npm test -- tests/unit/architecture/the-chao-freeze.test.ts
  */

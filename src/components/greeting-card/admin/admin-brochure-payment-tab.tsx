@@ -38,7 +38,7 @@ export function AdminBrochurePaymentTab({ focusOrderId = null, onClearFocus }: {
     <div className="flex flex-col gap-6">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-surface p-5 rounded-2xl border border-border shadow-sm">
         <div>
-          <h2 className="text-title font-extrabold text-foreground flex items-center gap-2">
+          <h2 className="text-title font-extrabold text-text flex items-center gap-2">
             <span>Việc chờ bạn quyết</span>
           </h2>
           <p className="text-body-sm text-text-muted mt-1">
@@ -48,7 +48,7 @@ export function AdminBrochurePaymentTab({ focusOrderId = null, onClearFocus }: {
         <div className="flex gap-2">
           <Link
             href={"/cai-dat?tab=BROCHURE_FLOW" as Route}
-            className="inline-flex items-center gap-1.5 px-3 h-9 rounded-lg border border-border bg-background text-caption font-bold text-foreground hover:bg-surface-muted transition-colors"
+            className="inline-flex items-center gap-1.5 px-3 h-9 rounded-lg border border-border bg-bg text-caption font-bold text-text hover:bg-surface-muted transition-colors"
           >
             <Settings size={14} aria-hidden="true" />
             <span>Cài đặt</span>
@@ -75,7 +75,7 @@ export function AdminBrochurePaymentTab({ focusOrderId = null, onClearFocus }: {
       <section className="bg-surface rounded-2xl border border-border shadow-sm overflow-hidden">
         {focusOrderId && (
           <div role="status" className="flex flex-wrap items-center justify-between gap-2 border-b border-border bg-primary/5 px-4 py-2.5 text-body-sm">
-            <span className="font-semibold text-foreground">Đang mở đơn từ Hộp việc</span>
+            <span className="font-semibold text-text">Đang mở đơn từ Hộp việc</span>
             <button type="button" onClick={onClearFocus} className="min-h-9 font-semibold text-primary hover:underline">Xem tất cả đơn</button>
           </div>
         )}
@@ -106,14 +106,14 @@ export function AdminBrochurePaymentTab({ focusOrderId = null, onClearFocus }: {
               placeholder="Tìm tên khách, mã đơn, SĐT…"
               value={search}
               onChange={(e) => { setSearch(e.target.value); onClearFocus?.() }}
-              className="h-8 w-full rounded-lg border border-border bg-surface pl-8 pr-7 text-caption text-foreground placeholder:text-text-muted focus:border-primary focus:outline-hidden"
+              className="h-8 w-full rounded-lg border border-border bg-surface pl-8 pr-7 text-caption text-text placeholder:text-text-muted focus:border-primary focus:outline-hidden"
             />
             {search && (
               <button
                 type="button"
                 aria-label="Xoá tìm kiếm"
                 onClick={() => setSearch("")}
-                className="absolute right-2 top-1/2 -translate-y-1/2 text-text-muted hover:text-foreground"
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-text-muted hover:text-text"
               >
                 <X size={12} aria-hidden="true" />
               </button>

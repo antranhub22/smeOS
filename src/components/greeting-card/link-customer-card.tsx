@@ -11,7 +11,7 @@ import type { OrderDetailModalTarget } from "./brochure-order-detail-modal"
 /** Tên mặc định của link chưa ghi tên khách (máy chủ đặt). */
 export const UNNAMED_LINK_CUSTOMER = "Khách đang xem mẫu"
 
-const INPUT = "h-10 w-full rounded-lg border border-border bg-surface px-3 text-body-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20"
+const INPUT = "h-10 w-full rounded-lg border border-border bg-surface px-3 text-body-sm text-text focus:outline-none focus:ring-2 focus:ring-primary/20"
 
 /**
  * Link đã gửi mà khách chưa đặt đơn: hiện lúc gửi / lúc khách mở / lúc xem gần nhất để Sale nhớ ra
@@ -66,7 +66,7 @@ export function LinkCustomerCard({
           <span className="flex items-center gap-1 text-caption font-bold uppercase tracking-wider text-text-muted">
             <User size={13} /> Link đã gửi cho
           </span>
-          <p className="text-body-sm font-bold text-foreground">{named ? target.customerName : "Chưa ghi tên khách"}</p>
+          <p className="text-body-sm font-bold text-text">{named ? target.customerName : "Chưa ghi tên khách"}</p>
           {target.customerPhone && (
             <a href={`tel:${target.customerPhone}`} className="inline-flex items-center gap-1 text-caption font-bold text-primary hover:underline">
               <Phone size={12} /> {target.customerPhone}
@@ -100,7 +100,7 @@ export function LinkCustomerCard({
             <span className="flex items-center gap-1.5 text-text-muted">
               {t.label === "Gửi link" || t.label === "Tạo link" ? <Send size={12} /> : <Clock size={12} />} {t.label}
             </span>
-            <span className="font-bold text-foreground">{t.at}</span>
+            <span className="font-bold text-text">{t.at}</span>
           </li>
         ))}
       </ul>

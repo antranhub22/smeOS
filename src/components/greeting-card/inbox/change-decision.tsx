@@ -37,8 +37,8 @@ export function ChangeDecision({ requestId, changes, note, expectedFeeDeltaVnd, 
       <ul className="flex flex-col gap-1 text-body-sm">
         {changes.map((c) => (
           <li key={c.field}>
-            <span className="font-bold text-foreground">{c.label}:</span>{" "}
-            <span className="text-text-muted line-through">{c.before}</span> → <span className="font-bold text-foreground">{c.after}</span>
+            <span className="font-bold text-text">{c.label}:</span>{" "}
+            <span className="text-text-muted line-through">{c.before}</span> → <span className="font-bold text-text">{c.after}</span>
           </li>
         ))}
       </ul>
@@ -49,7 +49,7 @@ export function ChangeDecision({ requestId, changes, note, expectedFeeDeltaVnd, 
       <label className="sr-only" htmlFor={`change-note-${requestId}`}>Lời nhắn cho khách</label>
       <textarea id={`change-note-${requestId}`} rows={2} value={reply} maxLength={500} onChange={(e) => setReply(e.target.value)}
         placeholder="Lời nhắn cho khách (bắt buộc khi không đồng ý)"
-        className="min-h-11 rounded-xl border border-border bg-surface px-3 py-2 text-body-sm text-foreground placeholder:text-text-muted" />
+        className="min-h-11 rounded-xl border border-border bg-surface px-3 py-2 text-body-sm text-text placeholder:text-text-muted" />
       {error && <p role="alert" className="rounded-lg bg-danger-bg px-3 py-2 text-body-sm text-danger">{error}</p>}
       <div className="flex gap-2">
         <button type="button" disabled={busy !== null} onClick={() => void decide(true)}

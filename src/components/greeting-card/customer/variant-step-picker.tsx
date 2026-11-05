@@ -41,7 +41,7 @@ export function VariantStepPicker({ dimensions, variants, value, onChange, error
         const avail = availableValues(options, picked, i)
         return (
           <div key={d.label} role="group" aria-label={d.label} className="flex flex-col gap-1">
-            <span className="text-caption font-bold text-foreground">{d.label}</span>
+            <span className="text-caption font-bold text-text">{d.label}</span>
             <div className="flex flex-wrap gap-2">
               {d.values.map((v) => {
                 const on = picked[i] === v
@@ -54,7 +54,7 @@ export function VariantStepPicker({ dimensions, variants, value, onChange, error
                     disabled={!ok && !on}
                     onClick={() => pick(i, v)}
                     className={`min-h-10 rounded-full border px-4 text-body-sm font-semibold transition-colors disabled:opacity-40 disabled:line-through ${
-                      on ? "border-primary bg-primary/10 text-primary" : "border-border bg-background text-foreground"
+                      on ? "border-primary bg-primary/10 text-primary" : "border-border bg-bg text-text"
                     }`}
                   >
                     {v}
@@ -70,7 +70,7 @@ export function VariantStepPicker({ dimensions, variants, value, onChange, error
           // eslint-disable-next-line @next/next/no-img-element -- ảnh phiên bản do tiệm tải, kích thước nhỏ
           <img src={matched.imageUrl} alt={matched.name} className="h-14 w-14 rounded-lg object-cover" />
         )}
-        <span className="text-body-sm text-foreground">
+        <span className="text-body-sm text-text">
           {matched ? (
             <>
               <strong>{matched.name}</strong> — {vnd(matched.priceVnd)}

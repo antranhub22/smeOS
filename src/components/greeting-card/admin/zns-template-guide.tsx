@@ -31,7 +31,7 @@ export function ZnsTemplateGuide() {
         <tbody>
           {PARAMS.map((p) => (
             <tr key={p.key} className="border-t border-border">
-              <td className="py-1 pr-2 font-mono text-foreground">{p.key}</td>
+              <td className="py-1 pr-2 font-mono text-text">{p.key}</td>
               <td className="py-1 text-text-muted">{p.meaning}</td>
             </tr>
           ))}

@@ -49,7 +49,7 @@ export function JourneyStepper({ step, onStepClick }: JourneyStepperProps) {
                   {done ? <Check size={14} aria-hidden="true" /> : s.id}
                 </span>
                 <span className="w-full min-w-0 sm:w-auto">
-                  <span className={cn("block truncate text-body-sm font-bold", current ? "text-foreground" : "text-text-muted")}>
+                  <span className={cn("block truncate text-body-sm font-bold", current ? "text-text" : "text-text-muted")}>
                     <span className="sm:hidden">{s.short}</span>
                     <span className="hidden sm:inline">{s.title}</span>
                   </span>

@@ -63,14 +63,14 @@ export function CoordinatorConfirmBalanceModal({
       >
         <div className="flex items-center gap-2">
           <Banknote size={20} className="text-warning shrink-0" />
-          <h3 id="confirm-balance-title" className="text-body font-extrabold text-foreground">
+          <h3 id="confirm-balance-title" className="text-body font-extrabold text-text">
             Xác nhận Nhận Đủ Tiền Lần 2 — #{orderCode}
           </h3>
         </div>
 
         <p className="text-body-sm text-text-muted">
           Phần còn lại:{" "}
-          <span className="font-extrabold text-foreground">
+          <span className="font-extrabold text-text">
             {balanceVnd.toLocaleString("vi-VN")}đ
           </span>
         </p>
@@ -105,7 +105,7 @@ export function CoordinatorConfirmBalanceModal({
             onChange={(e) => setNote(e.target.value)}
             maxLength={500}
             placeholder="VD: Đã kiểm tra sao kê, khớp số tiền và nội dung CK"
-            className="w-full h-10 px-3 rounded-lg border border-border bg-background text-body text-foreground"
+            className="w-full h-10 px-3 rounded-lg border border-border bg-bg text-body text-text"
           />
         </label>
 

@@ -22,7 +22,7 @@ export function CatalogTrackingTriggerOverride({
 
   return (
     <div className="space-y-2 pt-3 border-t border-border">
-      <h4 className="text-body-sm font-extrabold text-foreground flex items-center gap-1.5">
+      <h4 className="text-body-sm font-extrabold text-text flex items-center gap-1.5">
         <ShieldCheck size={15} className="text-primary" />
         <span>Cơ chế kích hoạt bước tiếp theo (Theo dõi tiến độ)</span>
       </h4>
@@ -35,7 +35,7 @@ export function CatalogTrackingTriggerOverride({
             checked={overrideValue === null}
             onChange={() => onChange(null)}
           />
-          <span className="font-semibold text-foreground">
+          <span className="font-semibold text-text">
             Theo chính sách tiệm ({storeLabel})
           </span>
         </label>
@@ -48,7 +48,7 @@ export function CatalogTrackingTriggerOverride({
             onChange={() => onChange("PAYMENT_OR_COORDINATOR")}
           />
           <div>
-            <span className="font-semibold text-foreground">
+            <span className="font-semibold text-text">
               Cho phép thêm Điều phối xác nhận Nhận đơn
             </span>
             <span className="block text-caption text-text-muted">
@@ -65,7 +65,7 @@ export function CatalogTrackingTriggerOverride({
             onChange={() => onChange("PAYMENT_ONLY")}
           />
           <div>
-            <span className="font-semibold text-foreground">
+            <span className="font-semibold text-text">
               Chỉ Điều hành xác nhận đã thanh toán
             </span>
             <span className="block text-caption text-text-muted">

@@ -54,7 +54,7 @@ export function CatalogCard({
               </span>
             )}
           </div>
-          <h3 className="text-body font-extrabold text-foreground truncate">{catalog.name}</h3>
+          <h3 className="text-body font-extrabold text-text truncate">{catalog.name}</h3>
           <p className="text-caption text-text-muted font-mono mt-0.5">
             <span>{catalog.code}</span>
           </p>
@@ -65,13 +65,13 @@ export function CatalogCard({
         <div className="flex items-center gap-1.5 text-caption text-text-muted">
           <Package size={13} />
           <span>
-            <strong className="text-foreground">{catalog._count.items}</strong> {itemLabel}
+            <strong className="text-text">{catalog._count.items}</strong> {itemLabel}
           </span>
         </div>
         <div className="flex items-center gap-1.5 text-caption text-text-muted">
           <Eye size={13} />
           <span>
-            <strong className="text-foreground">{catalog._count.sessions}</strong> link đã gửi
+            <strong className="text-text">{catalog._count.sessions}</strong> link đã gửi
           </span>
         </div>
       </div>
@@ -99,7 +99,7 @@ export function CatalogCard({
           onClick={onPreview}
           title="Xem trước giao diện thẻ chào khách hàng"
           aria-label={`Xem trước link công khai của ${catalog.name}`}
-          className="p-1.5 rounded-lg border border-border hover:bg-surface-muted transition-colors text-text-muted hover:text-foreground inline-flex items-center"
+          className="p-1.5 rounded-lg border border-border hover:bg-surface-muted transition-colors text-text-muted hover:text-text inline-flex items-center"
         >
           <Eye size={14} />
         </button>
@@ -108,7 +108,7 @@ export function CatalogCard({
           onClick={onCopy}
           title="Sao chép link mang tên bạn — khách mở link này được tính cho bạn"
           aria-label={`Sao chép link bộ sưu tập ${catalog.name} mang tên bạn`}
-          className="p-1.5 rounded-lg border border-border hover:bg-surface-muted transition-colors text-text-muted hover:text-foreground"
+          className="p-1.5 rounded-lg border border-border hover:bg-surface-muted transition-colors text-text-muted hover:text-text"
         >
           {copied ? <Check size={14} className="text-success" /> : <Copy size={14} />}
         </button>
@@ -117,7 +117,7 @@ export function CatalogCard({
           download
           title="Tải ảnh catalog để đăng lên Zalo/Facebook"
           aria-label={`Tải ảnh catalog ${catalog.name}`}
-          className="p-1.5 rounded-lg border border-border hover:bg-surface-muted transition-colors text-text-muted hover:text-foreground inline-flex items-center"
+          className="p-1.5 rounded-lg border border-border hover:bg-surface-muted transition-colors text-text-muted hover:text-text inline-flex items-center"
         >
           <Download size={14} />
         </a>

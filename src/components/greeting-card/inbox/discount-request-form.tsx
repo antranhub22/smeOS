@@ -45,12 +45,12 @@ export function DiscountRequestForm({ orderId, onSent }: { orderId: string; onSe
         <label className="sr-only" htmlFor={`discount-${orderId}`}>Mức xin giảm</label>
         <input id={`discount-${orderId}`} inputMode="numeric" value={value} onChange={(e) => setValue(e.target.value)}
           placeholder={unit === "PERCENT" ? "VD: 10" : "VD: 50000"}
-          className="h-11 min-w-0 flex-1 rounded-xl border border-border bg-surface px-3 text-body text-foreground" />
+          className="h-11 min-w-0 flex-1 rounded-xl border border-border bg-surface px-3 text-body text-text" />
       </div>
       <label className="sr-only" htmlFor={`reason-${orderId}`}>Lý do xin giảm</label>
       <textarea id={`reason-${orderId}`} rows={2} value={reason} maxLength={500} onChange={(e) => setReason(e.target.value)}
         placeholder="Lý do (vd. khách quen đặt lần 3)"
-        className="min-h-11 rounded-xl border border-border bg-surface px-3 py-2 text-body text-foreground placeholder:text-text-muted" />
+        className="min-h-11 rounded-xl border border-border bg-surface px-3 py-2 text-body text-text placeholder:text-text-muted" />
       <button type="button" onClick={() => void send()} disabled={busy || !(n > 0) || reason.trim().length < 3}
         className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-primary px-4 text-body-sm font-bold text-white hover:bg-primary-dark disabled:opacity-40">
         {busy && <Loader2 size={16} className="animate-spin" aria-hidden="true" />}

@@ -43,7 +43,7 @@ export function Sheet({ title, labelId, onClose, leading, footer, children }: Sh
       <div ref={panelRef} className="relative flex h-dvh w-full flex-col bg-bg shadow-2xl md:max-w-md md:border-l md:border-border">
         <header className="flex min-h-14 items-center gap-1 border-b border-border bg-surface px-2 pt-[env(safe-area-inset-top)]">
           {leading}
-          <h2 id={labelId} className="min-w-0 flex-1 truncate px-2 text-title-sm font-extrabold text-foreground">{title}</h2>
+          <h2 id={labelId} className="min-w-0 flex-1 truncate px-2 text-title-sm font-extrabold text-text">{title}</h2>
           <button type="button" data-autofocus onClick={onClose} aria-label="Đóng"
             className="inline-flex h-11 w-11 items-center justify-center rounded-full text-text-muted hover:bg-surface-muted">
             <X size={20} aria-hidden="true" />

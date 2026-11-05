@@ -48,7 +48,7 @@ export function ZaloDispatchConnector() {
             <MessageCircle size={22} />
           </div>
           <div>
-            <h3 className="text-body font-extrabold text-foreground">Nhận đơn gia công qua Zalo</h3>
+            <h3 className="text-body font-extrabold text-text">Nhận đơn gia công qua Zalo</h3>
             <p className="text-caption text-text-muted mt-0.5">
               Chi nhánh chưa dùng Telegram vẫn nhận được lời mời và nhắc việc qua Zalo
             </p>
@@ -75,7 +75,7 @@ export function ZaloDispatchConnector() {
 
       {info?.configured && (
         <>
-          <ol className="text-body-sm text-foreground flex flex-col gap-1 list-decimal pl-5">
+          <ol className="text-body-sm text-text flex flex-col gap-1 list-decimal pl-5">
             <li>
               Nhân viên chi nhánh mở Zalo, bấm Quan tâm trang Zalo của hệ thống
               {info.followUrl && (
@@ -97,7 +97,7 @@ export function ZaloDispatchConnector() {
             {branches.map((b) => (
               <div key={b.branchCode} className="flex items-center justify-between gap-3 p-3 rounded-xl border border-border">
                 <div className="min-w-0">
-                  <div className="text-body-sm font-bold text-foreground truncate">{b.name}</div>
+                  <div className="text-body-sm font-bold text-text truncate">{b.name}</div>
                   <div className="text-caption text-text-muted flex items-center gap-1">
                     {b.linked ? (
                       <>

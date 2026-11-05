@@ -71,7 +71,7 @@ export function DiscountDecision({ requestId, baseTotalVnd, requestedVnd, percen
       <label className="sr-only" htmlFor={`note-${requestId}`}>Ghi chú cho sale</label>
       <textarea id={`note-${requestId}`} rows={2} value={note} maxLength={500} onChange={(e) => setNote(e.target.value)}
         placeholder={choice === "REJECT" ? "Lý do không duyệt (bắt buộc)" : "Ghi chú cho sale (vd. Duyệt 5% thay vì 10%)"}
-        className="min-h-11 rounded-xl border border-border bg-surface px-3 py-2 text-body-sm text-foreground placeholder:text-text-muted" />
+        className="min-h-11 rounded-xl border border-border bg-surface px-3 py-2 text-body-sm text-text placeholder:text-text-muted" />
       {error && <p role="alert" className="rounded-lg bg-danger-bg px-3 py-2 text-body-sm text-danger">{error}</p>}
       <button type="button" onClick={() => void submit()}
         disabled={(choice === "OTHER" && !(Number(otherPercent) >= 1)) || (choice === "REJECT" && note.trim().length < 3)}

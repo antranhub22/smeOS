@@ -21,7 +21,7 @@ export function DeliverySlotToggles({
 
   return (
     <fieldset className="flex flex-col gap-2 border-t border-border pt-3">
-      <legend className="text-body-sm font-bold text-foreground">Khung giờ khách được chọn</legend>
+      <legend className="text-body-sm font-bold text-text">Khung giờ khách được chọn</legend>
       <div className="flex flex-wrap gap-2">
         {DELIVERY_SLOTS.map((s) => (
           <label

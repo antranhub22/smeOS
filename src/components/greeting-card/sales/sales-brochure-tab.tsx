@@ -79,7 +79,7 @@ export function SalesBrochureTab({ initialOpenCreate = false, onNavigateToCatalo
     <div className="flex flex-col gap-5">
       <div className="flex flex-col gap-3 rounded-2xl border border-border bg-surface p-5 shadow-sm sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h2 className="text-title font-extrabold text-foreground">Khách của tôi</h2>
+          <h2 className="text-title font-extrabold text-text">Khách của tôi</h2>
           <p className="mt-1 text-body-sm text-text-muted">Theo dõi từng khách đang ở bước nào; đơn cần bạn nhắc khách được đưa lên đầu.</p>
         </div>
         <div className="flex items-center gap-2">
@@ -120,14 +120,14 @@ export function SalesBrochureTab({ initialOpenCreate = false, onNavigateToCatalo
               placeholder="Tìm tên khách, mã đơn, SĐT…"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="h-9 w-full rounded-xl border border-border bg-surface pl-9 pr-8 text-caption text-foreground placeholder:text-text-muted focus:border-primary focus:outline-hidden"
+              className="h-9 w-full rounded-xl border border-border bg-surface pl-9 pr-8 text-caption text-text placeholder:text-text-muted focus:border-primary focus:outline-hidden"
             />
             {search && (
               <button
                 type="button"
                 aria-label="Xoá tìm kiếm"
                 onClick={() => setSearch("")}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-text-muted hover:text-foreground"
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-text-muted hover:text-text"
               >
                 <X size={13} aria-hidden="true" />
               </button>
@@ -137,7 +137,7 @@ export function SalesBrochureTab({ initialOpenCreate = false, onNavigateToCatalo
         <div role="group" aria-label="Cách xem" className="flex items-center rounded-xl border border-border bg-surface p-1">
           {(["kanban", "list"] as const).map((v) => (
             <button key={v} type="button" aria-pressed={viewMode === v} onClick={() => setViewMode(v)}
-              className={`rounded-lg px-3 py-1 text-caption font-bold transition-colors ${viewMode === v ? "bg-primary text-white" : "text-text-muted hover:text-foreground"}`}>
+              className={`rounded-lg px-3 py-1 text-caption font-bold transition-colors ${viewMode === v ? "bg-primary text-white" : "text-text-muted hover:text-text"}`}>
               {v === "kanban" ? "Kanban" : "Danh sách thẻ"}
             </button>
           ))}
@@ -230,7 +230,7 @@ export function SalesBrochureTab({ initialOpenCreate = false, onNavigateToCatalo
 
       <section className="overflow-hidden rounded-2xl border border-border bg-surface">
         <button type="button" aria-expanded={linksOpen} onClick={() => setLinksOpen((v) => !v)}
-          className="flex w-full items-center justify-between p-4 text-left text-body font-extrabold text-foreground hover:bg-surface-muted">
+          className="flex w-full items-center justify-between p-4 text-left text-body font-extrabold text-text hover:bg-surface-muted">
           Link đã gửi (thu hồi, mở lại)
           <ChevronDown size={18} aria-hidden="true" className={linksOpen ? "rotate-180" : ""} />
         </button>

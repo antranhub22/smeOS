@@ -48,7 +48,7 @@ export function BalancePaymentBanner({
           <div className="p-1.5 rounded-lg bg-warning/20 text-warning">
             <Banknote size={20} aria-hidden="true" />
           </div>
-          <span className="text-body font-extrabold text-foreground">
+          <span className="text-body font-extrabold text-text">
             {paidVnd > 0 ? "Yêu cầu thanh toán số tiền còn lại" : "Yêu cầu thanh toán đơn hàng"}
           </span>
         </div>
@@ -57,12 +57,12 @@ export function BalancePaymentBanner({
         </span>
       </div>
 
-      <p className="text-body-sm text-foreground leading-relaxed">
+      <p className="text-body-sm text-text leading-relaxed">
         {paidVnd > 0 ? (
           isPendingApproval ? (
             <>
               Hoa của bạn đã cắm xong hoàn thiện! Vui lòng kiểm tra ảnh hoa bên dưới và hoàn tất thanh toán phần còn lại{" "}
-              <strong className="text-foreground font-extrabold">
+              <strong className="text-text font-extrabold">
                 {remainingVnd.toLocaleString("vi-VN")} đ
               </strong>{" "}
               để cửa hàng tiến hành bàn giao cho tài xế giao hoa.
@@ -70,7 +70,7 @@ export function BalancePaymentBanner({
           ) : isDelivering ? (
             <>
               Đơn hoa của bạn đang trên đường giao! Vui lòng thanh toán số tiền còn lại{" "}
-              <strong className="text-foreground font-extrabold">
+              <strong className="text-text font-extrabold">
                 {remainingVnd.toLocaleString("vi-VN")} đ
               </strong>{" "}
               qua mã QR bên dưới hoặc cho tài xế khi nhận hoa.
@@ -78,7 +78,7 @@ export function BalancePaymentBanner({
           ) : !hasProductPhotos ? (
             <>
               Hoa của bạn đã cắm xong và đang được chuẩn bị giao gấp theo yêu cầu! Vui lòng thanh toán số tiền còn lại{" "}
-              <strong className="text-foreground font-extrabold">
+              <strong className="text-text font-extrabold">
                 {remainingVnd.toLocaleString("vi-VN")} đ
               </strong>{" "}
               để tài xế lên đường giao hoa ngay.
@@ -86,7 +86,7 @@ export function BalancePaymentBanner({
           ) : (
             <>
               Bình hoa hoàn thiện đã sẵn sàng giao! Vui lòng thanh toán phần còn lại{" "}
-              <strong className="text-foreground font-extrabold">
+              <strong className="text-text font-extrabold">
                 {remainingVnd.toLocaleString("vi-VN")} đ
               </strong>{" "}
               để hoàn tất đơn hàng.
@@ -95,7 +95,7 @@ export function BalancePaymentBanner({
         ) : (
           <>
             Đơn hoa của bạn đang được tiến hành! Vui lòng chuyển khoản thanh toán hoặc đặt cọc{" "}
-            <strong className="text-foreground font-extrabold">
+            <strong className="text-text font-extrabold">
               {remainingVnd.toLocaleString("vi-VN")} đ
             </strong>{" "}
             qua mã QR bên dưới để xác nhận hoàn tất.

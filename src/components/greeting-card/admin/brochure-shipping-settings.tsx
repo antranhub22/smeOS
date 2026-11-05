@@ -21,7 +21,7 @@ interface ZoneDraft {
   fee: string
 }
 
-const FIELD = "h-10 px-3 rounded-lg border border-border bg-background text-body text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20"
+const FIELD = "h-10 px-3 rounded-lg border border-border bg-bg text-body text-text focus:outline-none focus:ring-2 focus:ring-primary/20"
 
 type Draft = {
   zones: ZoneDraft[]; freeOver: string; cutoff: string; prep: string; slotIds: string[]; allowCustomTime: boolean
@@ -129,7 +129,7 @@ export function BrochureShippingSettings() {
     <form onSubmit={save} className="bg-surface rounded-2xl border border-border p-5 shadow-sm flex flex-col gap-4">
       <div className="flex items-center gap-2">
         <Truck size={18} className="text-primary" />
-        <h3 className="text-title-sm font-extrabold text-foreground">Khu vực, phí giao & giờ nhận đơn</h3>
+        <h3 className="text-title-sm font-extrabold text-text">Khu vực, phí giao & giờ nhận đơn</h3>
       </div>
 
       {org.error ? (

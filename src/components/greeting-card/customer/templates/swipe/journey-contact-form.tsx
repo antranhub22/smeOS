@@ -47,7 +47,7 @@ export function JourneyContactForm({
   }
 
   const inputClass =
-    "w-full h-11 px-3.5 rounded-xl border border-border bg-background text-body text-foreground placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors"
+    "w-full h-11 px-3.5 rounded-xl border border-border bg-bg text-body text-text placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors"
 
   return (
     <section

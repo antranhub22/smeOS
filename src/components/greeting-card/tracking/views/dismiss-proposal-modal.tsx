@@ -81,7 +81,7 @@ export function DismissProposalModal({ item, onClose, onSuccess }: DismissPropos
               <EyeOff size={18} aria-hidden="true" />
             </div>
             <div>
-              <h2 id="dismiss-modal-title" className="text-body font-bold text-foreground">
+              <h2 id="dismiss-modal-title" className="text-body font-bold text-text">
                 Bỏ hiển thị: {orderTitle}
               </h2>
               <p className="text-caption text-text-muted">
@@ -92,7 +92,7 @@ export function DismissProposalModal({ item, onClose, onSuccess }: DismissPropos
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg p-1 text-text-muted hover:bg-surface-muted hover:text-foreground cursor-pointer"
+            className="rounded-lg p-1 text-text-muted hover:bg-surface-muted hover:text-text cursor-pointer"
             aria-label="Đóng"
           >
             <X size={18} />
@@ -108,14 +108,14 @@ export function DismissProposalModal({ item, onClose, onSuccess }: DismissPropos
           </div>
 
           <div>
-            <label htmlFor="dismiss-reason-select" className="block text-caption font-semibold text-foreground mb-1">
+            <label htmlFor="dismiss-reason-select" className="block text-caption font-semibold text-text mb-1">
               Lý do bỏ hiển thị <span className="text-danger">*</span>
             </label>
             <select
               id="dismiss-reason-select"
               value={reasonId}
               onChange={(e) => setReasonId(e.target.value as DismissalReasonId)}
-              className="w-full rounded-xl border border-border bg-surface px-3 py-2 text-body-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20"
+              className="w-full rounded-xl border border-border bg-surface px-3 py-2 text-body-sm text-text focus:outline-none focus:ring-2 focus:ring-primary/20"
             >
               {DISMISSAL_REASONS.map((r) => (
                 <option key={r.id} value={r.id}>
@@ -127,7 +127,7 @@ export function DismissProposalModal({ item, onClose, onSuccess }: DismissPropos
 
           {reasonId === "OTHER" && (
             <div>
-              <label htmlFor="dismiss-custom-reason" className="block text-caption font-semibold text-foreground mb-1">
+              <label htmlFor="dismiss-custom-reason" className="block text-caption font-semibold text-text mb-1">
                 Chi tiết lý do khác <span className="text-danger">*</span>
               </label>
               <input
@@ -138,13 +138,13 @@ export function DismissProposalModal({ item, onClose, onSuccess }: DismissPropos
                 placeholder="Nhập lý do cụ thể..."
                 maxLength={200}
                 required
-                className="w-full rounded-xl border border-border bg-surface px-3 py-2 text-body-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20"
+                className="w-full rounded-xl border border-border bg-surface px-3 py-2 text-body-sm text-text focus:outline-none focus:ring-2 focus:ring-primary/20"
               />
             </div>
           )}
 
           <div>
-            <label htmlFor="dismiss-note" className="block text-caption font-semibold text-foreground mb-1">
+            <label htmlFor="dismiss-note" className="block text-caption font-semibold text-text mb-1">
               Ghi chú thêm (tùy chọn)
             </label>
             <textarea
@@ -154,7 +154,7 @@ export function DismissProposalModal({ item, onClose, onSuccess }: DismissPropos
               placeholder="Ghi chú nội bộ cho Điều hành..."
               rows={2}
               maxLength={500}
-              className="w-full rounded-xl border border-border bg-surface px-3 py-2 text-body-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20"
+              className="w-full rounded-xl border border-border bg-surface px-3 py-2 text-body-sm text-text focus:outline-none focus:ring-2 focus:ring-primary/20"
             />
           </div>
 

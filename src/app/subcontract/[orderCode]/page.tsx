@@ -75,7 +75,7 @@ export default function SubcontractClaimPage({ params }: PageProps) {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4">
+      <div className="min-h-screen bg-bg flex flex-col items-center justify-center p-4">
         <div className="w-full max-w-lg h-96 rounded-2xl bg-surface-muted animate-pulse border border-border" />
       </div>
     )
@@ -83,10 +83,10 @@ export default function SubcontractClaimPage({ params }: PageProps) {
 
   if (error || !data?.data) {
     return (
-      <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4">
+      <div className="min-h-screen bg-bg flex flex-col items-center justify-center p-4">
         <div className="w-full max-w-md bg-surface p-6 rounded-2xl border border-border shadow-md text-center flex flex-col items-center gap-3">
           <AlertCircle size={40} className="text-danger" />
-          <h2 className="text-title font-bold text-foreground">Không tìm thấy đơn gia công</h2>
+          <h2 className="text-title font-bold text-text">Không tìm thấy đơn gia công</h2>
           <p className="text-caption text-text-muted">
             Đường dẫn của đơn #{orderCode} không hợp lệ hoặc đã hết hạn. Vui lòng mở đường dẫn mới nhất mà Điều phối gửi cho chi nhánh.
           </p>
@@ -98,12 +98,12 @@ export default function SubcontractClaimPage({ params }: PageProps) {
   const orderData = data.data
 
   return (
-    <div className="min-h-screen bg-background py-8 px-4 flex flex-col items-center justify-center">
+    <div className="min-h-screen bg-bg py-8 px-4 flex flex-col items-center justify-center">
       <header className="mb-6 text-center">
         <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary text-caption font-bold mb-2">
           <Shield size={14} /> Hệ Thống Điều Phối Chuỗi smeOS
         </div>
-        <h1 className="text-title-lg font-black text-foreground">
+        <h1 className="text-title-lg font-black text-text">
           Tiếp Nhận Đơn Hàng Gia Công
         </h1>
         <p className="text-caption text-text-muted mt-1">

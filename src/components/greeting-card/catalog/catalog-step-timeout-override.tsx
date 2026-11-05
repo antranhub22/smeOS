@@ -64,12 +64,12 @@ export function CatalogStepTimeoutOverride({ storePolicy, override, onChange }: 
   return (
     <div className="space-y-3 pt-3 border-t border-border">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <h4 className="text-body-sm font-extrabold text-foreground flex items-center gap-1.5">
+        <h4 className="text-body-sm font-extrabold text-text flex items-center gap-1.5">
           <Timer size={16} className="text-primary" aria-hidden="true" />
           <span>Thời hạn & Tự động huỷ đơn cho Thẻ chào này</span>
         </h4>
         <div className="flex items-center gap-2">
-          <label className="flex items-center gap-2 text-caption font-bold text-foreground cursor-pointer">
+          <label className="flex items-center gap-2 text-caption font-bold text-text cursor-pointer">
             <input
               type="checkbox"
               checked={!isCustom}
@@ -85,13 +85,13 @@ export function CatalogStepTimeoutOverride({ storePolicy, override, onChange }: 
         <div className="rounded-xl border border-border bg-surface-alt p-3.5 flex items-start gap-2 text-caption text-text-muted">
           <ArrowDownLeft size={16} className="mt-0.5 text-primary shrink-0" aria-hidden="true" />
           <div className="space-y-1">
-            <p className="font-semibold text-foreground">
+            <p className="font-semibold text-text">
               Đang áp dụng thời hạn chuẩn theo Hồ sơ tiệm:
             </p>
             <ul className="list-disc list-inside space-y-0.5 text-caption">
               <li>
                 Khách không mở link:{" "}
-                <span className="font-bold text-foreground">
+                <span className="font-bold text-text">
                   {storePolicy.autoCancelUnopened
                     ? `Tự huỷ sau ${formatTimeoutDuration(storePolicy.unopenedExpiryHours, "hours")}`
                     : "Không tự huỷ"}
@@ -99,7 +99,7 @@ export function CatalogStepTimeoutOverride({ storePolicy, override, onChange }: 
               </li>
               <li>
                 Mở nhưng không chọn mẫu:{" "}
-                <span className="font-bold text-foreground">
+                <span className="font-bold text-text">
                   {storePolicy.autoCancelBrowsing
                     ? `Tự huỷ sau ${formatTimeoutDuration(storePolicy.browsingExpiryHours, "hours")}`
                     : "Không tự huỷ"}
@@ -107,7 +107,7 @@ export function CatalogStepTimeoutOverride({ storePolicy, override, onChange }: 
               </li>
               <li>
                 Chờ chuyển khoản cọc:{" "}
-                <span className="font-bold text-foreground">
+                <span className="font-bold text-text">
                   {storePolicy.autoCancelUnpaid
                     ? `Tự huỷ sau ${formatTimeoutDuration(storePolicy.unpaidExpiryMinutes, "minutes")}`
                     : "Không tự huỷ"}
@@ -115,7 +115,7 @@ export function CatalogStepTimeoutOverride({ storePolicy, override, onChange }: 
               </li>
               <li>
                 Duyệt ảnh thành phẩm:{" "}
-                <span className="font-bold text-foreground">
+                <span className="font-bold text-text">
                   {storePolicy.autoApprovePhotoOnTimeout
                     ? `Tự duyệt sau ${storePolicy.photoReviewTimeoutMinutes} phút`
                     : "Không tự duyệt"}
@@ -135,7 +135,7 @@ export function CatalogStepTimeoutOverride({ storePolicy, override, onChange }: 
 
           {/* 1. Hủy nếu không mở link */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-2.5 rounded-lg border border-border bg-surface">
-            <label className="flex items-center gap-2 text-caption font-bold text-foreground cursor-pointer">
+            <label className="flex items-center gap-2 text-caption font-bold text-text cursor-pointer">
               <input
                 type="checkbox"
                 checked={activeUnopened}
@@ -154,7 +154,7 @@ export function CatalogStepTimeoutOverride({ storePolicy, override, onChange }: 
                 onChange={(e) =>
                   setField("unopenedExpiryHours", Math.max(1, parseInt(e.target.value) || 24))
                 }
-                className="h-8 w-16 rounded border border-border bg-surface px-1.5 text-right text-caption font-bold text-foreground disabled:opacity-40"
+                className="h-8 w-16 rounded border border-border bg-surface px-1.5 text-right text-caption font-bold text-text disabled:opacity-40"
               />
               <span className="text-caption text-text-muted">giờ</span>
             </div>
@@ -162,7 +162,7 @@ export function CatalogStepTimeoutOverride({ storePolicy, override, onChange }: 
 
           {/* 2. Hủy nếu không chọn mẫu */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-2.5 rounded-lg border border-border bg-surface">
-            <label className="flex items-center gap-2 text-caption font-bold text-foreground cursor-pointer">
+            <label className="flex items-center gap-2 text-caption font-bold text-text cursor-pointer">
               <input
                 type="checkbox"
                 checked={activeBrowsing}
@@ -181,7 +181,7 @@ export function CatalogStepTimeoutOverride({ storePolicy, override, onChange }: 
                 onChange={(e) =>
                   setField("browsingExpiryHours", Math.max(1, parseInt(e.target.value) || 12))
                 }
-                className="h-8 w-16 rounded border border-border bg-surface px-1.5 text-right text-caption font-bold text-foreground disabled:opacity-40"
+                className="h-8 w-16 rounded border border-border bg-surface px-1.5 text-right text-caption font-bold text-text disabled:opacity-40"
               />
               <span className="text-caption text-text-muted">giờ</span>
             </div>
@@ -189,7 +189,7 @@ export function CatalogStepTimeoutOverride({ storePolicy, override, onChange }: 
 
           {/* 3. Hủy nếu chưa cọc */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-2.5 rounded-lg border border-border bg-surface">
-            <label className="flex items-center gap-2 text-caption font-bold text-foreground cursor-pointer">
+            <label className="flex items-center gap-2 text-caption font-bold text-text cursor-pointer">
               <input
                 type="checkbox"
                 checked={activeUnpaid}
@@ -208,7 +208,7 @@ export function CatalogStepTimeoutOverride({ storePolicy, override, onChange }: 
                 onChange={(e) =>
                   setField("unpaidExpiryMinutes", Math.max(5, parseInt(e.target.value) || 30))
                 }
-                className="h-8 w-16 rounded border border-border bg-surface px-1.5 text-right text-caption font-bold text-foreground disabled:opacity-40"
+                className="h-8 w-16 rounded border border-border bg-surface px-1.5 text-right text-caption font-bold text-text disabled:opacity-40"
               />
               <span className="text-caption text-text-muted">phút</span>
             </div>
@@ -216,7 +216,7 @@ export function CatalogStepTimeoutOverride({ storePolicy, override, onChange }: 
 
           {/* 4. Tự duyệt ảnh */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-2.5 rounded-lg border border-border bg-surface">
-            <label className="flex items-center gap-2 text-caption font-bold text-foreground cursor-pointer">
+            <label className="flex items-center gap-2 text-caption font-bold text-text cursor-pointer">
               <input
                 type="checkbox"
                 checked={activePhotoApprove}
@@ -235,7 +235,7 @@ export function CatalogStepTimeoutOverride({ storePolicy, override, onChange }: 
                 onChange={(e) =>
                   setField("photoReviewTimeoutMinutes", Math.max(5, parseInt(e.target.value) || 15))
                 }
-                className="h-8 w-16 rounded border border-border bg-surface px-1.5 text-right text-caption font-bold text-foreground disabled:opacity-40"
+                className="h-8 w-16 rounded border border-border bg-surface px-1.5 text-right text-caption font-bold text-text disabled:opacity-40"
               />
               <span className="text-caption text-text-muted">phút</span>
             </div>

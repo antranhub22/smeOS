@@ -38,7 +38,7 @@ export function HomestayGuestFields({
   return (
     <div className="p-4 rounded-xl border border-border bg-surface-muted/40 flex flex-col gap-3">
       <div className="flex items-center justify-between">
-        <div className="text-body-sm font-extrabold text-foreground flex items-center gap-2">
+        <div className="text-body-sm font-extrabold text-text flex items-center gap-2">
           <Users size={17} className="text-primary" />
           <span>Khách lưu trú & Người nhận phòng</span>
         </div>
@@ -59,7 +59,7 @@ export function HomestayGuestFields({
       {!isSelfBooking && (
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1 border-t border-border">
           <div>
-            <label htmlFor={`${uid}-guestName`} className="block text-caption font-bold text-foreground mb-1">
+            <label htmlFor={`${uid}-guestName`} className="block text-caption font-bold text-text mb-1">
               Người đại diện nhận phòng <span className="text-danger">*</span>
             </label>
             <input
@@ -73,7 +73,7 @@ export function HomestayGuestFields({
             />
           </div>
           <div>
-            <label htmlFor={`${uid}-guestPhone`} className="block text-caption font-bold text-foreground mb-1">
+            <label htmlFor={`${uid}-guestPhone`} className="block text-caption font-bold text-text mb-1">
               Số điện thoại người nhận phòng <span className="text-danger">*</span>
             </label>
             <input
@@ -91,8 +91,8 @@ export function HomestayGuestFields({
 
       {/* Số lượng khách */}
       <div className="grid grid-cols-2 gap-3 pt-1 border-t border-border">
-        <div className="flex items-center justify-between p-2.5 rounded-lg border border-border bg-background">
-          <span className="text-caption font-bold text-foreground">Người lớn</span>
+        <div className="flex items-center justify-between p-2.5 rounded-lg border border-border bg-bg">
+          <span className="text-caption font-bold text-text">Người lớn</span>
           <div className="flex items-center gap-2">
             <button
               type="button"
@@ -114,8 +114,8 @@ export function HomestayGuestFields({
           </div>
         </div>
 
-        <div className="flex items-center justify-between p-2.5 rounded-lg border border-border bg-background">
-          <span className="text-caption font-bold text-foreground">Trẻ em (&lt;12t)</span>
+        <div className="flex items-center justify-between p-2.5 rounded-lg border border-border bg-bg">
+          <span className="text-caption font-bold text-text">Trẻ em (&lt;12t)</span>
           <div className="flex items-center gap-2">
             <button
               type="button"

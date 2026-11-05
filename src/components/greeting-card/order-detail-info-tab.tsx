@@ -39,7 +39,7 @@ export function OrderDetailInfoTab({ target, onCustomerSaved }: OrderDetailInfoT
           <span className="text-caption font-bold uppercase tracking-wider text-text-muted flex items-center gap-1">
             <User size={13} /> {orderTerms.customerRoleLabel}
           </span>
-          <p className="text-body-sm font-bold text-foreground">{target.customerName || "Khách lẻ"}</p>
+          <p className="text-body-sm font-bold text-text">{target.customerName || "Khách lẻ"}</p>
           {target.customerPhone && (
             <div className="flex items-center gap-2 mt-1">
               <a
@@ -64,7 +64,7 @@ export function OrderDetailInfoTab({ target, onCustomerSaved }: OrderDetailInfoT
           <span className="text-caption font-bold uppercase tracking-wider text-text-muted flex items-center gap-1">
             <MapPin size={13} /> {orderTerms.recipientRoleLabel}
           </span>
-          <p className="text-body-sm font-bold text-foreground">{target.recipientName || target.customerName || "Chưa có tên"}</p>
+          <p className="text-body-sm font-bold text-text">{target.recipientName || target.customerName || "Chưa có tên"}</p>
           {target.recipientPhone && (
             <a
               href={`tel:${target.recipientPhone}`}
@@ -104,7 +104,7 @@ export function OrderDetailInfoTab({ target, onCustomerSaved }: OrderDetailInfoT
             className="h-16 w-16 shrink-0 rounded-xl border border-border object-cover"
           />
           <div className="min-w-0 flex-1">
-            <h4 className="text-body font-bold text-foreground truncate">{target.productName || `${terms.sampleProduct} theo mẫu`}</h4>
+            <h4 className="text-body font-bold text-text truncate">{target.productName || `${terms.sampleProduct} theo mẫu`}</h4>
             <p className="text-body-sm font-extrabold text-primary mt-0.5">
               {(target.totalVnd ?? 0) > 0 ? `${(target.totalVnd ?? 0).toLocaleString("vi-VN")} đ` : "Chưa có giá"}
             </p>
@@ -117,7 +117,7 @@ export function OrderDetailInfoTab({ target, onCustomerSaved }: OrderDetailInfoT
             <span className="text-caption font-bold text-warning-text flex items-center gap-1">
               💌 Lời nhắn gửi trên {terms.printablesTitle.toLowerCase()}:
             </span>
-            <p className="text-body-sm italic text-foreground">&ldquo;{target.cardMessage}&rdquo;</p>
+            <p className="text-body-sm italic text-text">&ldquo;{target.cardMessage}&rdquo;</p>
           </div>
         ) : (
           <p className="text-caption text-text-muted italic">Không kèm nội dung {terms.printablesTitle.toLowerCase()}.</p>
@@ -128,7 +128,7 @@ export function OrderDetailInfoTab({ target, onCustomerSaved }: OrderDetailInfoT
       <div className="rounded-2xl border border-border bg-surface-alt p-4 flex flex-col gap-2">
         <div className="flex items-center justify-between">
           <span className="text-body-sm text-text-muted">Tổng giá trị đơn:</span>
-          <span className="text-body font-bold text-foreground">
+          <span className="text-body font-bold text-text">
             {(target.totalVnd ?? 0).toLocaleString("vi-VN")} đ
           </span>
         </div>
@@ -175,7 +175,7 @@ export function OrderDetailInfoTab({ target, onCustomerSaved }: OrderDetailInfoT
                   : `Dạ chào anh/chị, ${terms.sampleProduct.toLowerCase()} cho đơn #${target.orderCode || target.sendCode} đã ${terms.makerAction.toLowerCase()} hoàn tất ạ! Anh/chị mở link kiểm tra ${terms.completedProductPhoto.toLowerCase()} và thanh toán phần còn lại ${(target.balanceVnd ?? 0).toLocaleString("vi-VN")} đ để cửa hàng tiến hành bàn giao nhé ạ:${url ? ` ${url}` : ""}`
                 void navigator.clipboard.writeText(msg)
               }}
-              className="rounded-lg border border-border bg-surface px-2.5 py-1 text-caption font-bold text-foreground hover:bg-surface-muted transition-colors"
+              className="rounded-lg border border-border bg-surface px-2.5 py-1 text-caption font-bold text-text hover:bg-surface-muted transition-colors"
             >
               📋 Chép tin nhắc khách
             </button>

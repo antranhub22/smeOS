@@ -131,7 +131,7 @@ export function EvidenceTimelineDiagram({
       <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border/60 pb-3">
         <div className="flex items-center gap-2">
           <ShieldCheck size={18} className="text-primary" />
-          <h4 className="text-body-sm font-extrabold text-foreground">
+          <h4 className="text-body-sm font-extrabold text-text">
             Lịch sử đơn hàng &amp; bằng chứng xác nhận
           </h4>
         </div>
@@ -182,7 +182,7 @@ export function EvidenceTimelineDiagram({
                     <span className={`h-1.5 w-1.5 rounded-full ${hasEventImages ? "bg-success" : isLatest ? "bg-primary" : "bg-text-muted"}`} />
                   </div>
                   <div className="flex flex-wrap items-center justify-between gap-1">
-                    <span className={`text-body-sm font-bold ${IMAGE_EVENT_KINDS.has(ev.kind) ? "text-foreground" : "text-foreground"}`}>
+                    <span className={`text-body-sm font-bold ${IMAGE_EVENT_KINDS.has(ev.kind) ? "text-text" : "text-text"}`}>
                       {ev.label}
                       {hasEventImages && (
                         <span className="ml-1.5 text-caption font-normal text-success">📸 {ev.imageUrls!.length} ảnh</span>

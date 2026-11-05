@@ -4,7 +4,7 @@ import React from "react"
 import { DELIVERY_SLOTS } from "@/modules/greeting-card/domain/delivery-schedule"
 import { DEFAULT_SLOT_CAPACITY } from "@/modules/greeting-card/domain/slot-capacity"
 
-const FIELD = "h-9 w-20 px-2 rounded-lg border border-border bg-background text-body text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20"
+const FIELD = "h-9 w-20 px-2 rounded-lg border border-border bg-bg text-body text-text focus:outline-none focus:ring-2 focus:ring-primary/20"
 
 export interface SlotCapacityDraft {
   /** Trần chung (chuỗi đang gõ). */
@@ -20,7 +20,7 @@ export interface SlotCapacityDraft {
 export function SlotCapacityFields({ value, onChange }: { value: SlotCapacityDraft; onChange: (next: SlotCapacityDraft) => void }) {
   return (
     <fieldset className="flex flex-col gap-2 border-t border-border pt-3">
-      <legend className="text-body-sm font-bold text-foreground">Số đơn tối đa mỗi khung giờ</legend>
+      <legend className="text-body-sm font-bold text-text">Số đơn tối đa mỗi khung giờ</legend>
       <label className="flex items-center gap-2 text-body-sm">
         <span className="text-text-muted">Mọi khung giờ:</span>
         <input

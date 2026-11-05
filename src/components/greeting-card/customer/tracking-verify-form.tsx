@@ -39,7 +39,7 @@ export function TrackingVerifyForm({ orderCode, onVerified }: { orderCode: strin
         <input
           id={`${uid}-last4`} inputMode="numeric" maxLength={4} value={value} autoComplete="off"
           onChange={(e) => setValue(e.target.value.replace(/\D/g, ""))}
-          className="h-11 w-28 rounded-lg border border-border bg-background px-3 text-center tracking-widest text-foreground"
+          className="h-11 w-28 rounded-lg border border-border bg-bg px-3 text-center tracking-widest text-text"
         />
         <Button type="submit" variant="primary" disabled={busy} className="h-11 flex-1">
           {busy ? "Đang kiểm tra..." : "Xem đầy đủ"}

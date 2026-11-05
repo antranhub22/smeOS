@@ -46,7 +46,7 @@ export function CopyProductImageButton({ imageUrl, driveLink }: { imageUrl?: str
       onClick={() => void handleCopy()}
       disabled={!src || state === "busy"}
       title={src ? (state === "failed" ? "Trình duyệt không cho chép ảnh — đã mở ảnh ở tab mới để bạn lưu/chép" : "Chép ảnh gốc của mẫu để dán gửi Điều phối") : "Mẫu này chưa có ảnh"}
-      className="h-8 shrink-0 gap-1.5 whitespace-nowrap text-caption font-semibold text-foreground"
+      className="h-8 shrink-0 gap-1.5 whitespace-nowrap text-caption font-semibold text-text"
     >
       {state === "busy" ? <Loader2 size={13} className="animate-spin" /> : state === "done" ? <Check size={13} className="text-primary" /> : <ImageIcon size={13} />}
       <span>{state === "done" ? "Đã chép ảnh" : "Copy ảnh sản phẩm"}</span>

@@ -39,7 +39,7 @@ export function AdminPaymentPlanCell({ order, shopDepositPercent }: { order: Adm
           {s.milestones.map((m) => (
             <Line key={m.seq} label={m.kind === "DEPOSIT" ? `Đợt ${m.seq}: cọc ${m.percent}%` : m.kind === "BALANCE" ? `Đợt ${m.seq}: còn lại` : "Một lần"} value={`${vnd(m.amountVnd)} · ${m.status === "PAID" ? "Đã thu" : m.status === "PARTIALLY_PAID" ? "Thu một phần" : "Chờ thu"}`} />
           ))}
-          <dt className="mt-1 font-bold text-foreground">Lịch sử thu</dt>
+          <dt className="mt-1 font-bold text-text">Lịch sử thu</dt>
           {order.payments.length === 0 ? (
             <dd className="text-text-muted">Chưa có lần thu nào</dd>
           ) : (
@@ -60,7 +60,7 @@ function Line({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex justify-between gap-2">
       <dt className="text-text-muted">{label}</dt>
-      <dd className="font-semibold text-foreground text-right">{value}</dd>
+      <dd className="font-semibold text-text text-right">{value}</dd>
     </div>
   )
 }

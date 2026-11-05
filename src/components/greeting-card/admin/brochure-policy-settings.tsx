@@ -55,7 +55,7 @@ export function BrochurePolicySettings() {
     <form onSubmit={save} className="bg-surface rounded-2xl border border-border p-5 shadow-sm flex flex-col gap-4">
       <div className="flex items-center gap-2">
         <ShieldCheck size={18} className="text-primary" />
-        <h3 className="text-title-sm font-extrabold text-foreground">Chính sách thu tiền</h3>
+        <h3 className="text-title-sm font-extrabold text-text">Chính sách thu tiền</h3>
       </div>
       {!policy ? (
         <div className="h-40 rounded-2xl bg-surface-muted animate-pulse" aria-busy="true" />
@@ -63,13 +63,13 @@ export function BrochurePolicySettings() {
         <div className="flex flex-col gap-4">
           <div className="flex flex-wrap items-center justify-between gap-3 p-3.5 rounded-xl border border-border bg-surface-muted/40">
             <div>
-              <span className="font-bold text-foreground text-body-sm">Mức đặt cọc tối thiểu mặc định</span>
+              <span className="font-bold text-text text-body-sm">Mức đặt cọc tối thiểu mặc định</span>
               <p className="text-caption text-text-muted">Tỉ lệ giá trị đơn hàng khách cần chuyển khoản trước khi xưởng tiến hành thực hiện đơn hàng.</p>
             </div>
             <select
               value={policy.depositPercent}
               onChange={(e) => edit({ depositPercent: Number(e.target.value) })}
-              className="h-9 px-3 rounded-lg border border-border bg-background text-body-sm font-semibold text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20"
+              className="h-9 px-3 rounded-lg border border-border bg-bg text-body-sm font-semibold text-text focus:outline-none focus:ring-2 focus:ring-primary/20"
             >
               <option value={0}>Không — Thu đủ 100%</option>
               {[20, 30, 50, 70].map((p) => <option key={p} value={p}>Cọc {p}% giá trị đơn</option>)}

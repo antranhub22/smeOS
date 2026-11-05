@@ -2,7 +2,6 @@
   "summary": {
     "app/(app)": {
       "R18": 7,
-      "R17": 5,
       "R20": 1
     },
     "app/(auth)": {
@@ -13,7 +12,6 @@
       "R21": 2
     },
     "app/subcontract": {
-      "R17": 5,
       "R20": 1,
       "R23": 1
     },
@@ -57,13 +55,12 @@
       "R16": 44
     },
     "components/crm": {
-      "R18": 6
+      "R18": 5
     },
     "components/dashboard": {
       "R18": 35
     },
     "components/greeting-card": {
-      "R17": 689,
       "R18": 478,
       "R23": 95,
       "R19": 27,
@@ -141,6 +138,6 @@
       "R18": 2
     }
   },
-  "total": 3948,
-  "updatedAt": "2026-11-04T03:35:42.159Z"
+  "total": 3248,
+  "updatedAt": "2026-11-05T04:14:31.729Z"
 }

@@ -44,7 +44,7 @@ export function TelegramLinkedChatCard({
       }`}
     >
       <button type="button" onClick={() => onSelect(chat.id)} className="min-w-0 flex-1 text-left cursor-pointer">
-        <div className="text-body-sm font-bold text-foreground truncate">{chat.title}</div>
+        <div className="text-body-sm font-bold text-text truncate">{chat.title}</div>
         <div className="flex items-center gap-2 mt-0.5">
           <span className="text-caption-sm text-text-muted capitalize">[{chat.type}]</span>
           <code className="text-caption-sm font-mono font-semibold text-primary">{chat.id}</code>

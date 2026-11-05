@@ -89,12 +89,12 @@ export function CatalogDetailPanel({ catalogId, catalogName, onBack }: Props) {
             type="button"
             onClick={onBack}
             aria-label="Quay lại danh sách bộ sưu tập"
-            className="p-2 rounded-xl border border-border hover:bg-surface-muted transition-colors text-text-muted hover:text-foreground"
+            className="p-2 rounded-xl border border-border hover:bg-surface-muted transition-colors text-text-muted hover:text-text"
           >
             <ArrowLeft size={16} />
           </button>
           <div>
-            <h2 className="text-title font-extrabold text-foreground">{catalogName}</h2>
+            <h2 className="text-title font-extrabold text-text">{catalogName}</h2>
             <p className="text-body-sm text-text-muted">
               {catalog?._count.sessions ?? 0} link đã gửi ·{" "}
               {catalog?.items.length ?? 0} {ti("sampleProduct").toLowerCase()} trong bộ sưu tập
@@ -147,9 +147,9 @@ export function CatalogDetailPanel({ catalogId, catalogName, onBack }: Props) {
       {/* Add Product Modal */}
       {isAddOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-          <div className="bg-background rounded-2xl shadow-2xl border border-border w-full max-w-lg mx-4 p-5 flex flex-col gap-4 max-h-[80vh]">
+          <div className="bg-bg rounded-2xl shadow-2xl border border-border w-full max-w-lg mx-4 p-5 flex flex-col gap-4 max-h-[80vh]">
             <div className="flex items-center justify-between">
-              <h3 className="text-title-sm font-extrabold text-foreground">Chọn {ti("sampleProduct").toLowerCase()} thêm vào bộ sưu tập</h3>
+              <h3 className="text-title-sm font-extrabold text-text">Chọn {ti("sampleProduct").toLowerCase()} thêm vào bộ sưu tập</h3>
               <button
                 type="button"
                 onClick={() => { setIsAddOpen(false); setProductSearch("") }}
@@ -166,7 +166,7 @@ export function CatalogDetailPanel({ catalogId, catalogName, onBack }: Props) {
                 placeholder="Tìm tên sản phẩm..."
                 value={productSearch}
                 onChange={(e) => setProductSearch(e.target.value)}
-                className="w-full h-10 pl-9 pr-3 rounded-lg border border-border bg-background text-body text-foreground"
+                className="w-full h-10 pl-9 pr-3 rounded-lg border border-border bg-bg text-body text-text"
               />
             </div>
             <div className="overflow-y-auto flex flex-col gap-2 flex-1 min-h-0">
@@ -185,7 +185,7 @@ export function CatalogDetailPanel({ catalogId, catalogName, onBack }: Props) {
                         <FlowerImage src={product.masterImageUrl} driveLink={product.driveLink} alt={product.name} sizes="(max-width: 640px) 50vw, 200px" fallback="icon" className="w-full h-full" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-body-sm font-bold text-foreground truncate">{product.name}</p>
+                        <p className="text-body-sm font-bold text-text truncate">{product.name}</p>
                         {product.price_vnd != null ? (
                           <p className="text-caption text-primary font-semibold">
                             {product.price_vnd.toLocaleString("vi-VN")}đ
@@ -228,7 +228,7 @@ export function CatalogDetailPanel({ catalogId, catalogName, onBack }: Props) {
             <Package size={28} className="text-text-muted" />
           </div>
           <div className="text-center">
-            <p className="text-title-sm font-bold text-foreground">Bộ sưu tập chưa có {ti("sampleProduct").toLowerCase()}</p>
+            <p className="text-title-sm font-bold text-text">Bộ sưu tập chưa có {ti("sampleProduct").toLowerCase()}</p>
             <p className="text-body-sm text-text-muted mt-1">
               Thêm {ti("sampleProduct").toLowerCase()} từ danh mục sản phẩm để khách có thể vuốt chọn
             </p>
@@ -272,7 +272,7 @@ export function CatalogDetailPanel({ catalogId, catalogName, onBack }: Props) {
                   </button>}
                 </div>
                 <div className="p-3 flex flex-col gap-1">
-                  <p className="text-caption font-bold text-foreground line-clamp-2 leading-tight">
+                  <p className="text-caption font-bold text-text line-clamp-2 leading-tight">
                     {item.product.name}
                   </p>
                   {price !== undefined && (

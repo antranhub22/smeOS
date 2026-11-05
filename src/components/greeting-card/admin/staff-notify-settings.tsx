@@ -90,7 +90,7 @@ export function StaffNotifySettings() {
             <Bell size={20} />
           </div>
           <div>
-            <h3 className="text-title-sm font-bold text-foreground">Thông báo đa kênh cho nhân viên</h3>
+            <h3 className="text-title-sm font-bold text-text">Thông báo đa kênh cho nhân viên</h3>
             <p className="text-body-sm text-text-muted">
               Đẩy thông báo tức thì ra Telegram, Zalo OA, SMS, WhatsApp khi có đơn mới, huỷ đơn hoặc đổi thông tin
             </p>
@@ -112,7 +112,7 @@ export function StaffNotifySettings() {
         <div className="mt-6 flex flex-col gap-6 border-t border-border pt-5">
           {/* 1. Chọn kênh thông báo */}
           <div>
-            <h4 className="text-body-sm font-bold text-foreground">Kênh thông báo kích hoạt</h4>
+            <h4 className="text-body-sm font-bold text-text">Kênh thông báo kích hoạt</h4>
             <p className="text-caption text-text-muted">
               Kênh có dấu kiểm được phép sử dụng theo chính sách gói của SaaS. Hộp việc luôn được đồng bộ.
             </p>
@@ -128,8 +128,8 @@ export function StaffNotifySettings() {
                     onClick={() => toggleChannel(ch)}
                     className={`flex items-center justify-between rounded-xl border p-3 text-left transition-all ${
                       isChecked
-                        ? "border-primary bg-primary/5 text-foreground"
-                        : "border-border bg-background text-text-muted"
+                        ? "border-primary bg-primary/5 text-text"
+                        : "border-border bg-bg text-text-muted"
                     } ${!isAllowed ? "cursor-not-allowed opacity-40" : "cursor-pointer"}`}
                   >
                     <div>
@@ -145,8 +145,8 @@ export function StaffNotifySettings() {
 
           {/* 2. Cấu hình Telegram nếu chọn */}
           {activeChannels.includes("TELEGRAM") && (
-            <div className="rounded-xl border border-border bg-background p-4">
-              <h5 className="text-body-sm font-bold text-foreground">Cấu hình Telegram Bot</h5>
+            <div className="rounded-xl border border-border bg-bg p-4">
+              <h5 className="text-body-sm font-bold text-text">Cấu hình Telegram Bot</h5>
               <p className="text-caption text-text-muted">Nhập Bot Token từ @BotFather và Chat ID nhóm hoặc cá nhân</p>
               <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <input
@@ -154,14 +154,14 @@ export function StaffNotifySettings() {
                   placeholder="Telegram Bot Token (để trống giữ nguyên)"
                   value={credentials.telegramBotToken ?? ""}
                   onChange={(e) => setCredentials({ ...credentials, telegramBotToken: e.target.value })}
-                  className="h-9 w-full rounded-lg border border-border bg-surface px-3 text-body-sm text-foreground"
+                  className="h-9 w-full rounded-lg border border-border bg-surface px-3 text-body-sm text-text"
                 />
                 <input
                   type="text"
                   placeholder="Default Chat ID (vd: -100123456789)"
                   value={credentials.telegramChatId ?? ""}
                   onChange={(e) => setCredentials({ ...credentials, telegramChatId: e.target.value })}
-                  className="h-9 w-full rounded-lg border border-border bg-surface px-3 text-body-sm text-foreground"
+                  className="h-9 w-full rounded-lg border border-border bg-surface px-3 text-body-sm text-text"
                 />
               </div>
             </div>
@@ -169,19 +169,19 @@ export function StaffNotifySettings() {
 
           {/* 3. Tùy chọn sự kiện nhận tin */}
           <div>
-            <h4 className="text-body-sm font-bold text-foreground">Sự kiện kích hoạt gửi ngoài</h4>
+            <h4 className="text-body-sm font-bold text-text">Sự kiện kích hoạt gửi ngoài</h4>
             <div className="mt-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
               {STAFF_NOTIFY_EVENTS.map((evt) => {
                 const checked = activeEvents[evt] !== false
                 return (
-                  <label key={evt} className="flex cursor-pointer items-center gap-2 rounded-lg border border-border bg-background p-2.5">
+                  <label key={evt} className="flex cursor-pointer items-center gap-2 rounded-lg border border-border bg-bg p-2.5">
                     <input
                       type="checkbox"
                       checked={checked}
                       onChange={() => toggleEvent(evt)}
                       className="rounded border-border text-primary focus:ring-primary"
                     />
-                    <span className="text-body-sm text-foreground">{STAFF_NOTIFY_EVENT_LABELS[evt]}</span>
+                    <span className="text-body-sm text-text">{STAFF_NOTIFY_EVENT_LABELS[evt]}</span>
                   </label>
                 )
               })}

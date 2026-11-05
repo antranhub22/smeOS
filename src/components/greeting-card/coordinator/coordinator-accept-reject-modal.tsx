@@ -90,7 +90,7 @@ export function CoordinatorAcceptRejectModal({
         className="bg-surface rounded-2xl border border-border shadow-xl w-full max-w-md p-5 flex flex-col gap-4"
       >
         <div className="flex items-center justify-between">
-          <h3 id="coordinator-decision-modal-title" className="text-body font-extrabold text-foreground flex items-center gap-2">
+          <h3 id="coordinator-decision-modal-title" className="text-body font-extrabold text-text flex items-center gap-2">
             {isAccept ? (
               <>
                 <ShieldCheck size={20} className="text-success" aria-hidden="true" />
@@ -103,7 +103,7 @@ export function CoordinatorAcceptRejectModal({
               </>
             )}
           </h3>
-          <button type="button" aria-label="Đóng" onClick={onClose} className="text-text-muted hover:text-foreground">
+          <button type="button" aria-label="Đóng" onClick={onClose} className="text-text-muted hover:text-text">
             <X size={18} />
           </button>
         </div>
@@ -119,7 +119,7 @@ export function CoordinatorAcceptRejectModal({
         {isAccept ? (
           <div className="flex flex-col gap-2">
             <div className="flex items-center justify-between">
-              <label htmlFor="coordinator-accept-note" className="text-body-sm font-semibold text-foreground">
+              <label htmlFor="coordinator-accept-note" className="text-body-sm font-semibold text-text">
                 Ghi chú nội bộ (tùy chọn)
               </label>
               {defaultBranchName && (
@@ -135,10 +135,10 @@ export function CoordinatorAcceptRejectModal({
               placeholder={defaultBranchName ? `Vd: Đã xác nhận với ${defaultBranchName}, xưởng đủ điều kiện thực hiện...` : "Vd: Đã kiểm tra kho nguyên liệu, đủ điều kiện thực hiện đơn..."}
               value={note}
               onChange={(e) => setNote(e.target.value)}
-              className="w-full rounded-xl border border-border bg-surface-muted p-3 text-body-sm text-foreground resize-none focus:outline-none focus:ring-2 focus:ring-primary/40"
+              className="w-full rounded-xl border border-border bg-surface-muted p-3 text-body-sm text-text resize-none focus:outline-none focus:ring-2 focus:ring-primary/40"
             />
             {autoMode && (
-              <label className="flex items-center gap-2 text-body-sm text-foreground">
+              <label className="flex items-center gap-2 text-body-sm text-text">
                 <input type="checkbox" checked={manualDispatch} onChange={(e) => setManualDispatch(e.target.checked)} />
                 Tự chọn cửa hàng cho đơn này
               </label>
@@ -146,7 +146,7 @@ export function CoordinatorAcceptRejectModal({
           </div>
         ) : (
           <div className="flex flex-col gap-2">
-            <label htmlFor="coordinator-reject-reason" className="text-body-sm font-semibold text-foreground">
+            <label htmlFor="coordinator-reject-reason" className="text-body-sm font-semibold text-text">
               Lý do từ chối <span className="text-danger">*</span>
             </label>
             <div className="flex flex-wrap gap-1.5 mb-1">
@@ -158,7 +158,7 @@ export function CoordinatorAcceptRejectModal({
                   className={`text-caption px-2.5 py-1 rounded-lg border text-left transition-colors ${
                     reason === r
                       ? "border-danger bg-danger-bg text-danger font-semibold"
-                      : "border-border bg-surface text-text-muted hover:border-border-strong hover:text-foreground"
+                      : "border-border bg-surface text-text-muted hover:border-border-strong hover:text-text"
                   }`}
                 >
                   {r}
@@ -172,7 +172,7 @@ export function CoordinatorAcceptRejectModal({
               placeholder="Nhập hoặc chỉnh sửa lý do từ chối (bắt buộc)..."
               value={reason}
               onChange={(e) => setReason(e.target.value)}
-              className="w-full rounded-xl border border-border bg-surface-muted p-3 text-body-sm text-foreground resize-none focus:outline-none focus:ring-2 focus:ring-danger/40"
+              className="w-full rounded-xl border border-border bg-surface-muted p-3 text-body-sm text-text resize-none focus:outline-none focus:ring-2 focus:ring-danger/40"
             />
           </div>
         )}

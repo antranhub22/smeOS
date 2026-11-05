@@ -26,7 +26,7 @@ interface Props {
 }
 
 const vnd = (n: number) => `${n.toLocaleString("vi-VN")}đ`
-const ACTION = "inline-flex h-8 items-center gap-1 rounded-lg border border-border px-2 text-caption font-bold text-foreground hover:bg-surface-muted"
+const ACTION = "inline-flex h-8 items-center gap-1 rounded-lg border border-border px-2 text-caption font-bold text-text hover:bg-surface-muted"
 
 /** Kanban của Sale: 9 cột = 9 bước của quy trình, phân tầng hiển thị theo thời gian. */
 export function SalesKanbanView({ items, now, onOpenNotes, showSale, doneHidden }: Props) {
@@ -132,7 +132,7 @@ export function SalesKanbanView({ items, now, onOpenNotes, showSale, doneHidden 
                     </span>
                   </div>
                 </div>
-                <h3 className="text-body-sm font-extrabold text-foreground">{step.title}</h3>
+                <h3 className="text-body-sm font-extrabold text-text">{step.title}</h3>
                 <p className="text-caption text-text-muted">
                   Phụ trách: {step.roleResponsible}
                   {needsMe > 0 && <span className="ml-1 font-semibold text-danger">· {needsMe} cần bạn</span>}
@@ -230,7 +230,7 @@ function SaleKanbanCard({
       >
         <div className="flex items-start justify-between gap-2 border-b border-border/60 pb-1.5 w-full">
           <div className="flex items-center gap-1.5 min-w-0">
-            <span className="min-w-0 truncate text-body-sm font-bold text-foreground group-hover:text-primary transition-colors">
+            <span className="min-w-0 truncate text-body-sm font-bold text-text group-hover:text-primary transition-colors">
               {item.customerName}
             </span>
             {isUrgent ? (
@@ -282,7 +282,7 @@ function SaleKanbanCard({
             className="h-10 w-10 shrink-0 rounded-lg border border-border"
           />
           <div className="min-w-0 flex-1">
-            <p className="truncate text-caption font-semibold text-foreground">{item.productName}</p>
+            <p className="truncate text-caption font-semibold text-text">{item.productName}</p>
             <p className="truncate text-caption font-extrabold text-primary">
               {item.totalVnd > 0 ? vnd(item.totalVnd) : "Chưa có giá"}
             </p>

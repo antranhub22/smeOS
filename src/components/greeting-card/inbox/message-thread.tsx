@@ -68,14 +68,14 @@ export function MessageThread({ target, stepKey = "GENERAL", title, onClose, onB
           messages.map((m) => (
             <article key={m.id} className={`flex max-w-[85%] flex-col gap-1 ${m.mine ? "self-end items-end" : "self-start"}`}>
               <p className="text-caption text-text-muted">
-                <strong className="text-foreground">{m.mine ? "Bạn" : m.senderName}</strong> · {m.senderRoleLabel}
+                <strong className="text-text">{m.mine ? "Bạn" : m.senderName}</strong> · {m.senderRoleLabel}
                 {m.toLabel && <> → {m.toLabel}</>} · {timeAgo(m.createdAt, now)}
               </p>
               <div className={`whitespace-pre-wrap break-words rounded-2xl px-3 py-2 text-body ${
-                m.mine ? "bg-primary text-white" : m.unread ? "border border-primary/40 bg-primary/5 text-foreground" : "bg-surface text-foreground border border-border"
+                m.mine ? "bg-primary text-white" : m.unread ? "border border-primary/40 bg-primary/5 text-text" : "bg-surface text-text border border-border"
               }`}>
                 {m.discount && (
-                  <p className={`mb-1 text-body-sm font-extrabold ${m.mine ? "text-white" : "text-foreground"}`}>
+                  <p className={`mb-1 text-body-sm font-extrabold ${m.mine ? "text-white" : "text-text"}`}>
                     {m.kind === "DISCOUNT_REQUEST" ? `Xin giảm ${m.discount.label}` : m.discount.status === "APPROVED"
                       ? `Đã duyệt giảm ${(m.discount.approvedVnd ?? 0).toLocaleString("vi-VN")}đ` : "Không duyệt giảm giá"}
                   </p>

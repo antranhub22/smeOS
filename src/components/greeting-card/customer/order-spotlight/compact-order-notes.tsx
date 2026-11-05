@@ -36,12 +36,12 @@ export function CompactOrderNotes({
   return (
     <>
       {open.map((kind) => (
-        <div key={kind} className="relative rounded-xl border border-border bg-background p-3">
+        <div key={kind} className="relative rounded-xl border border-border bg-bg p-3">
           <button
             type="button"
             onClick={() => remove(kind)}
             aria-label={`Bỏ ô ${orderNoteLabel(kind, industryKey).toLowerCase()}`}
-            className="absolute right-2 top-2 rounded-md p-1 text-text-muted transition hover:bg-surface-muted hover:text-foreground"
+            className="absolute right-2 top-2 rounded-md p-1 text-text-muted transition hover:bg-surface-muted hover:text-text"
           >
             <X size={16} aria-hidden="true" />
           </button>

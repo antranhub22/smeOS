@@ -44,7 +44,7 @@ export function InboxButton({ onOpenTarget }: { onOpenTarget: (t: InboxTarget) =
           "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
           open
             ? "border-border bg-surface text-primary shadow-xs"
-            : "border-border bg-surface-alt text-text-muted hover:bg-surface hover:text-foreground active:bg-surface active:text-primary",
+            : "border-border bg-surface-alt text-text-muted hover:bg-surface hover:text-text active:bg-surface active:text-primary",
         )}
       >
         <Bell size={18} aria-hidden="true" className={open ? "text-primary" : "text-text-muted"} />

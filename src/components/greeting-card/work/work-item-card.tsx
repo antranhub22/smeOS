@@ -49,7 +49,7 @@ export function WorkItemCard({ item, me, onOpenNotes, actions, now }: Props) {
           <FlowerImage src={item.productImageUrl} alt={item.productName} sizes="48px" fallback="icon" className="h-full w-full" />
         </div>
         <div className="min-w-0 flex-1 basis-40">
-          <p className="truncate text-body-sm font-bold text-foreground">{item.customerName}</p>
+          <p className="truncate text-body-sm font-bold text-text">{item.customerName}</p>
           <p className="truncate text-caption text-text-muted">
             {item.productName} · {item.totalVnd > 0 ? vnd(item.totalVnd) : "Chưa có giá"}{due ? ` · Giao ${due}` : ""}
           </p>
@@ -57,10 +57,10 @@ export function WorkItemCard({ item, me, onOpenNotes, actions, now }: Props) {
         <div className="flex w-full flex-wrap gap-1.5 sm:w-auto">
           {item.customerPhone && (
             <>
-              <a href={`tel:${item.customerPhone}`} className="inline-flex h-9 items-center gap-1 rounded-lg border border-border px-2.5 text-caption font-bold text-foreground hover:bg-surface-muted">
+              <a href={`tel:${item.customerPhone}`} className="inline-flex h-9 items-center gap-1 rounded-lg border border-border px-2.5 text-caption font-bold text-text hover:bg-surface-muted">
                 <Phone size={13} aria-hidden="true" /> Gọi
               </a>
-              <a href={zaloHref(item.customerPhone)} target="_blank" rel="noreferrer" className="inline-flex h-9 items-center rounded-lg border border-border px-2.5 text-caption font-bold text-foreground hover:bg-surface-muted">
+              <a href={zaloHref(item.customerPhone)} target="_blank" rel="noreferrer" className="inline-flex h-9 items-center rounded-lg border border-border px-2.5 text-caption font-bold text-text hover:bg-surface-muted">
                 Zalo
               </a>
             </>
@@ -68,7 +68,7 @@ export function WorkItemCard({ item, me, onOpenNotes, actions, now }: Props) {
           <button
             type="button"
             onClick={() => onOpenNotes(item, item.currentStepId)}
-            className="inline-flex h-9 items-center gap-1 rounded-lg border border-border px-2.5 text-caption font-bold text-foreground hover:bg-surface-muted"
+            className="inline-flex h-9 items-center gap-1 rounded-lg border border-border px-2.5 text-caption font-bold text-text hover:bg-surface-muted"
           >
             <MessageSquare size={13} className="text-primary" aria-hidden="true" />
             Nhắn tin

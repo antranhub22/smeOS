@@ -42,10 +42,10 @@ function OrderCard({ order }: { order: PortalOrder }) {
   return (
     <div className="p-4 rounded-xl border border-border bg-surface flex flex-col gap-2">
       <div className="flex items-center justify-between gap-2">
-        <span className="text-body font-extrabold text-foreground">Đơn #{order.orderCode}</span>
+        <span className="text-body font-extrabold text-text">Đơn #{order.orderCode}</span>
         <span className={`px-2 py-0.5 rounded-full text-caption font-bold ${copy.badgeClass}`}>{copy.badge}</span>
       </div>
-      <div className="text-body-sm text-foreground flex items-start gap-1.5">
+      <div className="text-body-sm text-text flex items-start gap-1.5">
         <MapPin size={14} className="text-primary mt-0.5 shrink-0" />
         <span>{order.deliveryAddress}</span>
       </div>
@@ -82,7 +82,7 @@ export function BranchPortalBoard() {
             <Store size={22} />
           </div>
           <div>
-            <h1 className="text-xl font-extrabold text-foreground">Đơn gia công</h1>
+            <h1 className="text-xl font-extrabold text-text">Đơn gia công</h1>
             <p className="text-caption text-text-muted">{branch ? branch.name : "Đơn được mời và đơn đang làm của chi nhánh"}</p>
           </div>
         </div>
@@ -110,7 +110,7 @@ export function BranchPortalBoard() {
         if (items.length === 0) return null
         return (
           <section key={stage} className="flex flex-col gap-3">
-            <h2 className="text-body font-bold text-foreground">
+            <h2 className="text-body font-bold text-text">
               {STAGE_COPY[stage].title} ({items.length})
             </h2>
             {items.map((o) => (

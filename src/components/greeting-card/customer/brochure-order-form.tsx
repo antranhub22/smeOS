@@ -43,7 +43,7 @@ interface BrochureOrderFormProps {
 }
 
 const INPUT =
-  "w-full min-w-0 h-11 px-3 rounded-lg border border-border bg-background text-title font-normal text-foreground placeholder:text-body placeholder:text-text-muted/70 focus:outline-none focus:ring-2 focus:ring-primary/20"
+  "w-full min-w-0 h-11 px-3 rounded-lg border border-border bg-bg text-title font-normal text-text placeholder:text-body placeholder:text-text-muted/70 focus:outline-none focus:ring-2 focus:ring-primary/20"
 
 export function BrochureOrderForm({
   productSnapshot,
@@ -171,7 +171,7 @@ export function BrochureOrderForm({
           variant="ghost"
           size="sm"
           onClick={onBack}
-          className="gap-1.5 text-text-muted hover:text-foreground text-caption"
+          className="gap-1.5 text-text-muted hover:text-text text-caption"
         >
           <ArrowLeft size={16} />
           <span>Đổi {terms.sampleProduct.toLowerCase()}</span>

@@ -24,7 +24,7 @@ interface Props {
   industryKey?: string | null | undefined
 }
 
-const FIELD = "w-full h-10 px-3 rounded-lg border border-border bg-background text-body text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20"
+const FIELD = "w-full h-10 px-3 rounded-lg border border-border bg-bg text-body text-text focus:outline-none focus:ring-2 focus:ring-primary/20"
 const vnd = (n: number) => `${n.toLocaleString("vi-VN")} đ`
 
 /** Size, số lượng, khu vực giao, mã giảm giá (khi tiệm bật), mã thanh toán (khi tiệm có mã) + bảng tổng tiền do server tính (đã trừ ưu đãi). */
@@ -50,7 +50,7 @@ export function BrochureOrderOptions({ variants, priceDimensions, basePrice, shi
           />
         ) : variants.length > 0 && (
           <label className="flex flex-col gap-1">
-            <span className="text-caption font-bold text-foreground">Kích thước / Phiên bản</span>
+            <span className="text-caption font-bold text-text">Kích thước / Phiên bản</span>
             <select value={selection.variantId} onChange={(e) => onChange({ variantId: e.target.value })} className={FIELD}>
               {/* Khoảng giá theo phiên bản: không có "bản tiêu chuẩn", khách phải chọn */}
               {variants.some((v) => isOptionId(v.id)) ? (
@@ -69,7 +69,7 @@ export function BrochureOrderOptions({ variants, priceDimensions, basePrice, shi
           </label>
         )}
         <div className="flex flex-col gap-1">
-          <span className="text-caption font-bold text-foreground" id="qty-label">Số lượng</span>
+          <span className="text-caption font-bold text-text" id="qty-label">Số lượng</span>
           <div className="flex items-center gap-2" role="group" aria-labelledby="qty-label">
             <button
               type="button"
@@ -96,7 +96,7 @@ export function BrochureOrderOptions({ variants, priceDimensions, basePrice, shi
 
       {shipping.zones.length > 0 && (
         <label className="flex flex-col gap-1">
-          <span className="text-caption font-bold text-foreground">{shippingZoneLabel} <span className="text-danger">*</span></span>
+          <span className="text-caption font-bold text-text">{shippingZoneLabel} <span className="text-danger">*</span></span>
           <select value={selection.shippingZoneId} onChange={(e) => onChange({ shippingZoneId: e.target.value })} className={FIELD}>
             <option value="">— Chọn khu vực —</option>
             {shipping.zones.map((z) => (
@@ -114,7 +114,7 @@ export function BrochureOrderOptions({ variants, priceDimensions, basePrice, shi
       {/* Khối Mã ưu đãi — luôn có cho mọi ngành */}
       <div className="flex flex-col gap-1.5 p-3 rounded-xl border border-border bg-surface-muted/30">
         <div className="flex items-center justify-between">
-          <span className="text-caption font-bold text-foreground flex items-center gap-1.5">
+          <span className="text-caption font-bold text-text flex items-center gap-1.5">
             <Ticket size={14} className="text-primary" />
             Mã ưu đãi
           </span>

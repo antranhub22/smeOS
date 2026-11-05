@@ -281,7 +281,7 @@ function LivePreviewPane({
       <div className="flex flex-col justify-center gap-4 flex-1 min-w-0">
         {/* Name + style badge */}
         <div className="flex flex-col gap-1">
-          <h3 className="text-body font-bold text-foreground leading-tight">{tpl.name}</h3>
+          <h3 className="text-body font-bold text-text leading-tight">{tpl.name}</h3>
         </div>
 
         {/* Dot navigator */}
@@ -291,7 +291,7 @@ function LivePreviewPane({
               <button
                 type="button"
                 onClick={prev}
-                className="size-8 sm:size-6 rounded-full border border-border flex items-center justify-center text-text-muted hover:text-foreground transition-colors cursor-pointer"
+                className="size-8 sm:size-6 rounded-full border border-border flex items-center justify-center text-text-muted hover:text-text transition-colors cursor-pointer"
                 aria-label="Sản phẩm trước"
               >
                 <ChevronLeft size={12} />
@@ -311,7 +311,7 @@ function LivePreviewPane({
               <button
                 type="button"
                 onClick={next}
-                className="size-8 sm:size-6 rounded-full border border-border flex items-center justify-center text-text-muted hover:text-foreground transition-colors cursor-pointer"
+                className="size-8 sm:size-6 rounded-full border border-border flex items-center justify-center text-text-muted hover:text-text transition-colors cursor-pointer"
                 aria-label="Sản phẩm tiếp"
               >
                 <ChevronRight size={12} />
@@ -409,7 +409,7 @@ export function TemplateSelectorSplitPane({
               2
             </span>
             <div>
-              <label className="text-body-sm font-extrabold text-foreground flex items-center gap-1.5">
+              <label className="text-body-sm font-extrabold text-text flex items-center gap-1.5">
                 <Layers size={15} className="text-primary" />
                 <span>Giao diện khách xem</span>
               </label>
@@ -433,8 +433,8 @@ export function TemplateSelectorSplitPane({
                 onClick={() => setActiveFilter(val)}
                 className={`px-2.5 py-1 rounded-lg text-caption font-semibold transition-colors cursor-pointer whitespace-nowrap ${
                   activeFilter === val
-                    ? "bg-surface text-foreground shadow-2xs"
-                    : "text-text-muted hover:text-foreground"
+                    ? "bg-surface text-text shadow-2xs"
+                    : "text-text-muted hover:text-text"
                 }`}
               >
                 {label}

@@ -150,7 +150,7 @@ export function CatalogProductPicker({ catalogId, compact = false, onItemCountCh
               placeholder="Tìm tên hoặc mã sản phẩm..."
               value={ci.searchQuery}
               onChange={(e) => ci.setSearchQuery(e.target.value)}
-              className="w-full h-9 pl-8 pr-3 rounded-lg border border-border bg-background text-body-sm text-text focus:outline-none focus:ring-1 focus:ring-primary"
+              className="w-full h-9 pl-8 pr-3 rounded-lg border border-border bg-bg text-body-sm text-text focus:outline-none focus:ring-1 focus:ring-primary"
             />
           </div>
 
@@ -326,7 +326,7 @@ export function CatalogProductPicker({ catalogId, compact = false, onItemCountCh
               ci.available.map((product) => (
                 <div
                   key={product.id}
-                  className="flex items-center gap-3 p-2.5 rounded-xl border border-border bg-background hover:border-primary/30 transition-colors"
+                  className="flex items-center gap-3 p-2.5 rounded-xl border border-border bg-bg hover:border-primary/30 transition-colors"
                 >
                   <div className="w-11 h-11 rounded-lg bg-surface-alt border border-border flex items-center justify-center shrink-0 overflow-hidden">
                     <FlowerImage src={product.masterImageUrl} driveLink={product.driveLink} alt={product.name} sizes="44px" fallback="icon" className="w-full h-full" />

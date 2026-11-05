@@ -20,7 +20,7 @@ export function SalesFunnelStats() {
   return (
     <section className="bg-surface rounded-2xl border border-border shadow-sm overflow-hidden">
       <div className="p-4 border-b border-border flex flex-wrap items-center justify-between gap-3">
-        <h3 className="text-body font-extrabold text-foreground flex items-center gap-2">
+        <h3 className="text-body font-extrabold text-text flex items-center gap-2">
           <BarChart3 size={18} className="text-primary" />
           Hiệu quả chào hàng theo nhân viên
         </h3>
@@ -67,7 +67,7 @@ export function SalesFunnelStats() {
             <tbody className="divide-y divide-border">
               {[...funnel.rows, funnel.total].map((r) => (
                 <tr key={r.saleId} className={r.saleId === "ALL" ? "font-extrabold bg-surface-muted/50" : ""}>
-                  <td className="px-4 py-2.5 text-foreground">{r.saleName}</td>
+                  <td className="px-4 py-2.5 text-text">{r.saleName}</td>
                   <td className="px-4 py-2.5 text-right">{r.sent}</td>
                   <td className="px-4 py-2.5 text-right">
                     {r.opened} <span className="text-caption text-text-muted">({r.openRate}%)</span>

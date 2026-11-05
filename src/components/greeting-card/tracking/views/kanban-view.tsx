@@ -99,7 +99,7 @@ export function KanbanView({ qs, onOpen, canDecide = false, onDismiss }: KanbanV
               className="flex w-64 shrink-0 flex-col gap-2 rounded-2xl border border-border bg-surface-alt p-2"
             >
               <header className="px-1">
-                <h3 className="flex items-center justify-between text-body-sm font-extrabold text-foreground">
+                <h3 className="flex items-center justify-between text-body-sm font-extrabold text-text">
                   <span>{c.title}</span>
                   <span className="text-text-muted">{c.count}</span>
                 </h3>
@@ -144,7 +144,7 @@ export function KanbanView({ qs, onOpen, canDecide = false, onDismiss }: KanbanV
                   type="button"
                   onClick={() => showMore(c)}
                   disabled={res.isValidating}
-                  className="h-9 rounded-xl border border-border bg-surface text-body-sm font-bold text-foreground hover:bg-surface-muted disabled:opacity-60"
+                  className="h-9 rounded-xl border border-border bg-surface text-body-sm font-bold text-text hover:bg-surface-muted disabled:opacity-60"
                 >
                   {res.isValidating ? "Đang tải..." : `Xem thêm ${Math.min(KANBAN_PAGE_SIZE, c.count - c.items.length)} (còn ${c.count - c.items.length})`}
                 </button>

@@ -20,7 +20,7 @@ interface Props {
 }
 
 const ACTION_BTN =
-  "inline-flex items-center justify-center h-8 rounded-lg border border-border text-text-muted hover:bg-surface-muted hover:text-foreground disabled:opacity-40"
+  "inline-flex items-center justify-center h-8 rounded-lg border border-border text-text-muted hover:bg-surface-muted hover:text-text disabled:opacity-40"
 
 function formatDate(iso: string | null): string {
   return iso ? _formatDate(iso) : "Không hết hạn"
@@ -85,12 +85,12 @@ export function SalesSessionTable({ sessions, hasMore, isLoadingMore, onLoadMore
               return (
                 <tr key={row.id} className="hover:bg-surface-muted/50 transition-colors">
                   <td className="px-4 py-3">
-                    <div className="font-mono font-bold text-foreground">{row.send_code}</div>
+                    <div className="font-mono font-bold text-text">{row.send_code}</div>
                     <div className="text-caption text-text-muted">Hạn: {formatDate(row.expires_at)}</div>
                   </td>
-                  <td className="px-4 py-3 text-foreground font-medium">{row.catalog.name}</td>
+                  <td className="px-4 py-3 text-text font-medium">{row.catalog.name}</td>
                   <td className="px-4 py-3">
-                    <div className="font-semibold text-foreground">{row.customer_name || "Khách chưa đặt tên"}</div>
+                    <div className="font-semibold text-text">{row.customer_name || "Khách chưa đặt tên"}</div>
                     {row.customer_phone && <div className="text-caption text-text-muted">{row.customer_phone}</div>}
                   </td>
                   <td className="px-4 py-3">

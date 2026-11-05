@@ -234,7 +234,7 @@ export function CoordinatorKanbanView({
               <header className="flex items-center justify-between px-1 py-0.5">
                 <div className="flex items-center gap-1.5">
                   <Icon size={14} className="text-primary" />
-                  <h3 className="text-body-sm font-extrabold text-foreground">{col.label}</h3>
+                  <h3 className="text-body-sm font-extrabold text-text">{col.label}</h3>
                 </div>
                 <div className="flex items-center gap-1">
                   {overdueOrders.length > 0 && (

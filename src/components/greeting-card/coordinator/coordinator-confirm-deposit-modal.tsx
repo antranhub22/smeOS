@@ -69,14 +69,14 @@ export function CoordinatorConfirmDepositModal({
       >
         <div className="flex items-center gap-2">
           <Banknote size={20} className="text-success shrink-0" />
-          <h3 id="confirm-deposit-title" className="text-body font-extrabold text-foreground">
+          <h3 id="confirm-deposit-title" className="text-body font-extrabold text-text">
             Xác nhận Tiền Cọc Đợt 1 — #{orderCode}
           </h3>
         </div>
 
         <p className="text-body-sm text-text-muted">
           Số tiền cọc cần thu:{" "}
-          <span className="font-extrabold text-foreground">
+          <span className="font-extrabold text-text">
             {depositVnd != null ? `${depositVnd.toLocaleString("vi-VN")}đ` : "theo kế hoạch thanh toán của đơn"}
           </span>
         </p>
@@ -111,7 +111,7 @@ export function CoordinatorConfirmDepositModal({
             onChange={(e) => setNote(e.target.value)}
             maxLength={500}
             placeholder="VD: Khớp bill chuyển khoản tiền cọc"
-            className="w-full h-10 px-3 rounded-lg border border-border bg-background text-body text-foreground"
+            className="w-full h-10 px-3 rounded-lg border border-border bg-bg text-body text-text"
           />
         </label>
 

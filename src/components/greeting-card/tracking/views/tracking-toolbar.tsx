@@ -31,7 +31,7 @@ import {
   type ViewKind,
 } from "./tracking-view-state"
 
-const SELECT = "h-9 rounded-xl border border-border bg-surface px-2.5 text-caption text-foreground focus:border-primary focus:outline-hidden"
+const SELECT = "h-9 rounded-xl border border-border bg-surface px-2.5 text-caption text-text focus:border-primary focus:outline-hidden"
 
 interface Props {
   state: TrackingViewState
@@ -102,14 +102,14 @@ export function TrackingToolbar({ state, onChange, onApplyView, onRefresh }: Pro
               value={state.q}
               onChange={(e) => onChange({ q: e.target.value })}
               placeholder="Tìm mã đơn, tên khách, SĐT…"
-              className="h-9 w-full rounded-xl border border-border bg-surface-alt pl-8 pr-7 text-caption text-foreground placeholder:text-text-muted focus:border-primary focus:bg-surface focus:outline-hidden"
+              className="h-9 w-full rounded-xl border border-border bg-surface-alt pl-8 pr-7 text-caption text-text placeholder:text-text-muted focus:border-primary focus:bg-surface focus:outline-hidden"
             />
             {state.q && (
               <button
                 type="button"
                 aria-label="Xoá tìm kiếm"
                 onClick={() => onChange({ q: "" })}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-text-muted hover:text-foreground"
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-text-muted hover:text-text"
               >
                 <X size={13} aria-hidden="true" />
               </button>
@@ -153,7 +153,7 @@ export function TrackingToolbar({ state, onChange, onApplyView, onRefresh }: Pro
             className={`inline-flex h-9 items-center gap-1.5 rounded-xl border px-2.5 text-caption font-semibold transition-colors ${
               showAdvanced || advancedCount > 0
                 ? "border-primary bg-primary/10 text-primary"
-                : "border-border text-text-muted hover:bg-surface-muted hover:text-foreground"
+                : "border-border text-text-muted hover:bg-surface-muted hover:text-text"
             }`}
           >
             <SlidersHorizontal size={13} />
@@ -185,7 +185,7 @@ export function TrackingToolbar({ state, onChange, onApplyView, onRefresh }: Pro
                   aria-selected={active}
                   onClick={() => onChange({ view: t.id })}
                   className={`inline-flex h-8 items-center gap-1 rounded-lg px-2.5 text-caption font-bold transition-all ${
-                    active ? "bg-surface text-primary shadow-xs" : "text-text-muted hover:text-foreground"
+                    active ? "bg-surface text-primary shadow-xs" : "text-text-muted hover:text-text"
                   }`}
                   title={t.label}
                 >
@@ -201,7 +201,7 @@ export function TrackingToolbar({ state, onChange, onApplyView, onRefresh }: Pro
               type="button"
               onClick={onRefresh}
               title="Làm mới tiến độ"
-              className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-border text-text-muted hover:bg-surface-muted hover:text-foreground"
+              className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-border text-text-muted hover:bg-surface-muted hover:text-text"
             >
               <RefreshCw size={14} />
             </button>
@@ -217,7 +217,7 @@ export function TrackingToolbar({ state, onChange, onApplyView, onRefresh }: Pro
             <button
               type="button"
               onClick={() => onApplyView(v)}
-              className="px-2 py-0.5 font-medium text-foreground hover:text-primary transition-colors text-caption"
+              className="px-2 py-0.5 font-medium text-text hover:text-primary transition-colors text-caption"
             >
               {v.name}
             </button>

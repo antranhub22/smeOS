@@ -12,7 +12,7 @@ function Stat({ label, value, tone = "" }: { label: string; value: React.ReactNo
   return (
     <div className="rounded-2xl border border-border bg-surface p-3">
       <p className="text-caption text-text-muted">{label}</p>
-      <p className={`text-title font-extrabold ${tone || "text-foreground"}`}>{value}</p>
+      <p className={`text-title font-extrabold ${tone || "text-text"}`}>{value}</p>
     </div>
   )
 }
@@ -34,11 +34,11 @@ export function DashboardView({ qs }: { qs: string }) {
           </div>
           <p className="text-body-sm text-text-muted">Đã thu tiền trở đi: {d.progress.paidOrBeyondRate}% đơn · Hoàn tất: {d.progress.completedRate}% đơn</p>
           <section aria-label="Theo bước" className="rounded-2xl border border-border bg-surface p-3">
-            <h3 className="mb-2 text-body-sm font-extrabold text-foreground">Theo bước</h3>
+            <h3 className="mb-2 text-body-sm font-extrabold text-text">Theo bước</h3>
             <ul className="flex flex-col gap-1.5">
               {d.byStep.map((s) => (
                 <li key={s.stepId} className="grid grid-cols-[8rem_1fr_auto] items-center gap-2 text-caption">
-                  <span className="truncate text-foreground">{s.title}</span>
+                  <span className="truncate text-text">{s.title}</span>
                   <span className="h-2 rounded-full bg-surface-muted"><span className="block h-2 rounded-full bg-primary" style={{ width: `${(s.count / max) * 100}%` }} /></span>
                   <span className="text-text-muted">{s.count}{s.overdue > 0 && <span className="text-danger"> · {s.overdue} quá hạn</span>}</span>
                 </li>
@@ -47,11 +47,11 @@ export function DashboardView({ qs }: { qs: string }) {
           </section>
           <div className="grid gap-3 sm:grid-cols-2">
             <section aria-label="Thời gian ở bước" className="rounded-2xl border border-border bg-surface p-3">
-              <h3 className="mb-2 text-body-sm font-extrabold text-foreground">Đã ở bước hiện tại</h3>
+              <h3 className="mb-2 text-body-sm font-extrabold text-text">Đã ở bước hiện tại</h3>
               {d.aging.map((a) => <p key={a.id} className="flex justify-between text-body-sm"><span>{a.label}</span><strong>{a.count}</strong></p>)}
             </section>
             <section aria-label="Theo người phụ trách" className="rounded-2xl border border-border bg-surface p-3">
-              <h3 className="mb-2 text-body-sm font-extrabold text-foreground">Việc trễ theo người phụ trách</h3>
+              <h3 className="mb-2 text-body-sm font-extrabold text-text">Việc trễ theo người phụ trách</h3>
               {d.byOwner.map((o) => (
                 <p key={o.owner} className="flex justify-between text-body-sm">
                   <span>{OWNER_LABEL[o.owner]}</span><span><strong className="text-danger">{o.overdue}</strong> quá hạn · {o.dueSoon} sắp hạn</span>

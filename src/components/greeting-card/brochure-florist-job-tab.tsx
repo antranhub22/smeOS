@@ -139,22 +139,22 @@ export function BrochureFloristJobTab({
                 #{target.orderCode || target.sendCode}
               </span>
             </div>
-            <h3 className="text-body font-extrabold text-foreground mt-1 break-words [overflow-wrap:anywhere] line-clamp-2">
+            <h3 className="text-body font-extrabold text-text mt-1 break-words [overflow-wrap:anywhere] line-clamp-2">
               {target.productName || `${terms.sampleProduct} theo mẫu`}
             </h3>
           </div>
 
           <div className="flex flex-wrap items-center gap-2 shrink-0 [&_button]:whitespace-nowrap">
-            <Button type="button" variant="outline" size="sm" onClick={handleCopyText} className="text-caption gap-1.5 h-8 font-semibold text-foreground">
+            <Button type="button" variant="outline" size="sm" onClick={handleCopyText} className="text-caption gap-1.5 h-8 font-semibold text-text">
               {copiedText ? <Check size={13} className="text-primary" /> : <Copy size={13} />}
               <span>{copiedText ? "Đã chép text" : "Copy text Zalo"}</span>
             </Button>
-            <Button type="button" variant="outline" size="sm" onClick={handleCopyImage} className="text-caption gap-1.5 h-8 font-semibold text-foreground">
+            <Button type="button" variant="outline" size="sm" onClick={handleCopyImage} className="text-caption gap-1.5 h-8 font-semibold text-text">
               {copiedImage ? <Check size={13} className="text-primary" /> : <Sparkles size={13} className="text-primary" />}
               <span>{copiedImage ? "Đã chép ảnh thẻ" : "Copy ảnh thẻ (HD)"}</span>
             </Button>
             {target.productImageUrl && (
-              <Button type="button" variant="outline" size="sm" onClick={handleCopyProductImage} className="text-caption gap-1.5 h-8 font-semibold text-foreground border-primary/30 text-primary hover:bg-primary/5">
+              <Button type="button" variant="outline" size="sm" onClick={handleCopyProductImage} className="text-caption gap-1.5 h-8 font-semibold text-text border-primary/30 text-primary hover:bg-primary/5">
                 {copiedProductImage ? <Check size={13} /> : <Eye size={13} />}
                 <span>{copiedProductImage ? "Đã chép ảnh mẫu" : "Copy ảnh mẫu gốc HD"}</span>
               </Button>
@@ -178,7 +178,7 @@ export function BrochureFloristJobTab({
         {/* Khung Thẻ Gia Công gửi cho Thợ (Chỉ chụp vùng này từ Ảnh mẫu tham chiếu trở xuống) */}
         <div
           ref={cardRef}
-          className="rounded-3xl border border-border/80 bg-surface p-6 shadow-md flex flex-col gap-5 text-foreground relative overflow-hidden"
+          className="rounded-3xl border border-border/80 bg-surface p-6 shadow-md flex flex-col gap-5 text-text relative overflow-hidden"
           style={{ backgroundColor: "#ffffff" }}
         >
           <div className="flex items-center justify-between border-b border-border/60 pb-3.5">
@@ -187,7 +187,7 @@ export function BrochureFloristJobTab({
                 <Sparkles size={12} />
                 {orderTerms.makerTabLabel}
               </span>
-              <span className="text-body-sm font-extrabold text-foreground">
+              <span className="text-body-sm font-extrabold text-text">
                 #{target.orderCode || target.sendCode}
               </span>
             </div>
@@ -226,7 +226,7 @@ export function BrochureFloristJobTab({
               </div>
 
               <div className="p-3.5 rounded-2xl bg-primary/5 border border-primary/20 space-y-1.5">
-                <span className="text-caption font-bold text-foreground block">
+                <span className="text-caption font-bold text-text block">
                   💰 Giá gia công trên thẻ:
                 </span>
                 <div className="relative">
@@ -239,7 +239,7 @@ export function BrochureFloristJobTab({
                       setSuggestedCraftFee(raw ? Number(raw) : 0)
                     }}
                     placeholder={defaultFee.toLocaleString("vi-VN")}
-                    className="w-full px-3 py-2 pr-12 rounded-xl border border-border bg-surface text-foreground font-extrabold text-body focus:outline-none focus:ring-2 focus:ring-primary/40"
+                    className="w-full px-3 py-2 pr-12 rounded-xl border border-border bg-surface text-text font-extrabold text-body focus:outline-none focus:ring-2 focus:ring-primary/40"
                   />
                   <span className="absolute right-3 top-2.5 text-caption font-black text-text-muted">VNĐ</span>
                 </div>
@@ -252,18 +252,18 @@ export function BrochureFloristJobTab({
                 <span className="text-caption font-bold text-text-muted uppercase tracking-wider block mb-1">
                   {terms.sampleProduct}
                 </span>
-                <h3 className="text-body font-black text-foreground break-words [overflow-wrap:anywhere]">
+                <h3 className="text-body font-black text-text break-words [overflow-wrap:anywhere]">
                   {target.productName || `${terms.sampleProduct} theo mẫu`}
                 </h3>
               </div>
 
               {/* Materials summary */}
               <div className="p-4 rounded-2xl bg-surface-alt/70 border border-border text-caption flex flex-col gap-1.5">
-                <span className="font-bold text-foreground uppercase tracking-wider flex items-center gap-1.5">
+                <span className="font-bold text-text uppercase tracking-wider flex items-center gap-1.5">
                   <Layers size={14} className="text-primary" />
                   {orderTerms.rawMaterialLabel}
                 </span>
-                <p className="text-body-sm text-foreground font-semibold leading-relaxed">
+                <p className="text-body-sm text-text font-semibold leading-relaxed">
                   {target.flowersSummary || `${terms.makerAction} theo chuẩn mẫu ảnh tham chiếu.`}
                 </p>
               </div>
@@ -275,13 +275,13 @@ export function BrochureFloristJobTab({
                     <MessageSquare size={14} />
                     <span>Nội dung {terms.printablesTitle.toLowerCase()} (In nguyên văn):</span>
                   </div>
-                  <p className="text-body-sm italic text-foreground font-semibold">&ldquo;{target.cardMessage}&rdquo;</p>
+                  <p className="text-body-sm italic text-text font-semibold">&ldquo;{target.cardMessage}&rdquo;</p>
                 </div>
               )}
 
               {/* Florist Custom Note / Message */}
               <div className="p-3.5 rounded-2xl bg-surface-alt/50 border border-border/80 text-caption flex flex-col gap-1.5">
-                <label htmlFor="florist-custom-note" className="font-bold text-foreground flex items-center gap-1.5">
+                <label htmlFor="florist-custom-note" className="font-bold text-text flex items-center gap-1.5">
                   <span>📝 Lưu ý & Ghi chú cho {terms.makerTitle.toLowerCase()}:</span>
                 </label>
                 <textarea
@@ -290,13 +290,13 @@ export function BrochureFloristJobTab({
                   value={floristNote}
                   onChange={(e) => setFloristNote(e.target.value)}
                   placeholder={`VD: ${terms.makerAction} theo form chuẩn, tỉ mỉ đường may và độ hoàn thiện...`}
-                  className="w-full p-2.5 rounded-xl border border-border bg-surface text-foreground text-body-sm font-medium resize-none focus:outline-none focus:ring-2 focus:ring-primary/40 leading-relaxed"
+                  className="w-full p-2.5 rounded-xl border border-border bg-surface text-text text-body-sm font-medium resize-none focus:outline-none focus:ring-2 focus:ring-primary/40 leading-relaxed"
                 />
               </div>
 
               {/* Delivery & Recipient */}
               <div className="p-4 rounded-2xl bg-surface-alt/70 border border-border text-caption flex flex-col gap-2.5">
-                <div className="flex items-center justify-between font-bold text-foreground pb-1 border-b border-border/40">
+                <div className="flex items-center justify-between font-bold text-text pb-1 border-b border-border/40">
                   <div className="flex items-center gap-1.5">
                     <MapPin size={14} className="text-primary shrink-0" />
                     <span>{orderTerms.recipientInfoLabel}</span>
@@ -304,23 +304,23 @@ export function BrochureFloristJobTab({
                   <button
                     type="button"
                     onClick={() => setMaskPhone(!maskPhone)}
-                    className="inline-flex items-center gap-1 text-caption text-text-muted hover:text-foreground font-medium shrink-0"
+                    className="inline-flex items-center gap-1 text-caption text-text-muted hover:text-text font-medium shrink-0"
                   >
                     {maskPhone ? <Eye size={12} /> : <EyeOff size={12} />}
                     <span>{maskPhone ? "Hiện số đầy đủ" : "Che số ĐT"}</span>
                   </button>
                 </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-foreground text-body-sm">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-text text-body-sm">
                   <div>
                     <span className="text-text-muted font-medium text-caption block">{orderTerms.recipientRoleLabel}:</span>
-                    <strong className="text-foreground">{target.recipientName || target.customerName || "Khách lẻ"}</strong>
+                    <strong className="text-text">{target.recipientName || target.customerName || "Khách lẻ"}</strong>
                   </div>
                   <div>
                     <span className="text-text-muted font-medium text-caption block">Số điện thoại:</span>
-                    <strong className="text-foreground">{maskPhone ? maskPhoneNumber(target.recipientPhone) : target.recipientPhone || "—"}</strong>
+                    <strong className="text-text">{maskPhone ? maskPhoneNumber(target.recipientPhone) : target.recipientPhone || "—"}</strong>
                   </div>
                 </div>
-                <div className="pt-1.5 border-t border-border/50 text-foreground">
+                <div className="pt-1.5 border-t border-border/50 text-text">
                   <span className="text-text-muted font-medium text-caption block">{orderTerms.addressLabel}:</span>
                   <span className="font-medium text-body-sm">{target.deliveryAddress || "Chưa có địa chỉ chi tiết"}</span>
                 </div>

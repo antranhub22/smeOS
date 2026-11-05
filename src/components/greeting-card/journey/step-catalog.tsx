@@ -56,7 +56,7 @@ export function StepCatalog(props: StepCatalogProps) {
             1
           </span>
           <div>
-            <h2 id="step-catalog-title" className="text-title font-bold text-foreground">
+            <h2 id="step-catalog-title" className="text-title font-bold text-text">
               Chọn {ti("catalogTitle").toLowerCase()}
             </h2>
             <p className="mt-1 text-body-sm text-text-muted">
@@ -117,7 +117,7 @@ export function StepCatalog(props: StepCatalogProps) {
                 )}
               >
                 <span className="min-w-0 flex-1">
-                  <span className="block truncate text-body font-bold text-foreground">{cat.name}</span>
+                  <span className="block truncate text-body font-bold text-text">{cat.name}</span>
                   <span className="mt-0.5 block truncate font-mono text-caption text-text-muted">
                     {catalogPublicPath(orgSlug, cat)}
                   </span>
@@ -176,7 +176,7 @@ export function StepCatalog(props: StepCatalogProps) {
               3
             </span>
             <div>
-              <p className="text-body-sm font-bold text-foreground">Gửi riêng cho khách</p>
+              <p className="text-body-sm font-bold text-text">Gửi riêng cho khách</p>
               <p className="text-caption text-text-muted">
                 {itemCount > 0
                   ? "Tạo link kèm lời chào cá nhân hóa (ví dụ: Chào anh Minh, chị Lan) và theo dõi mở thẻ."

@@ -61,7 +61,7 @@ export function CancellationDecision({
         <span>Yêu cầu phê duyệt: {typeLabel}</span>
       </div>
 
-      <div className="text-foreground flex flex-col gap-1 bg-surface p-2.5 rounded-lg border border-border">
+      <div className="text-text flex flex-col gap-1 bg-surface p-2.5 rounded-lg border border-border">
         <p><strong>Lý do đề xuất:</strong> {reason}</p>
         {refundAmountVnd > 0 && (
           <p><strong>Số tiền hoàn:</strong> <span className="text-danger font-mono font-bold">{vnd(refundAmountVnd)}</span></p>
@@ -76,7 +76,7 @@ export function CancellationDecision({
         value={note}
         onChange={(e) => setNote(e.target.value)}
         disabled={busy}
-        className="h-8 w-full rounded-lg border border-border bg-background px-2.5 text-caption text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+        className="h-8 w-full rounded-lg border border-border bg-bg px-2.5 text-caption text-text focus:outline-none focus:ring-1 focus:ring-primary"
       />
 
       <div className="flex items-center justify-end gap-2 pt-1">

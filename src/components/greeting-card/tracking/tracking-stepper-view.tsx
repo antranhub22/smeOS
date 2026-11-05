@@ -94,7 +94,7 @@ export function TrackingStepperView({
                       isCurrent
                         ? "text-primary underline decoration-primary underline-offset-2"
                         : isCompleted
-                        ? "text-foreground"
+                        ? "text-text"
                         : "text-text-muted"
                     }`}
                   >

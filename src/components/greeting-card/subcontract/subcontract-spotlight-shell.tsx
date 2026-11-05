@@ -186,7 +186,7 @@ export function SubcontractSpotlightShell({
           <span className="text-caption font-bold uppercase tracking-wider text-primary flex items-center gap-1">
             <Sparkles size={13} /> Thẻ Gia Công Đơn Hàng Chuỗi
           </span>
-          <h2 className="text-title font-extrabold text-foreground">
+          <h2 className="text-title font-extrabold text-text">
             Đơn hàng #{orderCode}
           </h2>
         </div>
@@ -201,7 +201,7 @@ export function SubcontractSpotlightShell({
             </span>
           ))}
           {craftFeeDeductions.length > 0 && craftFeePayableVnd !== undefined && (
-            <span className="text-caption font-bold text-foreground block">Thực nhận: {craftFeePayableVnd.toLocaleString("vi-VN")} đ</span>
+            <span className="text-caption font-bold text-text block">Thực nhận: {craftFeePayableVnd.toLocaleString("vi-VN")} đ</span>
           )}
         </div>
       </div>

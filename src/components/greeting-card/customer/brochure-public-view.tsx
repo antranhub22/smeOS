@@ -118,7 +118,7 @@ export function BrochurePublicView({ catalog, products, shipping, shop }: Props)
       | import("@/modules/greeting-card/domain/store-policy").PublicAppliedPolicies
       | undefined
     return (
-      <div className="min-h-screen bg-background text-foreground flex flex-col justify-start py-6 px-4 sm:px-6">
+      <div className="min-h-screen bg-bg text-text flex flex-col justify-start py-6 px-4 sm:px-6">
         <BrochureOrderForm
           productSnapshot={activeSnapshot}
           variants={selected?.variants ?? []}
@@ -137,7 +137,7 @@ export function BrochurePublicView({ catalog, products, shipping, shop }: Props)
   // 2. PAYMENT STEP WITH VIETQR
   if (step === "PAYMENT" && orderResult) {
     return (
-      <div className="min-h-screen bg-background text-foreground flex flex-col justify-start py-6 px-4 sm:px-6">
+      <div className="min-h-screen bg-bg text-text flex flex-col justify-start py-6 px-4 sm:px-6">
         <BrochurePaymentView
           orderCode={orderResult.orderCode}
           sendCode={orderResult.sendCode}
@@ -161,12 +161,12 @@ export function BrochurePublicView({ catalog, products, shipping, shop }: Props)
   // 2b. ORDER TRACKING STEP
   if (step === "TRACKING" && orderResult) {
     return (
-      <div className="min-h-screen bg-background text-foreground flex flex-col justify-start py-6 px-4 sm:px-6">
+      <div className="min-h-screen bg-bg text-text flex flex-col justify-start py-6 px-4 sm:px-6">
         <div className="w-full max-w-xl lg:max-w-2xl mx-auto mb-4">
           <button
             type="button"
             onClick={() => setStep("SWIPING")}
-            className="text-body-sm text-text-muted hover:text-foreground font-medium underline inline-flex items-center gap-1 cursor-pointer"
+            className="text-body-sm text-text-muted hover:text-text font-medium underline inline-flex items-center gap-1 cursor-pointer"
           >
             ← Quay lại Bộ sưu tập hoa
           </button>
@@ -184,7 +184,7 @@ export function BrochurePublicView({ catalog, products, shipping, shop }: Props)
           <FlowerImage src={selected.imageUrl} driveLink={selected.driveLink} alt={selected.name} sizes="(max-width: 448px) 100vw, 448px" priority className="w-full aspect-square" />
           <div className="p-6 flex flex-col gap-4">
             <div>
-              <h2 className="text-title font-extrabold text-foreground">{selected.name}</h2>
+              <h2 className="text-title font-extrabold text-text">{selected.name}</h2>
               {selected.description && (
                 <p className="text-body-sm text-text-muted mt-1">{selected.description}</p>
               )}
@@ -227,7 +227,7 @@ export function BrochurePublicView({ catalog, products, shipping, shop }: Props)
 
             {selected.priceMode === "RANGE" && (
               <details className="rounded-xl border border-border px-3 py-2">
-                <summary className="cursor-pointer text-body-sm font-semibold text-foreground">Muốn phiên bản theo ý bạn? Nhắn cửa hàng</summary>
+                <summary className="cursor-pointer text-body-sm font-semibold text-text">Muốn phiên bản theo ý bạn? Nhắn cửa hàng</summary>
                 <div className="mt-2">
                   <ProductContactActions shop={shop} inquiryUrl={`/api/v1/public/greeting-catalog/${catalog.id}/inquiry`} product={selected} />
                 </div>
@@ -240,7 +240,7 @@ export function BrochurePublicView({ catalog, products, shipping, shop }: Props)
                 setSelected(null)
                 setStep("SWIPING")
               }}
-              className="text-body-sm text-text-muted hover:text-foreground font-medium underline text-center cursor-pointer"
+              className="text-body-sm text-text-muted hover:text-text font-medium underline text-center cursor-pointer"
             >
               ← Xem mẫu khác
             </button>
@@ -252,7 +252,7 @@ export function BrochurePublicView({ catalog, products, shipping, shop }: Props)
 
   if (resuming) {
     return (
-      <div className="flex min-h-dvh items-center justify-center bg-background p-6 text-center text-body text-text-muted" aria-busy="true">
+      <div className="flex min-h-dvh items-center justify-center bg-bg p-6 text-center text-body text-text-muted" aria-busy="true">
         Đang mở đơn hàng của bạn…
       </div>
     )

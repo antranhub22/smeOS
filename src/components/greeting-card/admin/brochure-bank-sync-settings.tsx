@@ -53,7 +53,7 @@ export function BrochureBankSyncSettings() {
       <div className="flex items-start justify-between gap-2">
         <div className="flex items-center gap-2">
           <Link2 size={18} className="text-primary" />
-          <h3 className="text-title-sm font-extrabold text-foreground">Đối soát chuyển khoản tự động (SePay)</h3>
+          <h3 className="text-title-sm font-extrabold text-text">Đối soát chuyển khoản tự động (SePay)</h3>
         </div>
         <span className={`text-caption px-2.5 py-0.5 rounded-full font-bold ${payment?.enabled ? "bg-success-bg text-success" : "bg-surface-muted text-text-muted"}`}>
           {payment?.enabled ? `Đang bật · khoá …${payment.keyHint ?? ""}` : "Chưa bật"}

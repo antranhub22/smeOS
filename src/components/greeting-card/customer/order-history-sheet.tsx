@@ -32,7 +32,7 @@ export function OrderHistorySheet({ members, currentSendCode }: { members: Famil
         <button
           type="button"
           onClick={() => setOpen(true)}
-          className="inline-flex h-11 items-center gap-1.5 rounded-xl border border-border bg-surface px-3.5 text-body-sm font-semibold text-foreground hover:bg-surface-muted"
+          className="inline-flex h-11 items-center gap-1.5 rounded-xl border border-border bg-surface px-3.5 text-body-sm font-semibold text-text hover:bg-surface-muted"
         >
           <History size={16} aria-hidden="true" />
           Lịch sử đơn hàng ({orderCount})
@@ -45,7 +45,7 @@ export function OrderHistorySheet({ members, currentSendCode }: { members: Famil
           <button type="button" aria-label="Đóng lịch sử đơn hàng" tabIndex={-1} onClick={() => setOpen(false)} className="absolute inset-0 bg-black/40" />
           <div className="relative flex max-h-[85vh] w-full max-w-md flex-col rounded-t-2xl bg-surface shadow-xl sm:rounded-2xl">
             <div className="flex items-center justify-between border-b border-border px-4 py-3">
-              <h2 id="order-history-title" className="text-body font-bold text-foreground">Lịch sử đơn hàng</h2>
+              <h2 id="order-history-title" className="text-body font-bold text-text">Lịch sử đơn hàng</h2>
               <button type="button" onClick={() => setOpen(false)} aria-label="Đóng" className="inline-flex h-11 w-11 items-center justify-center rounded-xl text-text-muted hover:bg-surface-muted">
                 <X size={18} aria-hidden="true" />
               </button>
@@ -57,7 +57,7 @@ export function OrderHistorySheet({ members, currentSendCode }: { members: Famil
                   <>
                     <div className="min-w-0 flex-1">
                       <div className="flex flex-wrap items-center gap-2">
-                        <span className="font-semibold text-foreground">{m.order ? `Đơn ${m.order.code}` : "Đơn đang đặt dở"}</span>
+                        <span className="font-semibold text-text">{m.order ? `Đơn ${m.order.code}` : "Đơn đang đặt dở"}</span>
                         {current && <span className="rounded-full bg-primary/10 px-2 py-0.5 text-caption font-semibold text-primary">Đang xem</span>}
                       </div>
                       {m.productName && <div className="truncate text-body-sm text-text-muted">{m.productName}</div>}

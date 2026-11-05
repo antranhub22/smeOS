@@ -100,7 +100,7 @@ export function BrochureWorkflowSettings() {
   const PRESETS: Array<{ id: WorkflowPreset; title: string; subtitle: string; desc: string; icon: React.ReactNode }> = [
     { id: "LEAN", title: "Tinh Gọn (Tốc Độ)", subtitle: "Tiệm 1–3 người", desc: "3 chạm là giao. Bỏ chặn duyệt cọc, tự động nhận đơn sản xuất, ảnh tùy chọn, giao trước thu COD sau.", icon: <Zap size={18} className="text-warning" /> },
     { id: "STANDARD", title: "Tiêu Chuẩn", subtitle: "Tiệm vừa 4–10 người", desc: "Mặc định 1 cửa hàng. Điều hành duyệt cọc & tự động nhận đơn, ảnh thành phẩm đếm ngược 10p, thu đủ trước khi giao.", icon: <ShieldCheck size={18} className="text-primary" /> },
-    { id: "STRICT", title: "Nghiêm Ngặt", subtitle: "Chuỗi lớn & Cao cấp", desc: "Kiểm soát tuyệt đối. Bắt buộc Điều hành duyệt tiền, Điều phối liên hệ chuỗi nhận đơn, bắt buộc 2 lần ảnh.", icon: <Building2 size={18} className="text-foreground" /> },
+    { id: "STRICT", title: "Nghiêm Ngặt", subtitle: "Chuỗi lớn & Cao cấp", desc: "Kiểm soát tuyệt đối. Bắt buộc Điều hành duyệt tiền, Điều phối liên hệ chuỗi nhận đơn, bắt buộc 2 lần ảnh.", icon: <Building2 size={18} className="text-text" /> },
   ]
 
   return (
@@ -109,7 +109,7 @@ export function BrochureWorkflowSettings() {
       <div className="flex items-center justify-between gap-2 border-b border-border pb-3">
         <div className="flex items-center gap-2">
           <SlidersHorizontal size={18} className="text-primary" />
-          <h3 className="text-title-sm font-extrabold text-foreground">Ma trận Vận hành & Phân quyền Quy trình</h3>
+          <h3 className="text-title-sm font-extrabold text-text">Ma trận Vận hành & Phân quyền Quy trình</h3>
         </div>
         <span className="text-caption font-bold px-2.5 py-0.5 rounded-full bg-primary/10 text-primary">
           {policy.preset === "CUSTOM" ? "Đang tùy chỉnh" : `Gói: ${PRESETS.find((p) => p.id === policy.preset)?.title ?? "Tùy chỉnh"}`}
@@ -142,7 +142,7 @@ export function BrochureWorkflowSettings() {
               )}
               <div className="flex items-center gap-2 mb-1">
                 {p.icon}
-                <span className="text-body-sm font-extrabold text-foreground">{p.title}</span>
+                <span className="text-body-sm font-extrabold text-text">{p.title}</span>
               </div>
               <span className="text-caption font-bold text-text-muted mb-2">{p.subtitle}</span>
               <p className="text-caption text-text-muted leading-relaxed">{p.desc}</p>
@@ -152,11 +152,11 @@ export function BrochureWorkflowSettings() {
       </div>
 
       {/* Tầng 2: Tùy biến nâng cao */}
-      <div className="border border-border rounded-xl overflow-hidden bg-background/50">
+      <div className="border border-border rounded-xl overflow-hidden bg-bg/50">
         <button
           type="button"
           onClick={() => setShowAdvanced(!showAdvanced)}
-          className="w-full flex items-center justify-between p-3.5 bg-surface text-body-sm font-bold text-foreground hover:bg-surface-muted transition-colors"
+          className="w-full flex items-center justify-between p-3.5 bg-surface text-body-sm font-bold text-text hover:bg-surface-muted transition-colors"
         >
           <span className="flex items-center gap-2">
             <span>Tùy biến nâng cao từng chốt chặn</span>
@@ -174,7 +174,7 @@ export function BrochureWorkflowSettings() {
             {/* Gate 1: Bắt buộc Điều hành duyệt cọc */}
             <div className="flex items-start justify-between gap-3 pt-2">
               <div>
-                <label className="text-body-sm font-bold text-foreground block">
+                <label className="text-body-sm font-bold text-text block">
                   Bắt buộc Điều hành duyệt tiền cọc
                 </label>
                 <p className="text-caption text-text-muted">
@@ -191,7 +191,7 @@ export function BrochureWorkflowSettings() {
 
             {/* Chuỗi / 1 cửa hàng: theo loại tổ chức Admin SaaS duyệt, tiệm không tự đổi (PO 22/10/2026) */}
             <div className="pt-3">
-              <span className="text-body-sm font-bold text-foreground block">
+              <span className="text-body-sm font-bold text-text block">
                 Mô hình vận hành: {policy.requireCoordinatorAcceptance ? "Chuỗi cửa hàng" : "1 cửa hàng"}
               </span>
               <p className="text-caption text-text-muted">
@@ -205,7 +205,7 @@ export function BrochureWorkflowSettings() {
             {/* Gate 3: Bắt buộc chụp Ảnh thành phẩm */}
             <div className="flex items-start justify-between gap-3 pt-3">
               <div>
-                <label className="text-body-sm font-bold text-foreground block">
+                <label className="text-body-sm font-bold text-text block">
                   Bắt buộc chụp ảnh thành phẩm
                 </label>
                 <p className="text-caption text-text-muted">
@@ -223,7 +223,7 @@ export function BrochureWorkflowSettings() {
             {/* Gate 4: Khách duyệt ảnh */}
             <div className={`flex items-start justify-between gap-3 pt-3 ${!policy.requireFinishedPhoto ? "opacity-50 pointer-events-none" : ""}`}>
               <div>
-                <label className="text-body-sm font-bold text-foreground flex items-center gap-1.5">
+                <label className="text-body-sm font-bold text-text flex items-center gap-1.5">
                   <span>Cách khách duyệt ảnh</span>
                   {!policy.requireFinishedPhoto && <Lock size={12} className="text-text-muted" />}
                 </label>
@@ -246,7 +246,7 @@ export function BrochureWorkflowSettings() {
             {/* Gate 5: Chặn giao ship nếu chưa thu đủ */}
             <div className="flex items-start justify-between gap-3 pt-3">
               <div>
-                <label className="text-body-sm font-bold text-foreground block">
+                <label className="text-body-sm font-bold text-text block">
                   Chặn giao ship nếu chưa thu đủ 100%
                 </label>
                 <p className="text-caption text-text-muted">
@@ -264,7 +264,7 @@ export function BrochureWorkflowSettings() {
             {/* Gate 6: Bắt buộc ảnh người nhận */}
             <div className="flex items-start justify-between gap-3 pt-3">
               <div>
-                <label className="text-body-sm font-bold text-foreground block">
+                <label className="text-body-sm font-bold text-text block">
                   Bắt buộc chụp ảnh người nhận
                 </label>
                 <p className="text-caption text-text-muted">
@@ -282,7 +282,7 @@ export function BrochureWorkflowSettings() {
             {/* Gate 7: Cho phép ủy quyền duyệt SLA */}
             <div className="flex items-start justify-between gap-3 pt-3">
               <div>
-                <label className="text-body-sm font-bold text-foreground block">
+                <label className="text-body-sm font-bold text-text block">
                   Cho phép Điều phối / Sale duyệt cọc khi quá hạn xử lý
                 </label>
                 <p className="text-caption text-text-muted">

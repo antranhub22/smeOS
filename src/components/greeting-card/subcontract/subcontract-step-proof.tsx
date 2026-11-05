@@ -170,14 +170,14 @@ export function SubcontractStepProof({
                 : isActive
                 ? "bg-primary text-white ring-2 ring-primary/30"
                 : isUnlocked
-                ? "bg-surface-muted text-foreground border border-border"
+                ? "bg-surface-muted text-text border border-border"
                 : "bg-surface-muted text-text-muted/60 border border-border/40"
             )}
           >
             {isActuallyDelivered ? <CheckCircle2 size={16} /> : !isUnlocked ? <Lock size={12} /> : "4"}
           </div>
           <div>
-            <span className="text-body-sm font-extrabold text-foreground block">
+            <span className="text-body-sm font-extrabold text-text block">
               4. Bằng chứng giao hàng & Nghiệm thu
             </span>
             <span className="text-caption text-text-muted">
@@ -227,7 +227,7 @@ export function SubcontractStepProof({
               "p-3 rounded-xl border flex items-center justify-between gap-2 text-caption",
               countdown.isOverdue
                 ? "bg-danger-bg border-danger/30 text-danger font-bold"
-                : "bg-primary/5 border-primary/20 text-foreground"
+                : "bg-primary/5 border-primary/20 text-text"
             )}
           >
             <div className="flex items-center gap-2">
@@ -276,7 +276,7 @@ export function SubcontractStepProof({
             )}
 
             <div>
-              <label htmlFor="pod-note" className="block text-caption font-bold text-foreground mb-1">
+              <label htmlFor="pod-note" className="block text-caption font-bold text-text mb-1">
                 Ghi chú người nhận / giao hàng (tùy chọn)
               </label>
               <input

@@ -11,7 +11,7 @@ export function LinkUnavailable({ shop, title, message, action }: {
   shop?: ShopContact | null; title?: string; message?: string; action?: { href: string; label: string }
 }) {
   return (
-    <div className="min-h-dvh bg-background text-foreground">
+    <div className="min-h-dvh bg-bg text-text">
       {shop && <ShopContactBar shop={shop} />}
       <main className="mx-auto flex max-w-md flex-col items-center gap-3 px-6 py-16 text-center">
         <h1 className="text-title font-bold">{title ?? "Bộ sưu tập này không còn mở"}</h1>
@@ -34,7 +34,7 @@ export function LinkUnavailable({ shop, title, message, action }: {
               </a>
             )}
             {shop.phone && (
-              <a href={`tel:${shop.phone}`} className="inline-flex h-12 items-center justify-center gap-2 rounded-xl border border-border text-body font-bold text-foreground hover:bg-surface-muted">
+              <a href={`tel:${shop.phone}`} className="inline-flex h-12 items-center justify-center gap-2 rounded-xl border border-border text-body font-bold text-text hover:bg-surface-muted">
                 <Phone size={18} aria-hidden="true" />
                 Gọi {shop.phone}
               </a>

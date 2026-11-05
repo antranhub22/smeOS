@@ -26,7 +26,7 @@ export function BrochureClaimGate({ sendCode }: { sendCode: string }) {
   }, [sendCode, router])
 
   return (
-    <main className="flex min-h-dvh flex-col items-center justify-center gap-3 bg-background px-6 text-center text-foreground">
+    <main className="flex min-h-dvh flex-col items-center justify-center gap-3 bg-bg px-6 text-center text-text">
       {failed ? (
         <>
           <p className="text-body">Mất kết nối mạng, chưa mở được bộ sưu tập.</p>

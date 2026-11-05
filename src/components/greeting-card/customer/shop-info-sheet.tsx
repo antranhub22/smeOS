@@ -25,7 +25,7 @@ export function ShopLogo({ shop, size = "h-9 w-9" }: { shop: ShopContact; size?:
 
 function Line({ icon: Icon, children }: { icon: typeof Phone; children: React.ReactNode }) {
   return (
-    <li className="flex min-h-11 items-start gap-3 py-2 text-body-sm text-foreground">
+    <li className="flex min-h-11 items-start gap-3 py-2 text-body-sm text-text">
       <Icon size={18} className="mt-0.5 shrink-0 text-text-muted" aria-hidden="true" />
       <div className="min-w-0 flex-1 break-words">{children}</div>
     </li>
@@ -49,8 +49,8 @@ export function ShopInfoSheet({ shop, section, onClose }: { shop: ShopContact; s
         className="flex max-h-[85vh] w-full max-w-md flex-col overflow-y-auto rounded-t-3xl border border-border bg-surface p-5 shadow-xl sm:rounded-3xl">
         <div className="flex items-center gap-3">
           <ShopLogo shop={shop} size="h-14 w-14" />
-          <h2 id="shop-info-title" className="min-w-0 flex-1 text-title-sm font-extrabold text-foreground">{shop.name}</h2>
-          <button type="button" onClick={onClose} aria-label="Đóng thông tin cửa hàng" className="flex h-11 w-11 items-center justify-center rounded-full text-text-muted hover:bg-surface-muted hover:text-foreground">
+          <h2 id="shop-info-title" className="min-w-0 flex-1 text-title-sm font-extrabold text-text">{shop.name}</h2>
+          <button type="button" onClick={onClose} aria-label="Đóng thông tin cửa hàng" className="flex h-11 w-11 items-center justify-center rounded-full text-text-muted hover:bg-surface-muted hover:text-text">
             <X size={20} />
           </button>
         </div>
@@ -101,7 +101,7 @@ export function ShopInfoSheet({ shop, section, onClose }: { shop: ShopContact; s
                 {commitments.map((c) => (
                   <li key={c.id} className="flex items-start gap-2">
                     <span className="font-bold text-success" aria-hidden="true">✓</span>
-                    <span><strong className="text-foreground">{c.title}:</strong> {c.customerText}</span>
+                    <span><strong className="text-text">{c.title}:</strong> {c.customerText}</span>
                   </li>
                 ))}
               </ul>

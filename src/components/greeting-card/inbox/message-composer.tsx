@@ -86,7 +86,7 @@ export function MessageComposer({ target, stepKey, replyTo, onCancelReply, onSen
       ) : (
         <label className="flex items-center gap-2 text-body-sm">
           <span className="shrink-0 font-semibold text-text-muted">Gửi cho</span>
-          <select value={to} onChange={(e) => setTo(e.target.value)} className="h-11 min-w-0 flex-1 rounded-xl border border-border bg-surface px-3 text-body-sm text-foreground">
+          <select value={to} onChange={(e) => setTo(e.target.value)} className="h-11 min-w-0 flex-1 rounded-xl border border-border bg-surface px-3 text-body-sm text-text">
             {(recipients.data?.data.roles ?? [{ role: "ADMIN", label: "Điều hành" }]).map((r) => (
               <option key={r.role} value={`ROLE:${r.role}`}>{r.label}</option>
             ))}
@@ -114,7 +114,7 @@ export function MessageComposer({ target, stepKey, replyTo, onCancelReply, onSen
             }
           }}
           placeholder="Nhập tin nhắn…"
-          className="max-h-40 min-h-11 flex-1 resize-y rounded-xl border border-border bg-surface px-3 py-2 text-body text-foreground placeholder:text-text-muted"
+          className="max-h-40 min-h-11 flex-1 resize-y rounded-xl border border-border bg-surface px-3 py-2 text-body text-text placeholder:text-text-muted"
         />
         <button type="button" onClick={() => void send()} disabled={!body.trim() || sending} aria-label="Gửi tin nhắn"
           className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary text-white hover:bg-primary-dark disabled:opacity-40">

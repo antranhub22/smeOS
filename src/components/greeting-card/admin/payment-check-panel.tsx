@@ -16,17 +16,17 @@ export function PaymentCheckPanel({ order }: { order: AdminOrder }) {
       </div>
       <dl className="min-w-0 flex-1 text-caption">
         <dt className="sr-only">Mẫu</dt>
-        <dd className="truncate text-body-sm font-bold text-foreground">
+        <dd className="truncate text-body-sm font-bold text-text">
           {c.productName}{c.productCode && <span className="ml-1 font-mono font-medium text-text-muted">· {c.productCode}</span>}
         </dd>
         <div className="mt-1 flex flex-wrap gap-x-4 gap-y-0.5">
           <div className="flex gap-1">
             <dt className="text-text-muted">Giá công bố:</dt>
-            <dd className="font-semibold text-foreground">{c.listedPriceVnd !== null ? vnd(c.listedPriceVnd) : "Chưa niêm yết"}</dd>
+            <dd className="font-semibold text-text">{c.listedPriceVnd !== null ? vnd(c.listedPriceVnd) : "Chưa niêm yết"}</dd>
           </div>
           <div className="flex gap-1">
             <dt className="text-text-muted">Giá chốt:</dt>
-            <dd className={`font-extrabold ${differs ? "text-warning" : "text-foreground"}`}>{vnd(c.agreedTotalVnd)}</dd>
+            <dd className={`font-extrabold ${differs ? "text-warning" : "text-text"}`}>{vnd(c.agreedTotalVnd)}</dd>
           </div>
         </div>
         {c.promotion && (
@@ -39,7 +39,7 @@ export function PaymentCheckPanel({ order }: { order: AdminOrder }) {
           <div className="mt-1">
             <dt className="text-text-muted">Vì sao khác giá công bố:</dt>
             <dd>
-              <ul className="list-disc pl-4 text-foreground">
+              <ul className="list-disc pl-4 text-text">
                 {c.reasons.map((r) => <li key={r}>{r}</li>)}
               </ul>
             </dd>

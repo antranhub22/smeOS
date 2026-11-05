@@ -24,7 +24,7 @@ export function ChannelFunnelStats() {
   return (
     <section className="bg-surface rounded-2xl border border-border shadow-sm overflow-hidden">
       <div className="p-4 border-b border-border flex flex-wrap items-center justify-between gap-3">
-        <h3 className="text-body font-extrabold text-foreground flex items-center gap-2">
+        <h3 className="text-body font-extrabold text-text flex items-center gap-2">
           <Share2 size={18} className="text-primary" aria-hidden="true" />
           Hiệu quả {catalogTitle.toLowerCase()} theo kênh
         </h3>
@@ -72,7 +72,7 @@ export function ChannelFunnelStats() {
             <tbody className="divide-y divide-border">
               {rows.map((r) => (
                 <tr key={r.channel}>
-                  <td className="px-4 py-2.5 text-foreground font-semibold">{r.label}</td>
+                  <td className="px-4 py-2.5 text-text font-semibold">{r.label}</td>
                   <td className="px-4 py-2.5 text-right">{r.views}</td>
                   <td className="px-4 py-2.5 text-right">{r.details}</td>
                   <td className="px-4 py-2.5 text-right">{r.formOpens}</td>

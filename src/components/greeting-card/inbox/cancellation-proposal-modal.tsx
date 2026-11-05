@@ -99,19 +99,19 @@ export function CancellationProposalModal({
           type="button"
           onClick={onClose}
           aria-label="Đóng"
-          className="absolute top-4 right-4 p-1.5 rounded-lg text-text-muted hover:text-foreground hover:bg-surface-muted"
+          className="absolute top-4 right-4 p-1.5 rounded-lg text-text-muted hover:text-text hover:bg-surface-muted"
         >
           <X size={18} />
         </button>
 
         <div className="flex items-center gap-2 text-danger mb-1">
           <AlertTriangle size={20} />
-          <h3 id="cancel-modal-title" className="text-title-sm font-extrabold text-foreground">
+          <h3 id="cancel-modal-title" className="text-title-sm font-extrabold text-text">
             Đề xuất Hủy / Hoàn tiền đơn #{orderCode}
           </h3>
         </div>
         <p className="text-caption text-text-muted mb-4">
-          Tổng đơn: <strong className="text-foreground">{totalVnd.toLocaleString("vi-VN")}đ</strong> · Đã thu:{" "}
+          Tổng đơn: <strong className="text-text">{totalVnd.toLocaleString("vi-VN")}đ</strong> · Đã thu:{" "}
           <strong className="text-success">{paidVnd.toLocaleString("vi-VN")}đ</strong>
         </p>
 
@@ -126,13 +126,13 @@ export function CancellationProposalModal({
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-3.5">
           <div>
-            <label className="block text-body-sm font-bold text-foreground mb-1.5">Hình thức đề xuất</label>
+            <label className="block text-body-sm font-bold text-text mb-1.5">Hình thức đề xuất</label>
             <div className="flex flex-col gap-2">
               {(["CANCEL_ONLY", "FULL_REFUND", "PARTIAL_REFUND"] as CancellationType[]).map((t) => (
                 <label
                   key={t}
                   className={`flex cursor-pointer items-center gap-2.5 rounded-xl border p-2.5 text-body-sm transition-colors ${
-                    type === t ? "border-primary bg-primary/5 font-semibold text-foreground" : "border-border text-text-muted"
+                    type === t ? "border-primary bg-primary/5 font-semibold text-text" : "border-border text-text-muted"
                   }`}
                 >
                   <input
@@ -150,7 +150,7 @@ export function CancellationProposalModal({
 
           {type !== "CANCEL_ONLY" && (
             <div>
-              <label htmlFor="refund-amount" className="block text-body-sm font-bold text-foreground mb-1">
+              <label htmlFor="refund-amount" className="block text-body-sm font-bold text-text mb-1">
                 Số tiền đề xuất hoàn (VNĐ) <span className="text-danger">*</span>
               </label>
               <div className="relative">
@@ -163,7 +163,7 @@ export function CancellationProposalModal({
                   disabled={type === "FULL_REFUND"}
                   value={refundAmount}
                   onChange={(e) => setRefundAmount(e.target.value)}
-                  className="h-10 w-full rounded-xl border border-border bg-background px-3 text-body font-mono text-foreground focus:outline-none focus:ring-1 focus:ring-primary disabled:opacity-75"
+                  className="h-10 w-full rounded-xl border border-border bg-bg px-3 text-body font-mono text-text focus:outline-none focus:ring-1 focus:ring-primary disabled:opacity-75"
                 />
                 <span className="absolute right-3 top-1/2 -translate-y-1/2 text-caption text-text-muted">đ</span>
               </div>
@@ -174,7 +174,7 @@ export function CancellationProposalModal({
           )}
 
           <div>
-            <label htmlFor="cancel-reason" className="block text-body-sm font-bold text-foreground mb-1">
+            <label htmlFor="cancel-reason" className="block text-body-sm font-bold text-text mb-1">
               Lý do đề xuất <span className="text-danger">*</span>
             </label>
             <textarea
@@ -184,12 +184,12 @@ export function CancellationProposalModal({
               placeholder="VD: Khách đổi lịch đột xuất không nhận hoa..."
               value={reason}
               onChange={(e) => setReason(e.target.value)}
-              className="w-full rounded-xl border border-border bg-background p-2.5 text-body text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+              className="w-full rounded-xl border border-border bg-bg p-2.5 text-body text-text focus:outline-none focus:ring-1 focus:ring-primary"
             />
           </div>
 
           <div>
-            <label htmlFor="cancel-note" className="block text-body-sm font-bold text-foreground mb-1">
+            <label htmlFor="cancel-note" className="block text-body-sm font-bold text-text mb-1">
               Ghi chú thêm cho Điều hành (tùy chọn)
             </label>
             <input
@@ -198,7 +198,7 @@ export function CancellationProposalModal({
               placeholder="VD: Đã xin ý kiến khách qua Zalo..."
               value={note}
               onChange={(e) => setNote(e.target.value)}
-              className="h-9 w-full rounded-xl border border-border bg-background px-3 text-body-sm text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+              className="h-9 w-full rounded-xl border border-border bg-bg px-3 text-body-sm text-text focus:outline-none focus:ring-1 focus:ring-primary"
             />
           </div>
 

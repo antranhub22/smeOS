@@ -25,7 +25,7 @@ export function CatalogListFilters({
   return (
     <div className="flex flex-wrap items-center justify-between gap-3 bg-surface-muted/40 p-3.5 rounded-xl border border-border">
       <div className="flex flex-wrap items-center gap-2">
-        <span className="text-body-sm font-semibold text-foreground flex items-center gap-1.5">
+        <span className="text-body-sm font-semibold text-text flex items-center gap-1.5">
           <Filter size={15} className="text-primary" />
           <span>Xem:</span>
         </span>
@@ -34,7 +34,7 @@ export function CatalogListFilters({
             type="button"
             onClick={() => setStatusFilter("active")}
             className={`px-3 py-1 text-caption font-bold rounded-md transition-colors ${
-              statusFilter === "active" ? "bg-primary text-white shadow-xs" : "text-text-muted hover:text-foreground"
+              statusFilter === "active" ? "bg-primary text-white shadow-xs" : "text-text-muted hover:text-text"
             }`}
           >
             Đang hoạt động
@@ -43,7 +43,7 @@ export function CatalogListFilters({
             type="button"
             onClick={() => setStatusFilter("archived")}
             className={`px-3 py-1 text-caption font-bold rounded-md transition-colors flex items-center gap-1 ${
-              statusFilter === "archived" ? "bg-danger-bg text-danger shadow-xs" : "text-text-muted hover:text-foreground"
+              statusFilter === "archived" ? "bg-danger-bg text-danger shadow-xs" : "text-text-muted hover:text-text"
             }`}
           >
             <Archive size={12} />
@@ -60,7 +60,7 @@ export function CatalogListFilters({
           <select
             value={staffFilter}
             onChange={(e) => setStaffFilter(e.target.value)}
-            className="h-8 rounded-lg border border-border bg-surface px-2.5 text-body-sm text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+            className="h-8 rounded-lg border border-border bg-surface px-2.5 text-body-sm text-text focus:outline-none focus:ring-1 focus:ring-primary"
           >
             <option value="">Tất cả nhân sự</option>
             {staffList.map((s) => (

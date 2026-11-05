@@ -19,7 +19,7 @@ export function SelectedProductHeader({
       <FlowerImage src={product.imageUrl} driveLink={product.driveLink} alt={product.name} sizes="64px" fallback="icon" className="w-16 h-16 rounded-lg shrink-0 border border-border" />
       <div className="flex-1 min-w-0">
         <div className="text-caption text-text-muted">Mẫu đã chọn:</div>
-        <div className="text-body font-extrabold text-foreground truncate">{product.name}</div>
+        <div className="text-body font-extrabold text-text truncate">{product.name}</div>
         <div className="text-body-sm font-extrabold text-primary">
           {variant ? `${variant.name} · ` : ""}
           {price > 0 ? `${price.toLocaleString("vi-VN")} đ` : "Liên hệ"}

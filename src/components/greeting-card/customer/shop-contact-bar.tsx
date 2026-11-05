@@ -52,7 +52,7 @@ export function ShopContactBar({ shop, inquiry }: ShopContactBarProps) {
             className="flex min-h-11 min-w-0 flex-1 items-center gap-2.5 rounded-full text-left"
           >
             <ShopLogo shop={shop} />
-            <span className="min-w-0 truncate text-body font-bold text-foreground">{shop.name}</span>
+            <span className="min-w-0 truncate text-body font-bold text-text">{shop.name}</span>
             <ChevronDown size={16} className="shrink-0 text-text-muted" aria-hidden="true" />
           </button>
 
@@ -67,7 +67,7 @@ export function ShopContactBar({ shop, inquiry }: ShopContactBarProps) {
               type="button"
               onClick={() => setShowQrModal(true)}
               aria-label="Mã QR Zalo"
-              className="inline-flex h-10 items-center gap-1.5 rounded-full border border-border px-3 text-body-sm font-semibold text-foreground hover:bg-surface-muted transition-colors"
+              className="inline-flex h-10 items-center gap-1.5 rounded-full border border-border px-3 text-body-sm font-semibold text-text hover:bg-surface-muted transition-colors"
             >
               <QrCode size={16} aria-hidden="true" />
               <span>Mã QR</span>
@@ -113,11 +113,11 @@ export function ShopContactBar({ shop, inquiry }: ShopContactBarProps) {
               type="button"
               onClick={() => setShowQrModal(false)}
               aria-label="Đóng mã QR"
-              className="absolute top-3 right-3 p-1.5 rounded-lg text-text-muted hover:text-foreground hover:bg-surface-muted transition-colors"
+              className="absolute top-3 right-3 p-1.5 rounded-lg text-text-muted hover:text-text hover:bg-surface-muted transition-colors"
             >
               <X size={18} />
             </button>
-            <h3 id="zalo-qr-title" className="text-title-sm font-extrabold text-foreground mb-1">
+            <h3 id="zalo-qr-title" className="text-title-sm font-extrabold text-text mb-1">
               Quét mã kết nối Zalo
             </h3>
             <p className="text-caption text-text-muted mb-4">
@@ -133,7 +133,7 @@ export function ShopContactBar({ shop, inquiry }: ShopContactBarProps) {
             </div>
             {shop.phone && (
               <p className="mt-3 text-caption text-text-muted font-medium">
-                SĐT Zalo: <span className="font-bold text-foreground">{shop.phone}</span>
+                SĐT Zalo: <span className="font-bold text-text">{shop.phone}</span>
               </p>
             )}
           </div>

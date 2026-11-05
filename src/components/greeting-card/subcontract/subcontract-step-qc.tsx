@@ -181,14 +181,14 @@ export function SubcontractStepQc({
                 : isActive
                 ? "bg-primary text-white ring-2 ring-primary/30"
                 : isUnlocked
-                ? "bg-surface-muted text-foreground border border-border"
+                ? "bg-surface-muted text-text border border-border"
                 : "bg-surface-muted text-text-muted/60 border border-border/40"
             )}
           >
             {isCompleted ? <CheckCircle2 size={16} /> : !isUnlocked ? <Lock size={12} /> : "2"}
           </div>
           <div>
-            <span className="text-body-sm font-extrabold text-foreground block">
+            <span className="text-body-sm font-extrabold text-text block">
               2. Chế tác & Kiểm định chất lượng (QC)
             </span>
             <span className="text-caption text-text-muted">
@@ -247,7 +247,7 @@ export function SubcontractStepQc({
                   "p-3 rounded-xl border flex items-center justify-between gap-2 text-caption",
                   countdown.isOverdue
                     ? "bg-danger-bg border-danger/30 text-danger font-bold"
-                    : "bg-primary/5 border-primary/20 text-foreground"
+                    : "bg-primary/5 border-primary/20 text-text"
                 )}
               >
                 <div className="flex items-center gap-2">

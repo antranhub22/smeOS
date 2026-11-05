@@ -11,7 +11,7 @@ interface StatusResponse {
   data: { notify: { enabled: boolean; channel: NotifyChannel | null; configured: boolean; templates: Record<string, string> } }
 }
 
-const FIELD = "h-9 px-3 rounded-lg border border-border bg-background text-body-sm text-foreground w-full"
+const FIELD = "h-9 px-3 rounded-lg border border-border bg-bg text-body-sm text-text w-full"
 const CRED_FIELDS: Record<NotifyChannel, Array<{ key: string; label: string }>> = {
   ZNS: [
     { key: "appId", label: "App ID" },
@@ -83,7 +83,7 @@ export function BrochureNotifySettings() {
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-2">
           <BellRing size={18} className="text-primary" />
-          <h3 className="text-title-sm font-extrabold text-foreground">Thông báo khách (Zalo / SMS)</h3>
+          <h3 className="text-title-sm font-extrabold text-text">Thông báo khách (Zalo / SMS)</h3>
         </div>
         <label className="flex items-center gap-2 text-body-sm font-bold">
           <input type="checkbox" checked={on} onChange={(e) => setEnabled(e.target.checked)} /> Bật

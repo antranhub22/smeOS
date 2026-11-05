@@ -66,7 +66,7 @@ export function StandardOrderFields({
       {!hideRecipient && (
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div>
-          <label htmlFor={`${idPrefix}-recipientName`} className="block text-body-sm font-bold text-foreground mb-1">
+          <label htmlFor={`${idPrefix}-recipientName`} className="block text-body-sm font-bold text-text mb-1">
             Họ tên {recipientLabel} <span className="text-danger">*</span>
           </label>
           <input
@@ -82,7 +82,7 @@ export function StandardOrderFields({
           />
         </div>
         <div>
-          <label htmlFor={`${idPrefix}-recipientPhone`} className="block text-body-sm font-bold text-foreground mb-1">
+          <label htmlFor={`${idPrefix}-recipientPhone`} className="block text-body-sm font-bold text-text mb-1">
             Số điện thoại người nhận <span className="text-danger">*</span>
           </label>
           <input
@@ -104,7 +104,7 @@ export function StandardOrderFields({
       {/* Ngày & Giờ giao */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div>
-          <label htmlFor={`${idPrefix}-deliveryDate`} className="block text-body-sm font-bold text-foreground mb-1">
+          <label htmlFor={`${idPrefix}-deliveryDate`} className="block text-body-sm font-bold text-text mb-1">
             {dateLabel} <span className="text-danger">*</span>
           </label>
           <ViDateInput
@@ -118,7 +118,7 @@ export function StandardOrderFields({
           />
         </div>
         <div>
-          <label htmlFor={`${idPrefix}-deliveryTimeSlot`} className="block text-body-sm font-bold text-foreground mb-1">
+          <label htmlFor={`${idPrefix}-deliveryTimeSlot`} className="block text-body-sm font-bold text-text mb-1">
             Khung giờ mong muốn
           </label>
           <DeliveryTimePicker

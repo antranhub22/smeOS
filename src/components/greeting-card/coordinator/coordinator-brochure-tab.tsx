@@ -102,7 +102,7 @@ export function CoordinatorBrochureTab({ canDecideInTransitCancel = false }: { c
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-surface p-5 rounded-2xl border border-border shadow-sm">
         <div>
-          <h2 className="text-title font-extrabold text-foreground">Việc của Điều phối</h2>
+          <h2 className="text-title font-extrabold text-text">Việc của Điều phối</h2>
           <p className="text-body-sm text-text-muted mt-1">
             Đơn xếp theo ngày và giờ giao gần nhất. Mỗi tác vụ cập nhật bước của đơn — khách tự thấy trên link theo dõi.
           </p>
@@ -134,14 +134,14 @@ export function CoordinatorBrochureTab({ canDecideInTransitCancel = false }: { c
               placeholder="Tìm tên khách, mã đơn, SĐT…"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="h-9 w-full rounded-xl border border-border bg-surface pl-9 pr-8 text-caption text-foreground placeholder:text-text-muted focus:border-primary focus:outline-hidden"
+              className="h-9 w-full rounded-xl border border-border bg-surface pl-9 pr-8 text-caption text-text placeholder:text-text-muted focus:border-primary focus:outline-hidden"
             />
             {search && (
               <button
                 type="button"
                 aria-label="Xoá tìm kiếm"
                 onClick={() => setSearch("")}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-text-muted hover:text-foreground"
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-text-muted hover:text-text"
               >
                 <X size={13} aria-hidden="true" />
               </button>
@@ -164,7 +164,7 @@ export function CoordinatorBrochureTab({ canDecideInTransitCancel = false }: { c
                   </button>
                 ))}
                 <ViDateInput compact ariaLabel="Chọn ngày giao" value={day} onChange={setDay} wrapperClassName="w-36"
-                  className="h-9 rounded-xl border border-border bg-surface px-2 text-caption text-foreground" />
+                  className="h-9 rounded-xl border border-border bg-surface px-2 text-caption text-text" />
               </>
             )}
           </div>
@@ -175,7 +175,7 @@ export function CoordinatorBrochureTab({ canDecideInTransitCancel = false }: { c
               type="button"
               onClick={() => setViewMode("kanban")}
               className={`px-3 py-1 text-caption font-bold rounded-lg transition-colors ${
-                viewMode === "kanban" ? "bg-primary text-white" : "text-text-muted hover:text-foreground"
+                viewMode === "kanban" ? "bg-primary text-white" : "text-text-muted hover:text-text"
               }`}
             >
               Kanban
@@ -184,7 +184,7 @@ export function CoordinatorBrochureTab({ canDecideInTransitCancel = false }: { c
               type="button"
               onClick={() => setViewMode("grid")}
               className={`px-3 py-1 text-caption font-bold rounded-lg transition-colors ${
-                viewMode === "grid" ? "bg-primary text-white" : "text-text-muted hover:text-foreground"
+                viewMode === "grid" ? "bg-primary text-white" : "text-text-muted hover:text-text"
               }`}
             >
               Lưới thẻ
@@ -197,7 +197,7 @@ export function CoordinatorBrochureTab({ canDecideInTransitCancel = false }: { c
       {shown.length === 0 ? (
         <div className="bg-surface rounded-2xl border border-border p-12 text-center text-text-muted flex flex-col items-center">
           <Sparkles size={36} className="text-primary/40 mb-2" />
-          <p className="text-body font-bold text-foreground">
+          <p className="text-body font-bold text-text">
             {term ? `Không tìm thấy đơn nào phù hợp với "${search.trim()}"` : bucket ? "Không có đơn nào trong mục này" : "Chưa có đơn nào cần làm"}
           </p>
           <p className="text-caption text-text-muted mt-1">

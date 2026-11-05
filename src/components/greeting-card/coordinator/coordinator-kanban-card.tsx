@@ -106,7 +106,7 @@ export function CoordinatorKanbanCard({
       >
         <div className="flex items-start justify-between gap-1 border-b border-border/60 pb-1.5 w-full">
           <div className="flex items-center gap-1.5 min-w-0">
-            <span className="text-caption font-bold text-foreground group-hover:text-primary transition-colors">
+            <span className="text-caption font-bold text-text group-hover:text-primary transition-colors">
               #{o.code}
             </span>
             {o.greeting_sessions[0]?.send_code && (
@@ -157,7 +157,7 @@ export function CoordinatorKanbanCard({
             className="w-10 h-10 rounded-lg border border-border shrink-0"
           />
           <div className="flex-1 min-w-0">
-            <p className="text-caption font-semibold text-foreground truncate">
+            <p className="text-caption font-semibold text-text truncate">
               {product.name}
             </p>
             <p className="text-caption text-text-muted truncate">

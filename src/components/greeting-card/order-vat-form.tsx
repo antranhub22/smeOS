@@ -21,7 +21,7 @@ export interface OrderVatData {
 }
 
 const inputClass =
-  "w-full rounded-xl border border-border bg-surface px-3 py-2 text-body-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40"
+  "w-full rounded-xl border border-border bg-surface px-3 py-2 text-body-sm text-text focus:outline-none focus:ring-2 focus:ring-primary/40"
 
 /** Ô bật hoá đơn VAT (8%/10%) + thông tin xuất hoá đơn tách ô riêng. Tổng tiền do máy chủ tính lại. */
 export function OrderVatForm({ vat, onSaved }: { vat: OrderVatData; onSaved: (next: OrderVatData) => void }) {
@@ -56,7 +56,7 @@ export function OrderVatForm({ vat, onSaved }: { vat: OrderVatData; onSaved: (ne
 
   return (
     <div className="flex flex-col gap-3 rounded-2xl border border-border bg-surface p-4">
-      <label className="flex items-center gap-2 text-body-sm font-bold text-foreground">
+      <label className="flex items-center gap-2 text-body-sm font-bold text-text">
         <input type="checkbox" checked={enabled} onChange={(e) => setEnabled(e.target.checked)} className="h-4 w-4 accent-primary" />
         <Receipt size={15} className="text-primary" />
         <span>Xuất hoá đơn VAT</span>
@@ -77,7 +77,7 @@ export function OrderVatForm({ vat, onSaved }: { vat: OrderVatData; onSaved: (ne
               </button>
             ))}
             <span className="text-text-muted">
-              · Tiền VAT: <strong className="text-foreground">{preview.toLocaleString("vi-VN")} đ</strong>
+              · Tiền VAT: <strong className="text-text">{preview.toLocaleString("vi-VN")} đ</strong>
             </span>
           </div>
           <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">

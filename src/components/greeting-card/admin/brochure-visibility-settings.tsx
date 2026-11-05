@@ -36,7 +36,7 @@ export function BrochureVisibilitySettings() {
     <section className="bg-surface rounded-2xl border border-border p-5 shadow-sm flex flex-col gap-3">
       <div className="flex items-center gap-2">
         <Eye size={18} className="text-primary" aria-hidden="true" />
-        <h3 className="text-title-sm font-extrabold text-foreground">Sale được xem khách nào</h3>
+        <h3 className="text-title-sm font-extrabold text-text">Sale được xem khách nào</h3>
       </div>
       {view.error ? (
         <p role="alert" className="text-body-sm text-danger">{view.error.message}</p>
@@ -45,7 +45,7 @@ export function BrochureVisibilitySettings() {
       ) : (
         <>
           <label className="flex flex-wrap items-center gap-2 text-body-sm">
-            <span className="font-semibold text-foreground">Mặc định cho sale mới:</span>
+            <span className="font-semibold text-text">Mặc định cho sale mới:</span>
             <select
               value={data.defaultMode}
               disabled={saving !== null}
@@ -63,7 +63,7 @@ export function BrochureVisibilitySettings() {
               {data.members.map((m) => (
                 <li key={m.userId} className="flex flex-wrap items-center justify-between gap-2 px-3 py-2">
                   <div className="min-w-0">
-                    <p className="text-body-sm font-semibold text-foreground truncate">{m.name}</p>
+                    <p className="text-body-sm font-semibold text-text truncate">{m.name}</p>
                     <p className="text-caption text-text-muted">{m.roleName}</p>
                   </div>
                   <select

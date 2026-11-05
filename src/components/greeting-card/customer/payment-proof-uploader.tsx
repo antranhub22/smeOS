@@ -112,7 +112,7 @@ export function PaymentProofUploader({
               className="object-cover"
             />
             {uploading && (
-              <div className="absolute inset-0 bg-background/60 flex items-center justify-center">
+              <div className="absolute inset-0 bg-bg/60 flex items-center justify-center">
                 <Loader2 size={22} className="animate-spin text-primary" />
               </div>
             )}
@@ -150,7 +150,7 @@ export function PaymentProofUploader({
             <ImageIcon size={20} />
           </div>
           <div>
-            <span className="text-body-sm font-bold text-foreground block">
+            <span className="text-body-sm font-bold text-text block">
               Bấm để tải ảnh chuyển khoản
             </span>
             <span className="text-caption text-text-muted block mt-0.5">

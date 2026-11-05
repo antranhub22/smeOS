@@ -205,11 +205,11 @@ function CoordinatorTaskModal({
         className="bg-surface rounded-2xl border border-border shadow-xl w-full max-w-md p-5 flex flex-col gap-4"
       >
         <div className="flex items-center justify-between">
-          <h3 id="coordinator-modal-title" className="text-body font-extrabold text-foreground flex items-center gap-2">
+          <h3 id="coordinator-modal-title" className="text-body font-extrabold text-text flex items-center gap-2">
             <Icon size={18} className="text-primary" />
             {cfg.title} — #{modal.orderCode}
           </h3>
-          <button type="button" aria-label="Đóng" onClick={onClose} className="text-text-muted hover:text-foreground">
+          <button type="button" aria-label="Đóng" onClick={onClose} className="text-text-muted hover:text-text">
             <X size={18} />
           </button>
         </div>
@@ -225,7 +225,7 @@ function CoordinatorTaskModal({
               placeholder={cfg.note.placeholder}
               value={note}
               onChange={(e) => setNote(e.target.value)}
-              className="w-full rounded-xl border border-border bg-surface-muted p-3 text-body-sm text-foreground resize-none focus:outline-none focus:ring-2 focus:ring-primary/40"
+              className="w-full rounded-xl border border-border bg-surface-muted p-3 text-body-sm text-text resize-none focus:outline-none focus:ring-2 focus:ring-primary/40"
             />
             {error && <p role="alert" className="text-danger text-caption">{error}</p>}
             <div className="flex gap-2 justify-end">

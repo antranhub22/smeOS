@@ -4,7 +4,7 @@ import React from "react"
 import { Wallet, Tag } from "@/components/ui/icons"
 
 const PANEL = "flex flex-col gap-1.5 p-3 rounded-xl border border-border bg-surface-muted/30"
-const LABEL = "text-caption font-bold text-foreground flex items-center gap-1.5"
+const LABEL = "text-caption font-bold text-text flex items-center gap-1.5"
 
 /**
  * Hai ô mã bắt buộc xuất hiện trên mọi ngành:

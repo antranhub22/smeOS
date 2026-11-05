@@ -36,7 +36,7 @@ export function JourneyActionCards({
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h4 className="text-body font-extrabold text-foreground">
+                <h4 className="text-body font-extrabold text-text">
                   Cửa hàng chưa có {ti("catalogTitle")}
                 </h4>
                 <span className="px-2 py-0.5 rounded-full bg-warning/20 text-warning-text text-caption font-bold">
@@ -66,7 +66,7 @@ export function JourneyActionCards({
             <Sparkles size={13} />
             <span>HÀNH TRÌNH TÁC VỤ THÔNG MINH (JOURNEY-FIRST)</span>
           </div>
-          <h2 className="text-title font-extrabold text-foreground">
+          <h2 className="text-title font-extrabold text-text">
             Bạn muốn thực hiện tác vụ nào hôm nay?
           </h2>
           <p className="text-body-sm text-text-muted mt-0.5">
@@ -109,7 +109,7 @@ export function JourneyActionCards({
 
             <div className="flex items-center gap-2 mb-1.5">
               <span className="text-caption font-mono font-bold text-primary">BƯỚC 1</span>
-              <h3 className="text-body font-extrabold text-foreground group-hover:text-primary transition-colors">
+              <h3 className="text-body font-extrabold text-text group-hover:text-primary transition-colors">
                 {ti("catalogTitle")}
               </h3>
             </div>
@@ -156,7 +156,7 @@ export function JourneyActionCards({
 
             <div className="flex items-center gap-2 mb-1.5">
               <span className="text-caption font-mono font-bold text-primary">BƯỚC 2</span>
-              <h3 className="text-body font-extrabold text-foreground group-hover:text-primary transition-colors">
+              <h3 className="text-body font-extrabold text-text group-hover:text-primary transition-colors">
                 Tạo Link Gửi Khách Hàng
               </h3>
             </div>
@@ -199,7 +199,7 @@ export function JourneyActionCards({
 
             <div className="flex items-center gap-2 mb-1.5">
               <span className="text-caption font-mono font-bold text-primary">BƯỚC 3</span>
-              <h3 className="text-body font-extrabold text-foreground group-hover:text-primary transition-colors">
+              <h3 className="text-body font-extrabold text-text group-hover:text-primary transition-colors">
                 Duyệt Đơn & Thanh Toán
               </h3>
             </div>

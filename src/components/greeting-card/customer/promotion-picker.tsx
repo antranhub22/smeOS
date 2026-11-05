@@ -27,14 +27,14 @@ export function PromotionPicker({
   return (
     <fieldset className="p-3.5 rounded-xl border border-primary/30 bg-primary/5 flex flex-col gap-2">
       <legend className="sr-only">{t("greetingCard.customer.options.promotions.appliedPromo")}</legend>
-      <div className="text-body-sm font-extrabold text-foreground flex items-center justify-between">
+      <div className="text-body-sm font-extrabold text-text flex items-center justify-between">
         <span>{canChoose ? t("greetingCard.customer.options.promotions.chooseOne", { count: promos.length }) : t("greetingCard.customer.options.promotions.appliedPromo")}</span>
         <span className="text-caption font-normal text-primary">{canChoose && !value ? t("greetingCard.customer.options.promotions.required") : t("greetingCard.customer.options.promotions.onePerOrder")}</span>
       </div>
       {shown.map((p) => (
         <label
           key={p.id}
-          className="flex items-start gap-2.5 text-body-sm text-foreground bg-background p-2.5 rounded-lg border border-border cursor-pointer has-[:checked]:border-primary"
+          className="flex items-start gap-2.5 text-body-sm text-text bg-bg p-2.5 rounded-lg border border-border cursor-pointer has-[:checked]:border-primary"
         >
           {canChoose && (
             <input

@@ -120,7 +120,7 @@ export function BrochureOrderDetailModal({ target: inputTarget, onClose, onOpenN
         <header className="flex items-center justify-between border-b border-border p-5">
           <div className="flex flex-col gap-1">
             <div className="flex flex-wrap items-center gap-2">
-              <span className="font-mono text-title-sm font-extrabold text-foreground">
+              <span className="font-mono text-title-sm font-extrabold text-text">
                 {target.orderCode ? `#${target.orderCode}` : `Link ${target.sendCode}`}
               </span>
               {target.currentStepTitle && (
@@ -141,14 +141,14 @@ export function BrochureOrderDetailModal({ target: inputTarget, onClose, onOpenN
               />
             </div>
             <p className="text-caption text-text-muted">
-              Khách hàng: <strong className="text-foreground">{target.customerName || "Khách lẻ"}</strong>
+              Khách hàng: <strong className="text-text">{target.customerName || "Khách lẻ"}</strong>
             </p>
           </div>
           <button
             type="button"
             onClick={onClose}
             aria-label="Đóng"
-            className="rounded-xl p-1.5 text-text-muted hover:bg-surface-alt hover:text-foreground"
+            className="rounded-xl p-1.5 text-text-muted hover:bg-surface-alt hover:text-text"
           >
             <X size={20} />
           </button>
@@ -188,7 +188,7 @@ export function BrochureOrderDetailModal({ target: inputTarget, onClose, onOpenN
               aria-selected={activeTab === t.key}
               onClick={() => setActiveTab(t.key)}
               className={`-mb-px inline-flex min-h-11 shrink-0 items-center whitespace-nowrap border-b-2 px-3 text-body-sm font-bold leading-none transition-colors ${
-                activeTab === t.key ? "border-primary text-primary" : "border-transparent text-text-muted hover:text-foreground"
+                activeTab === t.key ? "border-primary text-primary" : "border-transparent text-text-muted hover:text-text"
               }`}
             >
               {t.label}

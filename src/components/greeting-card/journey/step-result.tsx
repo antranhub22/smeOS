@@ -22,17 +22,17 @@ export function StepResult(props: StepResultProps) {
         <CheckCircle2 size={30} aria-hidden="true" />
       </span>
       <div>
-        <h2 id="step-result-title" className="text-title font-bold text-foreground">
+        <h2 id="step-result-title" className="text-title font-bold text-text">
           Link đã sẵn sàng để gửi
         </h2>
         <p className="mt-1 text-body-sm text-text-muted">
-          Dành cho <strong className="text-foreground">{props.customerName || "khách"}</strong> · mã gửi{" "}
-          <span className="font-mono font-semibold text-foreground">{props.sendCode}</span>
+          Dành cho <strong className="text-text">{props.customerName || "khách"}</strong> · mã gửi{" "}
+          <span className="font-mono font-semibold text-text">{props.sendCode}</span>
         </p>
       </div>
 
       <div className="flex w-full max-w-xl flex-col gap-3 rounded-2xl border border-border bg-surface-muted p-4">
-        <output className="block break-all rounded-xl border border-border bg-background p-3 text-left font-mono text-body-sm text-foreground select-all">
+        <output className="block break-all rounded-xl border border-border bg-bg p-3 text-left font-mono text-body-sm text-text select-all">
           {props.shareUrl}
         </output>
         <p className="text-left text-caption text-text-muted">Dán link vào Zalo, Messenger hoặc tin nhắn để gửi khách.</p>
@@ -50,7 +50,7 @@ export function StepResult(props: StepResultProps) {
             target="_blank"
             rel="noreferrer"
             aria-label="Mở link trong thẻ mới"
-            className="inline-flex h-11 items-center justify-center rounded-xl border border-border px-3 text-text-muted hover:bg-surface hover:text-foreground"
+            className="inline-flex h-11 items-center justify-center rounded-xl border border-border px-3 text-text-muted hover:bg-surface hover:text-text"
           >
             <ExternalLink size={16} aria-hidden="true" />
           </a>

@@ -140,7 +140,7 @@ export function CatalogListTab({ onSelectCatalog }: Props) {
         <select
           value={shareChannel}
           onChange={(e) => setShareChannel(e.target.value)}
-          className="h-9 rounded-lg border border-border bg-surface px-2 text-body-sm text-foreground"
+          className="h-9 rounded-lg border border-border bg-surface px-2 text-body-sm text-text"
         >
           <option value="">Không chọn kênh</option>
           {CATALOG_CHANNELS.map((c) => (
@@ -152,7 +152,7 @@ export function CatalogListTab({ onSelectCatalog }: Props) {
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-surface p-5 rounded-2xl border border-border shadow-sm">
         <div>
-          <h2 className="text-title font-extrabold text-foreground flex items-center gap-2">
+          <h2 className="text-title font-extrabold text-text flex items-center gap-2">
             <BookOpen size={20} />
             <span className="capitalize">Quản lý {catalogHeading}</span>
           </h2>
@@ -214,7 +214,7 @@ export function CatalogListTab({ onSelectCatalog }: Props) {
       ) : catalogs.length === 0 && isFiltered ? (
         <div className="flex flex-col items-center justify-center py-20 gap-4">
           <div className="text-center">
-            <p className="text-title-sm font-bold text-foreground">Không có {catalogHeading} nào khớp bộ lọc</p>
+            <p className="text-title-sm font-bold text-text">Không có {catalogHeading} nào khớp bộ lọc</p>
             <p className="text-body-sm text-text-muted mt-1">
               Thử xem tất cả thời gian, tất cả nhân sự hoặc mục đang hoạt động
             </p>
@@ -229,7 +229,7 @@ export function CatalogListTab({ onSelectCatalog }: Props) {
             <BookOpen size={28} className="text-text-muted" />
           </div>
           <div className="text-center">
-            <p className="text-title-sm font-bold text-foreground">Chưa có {catalogHeading} nào</p>
+            <p className="text-title-sm font-bold text-text">Chưa có {catalogHeading} nào</p>
             <p className="text-body-sm text-text-muted mt-1">
               Tạo {catalogHeading} đầu tiên để bắt đầu gửi Thẻ Chào cho khách
             </p>

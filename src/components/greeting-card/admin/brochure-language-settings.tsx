@@ -100,7 +100,7 @@ export function BrochureLanguageSettings() {
     <div className="p-6 rounded-2xl border border-border bg-surface shadow-xs space-y-5">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-border pb-4">
         <div>
-          <h3 className="text-base font-extrabold text-foreground flex items-center gap-2">
+          <h3 className="text-base font-extrabold text-text flex items-center gap-2">
             <Globe2 size={18} className="text-primary" /> Ngôn Ngữ & Trải Nghiệm Khách Quốc Tế
           </h3>
           <p className="text-xs text-text-muted mt-1 leading-relaxed">
@@ -125,18 +125,18 @@ export function BrochureLanguageSettings() {
       <form onSubmit={handleSave} className="space-y-5">
         {/* Bảng lựa chọn ngôn ngữ */}
         <div className="space-y-3">
-          <label className="block text-body-sm font-bold text-foreground">
+          <label className="block text-body-sm font-bold text-text">
             1. Danh sách ngôn ngữ trên Thẻ Chào
           </label>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {/* Tiếng Việt */}
-            <div className="p-3.5 rounded-xl border border-border bg-background flex items-center justify-between">
+            <div className="p-3.5 rounded-xl border border-border bg-bg flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <span className="text-2xl">🇻🇳</span>
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="text-body-sm font-bold text-foreground">Tiếng Việt</span>
+                    <span className="text-body-sm font-bold text-text">Tiếng Việt</span>
                     <span className="text-caption px-1.5 py-0.2 rounded font-semibold bg-primary/10 text-primary">
                       Mặc định
                     </span>
@@ -154,7 +154,7 @@ export function BrochureLanguageSettings() {
                     onChange={() => handleSetDefault("vi")}
                     className="text-primary focus:ring-primary/20"
                   />
-                  <span className="font-medium text-foreground">Mặc định</span>
+                  <span className="font-medium text-text">Mặc định</span>
                 </label>
                 <input
                   type="checkbox"
@@ -171,7 +171,7 @@ export function BrochureLanguageSettings() {
                 isEnUnlocked
                   ? policy.activeLocales.includes("en")
                     ? "border-primary/40 bg-primary/5"
-                    : "border-border bg-background"
+                    : "border-border bg-bg"
                   : "border-dashed border-border bg-surface-muted/50 opacity-80"
               }`}
             >
@@ -179,7 +179,7 @@ export function BrochureLanguageSettings() {
                 <span className="text-2xl">🇬🇧</span>
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="text-body-sm font-bold text-foreground">English (Tiếng Anh)</span>
+                    <span className="text-body-sm font-bold text-text">English (Tiếng Anh)</span>
                     {!isEnUnlocked && (
                       <span className="inline-flex items-center gap-1 text-caption px-1.5 py-0.2 rounded font-semibold bg-surface-alt text-text-muted border border-border">
                         <Lock size={10} /> Khóa
@@ -202,7 +202,7 @@ export function BrochureLanguageSettings() {
                       onChange={() => handleSetDefault("en")}
                       className="text-primary focus:ring-primary/20"
                     />
-                    <span className="font-medium text-foreground">Mặc định</span>
+                    <span className="font-medium text-text">Mặc định</span>
                   </label>
                 )}
 
@@ -242,7 +242,7 @@ export function BrochureLanguageSettings() {
         {policy.activeLocales.length > 1 && (
           <div className="p-4 rounded-xl border border-primary/20 bg-primary/5 flex items-start justify-between gap-4">
             <div>
-              <p className="text-body-sm font-bold text-foreground">Nút chuyển đổi ngôn ngữ trên Thẻ Chào</p>
+              <p className="text-body-sm font-bold text-text">Nút chuyển đổi ngôn ngữ trên Thẻ Chào</p>
               <p className="text-caption text-text-muted mt-0.5">
                 Hiển thị nút chọn ngôn ngữ (🇻🇳 VI / 🇬🇧 EN) ở góc trên Thẻ chào để khách có thể linh hoạt đổi ngôn ngữ.
               </p>
@@ -259,7 +259,7 @@ export function BrochureLanguageSettings() {
         {/* Hướng dẫn thanh toán quốc tế */}
         {policy.activeLocales.includes("en") && (
           <div className="space-y-2">
-            <label className="block text-body-sm font-bold text-foreground">
+            <label className="block text-body-sm font-bold text-text">
               2. Hướng dẫn thanh toán quốc tế (Wise / PayPal / Swift / Zelle)
             </label>
             <p className="text-caption text-text-muted">
@@ -270,7 +270,7 @@ export function BrochureLanguageSettings() {
               placeholder="VD: For international payments, please transfer via Wise/PayPal to payment@yourshop.com or Swift Code: BFTVVNVX..."
               value={policy.internationalPaymentGuide ?? ""}
               onChange={(e) => setDraft({ ...policy, internationalPaymentGuide: e.target.value })}
-              className="w-full p-3 rounded-xl border border-border bg-background text-body-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 resize-none"
+              className="w-full p-3 rounded-xl border border-border bg-bg text-body-sm text-text focus:outline-none focus:ring-2 focus:ring-primary/20 resize-none"
             />
           </div>
         )}
@@ -305,11 +305,11 @@ export function BrochureLanguageSettings() {
       {/* Modal gửi yêu cầu mở khóa Tiếng Anh lên Admin SaaS */}
       {openUnlockModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4">
-          <div className="bg-background rounded-2xl border border-border p-6 max-w-md w-full shadow-2xl space-y-4">
+          <div className="bg-bg rounded-2xl border border-border p-6 max-w-md w-full shadow-2xl space-y-4">
             <div className="flex items-center justify-between border-b border-border pb-3">
               <div className="flex items-center gap-2">
                 <Sparkles size={18} className="text-primary" />
-                <h4 className="text-body font-bold text-foreground">Yêu Cầu Mở Khóa Gói Quốc Tế</h4>
+                <h4 className="text-body font-bold text-text">Yêu Cầu Mở Khóa Gói Quốc Tế</h4>
               </div>
               <button
                 type="button"
@@ -365,7 +365,7 @@ export function BrochureLanguageSettings() {
                 </p>
 
                 <div className="space-y-1.5">
-                  <label className="block text-caption font-bold text-foreground">
+                  <label className="block text-caption font-bold text-text">
                     Ghi chú hoặc lý do cần mở khóa (tùy chọn)
                   </label>
                   <textarea
@@ -373,7 +373,7 @@ export function BrochureLanguageSettings() {
                     placeholder="VD: Cửa hàng có nhiều khách hàng kiều bào đặt hoa giao tận nhà tại Việt Nam..."
                     value={unlockNote}
                     onChange={(e) => setUnlockNote(e.target.value)}
-                    className="w-full p-2.5 rounded-xl border border-border bg-surface text-body-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 resize-none"
+                    className="w-full p-2.5 rounded-xl border border-border bg-surface text-body-sm text-text focus:outline-none focus:ring-2 focus:ring-primary/20 resize-none"
                   />
                 </div>
 

@@ -127,7 +127,7 @@ export function CatalogPoliciesSettings({ catalogId, currentFilters, onSaved }: 
     <div className="space-y-5 bg-surface p-5 rounded-2xl border border-border shadow-xs">
       <div className="flex flex-wrap items-center justify-between gap-3 pb-3 border-b border-border">
         <div>
-          <h3 className="text-body font-bold text-foreground">Chính sách & Cam kết áp dụng cho Bộ sưu tập</h3>
+          <h3 className="text-body font-bold text-text">Chính sách & Cam kết áp dụng cho Bộ sưu tập</h3>
           <p className="text-caption text-text-muted">
             Chọn các ưu đãi, cam kết và thỏa thuận áp dụng khi khách xem và đặt hàng trong bộ sưu tập này.
           </p>
@@ -141,11 +141,11 @@ export function CatalogPoliciesSettings({ catalogId, currentFilters, onSaved }: 
       {/* 1. ƯU ĐÃI ÁP DỤNG */}
       <div className="space-y-3">
         <div className="flex items-center justify-between">
-          <h4 className="text-body-sm font-extrabold text-foreground flex items-center gap-1.5">
+          <h4 className="text-body-sm font-extrabold text-text flex items-center gap-1.5">
             <Gift size={15} className="text-primary" />
             <span>Ưu đãi áp dụng ({selectedPromos.length}/{policies.promotions.length})</span>
           </h4>
-          <label className="flex items-center gap-2 cursor-pointer text-caption font-semibold text-foreground">
+          <label className="flex items-center gap-2 cursor-pointer text-caption font-semibold text-text">
             <input
               type="checkbox"
               checked={allowPromoChoice}
@@ -165,7 +165,7 @@ export function CatalogPoliciesSettings({ catalogId, currentFilters, onSaved }: 
                 type="button"
                 onClick={() => togglePromo(p.id)}
                 className={`p-3 rounded-xl border text-left transition-all flex flex-col gap-1 ${
-                  active ? "border-primary bg-primary/5 text-foreground" : "border-border text-text-muted opacity-60 hover:opacity-100"
+                  active ? "border-primary bg-primary/5 text-text" : "border-border text-text-muted opacity-60 hover:opacity-100"
                 }`}
               >
                 <div className="flex items-center justify-between font-bold text-caption">
@@ -183,7 +183,7 @@ export function CatalogPoliciesSettings({ catalogId, currentFilters, onSaved }: 
 
       {/* 2. CAM KẾT ÁP DỤNG */}
       <div className="space-y-3 pt-3 border-t border-border">
-        <h4 className="text-body-sm font-extrabold text-foreground flex items-center gap-1.5">
+        <h4 className="text-body-sm font-extrabold text-text flex items-center gap-1.5">
           <ShieldCheck size={15} className="text-success" />
           <span>Cam kết công bố ({selectedCommits.length}/{policies.commitments.length})</span>
         </h4>
@@ -196,7 +196,7 @@ export function CatalogPoliciesSettings({ catalogId, currentFilters, onSaved }: 
                 type="button"
                 onClick={() => toggleCommit(c.id)}
                 className={`p-3 rounded-xl border text-left transition-all flex flex-col gap-1 ${
-                  active ? "border-success bg-success/5 text-foreground" : "border-border text-text-muted opacity-60 hover:opacity-100"
+                  active ? "border-success bg-success/5 text-text" : "border-border text-text-muted opacity-60 hover:opacity-100"
                 }`}
               >
                 <div className="flex items-center justify-between font-bold text-caption">
@@ -214,7 +214,7 @@ export function CatalogPoliciesSettings({ catalogId, currentFilters, onSaved }: 
 
       {/* 3. THỎA THUẬN ÁP DỤNG */}
       <div className="space-y-3 pt-3 border-t border-border">
-        <h4 className="text-body-sm font-extrabold text-foreground flex items-center gap-1.5">
+        <h4 className="text-body-sm font-extrabold text-text flex items-center gap-1.5">
           <FileText size={15} className="text-warning" />
           <span>Thỏa thuận khách cần xác nhận ({selectedAgrees.length}/{policies.agreements.length})</span>
         </h4>
@@ -227,7 +227,7 @@ export function CatalogPoliciesSettings({ catalogId, currentFilters, onSaved }: 
                 type="button"
                 onClick={() => toggleAgree(a.id)}
                 className={`p-3 rounded-xl border text-left transition-all flex flex-col gap-1 ${
-                  active ? "border-warning bg-warning/5 text-foreground" : "border-border text-text-muted opacity-60 hover:opacity-100"
+                  active ? "border-warning bg-warning/5 text-text" : "border-border text-text-muted opacity-60 hover:opacity-100"
                 }`}
               >
                 <div className="flex items-center justify-between font-bold text-caption">
@@ -245,7 +245,7 @@ export function CatalogPoliciesSettings({ catalogId, currentFilters, onSaved }: 
 
       {/* PHỤ PHÍ NGÀY LỄ — giờ chốt & số đơn tối đa ngày lễ áp cả tiệm, phụ phí chỉ khi bộ sưu tập bật */}
       <div className="space-y-2 pt-3 border-t border-border">
-        <label className="flex items-center gap-2 cursor-pointer text-body-sm font-extrabold text-foreground">
+        <label className="flex items-center gap-2 cursor-pointer text-body-sm font-extrabold text-text">
           <input
             type="checkbox"
             checked={applyHolidaySurcharge}
@@ -264,7 +264,7 @@ export function CatalogPoliciesSettings({ catalogId, currentFilters, onSaved }: 
 
       {/* 4. CẤU HÌNH THỜI GIAN DUYỆT ẢNH HOÀN THIỆN (SPEC #3) */}
       <div className="space-y-2 pt-3 border-t border-border">
-        <h4 className="text-body-sm font-extrabold text-foreground flex items-center gap-1.5">
+        <h4 className="text-body-sm font-extrabold text-text flex items-center gap-1.5">
           <span>Thời gian khách duyệt ảnh hoàn thiện (Phút)</span>
         </h4>
         <div className="flex items-center gap-3">
@@ -274,7 +274,7 @@ export function CatalogPoliciesSettings({ catalogId, currentFilters, onSaved }: 
             max={60}
             value={countdownMinutes}
             onChange={(e) => setCountdownMinutes(Math.max(1, parseInt(e.target.value) || 10))}
-            className="w-24 h-10 px-3 rounded-lg border border-border bg-background text-body text-foreground font-bold"
+            className="w-24 h-10 px-3 rounded-lg border border-border bg-bg text-body text-text font-bold"
           />
           <p className="text-caption text-text-muted">
             Thời gian đếm ngược khi thợ/điều phối tải ảnh lên. Hết thời gian này hệ thống sẽ tự động coi như khách đã duyệt để chuẩn bị giao hàng hoặc đón tiếp. (Mặc định: 10 phút)
@@ -291,7 +291,7 @@ export function CatalogPoliciesSettings({ catalogId, currentFilters, onSaved }: 
 
       {/* 6. CẤU HÌNH BẮT BUỘC ẢNH CHUYỂN KHOẢN (GHI ĐÈ THEO BỘ SƯU TẬP) */}
       <div className="space-y-2 pt-3 border-t border-border">
-        <h4 className="text-body-sm font-extrabold text-foreground flex items-center gap-1.5">
+        <h4 className="text-body-sm font-extrabold text-text flex items-center gap-1.5">
           <ShieldCheck size={15} className="text-primary" />
           <span>Ảnh chụp chuyển khoản</span>
         </h4>
@@ -303,7 +303,7 @@ export function CatalogPoliciesSettings({ catalogId, currentFilters, onSaved }: 
               checked={requirePaymentProofOverride === null}
               onChange={() => setRequirePaymentProofOverride(null)}
             />
-            <span className="font-semibold text-foreground">Theo chính sách tiệm (Mặc định)</span>
+            <span className="font-semibold text-text">Theo chính sách tiệm (Mặc định)</span>
           </label>
           <label className="flex items-center gap-2 cursor-pointer text-body-sm">
             <input
@@ -312,7 +312,7 @@ export function CatalogPoliciesSettings({ catalogId, currentFilters, onSaved }: 
               checked={requirePaymentProofOverride === true}
               onChange={() => setRequirePaymentProofOverride(true)}
             />
-            <span className="font-semibold text-foreground">Bắt buộc tải ảnh chuyển khoản</span>
+            <span className="font-semibold text-text">Bắt buộc tải ảnh chuyển khoản</span>
           </label>
           <label className="flex items-center gap-2 cursor-pointer text-body-sm">
             <input
@@ -321,7 +321,7 @@ export function CatalogPoliciesSettings({ catalogId, currentFilters, onSaved }: 
               checked={requirePaymentProofOverride === false}
               onChange={() => setRequirePaymentProofOverride(false)}
             />
-            <span className="font-semibold text-foreground">Không bắt buộc tải ảnh (Cho phép bỏ qua)</span>
+            <span className="font-semibold text-text">Không bắt buộc tải ảnh (Cho phép bỏ qua)</span>
           </label>
         </div>
         <p className="text-caption text-text-muted">

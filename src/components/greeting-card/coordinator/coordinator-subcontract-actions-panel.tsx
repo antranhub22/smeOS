@@ -467,7 +467,7 @@ export function CoordinatorSubcontractActionsPanel({
       {/* M2: Upload QC */}
       <div className="flex flex-col gap-2">
         <div className="flex items-center justify-between">
-          <span className="text-caption font-bold text-foreground flex items-center gap-1.5">
+          <span className="text-caption font-bold text-text flex items-center gap-1.5">
             <Camera size={13} className="text-primary" />
             Bước 2 — Ảnh thành phẩm
           </span>
@@ -482,7 +482,7 @@ export function CoordinatorSubcontractActionsPanel({
       {/* M3: Shipper */}
       <div className="flex flex-col gap-2">
         <div className="flex items-center justify-between">
-          <span className="text-caption font-bold text-foreground flex items-center gap-1.5">
+          <span className="text-caption font-bold text-text flex items-center gap-1.5">
             <Truck size={13} className="text-warning" />
             Bước 3 — Thông tin shipper
           </span>
@@ -506,7 +506,7 @@ export function CoordinatorSubcontractActionsPanel({
       {/* M4: Delivery POD */}
       <div className="flex flex-col gap-2">
         <div className="flex items-center justify-between">
-          <span className="text-caption font-bold text-foreground flex items-center gap-1.5">
+          <span className="text-caption font-bold text-text flex items-center gap-1.5">
             <PackageCheck size={13} className="text-success" />
             Bước 4 — Xác nhận giao hàng
           </span>

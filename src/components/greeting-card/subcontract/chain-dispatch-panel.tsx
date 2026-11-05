@@ -154,7 +154,7 @@ export function ChainDispatchPanel({
             <Sparkles size={16} />
           </span>
           <div>
-            <h4 className="text-body-sm font-extrabold text-foreground flex items-center gap-1.5">
+            <h4 className="text-body-sm font-extrabold text-text flex items-center gap-1.5">
               <span>Điều phối chuỗi tự động</span>
               <span className="text-caption font-bold px-1.5 py-0.5 rounded-md bg-primary/20 text-primary uppercase">
                 Gate 2
@@ -181,7 +181,7 @@ export function ChainDispatchPanel({
             </span>
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-body font-black text-foreground">
+                <span className="text-body font-black text-text">
                   ĐÃ GIAO CHO: {data.data.dispatchState.claimedBranchName || data.data.dispatchState.claimedBranchId}
                 </span>
                 <span className={`text-caption font-extrabold px-2 py-0.5 rounded-full uppercase ${
@@ -225,7 +225,7 @@ export function ChainDispatchPanel({
               <Clock size={16} />
             </span>
             <div>
-              <p className="text-caption font-bold text-foreground">
+              <p className="text-caption font-bold text-text">
                 Đã phát lệnh — đang chờ chi nhánh nhận
               </p>
               <p className="text-caption text-text-muted">
@@ -301,7 +301,7 @@ export function ChainDispatchPanel({
                 setDispatchResult(null)
                 mutate()
               }}
-              className="text-caption h-7 gap-1 text-text-muted hover:text-foreground"
+              className="text-caption h-7 gap-1 text-text-muted hover:text-text"
             >
               <RotateCcw size={12} />
               <span>Phát lại</span>
@@ -315,7 +315,7 @@ export function ChainDispatchPanel({
                 className="flex items-center justify-between text-caption py-1 px-2 rounded-lg bg-surface/80 border border-border/50"
               >
                 <div className="flex items-center gap-1.5">
-                  <span className="font-semibold text-foreground">{res.branchName}</span>
+                  <span className="font-semibold text-text">{res.branchName}</span>
                   <span className="text-caption px-1.5 py-0.5 rounded bg-primary/10 text-primary font-bold">
                     {dispatchChannelLabel(res.channel)}
                   </span>
@@ -337,7 +337,7 @@ export function ChainDispatchPanel({
       {!dispatchResult && !data?.data?.dispatchState?.status && (
         <>
           <div className="flex items-center justify-between text-caption">
-            <span className="font-bold text-foreground">
+            <span className="font-bold text-text">
               Chọn chi nhánh bạn muốn phát lệnh ({selectedBranchIds.length}/{topBranches.length}):
             </span>
             <div className="flex items-center gap-2">

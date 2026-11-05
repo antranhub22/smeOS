@@ -26,7 +26,7 @@ const METHOD_TEXT: Record<CraftFeeMethod, { title: string; hint: string }> = {
 
 function NumberField(props: { label: string; value: number; onChange: (v: number) => void; suffix: string; step?: number }) {
   return (
-    <label className="flex items-center justify-between gap-3 text-body-sm text-foreground">
+    <label className="flex items-center justify-between gap-3 text-body-sm text-text">
       <span>{props.label}</span>
       <span className="flex items-center gap-1.5">
         <input
@@ -46,7 +46,7 @@ function NumberField(props: { label: string; value: number; onChange: (v: number
 function Group({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <fieldset className="flex flex-col gap-2.5 p-4 rounded-xl border border-border">
-      <legend className="px-1 text-body-sm font-extrabold text-foreground">{title}</legend>
+      <legend className="px-1 text-body-sm font-extrabold text-text">{title}</legend>
       {children}
     </fieldset>
   )
@@ -93,7 +93,7 @@ export function CraftFeeSettings() {
     <form onSubmit={handleSave} className="bg-surface rounded-2xl border border-border p-5 sm:p-6 shadow-sm flex flex-col gap-5">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-border">
         <div>
-          <h3 className="text-title font-extrabold text-foreground flex items-center gap-2">
+          <h3 className="text-title font-extrabold text-text flex items-center gap-2">
             <Coins size={22} className="text-primary" /> {spec.feeLabel}
           </h3>
           <p className="text-caption text-text-muted mt-0.5">
@@ -122,12 +122,12 @@ export function CraftFeeSettings() {
           <label key={method} className="flex items-start gap-2.5 cursor-pointer">
             <input type="radio" name="craft-fee-method" checked={policy.method === method} onChange={() => set("method", method)} className="mt-1 accent-primary" />
             <span>
-              <span className="block text-body-sm font-bold text-foreground">{METHOD_TEXT[method].title}</span>
+              <span className="block text-body-sm font-bold text-text">{METHOD_TEXT[method].title}</span>
               <span className="block text-caption text-text-muted">{METHOD_TEXT[method].hint}</span>
             </span>
           </label>
         ))}
-        <label className="flex items-center gap-2 pt-1 text-body-sm text-foreground">
+        <label className="flex items-center gap-2 pt-1 text-body-sm text-text">
           <input type="checkbox" checked={policy.base === "AFTER_DISCOUNT"} onChange={(e) => set("base", e.target.checked ? "AFTER_DISCOUNT" : "LIST_PRICE")} className="accent-primary" />
           Tính trên giá sau khi trừ mã giảm giá (mặc định: giá niêm yết)
         </label>
@@ -147,7 +147,7 @@ export function CraftFeeSettings() {
               {i < 2 ? (
                 <NumberField label={`Bậc ${i + 1}: đơn đến`} value={tierAt(i)?.upToVnd ?? 0} onChange={(v) => set("tiers", policy.tiers.map((t, j) => (j === i ? { ...t, upToVnd: v } : t)))} suffix="đ" step={100_000} />
               ) : (
-                <span className="text-body-sm text-foreground">Bậc 3: đơn lớn hơn</span>
+                <span className="text-body-sm text-text">Bậc 3: đơn lớn hơn</span>
               )}
               <NumberField label="Tỷ lệ" value={tierAt(i)?.percent ?? policy.percent} onChange={(v) => set("tiers", policy.tiers.map((t, j) => (j === i ? { ...t, percent: Math.min(100, v) } : t)))} suffix="%" />
             </div>
@@ -169,7 +169,7 @@ export function CraftFeeSettings() {
         <NumberField label="Tính là gấp khi phải giao trong vòng" value={policy.rushWithinMinutes} onChange={(v) => set("rushWithinMinutes", v)} suffix="phút" step={15} />
         <NumberField label="Ngày cao điểm: cộng thêm" value={policy.peakSurchargePercent} onChange={(v) => set("peakSurchargePercent", v)} suffix="%" />
         <p className="text-caption text-text-muted">Ngày cao điểm cố định: {spec.peakDays.length ? spec.peakDays.map((d) => d.label).join(", ") : "chưa có"}.</p>
-        <label className="flex flex-col gap-1 text-body-sm text-foreground">
+        <label className="flex flex-col gap-1 text-body-sm text-text">
           Thêm ngày cao điểm (năm-tháng-ngày, cách nhau bằng dấu phẩy — vd. Tết, Trung thu)
           <input
             type="text"

@@ -44,8 +44,8 @@ export function SubstitutePanel({
     if (!last?.choiceLabel) return null
     return (
       <div role="status" className="rounded-2xl border border-border bg-surface-muted p-4 flex flex-col gap-1 text-body-sm">
-        <p className="font-bold text-foreground flex items-center gap-2"><Shuffle size={16} aria-hidden="true" /> Đổi sản phẩm</p>
-        <p className="text-foreground">
+        <p className="font-bold text-text flex items-center gap-2"><Shuffle size={16} aria-hidden="true" /> Đổi sản phẩm</p>
+        <p className="text-text">
           {last.choiceLabel}{last.chosenName ? `: ${last.chosenName}` : ""} <span className="text-text-muted">· {when(last.answeredAt)}</span>
         </p>
         <p className="text-text-muted">Mẫu ban đầu: {last.originalName}</p>
@@ -86,7 +86,7 @@ export function SubstitutePanel({
       <h3 id="substitute-title" className="text-body font-extrabold text-warning flex items-center gap-2">
         <Shuffle size={18} aria-hidden="true" /> Tiệm cần bạn chọn lại sản phẩm
       </h3>
-      <p className="text-body-sm text-foreground">
+      <p className="text-body-sm text-text">
         Mẫu <strong>{p.originalName}</strong> tạm thời không làm được: {p.reason}
       </p>
       <p className="text-caption text-text-muted">Tổng tiền đơn giữ nguyên. Chọn một mẫu dưới đây, hoặc nhờ tiệm chọn mẫu tương đương.</p>
@@ -99,7 +99,7 @@ export function SubstitutePanel({
               <button type="button" aria-pressed={on} disabled={busy} onClick={() => pick("OPTION", o.productId)}
                 className={`relative flex w-full flex-col gap-1 rounded-xl border bg-surface p-2 text-left ${on ? "border-primary ring-2 ring-primary/40" : "border-border"}`}>
                 <FlowerImage src={o.imageUrl} driveLink={o.driveLink} alt={o.name} className="aspect-square w-full rounded-lg" sizes="(max-width: 640px) 50vw, 200px" fallback="icon" />
-                <span className="text-body-sm font-bold text-foreground line-clamp-2">{o.name}</span>
+                <span className="text-body-sm font-bold text-text line-clamp-2">{o.name}</span>
                 {on && <Check size={18} className="absolute right-3 top-3 rounded-full bg-primary text-primary-foreground" aria-hidden="true" />}
               </button>
             </li>
@@ -117,7 +117,7 @@ export function SubstitutePanel({
       <label className="sr-only" htmlFor="substitute-note">Ghi chú cho tiệm</label>
       <textarea id="substitute-note" rows={2} maxLength={SUBSTITUTE_NOTE_MAX} value={note} onChange={(e) => setNote(e.target.value)} disabled={busy}
         placeholder={choice === "CANCEL" ? "Lý do huỷ (bắt buộc)" : "Ghi chú cho tiệm (không bắt buộc), vd. ưu tiên tông hồng nhạt"}
-        className="w-full rounded-xl border border-border bg-surface p-3 text-body-sm text-foreground resize-none focus:outline-none focus:ring-2 focus:ring-primary/40" />
+        className="w-full rounded-xl border border-border bg-surface p-3 text-body-sm text-text resize-none focus:outline-none focus:ring-2 focus:ring-primary/40" />
 
       {error && <p role="alert" className="text-danger text-caption">{error}</p>}
       <Button type="button" disabled={!!invalid || busy} title={invalid ?? undefined} onClick={() => void submit()} className="h-11">

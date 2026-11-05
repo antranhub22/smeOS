@@ -52,7 +52,7 @@ export function BrochureStepTimeoutSettings() {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Timer size={18} className="text-primary" aria-hidden="true" />
-          <h3 className="text-title-sm font-extrabold text-foreground">
+          <h3 className="text-title-sm font-extrabold text-text">
             Thời hạn & Tự động huỷ đơn theo bước
           </h3>
         </div>
@@ -72,7 +72,7 @@ export function BrochureStepTimeoutSettings() {
           {/* Bước 1: Quá hạn mở link */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 rounded-xl border border-border bg-surface-alt">
             <div className="space-y-0.5">
-              <label className="flex items-center gap-2 text-body-sm font-bold text-foreground cursor-pointer">
+              <label className="flex items-center gap-2 text-body-sm font-bold text-text cursor-pointer">
                 <input
                   type="checkbox"
                   checked={current.autoCancelUnopened}
@@ -100,7 +100,7 @@ export function BrochureStepTimeoutSettings() {
                     unopenedExpiryHours: Math.max(1, parseInt(e.target.value) || 24),
                   })
                 }
-                className="h-9 w-20 rounded-lg border border-border bg-surface px-2 text-right text-body-sm font-bold text-foreground disabled:opacity-40"
+                className="h-9 w-20 rounded-lg border border-border bg-surface px-2 text-right text-body-sm font-bold text-text disabled:opacity-40"
               />
               <span className="text-caption text-text-muted">giờ</span>
               <span className="text-caption font-medium text-text-muted">
@@ -112,7 +112,7 @@ export function BrochureStepTimeoutSettings() {
           {/* Bước 2: Quá hạn lướt chọn mẫu */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 rounded-xl border border-border bg-surface-alt">
             <div className="space-y-0.5">
-              <label className="flex items-center gap-2 text-body-sm font-bold text-foreground cursor-pointer">
+              <label className="flex items-center gap-2 text-body-sm font-bold text-text cursor-pointer">
                 <input
                   type="checkbox"
                   checked={current.autoCancelBrowsing}
@@ -140,7 +140,7 @@ export function BrochureStepTimeoutSettings() {
                     browsingExpiryHours: Math.max(1, parseInt(e.target.value) || 12),
                   })
                 }
-                className="h-9 w-20 rounded-lg border border-border bg-surface px-2 text-right text-body-sm font-bold text-foreground disabled:opacity-40"
+                className="h-9 w-20 rounded-lg border border-border bg-surface px-2 text-right text-body-sm font-bold text-text disabled:opacity-40"
               />
               <span className="text-caption text-text-muted">giờ</span>
               <span className="text-caption font-medium text-text-muted">
@@ -152,7 +152,7 @@ export function BrochureStepTimeoutSettings() {
           {/* Bước 3: Quá hạn thanh toán cọc */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 rounded-xl border border-border bg-surface-alt">
             <div className="space-y-0.5">
-              <label className="flex items-center gap-2 text-body-sm font-bold text-foreground cursor-pointer">
+              <label className="flex items-center gap-2 text-body-sm font-bold text-text cursor-pointer">
                 <input
                   type="checkbox"
                   checked={current.autoCancelUnpaid}
@@ -180,7 +180,7 @@ export function BrochureStepTimeoutSettings() {
                     unpaidExpiryMinutes: Math.max(5, parseInt(e.target.value) || 30),
                   })
                 }
-                className="h-9 w-20 rounded-lg border border-border bg-surface px-2 text-right text-body-sm font-bold text-foreground disabled:opacity-40"
+                className="h-9 w-20 rounded-lg border border-border bg-surface px-2 text-right text-body-sm font-bold text-text disabled:opacity-40"
               />
               <span className="text-caption text-text-muted">phút</span>
               <span className="text-caption font-medium text-text-muted">
@@ -192,7 +192,7 @@ export function BrochureStepTimeoutSettings() {
           {/* Bước 4: Chờ khách duyệt ảnh hoa */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 rounded-xl border border-border bg-surface-alt">
             <div className="space-y-0.5">
-              <label className="flex items-center gap-2 text-body-sm font-bold text-foreground cursor-pointer">
+              <label className="flex items-center gap-2 text-body-sm font-bold text-text cursor-pointer">
                 <input
                   type="checkbox"
                   checked={current.autoApprovePhotoOnTimeout}
@@ -220,7 +220,7 @@ export function BrochureStepTimeoutSettings() {
                     photoReviewTimeoutMinutes: Math.max(5, parseInt(e.target.value) || 15),
                   })
                 }
-                className="h-9 w-20 rounded-lg border border-border bg-surface px-2 text-right text-body-sm font-bold text-foreground disabled:opacity-40"
+                className="h-9 w-20 rounded-lg border border-border bg-surface px-2 text-right text-body-sm font-bold text-text disabled:opacity-40"
               />
               <span className="text-caption text-text-muted">phút</span>
             </div>

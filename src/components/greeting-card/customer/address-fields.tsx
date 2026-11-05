@@ -47,7 +47,7 @@ export function AddressFields(props: {
 
   return (
     <fieldset className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-      <legend className="mb-1 block text-body-sm font-bold text-foreground">
+      <legend className="mb-1 block text-body-sm font-bold text-text">
         {isEn ? "Delivery Address" : "Địa chỉ nhận hàng"} <span className="text-danger">*</span>
       </legend>
 

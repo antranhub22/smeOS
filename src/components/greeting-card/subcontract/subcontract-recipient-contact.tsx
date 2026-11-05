@@ -23,14 +23,14 @@ export function SubcontractRecipientContact({
         <span className="text-caption text-text-muted block">Thông tin liên hệ người nhận:</span>
         <div className="flex flex-wrap items-center gap-2 mt-1">
           {recipientName && (
-            <span className="text-foreground font-semibold text-body-sm">{recipientName}</span>
+            <span className="text-text font-semibold text-body-sm">{recipientName}</span>
           )}
           {recipientPhone && (
             <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-surface border border-border">
               {isPhoneMasked ? (
                 <>
                   <Lock size={12} className="text-warning" />
-                  <span className="font-mono text-caption font-bold text-foreground tracking-wider">
+                  <span className="font-mono text-caption font-bold text-text tracking-wider">
                     {recipientPhone}
                   </span>
                   <span className="text-caption text-text-muted italic">

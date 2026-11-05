@@ -71,7 +71,7 @@ export function GreetingTemplateRenderer({
           <button
             type="button"
             onClick={() => setShowSwitchMenu((prev) => !prev)}
-            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface border border-border text-text-muted hover:text-foreground text-caption font-medium transition-colors shadow-2xs cursor-pointer"
+            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface border border-border text-text-muted hover:text-text text-caption font-medium transition-colors shadow-2xs cursor-pointer"
             title="Nhấn để đổi mẫu giao diện trải nghiệm"
           >
             <Layers size={13} className="text-primary" />
@@ -103,7 +103,7 @@ export function GreetingTemplateRenderer({
                       className={`w-full text-left p-2 rounded-xl text-caption transition-colors flex items-center justify-between ${
                         activeTemplate === tpl.id
                           ? "bg-selected text-primary font-bold"
-                          : "hover:bg-surface-muted text-foreground"
+                          : "hover:bg-surface-muted text-text"
                       }`}
                     >
                       <div className="min-w-0 pr-2">

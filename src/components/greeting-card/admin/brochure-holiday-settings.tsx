@@ -18,7 +18,7 @@ import {
   type HolidayDay,
 } from "@/modules/greeting-card/domain/holiday-policy"
 
-const FIELD = "h-10 px-3 rounded-lg border border-border bg-background text-body text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20"
+const FIELD = "h-10 px-3 rounded-lg border border-border bg-bg text-body text-text focus:outline-none focus:ring-2 focus:ring-primary/20"
 
 interface Row { id: string; name: string; date: string; yearly: boolean; cutoff: string; maxOrders: string; surcharge: string }
 
@@ -91,7 +91,7 @@ export function BrochureHolidaySettings() {
     <form onSubmit={save} className="bg-surface rounded-2xl border border-border p-5 shadow-sm flex flex-col gap-4">
       <div className="flex items-center gap-2">
         <CalendarHeart size={18} className="text-primary" aria-hidden="true" />
-        <h3 className="text-title-sm font-extrabold text-foreground">Ngày lễ</h3>
+        <h3 className="text-title-sm font-extrabold text-text">Ngày lễ</h3>
       </div>
       <p className="text-caption text-text-muted">
         Giờ chốt nhận đơn và số đơn tối đa mỗi ngày lễ áp cho cả tiệm (mặc định {DEFAULT_HOLIDAY_MAX_ORDERS} đơn). Phụ phí chỉ cộng ở bộ sưu tập bật &ldquo;Áp dụng phụ phí ngày lễ&rdquo;.
@@ -110,7 +110,7 @@ export function BrochureHolidaySettings() {
                 <div className="flex flex-wrap items-center gap-2">
                   <input aria-label="Tên ngày lễ" value={r.name} maxLength={HOLIDAY_NAME_MAX} placeholder="VD: Valentine" onChange={(e) => patch(i, { name: e.target.value })} className={`${FIELD} flex-1 min-w-40`} />
                   <ViDateInput compact ariaLabel="Ngày" value={r.date} onChange={(date) => patch(i, { date })} wrapperClassName="w-44" className={FIELD} />
-                  <label className="flex items-center gap-1.5 text-body-sm text-foreground">
+                  <label className="flex items-center gap-1.5 text-body-sm text-text">
                     <input type="checkbox" checked={r.yearly} onChange={(e) => patch(i, { yearly: e.target.checked })} /> Lặp lại hằng năm
                   </label>
                   <button type="button" aria-label={`Xoá ${r.name || "ngày lễ"}`} onClick={() => edit(rows.filter((_, j) => j !== i))} className="ml-auto p-2 rounded-lg text-text-muted hover:text-danger hover:bg-danger-bg">

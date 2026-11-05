@@ -37,7 +37,7 @@ export function BrochureUnlockGate({ sendCode, shop }: { sendCode: string; shop:
   }
 
   return (
-    <div className="min-h-dvh bg-background text-foreground">
+    <div className="min-h-dvh bg-bg text-text">
       <ShopContactBar shop={shop} />
       <main className="mx-auto flex max-w-md flex-col items-center gap-3 px-6 py-14 text-center">
         <LockKeyhole size={28} className="text-primary" aria-hidden="true" />
@@ -53,7 +53,7 @@ export function BrochureUnlockGate({ sendCode, shop }: { sendCode: string; shop:
             value={digits}
             onChange={(e) => setDigits(e.target.value.replace(/\D/g, "").slice(0, 4))}
             placeholder="VD: 5678"
-            className="h-12 w-full rounded-xl border border-border bg-surface px-4 text-center text-title tracking-widest text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20"
+            className="h-12 w-full rounded-xl border border-border bg-surface px-4 text-center text-title tracking-widest text-text focus:outline-none focus:ring-2 focus:ring-primary/20"
           />
           {error && <p role="alert" className="text-body-sm text-danger">{error}</p>}
           <button type="submit" disabled={busy} className="inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-primary text-body font-bold text-surface disabled:opacity-60">

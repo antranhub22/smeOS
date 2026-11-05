@@ -23,7 +23,7 @@ export function CalendarView({ qs, from: fixedFrom, to: fixedTo, onOpen }: { qs:
       {!fixedFrom && (
         <div className="flex items-center gap-2">
           <Button type="button" variant="outline" size="sm" aria-label="Tuần trước" onClick={() => setStart(iso(Date.parse(start) - 7 * DAY))}><ChevronLeft size={16} aria-hidden="true" /></Button>
-          <span className="text-body-sm font-semibold text-foreground">{label(from)} – {label(to)}</span>
+          <span className="text-body-sm font-semibold text-text">{label(from)} – {label(to)}</span>
           <Button type="button" variant="outline" size="sm" aria-label="Tuần sau" onClick={() => setStart(iso(Date.parse(start) + 7 * DAY))}><ChevronRight size={16} aria-hidden="true" /></Button>
         </div>
       )}
@@ -31,7 +31,7 @@ export function CalendarView({ qs, from: fixedFrom, to: fixedTo, onOpen }: { qs:
         <div className="flex flex-col gap-3">
           {days.map((d) => (
             <section key={d.date} aria-label={label(d.date)} className="rounded-2xl border border-border bg-surface p-3">
-              <h3 className="mb-2 text-body-sm font-extrabold text-foreground">{label(d.date)} · {d.count} đơn</h3>
+              <h3 className="mb-2 text-body-sm font-extrabold text-text">{label(d.date)} · {d.count} đơn</h3>
               {d.slots.map((s) => (
                 <div key={s.slot} className="mb-2">
                   <p className="text-caption font-semibold text-text-muted">{s.slot}</p>

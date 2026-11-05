@@ -23,7 +23,7 @@ export function BrochurePreviewModal({
         {/* Modal Header */}
         <div className="px-4 py-3 border-b border-border flex items-center justify-between bg-surface-muted/50 shrink-0">
           <div className="flex items-center gap-2">
-            <span className="font-extrabold text-foreground text-body truncate max-w-xs sm:max-w-md">
+            <span className="font-extrabold text-text text-body truncate max-w-xs sm:max-w-md">
               {title}
             </span>
             <span className="text-caption font-bold px-2 py-0.5 rounded-full bg-primary/10 text-primary hidden sm:inline-block">
@@ -40,7 +40,7 @@ export function BrochurePreviewModal({
                 className={`p-1.5 rounded-lg text-caption flex items-center gap-1 transition-colors ${
                   device === "mobile"
                     ? "bg-primary text-white font-bold shadow-xs"
-                    : "text-text-muted hover:text-foreground"
+                    : "text-text-muted hover:text-text"
                 }`}
                 title="Khổ điện thoại (390px)"
               >
@@ -53,7 +53,7 @@ export function BrochurePreviewModal({
                 className={`p-1.5 rounded-lg text-caption flex items-center gap-1 transition-colors ${
                   device === "desktop"
                     ? "bg-primary text-white font-bold shadow-xs"
-                    : "text-text-muted hover:text-foreground"
+                    : "text-text-muted hover:text-text"
                 }`}
                 title="Toàn màn hình"
               >
@@ -65,7 +65,7 @@ export function BrochurePreviewModal({
             <button
               type="button"
               onClick={() => setIframeKey((k) => k + 1)}
-              className="p-2 rounded-xl border border-border bg-surface hover:bg-surface-muted text-text-muted hover:text-foreground transition-colors"
+              className="p-2 rounded-xl border border-border bg-surface hover:bg-surface-muted text-text-muted hover:text-text transition-colors"
               title="Tải lại preview"
             >
               <RefreshCw size={14} />
@@ -75,7 +75,7 @@ export function BrochurePreviewModal({
               href={url}
               target="_blank"
               rel="noreferrer"
-              className="p-2 rounded-xl border border-border bg-surface hover:bg-surface-muted text-text-muted hover:text-foreground transition-colors"
+              className="p-2 rounded-xl border border-border bg-surface hover:bg-surface-muted text-text-muted hover:text-text transition-colors"
               title="Mở trong tab mới"
             >
               <ExternalLink size={15} />
@@ -84,7 +84,7 @@ export function BrochurePreviewModal({
             <button
               type="button"
               onClick={onClose}
-              className="p-2 rounded-xl hover:bg-surface-muted text-text-muted hover:text-foreground transition-colors ml-1"
+              className="p-2 rounded-xl hover:bg-surface-muted text-text-muted hover:text-text transition-colors ml-1"
               title="Đóng preview"
             >
               <X size={18} />
@@ -95,7 +95,7 @@ export function BrochurePreviewModal({
         {/* Modal Body / Iframe Container */}
         <div className="flex-1 bg-surface-muted flex items-center justify-center p-2 sm:p-4 overflow-hidden relative">
           <div
-            className={`transition-all duration-300 h-full flex flex-col bg-background rounded-2xl overflow-hidden shadow-xl border border-border ${
+            className={`transition-all duration-300 h-full flex flex-col bg-bg rounded-2xl overflow-hidden shadow-xl border border-border ${
               device === "mobile"
                 ? "w-[390px] max-w-full ring-8 ring-black/10 rounded-[36px]"
                 : "w-full"

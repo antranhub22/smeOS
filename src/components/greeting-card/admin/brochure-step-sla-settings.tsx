@@ -54,7 +54,7 @@ export function BrochureStepSlaSettings() {
     <section className="bg-surface rounded-2xl border border-border p-5 shadow-sm flex flex-col gap-3">
       <div className="flex items-center gap-2">
         <Timer size={18} className="text-primary" aria-hidden="true" />
-        <h3 className="text-title-sm font-extrabold text-foreground">Thời gian chuẩn từng bước</h3>
+        <h3 className="text-title-sm font-extrabold text-text">Thời gian chuẩn từng bước</h3>
       </div>
       <p className="text-caption text-text-muted">Quá thời gian mà bước chưa xong, đơn được đánh dấu kẹt và người phụ trách nhận thông báo.</p>
       {!draft ? (
@@ -69,7 +69,7 @@ export function BrochureStepSlaSettings() {
                 <label className="flex min-w-0 flex-1 items-start gap-2">
                   <input type="checkbox" checked={s.enabled} onChange={(e) => patch(r.stepId, { enabled: e.target.checked })} className="mt-1" />
                   <span className="min-w-0">
-                    <span className="block text-body-sm font-semibold text-foreground">{title}</span>
+                    <span className="block text-body-sm font-semibold text-text">{title}</span>
                     <span className="block text-caption text-text-muted">{r.waitingFor} · báo cho {STEP_OWNER_LABEL[r.owner]}</span>
                   </span>
                 </label>
@@ -82,7 +82,7 @@ export function BrochureStepSlaSettings() {
                     value={s.minutes}
                     disabled={!s.enabled}
                     onChange={(e) => patch(r.stepId, { minutes: Number(e.target.value) })}
-                    className="h-9 w-20 rounded-lg border border-border bg-surface px-2 text-right text-body-sm text-foreground disabled:opacity-50"
+                    className="h-9 w-20 rounded-lg border border-border bg-surface px-2 text-right text-body-sm text-text disabled:opacity-50"
                   />
                   phút
                 </label>

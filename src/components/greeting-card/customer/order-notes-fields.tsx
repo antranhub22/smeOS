@@ -13,7 +13,7 @@ export interface OrderNotesValue {
   mapUrl: string
 }
 
-const LABEL = "block text-body-sm font-bold text-foreground mb-1"
+const LABEL = "block text-body-sm font-bold text-text mb-1"
 
 function getCardPlaceholder(industryKey?: string | null): string {
   switch (industryKey) {

@@ -87,7 +87,7 @@ export function ListView({ qs, state, onChange, onOpen, onDetail, view = "list" 
                       <button
                         type="button"
                         onClick={() => onDetail(i)}
-                        className="rounded-lg border border-border px-2 py-1 text-caption font-semibold text-foreground hover:bg-surface-muted hover:text-primary"
+                        className="rounded-lg border border-border px-2 py-1 text-caption font-semibold text-text hover:bg-surface-muted hover:text-primary"
                       >
                         Chi tiết
                       </button>

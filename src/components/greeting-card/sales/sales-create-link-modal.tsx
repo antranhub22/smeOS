@@ -15,7 +15,7 @@ interface Props {
   onNavigateToCatalog?: (() => void) | undefined
 }
 
-const INPUT = "w-full h-10 px-3 rounded-lg border border-border bg-background text-body text-foreground"
+const INPUT = "w-full h-10 px-3 rounded-lg border border-border bg-bg text-body text-text"
 
 /** Hộp thoại tạo link Thẻ chào gửi khách (chọn bộ sưu tập, khách, hạn dùng). */
 export function SalesCreateLinkModal({ catalogs, onClose, onCreated, onNavigateToCatalog }: Props) {
@@ -61,7 +61,7 @@ export function SalesCreateLinkModal({ catalogs, onClose, onCreated, onNavigateT
   return (
     <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="create-link-title">
       <div className="w-full max-w-md bg-surface rounded-2xl border border-border p-6 shadow-xl flex flex-col gap-4">
-        <h3 id="create-link-title" className="text-title font-extrabold text-foreground">Tạo Thẻ Chào Gửi Khách Hàng</h3>
+        <h3 id="create-link-title" className="text-title font-extrabold text-text">Tạo Thẻ Chào Gửi Khách Hàng</h3>
 
         {createdLink ? (
           <div className="flex flex-col gap-3 py-2">
@@ -90,7 +90,7 @@ export function SalesCreateLinkModal({ catalogs, onClose, onCreated, onNavigateT
           <form onSubmit={handleSubmit} className="flex flex-col gap-3.5">
             {error && <p role="alert" className="p-3 rounded-xl bg-danger-bg text-danger text-body-sm">{error}</p>}
             <label className="flex flex-col gap-1">
-              <span className="text-caption font-bold text-foreground">Chọn {catalogTitleCap} *</span>
+              <span className="text-caption font-bold text-text">Chọn {catalogTitleCap} *</span>
               {catalogs.length === 0 ? (
                 <span className="p-3 bg-warning-bg/50 border border-warning/30 rounded-xl text-body-sm text-text flex flex-col gap-2">
                   Chưa có {catalogHeading} nào. Cần tạo {catalogHeading} trước!
@@ -109,11 +109,11 @@ export function SalesCreateLinkModal({ catalogs, onClose, onCreated, onNavigateT
               )}
             </label>
             <label className="flex flex-col gap-1">
-              <span className="text-caption font-bold text-foreground">Tên khách hàng (không bắt buộc)</span>
+              <span className="text-caption font-bold text-text">Tên khách hàng (không bắt buộc)</span>
               <input type="text" maxLength={100} placeholder="VD: Anh Minh" value={customerName} onChange={(e) => setCustomerName(e.target.value)} className={INPUT} />
             </label>
             <label className="flex flex-col gap-1">
-              <span className="text-caption font-bold text-foreground">Số điện thoại khách (không bắt buộc)</span>
+              <span className="text-caption font-bold text-text">Số điện thoại khách (không bắt buộc)</span>
               <input type="tel" maxLength={15} placeholder="VD: 0901234567" value={customerPhone} onChange={(e) => setCustomerPhone(e.target.value)} className={INPUT} />
             </label>
             <p className="text-caption text-text-muted">{LINK_LIFETIME_HINT}</p>

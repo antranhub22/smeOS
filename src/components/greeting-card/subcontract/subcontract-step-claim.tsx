@@ -133,13 +133,13 @@ export function SubcontractStepClaim({
                 ? "bg-success text-white"
                 : isActive
                 ? "bg-primary text-white ring-2 ring-primary/30"
-                : "bg-surface-muted text-foreground border border-border"
+                : "bg-surface-muted text-text border border-border"
             )}
           >
             {isCompleted ? <CheckCircle2 size={16} /> : "1"}
           </div>
           <div>
-            <span className="text-body-sm font-extrabold text-foreground block">
+            <span className="text-body-sm font-extrabold text-text block">
               1. Tiếp nhận & Chốt sản xuất
             </span>
             <span className="text-caption text-text-muted">
@@ -186,7 +186,7 @@ export function SubcontractStepClaim({
         {isClaimedByOther && (
           <div className="p-4 rounded-xl bg-surface-muted border border-border text-center flex flex-col items-center gap-2">
             <CheckCircle2 size={32} className="text-text-muted" />
-            <h4 className="text-body font-bold text-foreground">Đơn hàng đã được tiếp nhận</h4>
+            <h4 className="text-body font-bold text-text">Đơn hàng đã được tiếp nhận</h4>
             <p className="text-caption text-text-muted max-w-xs">
               Đơn hàng này đã được {claimedBranchName ? `Chi nhánh ${claimedBranchName}` : "chi nhánh khác"} tiếp nhận gia công. Rất cảm ơn bạn đã quan tâm!
             </p>
@@ -248,7 +248,7 @@ export function SubcontractStepClaim({
             )}
             <div className="min-w-0 flex-1">
               <span className="text-caption text-text-muted block">Mẫu sản phẩm gia công</span>
-              <h3 className="text-body font-bold text-foreground truncate">{product.name}</h3>
+              <h3 className="text-body font-bold text-text truncate">{product.name}</h3>
               <span className="text-caption font-black text-primary mt-0.5 block">
                 Thù lao: {subcontractPriceVnd.toLocaleString("vi-VN")} đ
               </span>
@@ -258,13 +258,13 @@ export function SubcontractStepClaim({
           {/* Danh mục nguyên liệu BOM */}
           {product.bomItems && product.bomItems.length > 0 && (
             <div className="pt-2 border-t border-border">
-              <span className="text-caption font-bold text-foreground flex items-center gap-1 mb-1.5">
+              <span className="text-caption font-bold text-text flex items-center gap-1 mb-1.5">
                 <Layers size={13} className="text-primary" /> Định lượng nguyên vật liệu cần có:
               </span>
               <div className="grid grid-cols-2 gap-1.5 text-caption">
                 {product.bomItems.map((item, idx) => (
                   <div key={idx} className="bg-surface p-1.5 rounded border border-border flex justify-between">
-                    <span className="text-foreground truncate">{item.name}</span>
+                    <span className="text-text truncate">{item.name}</span>
                     <span className="font-bold text-primary whitespace-nowrap ml-1">
                       {item.quantity} {item.unit}
                     </span>
@@ -281,7 +281,7 @@ export function SubcontractStepClaim({
             <MapPin size={16} className="text-primary mt-0.5 shrink-0" />
             <div>
               <span className="text-caption text-text-muted block">Địa chỉ giao hàng:</span>
-              <span className="text-foreground font-semibold">{deliveryAddress}</span>
+              <span className="text-text font-semibold">{deliveryAddress}</span>
             </div>
           </div>
 
@@ -289,13 +289,13 @@ export function SubcontractStepClaim({
             <Calendar size={16} className="text-primary mt-0.5 shrink-0" />
             <div>
               <span className="text-caption text-text-muted block">Thời gian cần giao:</span>
-              <span className="text-foreground font-semibold">{deliveryTime}</span>
+              <span className="text-text font-semibold">{deliveryTime}</span>
             </div>
           </div>
 
           {cardMessage && (
             <div className="p-2.5 rounded-lg bg-surface-muted border border-border text-caption">
-              <span className="font-bold text-foreground block mb-0.5">Lời chúc thiệp:</span>
+              <span className="font-bold text-text block mb-0.5">Lời chúc thiệp:</span>
               <span className="italic text-text-muted">&ldquo;{cardMessage}&rdquo;</span>
             </div>
           )}
@@ -303,7 +303,7 @@ export function SubcontractStepClaim({
           {specialNotes && (
             <div className="p-2.5 rounded-lg bg-warning-bg/50 border border-warning/20 text-caption">
               <span className="font-bold text-warning block mb-0.5">Ghi chú đặc biệt:</span>
-              <span className="text-foreground">{specialNotes}</span>
+              <span className="text-text">{specialNotes}</span>
             </div>
           )}
         </div>

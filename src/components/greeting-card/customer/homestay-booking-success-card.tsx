@@ -46,7 +46,7 @@ export function HomestayBookingSuccessCard({ order, isPaid }: HomestayBookingSuc
           <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-success/15 text-success font-extrabold text-caption uppercase tracking-wider mb-1">
             <ShieldCheck size={14} /> ĐÃ KHÓA PHÒNG & XÁC NHẬN GIỮ LỊCH
           </span>
-          <h3 className="text-title-sm sm:text-title font-extrabold text-foreground leading-tight">
+          <h3 className="text-title-sm sm:text-title font-extrabold text-text leading-tight">
             Đặt phòng thành công!
           </h3>
           <p className="text-body-sm text-text-muted mt-1">
@@ -61,7 +61,7 @@ export function HomestayBookingSuccessCard({ order, isPaid }: HomestayBookingSuc
           <Home className="text-primary shrink-0" size={20} />
           <div className="min-w-0 flex-1">
             <span className="text-caption text-text-muted block">Hạng phòng đã đặt</span>
-            <span className="text-body font-bold text-foreground">
+            <span className="text-body font-bold text-text">
               {order.productSnapshot?.name || "Phòng nghỉ dưỡng Homestay"}
             </span>
           </div>
@@ -76,7 +76,7 @@ export function HomestayBookingSuccessCard({ order, isPaid }: HomestayBookingSuc
             <div className="flex items-center gap-1.5 text-caption font-bold text-text-muted">
               <Calendar size={14} className="text-primary" /> Nhận phòng (Check-in)
             </div>
-            <span className="text-body-sm font-extrabold text-foreground">
+            <span className="text-body-sm font-extrabold text-text">
               {formatDate(order.deliveryDate)}
             </span>
             <span className="text-caption text-text-muted">
@@ -88,7 +88,7 @@ export function HomestayBookingSuccessCard({ order, isPaid }: HomestayBookingSuc
             <div className="flex items-center gap-1.5 text-caption font-bold text-text-muted">
               <Calendar size={14} className="text-primary" /> Trả phòng (Check-out)
             </div>
-            <span className="text-body-sm font-extrabold text-foreground">
+            <span className="text-body-sm font-extrabold text-text">
               {formatDate(order.checkOutDate)}
             </span>
             <span className="text-caption text-text-muted">Trước 12:00</span>
@@ -101,14 +101,14 @@ export function HomestayBookingSuccessCard({ order, isPaid }: HomestayBookingSuc
             <div className="flex items-center gap-2 text-text-muted">
               <User size={15} className="shrink-0 text-text-muted" />
               <span>Khách lưu trú:</span>
-              <strong className="text-foreground ml-auto">{order.recipientName}</strong>
+              <strong className="text-text ml-auto">{order.recipientName}</strong>
             </div>
           )}
           {order.deliveryAddress && (
             <div className="flex items-start gap-2 text-text-muted">
               <MapPin size={15} className="shrink-0 mt-0.5 text-text-muted" />
               <span>Địa chỉ cơ sở:</span>
-              <strong className="text-foreground text-right ml-auto flex-1 break-words">
+              <strong className="text-text text-right ml-auto flex-1 break-words">
                 {order.deliveryAddress}
               </strong>
             </div>
@@ -119,7 +119,7 @@ export function HomestayBookingSuccessCard({ order, isPaid }: HomestayBookingSuc
       {/* Tình trạng thanh toán & Nhắc nhở Check-in */}
       <div className="rounded-xl border border-success/30 bg-success/10 p-3.5 flex flex-col gap-1.5 text-body-sm">
         <div className="flex justify-between items-center font-bold">
-          <span className="text-foreground">Tình trạng thanh toán:</span>
+          <span className="text-text">Tình trạng thanh toán:</span>
           <span className="text-success font-extrabold">
             {isPaid
               ? `Đã thanh toán đủ (${formatCompactVnd(order.totalVnd)})`
@@ -139,7 +139,7 @@ export function HomestayBookingSuccessCard({ order, isPaid }: HomestayBookingSuc
 
       {/* Hướng dẫn Check-in & Hỗ trợ */}
       <div className="flex flex-col gap-1.5 text-caption text-text-muted px-1">
-        <span className="font-bold text-foreground">💡 Lưu ý khi nhận phòng:</span>
+        <span className="font-bold text-text">💡 Lưu ý khi nhận phòng:</span>
         <ul className="list-disc list-inside space-y-0.5">
           <li>Quý khách vui lòng chuẩn bị CMND/CCCD hoặc Hộ chiếu để làm thủ tục lưu trú.</li>
           <li>Quản gia sẽ liên hệ trước giờ nhận phòng để hỗ trợ đón tiếp và gửi hướng dẫn chỉ đường.</li>

@@ -65,7 +65,7 @@ export function BypassRequestModal({
             onClick={onClose}
             disabled={submitting}
             aria-label="Đóng"
-            className="p-1 rounded-lg hover:bg-black/5 text-text-muted hover:text-foreground cursor-pointer"
+            className="p-1 rounded-lg hover:bg-black/5 text-text-muted hover:text-text cursor-pointer"
           >
             <X size={16} />
           </button>
@@ -78,7 +78,7 @@ export function BypassRequestModal({
               <AlertTriangle size={16} className="shrink-0" />
               <span>CẢNH BÁO TRỪ ĐIỂM HỢP TÁC & PHÂN BỔ ĐƠN</span>
             </div>
-            <p className="text-foreground leading-relaxed">
+            <p className="text-text leading-relaxed">
               Việc không cung cấp đầy đủ bằng chứng ({stepKey}) ảnh hưởng đến độ tin cậy dịch vụ của toàn chuỗi:
             </p>
             <ul className="list-disc pl-4 text-danger font-semibold space-y-1">
@@ -88,7 +88,7 @@ export function BypassRequestModal({
           </div>
 
           <div>
-            <label htmlFor="bypass-reason" className="block text-caption font-bold text-foreground mb-1.5">
+            <label htmlFor="bypass-reason" className="block text-caption font-bold text-text mb-1.5">
               Lý do bất khả kháng (Bắt buộc) <span className="text-danger">*</span>
             </label>
             <textarea

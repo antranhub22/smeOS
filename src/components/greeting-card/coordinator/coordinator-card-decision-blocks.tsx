@@ -177,7 +177,7 @@ export function CoordinatorCardDecisionBlocks({
             Khách đã báo chuyển khoản Lần 2 — Chờ Xác nhận
           </p>
           <p className="text-caption text-text-muted text-center">
-            Phần còn lại: <span className="font-extrabold text-foreground">{balanceVnd.toLocaleString("vi-VN")}đ</span>
+            Phần còn lại: <span className="font-extrabold text-text">{balanceVnd.toLocaleString("vi-VN")}đ</span>
             {order.payment_proof_balance_url && (
               <> · <a href={order.payment_proof_balance_url} target="_blank" rel="noopener noreferrer" className="text-primary underline font-bold">Xem ảnh bill</a></>
             )}
@@ -212,7 +212,7 @@ export function CoordinatorCardDecisionBlocks({
             <span className="font-bold text-warning flex items-center gap-1">
               <Banknote size={14} /> Chờ thanh toán Lần 2:
             </span>
-            <span className="font-extrabold text-foreground">{balanceVnd.toLocaleString("vi-VN")}đ</span>
+            <span className="font-extrabold text-text">{balanceVnd.toLocaleString("vi-VN")}đ</span>
           </div>
           <div className={`grid grid-cols-1 gap-1.5 ${balanceConfirmBlocker ? "" : "sm:grid-cols-2"}`}>
             <Button

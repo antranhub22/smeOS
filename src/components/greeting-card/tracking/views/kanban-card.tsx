@@ -112,7 +112,7 @@ export function KanbanCard({
             title={collapsed ? "Mở rộng chi tiết đơn" : "Thu gọn đơn"}
             aria-expanded={!collapsed}
             aria-label={collapsed ? "Mở rộng đơn" : "Thu gọn đơn"}
-            className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded text-text-muted hover:bg-surface-muted hover:text-foreground transition-colors cursor-pointer"
+            className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded text-text-muted hover:bg-surface-muted hover:text-text transition-colors cursor-pointer"
           >
             {collapsed ? <ChevronRight size={13} aria-hidden="true" /> : <ChevronDown size={13} aria-hidden="true" />}
           </button>
@@ -122,7 +122,7 @@ export function KanbanCard({
           <button
             type="button"
             onClick={() => onOpen(item)}
-            className="font-bold text-foreground truncate text-left hover:text-primary transition-colors cursor-pointer"
+            className="font-bold text-text truncate text-left hover:text-primary transition-colors cursor-pointer"
           >
             {displayCustomerName}
           </button>
@@ -218,7 +218,7 @@ export function KanbanCard({
                 className="h-9 w-9 shrink-0 rounded-md border border-border/70 bg-surface object-cover"
               />
               <div className="min-w-0 flex-1">
-                <p className="truncate font-semibold text-foreground text-caption" title={item.productName}>
+                <p className="truncate font-semibold text-text text-caption" title={item.productName}>
                   {item.productName === "Chưa chốt mẫu"
                     ? (isStay ? "Chưa chốt phòng" : `Chưa chốt ${terms.sampleProduct.toLowerCase()}`)
                     : item.productName}

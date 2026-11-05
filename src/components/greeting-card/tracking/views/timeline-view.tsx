@@ -41,7 +41,7 @@ function HistoryContent({ refQs }: { refQs: string }) {
         <ol className="flex flex-col gap-2" aria-label="Các bước đã qua">
           {segments.map((s) => (
             <li key={s.stepId} className={`rounded-xl border p-3 text-body-sm ${s.overMinutes > 0 ? "border-danger/50 bg-danger-bg/40" : "border-border bg-surface"}`}>
-              <p className="font-bold text-foreground">{s.title}</p>
+              <p className="font-bold text-text">{s.title}</p>
               <p className="text-caption text-text-muted">
                 Vào {when(s.enteredAt)} · {s.leftAt ? `ở ${formatMinutes(s.durationMinutes)}` : `đang ở ${formatMinutes(s.durationMinutes)}`}
                 {s.slaMinutes !== null && ` · chuẩn ${formatMinutes(s.slaMinutes)}`}
@@ -52,7 +52,7 @@ function HistoryContent({ refQs }: { refQs: string }) {
         </ol>
       )}
       <section aria-label="Sự kiện" className="flex flex-col gap-1">
-        <h4 className="text-body-sm font-extrabold text-foreground">Sự kiện</h4>
+        <h4 className="text-body-sm font-extrabold text-text">Sự kiện</h4>
         <ul className="divide-y divide-border rounded-2xl border border-border bg-surface">
           {events.items.map((e, n) => (
             <li key={`${e.at}-${n}`} className="flex flex-wrap justify-between gap-2 px-3 py-2 text-body-sm">
