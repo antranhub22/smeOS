@@ -1,5 +1,6 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
 import { IconTile } from "@/components/ui/app-icon"
 import { safeImageSrc } from "@/lib/safe-image-src"
 import React, { useRef, useState } from "react"
@@ -87,7 +88,7 @@ export function PhotoUploadPanel({ onFileSelected, disabled }: PhotoUploadPanelP
         disabled={disabled}
         onChange={handleChange}
       />
-      <button
+      <Button variant="ghost"
         type="button"
         disabled={disabled}
         onDragOver={(e) => {
@@ -97,10 +98,10 @@ export function PhotoUploadPanel({ onFileSelected, disabled }: PhotoUploadPanelP
         onDragLeave={() => setDragOver(false)}
         onDrop={handleDrop}
         onClick={() => fileInputRef.current?.click()}
-        className={`block w-full relative border-2 border-dashed rounded-2xl p-8 sm:p-10 text-center transition-all cursor-pointer ${
+        className={`h-auto text-[length:inherit] font-[inherit] gap-0 block w-full relative border-2 border-dashed rounded-2xl p-8 sm:p-10 text-center transition-all cursor-pointer ${
           dragOver
-            ? "border-primary bg-primary/10 scale-[1.01]"
-            : "border-border hover:border-primary/50 bg-surface shadow-sm"
+            ? "border-primary bg-primary/10 scale-[1.01] hover:bg-primary/10"
+            : "border-border hover:border-primary/50 bg-surface shadow-sm hover:bg-surface"
         } ${disabled ? "opacity-60 cursor-not-allowed" : ""} focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary`}
       >
 
@@ -148,7 +149,7 @@ export function PhotoUploadPanel({ onFileSelected, disabled }: PhotoUploadPanelP
             </div>
           </div>
         )}
-      </button>
+      </Button>
     </div>
   )
 }

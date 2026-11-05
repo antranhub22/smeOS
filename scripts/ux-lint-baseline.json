@@ -42,9 +42,6 @@
     "components/platform": {
       "R1": 9
     },
-    "components/product-photo-studio": {
-      "R18": 1
-    },
     "components/profiles": {
       "R18": 2
     },
@@ -60,11 +57,9 @@
       "R16": 2
     },
     "components/upload": {
-      "R14": 1,
-      "R18": 14,
-      "R21": 5
+      "R14": 1
     }
   },
-  "total": 134,
-  "updatedAt": "2026-11-05T16:51:58.492Z"
+  "total": 114,
+  "updatedAt": "2026-11-05T22:54:31.987Z"
 }
