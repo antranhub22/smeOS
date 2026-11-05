@@ -20,6 +20,7 @@ import { findPaymentCode, parsePaymentPlans, type PaymentCodeRule } from "../dom
 import { resolvePaymentPlan } from "./payment-plan-quote"
 import { listActiveShopPromotions } from "./active-shop-promotions"
 import { isWeekend, unitPriceFor } from "@/modules/products/domain/product-pricing"
+import { craftFeeForProduct } from "./craft-fee-for-product"
 
 export interface QuoteRequest {
   variantId?: string | undefined
@@ -136,8 +137,10 @@ async function priceProduct(
   const isPeakDay = holiday !== null || (product.weekendIsPeak === true && isWeekend(deliveryDate))
   const basePrice = variant?.priceVnd ?? product.price
   const peakPrice = variant ? variant.peakPriceVnd ?? null : product.peakPriceVnd ?? null
-  const unitPriceVnd = basePrice === null ? null : unitPriceFor(basePrice, peakPrice, isPeakDay)
   const peakApplied = isPeakDay && peakPrice !== null
+  // Ngày lễ: phần phí chế tác theo kiểu dáng nhân hệ số, gộp vào đơn giá (PO Q8) — trừ khi đã có giá cao điểm riêng
+  const craft = craftFeeForProduct(product.craftStyle, shopSettings, holiday !== null && !peakApplied)
+  const unitPriceVnd = basePrice === null ? null : unitPriceFor(basePrice, peakPrice, isPeakDay) + (craft?.holidayExtraVnd ?? 0)
   const quantity = req.quantity ?? 1
   // Tiệm tắt mã giảm giá (mặc định): ô nhập bị ẩn, mã gửi thẳng API cũng bị bỏ qua
   const code = shipping.vouchersEnabled ? req.voucherCode?.trim() : undefined
@@ -172,5 +175,6 @@ async function priceProduct(
 
   // Đã tính giá cao điểm riêng của sản phẩm thì không cộng thêm phụ phí ngày lễ (tránh thu hai lần)
   const surcharge = peakApplied ? null : holidaySurcharge(holiday, catalogFilters)
-  return { quote: computeQuote({ unitPriceVnd, quantity, zone, shipping, voucher, promotion, surcharge }), variant, voucher, errors }
+  const quote = computeQuote({ unitPriceVnd, quantity, zone, shipping, voucher, promotion, surcharge })
+  return { quote: craft ? { ...quote, craftFee: craft } : quote, variant, voucher, errors }
 }

@@ -108,7 +108,7 @@ export default function CreateProductPage() {
             setPrimaryColor={form.setPrimaryColor}
           />
 
-          <CreateOccasionSizeCard value={form.occasionSize} />
+          <CreateOccasionSizeCard value={form.occasionSize} craftStyles={activeIndustry.craftFee?.styles ?? []} />
 
           <CreateBomCard
             ti={ti}

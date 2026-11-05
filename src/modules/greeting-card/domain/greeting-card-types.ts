@@ -53,6 +53,8 @@ export interface GreetingCatalogProduct {
   meaning?: string | null | undefined
   occasion?: string | null | undefined
   style?: string | null | undefined
+  /** Kiểu dáng tính phí chế tác (`attributes.craftStyle`, PO Q8) — chỉ dùng tính giá ngày lễ */
+  craftStyle?: string | null | undefined
   flowersSummary?: string | null | undefined
   /** Loại sản phẩm (bó, giỏ, kệ…) — từ Master Index */
   category?: string | null | undefined

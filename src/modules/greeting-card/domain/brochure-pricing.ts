@@ -212,6 +212,8 @@ export interface BrochureQuote {
   promotionDiscountVnd?: number
   /** Mẫu chưa niêm yết giá: đơn được nhận với tổng 0, cửa hàng báo giá sau. */
   awaitingQuote?: boolean
+  /** Phí chế tác theo kiểu dáng (PO Q8) — đã gộp trong đơn giá, chỉ để sổ nội bộ tách tiền hoa và phí. */
+  craftFee?: import("./craft-style-fee").CraftFeeBreakdown
   /** Phụ phí ngày lễ đã cộng vào tổng (không bị mã giảm giá trừ). */
   holidaySurchargeVnd?: number
   holidayName?: string

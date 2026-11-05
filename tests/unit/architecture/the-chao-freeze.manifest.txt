@@ -43,6 +43,7 @@ fe9eff00dc6f9082aaf7cc712d9ef45157cea5fd41bf76e6a6d67c1cbb19fb0a  src/modules/gr
 2e5b9538dcfda87295168b024bd9ccb625c9057180bb1d3972ac9507794ae2b5  src/modules/greeting-card/domain/__tests__/coordinator-card-actions.test.ts
 4a890a7ff924bc99a302091178587f9008fb74afaae61e556cd17e5165f75ba4  src/modules/greeting-card/domain/__tests__/coordinator-owner.test.ts
 07f897bd603917f1e175183dbb919c0f32701ddca3b720e7fb2ca39de22a522a  src/modules/greeting-card/domain/__tests__/craft-fee-policy.test.ts
+184704f642778f97a17ac8231712275119681547f9c720adecf504ff9d0957d2  src/modules/greeting-card/domain/__tests__/craft-style-fee.test.ts
 88187c34dd1316f188ff3d078106a00eb3e9336b19b91ff0a0356ea249521cf2  src/modules/greeting-card/domain/__tests__/customer-cancellation-notice.test.ts
 d120f00eef075fd6eaf0671b02f0def6c0abeef738cb1de1e5c2dc4f0e90abca  src/modules/greeting-card/domain/__tests__/customer-cancellation-reminder.test.ts
 5700207bad5e698b5e40415d026c9914eb4491609ca0a4fde48136478802f8a5  src/modules/greeting-card/domain/__tests__/customer-intake.test.ts
@@ -101,7 +102,7 @@ a66d50466bf6e161ce3a7e7d9a6ff1eced0025fe7c347324e66950a46e7bafd0  src/modules/gr
 d059022b4eeb27f29f27cae937905e6589864b66cf6fca4a88a7d67210e6a0c8  src/modules/greeting-card/domain/brochure-language-policy.ts
 3bd826b767bd9c9c2585aa1ff8f16387d8e8f1eee86c4c18be669986ddcc56e1  src/modules/greeting-card/domain/brochure-payment-policy.ts
 33f42199e9094db35dc621f9c0b55d688f84e85108e08d848d95e9f38a5da822  src/modules/greeting-card/domain/brochure-policy-resolvers.ts
-53dcb090418aaa6a8073a4481c01409b1957b095fce91880c4e07da4ec33584c  src/modules/greeting-card/domain/brochure-pricing.ts
+0e3f4e5c600a094bef5ab6f0871178b6f4d8d919656b63c7cc09eff8bc4cf479  src/modules/greeting-card/domain/brochure-pricing.ts
 4024a8a1d53e0d013c66c954c62eba5a7baa5aa184572655212dba87ca6ee12c  src/modules/greeting-card/domain/brochure-workflow-policy.ts
 68cbc796dda86dc1c9c187780670eb07d9b72f1233a75735e8a5a06e7ec0207a  src/modules/greeting-card/domain/cancellation-request.ts
 29fde5718cfd8fa558c7f618bd3de4ac5278f7e747e962c99aa86b2a01ca71cd  src/modules/greeting-card/domain/catalog-channel.ts
@@ -118,6 +119,7 @@ a94a39233c0f8158aa473c66a2b682d1056105a16aa288b1b564f6318f90ff37  src/modules/gr
 e5cdb3d759eb77c57595d398991d7c670bf7b025c0257d242dbc1d2af9cd8136  src/modules/greeting-card/domain/coordinator-owner.ts
 416bac236b7b325b0dfc9c1da34445e43b5d8b5bed781a53ba6989c0f38a9763  src/modules/greeting-card/domain/coordinator-progress.ts
 e06072afff1549ae9e98c44af9b645ebc8e8a3e05964d493a3db8284d29a54fd  src/modules/greeting-card/domain/craft-fee-policy.ts
+598708cef0ed1e464b576c7c4660cc5db27eb490b84a7932549421308314dee7  src/modules/greeting-card/domain/craft-style-fee.ts
 eb97afe9453c43b4d3d453a2a0cdda1bd7241f5f7145d73f907aae45f8c32995  src/modules/greeting-card/domain/customer-cancellation-notice.ts
 b3c33a7dc51d7fe043f429c11e41cc0545ae895409da9d7d2d0d39475bf5f8dc  src/modules/greeting-card/domain/customer-journey-events.ts
 cf3b5215ae0aa5efe4ca37c4cb8b748b170815461408750f1257ca54d56111da  src/modules/greeting-card/domain/customer-notifications.ts
@@ -135,7 +137,7 @@ f9df29b97ada99644425be9eb5904117fc3643692b5fa8a128a9935f62048102  src/modules/gr
 685c8ae3808ae869a3d3d41ef8d303ef777cac4312f9ab9797f038cad64f4f3e  src/modules/greeting-card/domain/drive-thumb.ts
 a8a5b6aaea14dfa98de85acea3f95132b9d92fd4d90555ed6de1a397b7fd1ad8  src/modules/greeting-card/domain/greeting-card-capabilities.ts
 5cf41595d2cbf670853a49424e27a913303fa64d5dff2dc4e39e13dcf4b903a0  src/modules/greeting-card/domain/greeting-card-rules.ts
-0a72b51531dc154684ae82ac5fa5c00a12d7f3bf16bf94203eba0e7929d97b5f  src/modules/greeting-card/domain/greeting-card-types.ts
+5803bd7c64477bfec1c88b357b6c083ee48d434233b001bb76ca18479d9c68a5  src/modules/greeting-card/domain/greeting-card-types.ts
 c56151fcc25fcd4f236d9fc8de21e406c855433c192eea00d3fa86abce06bb34  src/modules/greeting-card/domain/greeting-template-catalog.ts
 c3f7c160c7c242c7f9c4367fc6c9ce07f18d399a70515edd848f17b245da2eec  src/modules/greeting-card/domain/greeting-template-registry.ts
 8f6ee1e30e32daa30e237df4267df4afdf9be728085382cf7688aecbac2652ef  src/modules/greeting-card/domain/greeting-template-types.ts
@@ -292,9 +294,9 @@ ac7994ce3897614def6267340eebf0eac8388eaf990eafb421bc61a7e8f17692  src/modules/gr
 6fe04036d146f387217b18719c9cc82996ba085be5ad0f2acc52537aea1b00be  src/modules/greeting-card/use-cases/brochure-order-action-guards.ts
 5156103830e61c1c10a60ea19059a96302fda8e35399efc70efdffcfda092ad5  src/modules/greeting-card/use-cases/brochure-owner.ts
 6beb8b3986364e5e686ad19f01278054440aaeaf52f6fafca5e211a47be5093a  src/modules/greeting-card/use-cases/brochure-product-mapper.test.ts
-b2c8bc30a6e097bcac7de2dde724a7505b2cb65c58fdf91eaf38265ee35da245  src/modules/greeting-card/use-cases/brochure-product-mapper.ts
+7ed61155624bc9ef739d18ec8210938296d06a5438ecfcab979576c2de8c6c68  src/modules/greeting-card/use-cases/brochure-product-mapper.ts
 6fa8a506deee44e13a0f1d9a743baaf98ec9e80b170cce3845d41cf884bac569  src/modules/greeting-card/use-cases/brochure-quote.test.ts
-d839c29d81b160b57ceac57710bed337c2fe84cced379d1ceb859c6c75c0c8ce  src/modules/greeting-card/use-cases/brochure-quote.ts
+4e30eb80c04b83533ec31703c1893d8dc5d6ac6e8eeb906bdfff44f1fa17dc88  src/modules/greeting-card/use-cases/brochure-quote.ts
 64122f8cbea89816ba30b75cd16e9eeca83e80e4605cd2806265e6521baa38b1  src/modules/greeting-card/use-cases/brochure-session-access.ts
 b876bb9828a2c1e84b4da34e0a5ccd86d9e44b8aac1bc3730bbf2538c6cd582b  src/modules/greeting-card/use-cases/cancel-subcontract-reminder-steps.ts
 7bc266e705ed9970ca6a1d9ac9c9ade58e909849ea1640fd0a054271fd624230  src/modules/greeting-card/use-cases/catalog-channel-events.ts
@@ -307,6 +309,7 @@ abf5007d897e93a071b2813d624f886edfeecc3acc511c3f0d225b6f3fc02511  src/modules/gr
 60ce56453c6bf1cbbde4cc64c314e9f2c616f1bf4d55ed067f8d32597c633026  src/modules/greeting-card/use-cases/coordinator-confirm-chain-payment.ts
 3664c964bc4c067c4e746713fe0d952d0081782c6f4659409e362f51acb9a2c3  src/modules/greeting-card/use-cases/coordinator-work.ts
 cfde55ccab6c187e0a629c40a453772bf4e61127078718f89ca0ee4ef9fbea44  src/modules/greeting-card/use-cases/craft-fee-deductions.ts
+70b53251920b8050be653ea977bdfb40e0edf8ce50f48b5501628416ffe7ebd0  src/modules/greeting-card/use-cases/craft-fee-for-product.ts
 fc0a06ee75e045f4a560032339b16d82eaea7be157418c956a8e9044a8548602  src/modules/greeting-card/use-cases/create-send-link.ts
 d437b359483f6594665c4086c723b0264aa1f1e33c640e6dd38c79ed256c1d9c  src/modules/greeting-card/use-cases/customer-journey.ts
 42f3e30b5ae9777f54340ce8cff50307f08c118688f0369986471dc481a5c4e2  src/modules/greeting-card/use-cases/decide-dismissal.ts
@@ -386,7 +389,7 @@ d25eb8c375b428436d0c8affc76c2c31a2f37f47e9bf87a7ac692416e2d7a9f1  src/components
 128f79f7344c82f88eb157c7bc1e3dbc39789691b2ff8058ff224e669ec486b6  src/components/greeting-card/admin/admin-order-table.tsx
 2a42eaab19a3a7650032e793805d63f1b9fafde61c5a4a1d4a20573336b310c3  src/components/greeting-card/admin/admin-order-types.ts
 32af7fd2b294a6cbef7fa87b74f2a155057c1f880e8161f511805f7f90b4dceb  src/components/greeting-card/admin/admin-payment-plan-cell.tsx
-74c9290f6acd6333813b481fc3221a4e013c993efab0cc7ea6fd3f7fe8e83dc5  src/components/greeting-card/admin/admin-settings-drawer.tsx
+0998fa3c6bf3962bcdf7795066b2cacd0990b1ff39541c9ffd19c024b5b3f335  src/components/greeting-card/admin/admin-settings-drawer.tsx
 06c436614947d4aaff8106205447483f922ea4dc7bad05c0884cee27d0a0645d  src/components/greeting-card/admin/brochure-bank-sync-settings.tsx
 a0ef5cd6061642e15242ef7ca447abcf570cbc8c8b0645f30a8943e10383d2db  src/components/greeting-card/admin/brochure-default-owner-settings.tsx
 e8ec1fe8eb460c79ba7772862298e6a6ffd43ea320c472ea21563763342697e5  src/components/greeting-card/admin/brochure-discount-settings.tsx
@@ -405,6 +408,7 @@ f3c91d1c6fbefebf2989c350272754eb5acbdff40f9309fa604ffdef807ab40b  src/components
 24c7052eb0e0b455451162fdb19f595103adc5edc08da4e3ccbdb1b6e6a5e2d3  src/components/greeting-card/admin/copy-customer-message.tsx
 db311c1c3d82c86a54acf07420cc1cdf4adab13dd562f0de36c19636c46fe2be  src/components/greeting-card/admin/craft-fee-preview.tsx
 675cfa8a978b66fd94634151e0341ce2c99f71947a6259ff625770e0f2d87986  src/components/greeting-card/admin/craft-fee-settings.tsx
+03f0f6e188848b7563445be03bd7cf4c37dfc538268342bc31619197a0c0cbd8  src/components/greeting-card/admin/craft-style-fee-settings.tsx
 689950341ccdeef4362bedb123e634fd1485da7be76235bb5788bd2d4ef387e0  src/components/greeting-card/admin/delivery-slot-toggles.tsx
 224aff32cf111c5451b72bec3b9ceca189f25a81f90ba9fed9efc8720a61e6aa  src/components/greeting-card/admin/payment-check-panel.tsx
 dfcbd2afd9c60ca900608d19b77e7c16f0009e1e4056e42f972d7ec1663df921  src/components/greeting-card/admin/payment-proof-badge.tsx

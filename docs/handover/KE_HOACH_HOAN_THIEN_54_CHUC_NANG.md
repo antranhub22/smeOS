@@ -24,7 +24,7 @@ Căn cứ: `docs/handover/BAO_CAO_ANH_XA_123_CHUC_NANG.md` (mã nguồn tại `0
 | Q5 | Ảnh giao hàng bắt buộc ở mọi gói chính sách | 4.18 | Trước Đợt 1 | Bắt buộc mặc định; Điều hành cửa hàng được tắt yêu cầu ảnh giao trong Cài đặt |
 | Q6 | Vòng đời đơn: giao xong còn nợ ở trạng thái "Đã giao — chờ thu đủ", chỉ "Hoàn tất" khi số dư bằng 0 | 4.26 | Trước Đợt 1 | Áp dụng |
 | Q7 | Bộ quyền mặc định cho ba vai mới: Thợ cắm hoa, Shipper, Kế toán | 1.12, 4.5, 4.13, 6.5, 6.6 | Trước Đợt 2 | Thợ cắm hoa: chỉ việc được giao, công thức, ảnh mẫu, báo xong, tải ảnh thành phẩm · Shipper: chỉ đơn được giao, thông tin người nhận (không giá), cập nhật giao, ảnh giao · Kế toán: xem đơn, sổ thu, đối soát, xuất Excel, báo cáo, mức dùng; không xác nhận tiền |
-| Q8 | Danh sách 6 kiểu dáng, đơn giá phí cắm từng kiểu, hệ số ngày lễ mặc định 1,3, phí cắm hiện thành dòng riêng trên báo giá | 3.6 | Trước Đợt 3 | Chờ chốt |
+| Q8 | Danh sách 6 kiểu dáng, đơn giá phí cắm từng kiểu, hệ số ngày lễ mặc định, cách hiện phí cắm trên báo giá | 3.6 | Trước Đợt 3 | 6 kiểu dáng, đơn giá mặc định (cửa hàng sửa được): bó hoa cầm tay 80.000đ, hộp hoa 120.000đ, giỏ hoa 150.000đ, bình hoa 180.000đ, lẵng/kệ khai trương 300.000đ, hoa sự kiện/cưới 500.000đ · hệ số ngày lễ ×1,5 (cửa hàng sửa được) · phí cắm gộp vào giá mẫu khách thấy, tách riêng trong sổ nội bộ; giá niêm yết đã gồm phí cắm — ngày lễ cộng phần chênh phí cắm × (hệ số − 1); mẫu chưa gắn kiểu dáng giữ nguyên giá · lược đồ 3.8 (`quotations.shipping_fee`, `quotation_items.variant_label`) và 3.10 (`quotation_revisions`) đã duyệt |
 | Q9 | Gói thuê bao: giá theo năm, chu kỳ gia hạn, kênh thu phí (VietQR + đối soát SePay), xử lý quá hạn | 10.7, 9.8, 9.10 | Trước Đợt 4 | Chờ chốt |
 | Q10 | Đơn vị hạn mức tháng cho AI (credit), SMS (tin), Zalo ZNS (tin) và giá vốn tham chiếu | 10.3, 10.4 | Trước Đợt 4 | Chờ chốt |
 | Q11 | Hạ tầng tên miền riêng: dịch vụ cấp chứng chỉ và cách thêm tên miền trên Render (thay đổi `render.yaml` hoặc API Render) | 10.8 | Trước Đợt 4 | Chờ chốt |
@@ -176,12 +176,12 @@ Mọi bảng mới có `organization_id` + `@@index([organization_id])` (trừ b
 |---|---:|---:|
 | 1 | 13 | 13 |
 | 2 | 11 | 11 |
-| 3 | 6 | 0 |
+| 3 | 6 | 1 |
 | 4 | 9 | 0 |
 | 5 | 6 | 0 |
 | 6 | 8 | 0 |
 | 7 | 1 | 0 |
-| **Tổng** | **54** | **24** |
+| **Tổng** | **54** | **25** |
 
 Đợt 2 hoàn thiện đủ 11/11 chức năng. Phần mở rộng còn theo dõi: link giao riêng cho shipper thuê ngoài (4.5), đưa đơn Thẻ Chào vào hàng đợi của tài khoản thợ (4.13), giá vốn theo phiên bản (2.4), ẩn mẫu bị khoá khỏi danh sách trên link theo ngày khách chọn trước (2.8). Shipper nội bộ được gắn đơn theo số điện thoại Điều phối ghi khi điều xe; Điều hành nhập số điện thoại nhân viên ở màn Thành viên.
 

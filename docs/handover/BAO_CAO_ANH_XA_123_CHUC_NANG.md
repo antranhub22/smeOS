@@ -26,7 +26,7 @@ Ký hiệu đường dẫn rút gọn: `org/` = `src/modules/organization/`, `gc
 |---|---|---:|---:|---:|---:|
 | 1 | Nền tảng chung & phân quyền | 19 | 17 | 2 | 0 |
 | 2 | Quản lý sản phẩm, mẫu hoa & hình ảnh | 9 | 9 | 0 | 0 |
-| 3 | Tạo & quản lý báo giá | 13 | 8 | 5 | 0 |
+| 3 | Tạo & quản lý báo giá | 13 | 9 | 4 | 0 |
 | 4 | Tiếp nhận, quản lý & xử lý đơn hàng | 32 | 32 | 0 | 0 |
 | 5 | Thẻ Chào mẫu hoa & trang khách hàng | 15 | 10 | 5 | 0 |
 | 6 | Báo cáo hoạt động & tài chính | 9 | 3 | 6 | 0 |
@@ -34,9 +34,9 @@ Ký hiệu đường dẫn rút gọn: `org/` = `src/modules/organization/`, `gc
 | 8 | Landing page bán hàng | 1 | 1 | 0 | 0 |
 | 9 | Chat nội bộ, đa chuỗi & phân quyền nâng cao | 14 | 10 | 3 | 1 |
 | 10 | Quản lý credit AI, hạn mức & thuê bao SaaS | 8 | 2 | 3 | 3 |
-| | **Tổng cộng** | **123** | **93** | **26** | **4** |
+| | **Tổng cộng** | **123** | **94** | **25** | **4** |
 
-Tỷ lệ: Hoàn thiện 75,6% · Dang dở 21,1% · Chưa hoàn thành 3,3%.
+Tỷ lệ: Hoàn thiện 76,4% · Dang dở 20,3% · Chưa hoàn thành 3,3%.
 
 ### Bốn chức năng chưa hoàn thành
 
@@ -96,7 +96,7 @@ Tỷ lệ: Hoàn thiện 75,6% · Dang dở 21,1% · Chưa hoàn thành 3,3%.
 | 3.3 | Tính giá vốn thực tế (nguyên liệu + bao bì + thợ) | Hoàn thiện | `src/modules/costing/domain/cost-calculator.ts:11-57`; `api/costing/products/[productId]`; `src/app/(app)/tinh-gia/gia-von`; `src/modules/costing/domain/costing.test.ts:21-67` | — |
 | 3.4 | Kiểm soát cảnh báo & chặn giá dưới sàn | Hoàn thiện | Sàn = giá vốn × hệ số Sàn `src/modules/costing/domain/price-floor.ts`; chặn `BELOW_FLOOR` trừ người có C10 `src/modules/costing/use-cases/price-floor-guard.ts`, áp ở báo giá đơn `src/modules/orders/use-cases/quote-order.ts`, báo giá bán hàng `src/modules/sales/use-cases/create-quotation.use-case.ts`, `update-quotation.use-case.ts`, duyệt giảm giá Thẻ Chào `gc/use-cases/discount-requests.ts`; cảnh báo ở máy tính giá `src/app/(app)/gia/pricing-calculator-card.tsx`; `tt/below-floor.test.ts`, `src/modules/costing/domain/price-floor.test.ts` | — |
 | 3.5 | Quản lý ưu đãi, mã giảm giá, miễn phí ship | Hoàn thiện | `gc/domain/brochure-pricing.ts:156-181` (kiểm mã hợp lệ, % hoặc số tiền), `:228-232` (miễn phí giao); `api/vouchers/batches` (Q8); `tt/vouchers-price-lists.test.ts:42-94`, `tt/greeting-card-promotion-slot.test.ts:97` | — |
-| 3.6 | Phụ phí 6 kiểu dáng, hệ số ngày lễ 1.3x & VAT | Dang dở | VAT 8%/10% `gc/domain/order-vat.ts:6-8`, `tt/greeting-card-vat.test.ts:64-90`; phụ phí lễ là số tiền cố định `gc/domain/holiday-policy.ts:27` | Phí cắm theo 6 kiểu dáng; hệ số ngày lễ 1,3 (`gc/domain/craft-fee-policy.ts:14-21` là 6 phương án phí trả bên gia công, không phải phí cắm cho khách) |
+| 3.6 | Phụ phí 6 kiểu dáng, hệ số ngày lễ 1.3x & VAT | Hoàn thiện | 6 kiểu dáng với đơn giá phí chế tác mặc định trong cấu hình ngành hoa `src/modules/organization/domain/industries/floral.ts` (PO Q8); cửa hàng sửa đơn giá và hệ số ngày lễ (mặc định ×1,5) `src/components/greeting-card/admin/craft-style-fee-settings.tsx`; mẫu gắn kiểu dáng `src/components/products/product-craft-fee-card.tsx`, form tạo mẫu; giá niêm yết đã gồm phí chế tác, ngày lễ cộng phí × (hệ số − 1) gộp vào đơn giá, đơn lưu tách `craftFee` `gc/domain/craft-style-fee.ts`, `gc/use-cases/brochure-quote.ts`; VAT 8%/10% `gc/domain/order-vat.ts`; `tu/…/craft-style-fee.test.ts`, `tt/craft-style-holiday.test.ts`, `tt/greeting-card-vat.test.ts` | — |
 | 3.7 | Đề xuất & duyệt giảm giá sâu trình Điều hành | Hoàn thiện | `gc/domain/discount-request.ts:1-55`; `api/greeting-card/orders/[id]/discount-request`, `api/greeting-card/discount-requests/[id]/decision`; `tt/greeting-card-messages.test.ts:109-134` (duyệt → tổng tiền cập nhật, nhật ký, tổ chức khác 404) | — |
 | 3.8 | Soạn & xem trước báo giá chuyên nghiệp | Dang dở | `src/components/sales/quotation/customer-quote-builder.tsx`, `quote-preview-card.tsx:70`; `api/quotations/route.ts:73-75` (R15); `src/modules/sales/use-cases/quotation.test.ts:159` | Chọn kích cỡ và phí vận chuyển trong báo giá (`quotation_items` chỉ có tên/SL/đơn giá `schema:4135-4150`) |
 | 3.9 | Lưu & quản lý báo giá theo mã | Hoàn thiện | `schema:4099-4131` (`code`, `valid_until`, `customer_id`); `src/modules/sales/use-cases/quotation.test.ts:200` (tự hết hạn); `tt/quotation-public-link.test.ts:140` | Mã có dạng `BG-0001`, không phải `QUO-…` |
