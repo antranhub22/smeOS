@@ -3,7 +3,7 @@ import { readFileSync } from "node:fs"
 import { describe, expect, it } from "vitest"
 
 import { buildRegistrySource, OUTPUT_PATH, SCHEMA_PATH } from "../../../scripts/gen-tenant-table-registry.mjs"
-import { TABLE_REGISTRY, TENANT_SCOPED_TABLES } from "@/core/tenancy/tenant-table-registry"
+import { TABLE_REGISTRY, TABLES_CHILD_FIRST, TENANT_SCOPED_TABLES } from "@/core/tenancy/generated/tenant-table-registry"
 
 /**
  * Sổ bảng-thuộc-tenant (ADR-016 D-S1) phải khớp đúng `prisma/schema.prisma`.
@@ -31,6 +31,16 @@ describe("sổ bảng-thuộc-tenant", () => {
       }
     }
     expect(missing, "thêm `/// @pii <loại>` ngay trên cột").toEqual([])
+  })
+
+  it("TABLES_CHILD_FIRST: đủ mọi bảng một lần; mọi bảng trỏ tới organizations/users đứng trước chúng", () => {
+    expect([...TABLES_CHILD_FIRST].sort()).toEqual(Object.keys(TABLE_REGISTRY).sort())
+    const at = (t: string) => TABLES_CHILD_FIRST.indexOf(t)
+    for (const [name, entry] of Object.entries(TABLE_REGISTRY)) {
+      for (const root of ["organizations", "users"]) {
+        if (entry.parents.includes(root)) expect(at(name), `${name} phải đứng trước ${root}`).toBeLessThan(at(root))
+      }
+    }
   })
 
   it("bảng tenant chỉ trỏ khoá ngoại tới bảng có trong sổ", () => {

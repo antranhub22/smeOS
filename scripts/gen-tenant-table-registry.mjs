@@ -6,7 +6,7 @@ import { readFileSync, writeFileSync } from "node:fs"
 import { fileURLToPath } from "node:url"
 
 export const SCHEMA_PATH = "prisma/schema.prisma"
-export const OUTPUT_PATH = "src/core/tenancy/tenant-table-registry.ts"
+export const OUTPUT_PATH = "src/core/tenancy/generated/tenant-table-registry.ts"
 
 /** Mỗi model → { scope, parents }: TENANT khi có cột `organization_id`, còn lại GLOBAL. */
 export function parseSchema(schemaText) {
@@ -31,6 +31,27 @@ export function parseSchema(schemaText) {
     models.set(name, { scope: tenant ? "TENANT" : "GLOBAL", parents: [...parents].sort(), pii })
   }
   return new Map([...models].sort(([a], [b]) => a.localeCompare(b)))
+}
+
+/**
+ * Thứ tự "con trước cha": mỗi bảng đứng trước mọi bảng nó trỏ khoá ngoại tới. TRUNCATE / xoá theo thứ tự
+ * này khoá bảng con trước, không ngược chiều với một giao dịch đang ghi con rồi kiểm cha (tránh deadlock).
+ * Vòng khoá ngoại (vd. orders ↔ vouchers): lấy bảng còn ít bảng con chưa xếp nhất trước.
+ */
+export function childFirstOrder(models) {
+  const referencedBy = new Map([...models.keys()].map((n) => [n, 0]))
+  for (const { parents } of models.values()) for (const p of parents) if (referencedBy.has(p)) referencedBy.set(p, referencedBy.get(p) + 1)
+  const done = new Set()
+  const order = []
+  while (done.size < models.size) {
+    // Bảng chưa xếp mà không còn bảng con nào chưa xếp; gặp vòng thì lấy bảng ít con chưa xếp nhất.
+    const left = [...referencedBy].filter(([n]) => !done.has(n)).sort(([a, ca], [b, cb]) => ca - cb || a.localeCompare(b))
+    const [name] = left[0]
+    done.add(name)
+    order.push(name)
+    for (const p of models.get(name).parents) if (referencedBy.has(p)) referencedBy.set(p, referencedBy.get(p) - 1)
+  }
+  return order
 }
 
 export function buildRegistrySource(schemaText) {
@@ -63,6 +84,11 @@ export function buildRegistrySource(schemaText) {
     "export const TABLE_REGISTRY: Readonly<Record<string, TableEntry>> = {",
     ...rows,
     "}",
+    "",
+    "/** Mọi bảng, con trước cha (theo khoá ngoại) — thứ tự TRUNCATE/xoá an toàn. */",
+    "export const TABLES_CHILD_FIRST: readonly string[] = [",
+    ...childFirstOrder(models).map((n) => `  "${n}",`),
+    "]",
     "",
     "/** Mọi bảng có organization_id, theo thứ tự tên. */",
     "export const TENANT_SCOPED_TABLES: readonly string[] = [",

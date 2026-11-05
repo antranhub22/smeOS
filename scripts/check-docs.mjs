@@ -122,7 +122,7 @@ for (const t of tenant) {
   if (!dang.some((d) => thu.includes(d))) bao(`bảng tenant "${t}" không có ca thử cách ly nào (đặc tả 07 mục 19)`)
 }
 // TENANT_TABLES = sổ sinh từ schema (ADR-016 S-1) + bảng thêm trong helper — đọc cả hai.
-const helper = readFileSync("tests/helpers/database.ts", "utf8") + readFileSync("src/core/tenancy/tenant-table-registry.ts", "utf8")
+const helper = readFileSync("tests/helpers/database.ts", "utf8") + readFileSync("src/core/tenancy/generated/tenant-table-registry.ts", "utf8")
 const trunc = new Set([...helper.matchAll(/"([a-z_]+)"/g)].map((m) => m[1]))
 for (const t of tenant) if (!trunc.has(t)) bao(`bảng tenant "${t}" không nằm trong TENANT_TABLES — không được dọn giữa các ca thử`)
 

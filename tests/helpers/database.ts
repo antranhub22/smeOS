@@ -1,5 +1,5 @@
 import { prisma } from "@/core/tenancy/infra/prisma"
-import { TENANT_SCOPED_TABLES } from "@/core/tenancy/tenant-table-registry"
+import { TABLES_CHILD_FIRST, TENANT_SCOPED_TABLES } from "@/core/tenancy/generated/tenant-table-registry"
 import { Prisma } from "@/generated/prisma/client"
 import { env } from "@/lib/env"
 import { ensureSystemRoles } from "@/modules/organization/use-cases/ensure-system-roles"
@@ -7,7 +7,7 @@ import { seedAiCapabilities, seedVisionModels } from "@/core/ai/infra/seed-ai-re
 
 /**
  * Bảng dọn giữa các ca thử. Bảng có `organization_id` lấy từ sổ sinh tự động (ADR-016 S-1) —
- * thêm bảng tenant mới không phải sửa ở đây. TRUNCATE … CASCADE nên thứ tự không quan trọng.
+ * thêm bảng tenant mới không phải sửa ở đây.
  */
 const TEST_EXTRA_TABLES = [
   // Bảng không có organization_id nhưng ca thử nào cũng tạo dòng mới
@@ -21,7 +21,10 @@ const TEST_EXTRA_TABLES = [
   "integration_governance",
 ] as const
 
-const TENANT_TABLES: readonly string[] = [...TENANT_SCOPED_TABLES, ...TEST_EXTRA_TABLES]
+// Con trước cha (TABLES_CHILD_FIRST): TRUNCATE khoá bảng con trước, cùng chiều với giao dịch đang ghi con rồi
+// kiểm cha — xếp theo tên từng gây deadlock trên CI (05/11/2026).
+const TRUNCATE_SET = new Set<string>([...TENANT_SCOPED_TABLES, ...TEST_EXTRA_TABLES])
+const TENANT_TABLES: readonly string[] = TABLES_CHILD_FIRST.filter((t) => TRUNCATE_SET.has(t))
 
 /**
  * Chốt chặn: bộ test này XOÁ SẠCH database nó trỏ tới, nên nó chỉ được phép
