@@ -83,7 +83,7 @@ async function main(): Promise<void> {
     return
   }
 
-  const balance = await repository.topUpCredit(organizationId, amount)
+  const balance = await repository.topUpCredit(organizationId, amount, "TOPUP", { reason: "Nạp qua script vận hành" })
   console.log(
     `${before.name}: ${before.credit_balance} + ${amount} = ${balance} credit`
   )

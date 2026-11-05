@@ -13,6 +13,7 @@ import { hashSessionToken } from "@/modules/organization/infra/session-token"
 import { UserRepository } from "@/modules/organization/infra/user-repository"
 import { WorkspaceRepository } from "@/modules/organization/infra/workspace-repository"
 import { OrganizationRepository } from "@/modules/organization/infra/organization-repository"
+import { checkSubscription } from "@/modules/subscription/use-cases/subscription-guard"
 import { lockedToolForPath, toolForPath, unlockedToolsFrom } from "@/modules/organization/domain/tool-route-entitlement"
 
 export type ResolvedSession = {
@@ -138,8 +139,19 @@ export async function requireTenantContext(
     throw new AppError("PASSWORD_CHANGE_REQUIRED", "Tài khoản đang dùng mật khẩu tạm — đổi mật khẩu trước khi tiếp tục")
   }
   await assertToolUnlocked(request, resolved.ctx)
+  await assertSubscriptionWritable(request, resolved.ctx)
   return { resolved, ctx: resolved.ctx }
 }
+
+/** Gói quá hạn thanh toán → mọi yêu cầu ghi bị chặn, vẫn xem được dữ liệu (checklist ALG 10.7, PO Q9). */
+async function assertSubscriptionWritable(request: Request, ctx: TenantContext): Promise<void> {
+  const state = await checkSubscription(ctx.organizationId)
+  if (!state.readOnly || READ_METHODS.has(request.method.toUpperCase())) return
+  if (new URL(request.url).pathname === PASSWORD_CHANGE_PATH) return
+  throw new AppError("SUBSCRIPTION_OVERDUE", "Gói dịch vụ quá hạn thanh toán — tài khoản đang ở chế độ chỉ xem. Thanh toán hoá đơn để mở lại.")
+}
+
+const READ_METHODS = new Set(["GET", "HEAD", "OPTIONS"])
 
 /**
  * API riêng của công cụ mà cấp trên chưa mở khoá cho tổ chức → 403 ENTITLEMENT_REQUIRED.

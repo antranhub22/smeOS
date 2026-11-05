@@ -31,6 +31,7 @@ acceptance:
 - **Vùng làm việc:** `DashboardLayout` hiển thị lưới KPI 4 khối và các phân hệ điều hành.
 - **Khối chức năng chính:**
   1. L0 (Thiết yếu): Tổng số tổ chức, tổ chức mới 7 ngày, số job lỗi/treo, tổng credit tiêu thụ.
+     Thuê bao (`src/components/platform/subscription-overview-card.tsx`, `GET /api/v1/platform/overview`, `N1`): 4 ô Đang thuê bao / Quá hạn (đỏ khi > 0) / Chưa gán gói / Đã huỷ và biểu đồ thanh doanh thu thuê bao đã thu 6 tháng gần nhất. Nạp credit làm ở trang chi tiết từng tổ chức.
   2. L1 (Hành động): Nút chuyển nhanh sang Tổ chức, Sức khỏe hệ thống, Mức dùng, Chợ đối tác.
   3. L2 (Bổ trợ): Hướng dẫn vận hành hệ thống mẹ, nhật ký kiểm toán gần nhất.
 

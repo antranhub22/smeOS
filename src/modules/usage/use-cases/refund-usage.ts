@@ -29,5 +29,5 @@ export async function refundUsage(
     feature: input.feature,
     costUsd: input.costUsd,
   })
-  await getOrganizationRepository(db).refundCredit(ctx, input.creditToRefund)
+  await getOrganizationRepository(db).refundCredit(ctx, input.creditToRefund, { service: "AI", reason: input.feature, reference: input.jobId })
 }

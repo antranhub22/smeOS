@@ -311,9 +311,17 @@ Trả về chỉ những mục người gọi có năng lực duyệt. Nếu cô
 |---|---|---|
 | GET | `/usage` | `G8` |
 | GET | `/usage/summary` | `G8` |
+| GET | `/usage/limits` | `G8` |
+| PUT | `/usage/limits` | `U2` |
+| GET | `/subscription` | `D1` |
+| POST | `/billing/sepay` | — (khoá `SEPAY_PLATFORM_API_KEY`) |
 | GET | `/audit-logs` | `G9` |
 
 `/usage/summary` trả số lượt theo `feature`, credit đã dùng, credit còn lại, chia theo chi nhánh nếu tổ chức là Chuỗi.
+
+`/subscription` (checklist ALG 10.7): gói, kỳ hiện tại, trạng thái và hoá đơn của cửa hàng kèm mã VietQR (nội dung chuyển khoản = mã hoá đơn `TB…`). Gói `OVERDUE` (hoá đơn tới hạn chưa thu, PO Q9 không ân hạn) → mọi yêu cầu ghi của cửa hàng trả 402 `SUBSCRIPTION_OVERDUE`, yêu cầu đọc vẫn được. Hoá đơn kỳ sau sinh 7 ngày trước hết kỳ, nhắc `SUBSCRIPTION_RENEWAL_DUE` 7 ngày và 1 ngày trước hạn; quá hạn phát `SUBSCRIPTION_OVERDUE`; credit tặng theo gói cấp đầu tháng, phần tháng trước chưa dùng thu hồi (`EXPIRE`). Xét khi cửa hàng gửi yêu cầu, không cần lịch chạy nền. `POST /billing/sepay`: SePay báo giao dịch vào tài khoản nền tảng (`Authorization: Apikey …`; chưa cấu hình khoá → 404); khớp mã hoá đơn và đủ tiền → ghi đã thu, mã giao dịch SePay chống ghi trùng; không khớp để Console xác nhận tay.
+
+`/usage/limits` (checklist ALG 10.3, 9.7): kỳ hiện tại (YYYY-MM giờ Việt Nam), `credit { used, limit }` theo hạn mức nền tảng đặt và `ai { used, limit }` theo trần cửa hàng tự đặt (`PUT { aiMonthlyLimit: number | null }`, Điều hành). Hai hạn mức chặn ngay khi trừ credit: vượt → 422 `QUOTA_EXCEEDED`, số dư không bị trừ. Dùng tới 80% phát `USAGE_LIMIT_NEAR`, số dư dưới 20% lần nạp gần nhất phát `CREDIT_LOW` (mỗi loại một lần mỗi kỳ). Tin SMS/ZNS gửi khách trừ credit theo quy đổi của nền tảng (mặc định 0); gửi lỗi hoàn lại, hết credit thì bỏ qua tin.
 
 ## 11. Integration API — máy gọi máy
 
@@ -774,6 +782,20 @@ Chín route dưới đây cũng là console vận hành nền tảng (`PlatformC
 | POST | `/platform/catalogs/:key/values` | `N12` | Thêm giá trị mới. Danh mục CÓ HÀNH VI bắt buộc `behavior` là mã có thật trong `behaviors.ts`; danh mục ĐÓNG từ chối → 400 |
 | PUT | `/platform/organizations/:id/field-overrides` | `N12` | Ghi đè CHỈ áp cho một tổ chức — trường (`target: "field"`) hoặc giá trị danh mục (`target: "catalogValue"`) |
 | GET | `/platform/organizations/:id/field-preview` | `N12` | ĐP-3 3.15 — "tổ chức này sẽ thấy gì" sau khi cộng ghi đè, `?entity=ORDER\|PARTNER`. Dùng chung phép tính với `/field-config` (tenant), chỉ khác ngữ cảnh gọi. CHỈ ĐỌC |
+| GET | `/platform/organizations/:id/credits` | `N1` | Checklist ALG 10.6 — số dư và 50 dòng gần nhất của sổ cái `credit_transactions` |
+| POST | `/platform/organizations/:id/credits` | `N3` | `{ kind: TOPUP\|GIFT\|REFUND, amount, reason }` — nạp/tặng/hoàn có lý do (1–1.000.000 credit), ghi sổ cái và `platform_audit_logs`; tổ chức không có → 404 |
+| PUT | `/platform/organizations/:id/usage-limit` | `N3` | Checklist ALG 10.3 — `{ monthlyLimit: number \| null }` hạn mức credit/tháng của tổ chức (áp kỳ hiện tại và các tháng sau), ghi `platform_audit_logs` |
+| GET | `/platform/credit-pricing` | `N4` | PO Q10 — quy đổi credit: `smsCredit`, `znsCredit` (credit/tin, mặc định 0), `usdToVnd`, `creditValueVnd`, `smsCostVnd`, `znsCostVnd` (giá vốn tham chiếu mỗi tin), `defaultMonthlyLimit` |
+| PUT | `/platform/credit-pricing` | `N3` | Sửa từng trường của quy đổi credit (lưu `platform_settings.credit_pricing`), ghi `platform_audit_logs` |
+| GET | `/platform/margin` | `N4` | Checklist ALG 10.4 — `?period=YYYY-MM` (mặc định tháng hiện tại, giờ Việt Nam): theo tổ chức có phát sinh — credit đã dùng sau hoàn, doanh thu (× `creditValueVnd`), chi phí (AI `ai_requests.cost_usd` × `usdToVnd` + `provider_cost_entries.cost_vnd`), biên và tỷ lệ; kèm dòng tổng |
+| POST | `/platform/organizations` | `N7` (+`N19` khi gán gói) | Checklist ALG 9.10 — `{ organizationName, ownerEmail, ownerName?, industry?, subscription?: { plan, cycle, priceVnd, includedCreditsMonthly, firstPeriodPaid? } }`: tổ chức, workspace vận hành, chủ tiệm vai Điều hành với mật khẩu tạm (buộc đổi lần đầu), gói thuê bao; 201 trả `temporaryPassword` một lần (không ghi nhật ký); thư đã có tài khoản → 409 |
+| GET | `/platform/organizations/:id/subscription` | `N1` | Checklist ALG 10.7 — gói, kỳ hiện tại, trạng thái (`ACTIVE`·`OVERDUE`·`CANCELLED`), 12 hoá đơn gần nhất kèm thông tin VietQR khi đã khai tài khoản nhận tiền |
+| PUT | `/platform/organizations/:id/subscription` | `N19` | `{ plan, cycle: MONTHLY\|YEARLY, priceVnd, includedCreditsMonthly, firstPeriodPaid? }` — gán lần đầu (kỳ bắt đầu ngay, hoá đơn kỳ đầu hạn trả ngay; chưa thu → chỉ xem) hoặc đổi gói (áp từ hoá đơn kỳ sau) |
+| DELETE | `/platform/organizations/:id/subscription` | `N19` | Huỷ gói, huỷ hoá đơn còn chờ thu |
+| POST | `/platform/subscription-invoices/:id/mark-paid` | `N19` | `{ note }` — Console xác nhận đã nhận tiền; hoá đơn kỳ sau → dời kỳ hiện tại; hết hoá đơn quá hạn → `ACTIVE`; đã thu rồi → 404 |
+| GET | `/platform/billing-account` | `N1` | Tài khoản nhận tiền thuê bao của nền tảng (`platform_settings.platform_billing_account`) |
+| PUT | `/platform/billing-account` | `N19` | `{ bankBin (6 số), bankName, accountNumber (6–20 số), accountHolder }` |
+| GET | `/platform/overview` | `N1` | Checklist ALG 9.8 — số tổ chức theo trạng thái thuê bao (`active`, `overdue`, `cancelled`, `withoutSubscription`), doanh thu thuê bao đã thu 6 tháng gần nhất (giờ Việt Nam), `health` khi người xem có `N5` |
 | GET | `/platform/behaviors` | `N12` | ĐP-3 3.15 — liệt kê mã hành vi có thật trong `field-platform/domain/behaviors.ts` cho một `behavior_kind` (`?kind=…`), để Console gợi ý khi thêm giá trị danh mục CÓ HÀNH VI. CHỈ ĐỌC, không thay luật kiểm ở `upsert-catalog-value.ts` |
 
 ## 22. Phân hệ Nghiên cứu Thị trường & Xu hướng (Market Intelligence Engine, Đợt A mở rộng)

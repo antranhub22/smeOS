@@ -112,7 +112,7 @@ export async function enqueueJob(
         const ok = await workspaceRepo.tryConsumeTrial(workspace.id)
         if (!ok) throw quotaExceeded("Đã hết lượt dùng thử", { workspace_id: workspace.id })
       } else {
-        const ok = await getOrganizationRepository(tx).tryDeductCredit(ctx, cost)
+        const ok = await getOrganizationRepository(tx).tryDeductCredit(ctx, cost, { service: "AI", reason: input.feature })
         if (!ok) throw quotaExceeded("Không đủ credit", { required: cost })
       }
 

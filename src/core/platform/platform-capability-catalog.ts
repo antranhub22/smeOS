@@ -1,5 +1,5 @@
 /**
- * Từ vựng năng lực CỦA RIÊNG console vận hành nền tảng — dải `N1`–`N8`, `N12`–`N18`
+ * Từ vựng năng lực CỦA RIÊNG console vận hành nền tảng — dải `N1`–`N8`, `N12`–`N19`
  * (đặc tả 02 mục "Vận hành nền tảng — dải N").
  *
  * TÁCH HẲN khỏi `src/core/rbac/capability-catalog.ts` (D-N6, chốt 19/09).
@@ -43,6 +43,8 @@ const DEFINITIONS: Record<string, Omit<PlatformCapabilityDefinition, "code">> = 
   N17: { name: "platform.marketplace.manage", label: "Đồng bộ, nhập dữ liệu & ảnh chợ đối tác" },
   // PO 03/11/2026: xoá hồ sơ chợ đối tác — chỉ superadmin nền tảng (tách khỏi N17 để người nhập dữ liệu không xoá được)
   N18: { name: "platform.marketplace.delete", label: "Xoá hồ sơ cửa hàng khỏi chợ đối tác" },
+  // Checklist ALG 10.7 (PO Q9): gán gói, xác nhận thu tiền thuê bao, tài khoản nhận tiền
+  N19: { name: "platform.subscriptions.manage", label: "Gán gói thuê bao, xác nhận thanh toán hoá đơn thuê bao" },
 }
 
 export const PLATFORM_CAPABILITIES: Record<string, PlatformCapabilityDefinition> = Object.fromEntries(

@@ -339,7 +339,7 @@ c8b23a4eed937a854e2579bc185ca77e6b58b4224acc241db1a7ce6124dc4230  src/modules/gr
 fe6b81e545dfa1bbcadaf081549b30ed4300e73c59201440b98191d951d80f40  src/modules/greeting-card/use-cases/invite-cards.ts
 534a69ab7c16a792c2411fcc3b59a4452213e29fc7b472efa58e04f8a4a759a1  src/modules/greeting-card/use-cases/link-customer.ts
 2f236f91b9123e78f4be40bd872f394d544e18b4a26497b4d6e8d30abf2d8fe7  src/modules/greeting-card/use-cases/missing-info-actions.ts
-d93339b87230630a5dec3ff11ad6484b96d1505aeda9433ea28def062b41a28f  src/modules/greeting-card/use-cases/notify-customer.ts
+a1c3a40cec7438de32afbe6cdd5bb911cc8fa66954d692d1b03a277aee49471f  src/modules/greeting-card/use-cases/notify-customer.ts
 06dfac6b0d1f2a46520d353c49f097192a04119dc910ee6efc2287df00844ba2  src/modules/greeting-card/use-cases/notify-settings.ts
 ff2e657230f0db412a6399116a7852e0a33f921dbb91efaf889ba18f80993649  src/modules/greeting-card/use-cases/notify-shipper-request.ts
 0ef4909d2f4552d1d37cf17aa3f1ca4550b264d5f40bc88ab157949c85e4da26  src/modules/greeting-card/use-cases/notify-staff.ts

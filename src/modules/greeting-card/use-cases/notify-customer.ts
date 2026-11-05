@@ -13,6 +13,9 @@ import {
 } from "../domain/customer-notifications"
 import { sendZnsMessage, type FetchLike, type ZnsCredentials } from "../adapters/zalo-zns-adapter"
 import { sendEsmsMessage, type EsmsCredentials } from "../adapters/esms-adapter"
+import { OrganizationRepository } from "@/modules/organization/infra/organization-repository"
+import { readCreditPricing } from "@/modules/usage/infra/credit-pricing-store"
+import { recordProviderCost } from "@/modules/usage/infra/provider-cost-repository"
 import { expectedPayment, parsePaymentPolicy } from "../domain/brochure-payment-policy"
 import { policyForOrder } from "../domain/payment-plan"
 
@@ -31,6 +34,37 @@ function publicBaseUrl(): string {
   return publicAppUrl()
 }
 
+/** Thu/hoàn credit cho mỗi tin gửi khách (checklist ALG 10.3). */
+export interface MessageCredits {
+  costOf(channel: "ZNS" | "ESMS"): Promise<number>
+  charge(organizationId: string, cost: number, channel: "ZNS" | "ESMS"): Promise<boolean>
+  refund(organizationId: string, cost: number, channel: "ZNS" | "ESMS"): Promise<void>
+  /** Ghi chi phí thật theo giá vốn tham chiếu (checklist ALG 10.4) */
+  recordCost(organizationId: string, channel: "ZNS" | "ESMS", reference: string): Promise<void>
+}
+
+const serviceOf = (channel: "ZNS" | "ESMS") => (channel === "ZNS" ? "ZNS" : "SMS") as "ZNS" | "SMS"
+
+const defaultMessageCredits: MessageCredits = {
+  async costOf(channel) {
+    const pricing = await readCreditPricing()
+    return channel === "ZNS" ? pricing.znsCredit : pricing.smsCredit
+  },
+  charge: (organizationId, cost, channel) =>
+    new OrganizationRepository()
+      .tryDeductCreditFor(organizationId, cost, { service: serviceOf(channel), reason: `Tin ${serviceOf(channel)} gửi khách` })
+      .catch(() => false),
+  refund: (organizationId, cost, channel) =>
+    new OrganizationRepository().refundCreditFor(organizationId, cost, { service: serviceOf(channel), reason: "Tin gửi lỗi" }),
+  async recordCost(organizationId, channel, reference) {
+    const pricing = await readCreditPricing()
+    await recordProviderCost(organizationId, {
+      provider: channel === "ZNS" ? "ZALO_ZNS" : "ESMS", service: serviceOf(channel),
+      costVnd: channel === "ZNS" ? pricing.znsCostVnd : pricing.smsCostVnd, reference,
+    })
+  },
+}
+
 /**
  * Gửi tin cho khách ở một mốc đơn. Không bao giờ ném lỗi ra ngoài: thông báo
  * là việc phụ, không được làm hỏng thao tác chính (thu tiền, giao hàng...).
@@ -41,7 +75,8 @@ export async function notifyOrderEvent(
   orderId: string,
   event: NotifyEvent,
   repo = getGreetingNotificationRepository(),
-  fetchImpl: FetchLike = fetch
+  fetchImpl: FetchLike = fetch,
+  credits: MessageCredits = defaultMessageCredits,
 ): Promise<NotifyOutcome> {
   const config = await repo.getChannelConfig(organizationId)
   if (!config?.notify_enabled || !config.notify_channel || !config.notify_config_encrypted) return "DISABLED"
@@ -56,6 +91,13 @@ export async function notifyOrderEvent(
   if (!claim) return "DUPLICATE"
   if (!phone) {
     await repo.finish(claim.id, { status: "SKIPPED", error: "Khách không có số điện thoại hợp lệ" })
+    return "SKIPPED"
+  }
+
+  // Quy đổi tin nhắn ra credit theo cấu hình nền tảng (PO Q10, checklist ALG 10.3); 0 = không thu
+  const messageCost = await credits.costOf(channel)
+  if (messageCost > 0 && !(await credits.charge(organizationId, messageCost, channel))) {
+    await repo.finish(claim.id, { status: "SKIPPED", error: "Hết credit hoặc đã chạm hạn mức credit tháng này" })
     return "SKIPPED"
   }
 
@@ -98,11 +140,13 @@ export async function notifyOrderEvent(
       messageId = result.messageId
     }
     await repo.finish(claim.id, { status: "SENT", providerMessageId: messageId })
+    await credits.recordCost(organizationId, channel, claim.id).catch(() => undefined)
     return "SENT"
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error)
     log.warn("greeting_card.notify_failed", { organizationId, feature: "greeting-card", event, channel, message })
     await repo.finish(claim.id, { status: "FAILED", error: message })
+    if (messageCost > 0) await credits.refund(organizationId, messageCost, channel)
     return "FAILED"
   }
 }
