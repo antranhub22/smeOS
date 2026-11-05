@@ -4,20 +4,18 @@ import { useI18n } from "@/lib/i18n"
 import React, { useState, useEffect, useRef, useCallback } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import {
-  Send,
-  Plus,
-  Bot,
-  User,
-  ShoppingBag,
-  Clock,
-  ArrowLeft,
-  CheckCircle2,
-  Flower2,
-  Loader2,
-  ExternalLink,
-  Share2,
-} from "@/components/ui/icons"
+import { Send } from "@/components/ui/icon-set/send"
+import { Plus } from "@/components/ui/icon-set/plus"
+import { Bot } from "@/components/ui/icon-set/bot"
+import { User } from "@/components/ui/icon-set/user"
+import { ShoppingBag } from "@/components/ui/icon-set/shopping-bag"
+import { Clock } from "@/components/ui/icon-set/clock"
+import { ArrowLeft } from "@/components/ui/icon-set/arrow-left"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
+import { Flower2 } from "@/components/ui/icon-set/flower2"
+import { Loader2 } from "@/components/ui/icon-set/loader2"
+import { ExternalLink } from "@/components/ui/icon-set/external-link"
+import { Share2 } from "@/components/ui/icon-set/share2"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"

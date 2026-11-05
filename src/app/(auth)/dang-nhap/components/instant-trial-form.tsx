@@ -2,7 +2,10 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { Check, Sparkles, Zap, ShieldCheck } from "@/components/ui/icons"
+import { Check } from "@/components/ui/icon-set/check"
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
+import { Zap } from "@/components/ui/icon-set/zap"
+import { ShieldCheck } from "@/components/ui/icon-set/shield-check"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { PendingApprovalNotice } from "./pending-approval-notice"

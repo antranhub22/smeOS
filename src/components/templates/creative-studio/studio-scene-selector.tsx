@@ -2,7 +2,11 @@
 
 import * as React from "react"
 import { Badge } from "@/components/ui/badge"
-import { Sparkles, Camera, Sun, TreePine, Palette } from "@/components/ui/icons"
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
+import { Camera } from "@/components/ui/icon-set/camera"
+import { Sun } from "@/components/ui/icon-set/sun"
+import { TreePine } from "@/components/ui/icon-set/tree-pine"
+import { Palette } from "@/components/ui/icon-set/palette"
 
 export interface StudioScenePreset {
   id: string

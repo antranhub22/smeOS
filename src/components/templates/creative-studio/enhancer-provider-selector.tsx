@@ -2,7 +2,10 @@
 
 import * as React from "react"
 import { Badge } from "@/components/ui/badge"
-import { Sparkles, Cpu, Cloud, Zap } from "@/components/ui/icons"
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
+import { Cpu } from "@/components/ui/icon-set/cpu"
+import { Cloud } from "@/components/ui/icon-set/cloud"
+import { Zap } from "@/components/ui/icon-set/zap"
 import { optimizationPriceKey } from "@/modules/media/domain/optimization-rules"
 import { costCreditForFeature } from "@/modules/usage/domain/pricing"
 

@@ -1,7 +1,12 @@
 "use client";
 
 import React from "react";
-import { CheckCircle2, AlertTriangle, XCircle, TrendingUp, BarChart3 } from "@/components/ui/icons";
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
+import { AlertTriangle } from "@/components/ui/icon-set/alert-triangle"
+import { XCircle } from "@/components/ui/icon-set/x-circle"
+import { TrendingUp } from "@/components/ui/icon-set/trending-up"
+import { BarChart3 } from "@/components/ui/icon-set/bar-chart3"
+;
 import type { ProductTrendFitItem } from "@/modules/market-intelligence/domain/product-intelligence-types";
 import { LIFECYCLE_SPECS } from "@/modules/market-intelligence/domain/trend-lifecycle";
 

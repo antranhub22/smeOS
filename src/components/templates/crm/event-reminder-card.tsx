@@ -1,7 +1,9 @@
 "use client"
 
 import React from "react"
-import { Bell, Calendar, Send } from "@/components/ui/icons"
+import { Bell } from "@/components/ui/icon-set/bell"
+import { Calendar } from "@/components/ui/icon-set/calendar"
+import { Send } from "@/components/ui/icon-set/send"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"

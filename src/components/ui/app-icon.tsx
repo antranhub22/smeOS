@@ -2,11 +2,12 @@ import * as React from "react"
 import * as Ph from "@phosphor-icons/react/dist/ssr"
 import type { Icon as PhosphorIcon, IconWeight } from "@phosphor-icons/react"
 import { cn } from "@/lib/utils"
-import * as Compat from "./icons"
 
 /**
  * Bộ icon chuẩn SMEOS (Phosphor, PO 30/10/2026). Danh mục vẫn lưu tên icon kiểu lucide
  * (`"Camera"`, `"BadgeCheck"`…) — bảng dưới ánh xạ sang Phosphor, thiếu thì dùng `Folder`.
+ * Bảng tường minh, không tra động qua `./icons`: tra động buộc bundler giữ MỌI icon trong chunk chung
+ * của shell (trước đây ~236 icon × 6 nét vẽ, 174 KB gzip ở mọi trang).
  */
 const ICONS: Readonly<Record<string, PhosphorIcon>> = {
   Activity: Ph.Pulse, Award: Ph.Medal, BadgeCheck: Ph.SealCheck, BarChart3: Ph.ChartBar,
@@ -24,11 +25,12 @@ const ICONS: Readonly<Record<string, PhosphorIcon>> = {
   ShoppingBag: Ph.ShoppingBag, ShoppingCart: Ph.ShoppingCart, Sparkles: Ph.Sparkle,
   Store: Ph.Storefront, Table: Ph.Table, Target: Ph.Target, TrendingUp: Ph.TrendUp,
   Truck: Ph.Truck, Bot: Ph.Robot, IdCard: Ph.IdentificationCard, Inbox: Ph.Tray, LayoutTemplate: Ph.Layout,
+  CheckCircle2: Ph.CheckCircle, Coins: Ph.Coins, Database: Ph.Database, Flower2: Ph.Flower, Handshake: Ph.Handshake, PackageCheck: Ph.Package, Plug: Ph.Plug, Printer: Ph.Printer, Rocket: Ph.Rocket, Settings: Ph.GearSix, ShieldAlert: Ph.ShieldWarning, SlidersHorizontal: Ph.SlidersHorizontal, UserCog: Ph.UserGear, Volume2: Ph.SpeakerHigh,
   Percent: Ph.Percent, Route: Ph.Path, Ticket: Ph.Ticket, Sliders: Ph.Sliders, Layers: Ph.Stack, Download: Ph.DownloadSimple, Upload: Ph.UploadSimple, UserPlus: Ph.UserPlus, Users: Ph.Users, Video: Ph.VideoCamera, Wallet: Ph.Wallet,
 }
 
 export function hasAppIcon(name: string): boolean {
-  return name in ICONS || name in Compat
+  return name in ICONS
 }
 
 const TONE_ORDER: readonly IconTone[] = [
@@ -51,9 +53,7 @@ interface AppIconProps {
 export function AppIcon({ name, weight = "duotone", className }: AppIconProps) {
   const Icon = ICONS[name]
   if (Icon) return <Icon weight={weight} className={className} aria-hidden="true" />
-  // Tên lucide khác đã có trong bộ chuyển đổi `icons.tsx`
-  const Fallback = (Compat as unknown as Record<string, Compat.LucideIcon | undefined>)[name] ?? Compat.Folder
-  return <Fallback weight={weight} className={className} aria-hidden="true" />
+  return <Ph.Folder weight={weight} className={className} aria-hidden="true" />
 }
 
 export type IconTone =

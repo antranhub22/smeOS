@@ -3,7 +3,11 @@
 import React from "react"
 import { Dialog } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
-import { AlertTriangle, CheckCircle2, ShieldAlert, Store, Layers } from "@/components/ui/icons"
+import { AlertTriangle } from "@/components/ui/icon-set/alert-triangle"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
+import { ShieldAlert } from "@/components/ui/icon-set/shield-alert"
+import { Store } from "@/components/ui/icon-set/store"
+import { Layers } from "@/components/ui/icon-set/layers"
 import type { PreviewChainCollectionProfileResult } from "@/modules/field-platform/use-cases/preview-chain-collection-profile"
 
 interface PreviewModalProps {

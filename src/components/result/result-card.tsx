@@ -1,7 +1,10 @@
 "use client"
 
 import { useState } from "react"
-import { AlertTriangle, ShieldCheck, ChevronDown, ChevronUp } from "@/components/ui/icons"
+import { AlertTriangle } from "@/components/ui/icon-set/alert-triangle"
+import { ShieldCheck } from "@/components/ui/icon-set/shield-check"
+import { ChevronDown } from "@/components/ui/icon-set/chevron-down"
+import { ChevronUp } from "@/components/ui/icon-set/chevron-up"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"

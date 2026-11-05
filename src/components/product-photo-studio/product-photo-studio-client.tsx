@@ -1,7 +1,9 @@
 "use client"
 
 import React, { useState } from "react"
-import { Sparkles, Loader2, RefreshCw } from "@/components/ui/icons"
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
+import { Loader2 } from "@/components/ui/icon-set/loader2"
+import { RefreshCw } from "@/components/ui/icon-set/refresh-cw"
 import { Button } from "@/components/ui/button"
 import { FeatureGuidanceCard } from "@/components/templates/shared/feature-guidance-card"
 import { PhotoUploadPanel } from "@/components/product-photo-studio/photo-upload-panel"

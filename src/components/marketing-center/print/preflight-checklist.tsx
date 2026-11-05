@@ -3,14 +3,12 @@
 import React from "react"
 import type { PreflightReport } from "@/modules/print/domain/print-preset"
 import { Badge } from "@/components/ui/badge"
-import {
-  AlertCircle,
-  AlertTriangle,
-  CheckCircle2,
-  FileCheck2,
-  Scissors,
-  QrCode,
-} from "@/components/ui/icons"
+import { AlertCircle } from "@/components/ui/icon-set/alert-circle"
+import { AlertTriangle } from "@/components/ui/icon-set/alert-triangle"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
+import { FileCheck2 } from "@/components/ui/icon-set/file-check2"
+import { Scissors } from "@/components/ui/icon-set/scissors"
+import { QrCode } from "@/components/ui/icon-set/qr-code"
 
 export interface PreflightChecklistProps {
   report: PreflightReport | null

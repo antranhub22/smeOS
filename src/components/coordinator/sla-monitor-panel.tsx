@@ -1,15 +1,13 @@
 "use client"
 
 import React, { useState } from "react"
-import {
-  Clock,
-  AlertTriangle,
-  AlertOctagon,
-  CheckCircle,
-  TrendingUp,
-  ArrowRight,
-  ShieldAlert,
-} from "@/components/ui/icons"
+import { Clock } from "@/components/ui/icon-set/clock"
+import { AlertTriangle } from "@/components/ui/icon-set/alert-triangle"
+import { AlertOctagon } from "@/components/ui/icon-set/alert-octagon"
+import { CheckCircle } from "@/components/ui/icon-set/check-circle"
+import { TrendingUp } from "@/components/ui/icon-set/trending-up"
+import { ArrowRight } from "@/components/ui/icon-set/arrow-right"
+import { ShieldAlert } from "@/components/ui/icon-set/shield-alert"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"

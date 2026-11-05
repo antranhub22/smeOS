@@ -3,7 +3,9 @@
 import { IconTile } from "@/components/ui/app-icon"
 import { safeImageSrc } from "@/lib/safe-image-src"
 import React, { useRef, useState } from "react"
-import { CheckCircle, AlertTriangle, XCircle } from "@/components/ui/icons"
+import { CheckCircle } from "@/components/ui/icon-set/check-circle"
+import { AlertTriangle } from "@/components/ui/icon-set/alert-triangle"
+import { XCircle } from "@/components/ui/icon-set/x-circle"
 
 interface PhotoUploadPanelProps {
   onFileSelected: (file: File) => void

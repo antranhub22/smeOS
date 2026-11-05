@@ -1,7 +1,10 @@
 "use client"
 
 import React from "react"
-import { Wand2, Sparkles, Package, Camera } from "@/components/ui/icons"
+import { Wand2 } from "@/components/ui/icon-set/wand2"
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
+import { Package } from "@/components/ui/icon-set/package"
+import { Camera } from "@/components/ui/icon-set/camera"
 import { FeatureGuidanceCard } from "@/components/templates/shared/feature-guidance-card"
 import { useSession } from "@/lib/session"
 import { getIndustryTerminology } from "@/modules/organization/domain/industry-profile"

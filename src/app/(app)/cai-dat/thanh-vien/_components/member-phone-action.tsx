@@ -2,7 +2,7 @@
 
 import { useState } from "react"
 
-import { Phone } from "@/components/ui/icons"
+import { Phone } from "@/components/ui/icon-set/phone"
 import { Button } from "@/components/ui/button"
 import { Dialog } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"

@@ -2,7 +2,11 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { Eye, EyeOff, Check, Store, Building2 } from "@/components/ui/icons"
+import { Eye } from "@/components/ui/icon-set/eye"
+import { EyeOff } from "@/components/ui/icon-set/eye-off"
+import { Check } from "@/components/ui/icon-set/check"
+import { Store } from "@/components/ui/icon-set/store"
+import { Building2 } from "@/components/ui/icon-set/building2"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { PendingApprovalNotice } from "./pending-approval-notice"

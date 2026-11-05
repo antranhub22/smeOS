@@ -4,32 +4,30 @@ import { useI18n } from "@/lib/i18n"
 import { useState, useMemo, type ComponentType } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
-import {
-  Camera,
-  ChevronRight,
-  TrendingUp,
-  Tag,
-  Users,
-  ShoppingBag,
-  Bot,
-  Globe,
-  Folder,
-  WalletCards,
-  Sparkles,
-  Wand2,
-  Video,
-  FileText,
-  Share2,
-  LayoutTemplate,
-  Radio,
-  Clock,
-  CheckCircle2,
-  BarChart3,
-  ShieldCheck,
-  Settings2,
-  BookOpen,
-  Cpu,
-} from "@/components/ui/icons"
+import { Camera } from "@/components/ui/icon-set/camera"
+import { ChevronRight } from "@/components/ui/icon-set/chevron-right"
+import { TrendingUp } from "@/components/ui/icon-set/trending-up"
+import { Tag } from "@/components/ui/icon-set/tag"
+import { Users } from "@/components/ui/icon-set/users"
+import { ShoppingBag } from "@/components/ui/icon-set/shopping-bag"
+import { Bot } from "@/components/ui/icon-set/bot"
+import { Globe } from "@/components/ui/icon-set/globe"
+import { Folder } from "@/components/ui/icon-set/folder"
+import { WalletCards } from "@/components/ui/icon-set/wallet-cards"
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
+import { Wand2 } from "@/components/ui/icon-set/wand2"
+import { Video } from "@/components/ui/icon-set/video"
+import { FileText } from "@/components/ui/icon-set/file-text"
+import { Share2 } from "@/components/ui/icon-set/share2"
+import { LayoutTemplate } from "@/components/ui/icon-set/layout-template"
+import { Radio } from "@/components/ui/icon-set/radio"
+import { Clock } from "@/components/ui/icon-set/clock"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
+import { BarChart3 } from "@/components/ui/icon-set/bar-chart3"
+import { ShieldCheck } from "@/components/ui/icon-set/shield-check"
+import { Settings2 } from "@/components/ui/icon-set/settings2"
+import { BookOpen } from "@/components/ui/icon-set/book-open"
+import { Cpu } from "@/components/ui/icon-set/cpu"
 import { useSession } from "@/lib/session"
 import { COMING_SOON_LABEL, isRouteLocked } from "@/lib/feature-lock"
 import { Button } from "@/components/ui/button"

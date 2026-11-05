@@ -2,24 +2,23 @@
 
 import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import {
-  X,
-  Sparkles,
-  Tag,
-  TrendingUp,
-  Video,
-  Image as ImageIcon,
-  Play,
-  ExternalLink,
-  Copy,
-  Check,
-  Flame,
-  Users,
-  Lightbulb,
-  ShieldCheck,
-  ChevronDown,
-  ArrowRight,
-} from "@/components/ui/icons";
+import { X } from "@/components/ui/icon-set/x"
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
+import { Tag } from "@/components/ui/icon-set/tag"
+import { TrendingUp } from "@/components/ui/icon-set/trending-up"
+import { Video } from "@/components/ui/icon-set/video"
+import { Image as ImageIcon } from "@/components/ui/icon-set/image"
+import { Play } from "@/components/ui/icon-set/play"
+import { ExternalLink } from "@/components/ui/icon-set/external-link"
+import { Copy } from "@/components/ui/icon-set/copy"
+import { Check } from "@/components/ui/icon-set/check"
+import { Flame } from "@/components/ui/icon-set/flame"
+import { Users } from "@/components/ui/icon-set/users"
+import { Lightbulb } from "@/components/ui/icon-set/lightbulb"
+import { ShieldCheck } from "@/components/ui/icon-set/shield-check"
+import { ChevronDown } from "@/components/ui/icon-set/chevron-down"
+import { ArrowRight } from "@/components/ui/icon-set/arrow-right"
+;
 import { determineTrendLifecycle, LIFECYCLE_SPECS } from "@/modules/market-intelligence/domain/trend-lifecycle";
 import type { OpportunityItem, EvidenceReference } from "./opportunity-card";
 import { getOpportunityIllustration } from "./opportunity-illustration";

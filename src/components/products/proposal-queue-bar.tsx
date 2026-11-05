@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import Link from "next/link"
-import { ClipboardCheck } from "@/components/ui/icons"
+import { ClipboardCheck } from "@/components/ui/icon-set/clipboard-check"
 import { Button } from "@/components/ui/button"
 
 const COUNT_LIMIT = 100

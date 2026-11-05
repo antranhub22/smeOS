@@ -8,7 +8,7 @@
 
 - **Khung kiến trúc UI đạt mức có cổng kiểm tự động.** Token ngữ nghĩa có một nguồn (`src/styles/tokens/`), shell dùng chung (`AppShell`, `LiveRegionProvider`), 48 primitive trong `src/components/ui/` có test, Screen Contract phủ 111/111 trang, và các cổng ratchet trong CI (ESLint, UX lint, thuật ngữ ngành, gọi `Intl` trực tiếp) chặn nợ tăng thêm.
 - **Độ phủ trên màn hình thật tăng nhưng chưa trọn.** Baseline UX lint 3.945 vi phạm (từ 5.491), tính cả 45 điểm do R18 bắt thêm phần tử gắn `role` điều khiển; 43/111 trang gọi trực tiếp `PageLayout`/`PageHeader`/`ToolHero`; 87 tệp nguồn vượt 350 dòng.
-- **Trợ năng và hiệu năng có số đo.** Bộ E2E UX 34/34, gồm kiểm tự động 12 hành trình (axe, bàn phím, phóng 200%, giảm chuyển động, tương phản 3 preset) và 22 ảnh mốc màn chính. Web Vitals lab: LCP, CLS và INP đạt 6/6 tuyến (LCP di động cao nhất 1,92 s; `/san-pham` 5,3 s → 1,72 s nhờ render trang đầu phía máy chủ). Kiểm bằng trình đọc màn hình chưa thực hiện.
+- **Trợ năng và hiệu năng có số đo.** Bộ E2E UX 34/34, gồm kiểm tự động 12 hành trình (axe, bàn phím, phóng 200%, giảm chuyển động, tương phản 3 preset) và 22 ảnh mốc màn chính. Web Vitals lab: LCP, CLS và INP đạt 6/6 tuyến (LCP di động cao nhất 1,77 s; `/san-pham` 5,3 s → 1,58 s nhờ render trang đầu phía máy chủ; TBT di động 133–233 ms sau khi tách icon theo module). Kiểm bằng trình đọc màn hình chưa thực hiện.
 - **Kết luận bàn giao:** đạt điều kiện bàn giao thương mại với nợ UX được kiểm soát bằng ratchet và có lộ trình (mục 6). Chưa đạt mức "enterprise grade toàn diện" ở các miền D, J và phần trình đọc màn hình của F.
 
 ## 2. Cổng CI

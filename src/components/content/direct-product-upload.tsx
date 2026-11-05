@@ -1,7 +1,12 @@
 "use client"
 
 import React, { useRef, useState } from "react"
-import { UploadCloud, Image as ImageIcon, Sparkles, X, CheckCircle, RefreshCw } from "@/components/ui/icons"
+import { UploadCloud } from "@/components/ui/icon-set/upload-cloud"
+import { Image as ImageIcon } from "@/components/ui/icon-set/image"
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
+import { X } from "@/components/ui/icon-set/x"
+import { CheckCircle } from "@/components/ui/icon-set/check-circle"
+import { RefreshCw } from "@/components/ui/icon-set/refresh-cw"
 import { Button } from "@/components/ui/button"
 
 export interface DirectProductUploadProps {

@@ -1,7 +1,10 @@
 "use client"
 
 import React from "react"
-import { AlertCircle, CheckCircle2, Clock, Wrench } from "@/components/ui/icons"
+import { AlertCircle } from "@/components/ui/icon-set/alert-circle"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
+import { Clock } from "@/components/ui/icon-set/clock"
+import { Wrench } from "@/components/ui/icon-set/wrench"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"

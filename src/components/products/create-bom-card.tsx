@@ -2,7 +2,9 @@
 
 import { InfoTip } from "@/components/ui/info-tip"
 import React from "react"
-import { Plus, Trash2, FileText } from "@/components/ui/icons"
+import { Plus } from "@/components/ui/icon-set/plus"
+import { Trash2 } from "@/components/ui/icon-set/trash2"
+import { FileText } from "@/components/ui/icon-set/file-text"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"

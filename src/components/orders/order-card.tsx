@@ -1,7 +1,9 @@
 "use client"
 
 import React from "react"
-import { Eye, Flower2, Heart } from "@/components/ui/icons"
+import { Eye } from "@/components/ui/icon-set/eye"
+import { Flower2 } from "@/components/ui/icon-set/flower2"
+import { Heart } from "@/components/ui/icon-set/heart"
 import { useI18n } from "@/lib/i18n"
 
 export interface OrderItemCardProps {

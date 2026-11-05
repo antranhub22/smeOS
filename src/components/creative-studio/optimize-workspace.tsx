@@ -7,21 +7,19 @@
 
 "use client"
 
-import {
-  Camera,
-  Check,
-  ChevronRight,
-  Sparkles,
-  ArrowLeft,
-  ShieldCheck,
-  AlertTriangle,
-  Download,
-  RotateCcw,
-  Layers,
-  Upload,
-  Loader2,
-  Cloud,
-} from "@/components/ui/icons"
+import { Camera } from "@/components/ui/icon-set/camera"
+import { Check } from "@/components/ui/icon-set/check"
+import { ChevronRight } from "@/components/ui/icon-set/chevron-right"
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
+import { ArrowLeft } from "@/components/ui/icon-set/arrow-left"
+import { ShieldCheck } from "@/components/ui/icon-set/shield-check"
+import { AlertTriangle } from "@/components/ui/icon-set/alert-triangle"
+import { Download } from "@/components/ui/icon-set/download"
+import { RotateCcw } from "@/components/ui/icon-set/rotate-ccw"
+import { Layers } from "@/components/ui/icon-set/layers"
+import { Upload } from "@/components/ui/icon-set/upload"
+import { Loader2 } from "@/components/ui/icon-set/loader2"
+import { Cloud } from "@/components/ui/icon-set/cloud"
 import { ResultCard } from "@/components/result/result-card"
 import { FlowSteps } from "@/components/flow/flow-steps"
 import { Button } from "@/components/ui/button"

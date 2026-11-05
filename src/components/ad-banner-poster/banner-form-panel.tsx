@@ -1,7 +1,8 @@
 "use client"
 
 import React, { useState } from "react"
-import { Zap, SlidersHorizontal } from "@/components/ui/icons"
+import { Zap } from "@/components/ui/icon-set/zap"
+import { SlidersHorizontal } from "@/components/ui/icon-set/sliders-horizontal"
 import type {
   BannerCopyPayload,
   BannerBrandInfo,

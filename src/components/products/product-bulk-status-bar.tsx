@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
-import { X } from "@/components/ui/icons"
+import { X } from "@/components/ui/icon-set/x"
 import { Button } from "@/components/ui/button"
 import { readApiError } from "@/components/greeting-card/api-error"
 import { useConfirmDialog } from "@/components/ui/confirm-dialog"

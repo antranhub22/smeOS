@@ -1,7 +1,11 @@
 "use client"
 
 import React, { useState } from "react"
-import { AlertTriangle, Trash2, Clock, ShieldCheck, Loader2 } from "@/components/ui/icons"
+import { AlertTriangle } from "@/components/ui/icon-set/alert-triangle"
+import { Trash2 } from "@/components/ui/icon-set/trash2"
+import { Clock } from "@/components/ui/icon-set/clock"
+import { ShieldCheck } from "@/components/ui/icon-set/shield-check"
+import { Loader2 } from "@/components/ui/icon-set/loader2"
 import { Button } from "@/components/ui/button"
 import { Dialog } from "@/components/ui/dialog"
 

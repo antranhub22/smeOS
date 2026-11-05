@@ -2,7 +2,11 @@
 
 import * as React from "react"
 import Link from "next/link"
-import { ExternalLink, Copy, Check, FileCode, Layers } from "@/components/ui/icons"
+import { ExternalLink } from "@/components/ui/icon-set/external-link"
+import { Copy } from "@/components/ui/icon-set/copy"
+import { Check } from "@/components/ui/icon-set/check"
+import { FileCode } from "@/components/ui/icon-set/file-code"
+import { Layers } from "@/components/ui/icon-set/layers"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import type { ScreenItem } from "@/modules/platform/infra/screen-scanner"

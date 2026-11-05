@@ -1,7 +1,9 @@
 "use client"
 
 import React from "react"
-import { Sparkles, ArrowRight, CheckCircle2 } from "@/components/ui/icons"
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
+import { ArrowRight } from "@/components/ui/icon-set/arrow-right"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
 import { COMING_SOON_LABEL } from "@/lib/feature-lock"
 import type { JourneyDefinition } from "@/modules/journey/domain/journey-model"
 import { useSession } from "@/lib/session"

@@ -1,7 +1,9 @@
 "use client"
 
 import React from "react"
-import { ArrowLeft, Sparkles, CheckCircle2 } from "@/components/ui/icons"
+import { ArrowLeft } from "@/components/ui/icon-set/arrow-left"
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { ResultCard, type ResultField, type ResultFieldItem, type JudgmentState } from "@/components/result/result-card"

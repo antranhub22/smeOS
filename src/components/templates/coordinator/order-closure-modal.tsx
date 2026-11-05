@@ -1,7 +1,12 @@
 "use client"
 
 import React, { useState } from "react"
-import { Award, CheckCircle2, Clock, Star, FileCheck, XCircle } from "@/components/ui/icons"
+import { Award } from "@/components/ui/icon-set/award"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
+import { Clock } from "@/components/ui/icon-set/clock"
+import { Star } from "@/components/ui/icon-set/star"
+import { FileCheck } from "@/components/ui/icon-set/file-check"
+import { XCircle } from "@/components/ui/icon-set/x-circle"
 import { Button } from "@/components/ui/button"
 import { Dialog } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"

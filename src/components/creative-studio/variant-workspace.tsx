@@ -10,18 +10,16 @@
 
 import { useState, useEffect, useContext, useMemo, useRef } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
-import {
-  Sparkles,
-  ArrowLeft,
-  ShieldCheck,
-  Download,
-  RotateCcw,
-  Image as ImageIcon,
-  Check,
-  AlertTriangle,
-  CheckCircle2,
-  Camera,
-} from "@/components/ui/icons"
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
+import { ArrowLeft } from "@/components/ui/icon-set/arrow-left"
+import { ShieldCheck } from "@/components/ui/icon-set/shield-check"
+import { Download } from "@/components/ui/icon-set/download"
+import { RotateCcw } from "@/components/ui/icon-set/rotate-ccw"
+import { Image as ImageIcon } from "@/components/ui/icon-set/image"
+import { Check } from "@/components/ui/icon-set/check"
+import { AlertTriangle } from "@/components/ui/icon-set/alert-triangle"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
+import { Camera } from "@/components/ui/icon-set/camera"
 import { CreativeStudioContext } from "@/app/(app)/creative-studio/page"
 import type { PublishRatio } from "@/modules/creative-production/domain/publishing-rules"
 import {

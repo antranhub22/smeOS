@@ -1,15 +1,13 @@
 "use client"
 
 import React, { useState, useEffect, useMemo, useCallback } from "react"
-import {
-  Users,
-  Search,
-  Plus,
-  CheckCircle2,
-  AlertCircle,
-  RefreshCw,
-  X,
-} from "@/components/ui/icons"
+import { Users } from "@/components/ui/icon-set/users"
+import { Search } from "@/components/ui/icon-set/search"
+import { Plus } from "@/components/ui/icon-set/plus"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
+import { AlertCircle } from "@/components/ui/icon-set/alert-circle"
+import { RefreshCw } from "@/components/ui/icon-set/refresh-cw"
+import { X } from "@/components/ui/icon-set/x"
 import { Dialog } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"

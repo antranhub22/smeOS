@@ -1,7 +1,8 @@
 "use client"
 
 import React from "react"
-import { X, SlidersHorizontal } from "@/components/ui/icons"
+import { X } from "@/components/ui/icon-set/x"
+import { SlidersHorizontal } from "@/components/ui/icon-set/sliders-horizontal"
 import { Button } from "@/components/ui/button"
 import {
   SORT_OPTIONS,

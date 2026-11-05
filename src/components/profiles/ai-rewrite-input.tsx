@@ -1,7 +1,11 @@
 "use client"
 
 import React, { useState } from "react"
-import { Sparkles, Loader2, Check, ArrowRight, Wand2 } from "@/components/ui/icons"
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
+import { Loader2 } from "@/components/ui/icon-set/loader2"
+import { Check } from "@/components/ui/icon-set/check"
+import { ArrowRight } from "@/components/ui/icon-set/arrow-right"
+import { Wand2 } from "@/components/ui/icon-set/wand2"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 

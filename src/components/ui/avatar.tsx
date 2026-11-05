@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { Avatar as BaseAvatar } from "@base-ui/react/avatar"
-import { User } from "@/components/ui/icons"
+import { User } from "@/components/ui/icon-set/user"
 import { cn } from "@/lib/utils"
 
 export type AvatarSize = "xs" | "sm" | "md" | "lg" | "xl"

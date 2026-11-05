@@ -2,7 +2,11 @@
 
 import type { ReactNode } from "react"
 import { usePathname, useRouter } from "next/navigation"
-import { BookOpen, Calculator, ClipboardList, Package, TrendingUp } from "@/components/ui/icons"
+import { BookOpen } from "@/components/ui/icon-set/book-open"
+import { Calculator } from "@/components/ui/icon-set/calculator"
+import { ClipboardList } from "@/components/ui/icon-set/clipboard-list"
+import { Package } from "@/components/ui/icon-set/package"
+import { TrendingUp } from "@/components/ui/icon-set/trending-up"
 import { TabActionHeader, type TabItem } from "@/components/ui/tab-header"
 import { EntitlementGate } from "@/components/ui/entitlement-gate"
 import { InlineError } from "@/components/ui/inline-error"

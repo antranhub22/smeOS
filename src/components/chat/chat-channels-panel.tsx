@@ -2,12 +2,10 @@
 
 import { useI18n } from "@/lib/i18n"
 import React, { useState, useEffect, useCallback } from "react"
-import {
-  Globe,
-  Copy,
-  Check,
-  Loader2,
-} from "@/components/ui/icons"
+import { Globe } from "@/components/ui/icon-set/globe"
+import { Copy } from "@/components/ui/icon-set/copy"
+import { Check } from "@/components/ui/icon-set/check"
+import { Loader2 } from "@/components/ui/icon-set/loader2"
 import { Button } from "@/components/ui/button"
 import { ChannelIntegrationCard } from "@/components/chat/channel-integration-card"
 import { PublicChatSurfaceSettings } from "@/components/chat/public-chat-surface-settings"

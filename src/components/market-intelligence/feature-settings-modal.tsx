@@ -1,17 +1,16 @@
 "use client";
 
 import React, { useState } from "react";
-import {
-  X,
-  Clock,
-  FileInput,
-  FileOutput,
-  Save,
-  CheckCircle2,
-  TrendingUp,
-  Search,
-  Camera,
-} from "@/components/ui/icons";
+import { X } from "@/components/ui/icon-set/x"
+import { Clock } from "@/components/ui/icon-set/clock"
+import { FileInput } from "@/components/ui/icon-set/file-input"
+import { FileOutput } from "@/components/ui/icon-set/file-output"
+import { Save } from "@/components/ui/icon-set/save"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
+import { TrendingUp } from "@/components/ui/icon-set/trending-up"
+import { Search } from "@/components/ui/icon-set/search"
+import { Camera } from "@/components/ui/icon-set/camera"
+;
 import {
   FeatureKey,
   SettingsScheduleTab,

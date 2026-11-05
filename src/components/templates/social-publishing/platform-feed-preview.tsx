@@ -1,7 +1,7 @@
 "use client"
 
 import React, { useState } from "react"
-import { Sparkles } from "@/components/ui/icons"
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { SocialPostPreview } from "@/components/templates/content-engine/social-post-preview"

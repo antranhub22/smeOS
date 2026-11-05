@@ -4,7 +4,11 @@ import React, { useState } from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { StatTile } from "@/components/ui/stat-tile"
-import { Building2, Clock, AlertTriangle, ArrowRight, Zap } from "@/components/ui/icons"
+import { Building2 } from "@/components/ui/icon-set/building2"
+import { Clock } from "@/components/ui/icon-set/clock"
+import { AlertTriangle } from "@/components/ui/icon-set/alert-triangle"
+import { ArrowRight } from "@/components/ui/icon-set/arrow-right"
+import { Zap } from "@/components/ui/icon-set/zap"
 import { VietQrTopupModal } from "@/components/platform/vietqr-topup-modal"
 
 export interface PlatformOrganizationSummary {

@@ -1,5 +1,7 @@
 import React from "react"
-import { CheckCircle2, Sparkles, Layers } from "@/components/ui/icons"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
+import { Layers } from "@/components/ui/icon-set/layers"
 import type { PartnerStoreProduction } from "@/modules/platform/domain/partner-marketplace.types"
 
 interface MarketplaceCraftTabProps {

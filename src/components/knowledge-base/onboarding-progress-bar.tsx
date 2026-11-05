@@ -1,7 +1,10 @@
 "use client"
 
 import React from "react"
-import { CheckCircle2, Circle, Sparkles, ShieldCheck } from "@/components/ui/icons"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
+import { Circle } from "@/components/ui/icon-set/circle"
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
+import { ShieldCheck } from "@/components/ui/icon-set/shield-check"
 
 interface OnboardingStep {
   id: string

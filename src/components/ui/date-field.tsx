@@ -1,7 +1,7 @@
 "use client"
 
 import * as React from "react"
-import { Calendar } from "@/components/ui/icons"
+import { Calendar } from "@/components/ui/icon-set/calendar"
 import { useFormField } from "@/components/ui/form-field"
 import { cn } from "@/lib/utils"
 

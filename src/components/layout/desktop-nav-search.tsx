@@ -5,7 +5,8 @@
  */
 
 import type { KeyboardEvent, RefObject } from "react"
-import { Search, X } from "@/components/ui/icons"
+import { Search } from "@/components/ui/icon-set/search"
+import { X } from "@/components/ui/icon-set/x"
 import { cn } from "@/lib/utils"
 
 interface DesktopNavSearchProps {

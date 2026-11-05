@@ -1,7 +1,10 @@
 "use client"
 
 import { useState } from "react"
-import { BarChart3, Copy, Download, Power } from "@/components/ui/icons"
+import { BarChart3 } from "@/components/ui/icon-set/bar-chart3"
+import { Copy } from "@/components/ui/icon-set/copy"
+import { Download } from "@/components/ui/icon-set/download"
+import { Power } from "@/components/ui/icon-set/power"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { triggerDownload } from "@/core/media/qr-engine"

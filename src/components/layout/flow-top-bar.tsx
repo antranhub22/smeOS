@@ -1,6 +1,6 @@
 "use client"
 
-import { ArrowLeft } from "@/components/ui/icons"
+import { ArrowLeft } from "@/components/ui/icon-set/arrow-left"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 

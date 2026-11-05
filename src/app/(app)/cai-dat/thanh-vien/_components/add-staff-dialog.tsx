@@ -1,7 +1,11 @@
 "use client"
 
 import { useState, type FormEvent } from "react"
-import { UserPlus, Mail, Phone, Shield, User } from "@/components/ui/icons"
+import { UserPlus } from "@/components/ui/icon-set/user-plus"
+import { Mail } from "@/components/ui/icon-set/mail"
+import { Shield } from "@/components/ui/icon-set/shield"
+import { User } from "@/components/ui/icon-set/user"
+import { Phone } from "@/components/ui/icon-set/phone"
 import { Dialog } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"

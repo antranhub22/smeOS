@@ -1,7 +1,11 @@
 "use client"
 
 import React from "react"
-import { ShoppingCart, Clock, User, MapPin, Tag } from "@/components/ui/icons"
+import { ShoppingCart } from "@/components/ui/icon-set/shopping-cart"
+import { Clock } from "@/components/ui/icon-set/clock"
+import { User } from "@/components/ui/icon-set/user"
+import { MapPin } from "@/components/ui/icon-set/map-pin"
+import { Tag } from "@/components/ui/icon-set/tag"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 

@@ -2,7 +2,8 @@
 
 import { safeImageSrc } from "@/lib/safe-image-src"
 import React, { useState } from "react"
-import { Download, CheckCircle2 } from "@/components/ui/icons"
+import { Download } from "@/components/ui/icon-set/download"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
 import { Button } from "@/components/ui/button"
 import type { ProductSetVariantResult, ProductImageSetResult } from "@/modules/product-image-set/use-cases/get-product-image-set-result"
 

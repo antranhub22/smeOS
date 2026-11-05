@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 
-import { AlertCircle } from "@/components/ui/icons"
+import { AlertCircle } from "@/components/ui/icon-set/alert-circle"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { formatDateTime } from "@/lib/i18n/formatters"

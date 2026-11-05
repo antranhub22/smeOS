@@ -1,6 +1,10 @@
 "use client"
 
-import { Printer, Ban, CheckCircle, Truck, Flower2 } from "@/components/ui/icons"
+import { Printer } from "@/components/ui/icon-set/printer"
+import { Ban } from "@/components/ui/icon-set/ban"
+import { CheckCircle } from "@/components/ui/icon-set/check-circle"
+import { Truck } from "@/components/ui/icon-set/truck"
+import { Flower2 } from "@/components/ui/icon-set/flower2"
 import { Button } from "@/components/ui/button"
 import { useI18n } from "@/lib/i18n"
 

@@ -3,16 +3,14 @@
 import { useEffect, useState, useCallback, useMemo } from "react"
 import { useRouter } from "next/navigation"
 import type { Route } from "next"
-import {
-  PackagePlus,
-  BookOpen,
-  DollarSign,
-  AlertCircle,
-  CheckCircle2,
-  ChevronRight,
-  Package,
-  Layers,
-} from "@/components/ui/icons"
+import { PackagePlus } from "@/components/ui/icon-set/package-plus"
+import { BookOpen } from "@/components/ui/icon-set/book-open"
+import { DollarSign } from "@/components/ui/icon-set/dollar-sign"
+import { AlertCircle } from "@/components/ui/icon-set/alert-circle"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
+import { ChevronRight } from "@/components/ui/icon-set/chevron-right"
+import { Package } from "@/components/ui/icon-set/package"
+import { Layers } from "@/components/ui/icon-set/layers"
 import { useSession } from "@/lib/session"
 import { getIndustryTerminology } from "@/modules/organization/domain/industry-profile"
 import { Card } from "@/components/ui/card"

@@ -2,7 +2,9 @@
 
 import { useEffect, useState, useCallback } from "react"
 import { useRouter } from "next/navigation"
-import { AlertTriangle, Cpu, TrendingUp } from "@/components/ui/icons"
+import { AlertTriangle } from "@/components/ui/icon-set/alert-triangle"
+import { Cpu } from "@/components/ui/icon-set/cpu"
+import { TrendingUp } from "@/components/ui/icon-set/trending-up"
 import { useSession } from "@/lib/session"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"

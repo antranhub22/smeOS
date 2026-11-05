@@ -1,6 +1,8 @@
 "use client"
 
-import { Calendar, Receipt, Shield } from "@/components/ui/icons"
+import { Calendar } from "@/components/ui/icon-set/calendar"
+import { Receipt } from "@/components/ui/icon-set/receipt"
+import { Shield } from "@/components/ui/icon-set/shield"
 
 export type CustomerDetailTab = "profile" | "orders" | "occasions" | "privacy"
 

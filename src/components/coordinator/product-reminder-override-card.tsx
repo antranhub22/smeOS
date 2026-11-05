@@ -1,15 +1,13 @@
 "use client"
 
 import React, { useState, useEffect } from "react"
-import {
-  Bell,
-  RefreshCw,
-  RotateCcw,
-  Save,
-  CheckCircle2,
-  AlertCircle,
-  Info,
-} from "@/components/ui/icons"
+import { Bell } from "@/components/ui/icon-set/bell"
+import { RefreshCw } from "@/components/ui/icon-set/refresh-cw"
+import { RotateCcw } from "@/components/ui/icon-set/rotate-ccw"
+import { Save } from "@/components/ui/icon-set/save"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
+import { AlertCircle } from "@/components/ui/icon-set/alert-circle"
+import { Info } from "@/components/ui/icon-set/info"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"

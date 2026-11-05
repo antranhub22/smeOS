@@ -1,7 +1,11 @@
 "use client"
 
 import React, { useState } from "react"
-import { X, Sparkles, Check, LayoutGrid, ImageIcon } from "@/components/ui/icons"
+import { X } from "@/components/ui/icon-set/x"
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
+import { Check } from "@/components/ui/icon-set/check"
+import { LayoutGrid } from "@/components/ui/icon-set/layout-grid"
+import { ImageIcon } from "@/components/ui/icon-set/image-icon"
 import { Dialog } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import {

@@ -1,7 +1,14 @@
 "use client";
 
 import React, { useState } from "react";
-import { CalendarDays, Tag, ArrowRight, Sparkles, CheckCircle2, Video, Play } from "@/components/ui/icons";
+import { CalendarDays } from "@/components/ui/icon-set/calendar-days"
+import { Tag } from "@/components/ui/icon-set/tag"
+import { ArrowRight } from "@/components/ui/icon-set/arrow-right"
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
+import { Video } from "@/components/ui/icon-set/video"
+import { Play } from "@/components/ui/icon-set/play"
+;
 import type { OpportunityItem } from "./opportunity-card";
 import { determineTrendLifecycle, LIFECYCLE_SPECS } from "@/modules/market-intelligence/domain/trend-lifecycle";
 import { getDualOpportunityEvidencePreview, getOpportunityHeadline } from "./opportunity-illustration";

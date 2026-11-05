@@ -1,7 +1,11 @@
 "use client"
 
 import React, { useState } from "react"
-import { Copy, Check, Phone, MessageSquare, CheckCircle } from "@/components/ui/icons"
+import { Copy } from "@/components/ui/icon-set/copy"
+import { Check } from "@/components/ui/icon-set/check"
+import { Phone } from "@/components/ui/icon-set/phone"
+import { MessageSquare } from "@/components/ui/icon-set/message-square"
+import { CheckCircle } from "@/components/ui/icon-set/check-circle"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { buildCareCardShareText, type CareCardContent } from "@/modules/care-cards/domain/care-card"

@@ -10,7 +10,10 @@
  */
 
 import { useState, useRef, useEffect, useCallback } from "react"
-import { Monitor, ChevronDown, Check, FlaskConical } from "@/components/ui/icons"
+import { Monitor } from "@/components/ui/icon-set/monitor"
+import { ChevronDown } from "@/components/ui/icon-set/chevron-down"
+import { Check } from "@/components/ui/icon-set/check"
+import { FlaskConical } from "@/components/ui/icon-set/flask-conical"
 import { Button } from "@/components/ui/button"
 import { useSession } from "@/lib/session"
 import { cn } from "@/lib/utils"

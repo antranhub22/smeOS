@@ -1,14 +1,12 @@
 import React from "react"
-import {
-  ShieldCheck,
-  MapPin,
-  Globe,
-  Calendar,
-  Users,
-  Target,
-  CreditCard,
-  TrendingUp,
-} from "@/components/ui/icons"
+import { ShieldCheck } from "@/components/ui/icon-set/shield-check"
+import { MapPin } from "@/components/ui/icon-set/map-pin"
+import { Globe } from "@/components/ui/icon-set/globe"
+import { Calendar } from "@/components/ui/icon-set/calendar"
+import { Users } from "@/components/ui/icon-set/users"
+import { Target } from "@/components/ui/icon-set/target"
+import { CreditCard } from "@/components/ui/icon-set/credit-card"
+import { TrendingUp } from "@/components/ui/icon-set/trending-up"
 import type {
   PartnerStoreIdentity,
   PartnerStoreContact,

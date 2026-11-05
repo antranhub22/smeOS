@@ -1,7 +1,10 @@
 "use client"
 
 import { Button } from "@/components/ui/button"
-import { Check, CheckCircle2, FileDown, Sparkles } from "@/components/ui/icons"
+import { Check } from "@/components/ui/icon-set/check"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
+import { FileDown } from "@/components/ui/icon-set/file-down"
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
 import { formatNumber } from "@/lib/i18n/formatters"
 import type { PrintPreset } from "@/modules/print/domain/print-preset"
 

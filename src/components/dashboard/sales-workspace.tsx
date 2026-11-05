@@ -2,7 +2,11 @@
 
 import { useEffect, useState, useCallback } from "react"
 import { useRouter } from "next/navigation"
-import { CalendarHeart, ChevronRight, ShoppingBag, Tag, UserPlus } from "@/components/ui/icons"
+import { CalendarHeart } from "@/components/ui/icon-set/calendar-heart"
+import { ChevronRight } from "@/components/ui/icon-set/chevron-right"
+import { ShoppingBag } from "@/components/ui/icon-set/shopping-bag"
+import { Tag } from "@/components/ui/icon-set/tag"
+import { UserPlus } from "@/components/ui/icon-set/user-plus"
 import { useSession } from "@/lib/session"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"

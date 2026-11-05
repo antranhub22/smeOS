@@ -13,7 +13,15 @@
 
 import React, { useCallback, useEffect, useState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
-import { BarChart3, Brain, Loader2, MessageCircle, Plus, Rocket, Save, Target, Trash2 } from "@/components/ui/icons"
+import { BarChart3 } from "@/components/ui/icon-set/bar-chart3"
+import { Brain } from "@/components/ui/icon-set/brain"
+import { Loader2 } from "@/components/ui/icon-set/loader2"
+import { MessageCircle } from "@/components/ui/icon-set/message-circle"
+import { Plus } from "@/components/ui/icon-set/plus"
+import { Rocket } from "@/components/ui/icon-set/rocket"
+import { Save } from "@/components/ui/icon-set/save"
+import { Target } from "@/components/ui/icon-set/target"
+import { Trash2 } from "@/components/ui/icon-set/trash2"
 
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"

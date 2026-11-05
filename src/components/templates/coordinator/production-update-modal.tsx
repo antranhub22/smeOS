@@ -1,16 +1,14 @@
 "use client"
 
 import React, { useState } from "react"
-import {
-  Sliders,
-  AlertTriangle,
-  CheckCircle2,
-  Camera,
-  Upload,
-  Eye,
-  Trash2,
-  ArrowRight,
-} from "@/components/ui/icons"
+import { Sliders } from "@/components/ui/icon-set/sliders"
+import { AlertTriangle } from "@/components/ui/icon-set/alert-triangle"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
+import { Camera } from "@/components/ui/icon-set/camera"
+import { Upload } from "@/components/ui/icon-set/upload"
+import { Eye } from "@/components/ui/icon-set/eye"
+import { Trash2 } from "@/components/ui/icon-set/trash2"
+import { ArrowRight } from "@/components/ui/icon-set/arrow-right"
 import { Button } from "@/components/ui/button"
 import { safeImageSrc } from "@/lib/safe-image-src"
 import { Dialog } from "@/components/ui/dialog"

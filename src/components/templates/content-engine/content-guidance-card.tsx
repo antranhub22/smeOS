@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { Sparkles } from "@/components/ui/icons"
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
 import { FeatureGuidanceCard } from "@/components/templates/shared/feature-guidance-card"
 import { useI18n } from "@/lib/i18n"
 

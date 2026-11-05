@@ -1,7 +1,12 @@
 "use client";
 
 import React from "react";
-import { CheckCircle2, AlertTriangle, FlaskConical, Lightbulb, Sparkles } from "@/components/ui/icons";
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
+import { AlertTriangle } from "@/components/ui/icon-set/alert-triangle"
+import { FlaskConical } from "@/components/ui/icon-set/flask-conical"
+import { Lightbulb } from "@/components/ui/icon-set/lightbulb"
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
+;
 import type { ProductImprovement } from "@/modules/market-intelligence/domain/product-intelligence-types";
 
 interface ProductImprovementCardProps {

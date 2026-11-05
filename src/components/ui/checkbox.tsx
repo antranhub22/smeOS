@@ -2,7 +2,7 @@
 
 import * as React from "react"
 import { Checkbox as BaseCheckbox } from "@base-ui/react/checkbox"
-import { Check } from "@/components/ui/icons"
+import { Check } from "@/components/ui/icon-set/check"
 import { cn } from "@/lib/utils"
 
 export interface CheckboxProps

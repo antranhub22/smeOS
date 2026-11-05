@@ -2,7 +2,9 @@
 
 import React from "react"
 import { Card } from "@/components/ui/card"
-import { Folder, ChevronRight, FileSpreadsheet } from "@/components/ui/icons"
+import { Folder } from "@/components/ui/icon-set/folder"
+import { ChevronRight } from "@/components/ui/icon-set/chevron-right"
+import { FileSpreadsheet } from "@/components/ui/icon-set/file-spreadsheet"
 import type { StoreDomainFolder } from "@/modules/field-platform/use-cases/get-store-folder-data"
 
 interface DomainFolderCardProps {

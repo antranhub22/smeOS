@@ -1,7 +1,9 @@
 "use client"
 
 import React from "react"
-import { Search, Plus, RefreshCw } from "@/components/ui/icons"
+import { Search } from "@/components/ui/icon-set/search"
+import { Plus } from "@/components/ui/icon-set/plus"
+import { RefreshCw } from "@/components/ui/icon-set/refresh-cw"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 

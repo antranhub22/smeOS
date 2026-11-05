@@ -1,19 +1,17 @@
 "use client"
 
 import React, { useState, useEffect, useCallback } from "react"
-import {
-  Trash2,
-  RotateCcw,
-  Clock,
-  AlertTriangle,
-  RefreshCw,
-  Search,
-  Folder,
-  Layers,
-  ShoppingBag,
-  Loader2,
-  ShieldCheck,
-} from "@/components/ui/icons"
+import { Trash2 } from "@/components/ui/icon-set/trash2"
+import { RotateCcw } from "@/components/ui/icon-set/rotate-ccw"
+import { Clock } from "@/components/ui/icon-set/clock"
+import { AlertTriangle } from "@/components/ui/icon-set/alert-triangle"
+import { RefreshCw } from "@/components/ui/icon-set/refresh-cw"
+import { Search } from "@/components/ui/icon-set/search"
+import { Folder } from "@/components/ui/icon-set/folder"
+import { Layers } from "@/components/ui/icon-set/layers"
+import { ShoppingBag } from "@/components/ui/icon-set/shopping-bag"
+import { Loader2 } from "@/components/ui/icon-set/loader2"
+import { ShieldCheck } from "@/components/ui/icon-set/shield-check"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useConfirmDialog } from "@/components/ui/confirm-dialog"

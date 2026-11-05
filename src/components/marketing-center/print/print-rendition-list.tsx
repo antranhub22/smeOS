@@ -3,12 +3,10 @@
 import React, { useEffect, useState } from "react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import {
-  FileDown,
-  Printer,
-  CheckCircle2,
-  Clock,
-} from "@/components/ui/icons"
+import { FileDown } from "@/components/ui/icon-set/file-down"
+import { Printer } from "@/components/ui/icon-set/printer"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
+import { Clock } from "@/components/ui/icon-set/clock"
 import type { PrintRendition } from "@/modules/print/domain/print-rendition"
 import { getPrintPreset } from "@/modules/print/domain/print-preset"
 import { formatDateTime } from "@/lib/i18n/formatters"

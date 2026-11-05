@@ -1,24 +1,22 @@
 "use client"
 
 import { useState, useMemo } from "react"
-import {
-  Folder,
-  Layers,
-  Sparkles,
-  CheckCircle2,
-  Copy,
-  Check,
-  Search,
-  RefreshCw,
-  Tag,
-  Image as ImageIcon,
-  FileText,
-  ChevronRight,
-  ChevronLeft,
-  Filter,
-  ArrowRight,
-  Clock,
-} from "@/components/ui/icons"
+import { Folder } from "@/components/ui/icon-set/folder"
+import { Layers } from "@/components/ui/icon-set/layers"
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
+import { Copy } from "@/components/ui/icon-set/copy"
+import { Check } from "@/components/ui/icon-set/check"
+import { Search } from "@/components/ui/icon-set/search"
+import { RefreshCw } from "@/components/ui/icon-set/refresh-cw"
+import { Tag } from "@/components/ui/icon-set/tag"
+import { Image as ImageIcon } from "@/components/ui/icon-set/image"
+import { FileText } from "@/components/ui/icon-set/file-text"
+import { ChevronRight } from "@/components/ui/icon-set/chevron-right"
+import { ChevronLeft } from "@/components/ui/icon-set/chevron-left"
+import { Filter } from "@/components/ui/icon-set/filter"
+import { ArrowRight } from "@/components/ui/icon-set/arrow-right"
+import { Clock } from "@/components/ui/icon-set/clock"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {

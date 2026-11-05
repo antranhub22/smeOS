@@ -1,7 +1,7 @@
 "use client"
 
 import { useCallback, useEffect, useState } from "react"
-import { ShoppingBag } from "@/components/ui/icons"
+import { ShoppingBag } from "@/components/ui/icon-set/shopping-bag"
 import { Badge } from "@/components/ui/badge"
 import { EmptyState } from "@/components/ui/empty-state"
 import { InlineError } from "@/components/ui/inline-error"

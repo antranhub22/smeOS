@@ -1,13 +1,11 @@
 "use client"
 
 import React, { useState, useEffect, useRef } from "react"
-import {
-  Upload,
-  Image as ImageIcon,
-  Trash2,
-  CheckCircle2,
-  Loader2,
-} from "@/components/ui/icons"
+import { Upload } from "@/components/ui/icon-set/upload"
+import { Image as ImageIcon } from "@/components/ui/icon-set/image"
+import { Trash2 } from "@/components/ui/icon-set/trash2"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
+import { Loader2 } from "@/components/ui/icon-set/loader2"
 import { Button } from "@/components/ui/button"
 import { PhotoUploadGuidance, LOGO_GUIDANCE } from "./photo-upload-guidance"
 import { uploadBrandAsset, resolveAssetViewUrl } from "./upload-brand-asset"

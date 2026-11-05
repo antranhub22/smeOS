@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { Users } from "@/components/ui/icons"
+import { Users } from "@/components/ui/icon-set/users"
 import { FeatureGuidanceCard } from "@/components/templates/shared/feature-guidance-card"
 import { useI18n } from "@/lib/i18n"
 

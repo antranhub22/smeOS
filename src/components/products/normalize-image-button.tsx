@@ -1,7 +1,12 @@
 "use client"
 
 import React from "react"
-import { Wand2, CheckCircle2, Loader2, AlertCircle, RefreshCw, X } from "@/components/ui/icons"
+import { Wand2 } from "@/components/ui/icon-set/wand2"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
+import { Loader2 } from "@/components/ui/icon-set/loader2"
+import { AlertCircle } from "@/components/ui/icon-set/alert-circle"
+import { RefreshCw } from "@/components/ui/icon-set/refresh-cw"
+import { X } from "@/components/ui/icon-set/x"
 import { Button } from "@/components/ui/button"
 import type { IndustryPluginContract } from "@/modules/organization/domain/industry-plugin-contract"
 import { useNormalizeImage } from "./use-normalize-image"

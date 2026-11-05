@@ -2,15 +2,13 @@
 
 import { useI18n } from "@/lib/i18n"
 import { useEffect, useState, useCallback, useMemo } from "react"
-import {
-  ShieldCheck,
-  Search,
-  RefreshCw,
-  AlertCircle,
-  Eye,
-  Calendar,
-  FileCode,
-} from "@/components/ui/icons"
+import { ShieldCheck } from "@/components/ui/icon-set/shield-check"
+import { Search } from "@/components/ui/icon-set/search"
+import { RefreshCw } from "@/components/ui/icon-set/refresh-cw"
+import { AlertCircle } from "@/components/ui/icon-set/alert-circle"
+import { Eye } from "@/components/ui/icon-set/eye"
+import { Calendar } from "@/components/ui/icon-set/calendar"
+import { FileCode } from "@/components/ui/icon-set/file-code"
 import { useSession } from "@/lib/session"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"

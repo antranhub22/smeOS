@@ -1,7 +1,10 @@
 "use client"
 
 import React, { useState } from "react"
-import { Play, Check, ChevronRight, X } from "@/components/ui/icons"
+import { Play } from "@/components/ui/icon-set/play"
+import { Check } from "@/components/ui/icon-set/check"
+import { ChevronRight } from "@/components/ui/icon-set/chevron-right"
+import { X } from "@/components/ui/icon-set/x"
 import { Button } from "@/components/ui/button"
 import type { JourneyDefinition } from "@/modules/journey/domain/journey-model"
 

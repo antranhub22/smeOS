@@ -8,7 +8,10 @@ import { Button } from "@/components/ui/button"
 import { EmptyState } from "@/components/ui/empty-state"
 import { InlineError } from "@/components/ui/inline-error"
 import { SkeletonBlock } from "@/components/ui/skeleton"
-import { ArrowLeft, Megaphone, Plus, Sparkles } from "@/components/ui/icons"
+import { ArrowLeft } from "@/components/ui/icon-set/arrow-left"
+import { Megaphone } from "@/components/ui/icon-set/megaphone"
+import { Plus } from "@/components/ui/icon-set/plus"
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
 import { formatDateTime } from "@/lib/i18n/formatters"
 import {
   CAMPAIGN_OBJECTIVE_LABELS,

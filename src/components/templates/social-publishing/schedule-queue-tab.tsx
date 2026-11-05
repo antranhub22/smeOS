@@ -1,7 +1,10 @@
 "use client"
 
 import React from "react"
-import { Calendar, RefreshCw, Sparkles, CheckCircle2 } from "@/components/ui/icons"
+import { Calendar } from "@/components/ui/icon-set/calendar"
+import { RefreshCw } from "@/components/ui/icon-set/refresh-cw"
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { SchedulePostItemCard } from "./schedule-post-item-card"

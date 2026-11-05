@@ -1,5 +1,6 @@
 import React, { useState } from "react"
-import { ExternalLink, Store } from "@/components/ui/icons"
+import { ExternalLink } from "@/components/ui/icon-set/external-link"
+import { Store } from "@/components/ui/icon-set/store"
 import type { PartnerStoreMedia } from "@/modules/platform/domain/partner-marketplace.types"
 
 interface MarketplacePhotosTabProps {

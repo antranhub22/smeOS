@@ -1,7 +1,8 @@
 "use client"
 
 import React from "react"
-import { Palette, RefreshCw } from "@/components/ui/icons"
+import { Palette } from "@/components/ui/icon-set/palette"
+import { RefreshCw } from "@/components/ui/icon-set/refresh-cw"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { isValidHexColor } from "@/modules/profiles/domain/profile-rules"

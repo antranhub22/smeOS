@@ -1,4 +1,4 @@
-import { Info } from "@/components/ui/icons"
+import { Info } from "@/components/ui/icon-set/info"
 
 /**
  * Báo rõ màn hình đang ở giai đoạn xem trước: cấu hình chưa được lưu hoặc chưa áp vào nghiệp vụ.

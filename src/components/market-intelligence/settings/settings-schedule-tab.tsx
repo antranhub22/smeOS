@@ -1,7 +1,9 @@
 "use client";
 
 import React from "react";
-import { Plus, Trash2 } from "@/components/ui/icons";
+import { Plus } from "@/components/ui/icon-set/plus"
+import { Trash2 } from "@/components/ui/icon-set/trash2"
+;
 
 export type FeatureKey = "market" | "keyword" | "product";
 

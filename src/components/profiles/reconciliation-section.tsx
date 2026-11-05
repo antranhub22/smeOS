@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { HelpCircle } from "@/components/ui/icons"
+import { HelpCircle } from "@/components/ui/icon-set/help-circle"
 import type { StorePaymentMethodsConfig } from "@/modules/greeting-card/domain/store-payment-methods"
 
 interface ReconciliationSectionProps {

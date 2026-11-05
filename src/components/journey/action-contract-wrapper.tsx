@@ -1,7 +1,11 @@
 "use client"
 
 import React from "react"
-import { ArrowLeft, Loader2, AlertCircle, ArrowRight, RefreshCw } from "@/components/ui/icons"
+import { ArrowLeft } from "@/components/ui/icon-set/arrow-left"
+import { Loader2 } from "@/components/ui/icon-set/loader2"
+import { AlertCircle } from "@/components/ui/icon-set/alert-circle"
+import { ArrowRight } from "@/components/ui/icon-set/arrow-right"
+import { RefreshCw } from "@/components/ui/icon-set/refresh-cw"
 import { Button } from "@/components/ui/button"
 import { NextActions, type NextActionItem } from "./next-actions"
 

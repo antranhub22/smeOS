@@ -1,7 +1,10 @@
 "use client"
 
 import React from "react"
-import { Heart, Award, Tag, Sparkles } from "@/components/ui/icons"
+import { Heart } from "@/components/ui/icon-set/heart"
+import { Award } from "@/components/ui/icon-set/award"
+import { Tag } from "@/components/ui/icon-set/tag"
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
 import { Card } from "@/components/ui/card"
 import { useI18n } from "@/lib/i18n"
 

@@ -1,7 +1,9 @@
 "use client"
 
 import React, { useState } from "react"
-import { Layers, ChevronDown, Check } from "@/components/ui/icons"
+import { Layers } from "@/components/ui/icon-set/layers"
+import { ChevronDown } from "@/components/ui/icon-set/chevron-down"
+import { Check } from "@/components/ui/icon-set/check"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { IMAGE_SET_BUNDLES } from "@/modules/product-image-set/domain/bundle-catalog"

@@ -3,18 +3,16 @@
 import { useEffect, useState, useMemo } from "react"
 import Link from "next/link"
 import type { Route } from "next"
-import {
-  Users,
-  UserPlus,
-  ArrowLeft,
-  UserCheck,
-  Clock,
-  Building,
-  Search,
-  Shield,
-  AlertCircle,
-  RefreshCw,
-} from "@/components/ui/icons"
+import { Users } from "@/components/ui/icon-set/users"
+import { UserPlus } from "@/components/ui/icon-set/user-plus"
+import { ArrowLeft } from "@/components/ui/icon-set/arrow-left"
+import { UserCheck } from "@/components/ui/icon-set/user-check"
+import { Clock } from "@/components/ui/icon-set/clock"
+import { Building } from "@/components/ui/icon-set/building"
+import { Search } from "@/components/ui/icon-set/search"
+import { Shield } from "@/components/ui/icon-set/shield"
+import { AlertCircle } from "@/components/ui/icon-set/alert-circle"
+import { RefreshCw } from "@/components/ui/icon-set/refresh-cw"
 import { useSession } from "@/lib/session"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"

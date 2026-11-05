@@ -1,19 +1,17 @@
 "use client"
 
 import React from "react"
-import {
-  Wand2,
-  Sliders,
-  Check,
-  AlertCircle,
-  Zap,
-  SunMedium,
-  Eraser,
-  Layers,
-  Maximize2,
-  Type,
-  Sparkles,
-} from "@/components/ui/icons"
+import { Wand2 } from "@/components/ui/icon-set/wand2"
+import { Sliders } from "@/components/ui/icon-set/sliders"
+import { Check } from "@/components/ui/icon-set/check"
+import { AlertCircle } from "@/components/ui/icon-set/alert-circle"
+import { Zap } from "@/components/ui/icon-set/zap"
+import { SunMedium } from "@/components/ui/icon-set/sun-medium"
+import { Eraser } from "@/components/ui/icon-set/eraser"
+import { Layers } from "@/components/ui/icon-set/layers"
+import { Maximize2 } from "@/components/ui/icon-set/maximize2"
+import { Type } from "@/components/ui/icon-set/type"
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
 import { Badge } from "@/components/ui/badge"
 import { Checkbox } from "@/components/ui/checkbox"
 import {

@@ -2,20 +2,18 @@
 
 import { useI18n } from "@/lib/i18n"
 import React, { useEffect, useState, useCallback } from "react"
-import {
-  Building2,
-  Store,
-  Users,
-  Copy,
-  CheckCircle2,
-  Link2,
-  ShieldCheck,
-  QrCode,
-  MessageSquare,
-  Layers,
-  Hash,
-  BadgeCheck,
-} from "@/components/ui/icons"
+import { Building2 } from "@/components/ui/icon-set/building2"
+import { Store } from "@/components/ui/icon-set/store"
+import { Users } from "@/components/ui/icon-set/users"
+import { Copy } from "@/components/ui/icon-set/copy"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
+import { Link2 } from "@/components/ui/icon-set/link2"
+import { ShieldCheck } from "@/components/ui/icon-set/shield-check"
+import { QrCode } from "@/components/ui/icon-set/qr-code"
+import { MessageSquare } from "@/components/ui/icon-set/message-square"
+import { Layers } from "@/components/ui/icon-set/layers"
+import { Hash } from "@/components/ui/icon-set/hash"
+import { BadgeCheck } from "@/components/ui/icon-set/badge-check"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { PageContainer } from "@/components/ui/page-container"

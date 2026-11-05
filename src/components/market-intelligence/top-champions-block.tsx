@@ -1,7 +1,14 @@
 "use client";
 
 import React, { useMemo, useState } from "react";
-import { Trophy, Crown, Play, Video, ArrowRight, Sparkles, ExternalLink } from "@/components/ui/icons";
+import { Trophy } from "@/components/ui/icon-set/trophy"
+import { Crown } from "@/components/ui/icon-set/crown"
+import { Play } from "@/components/ui/icon-set/play"
+import { Video } from "@/components/ui/icon-set/video"
+import { ArrowRight } from "@/components/ui/icon-set/arrow-right"
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
+import { ExternalLink } from "@/components/ui/icon-set/external-link"
+;
 import {
   findPeriodChampions,
   type PeriodChampion,

@@ -1,7 +1,8 @@
 "use client"
 
 import React from "react"
-import { ArrowRight, CheckCircle2 } from "@/components/ui/icons"
+import { ArrowRight } from "@/components/ui/icon-set/arrow-right"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
 
 export interface NextActionItem {
   id: string

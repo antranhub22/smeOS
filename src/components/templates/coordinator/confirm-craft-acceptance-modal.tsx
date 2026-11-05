@@ -1,7 +1,9 @@
 "use client"
 
 import React, { useState } from "react"
-import { CheckCircle2, AlertTriangle, ShieldCheck } from "@/components/ui/icons"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
+import { AlertTriangle } from "@/components/ui/icon-set/alert-triangle"
+import { ShieldCheck } from "@/components/ui/icon-set/shield-check"
 import { Dialog } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"

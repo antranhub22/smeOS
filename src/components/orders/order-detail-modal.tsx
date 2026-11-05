@@ -1,7 +1,12 @@
 "use client"
 
 import React, { useState } from "react"
-import { Clock, Loader2, Layers, FileText, Truck, Flower2 } from "@/components/ui/icons"
+import { Clock } from "@/components/ui/icon-set/clock"
+import { Loader2 } from "@/components/ui/icon-set/loader2"
+import { Layers } from "@/components/ui/icon-set/layers"
+import { FileText } from "@/components/ui/icon-set/file-text"
+import { Truck } from "@/components/ui/icon-set/truck"
+import { Flower2 } from "@/components/ui/icon-set/flower2"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Dialog } from "@/components/ui/dialog"
 import { FloristTicketCard } from "@/components/templates/orders/florist-ticket-card"

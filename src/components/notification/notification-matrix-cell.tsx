@@ -7,7 +7,9 @@
 "use client"
 
 import { useState, useRef, useEffect } from "react"
-import { Lock, Unlock, Loader2 } from "@/components/ui/icons"
+import { Lock } from "@/components/ui/icon-set/lock"
+import { Unlock } from "@/components/ui/icon-set/unlock"
+import { Loader2 } from "@/components/ui/icon-set/loader2"
 import { Button } from "@/components/ui/button"
 import { Switch } from "@/components/ui/switch"
 import type { MatrixCellState } from "./notification-matrix-types"

@@ -10,7 +10,12 @@
  */
 
 import { useCallback, useEffect, useRef, useState } from "react"
-import { CheckCircle2, Clapperboard, Download, Loader2, RotateCcw, ShieldCheck } from "@/components/ui/icons"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
+import { Clapperboard } from "@/components/ui/icon-set/clapperboard"
+import { Download } from "@/components/ui/icon-set/download"
+import { Loader2 } from "@/components/ui/icon-set/loader2"
+import { RotateCcw } from "@/components/ui/icon-set/rotate-ccw"
+import { ShieldCheck } from "@/components/ui/icon-set/shield-check"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"

@@ -1,7 +1,9 @@
 "use client"
 
 import { useState, useEffect, type FormEvent } from "react"
-import { ShieldCheck, AlertTriangle, Trash2 } from "@/components/ui/icons"
+import { ShieldCheck } from "@/components/ui/icon-set/shield-check"
+import { AlertTriangle } from "@/components/ui/icon-set/alert-triangle"
+import { Trash2 } from "@/components/ui/icon-set/trash2"
 import { Dialog } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { NativeSelect } from "@/components/ui/select"

@@ -1,7 +1,12 @@
 "use client"
 
 import React, { useState } from "react"
-import { Store, Lock, Unlock, Sparkles, Database, Check } from "@/components/ui/icons"
+import { Store } from "@/components/ui/icon-set/store"
+import { Lock } from "@/components/ui/icon-set/lock"
+import { Unlock } from "@/components/ui/icon-set/unlock"
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
+import { Database } from "@/components/ui/icon-set/database"
+import { Check } from "@/components/ui/icon-set/check"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { listAllIndustries, getIndustryDefinition, DEFAULT_INDUSTRY } from "@/modules/organization/domain/industry-profile"

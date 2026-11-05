@@ -2,14 +2,12 @@
 
 import React, { useState, useEffect, useRef, useCallback } from "react"
 import { useRouter } from "next/navigation"
-import {
-  Bot,
-  X,
-  Send,
-  Sparkles,
-  Loader2,
-  ArrowRight,
-} from "@/components/ui/icons"
+import { Bot } from "@/components/ui/icon-set/bot"
+import { X } from "@/components/ui/icon-set/x"
+import { Send } from "@/components/ui/icon-set/send"
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
+import { Loader2 } from "@/components/ui/icon-set/loader2"
+import { ArrowRight } from "@/components/ui/icon-set/arrow-right"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { CopilotMessageItem } from "@/components/chat/copilot-message-item"

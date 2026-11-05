@@ -1,14 +1,12 @@
 "use client"
 
 import React, { useState, useEffect } from "react"
-import {
-  Bell,
-  Clock,
-  Save,
-  CheckCircle2,
-  AlertCircle,
-  Info,
-} from "@/components/ui/icons"
+import { Bell } from "@/components/ui/icon-set/bell"
+import { Clock } from "@/components/ui/icon-set/clock"
+import { Save } from "@/components/ui/icon-set/save"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
+import { AlertCircle } from "@/components/ui/icon-set/alert-circle"
+import { Info } from "@/components/ui/icon-set/info"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"

@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { Check } from "@/components/ui/icons"
+import { Check } from "@/components/ui/icon-set/check"
 import {
   BANNER_PRESETS,
   type BannerStylePreset,

@@ -1,18 +1,16 @@
 "use client"
 
 import React, { useState } from "react"
-import {
-  TrendingUp,
-  DollarSign,
-  ShoppingCart,
-  Percent,
-  Download,
-  Sparkles,
-  BarChart3,
-  CheckCircle2,
-  AlertTriangle,
-  ArrowUpRight,
-} from "@/components/ui/icons"
+import { TrendingUp } from "@/components/ui/icon-set/trending-up"
+import { DollarSign } from "@/components/ui/icon-set/dollar-sign"
+import { ShoppingCart } from "@/components/ui/icon-set/shopping-cart"
+import { Percent } from "@/components/ui/icon-set/percent"
+import { Download } from "@/components/ui/icon-set/download"
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
+import { BarChart3 } from "@/components/ui/icon-set/bar-chart3"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
+import { AlertTriangle } from "@/components/ui/icon-set/alert-triangle"
+import { ArrowUpRight } from "@/components/ui/icon-set/arrow-up-right"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Dialog } from "@/components/ui/dialog"

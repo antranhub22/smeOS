@@ -1,7 +1,10 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Loader2, Music, Trash2, Upload } from "@/components/ui/icons"
+import { Loader2 } from "@/components/ui/icon-set/loader2"
+import { Music } from "@/components/ui/icon-set/music"
+import { Trash2 } from "@/components/ui/icon-set/trash2"
+import { Upload } from "@/components/ui/icon-set/upload"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"

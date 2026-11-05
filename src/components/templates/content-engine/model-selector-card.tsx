@@ -1,7 +1,10 @@
 "use client"
 
 import React from "react"
-import { Cpu, Sparkles, Zap, ShieldCheck } from "@/components/ui/icons"
+import { Cpu } from "@/components/ui/icon-set/cpu"
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
+import { Zap } from "@/components/ui/icon-set/zap"
+import { ShieldCheck } from "@/components/ui/icon-set/shield-check"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 

@@ -13,6 +13,15 @@ const UI_DENSITY_STORAGE_KEY = "smeos_ui_density"
 
 const UiSystemContext = createContext<UiSystemContextValue | null>(null)
 
+/**
+ * Giữ nguyên object config khi density đọc từ localStorage trùng giá trị đang dùng. Một object mới
+ * làm context đổi ngay sau hydrate: React bỏ HTML máy chủ của segment trang còn chờ chunk JS và
+ * dựng lại phía client, phần tử LCP bị vẽ lại muộn (trang chủ di động 1,7 s → 3,8 s).
+ */
+export function withStoredDensity(prev: UiSystemConfig, density: UiDensity): UiSystemConfig {
+  return prev.density === density ? prev : { ...prev, density }
+}
+
 export function UiSystemProvider({
   children,
   initialConfig,
@@ -31,7 +40,7 @@ export function UiSystemProvider({
       try {
         const storedDensity = localStorage.getItem(UI_DENSITY_STORAGE_KEY)
         if (storedDensity === "compact" || storedDensity === "comfortable") {
-          setConfig((prev) => ({ ...prev, density: storedDensity }))
+          setConfig((prev) => withStoredDensity(prev, storedDensity))
           document.documentElement.setAttribute("data-density", storedDensity)
         }
       } catch {

@@ -1,18 +1,16 @@
 "use client"
 
 import React, { useState } from "react"
-import {
-  Zap,
-  Palette,
-  ShieldCheck,
-  CheckCircle2,
-  ArrowRight,
-  Sparkles,
-  SlidersHorizontal,
-  Layers,
-  ChevronRight,
-  ExternalLink,
-} from "@/components/ui/icons"
+import { Zap } from "@/components/ui/icon-set/zap"
+import { Palette } from "@/components/ui/icon-set/palette"
+import { ShieldCheck } from "@/components/ui/icon-set/shield-check"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
+import { ArrowRight } from "@/components/ui/icon-set/arrow-right"
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
+import { SlidersHorizontal } from "@/components/ui/icon-set/sliders-horizontal"
+import { Layers } from "@/components/ui/icon-set/layers"
+import { ChevronRight } from "@/components/ui/icon-set/chevron-right"
+import { ExternalLink } from "@/components/ui/icon-set/external-link"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import type { BusinessProfileDetail } from "@/modules/profiles/use-cases/get-business-profile"

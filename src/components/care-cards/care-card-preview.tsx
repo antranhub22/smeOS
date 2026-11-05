@@ -1,7 +1,10 @@
 "use client"
 
 import React from "react"
-import { Sparkles, Gift, Heart, ShieldCheck } from "@/components/ui/icons"
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
+import { Gift } from "@/components/ui/icon-set/gift"
+import { Heart } from "@/components/ui/icon-set/heart"
+import { ShieldCheck } from "@/components/ui/icon-set/shield-check"
 import type { CareCardContent } from "@/modules/care-cards/domain/care-card"
 
 interface CareCardPreviewProps {

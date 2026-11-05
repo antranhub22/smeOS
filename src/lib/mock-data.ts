@@ -1,4 +1,16 @@
-import { LucideIcon, ScanSearch, Sparkles, Video, FileText, Rss, LayoutGrid, Users, Package, MessageSquare, BarChart3, Zap, TrendingUp } from "@/components/ui/icons"
+import type { LucideIcon } from "@/components/ui/icon-set/wrap"
+import { ScanSearch } from "@/components/ui/icon-set/scan-search"
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
+import { Video } from "@/components/ui/icon-set/video"
+import { FileText } from "@/components/ui/icon-set/file-text"
+import { Rss } from "@/components/ui/icon-set/rss"
+import { LayoutGrid } from "@/components/ui/icon-set/layout-grid"
+import { Users } from "@/components/ui/icon-set/users"
+import { Package } from "@/components/ui/icon-set/package"
+import { MessageSquare } from "@/components/ui/icon-set/message-square"
+import { BarChart3 } from "@/components/ui/icon-set/bar-chart3"
+import { Zap } from "@/components/ui/icon-set/zap"
+import { TrendingUp } from "@/components/ui/icon-set/trending-up"
 
 export type WorkspaceKind = "EXPERIENCE" | "PRODUCTION"
 export type FeatureId =

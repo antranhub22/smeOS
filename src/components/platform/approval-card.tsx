@@ -2,15 +2,13 @@
 
 /** Thẻ một yêu cầu chờ Admin SaaS phê duyệt, kiểu dữ liệu và nội dung gửi API theo từng loại yêu cầu. */
 import Link from "next/link"
-import {
-  Clock,
-  CheckCircle2,
-  XCircle,
-  Globe,
-  Store,
-  ExternalLink,
-  MessageCircle,
-} from "@/components/ui/icons"
+import { Clock } from "@/components/ui/icon-set/clock"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
+import { XCircle } from "@/components/ui/icon-set/x-circle"
+import { Globe } from "@/components/ui/icon-set/globe"
+import { Store } from "@/components/ui/icon-set/store"
+import { ExternalLink } from "@/components/ui/icon-set/external-link"
+import { MessageCircle } from "@/components/ui/icon-set/message-circle"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { formatDateTime } from "@/lib/i18n/formatters"

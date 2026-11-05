@@ -1,7 +1,8 @@
 "use client"
 
 import React, { useState, useEffect, useCallback } from "react"
-import { ShieldAlert, RefreshCw } from "@/components/ui/icons"
+import { ShieldAlert } from "@/components/ui/icon-set/shield-alert"
+import { RefreshCw } from "@/components/ui/icon-set/refresh-cw"
 import { Dialog } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { SlaMonitorPanel, type SlaMonitorOrder } from "./sla-monitor-panel"

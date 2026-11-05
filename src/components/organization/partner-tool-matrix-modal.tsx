@@ -1,7 +1,9 @@
 "use client"
 
 import React, { useState } from "react"
-import { Shield, X, Check } from "@/components/ui/icons"
+import { Shield } from "@/components/ui/icon-set/shield"
+import { X } from "@/components/ui/icon-set/x"
+import { Check } from "@/components/ui/icon-set/check"
 import { STORE_NAV_ENTRIES } from "@/components/layout/nav/nav-store"
 import { Button } from "@/components/ui/button"
 import { Dialog } from "@/components/ui/dialog"

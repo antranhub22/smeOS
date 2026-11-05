@@ -2,7 +2,7 @@
 
 import React, { useCallback, useState } from "react"
 import { Card } from "@/components/ui/card"
-import { LinkIcon } from "@/components/ui/icons"
+import { LinkIcon } from "@/components/ui/icon-set/link-icon"
 import { formatDateTime } from "@/lib/i18n/formatters"
 import { MarketplaceBrowser, type MarketplaceLoadResult } from "@/app/(platform)/van-hanh/marketplace/marketplace-browser"
 

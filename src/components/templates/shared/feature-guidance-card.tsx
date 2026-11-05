@@ -1,7 +1,10 @@
 "use client"
 
 import * as React from "react"
-import { type LucideIcon, Info, BookOpen, ChevronDown } from "@/components/ui/icons"
+import type { LucideIcon } from "@/components/ui/icon-set/wrap"
+import { Info } from "@/components/ui/icon-set/info"
+import { BookOpen } from "@/components/ui/icon-set/book-open"
+import { ChevronDown } from "@/components/ui/icon-set/chevron-down"
 import { cn } from "@/lib/utils"
 
 export interface GuidanceTip {

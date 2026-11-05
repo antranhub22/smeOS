@@ -10,19 +10,17 @@
 import React, { useState, useEffect, useCallback } from "react"
 import { Button } from "@/components/ui/button"
 import { SkeletonBlock } from "@/components/ui/skeleton"
-import {
-  Download,
-  ChevronLeft,
-  ChevronRight,
-  Package,
-  ShoppingCart,
-  Users,
-  Building2,
-  UserCircle,
-  Cpu,
-  Loader2,
-  FileSpreadsheet,
-} from "@/components/ui/icons"
+import { Download } from "@/components/ui/icon-set/download"
+import { ChevronLeft } from "@/components/ui/icon-set/chevron-left"
+import { ChevronRight } from "@/components/ui/icon-set/chevron-right"
+import { Package } from "@/components/ui/icon-set/package"
+import { ShoppingCart } from "@/components/ui/icon-set/shopping-cart"
+import { Users } from "@/components/ui/icon-set/users"
+import { Building2 } from "@/components/ui/icon-set/building2"
+import { UserCircle } from "@/components/ui/icon-set/user-circle"
+import { Cpu } from "@/components/ui/icon-set/cpu"
+import { Loader2 } from "@/components/ui/icon-set/loader2"
+import { FileSpreadsheet } from "@/components/ui/icon-set/file-spreadsheet"
 import { formatDateTime } from "@/lib/i18n/formatters"
 import type { PlatformOrgRecordsResult, RecordDomain } from "@/modules/platform/use-cases/get-platform-org-records"
 import type { RecordColumn } from "@/modules/platform/use-cases/get-platform-org-records"

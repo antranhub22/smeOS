@@ -4,7 +4,8 @@
  * desktop-nav-group.tsx — Render một nhóm điều hướng trong Sidebar (SRP)
  */
 
-import { BarChart3, LayoutGrid } from "@/components/ui/icons"
+import { BarChart3 } from "@/components/ui/icon-set/bar-chart3"
+import { LayoutGrid } from "@/components/ui/icon-set/layout-grid"
 import type { NavEntry, NavGroup as NavGroupType } from "./nav-model"
 import { isToolkitGroupKey } from "./nav/nav-types"
 import { DesktopNavItem } from "./desktop-nav-item"

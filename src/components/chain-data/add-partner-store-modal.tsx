@@ -5,7 +5,11 @@ import { Dialog } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { NativeSelect } from "@/components/ui/select"
-import { ShieldAlert, AlertCircle, FileText, CheckCircle2, Handshake } from "@/components/ui/icons"
+import { ShieldAlert } from "@/components/ui/icon-set/shield-alert"
+import { AlertCircle } from "@/components/ui/icon-set/alert-circle"
+import { FileText } from "@/components/ui/icon-set/file-text"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
+import { Handshake } from "@/components/ui/icon-set/handshake"
 import type { PropagationTarget } from "@/modules/field-platform/domain/field-registry-v2"
 
 interface AddPartnerStoreModalProps {

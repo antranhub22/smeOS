@@ -1,6 +1,10 @@
 "use client"
 
-import { AlertTriangle, Check, FileSpreadsheet, Image as ImageIcon, RefreshCw } from "@/components/ui/icons"
+import { AlertTriangle } from "@/components/ui/icon-set/alert-triangle"
+import { Check } from "@/components/ui/icon-set/check"
+import { FileSpreadsheet } from "@/components/ui/icon-set/file-spreadsheet"
+import { Image as ImageIcon } from "@/components/ui/icon-set/image"
+import { RefreshCw } from "@/components/ui/icon-set/refresh-cw"
 import { parseDriveLink, type ParsedProductRow } from "./types"
 import { priceLabel, summarizePricing } from "@/modules/products/domain/product-pricing"
 import type { DriveThumbState } from "./use-drive-thumbs"

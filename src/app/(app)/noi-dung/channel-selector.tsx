@@ -6,7 +6,7 @@
  */
 
 import React from "react"
-import { Check } from "@/components/ui/icons"
+import { Check } from "@/components/ui/icon-set/check"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 

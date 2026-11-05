@@ -3,7 +3,8 @@
 // Danh sách chợ đối tác dùng chung cho console (N1) và link chia sẻ công khai.
 // Lọc: ô tìm nhanh + dropdown nhiều tiêu chí (HOẶC trong nhóm, VÀ giữa nhóm).
 import React, { useCallback, useEffect, useMemo, useState } from "react"
-import { Search, Store } from "@/components/ui/icons"
+import { Search } from "@/components/ui/icon-set/search"
+import { Store } from "@/components/ui/icon-set/store"
 import { PageHeader } from "@/components/ui/page-header"
 import { PageContainer } from "@/components/ui/page-container"
 import { Input } from "@/components/ui/input"

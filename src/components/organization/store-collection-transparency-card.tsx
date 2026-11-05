@@ -4,7 +4,10 @@ import React, { useState, useEffect } from "react"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { SkeletonBlock } from "@/components/ui/skeleton"
-import { ShieldCheck, Info, CheckCircle2, Lock } from "@/components/ui/icons"
+import { ShieldCheck } from "@/components/ui/icon-set/shield-check"
+import { Info } from "@/components/ui/icon-set/info"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
+import { Lock } from "@/components/ui/icon-set/lock"
 import type { StoreCollectionTransparencyResult } from "@/modules/field-platform/use-cases/get-store-collection-transparency"
 
 interface TransparencyCardProps {

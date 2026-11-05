@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from "react"
-import {
-  Store,
-  Award,
-  User,
-  Trash2,
-} from "@/components/ui/icons"
+import { Store } from "@/components/ui/icon-set/store"
+import { Award } from "@/components/ui/icon-set/award"
+import { User } from "@/components/ui/icon-set/user"
+import { Trash2 } from "@/components/ui/icon-set/trash2"
 import { Button } from "@/components/ui/button"
 import { Dialog } from "@/components/ui/dialog"
 import { cn } from "@/lib/utils"

@@ -1,7 +1,12 @@
 "use client"
 
 import React from "react"
-import { Clock, AlertTriangle, ArrowRight, User, MapPin, Flower2 } from "@/components/ui/icons"
+import { Clock } from "@/components/ui/icon-set/clock"
+import { AlertTriangle } from "@/components/ui/icon-set/alert-triangle"
+import { ArrowRight } from "@/components/ui/icon-set/arrow-right"
+import { User } from "@/components/ui/icon-set/user"
+import { MapPin } from "@/components/ui/icon-set/map-pin"
+import { Flower2 } from "@/components/ui/icon-set/flower2"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -87,7 +92,7 @@ export function CoordinatorOrderBriefCard({
             </span>
           )}
         </div>
-        <div className="flex items-center gap-1.5 text-xs font-semibold text-blush-600 bg-blush-50 px-2.5 py-1 rounded-full border border-blush-200">
+        <div className="flex items-center gap-1.5 text-caption font-semibold text-danger-text bg-danger-bg px-2.5 py-1 rounded-full border border-danger/30">
           <Clock size={13} />
           <span>Hẹn giao: {deliveryTargetTime}</span>
         </div>

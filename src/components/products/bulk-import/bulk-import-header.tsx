@@ -1,6 +1,10 @@
 "use client"
 
-import { ArrowLeft, CheckCircle2, Download, Store, FileSpreadsheet } from "@/components/ui/icons"
+import { ArrowLeft } from "@/components/ui/icon-set/arrow-left"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
+import { Download } from "@/components/ui/icon-set/download"
+import { Store } from "@/components/ui/icon-set/store"
+import { FileSpreadsheet } from "@/components/ui/icon-set/file-spreadsheet"
 import { Button } from "@/components/ui/button"
 import { PageHeader } from "@/components/ui/page-header"
 

@@ -2,7 +2,9 @@
 
 import React from "react"
 import Link from "next/link"
-import { Eye, Sparkles, Trash2 } from "@/components/ui/icons"
+import { Eye } from "@/components/ui/icon-set/eye"
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
+import { Trash2 } from "@/components/ui/icon-set/trash2"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { ProductThumb } from "@/components/products/product-thumb"

@@ -2,15 +2,13 @@
 
 import { useI18n } from "@/lib/i18n"
 import { useEffect, useState, useCallback } from "react"
-import {
-  WalletCards,
-  Coins,
-  Activity,
-  Layers,
-  RefreshCw,
-  AlertCircle,
-  Calendar,
-} from "@/components/ui/icons"
+import { WalletCards } from "@/components/ui/icon-set/wallet-cards"
+import { Coins } from "@/components/ui/icon-set/coins"
+import { Activity } from "@/components/ui/icon-set/activity"
+import { Layers } from "@/components/ui/icon-set/layers"
+import { RefreshCw } from "@/components/ui/icon-set/refresh-cw"
+import { AlertCircle } from "@/components/ui/icon-set/alert-circle"
+import { Calendar } from "@/components/ui/icon-set/calendar"
 import { useSession } from "@/lib/session"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"

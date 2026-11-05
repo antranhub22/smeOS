@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { ArrowLeft } from "@/components/ui/icons"
+import { ArrowLeft } from "@/components/ui/icon-set/arrow-left"
 import { Button } from "@/components/ui/button"
 
 interface JourneyHeaderProps {

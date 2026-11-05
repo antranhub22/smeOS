@@ -3,7 +3,8 @@
 // Bước duyệt ghép cột khi nhập tệp khảo sát: hệ thống tự ghép theo tên tiêu đề,
 // người nhập sửa chỗ sai rồi mới nhập — tệp lệch cột không làm sai dữ liệu.
 import React, { useMemo, useState } from "react"
-import { AlertCircle, CheckCircle } from "@/components/ui/icons"
+import { AlertCircle } from "@/components/ui/icon-set/alert-circle"
+import { CheckCircle } from "@/components/ui/icon-set/check-circle"
 import { Button } from "@/components/ui/button"
 import { Dialog } from "@/components/ui/dialog"
 import { Disclosure } from "@/components/ui/disclosure"

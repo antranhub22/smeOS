@@ -1,7 +1,9 @@
 "use client"
 
 import React, { useState } from "react"
-import { Loader2, Save, Truck } from "@/components/ui/icons"
+import { Loader2 } from "@/components/ui/icon-set/loader2"
+import { Save } from "@/components/ui/icon-set/save"
+import { Truck } from "@/components/ui/icon-set/truck"
 import { Button } from "@/components/ui/button"
 import { apiSend, useApi } from "@/components/greeting-card/greeting-api"
 import {

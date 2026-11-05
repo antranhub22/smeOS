@@ -1,7 +1,12 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
-import { Sparkles, Activity, Target, Clock, RefreshCw } from "@/components/ui/icons";
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
+import { Activity } from "@/components/ui/icon-set/activity"
+import { Target } from "@/components/ui/icon-set/target"
+import { Clock } from "@/components/ui/icon-set/clock"
+import { RefreshCw } from "@/components/ui/icon-set/refresh-cw"
+;
 import { DirectResearchPanel } from "./direct-research-panel";
 import { ResearchStatusBanner, type ResearchStatusInfo } from "./research-status-banner";
 import { OpportunityCard, type OpportunityItem } from "./opportunity-card";

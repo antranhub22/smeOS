@@ -1,7 +1,11 @@
 "use client"
 
 import React, { useState } from "react"
-import { Copy, Check, MessageSquareText, Sparkles, RefreshCw } from "@/components/ui/icons"
+import { Copy } from "@/components/ui/icon-set/copy"
+import { Check } from "@/components/ui/icon-set/check"
+import { MessageSquareText } from "@/components/ui/icon-set/message-square-text"
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
+import { RefreshCw } from "@/components/ui/icon-set/refresh-cw"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"

@@ -3,7 +3,7 @@
 import Link from "next/link"
 import { AccountStorageHub } from "@/components/storage/account-storage-hub"
 import { Button } from "@/components/ui/button"
-import { Camera } from "@/components/ui/icons"
+import { Camera } from "@/components/ui/icon-set/camera"
 import { ListLayout } from "@/components/layout/page-layout"
 import { PageHeader } from "@/components/ui/page-header"
 import { useI18n } from "@/lib/i18n"
