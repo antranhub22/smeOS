@@ -1,5 +1,6 @@
 "use client"
 
+import { useConfirmDialog } from "@/components/ui/confirm-dialog"
 import React, { useEffect, useRef, useState } from "react"
 import { Upload, X, CheckCircle2, AlertCircle, Play, ImagePlus } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
@@ -54,6 +55,7 @@ async function uploadOne(file: File): Promise<string> {
  * Lưới xem trước, xoá từng tệp trước khi lưu; cả bộ gắn vào đơn trong một lần.
  */
 export function CoordinatorImageUpload({ orderId, endpoint, label, allowSkip = true, onSuccess, onCancel }: CoordinatorImageUploadProps) {
+  const [confirm, confirmDialog] = useConfirmDialog()
   const inputRef = useRef<HTMLInputElement>(null)
   const [picked, setPicked] = useState<Picked[]>([])
   const [state, setState] = useState<UploadState>("idle")
@@ -128,6 +130,7 @@ export function CoordinatorImageUpload({ orderId, endpoint, label, allowSkip = t
 
   return (
     <div className="flex flex-col gap-4">
+      {confirmDialog}
       <p className="text-body-sm text-text-muted">
         {label}: {MEDIA_LIMITS.imagesMin}–{MEDIA_LIMITS.imagesMax} ảnh, tối đa {MEDIA_LIMITS.videosMax} video (mỗi video ≤ {MEDIA_LIMITS.videoMaxSeconds} giây).
       </p>
@@ -147,28 +150,28 @@ export function CoordinatorImageUpload({ orderId, endpoint, label, allowSkip = t
               // eslint-disable-next-line @next/next/no-img-element
               <img src={p.url} alt={`Ảnh ${i + 1}`} className="h-full w-full object-cover" />
             )}
-            <button
+            <Button variant="ghost"
               type="button"
               aria-label={`Bỏ tệp ${i + 1}`}
               onClick={() => setPicked((list) => list.filter((x) => x !== p))}
               disabled={state === "uploading"}
-              className="absolute right-1 top-1 rounded-full bg-text/70 p-1 text-surface"
+              className="font-[inherit] gap-0 absolute right-1 top-1 rounded-full bg-text/70 p-1 text-surface hover:bg-text/70"
             >
               <X size={12} aria-hidden="true" />
-            </button>
+            </Button>
           </li>
         ))}
         {!full && (
           <li>
-            <button
+            <Button variant="ghost"
               type="button"
               onClick={() => inputRef.current?.click()}
               disabled={state === "uploading"}
-              className="flex aspect-square w-full flex-col items-center justify-center gap-1 rounded-xl border-2 border-dashed border-border text-text-muted hover:border-primary/50 hover:bg-primary/5"
+              className="h-auto p-0 font-[inherit] flex aspect-square w-full flex-col items-center justify-center gap-1 rounded-xl border-2 border-dashed border-border text-text-muted hover:border-primary/50 hover:bg-primary/5"
             >
               {picked.length === 0 ? <Upload size={22} aria-hidden="true" /> : <ImagePlus size={22} aria-hidden="true" />}
               <span className="text-caption font-medium">{picked.length === 0 ? "Chọn ảnh/video" : "Thêm"}</span>
-            </button>
+            </Button>
           </li>
         )}
       </ul>
@@ -194,11 +197,11 @@ export function CoordinatorImageUpload({ orderId, endpoint, label, allowSkip = t
       {/* Tác vụ Bỏ qua ảnh nếu giao gấp (Spec #13) */}
       <div className="pt-2 border-t border-border flex items-center justify-between">
         {allowSkip ? (
-        <button
+        <Button variant="ghost"
           type="button"
           disabled={state === "uploading"}
           onClick={async () => {
-            if (!window.confirm(`Xác nhận bỏ qua ${label} để giao gấp? Hệ thống sẽ ghi nhận trạng thái Skipped.`)) return
+            if (!(await confirm({ title: `Bỏ qua ${label} để giao gấp?`, consequence: "Hệ thống ghi nhận bước này là đã bỏ qua.", confirmLabel: "Bỏ qua và giao gấp" }))) return
             setState("uploading")
             setErrorMsg("")
             try {
@@ -215,10 +218,10 @@ export function CoordinatorImageUpload({ orderId, endpoint, label, allowSkip = t
               setErrorMsg(err instanceof Error ? err.message : "Lỗi không xác định")
             }
           }}
-          className="text-caption font-semibold text-text-muted hover:text-danger underline transition-colors"
+          className="h-auto p-0 gap-0 text-caption font-semibold text-text-muted hover:text-danger underline transition-colors"
         >
           Giao gấp — Bỏ qua {label.toLowerCase()}
-        </button>
+        </Button>
         ) : (
           <p className="text-caption text-text-muted">Tiệm bắt buộc {label.toLowerCase()} trước khi làm bước tiếp theo</p>
         )}

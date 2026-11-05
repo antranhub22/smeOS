@@ -1,5 +1,6 @@
 "use client"
 
+import { Input } from "@/components/ui/input"
 import React, { useState } from "react"
 import {
   Bot,
@@ -122,7 +123,7 @@ export function TelegramDispatchConnector() {
             <Bot size={22} />
           </div>
           <div>
-            <h3 className="text-body font-extrabold text-foreground flex items-center gap-2">
+            <h3 className="text-body font-extrabold text-text flex items-center gap-2">
               Kết Nối Telegram Bot Chi Nhánh
               {isConfigured && bot && (
                 <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-caption-sm font-bold bg-success-bg text-success border border-success-border">
@@ -144,7 +145,7 @@ export function TelegramDispatchConnector() {
           disabled={isLoading || isValidating}
           className="self-start sm:self-auto flex items-center gap-1.5"
         >
-          <RefreshCw size={14} className={isValidating ? "animate-spin" : ""} />
+          <RefreshCw size={14} className={isValidating ? "animate-spin motion-reduce:animate-none" : ""} />
           <span>Quét Chat ID mới</span>
         </Button>
       </div>
@@ -155,7 +156,7 @@ export function TelegramDispatchConnector() {
           <div className="flex items-center gap-3">
             <CheckCircle2 size={20} className="text-success shrink-0" />
             <div>
-              <div className="text-body-sm font-bold text-foreground">
+              <div className="text-body-sm font-bold text-text">
                 Bot: {bot.first_name}{" "}
                 <a
                   href={`https://t.me/${bot.username}`}
@@ -167,7 +168,7 @@ export function TelegramDispatchConnector() {
                 </a>
               </div>
               <p className="text-caption text-text-muted">
-                Bot ID: <code className="font-mono text-foreground font-semibold">{bot.id}</code> — Sẵn sàng nhận việc và thông báo cho chi nhánh
+                Bot ID: <code className="font-mono text-text font-semibold">{bot.id}</code> — Sẵn sàng nhận việc và thông báo cho chi nhánh
               </p>
             </div>
           </div>
@@ -183,15 +184,15 @@ export function TelegramDispatchConnector() {
       ) : isConfigured || isLoading ? null : (
         <div className="p-4 rounded-xl border border-warning-border bg-warning-bg/40 flex items-start gap-3">
           <AlertCircle size={20} className="text-warning shrink-0 mt-0.5" />
-          <div className="text-caption text-foreground leading-relaxed">
+          <div className="text-caption text-text leading-relaxed">
             <strong className="block text-body-sm font-bold mb-1">Chưa cấu hình Telegram Bot Token</strong>
-            Vui lòng khai báo <code className="font-mono font-bold text-foreground">TELEGRAM_DISPATCH_BOT_TOKEN</code> trong file biến môi trường <code className="font-mono font-bold text-foreground">.env</code> để kích hoạt tính năng điều phối tự động.
+            Vui lòng khai báo <code className="font-mono font-bold text-text">TELEGRAM_DISPATCH_BOT_TOKEN</code> trong file biến môi trường <code className="font-mono font-bold text-text">.env</code> để kích hoạt tính năng điều phối tự động.
           </div>
         </div>
       )}
 
       {respData?.error && (
-        <div className="p-3 rounded-xl border border-warning-border bg-warning-bg/40 flex items-start gap-2 text-caption text-foreground">
+        <div className="p-3 rounded-xl border border-warning-border bg-warning-bg/40 flex items-start gap-2 text-caption text-text">
           <AlertCircle size={16} className="text-warning shrink-0 mt-0.5" />
           <span>
             <strong>Không quét được nhóm mới:</strong> {respData.error}. Vui lòng liên hệ bộ phận hỗ trợ.
@@ -203,10 +204,10 @@ export function TelegramDispatchConnector() {
 
       {/* Hướng dẫn 3 bước kết nối */}
       <div className="p-4 rounded-xl bg-surface-muted border border-border flex flex-col gap-2.5">
-        <h4 className="text-body-sm font-bold text-foreground flex items-center gap-1.5">
+        <h4 className="text-body-sm font-bold text-text flex items-center gap-1.5">
           <MessageSquare size={16} className="text-primary" /> Hoặc dùng nhóm Telegram cho Chi nhánh trong 3 bước:
         </h4>
-        <ol className="text-caption text-foreground/90 space-y-1.5 list-decimal pl-4 leading-relaxed">
+        <ol className="text-caption text-text/90 space-y-1.5 list-decimal pl-4 leading-relaxed">
           <li>
             Tạo nhóm Telegram cho Chi nhánh/Xưởng gia công, sau đó thêm bot{" "}
             <strong className="text-primary font-mono">@{bot?.username || "smeos_dieuphoi_bot"}</strong> vào nhóm.
@@ -228,7 +229,7 @@ export function TelegramDispatchConnector() {
       {/* Danh sách Chat ID đã quét được */}
       <div>
         <div className="flex items-center justify-between mb-2">
-          <h4 className="text-body-sm font-bold text-foreground flex items-center gap-1.5">
+          <h4 className="text-body-sm font-bold text-text flex items-center gap-1.5">
             <Users size={16} className="text-primary" /> Nhóm chat đã liên kết với cửa hàng ({recentChats.length})
           </h4>
           <span className="text-caption text-text-muted">Nhấp vào ID để chọn thử nghiệm</span>
@@ -259,16 +260,16 @@ export function TelegramDispatchConnector() {
 
       {/* Form Gửi Tin Thử Nghiệm */}
       <form onSubmit={handleSendTest} className="pt-3 border-t border-border flex flex-col gap-3">
-        <h4 className="text-body-sm font-bold text-foreground flex items-center gap-1.5">
+        <h4 className="text-body-sm font-bold text-text flex items-center gap-1.5">
           <Send size={16} className="text-primary" /> Kiểm tra gửi thông báo thử nghiệm
         </h4>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <div className="sm:col-span-1">
-            <label className="block text-caption font-semibold text-foreground mb-1">
+            <label className="block text-caption font-semibold text-text mb-1">
               Chat ID nhận tin: <span className="text-danger">*</span>
             </label>
-            <input
+            <Input
               type="text"
               placeholder="-100... hoặc user ID"
               value={testChatId}
@@ -279,11 +280,11 @@ export function TelegramDispatchConnector() {
           </div>
 
           <div className="sm:col-span-2">
-            <label className="block text-caption font-semibold text-foreground mb-1">
+            <label className="block text-caption font-semibold text-text mb-1">
               Nội dung tùy chỉnh (Tùy chọn):
             </label>
             <div className="flex gap-2">
-              <input
+              <Input
                 type="text"
                 placeholder="Để trống để dùng tin nhắn mẫu Điều Phối..."
                 value={testMessage}

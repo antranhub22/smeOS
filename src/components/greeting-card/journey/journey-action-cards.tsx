@@ -36,7 +36,7 @@ export function JourneyActionCards({
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h4 className="text-body font-extrabold text-foreground">
+                <h4 className="text-body font-extrabold text-text">
                   Cửa hàng chưa có {ti("catalogTitle")}
                 </h4>
                 <span className="px-2 py-0.5 rounded-full bg-warning/20 text-warning-text text-caption font-bold">
@@ -66,7 +66,7 @@ export function JourneyActionCards({
             <Sparkles size={13} />
             <span>HÀNH TRÌNH TÁC VỤ THÔNG MINH (JOURNEY-FIRST)</span>
           </div>
-          <h2 className="text-title font-extrabold text-foreground">
+          <h2 className="text-title font-extrabold text-text">
             Bạn muốn thực hiện tác vụ nào hôm nay?
           </h2>
           <p className="text-body-sm text-text-muted mt-0.5">
@@ -109,7 +109,7 @@ export function JourneyActionCards({
 
             <div className="flex items-center gap-2 mb-1.5">
               <span className="text-caption font-mono font-bold text-primary">BƯỚC 1</span>
-              <h3 className="text-body font-extrabold text-foreground group-hover:text-primary transition-colors">
+              <h3 className="text-body font-extrabold text-text group-hover:text-primary transition-colors">
                 {ti("catalogTitle")}
               </h3>
             </div>
@@ -119,14 +119,14 @@ export function JourneyActionCards({
           </div>
 
           <div className="mt-5 pt-3.5 border-t border-border flex items-center justify-between">
-            <button
+            <Button variant="ghost"
               type="button"
               onClick={onStartCreateCatalog}
-              className="text-body-sm font-bold text-primary inline-flex items-center gap-1.5 hover:underline"
+              className="h-auto p-0 text-body-sm font-bold text-primary inline-flex items-center gap-1.5 hover:underline"
             >
               <span>{catalogCount === 0 ? "Tạo bộ sưu tập đầu tiên" : `Quản lý & Thêm ${ti("sampleProduct").toLowerCase()}`}</span>
               <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
-            </button>
+            </Button>
             {catalogCount > 0 && (
               <span className="inline-flex items-center gap-1 text-caption text-success font-medium">
                 <CheckCircle2 size={13} />
@@ -156,7 +156,7 @@ export function JourneyActionCards({
 
             <div className="flex items-center gap-2 mb-1.5">
               <span className="text-caption font-mono font-bold text-primary">BƯỚC 2</span>
-              <h3 className="text-body font-extrabold text-foreground group-hover:text-primary transition-colors">
+              <h3 className="text-body font-extrabold text-text group-hover:text-primary transition-colors">
                 Tạo Link Gửi Khách Hàng
               </h3>
             </div>
@@ -166,11 +166,11 @@ export function JourneyActionCards({
           </div>
 
           <div className="mt-5 pt-3.5 border-t border-border flex items-center justify-between">
-            <button
+            <Button variant="ghost"
               type="button"
               onClick={onStartCreateLink}
               disabled={hasNoCatalog}
-              className={`text-body-sm font-bold inline-flex items-center gap-1.5 ${
+              className={`h-auto p-0 text-body-sm font-bold inline-flex items-center gap-1.5 ${
                 hasNoCatalog
                   ? "text-text-muted cursor-not-allowed"
                   : "text-primary hover:underline"
@@ -178,7 +178,7 @@ export function JourneyActionCards({
             >
               <span>{hasNoCatalog ? "Cần tạo catalog trước" : "Tạo link gửi khách ngay"}</span>
               {!hasNoCatalog && <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />}
-            </button>
+            </Button>
             <span className="text-caption text-text-muted font-medium">
               {sessionCount} link đã tạo
             </span>
@@ -199,7 +199,7 @@ export function JourneyActionCards({
 
             <div className="flex items-center gap-2 mb-1.5">
               <span className="text-caption font-mono font-bold text-primary">BƯỚC 3</span>
-              <h3 className="text-body font-extrabold text-foreground group-hover:text-primary transition-colors">
+              <h3 className="text-body font-extrabold text-text group-hover:text-primary transition-colors">
                 Duyệt Đơn & Thanh Toán
               </h3>
             </div>
@@ -209,14 +209,14 @@ export function JourneyActionCards({
           </div>
 
           <div className="mt-5 pt-3.5 border-t border-border flex items-center justify-between">
-            <button
+            <Button variant="ghost"
               type="button"
               onClick={onViewPayments}
-              className="text-body-sm font-bold text-primary inline-flex items-center gap-1.5 hover:underline"
+              className="h-auto p-0 text-body-sm font-bold text-primary inline-flex items-center gap-1.5 hover:underline"
             >
               <span>Vào trang đối soát thanh toán</span>
               <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
-            </button>
+            </Button>
           </div>
         </div>
       </div>

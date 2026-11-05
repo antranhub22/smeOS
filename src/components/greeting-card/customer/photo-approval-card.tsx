@@ -65,8 +65,8 @@ export function PhotoApprovalCard({
   return (
     <div className="p-4 rounded-xl border border-primary/30 bg-primary/5 flex flex-col gap-3 mt-1">
       <div className="flex items-center justify-between">
-        <span className="text-body-sm font-extrabold text-foreground flex items-center gap-1.5">
-          <Clock size={16} className="text-primary animate-pulse" />
+        <span className="text-body-sm font-extrabold text-text flex items-center gap-1.5">
+          <Clock size={16} className="text-primary animate-pulse motion-reduce:animate-none" />
           <span>Xác nhận hình ảnh sản phẩm</span>
         </span>
         <span className="text-body-sm font-mono font-bold text-primary bg-primary/10 px-2.5 py-0.5 rounded-lg tabular-nums">

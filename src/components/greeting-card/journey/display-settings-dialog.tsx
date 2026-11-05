@@ -94,7 +94,7 @@ export function DisplaySettingsDialog({ open, onOpenChange, templateId, settings
             Hủy
           </Button>
           <Button size="sm" onClick={() => void handleSave()} disabled={saving}>
-            {saving && <Loader2 size={16} className="mr-1.5 animate-spin" aria-hidden="true" />}
+            {saving && <Loader2 size={16} className="mr-1.5 animate-spin motion-reduce:animate-none" aria-hidden="true" />}
             Lưu cài đặt
           </Button>
         </div>
@@ -116,16 +116,16 @@ export function DisplaySettingsDialog({ open, onOpenChange, templateId, settings
               <label htmlFor={`df-${f.key}`} className="font-medium">
                 {f.label}
               </label>
-              <button
+              <Button variant="ghost"
                 id={`df-${f.key}`}
                 type="button"
                 role="switch"
                 aria-checked={on}
                 onClick={() => toggle(f.key)}
-                className={`relative h-6 w-11 shrink-0 rounded-full transition-colors ${on ? "bg-primary" : "bg-border"}`}
+                className={`font-[inherit] gap-0 relative h-6 w-11 shrink-0 rounded-full transition-colors ${on ? "bg-primary hover:bg-primary" : "bg-border hover:bg-border"}`}
               >
                 <span className={`absolute top-0.5 h-5 w-5 rounded-full bg-surface shadow transition-all ${on ? "left-5" : "left-0.5"}`} />
-              </button>
+              </Button>
             </li>
           )
         })}

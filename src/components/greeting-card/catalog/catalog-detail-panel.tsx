@@ -1,8 +1,10 @@
 "use client"
 
+import { Input } from "@/components/ui/input"
 import React, { useState } from "react"
-import { ArrowLeft, Package, Plus, Trash2, Search, Loader2, X, CheckCircle, ShieldCheck } from "@/components/ui/icons"
+import { ArrowLeft, Package, Plus, Trash2, Search, Loader2, CheckCircle, ShieldCheck } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
+import { Dialog } from "@/components/ui/dialog"
 import { useConfirmDialog } from "@/components/ui/confirm-dialog"
 import { useSession } from "@/lib/session"
 import { useCatalogItems } from "./use-catalog-items"
@@ -73,7 +75,7 @@ export function CatalogDetailPanel({ catalogId, catalogName, onBack }: Props) {
   if (loading && !catalog) {
     return (
       <div className="flex items-center justify-center py-16 text-text-muted">
-        <Loader2 size={24} className="animate-spin mr-2" />
+        <Loader2 size={24} className="animate-spin motion-reduce:animate-none mr-2" />
         <span className="text-body-sm">Đang tải bộ sưu tập...</span>
       </div>
     )
@@ -85,16 +87,16 @@ export function CatalogDetailPanel({ catalogId, catalogName, onBack }: Props) {
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-surface p-5 rounded-2xl border border-border shadow-sm">
         <div className="flex items-center gap-3">
-          <button
+          <Button variant="outline"
             type="button"
             onClick={onBack}
             aria-label="Quay lại danh sách bộ sưu tập"
-            className="p-2 rounded-xl border border-border hover:bg-surface-muted transition-colors text-text-muted hover:text-foreground"
+            className="font-[inherit] gap-0 p-2 rounded-xl border border-border hover:bg-surface-muted transition-colors text-text-muted hover:text-text"
           >
             <ArrowLeft size={16} />
-          </button>
+          </Button>
           <div>
-            <h2 className="text-title font-extrabold text-foreground">{catalogName}</h2>
+            <h2 className="text-title font-extrabold text-text">{catalogName}</h2>
             <p className="text-body-sm text-text-muted">
               {catalog?._count.sessions ?? 0} link đã gửi ·{" "}
               {catalog?.items.length ?? 0} {ti("sampleProduct").toLowerCase()} trong bộ sưu tập
@@ -146,27 +148,17 @@ export function CatalogDetailPanel({ catalogId, catalogName, onBack }: Props) {
 
       {/* Add Product Modal */}
       {isAddOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-          <div className="bg-background rounded-2xl shadow-2xl border border-border w-full max-w-lg mx-4 p-5 flex flex-col gap-4 max-h-[80vh]">
-            <div className="flex items-center justify-between">
-              <h3 className="text-title-sm font-extrabold text-foreground">Chọn {ti("sampleProduct").toLowerCase()} thêm vào bộ sưu tập</h3>
-              <button
-                type="button"
-                onClick={() => { setIsAddOpen(false); setProductSearch("") }}
-                aria-label={`Đóng modal chọn ${ti("sampleProduct").toLowerCase()}`}
-                className="p-1.5 rounded-lg hover:bg-surface text-text-muted"
-              >
-                <X size={18} />
-              </button>
-            </div>
+        <Dialog open onOpenChange={(o) => { if (!o) { setIsAddOpen(false); setProductSearch("") } }} size="md"
+          title={`Chọn ${ti("sampleProduct").toLowerCase()} thêm vào bộ sưu tập`}>
+          <div className="flex flex-col gap-4">
             <div className="relative">
               <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" />
-              <input
+              <Input
                 type="text"
                 placeholder="Tìm tên sản phẩm..."
                 value={productSearch}
                 onChange={(e) => setProductSearch(e.target.value)}
-                className="w-full h-10 pl-9 pr-3 rounded-lg border border-border bg-background text-body text-foreground"
+                className="w-full h-10 pl-9 pr-3 rounded-lg border border-border bg-bg text-body text-text"
               />
             </div>
             <div className="overflow-y-auto flex flex-col gap-2 flex-1 min-h-0">
@@ -185,7 +177,7 @@ export function CatalogDetailPanel({ catalogId, catalogName, onBack }: Props) {
                         <FlowerImage src={product.masterImageUrl} driveLink={product.driveLink} alt={product.name} sizes="(max-width: 640px) 50vw, 200px" fallback="icon" className="w-full h-full" />
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-body-sm font-bold text-foreground truncate">{product.name}</p>
+                        <p className="text-body-sm font-bold text-text truncate">{product.name}</p>
                         {product.price_vnd != null ? (
                           <p className="text-caption text-primary font-semibold">
                             {product.price_vnd.toLocaleString("vi-VN")}đ
@@ -194,16 +186,16 @@ export function CatalogDetailPanel({ catalogId, catalogName, onBack }: Props) {
                           <p className="text-caption text-text-muted italic">Liên hệ báo giá</p>
                         )}
                       </div>
-                      <button
+                      <Button variant="ghost"
                         type="button"
                         onClick={() => void handleAddProduct(product.id)}
                         disabled={addingId === product.id}
-                        className="p-2 rounded-lg bg-primary/10 hover:bg-primary/20 text-primary transition-colors shrink-0"
+                        className="font-[inherit] gap-0 p-2 rounded-lg bg-primary/10 hover:bg-primary/20 text-primary transition-colors shrink-0"
                       >
                         {addingId === product.id
-                          ? <Loader2 size={16} className="animate-spin" />
+                          ? <Loader2 size={16} className="animate-spin motion-reduce:animate-none" />
                           : <Plus size={16} />}
-                      </button>
+                      </Button>
                     </div>
                   )
                 })
@@ -218,7 +210,7 @@ export function CatalogDetailPanel({ catalogId, catalogName, onBack }: Props) {
               Xong
             </Button>
           </div>
-        </div>
+        </Dialog>
       )}
 
       {/* Products Grid */}
@@ -228,7 +220,7 @@ export function CatalogDetailPanel({ catalogId, catalogName, onBack }: Props) {
             <Package size={28} className="text-text-muted" />
           </div>
           <div className="text-center">
-            <p className="text-title-sm font-bold text-foreground">Bộ sưu tập chưa có {ti("sampleProduct").toLowerCase()}</p>
+            <p className="text-title-sm font-bold text-text">Bộ sưu tập chưa có {ti("sampleProduct").toLowerCase()}</p>
             <p className="text-body-sm text-text-muted mt-1">
               Thêm {ti("sampleProduct").toLowerCase()} từ danh mục sản phẩm để khách có thể vuốt chọn
             </p>
@@ -259,20 +251,20 @@ export function CatalogDetailPanel({ catalogId, catalogName, onBack }: Props) {
                       {item.sort_order + 1}
                     </span>
                   </div>
-                  {canEdit && <button
+                  {canEdit && <Button variant="ghost"
                     type="button"
                     onClick={() => void handleRemoveProduct(item.product.id)}
                     disabled={removingId === item.product.id}
                     aria-label={`Xóa ${item.product.name} khỏi bộ sưu tập`}
-                    className="absolute top-2 right-2 p-1.5 rounded-lg bg-black/50 hover:bg-danger/80 text-white"
+                    className="font-[inherit] gap-0 absolute top-2 right-2 p-1.5 rounded-lg bg-black/50 hover:bg-danger/80 text-white"
                   >
                     {removingId === item.product.id
-                      ? <Loader2 size={12} className="animate-spin" />
+                      ? <Loader2 size={12} className="animate-spin motion-reduce:animate-none" />
                       : <Trash2 size={12} />}
-                  </button>}
+                  </Button>}
                 </div>
                 <div className="p-3 flex flex-col gap-1">
-                  <p className="text-caption font-bold text-foreground line-clamp-2 leading-tight">
+                  <p className="text-caption font-bold text-text line-clamp-2 leading-tight">
                     {item.product.name}
                   </p>
                   {price !== undefined && (
@@ -286,14 +278,14 @@ export function CatalogDetailPanel({ catalogId, catalogName, onBack }: Props) {
           })}
 
           {/* Add More Card */}
-          {canEdit && <button
+          {canEdit && <Button variant="ghost"
             type="button"
             onClick={() => void openAddProduct()}
-            className="aspect-square rounded-xl border-2 border-dashed border-border hover:border-primary/50 hover:bg-primary/5 transition-all duration-200 flex flex-col items-center justify-center gap-2 text-text-muted hover:text-primary"
+            className="h-auto p-0 font-[inherit] aspect-square rounded-xl border-2 border-dashed border-border hover:border-primary/50 hover:bg-primary/5 transition-all duration-200 flex flex-col items-center justify-center gap-2 text-text-muted hover:text-primary"
           >
             <Plus size={24} />
             <span className="text-caption font-bold">Thêm mẫu</span>
-          </button>}
+          </Button>}
         </div>
       )}
 

@@ -1,5 +1,7 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
+import { NativeSelect } from "@/components/ui/select"
 import { useState } from "react"
 import { ArrowLeftRight } from "@/components/ui/icons"
 import type { GreetingCatalogProduct } from "@/modules/greeting-card/domain/greeting-card-types"
@@ -19,7 +21,7 @@ interface SplitCompareDeckProps {
 
 function Picker({ products, value, onChange, label }: { products: GreetingCatalogProduct[]; value: number; onChange: (i: number) => void; label: string }) {
   return (
-    <select
+    <NativeSelect
       aria-label={label}
       value={value}
       onChange={(e) => onChange(Number(e.target.value))}
@@ -28,7 +30,7 @@ function Picker({ products, value, onChange, label }: { products: GreetingCatalo
       {products.map((p, i) => (
         <option key={p.id} value={i}>{p.name}</option>
       ))}
-    </select>
+    </NativeSelect>
   )
 }
 
@@ -49,17 +51,17 @@ export function SplitCompareDeck({ products, catalogName, onSelectProduct }: Spl
       {products.length > 1 && (
         <div className="mb-3 grid grid-cols-[1fr_auto_1fr] items-center gap-2">
           <Picker products={products} value={left} onChange={setLeft} label="Mẫu bên trái" />
-          <button
+          <Button variant="outline"
             type="button"
             onClick={() => {
               setLeft(right)
               setRight(left)
             }}
             aria-label="Đổi chỗ hai mẫu"
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-surface"
+            className="font-[inherit] gap-0 flex h-10 w-10 items-center justify-center rounded-full border border-border bg-surface hover:bg-surface"
           >
             <ArrowLeftRight size={16} aria-hidden="true" />
-          </button>
+          </Button>
           <Picker products={products} value={right} onChange={setRight} label="Mẫu bên phải" />
         </div>
       )}
@@ -67,17 +69,17 @@ export function SplitCompareDeck({ products, catalogName, onSelectProduct }: Spl
       <div className="grid grid-cols-2 gap-3">
         {pair.map((p, i) => (
           <article key={`${p.id}-${i}`} className="flex flex-col">
-            <button type="button" onClick={() => setOpen(p)} className="aspect-[3/4] overflow-hidden rounded-2xl bg-surface-alt" aria-label={`Chi tiết ${p.name}`}>
+            <Button variant="ghost" type="button" onClick={() => setOpen(p)} className="h-auto p-0 font-[inherit] gap-0 aspect-[3/4] overflow-hidden rounded-2xl bg-surface-alt hover:bg-surface-alt" aria-label={`Chi tiết ${p.name}`}>
               <ProductImage product={p} />
-            </button>
+            </Button>
             <ProductInfo product={p} level="compact" size="sm" as="h2" titleClassName="min-h-[2.5em] font-semibold" className="mt-2" />
-            <button
+            <Button variant="primary"
               type="button"
               onClick={() => onSelectProduct(p)}
-              className="mt-2 h-11 rounded-xl bg-primary text-body-sm font-bold text-white active:scale-[0.99]"
+              className="gap-0 mt-2 h-11 rounded-xl bg-primary text-body-sm font-bold text-white active:scale-[0.99] hover:bg-primary"
             >
               Chọn mẫu này
-            </button>
+            </Button>
           </article>
         ))}
       </div>

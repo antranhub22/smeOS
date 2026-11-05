@@ -1,7 +1,8 @@
 "use client"
 
+import { PageHeader } from "@/components/ui/page-header"
 import React from "react"
-import { Clock, ExternalLink, Inbox, MapPin, RefreshCw, Store } from "@/components/ui/icons"
+import { Clock, ExternalLink, Inbox, MapPin, RefreshCw } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { useApi } from "@/components/greeting-card/greeting-api"
 
@@ -42,10 +43,10 @@ function OrderCard({ order }: { order: PortalOrder }) {
   return (
     <div className="p-4 rounded-xl border border-border bg-surface flex flex-col gap-2">
       <div className="flex items-center justify-between gap-2">
-        <span className="text-body font-extrabold text-foreground">Đơn #{order.orderCode}</span>
+        <span className="text-body font-extrabold text-text">Đơn #{order.orderCode}</span>
         <span className={`px-2 py-0.5 rounded-full text-caption font-bold ${copy.badgeClass}`}>{copy.badge}</span>
       </div>
-      <div className="text-body-sm text-foreground flex items-start gap-1.5">
+      <div className="text-body-sm text-text flex items-start gap-1.5">
         <MapPin size={14} className="text-primary mt-0.5 shrink-0" />
         <span>{order.deliveryAddress}</span>
       </div>
@@ -76,21 +77,16 @@ export function BranchPortalBoard() {
 
   return (
     <div className="flex flex-col gap-6 max-w-3xl mx-auto w-full px-4 sm:px-6 py-6">
-      <div className="flex items-center justify-between gap-3 border-b border-border pb-4">
-        <div className="flex items-center gap-3">
-          <div className="h-10 w-10 rounded-xl bg-primary/10 text-primary flex items-center justify-center shrink-0">
-            <Store size={22} />
-          </div>
-          <div>
-            <h1 className="text-xl font-extrabold text-foreground">Đơn gia công</h1>
-            <p className="text-caption text-text-muted">{branch ? branch.name : "Đơn được mời và đơn đang làm của chi nhánh"}</p>
-          </div>
-        </div>
-        <Button type="button" variant="outline" size="sm" onClick={() => mutate()} disabled={isValidating} className="flex items-center gap-1.5">
-          <RefreshCw size={14} className={isValidating ? "animate-spin" : ""} />
-          <span>Làm mới</span>
-        </Button>
-      </div>
+      <PageHeader
+        title="Đơn gia công"
+        description={branch ? branch.name : "Đơn được mời và đơn đang làm của chi nhánh"}
+        actions={
+          <Button type="button" variant="outline" size="sm" onClick={() => mutate()} disabled={isValidating} className="flex items-center gap-1.5">
+            <RefreshCw size={14} className={isValidating ? "animate-spin motion-reduce:animate-none" : ""} />
+            <span>Làm mới</span>
+          </Button>
+        }
+      />
 
       {!isLoading && data && !branch && (
         <p className="text-body-sm text-text-muted">
@@ -110,7 +106,7 @@ export function BranchPortalBoard() {
         if (items.length === 0) return null
         return (
           <section key={stage} className="flex flex-col gap-3">
-            <h2 className="text-body font-bold text-foreground">
+            <h2 className="text-body font-bold text-text">
               {STAGE_COPY[stage].title} ({items.length})
             </h2>
             {items.map((o) => (

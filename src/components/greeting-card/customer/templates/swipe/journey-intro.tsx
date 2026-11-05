@@ -1,5 +1,6 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
 import React, { useState } from "react"
 import { Hand, Heart, ShoppingBag } from "@/components/ui/icons"
 import { useI18n } from "@/lib/i18n"
@@ -110,34 +111,34 @@ export function JourneyIntro({
       )}
 
       <div className="flex flex-col gap-2">
-        <button
+        <Button variant="ghost"
           type="button"
           onClick={onStart}
           autoFocus
-          className="h-12 rounded-2xl text-body font-bold shadow-lg transition-transform active:scale-[0.98]"
+          className="gap-0 h-12 rounded-2xl text-body font-bold shadow-lg transition-transform active:scale-[0.98]"
           style={{ background: theme.ctaBg, color: theme.ctaText }}
         >
           {mode === "onboarding" ? t("greetingCard.customer.journey.start") : t("greetingCard.customer.journey.resume")}
-        </button>
+        </Button>
         {mode === "resume" && (
-          <button
+          <Button variant="outline"
             type="button"
             onClick={onStartOver}
-            className="h-12 rounded-2xl border text-body-sm font-semibold transition-transform active:scale-[0.98]"
+            className="gap-0 h-12 rounded-2xl border text-body-sm font-semibold transition-transform active:scale-[0.98]"
             style={{ borderColor: theme.controlBorder }}
           >
             {t("greetingCard.customer.journey.startOver")}
-          </button>
+          </Button>
         )}
         {mode === "onboarding" && (
-          <button
+          <Button variant="ghost"
             type="button"
             onClick={() => setStage("contact")}
-            className="mt-1 text-center text-caption underline opacity-75"
+            className="h-auto p-0 font-[inherit] gap-0 mt-1 text-center text-caption underline opacity-75"
             style={{ color: theme.stageMuted }}
           >
             {t("greetingCard.customer.journey.editInfo")}
-          </button>
+          </Button>
         )}
       </div>
     </section>

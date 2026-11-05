@@ -1,5 +1,6 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
 import React, { useState } from "react"
 import { Share2 } from "@/components/ui/icons"
 import { useApi } from "@/components/greeting-card/greeting-api"
@@ -24,23 +25,23 @@ export function ChannelFunnelStats() {
   return (
     <section className="bg-surface rounded-2xl border border-border shadow-sm overflow-hidden">
       <div className="p-4 border-b border-border flex flex-wrap items-center justify-between gap-3">
-        <h3 className="text-body font-extrabold text-foreground flex items-center gap-2">
+        <h3 className="text-body font-extrabold text-text flex items-center gap-2">
           <Share2 size={18} className="text-primary" aria-hidden="true" />
           Hiệu quả {catalogTitle.toLowerCase()} theo kênh
         </h3>
         <div role="group" aria-label="Khoảng thời gian" className="flex gap-1">
           {PERIODS.map((p) => (
-            <button
+            <Button variant="outline"
               key={p}
               type="button"
               onClick={() => setDays(p)}
               aria-pressed={days === p}
-              className={`px-3 h-8 rounded-lg text-caption font-bold border ${
-                days === p ? "bg-primary text-white border-primary" : "border-border text-text-muted hover:bg-surface-muted"
+              className={`gap-0 px-3 h-8 rounded-lg text-caption font-bold border ${
+                days === p ? "bg-primary text-white border-primary hover:bg-primary" : "border-border text-text-muted hover:bg-surface-muted"
               }`}
             >
               {p} ngày
-            </button>
+            </Button>
           ))}
         </div>
       </div>
@@ -50,7 +51,7 @@ export function ChannelFunnelStats() {
       ) : isLoading || !rows ? (
         <div className="p-4 flex flex-col gap-2" aria-busy="true">
           {[0, 1].map((i) => (
-            <div key={i} className="h-8 rounded-lg bg-surface-muted animate-pulse" />
+            <div key={i} className="h-8 rounded-lg bg-surface-muted animate-pulse motion-reduce:animate-none" />
           ))}
         </div>
       ) : rows.length === 0 ? (
@@ -72,7 +73,7 @@ export function ChannelFunnelStats() {
             <tbody className="divide-y divide-border">
               {rows.map((r) => (
                 <tr key={r.channel}>
-                  <td className="px-4 py-2.5 text-foreground font-semibold">{r.label}</td>
+                  <td className="px-4 py-2.5 text-text font-semibold">{r.label}</td>
                   <td className="px-4 py-2.5 text-right">{r.views}</td>
                   <td className="px-4 py-2.5 text-right">{r.details}</td>
                   <td className="px-4 py-2.5 text-right">{r.formOpens}</td>

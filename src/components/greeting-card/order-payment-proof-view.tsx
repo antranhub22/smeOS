@@ -86,7 +86,7 @@ function ProofVerificationCard({
           {!analysis && (
             // Chưa có kết quả AI (đang xử lý ngầm — thường chỉ vài giây sau khi khách tải lên)
             <p className="text-caption text-text-muted flex items-center gap-1">
-              <Clock size={11} className="animate-spin shrink-0" />
+              <Clock size={11} className="animate-spin motion-reduce:animate-none shrink-0" />
               <span>Đang đọc dữ liệu biên lai...</span>
             </p>
           )}
@@ -109,20 +109,20 @@ function ProofVerificationCard({
             <div className="flex flex-col gap-1 text-caption">
               <div className="flex items-baseline justify-between gap-2">
                 <span className="text-text-muted">Tiền trên bill:</span>
-                <span className="font-extrabold text-foreground text-body-sm">
+                <span className="font-extrabold text-text text-body-sm">
                   {ext.amountVnd.toLocaleString("vi-VN")} đ
                 </span>
               </div>
               {ext.bankName && (
                 <div className="flex items-baseline justify-between gap-2">
                   <span className="text-text-muted">Ngân hàng:</span>
-                  <span className="font-semibold text-foreground truncate">{ext.bankName}</span>
+                  <span className="font-semibold text-text truncate">{ext.bankName}</span>
                 </div>
               )}
               {ext.receiverAccountNumber && (
                 <div className="flex items-baseline justify-between gap-2">
                   <span className="text-text-muted">Tài khoản nhận:</span>
-                  <span className="font-mono font-bold text-foreground">{ext.receiverAccountNumber}</span>
+                  <span className="font-mono font-bold text-text">{ext.receiverAccountNumber}</span>
                 </div>
               )}
               {ext.transactionCode && (

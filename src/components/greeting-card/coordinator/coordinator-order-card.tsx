@@ -1,5 +1,6 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
 import { PhotoApprovalNote, photoWaitBlocker, type PhotoApprovalState } from "./photo-approval-note"
 import React from "react"
 import { MapPin, Calendar, CheckCircle2, ExternalLink } from "@/components/ui/icons"
@@ -165,12 +166,12 @@ export function CoordinatorOrderCard({
       {/* Top bar */}
       <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border pb-3">
         <div className="flex flex-wrap items-center gap-2">
-          <button
+          <Button variant="ghost"
             type="button"
             onClick={() => onOpen({ type: "detail", order })}
-            className="flex items-center gap-2 text-left group cursor-pointer"
+            className="h-auto p-0 justify-start font-[inherit] flex items-center gap-2 text-left group cursor-pointer"
           >
-            <span className="text-title-sm font-extrabold text-foreground group-hover:text-primary transition-colors">
+            <span className="text-title-sm font-extrabold text-text group-hover:text-primary transition-colors">
               #{order.code}
             </span>
             {session?.send_code && (
@@ -179,12 +180,12 @@ export function CoordinatorOrderCard({
               </span>
             )}
             {isUrgent && (
-              <span className="text-caption px-2 py-0.5 rounded-md bg-danger-bg text-danger font-extrabold animate-pulse">
+              <span className="text-caption px-2 py-0.5 rounded-md bg-danger-bg text-danger font-extrabold animate-pulse motion-reduce:animate-none">
                 HỎA TỐC
               </span>
             )}
             <span className="text-caption text-primary underline font-medium ml-1">Xem chi tiết</span>
-          </button>
+          </Button>
           <StaffNametagGroup
             item={work}
             fallbackSaleName={order.saleName}
@@ -210,7 +211,7 @@ export function CoordinatorOrderCard({
         />
         <div className="flex-1 min-w-0 flex flex-col gap-1">
           <div className="text-caption text-text-muted font-medium">{terms.sampleProduct.replace(/ chuẩn$/i, "")} khách chọn:</div>
-          <div className="text-body font-bold text-foreground truncate">
+          <div className="text-body font-bold text-text truncate">
             {product.name}
           </div>
           <div className="flex flex-wrap gap-2 mt-0.5">

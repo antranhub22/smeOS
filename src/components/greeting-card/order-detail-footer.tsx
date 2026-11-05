@@ -112,7 +112,7 @@ export function OrderDetailFooter({
             </p>
             <p className="text-caption text-text-muted text-center">
               Số tiền còn lại:{" "}
-              <span className="font-extrabold text-foreground">{balanceVnd.toLocaleString("vi-VN")} đ</span>
+              <span className="font-extrabold text-text">{balanceVnd.toLocaleString("vi-VN")} đ</span>
               {target.paymentProofBalanceUrl && (
                 <>
                   {" · "}
@@ -178,7 +178,7 @@ export function OrderDetailFooter({
                 href={`/b/${target.sendCode}`}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex h-9 items-center gap-1 rounded-xl border border-border px-3 text-caption font-bold text-foreground hover:bg-surface"
+                className="inline-flex h-9 items-center gap-1 rounded-xl border border-border px-3 text-caption font-bold text-text hover:bg-surface"
               >
                 <ExternalLink size={14} /> Mở link khách
               </a>
@@ -202,7 +202,7 @@ export function OrderDetailFooter({
 
         {target.orderId ? (
           <div className="border-t border-border/60 pt-2">
-            <button
+            <Button variant="outline"
               type="button"
               disabled={!cancellationCheck.allowed}
               title={
@@ -217,7 +217,7 @@ export function OrderDetailFooter({
               {cancellationCheck.allowed
                 ? "Đề xuất Hủy / Hoàn tiền đơn này"
                 : `Không thể đề xuất — ${cancellationCheck.reason}`}
-            </button>
+            </Button>
           </div>
         ) : (
           <div className="border-t border-border/60 pt-2">

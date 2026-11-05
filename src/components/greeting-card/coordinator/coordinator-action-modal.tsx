@@ -1,8 +1,10 @@
 "use client"
 
+import { Textarea } from "@/components/ui/textarea"
 import React, { useState } from "react"
-import { Camera, Image as ImageIcon, Truck, UserCheck, X } from "@/components/ui/icons"
+import { Camera, Image as ImageIcon, Truck, UserCheck } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
+import { Dialog } from "@/components/ui/dialog"
 import { apiSend, useApi } from "@/components/greeting-card/greeting-api"
 import { CoordinatorImageUpload } from "./coordinator-image-upload"
 import { CancellationProposalModal } from "@/components/greeting-card/inbox/cancellation-proposal-modal"
@@ -193,31 +195,17 @@ function CoordinatorTaskModal({
   }
 
   return (
-    <div
-      role="presentation"
-      className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-end sm:items-center justify-center p-4"
-      onKeyDown={(e) => e.key === "Escape" && onClose()}
-    >
-      <div
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="coordinator-modal-title"
-        className="bg-surface rounded-2xl border border-border shadow-xl w-full max-w-md p-5 flex flex-col gap-4"
-      >
-        <div className="flex items-center justify-between">
-          <h3 id="coordinator-modal-title" className="text-body font-extrabold text-foreground flex items-center gap-2">
-            <Icon size={18} className="text-primary" />
-            {cfg.title} — #{modal.orderCode}
-          </h3>
-          <button type="button" aria-label="Đóng" onClick={onClose} className="text-text-muted hover:text-foreground">
-            <X size={18} />
-          </button>
-        </div>
+    <Dialog open onOpenChange={(o) => { if (!o && !busy) onClose() }} size="sm"
+      title={<span className="flex items-center gap-2">
+          <Icon size={18} className="text-primary" />
+          {cfg.title} — #{modal.orderCode}
+        </span>}>
+      <div className="flex flex-col gap-4">
         {cfg.description && <p className="text-body-sm text-text-muted">{cfg.description}</p>}
 
         {"note" in cfg ? (
           <>
-            <textarea
+            <Textarea
               rows={3}
               autoFocus
               maxLength={500}
@@ -225,7 +213,7 @@ function CoordinatorTaskModal({
               placeholder={cfg.note.placeholder}
               value={note}
               onChange={(e) => setNote(e.target.value)}
-              className="w-full rounded-xl border border-border bg-surface-muted p-3 text-body-sm text-foreground resize-none focus:outline-none focus:ring-2 focus:ring-primary/40"
+              className="w-full rounded-xl border border-border bg-surface-muted p-3 text-body-sm text-text resize-none focus:outline-none focus:ring-2 focus:ring-primary/40"
             />
             {error && <p role="alert" className="text-danger text-caption">{error}</p>}
             <div className="flex gap-2 justify-end">
@@ -246,6 +234,6 @@ function CoordinatorTaskModal({
           />
         )}
       </div>
-    </div>
+    </Dialog>
   )
 }

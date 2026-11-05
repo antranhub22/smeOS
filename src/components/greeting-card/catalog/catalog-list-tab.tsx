@@ -1,5 +1,6 @@
 "use client"
 
+import { NativeSelect } from "@/components/ui/select"
 import React, { useState } from "react"
 import { BookOpen, Plus, RefreshCw, Loader2 } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
@@ -137,22 +138,22 @@ export function CatalogListTab({ onSelectCatalog }: Props) {
       )}
       <label className="flex flex-wrap items-center gap-2 text-body-sm text-text-muted">
         Sao chép link cho kênh
-        <select
+        <NativeSelect
           value={shareChannel}
           onChange={(e) => setShareChannel(e.target.value)}
-          className="h-9 rounded-lg border border-border bg-surface px-2 text-body-sm text-foreground"
+          className="h-9 rounded-lg border border-border bg-surface px-2 text-body-sm text-text"
         >
           <option value="">Không chọn kênh</option>
           {CATALOG_CHANNELS.map((c) => (
             <option key={c.code} value={c.code}>{c.label}</option>
           ))}
-        </select>
+        </NativeSelect>
         <span className="text-caption">Link này gắn với tên bạn. Đơn khách đặt từ link sẽ được tính cho bạn.</span>
       </label>
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-surface p-5 rounded-2xl border border-border shadow-sm">
         <div>
-          <h2 className="text-title font-extrabold text-foreground flex items-center gap-2">
+          <h2 className="text-title font-extrabold text-text flex items-center gap-2">
             <BookOpen size={20} />
             <span className="capitalize">Quản lý {catalogHeading}</span>
           </h2>
@@ -168,7 +169,7 @@ export function CatalogListTab({ onSelectCatalog }: Props) {
             onClick={() => void loadCatalogs()}
             className="gap-1.5 text-caption h-9"
           >
-            <RefreshCw size={14} className={loading ? "animate-spin" : ""} />
+            <RefreshCw size={14} className={loading ? "animate-spin motion-reduce:animate-none" : ""} />
             <span>Làm mới</span>
           </Button>
           <Button
@@ -208,13 +209,13 @@ export function CatalogListTab({ onSelectCatalog }: Props) {
       {/* Catalog Grid */}
       {loading && catalogs.length === 0 ? (
         <div className="flex items-center justify-center py-16 text-text-muted">
-          <Loader2 size={24} className="animate-spin mr-2" />
+          <Loader2 size={24} className="animate-spin motion-reduce:animate-none mr-2" />
           <span className="text-body-sm">Đang tải danh sách...</span>
         </div>
       ) : catalogs.length === 0 && isFiltered ? (
         <div className="flex flex-col items-center justify-center py-20 gap-4">
           <div className="text-center">
-            <p className="text-title-sm font-bold text-foreground">Không có {catalogHeading} nào khớp bộ lọc</p>
+            <p className="text-title-sm font-bold text-text">Không có {catalogHeading} nào khớp bộ lọc</p>
             <p className="text-body-sm text-text-muted mt-1">
               Thử xem tất cả thời gian, tất cả nhân sự hoặc mục đang hoạt động
             </p>
@@ -229,7 +230,7 @@ export function CatalogListTab({ onSelectCatalog }: Props) {
             <BookOpen size={28} className="text-text-muted" />
           </div>
           <div className="text-center">
-            <p className="text-title-sm font-bold text-foreground">Chưa có {catalogHeading} nào</p>
+            <p className="text-title-sm font-bold text-text">Chưa có {catalogHeading} nào</p>
             <p className="text-body-sm text-text-muted mt-1">
               Tạo {catalogHeading} đầu tiên để bắt đầu gửi Thẻ Chào cho khách
             </p>

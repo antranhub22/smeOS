@@ -39,14 +39,14 @@ export function UnmatchedPaymentsPanel() {
     <section className="bg-surface rounded-2xl border border-warning/40 shadow-sm overflow-hidden">
       <div className="p-4 border-b border-border flex items-center gap-2 bg-warning-bg/30">
         <AlertTriangle size={18} className="text-warning" />
-        <h3 className="text-body font-extrabold text-foreground">Giao dịch chưa khớp đơn ({events.items.length}{events.hasMore ? "+" : ""})</h3>
+        <h3 className="text-body font-extrabold text-text">Giao dịch chưa khớp đơn ({events.items.length}{events.hasMore ? "+" : ""})</h3>
       </div>
       {error && <p role="alert" className="px-4 pt-3 text-body-sm text-danger">{error}</p>}
       <ul className="divide-y divide-border">
         {events.items.map((e) => (
           <li key={e.id} className="p-4 flex flex-col sm:flex-row sm:items-center gap-2 justify-between text-body-sm">
             <div className="min-w-0">
-              <div className="font-bold text-foreground">{vnd(e.amount_vnd)} · <span className="font-mono text-text-muted">#{e.external_id}</span></div>
+              <div className="font-bold text-text">{vnd(e.amount_vnd)} · <span className="font-mono text-text-muted">#{e.external_id}</span></div>
               <div className="text-text-muted break-words">“{e.content}”</div>
               {e.note && <div className="text-caption text-warning font-medium">{e.note}</div>}
               <div className="text-caption text-text-muted">{new Date(e.transaction_at ?? e.created_at).toLocaleString("vi-VN")}</div>

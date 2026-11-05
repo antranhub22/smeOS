@@ -1,5 +1,6 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
 import React from "react"
 import { useI18n } from "@/lib/i18n"
 import type { SupportedLocale } from "@/lib/i18n/types"
@@ -33,7 +34,7 @@ export function LanguageToggle({ activeLocales = ["vi", "en"], className = "" }:
         const meta = LOCALE_META[loc]
         const isActive = locale === loc
         return (
-          <button
+          <Button variant="ghost"
             key={loc}
             type="button"
             onClick={() => setLocale(loc)}
@@ -41,13 +42,13 @@ export function LanguageToggle({ activeLocales = ["vi", "en"], className = "" }:
             aria-pressed={isActive}
             className={`inline-flex items-center gap-1 h-9 px-2.5 text-caption font-black uppercase tracking-wide transition-all ${
               isActive
-                ? "bg-primary text-white"
-                : "text-text-muted hover:bg-surface-muted hover:text-foreground"
+                ? "bg-primary text-white hover:bg-primary"
+                : "text-text-muted hover:bg-surface-muted hover:text-text"
             }`}
           >
-            <span className="text-sm leading-none">{meta.flag}</span>
+            <span className="text-title-sm leading-none">{meta.flag}</span>
             <span>{meta.label}</span>
-          </button>
+          </Button>
         )
       })}
     </div>

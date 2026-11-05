@@ -1,5 +1,6 @@
 "use client"
 
+import { Checkbox } from "@/components/ui/checkbox"
 import React from "react"
 import { CUSTOM_TIME_MAX_HOUR, CUSTOM_TIME_MIN_HOUR, DELIVERY_SLOTS } from "@/modules/greeting-card/domain/delivery-schedule"
 
@@ -21,23 +22,22 @@ export function DeliverySlotToggles({
 
   return (
     <fieldset className="flex flex-col gap-2 border-t border-border pt-3">
-      <legend className="text-body-sm font-bold text-foreground">Khung giờ khách được chọn</legend>
+      <legend className="text-body-sm font-bold text-text">Khung giờ khách được chọn</legend>
       <div className="flex flex-wrap gap-2">
         {DELIVERY_SLOTS.map((s) => (
           <label
             key={s.id}
             className="flex items-center gap-2 h-9 px-3 rounded-lg border border-border text-body-sm cursor-pointer has-[:checked]:border-primary has-[:checked]:bg-primary/5"
           >
-            <input type="checkbox" checked={slotIds.includes(s.id)} onChange={() => toggle(s.id)} className="accent-primary" />
+            <Checkbox checked={slotIds.includes(s.id)} onCheckedChange={() => toggle(s.id)} className="accent-primary" />
             <span>{s.label}</span>
           </label>
         ))}
       </div>
       <label className="flex items-center gap-2 text-body-sm cursor-pointer">
-        <input
-          type="checkbox"
+        <Checkbox
           checked={allowCustomTime}
-          onChange={(e) => onChange({ slotIds, allowCustomTime: e.target.checked })}
+          onCheckedChange={(checked) => onChange({ slotIds, allowCustomTime: (checked === true) })}
           className="accent-primary"
         />
         <span>

@@ -1,5 +1,6 @@
 "use client"
 
+import { Checkbox } from "@/components/ui/checkbox"
 import { ArrowLeft, Check, Gift, ShieldCheck, FileText } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import type { BrochureQuote } from "@/modules/greeting-card/domain/brochure-pricing"
@@ -16,7 +17,7 @@ function Row({ label, value, strong }: { label: string; value: string; strong?: 
   return (
     <div className="flex items-start justify-between gap-4 py-1.5">
       <dt className="shrink-0 text-body-sm text-text-muted">{label}</dt>
-      <dd className={`text-right text-body-sm ${strong ? "font-extrabold text-primary" : "font-semibold text-foreground"}`}>{value}</dd>
+      <dd className={`text-right text-body-sm ${strong ? "font-extrabold text-primary" : "font-semibold text-text"}`}>{value}</dd>
     </div>
   )
 }
@@ -60,7 +61,7 @@ export function OrderReview(props: {
 
   return (
     <section aria-labelledby="order-review-title" className="flex flex-col gap-4">
-      <h2 id="order-review-title" className="text-title font-extrabold text-foreground">
+      <h2 id="order-review-title" className="text-title font-extrabold text-text">
         {isHomestay
           ? (isEn ? "Review Booking Details" : "Xem lại thông tin đặt phòng")
           : (isEn ? "Review Order Before Submitting" : "Xem lại đơn trước khi đặt")}
@@ -82,7 +83,7 @@ export function OrderReview(props: {
               ? (isEn ? "Selected room type" : "Hạng phòng bạn đã chọn")
               : (isEn ? "Selected item" : "Mẫu bạn đã chọn")}
           </p>
-          <p className="text-body font-extrabold text-foreground">{product.name}</p>
+          <p className="text-body font-extrabold text-text">{product.name}</p>
           {props.variantName && <p className="text-body-sm text-text-muted">{props.variantName}</p>}
         </figcaption>
       </figure>
@@ -127,24 +128,24 @@ export function OrderReview(props: {
               <Gift size={14} />
               <span>{isEn ? "Applied order promotion" : "Ưu đãi áp dụng cho đơn hàng"}</span>
             </h4>
-            <p className="text-body-sm font-bold text-foreground">{selectedPromo.title}</p>
+            <p className="text-body-sm font-bold text-text">{selectedPromo.title}</p>
             <p className="text-caption text-text-muted">{selectedPromo.customerText}</p>
           </div>
         )}
 
         {/* Cam kết chuyển lên khung "Thông tin cửa hàng" ở thanh trên cùng (PO 08/10/2026) — ở đây chỉ còn lối mở */}
-        <button
+        <Button variant="outline"
           type="button"
           onClick={() => openShopInfo("commitments")}
-          className="flex min-h-11 w-full items-center gap-2 rounded-xl border border-success/20 bg-success/5 px-3.5 text-left text-body-sm font-bold text-success"
+          className="justify-start flex min-h-11 w-full items-center gap-2 rounded-xl border border-success/20 bg-success/5 px-3.5 text-left text-body-sm font-bold text-success hover:bg-success/5"
         >
           <ShieldCheck size={16} aria-hidden="true" />
           <span>{isEn ? "View store commitments & guarantees" : "Xem cam kết của cửa hàng"}</span>
-        </button>
+        </Button>
 
         {appliedPolicies?.agreements && appliedPolicies.agreements.length > 0 && (
           <div className="p-3.5 rounded-xl border border-border bg-surface-muted space-y-2">
-            <h4 className="text-caption font-extrabold uppercase tracking-wider text-foreground flex items-center gap-1.5">
+            <h4 className="text-caption font-extrabold uppercase tracking-wider text-text flex items-center gap-1.5">
               <FileText size={14} />
               <span>{isEn ? "Terms & Agreements" : orderTerms.agreementHeading} ({appliedPolicies.agreements.length})</span>
             </h4>
@@ -152,7 +153,7 @@ export function OrderReview(props: {
               {appliedPolicies.agreements.map((a) => (
                 <li key={a.id} className="flex items-start gap-1.5">
                   <span className="text-text-muted font-bold">•</span>
-                  <span><strong className="text-foreground">{a.title}:</strong> {a.customerText}</span>
+                  <span><strong className="text-text">{a.title}:</strong> {a.customerText}</span>
                 </li>
               ))}
             </ul>
@@ -161,14 +162,13 @@ export function OrderReview(props: {
       </div>
 
       {/* CHECKBOX XÁC NHẬN THỎA THUẬN (SPEC #2 D, #5) */}
-      {needsTerms && <label className="flex items-start gap-2.5 p-3 rounded-xl border border-border bg-background cursor-pointer select-none">
-        <input
-          type="checkbox"
+      {needsTerms && <label className="flex items-start gap-2.5 p-3 rounded-xl border border-border bg-bg cursor-pointer select-none">
+        <Checkbox
           checked={termsAgreed}
-          onChange={(e) => setTermsAgreed(e.target.checked)}
+          onCheckedChange={(checked) => setTermsAgreed((checked === true))}
           className="mt-0.5 rounded border-border text-primary focus:ring-primary w-4 h-4"
         />
-        <span className="text-caption leading-relaxed text-foreground">
+        <span className="text-caption leading-relaxed text-text">
           {isEn
             ? `I have read and agree to the ${appliedPolicies?.agreements.length} terms & agreements above for this order.`
             : `Tôi đã đọc và đồng ý với ${appliedPolicies?.agreements.length} ${isHomestay ? "quy định & thỏa thuận" : "thỏa thuận"} ở trên ${isHomestay ? "cho kỳ lưu trú này" : "cho đơn hàng này"}.`}

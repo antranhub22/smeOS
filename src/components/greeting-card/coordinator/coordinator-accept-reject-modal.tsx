@@ -1,8 +1,11 @@
 "use client"
 
+import { Checkbox } from "@/components/ui/checkbox"
+import { Textarea } from "@/components/ui/textarea"
 import React, { useState } from "react"
-import { CheckCircle2, ShieldCheck, X, XCircle } from "@/components/ui/icons"
+import { CheckCircle2, ShieldCheck, XCircle } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
+import { Dialog } from "@/components/ui/dialog"
 import { apiSend, useApi } from "@/components/greeting-card/greeting-api"
 
 interface CoordinatorAcceptRejectModalProps {
@@ -78,35 +81,21 @@ export function CoordinatorAcceptRejectModal({
   }
 
   return (
-    <div
-      role="presentation"
-      className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-end sm:items-center justify-center p-4"
-      onKeyDown={(e) => e.key === "Escape" && onClose()}
-    >
-      <div
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="coordinator-decision-modal-title"
-        className="bg-surface rounded-2xl border border-border shadow-xl w-full max-w-md p-5 flex flex-col gap-4"
-      >
-        <div className="flex items-center justify-between">
-          <h3 id="coordinator-decision-modal-title" className="text-body font-extrabold text-foreground flex items-center gap-2">
-            {isAccept ? (
-              <>
-                <ShieldCheck size={20} className="text-success" aria-hidden="true" />
-                Xác nhận đã nhận tiền — #{orderCode}
-              </>
-            ) : (
-              <>
-                <XCircle size={20} className="text-danger" aria-hidden="true" />
-                Từ chối Nhận đơn — #{orderCode}
-              </>
-            )}
-          </h3>
-          <button type="button" aria-label="Đóng" onClick={onClose} className="text-text-muted hover:text-foreground">
-            <X size={18} />
-          </button>
-        </div>
+    <Dialog open onOpenChange={(o) => { if (!o && !busy) onClose() }} size="sm"
+      title={<span className="flex items-center gap-2">
+          {isAccept ? (
+            <>
+              <ShieldCheck size={20} className="text-success" aria-hidden="true" />
+              Xác nhận đã nhận tiền — #{orderCode}
+            </>
+          ) : (
+            <>
+              <XCircle size={20} className="text-danger" aria-hidden="true" />
+              Từ chối Nhận đơn — #{orderCode}
+            </>
+          )}
+        </span>}>
+      <div className="flex flex-col gap-4">
 
         <p className="text-body-sm text-text-muted leading-relaxed">
           {isAccept
@@ -119,7 +108,7 @@ export function CoordinatorAcceptRejectModal({
         {isAccept ? (
           <div className="flex flex-col gap-2">
             <div className="flex items-center justify-between">
-              <label htmlFor="coordinator-accept-note" className="text-body-sm font-semibold text-foreground">
+              <label htmlFor="coordinator-accept-note" className="text-body-sm font-semibold text-text">
                 Ghi chú nội bộ (tùy chọn)
               </label>
               {defaultBranchName && (
@@ -128,51 +117,51 @@ export function CoordinatorAcceptRejectModal({
                 </span>
               )}
             </div>
-            <textarea
+            <Textarea
               id="coordinator-accept-note"
               rows={3}
               maxLength={500}
               placeholder={defaultBranchName ? `Vd: Đã xác nhận với ${defaultBranchName}, xưởng đủ điều kiện thực hiện...` : "Vd: Đã kiểm tra kho nguyên liệu, đủ điều kiện thực hiện đơn..."}
               value={note}
               onChange={(e) => setNote(e.target.value)}
-              className="w-full rounded-xl border border-border bg-surface-muted p-3 text-body-sm text-foreground resize-none focus:outline-none focus:ring-2 focus:ring-primary/40"
+              className="w-full rounded-xl border border-border bg-surface-muted p-3 text-body-sm text-text resize-none focus:outline-none focus:ring-2 focus:ring-primary/40"
             />
             {autoMode && (
-              <label className="flex items-center gap-2 text-body-sm text-foreground">
-                <input type="checkbox" checked={manualDispatch} onChange={(e) => setManualDispatch(e.target.checked)} />
+              <label className="flex items-center gap-2 text-body-sm text-text">
+                <Checkbox checked={manualDispatch} onCheckedChange={(checked) => setManualDispatch((checked === true))} />
                 Tự chọn cửa hàng cho đơn này
               </label>
             )}
           </div>
         ) : (
           <div className="flex flex-col gap-2">
-            <label htmlFor="coordinator-reject-reason" className="text-body-sm font-semibold text-foreground">
+            <label htmlFor="coordinator-reject-reason" className="text-body-sm font-semibold text-text">
               Lý do từ chối <span className="text-danger">*</span>
             </label>
             <div className="flex flex-wrap gap-1.5 mb-1">
               {COMMON_REJECT_REASONS.map((r) => (
-                <button
+                <Button variant="outline"
                   key={r}
                   type="button"
                   onClick={() => setReason(r)}
-                  className={`text-caption px-2.5 py-1 rounded-lg border text-left transition-colors ${
+                  className={`justify-start gap-0 text-caption px-2.5 py-1 rounded-lg border text-left transition-colors ${
                     reason === r
-                      ? "border-danger bg-danger-bg text-danger font-semibold"
-                      : "border-border bg-surface text-text-muted hover:border-border-strong hover:text-foreground"
+                      ? "border-danger bg-danger-bg text-danger font-semibold hover:bg-danger-bg"
+                      : "border-border bg-surface text-text-muted hover:border-border-strong hover:text-text hover:bg-surface"
                   }`}
                 >
                   {r}
-                </button>
+                </Button>
               ))}
             </div>
-            <textarea
+            <Textarea
               id="coordinator-reject-reason"
               rows={3}
               maxLength={500}
               placeholder="Nhập hoặc chỉnh sửa lý do từ chối (bắt buộc)..."
               value={reason}
               onChange={(e) => setReason(e.target.value)}
-              className="w-full rounded-xl border border-border bg-surface-muted p-3 text-body-sm text-foreground resize-none focus:outline-none focus:ring-2 focus:ring-danger/40"
+              className="w-full rounded-xl border border-border bg-surface-muted p-3 text-body-sm text-text resize-none focus:outline-none focus:ring-2 focus:ring-danger/40"
             />
           </div>
         )}
@@ -214,6 +203,6 @@ export function CoordinatorAcceptRejectModal({
           )}
         </div>
       </div>
-    </div>
+    </Dialog>
   )
 }

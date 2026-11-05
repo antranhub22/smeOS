@@ -1,5 +1,6 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
 import React, { useState } from "react"
 import { AlertTriangle, Clock, MessageSquare, Phone } from "@/components/ui/icons"
 import { FlowerImage } from "@/components/greeting-card/flower-image"
@@ -26,7 +27,7 @@ interface Props {
 }
 
 const vnd = (n: number) => `${n.toLocaleString("vi-VN")}đ`
-const ACTION = "inline-flex h-8 items-center gap-1 rounded-lg border border-border px-2 text-caption font-bold text-foreground hover:bg-surface-muted"
+const ACTION = "inline-flex h-8 items-center gap-1 rounded-lg border border-border px-2 text-caption font-bold text-text hover:bg-surface-muted"
 
 /** Kanban của Sale: 9 cột = 9 bước của quy trình, phân tầng hiển thị theo thời gian. */
 export function SalesKanbanView({ items, now, onOpenNotes, showSale, doneHidden }: Props) {
@@ -132,7 +133,7 @@ export function SalesKanbanView({ items, now, onOpenNotes, showSale, doneHidden 
                     </span>
                   </div>
                 </div>
-                <h3 className="text-body-sm font-extrabold text-foreground">{step.title}</h3>
+                <h3 className="text-body-sm font-extrabold text-text">{step.title}</h3>
                 <p className="text-caption text-text-muted">
                   Phụ trách: {step.roleResponsible}
                   {needsMe > 0 && <span className="ml-1 font-semibold text-danger">· {needsMe} cần bạn</span>}
@@ -223,18 +224,18 @@ function SaleKanbanCard({
       className={`flex flex-col gap-2 rounded-xl border bg-surface p-3 shadow-xs transition-shadow hover:shadow-md ${tierBorder}`}
     >
       {/* Clickable Header & Info to open detail pop-up */}
-      <button
+      <Button variant="ghost"
         type="button"
         onClick={onOpenDetail}
-        className="flex flex-col gap-2 text-left w-full cursor-pointer group"
+        className="h-auto p-0 justify-start font-[inherit] flex flex-col gap-2 text-left w-full cursor-pointer group"
       >
         <div className="flex items-start justify-between gap-2 border-b border-border/60 pb-1.5 w-full">
           <div className="flex items-center gap-1.5 min-w-0">
-            <span className="min-w-0 truncate text-body-sm font-bold text-foreground group-hover:text-primary transition-colors">
+            <span className="min-w-0 truncate text-body-sm font-bold text-text group-hover:text-primary transition-colors">
               {item.customerName}
             </span>
             {isUrgent ? (
-              <span className="rounded-md bg-danger-bg px-1.5 py-0.5 text-caption font-extrabold text-danger shrink-0 animate-pulse">
+              <span className="rounded-md bg-danger-bg px-1.5 py-0.5 text-caption font-extrabold text-danger shrink-0 animate-pulse motion-reduce:animate-none">
                 HỎA TỐC
               </span>
             ) : tier === "OVERDUE" ? (
@@ -242,7 +243,7 @@ function SaleKanbanCard({
                 Quá hạn
               </span>
             ) : tier === "URGENT" ? (
-              <span className="rounded-md bg-warning-bg px-1.5 py-0.5 text-caption font-extrabold text-warning shrink-0 animate-pulse">
+              <span className="rounded-md bg-warning-bg px-1.5 py-0.5 text-caption font-extrabold text-warning shrink-0 animate-pulse motion-reduce:animate-none">
                 Sắp đến hạn
               </span>
             ) : null}
@@ -282,7 +283,7 @@ function SaleKanbanCard({
             className="h-10 w-10 shrink-0 rounded-lg border border-border"
           />
           <div className="min-w-0 flex-1">
-            <p className="truncate text-caption font-semibold text-foreground">{item.productName}</p>
+            <p className="truncate text-caption font-semibold text-text">{item.productName}</p>
             <p className="truncate text-caption font-extrabold text-primary">
               {item.totalVnd > 0 ? vnd(item.totalVnd) : "Chưa có giá"}
             </p>
@@ -293,7 +294,7 @@ function SaleKanbanCard({
           <Clock size={12} aria-hidden="true" /> Ở bước này {formatMinutes(waited)}
           {showSale && <span className="truncate">· {item.saleName}</span>}
         </p>
-      </button>
+      </Button>
 
       {item.stuck && (
         <p
@@ -319,7 +320,7 @@ function SaleKanbanCard({
           </>
         )}
         {item.paidVnd > 0 && item.balanceVnd > 0 && item.currentStepId === "STEP_7_READY_QC" && (
-          <button
+          <Button variant="outline"
             type="button"
             onClick={() => {
               const url = typeof window !== "undefined" ? `${window.location.origin}/b/${item.sendCode}` : ""
@@ -331,11 +332,11 @@ function SaleKanbanCard({
             className="inline-flex h-8 items-center gap-1 rounded-lg border border-warning/40 bg-warning-bg/40 px-2 text-caption font-bold text-warning-text hover:bg-warning-bg transition-colors"
           >
             📋 Nhắc TT lần 2
-          </button>
+          </Button>
         )}
-        <button type="button" onClick={() => onOpenNotes(item, item.currentStepId)} className={ACTION}>
+        <Button variant="ghost" type="button" onClick={() => onOpenNotes(item, item.currentStepId)} className={ACTION}>
           <MessageSquare size={12} className="text-primary" aria-hidden="true" /> Nhắn tin
-        </button>
+        </Button>
       </div>
     </article>
   )

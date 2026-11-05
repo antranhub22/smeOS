@@ -1,5 +1,8 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
+import { NativeSelect } from "@/components/ui/select"
+import { Input } from "@/components/ui/input"
 import { useState } from "react"
 import { ADDRESS_PART_MAX } from "@/modules/greeting-card/domain/delivery-address"
 
@@ -33,7 +36,7 @@ export function PickOrTypeField(props: {
       </label>
       {showInput ? (
         <div className="flex flex-col gap-1">
-          <input
+          <Input
             id={id}
             type="text"
             required={required}
@@ -45,13 +48,13 @@ export function PickOrTypeField(props: {
             className={inputClassName}
           />
           {options.length > 0 && (
-            <button type="button" onClick={() => { setTyping(false); onChange("") }} className="self-start text-caption font-medium text-primary hover:underline">
+            <Button variant="ghost" type="button" onClick={() => { setTyping(false); onChange("") }} className="h-auto p-0 gap-0 self-start text-caption font-medium text-primary hover:underline">
               Chọn từ danh sách
-            </button>
+            </Button>
           )}
         </div>
       ) : (
-        <select
+        <NativeSelect
           id={id}
           required={required}
           disabled={disabled}
@@ -66,7 +69,7 @@ export function PickOrTypeField(props: {
             <option key={o} value={o}>{o}</option>
           ))}
           <option value={OTHER}>Khác (tự nhập)…</option>
-        </select>
+        </NativeSelect>
       )}
     </div>
   )

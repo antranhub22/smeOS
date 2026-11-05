@@ -1,7 +1,9 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
+import { Dialog } from "@/components/ui/dialog"
 import { useState, useEffect } from "react"
-import { ChevronDown, MessageCircle, QrCode, X } from "@/components/ui/icons"
+import { ChevronDown, MessageCircle, QrCode } from "@/components/ui/icons"
 import type { ShopContact } from "@/modules/greeting-card/domain/shop-contact"
 import { generateQRCodeDataUrl } from "@/core/media/qr-engine"
 import { SHOP_INFO_EVENT, ShopInfoSheet, ShopLogo, type ShopInfoSection } from "./shop-info-sheet"
@@ -44,17 +46,17 @@ export function ShopContactBar({ shop, inquiry }: ShopContactBarProps) {
     <>
       <header className="sticky top-0 z-30 w-full border-b border-border bg-surface/95 backdrop-blur">
         <div className="mx-auto flex h-14 max-w-md items-center gap-2.5 px-4">
-          <button
+          <Button variant="ghost"
             type="button"
             onClick={() => setInfoSection("info")}
             aria-haspopup="dialog"
             aria-label={`Thông tin cửa hàng ${shop.name}`}
-            className="flex min-h-11 min-w-0 flex-1 items-center gap-2.5 rounded-full text-left"
+            className="justify-start font-[inherit] flex min-h-11 min-w-0 flex-1 items-center gap-2.5 rounded-full text-left"
           >
             <ShopLogo shop={shop} />
-            <span className="min-w-0 truncate text-body font-bold text-foreground">{shop.name}</span>
+            <span className="min-w-0 truncate text-body font-bold text-text">{shop.name}</span>
             <ChevronDown size={16} className="shrink-0 text-text-muted" aria-hidden="true" />
-          </button>
+          </Button>
 
           {/* Nút chuyển đổi ngôn ngữ khi cửa hàng bật tính năng này */}
           {showLanguageToggle && (
@@ -63,15 +65,15 @@ export function ShopContactBar({ shop, inquiry }: ShopContactBarProps) {
 
           {/* Nút xem QR Code Zalo (từ hồ sơ cửa hàng) */}
           {qrImageUrl && (
-            <button
+            <Button variant="outline"
               type="button"
               onClick={() => setShowQrModal(true)}
               aria-label="Mã QR Zalo"
-              className="inline-flex h-10 items-center gap-1.5 rounded-full border border-border px-3 text-body-sm font-semibold text-foreground hover:bg-surface-muted transition-colors"
+              className="inline-flex h-10 items-center gap-1.5 rounded-full border border-border px-3 text-body-sm font-semibold text-text hover:bg-surface-muted transition-colors"
             >
               <QrCode size={16} aria-hidden="true" />
               <span>Mã QR</span>
-            </button>
+            </Button>
           )}
 
           {/* Nút Chat Zalo */}
@@ -102,24 +104,9 @@ export function ShopContactBar({ shop, inquiry }: ShopContactBarProps) {
 
       {/* Modal hiển thị QR Code Zalo */}
       {showQrModal && qrImageUrl && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="zalo-qr-title"
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-xs"
-        >
-          <div className="relative w-full max-w-xs rounded-2xl border border-border bg-surface p-6 shadow-xl text-center flex flex-col items-center">
-            <button
-              type="button"
-              onClick={() => setShowQrModal(false)}
-              aria-label="Đóng mã QR"
-              className="absolute top-3 right-3 p-1.5 rounded-lg text-text-muted hover:text-foreground hover:bg-surface-muted transition-colors"
-            >
-              <X size={18} />
-            </button>
-            <h3 id="zalo-qr-title" className="text-title-sm font-extrabold text-foreground mb-1">
-              Quét mã kết nối Zalo
-            </h3>
+        <Dialog open onOpenChange={(o) => { if (!o) setShowQrModal(false) }} size="sm"
+          title="Quét mã kết nối Zalo">
+          <div className="flex flex-col items-center text-center">
             <p className="text-caption text-text-muted mb-4">
               Mở Zalo trên điện thoại và quét mã để liên hệ với {shop.name}
             </p>
@@ -133,11 +120,11 @@ export function ShopContactBar({ shop, inquiry }: ShopContactBarProps) {
             </div>
             {shop.phone && (
               <p className="mt-3 text-caption text-text-muted font-medium">
-                SĐT Zalo: <span className="font-bold text-foreground">{shop.phone}</span>
+                SĐT Zalo: <span className="font-bold text-text">{shop.phone}</span>
               </p>
             )}
           </div>
-        </div>
+        </Dialog>
       )}
     </>
   )

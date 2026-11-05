@@ -1,5 +1,8 @@
 "use client"
 
+import { NativeSelect } from "@/components/ui/select"
+import { Textarea } from "@/components/ui/textarea"
+import { Input } from "@/components/ui/input"
 import React, { useId, useState } from "react"
 import { Send, X } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
@@ -14,8 +17,8 @@ import { AddressFields } from "./address-fields"
 import { DeliveryTimePicker } from "./delivery-time-picker"
 import { ViDateInput } from "./vi-date-input"
 
-const INPUT = "w-full min-w-0 h-11 px-3 rounded-lg border border-border bg-background text-title font-normal text-foreground placeholder:text-body placeholder:text-text-muted/70 focus:outline-none focus:ring-2 focus:ring-primary/20"
-const LABEL = "block text-body-sm font-bold text-foreground mb-1"
+const INPUT = "w-full min-w-0 h-11 px-3 rounded-lg border border-border bg-bg text-title font-normal text-text placeholder:text-body placeholder:text-text-muted/70 focus:outline-none focus:ring-2 focus:ring-primary/20"
+const LABEL = "block text-body-sm font-bold text-text mb-1"
 const EMPTY_PARTS: AddressParts = { houseNumber: "", street: "", ward: "", province: "" }
 
 /** Chỉ gửi ô khách thực sự đổi — máy chủ so lại với đơn và báo nếu không có gì đổi. */
@@ -94,10 +97,10 @@ export function OrderChangeForm({
     <form onSubmit={submit} noValidate className="flex flex-col gap-4 rounded-2xl border border-border p-4">
       <div className="flex items-start justify-between gap-2">
         <div>
-          <h3 className="text-body font-extrabold text-foreground">Yêu cầu thay đổi thông tin</h3>
+          <h3 className="text-body font-extrabold text-text">Yêu cầu thay đổi thông tin</h3>
           <p className="text-caption text-text-muted">Sửa ô bạn muốn đổi rồi gửi. Cửa hàng xác nhận xong, đơn mới được cập nhật.</p>
         </div>
-        <button type="button" onClick={onClose} aria-label="Đóng" className="p-2 rounded-lg text-text-muted hover:bg-surface-muted"><X size={18} /></button>
+        <Button variant="ghost" type="button" onClick={onClose} aria-label="Đóng" className="font-[inherit] gap-0 p-2 rounded-lg text-text-muted hover:bg-surface-muted"><X size={18} /></Button>
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -111,11 +114,11 @@ export function OrderChangeForm({
         </div>
         <div>
           <label htmlFor={`${uid}-rname`} className={LABEL}>Tên người nhận</label>
-          <input id={`${uid}-rname`} value={v.recipientName} maxLength={ORDER_FIELD_MAX.name} onChange={(e) => set({ recipientName: e.target.value })} className={INPUT} />
+          <Input id={`${uid}-rname`} value={v.recipientName} maxLength={ORDER_FIELD_MAX.name} onChange={(e) => set({ recipientName: e.target.value })} className={INPUT} />
         </div>
         <div>
           <label htmlFor={`${uid}-rphone`} className={LABEL}>SĐT người nhận mới</label>
-          <input id={`${uid}-rphone`} type="tel" inputMode="tel" maxLength={15} placeholder="Để trống nếu không đổi" value={v.recipientPhone} onChange={(e) => set({ recipientPhone: e.target.value })} className={INPUT} />
+          <Input id={`${uid}-rphone`} type="tel" inputMode="tel" maxLength={15} placeholder="Để trống nếu không đổi" value={v.recipientPhone} onChange={(e) => set({ recipientPhone: e.target.value })} className={INPUT} />
         </div>
       </div>
 
@@ -127,10 +130,10 @@ export function OrderChangeForm({
       {shipping.zones.length > 0 && (
         <div>
           <label htmlFor={`${uid}-zone`} className={LABEL}>Khu vực giao</label>
-          <select id={`${uid}-zone`} value={v.shippingZoneId} onChange={(e) => set({ shippingZoneId: e.target.value })} className={INPUT}>
+          <NativeSelect id={`${uid}-zone`} value={v.shippingZoneId} onChange={(e) => set({ shippingZoneId: e.target.value })} className={INPUT}>
             {!v.shippingZoneId && <option value="">Chọn khu vực</option>}
             {shipping.zones.map((z) => <option key={z.id} value={z.id}>{z.name} · {z.feeVnd.toLocaleString("vi-VN")}đ</option>)}
-          </select>
+          </NativeSelect>
           <p className="mt-1 text-caption text-text-muted">Khu vực mới phí cao hơn thì phần chênh được cộng vào đơn; phí thấp hơn thì giữ nguyên số tiền.</p>
         </div>
       )}
@@ -140,21 +143,21 @@ export function OrderChangeForm({
       ) : (
       <div>
         <label htmlFor={`${uid}-card`} className={LABEL}>Nội dung thiệp mừng / băng rôn</label>
-        <textarea id={`${uid}-card`} rows={2} value={v.cardMessage} maxLength={ORDER_FIELD_MAX.cardMessage} onChange={(e) => set({ cardMessage: e.target.value })} className={`${INPUT} h-auto p-3 resize-none`} />
+        <Textarea id={`${uid}-card`} rows={2} value={v.cardMessage} maxLength={ORDER_FIELD_MAX.cardMessage} onChange={(e) => set({ cardMessage: e.target.value })} className={`${INPUT} h-auto p-3 resize-none`} />
         <p className="mt-1 text-right text-caption text-text-muted">{v.cardMessage.length}/{ORDER_FIELD_MAX.cardMessage} ký tự</p>
       </div>
       )}
       <div>
         <label htmlFor={`${uid}-dnote`} className={LABEL}>Ghi chú cho người giao hoa</label>
-        <input id={`${uid}-dnote`} value={v.deliveryNote} maxLength={DELIVERY_NOTE_MAX} onChange={(e) => set({ deliveryNote: e.target.value })} className={INPUT} />
+        <Input id={`${uid}-dnote`} value={v.deliveryNote} maxLength={DELIVERY_NOTE_MAX} onChange={(e) => set({ deliveryNote: e.target.value })} className={INPUT} />
       </div>
       <div>
         <label htmlFor={`${uid}-map`} className={LABEL}>Link vị trí trên Google Maps</label>
-        <input id={`${uid}-map`} type="url" inputMode="url" value={v.mapUrl} maxLength={MAP_URL_MAX} placeholder="Để trống nếu không có" onChange={(e) => set({ mapUrl: e.target.value })} className={INPUT} />
+        <Input id={`${uid}-map`} type="url" inputMode="url" value={v.mapUrl} maxLength={MAP_URL_MAX} placeholder="Để trống nếu không có" onChange={(e) => set({ mapUrl: e.target.value })} className={INPUT} />
       </div>
       <div>
         <label htmlFor={`${uid}-note`} className={LABEL}>Lời nhắn cho cửa hàng (không bắt buộc)</label>
-        <input id={`${uid}-note`} value={v.note} maxLength={CHANGE_NOTE_MAX} placeholder="VD: Người nhận đi công tác, nhờ giao chiều" onChange={(e) => set({ note: e.target.value })} className={INPUT} />
+        <Input id={`${uid}-note`} value={v.note} maxLength={CHANGE_NOTE_MAX} placeholder="VD: Người nhận đi công tác, nhờ giao chiều" onChange={(e) => set({ note: e.target.value })} className={INPUT} />
       </div>
 
       {error && <p role="alert" className="rounded-lg bg-danger-bg px-3 py-2 text-body-sm text-danger">{error}</p>}

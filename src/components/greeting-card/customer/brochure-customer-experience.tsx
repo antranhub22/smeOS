@@ -1,5 +1,6 @@
 "use client"
 
+import { Disclosure } from "@/components/ui/disclosure"
 import { ReorderButton } from "./reorder-button"
 import { ShopContactBar } from "./shop-contact-bar"
 import { useOrderFamily } from "./use-order-family"
@@ -224,7 +225,7 @@ export function BrochureCustomerExperience({ initialData, preview = false }: Bro
       </p>
     )}
     {family.redirecting && (
-      <p role="status" className="bg-surface-muted px-4 py-2 text-center text-body-sm text-foreground">
+      <p role="status" className="bg-surface-muted px-4 py-2 text-center text-body-sm text-text">
         Đang mở đơn bạn đang làm dở…
       </p>
     )}
@@ -232,11 +233,11 @@ export function BrochureCustomerExperience({ initialData, preview = false }: Bro
       <OrderHistorySheet members={family.members} currentSendCode={session.sendCode} />
     )}
     {contactNote && (
-      <p role="status" className="bg-surface-muted px-4 py-2 text-center text-body-sm text-foreground">
+      <p role="status" className="bg-surface-muted px-4 py-2 text-center text-body-sm text-text">
         {contactNote}
       </p>
     )}
-    <div className="min-h-screen bg-background text-foreground flex flex-col justify-between py-6 px-4 sm:px-6">
+    <div className="min-h-screen bg-bg text-text flex flex-col justify-between py-6 px-4 sm:px-6">
       <div className="w-full max-w-md mx-auto mb-6 flex flex-col items-center">
 
         {step === "SWIPING" && (
@@ -266,12 +267,11 @@ export function BrochureCustomerExperience({ initialData, preview = false }: Bro
         )}
 
         {step === "ORDER_FORM" && snapshot && products.find((p) => p.id === snapshot.id)?.priceMode === "RANGE" && (
-          <details className="mx-auto mt-3 w-full max-w-md rounded-xl border border-border bg-surface px-3 py-2">
-            <summary className="cursor-pointer text-body-sm font-semibold text-foreground">Muốn phiên bản theo ý bạn? Nhắn cửa hàng</summary>
+          <Disclosure label="Muốn phiên bản theo ý bạn? Nhắn cửa hàng" className="mx-auto mt-3 w-full max-w-md">
             <div className="mt-2">
               <ProductContactActions shop={shop} inquiryUrl={inquiryUrl} product={{ id: snapshot.id, name: snapshot.name }} />
             </div>
-          </details>
+          </Disclosure>
         )}
 
         {step === "ORDER_FORM" && snapshot && (

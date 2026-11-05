@@ -1,7 +1,9 @@
 "use client"
 
 import React, { useState } from "react"
-import { X, Smartphone, Monitor, ExternalLink, RefreshCw } from "@/components/ui/icons"
+import { Smartphone, Monitor, ExternalLink, RefreshCw } from "@/components/ui/icons"
+import { Button } from "@/components/ui/button"
+import { Dialog } from "@/components/ui/dialog"
 
 interface BrochurePreviewModalProps {
   url: string
@@ -18,84 +20,60 @@ export function BrochurePreviewModal({
   const [iframeKey, setIframeKey] = useState(0)
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-2 sm:p-4 animate-in fade-in duration-200">
-      <div className="bg-surface rounded-2xl border border-border shadow-2xl w-full max-w-4xl h-[92vh] flex flex-col overflow-hidden">
-        {/* Modal Header */}
-        <div className="px-4 py-3 border-b border-border flex items-center justify-between bg-surface-muted/50 shrink-0">
-          <div className="flex items-center gap-2">
-            <span className="font-extrabold text-foreground text-body truncate max-w-xs sm:max-w-md">
-              {title}
-            </span>
-            <span className="text-caption font-bold px-2 py-0.5 rounded-full bg-primary/10 text-primary hidden sm:inline-block">
-              Live Preview
-            </span>
-          </div>
-
-          <div className="flex items-center gap-2">
-            {/* Device Switcher */}
-            <div className="flex items-center bg-surface border border-border rounded-xl p-0.5">
-              <button
-                type="button"
-                onClick={() => setDevice("mobile")}
-                className={`p-1.5 rounded-lg text-caption flex items-center gap-1 transition-colors ${
-                  device === "mobile"
-                    ? "bg-primary text-white font-bold shadow-xs"
-                    : "text-text-muted hover:text-foreground"
-                }`}
-                title="Khổ điện thoại (390px)"
-              >
-                <Smartphone size={15} />
-                <span className="hidden sm:inline">Di động</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => setDevice("desktop")}
-                className={`p-1.5 rounded-lg text-caption flex items-center gap-1 transition-colors ${
-                  device === "desktop"
-                    ? "bg-primary text-white font-bold shadow-xs"
-                    : "text-text-muted hover:text-foreground"
-                }`}
-                title="Toàn màn hình"
-              >
-                <Monitor size={15} />
-                <span className="hidden sm:inline">Desktop</span>
-              </button>
-            </div>
-
-            <button
+    <Dialog
+      open
+      onOpenChange={(o) => { if (!o) onClose() }}
+      size="lg"
+      className="max-w-4xl h-[90dvh]"
+      title={title}
+      description="Xem trực tiếp"
+      subHeader={
+        <div className="flex flex-wrap items-center justify-end gap-2 px-5 py-2 sm:px-6">
+          <div role="group" aria-label="Khổ xem trước" className="flex items-center gap-0.5 rounded-xl border border-border bg-surface p-0.5">
+            <Button
               type="button"
-              onClick={() => setIframeKey((k) => k + 1)}
-              className="p-2 rounded-xl border border-border bg-surface hover:bg-surface-muted text-text-muted hover:text-foreground transition-colors"
-              title="Tải lại preview"
+              variant={device === "mobile" ? "primary" : "ghost"}
+              size="xs"
+              aria-pressed={device === "mobile"}
+              onClick={() => setDevice("mobile")}
+              className="gap-1"
+              title="Khổ điện thoại (390px)"
             >
-              <RefreshCw size={14} />
-            </button>
-
-            <a
-              href={url}
-              target="_blank"
-              rel="noreferrer"
-              className="p-2 rounded-xl border border-border bg-surface hover:bg-surface-muted text-text-muted hover:text-foreground transition-colors"
-              title="Mở trong tab mới"
-            >
-              <ExternalLink size={15} />
-            </a>
-
-            <button
+              <Smartphone size={15} />
+              <span className="hidden sm:inline">Di động</span>
+            </Button>
+            <Button
               type="button"
-              onClick={onClose}
-              className="p-2 rounded-xl hover:bg-surface-muted text-text-muted hover:text-foreground transition-colors ml-1"
-              title="Đóng preview"
+              variant={device === "desktop" ? "primary" : "ghost"}
+              size="xs"
+              aria-pressed={device === "desktop"}
+              onClick={() => setDevice("desktop")}
+              className="gap-1"
+              title="Toàn màn hình"
             >
-              <X size={18} />
-            </button>
+              <Monitor size={15} />
+              <span className="hidden sm:inline">Máy tính</span>
+            </Button>
           </div>
+          <Button type="button" variant="outline" size="icon-sm" onClick={() => setIframeKey((k) => k + 1)} aria-label="Tải lại bản xem trước" title="Tải lại bản xem trước">
+            <RefreshCw size={14} />
+          </Button>
+          <a
+            href={url}
+            target="_blank"
+            rel="noreferrer"
+            aria-label="Mở trong tab mới"
+            className="inline-flex h-8 w-8 items-center justify-center rounded-[var(--radius-button)] border border-border bg-surface text-text-muted hover:bg-surface-alt hover:text-text"
+            title="Mở trong tab mới"
+          >
+            <ExternalLink size={15} />
+          </a>
         </div>
-
-        {/* Modal Body / Iframe Container */}
-        <div className="flex-1 bg-surface-muted flex items-center justify-center p-2 sm:p-4 overflow-hidden relative">
+      }
+    >
+        <div className="-m-5 sm:-m-6 h-[calc(100%+2.5rem)] sm:h-[calc(100%+3rem)] bg-surface-muted flex items-center justify-center p-2 sm:p-4 overflow-hidden relative">
           <div
-            className={`transition-all duration-300 h-full flex flex-col bg-background rounded-2xl overflow-hidden shadow-xl border border-border ${
+            className={`transition-all duration-300 h-full flex flex-col bg-bg rounded-2xl overflow-hidden shadow-xl border border-border ${
               device === "mobile"
                 ? "w-[390px] max-w-full ring-8 ring-black/10 rounded-[36px]"
                 : "w-full"
@@ -116,7 +94,6 @@ export function BrochurePreviewModal({
             />
           </div>
         </div>
-      </div>
-    </div>
+    </Dialog>
   )
 }

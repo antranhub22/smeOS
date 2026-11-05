@@ -1,5 +1,6 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
 import { Info } from "@/components/ui/icons"
 import type { GreetingCatalogProduct } from "@/modules/greeting-card/domain/greeting-card-types"
 import type { SwipeTheme } from "./swipe-themes"
@@ -55,15 +56,15 @@ export function SwipeCard({ product, theme, brand, index, total, onInfo }: Swipe
   const serif = theme.font.includes("serif") && !theme.font.includes("sans")
   const fontSize = polaroid ? 30 : theme.titleUpper ? 20 : serif ? 26 : 22
   const infoButton = onInfo && (
-    <button
+    <Button variant="outline"
       type="button"
       onPointerDown={(e) => e.stopPropagation()}
       onClick={onInfo}
       aria-label={`Xem chi tiết ${product.name}`}
-      className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-current/30 backdrop-blur-sm transition-transform active:scale-90"
+      className="font-[inherit] gap-0 flex h-9 w-9 shrink-0 items-center justify-center rounded-full border border-current/30 backdrop-blur-sm transition-transform active:scale-90"
     >
       <Info size={18} aria-hidden="true" />
-    </button>
+    </Button>
   )
   const info = (
     <ProductInfo

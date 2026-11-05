@@ -1,5 +1,6 @@
 "use client"
 
+import { NativeSelect } from "@/components/ui/select"
 import React, { useState } from "react"
 import { Eye } from "@/components/ui/icons"
 import { apiSend, useApi } from "@/components/greeting-card/greeting-api"
@@ -36,17 +37,17 @@ export function BrochureVisibilitySettings() {
     <section className="bg-surface rounded-2xl border border-border p-5 shadow-sm flex flex-col gap-3">
       <div className="flex items-center gap-2">
         <Eye size={18} className="text-primary" aria-hidden="true" />
-        <h3 className="text-title-sm font-extrabold text-foreground">Sale được xem khách nào</h3>
+        <h3 className="text-title-sm font-extrabold text-text">Sale được xem khách nào</h3>
       </div>
       {view.error ? (
         <p role="alert" className="text-body-sm text-danger">{view.error.message}</p>
       ) : !data ? (
-        <div className="h-16 rounded-lg bg-surface-muted animate-pulse" aria-busy="true" />
+        <div className="h-16 rounded-lg bg-surface-muted animate-pulse motion-reduce:animate-none" aria-busy="true" />
       ) : (
         <>
           <label className="flex flex-wrap items-center gap-2 text-body-sm">
-            <span className="font-semibold text-foreground">Mặc định cho sale mới:</span>
-            <select
+            <span className="font-semibold text-text">Mặc định cho sale mới:</span>
+            <NativeSelect
               value={data.defaultMode}
               disabled={saving !== null}
               onChange={(e) => void save("default", { mode: e.target.value as VisibilityMode })}
@@ -54,7 +55,7 @@ export function BrochureVisibilitySettings() {
             >
               <option value="ALL">{MODE_LABEL.ALL}</option>
               <option value="OWN">{MODE_LABEL.OWN}</option>
-            </select>
+            </NativeSelect>
           </label>
           {data.members.length === 0 ? (
             <p className="text-body-sm text-text-muted">Chưa có nhân viên bán hàng nào trong cửa hàng.</p>
@@ -63,10 +64,10 @@ export function BrochureVisibilitySettings() {
               {data.members.map((m) => (
                 <li key={m.userId} className="flex flex-wrap items-center justify-between gap-2 px-3 py-2">
                   <div className="min-w-0">
-                    <p className="text-body-sm font-semibold text-foreground truncate">{m.name}</p>
+                    <p className="text-body-sm font-semibold text-text truncate">{m.name}</p>
                     <p className="text-caption text-text-muted">{m.roleName}</p>
                   </div>
-                  <select
+                  <NativeSelect
                     aria-label={`Quyền xem của ${m.name}`}
                     value={m.mode ?? ""}
                     disabled={saving !== null}
@@ -76,7 +77,7 @@ export function BrochureVisibilitySettings() {
                     <option value="">Theo mặc định ({MODE_LABEL[data.defaultMode]})</option>
                     <option value="ALL">{MODE_LABEL.ALL}</option>
                     <option value="OWN">{MODE_LABEL.OWN}</option>
-                  </select>
+                  </NativeSelect>
                 </li>
               ))}
             </ul>

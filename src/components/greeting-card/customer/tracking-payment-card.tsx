@@ -63,7 +63,7 @@ export function TrackingPaymentCard({
 
   return (
     <section aria-labelledby="tracking-payment-title" className="flex flex-col gap-3 p-4 rounded-2xl bg-surface-muted border border-border">
-      <h3 id="tracking-payment-title" className="flex items-center gap-2 text-foreground font-extrabold text-body">
+      <h3 id="tracking-payment-title" className="flex items-center gap-2 text-text font-extrabold text-body">
         <Wallet size={18} className="text-primary" aria-hidden="true" /> Thanh toán
       </h3>
       <dl className="flex flex-col gap-1 text-body-sm">
@@ -83,7 +83,7 @@ export function TrackingPaymentCard({
       </ul>
       {qr && (
         <div className="flex flex-col items-center gap-2 border-t border-border pt-3">
-          <p className="text-body-sm text-foreground text-center">
+          <p className="text-body-sm text-text text-center">
             {payment.paidVnd > 0
               ? payment.milestones.some((m) => m.due === "AFTER_DELIVERY")
                 ? `Vui lòng thanh toán phần còn lại qua mã QR bên dưới hoặc ${ot.trackingDeliveryStepLabel === "Nhận phòng" ? "khi nhận phòng." : "khi nhận hàng."}`
@@ -96,7 +96,7 @@ export function TrackingPaymentCard({
             <Image src={qr.qrUrl} alt={`Mã QR thanh toán ${vnd(qr.amount)}`} width={176} height={176} unoptimized className="w-44 h-44 object-contain" />
           </div>
           <p className="text-caption text-text-muted text-center">
-            {qr.bankName} · {qr.accountNo} · {qr.accountName}<br />Nội dung chuyển khoản: <strong className="text-foreground">{qr.transferMemo}</strong>
+            {qr.bankName} · {qr.accountNo} · {qr.accountName}<br />Nội dung chuyển khoản: <strong className="text-text">{qr.transferMemo}</strong>
           </p>
           {sendCode && (
             <div className="w-full flex flex-col gap-2">
@@ -137,7 +137,7 @@ export function TrackingPaymentCard({
         </div>
       )}
       {!qr && payment.remainingVnd > 0 && (
-        <p className="text-body-sm text-foreground border-t border-border pt-2">
+        <p className="text-body-sm text-text border-t border-border pt-2">
           {payment.paidVnd > 0
             ? ot.trackingBalanceContactHint
             : `Cửa hàng sẽ liên hệ để hướng dẫn thanh toán ${vnd(payment.remainingVnd)}.`}

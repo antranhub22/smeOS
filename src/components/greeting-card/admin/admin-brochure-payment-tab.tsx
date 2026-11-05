@@ -1,5 +1,6 @@
 "use client"
 
+import { Input } from "@/components/ui/input"
 import React, { useState } from "react"
 import { RefreshCw, Settings, ShieldCheck, Search, X } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
@@ -38,7 +39,7 @@ export function AdminBrochurePaymentTab({ focusOrderId = null, onClearFocus }: {
     <div className="flex flex-col gap-6">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-surface p-5 rounded-2xl border border-border shadow-sm">
         <div>
-          <h2 className="text-title font-extrabold text-foreground flex items-center gap-2">
+          <h2 className="text-title font-extrabold text-text flex items-center gap-2">
             <span>Việc chờ bạn quyết</span>
           </h2>
           <p className="text-body-sm text-text-muted mt-1">
@@ -48,13 +49,13 @@ export function AdminBrochurePaymentTab({ focusOrderId = null, onClearFocus }: {
         <div className="flex gap-2">
           <Link
             href={"/cai-dat?tab=BROCHURE_FLOW" as Route}
-            className="inline-flex items-center gap-1.5 px-3 h-9 rounded-lg border border-border bg-background text-caption font-bold text-foreground hover:bg-surface-muted transition-colors"
+            className="inline-flex items-center gap-1.5 px-3 h-9 rounded-lg border border-border bg-bg text-caption font-bold text-text hover:bg-surface-muted transition-colors"
           >
             <Settings size={14} aria-hidden="true" />
             <span>Cài đặt</span>
           </Link>
           <Button type="button" variant="outline" size="sm" onClick={() => void orders.refresh()} className="gap-1.5 text-caption h-9">
-            <RefreshCw size={14} className={orders.isLoading ? "animate-spin" : ""} />
+            <RefreshCw size={14} className={orders.isLoading ? "animate-spin motion-reduce:animate-none" : ""} />
             <span>Làm mới</span>
           </Button>
         </div>
@@ -75,8 +76,8 @@ export function AdminBrochurePaymentTab({ focusOrderId = null, onClearFocus }: {
       <section className="bg-surface rounded-2xl border border-border shadow-sm overflow-hidden">
         {focusOrderId && (
           <div role="status" className="flex flex-wrap items-center justify-between gap-2 border-b border-border bg-primary/5 px-4 py-2.5 text-body-sm">
-            <span className="font-semibold text-foreground">Đang mở đơn từ Hộp việc</span>
-            <button type="button" onClick={onClearFocus} className="min-h-9 font-semibold text-primary hover:underline">Xem tất cả đơn</button>
+            <span className="font-semibold text-text">Đang mở đơn từ Hộp việc</span>
+            <Button variant="ghost" type="button" onClick={onClearFocus} className="gap-0 min-h-9 font-semibold text-primary hover:underline">Xem tất cả đơn</Button>
           </div>
         )}
         {!focusOrderId && (
@@ -86,37 +87,37 @@ export function AdminBrochurePaymentTab({ focusOrderId = null, onClearFocus }: {
         )}
         <div className="p-4 border-b border-border flex flex-wrap items-center gap-2" role="group" aria-label="Lọc đơn">
           {ORDER_FILTERS.map((f) => (
-            <button
+            <Button variant="outline"
               key={f.id}
               type="button"
               aria-pressed={filter === f.id}
               onClick={() => { setFilter(f.id); onClearFocus?.() }}
-              className={`px-3 h-8 rounded-lg text-caption font-bold border ${
-                filter === f.id ? "bg-primary text-white border-primary" : "border-border text-text-muted hover:bg-surface-muted"
+              className={`gap-0 px-3 h-8 rounded-lg text-caption font-bold border ${
+                filter === f.id ? "bg-primary text-white border-primary hover:bg-primary" : "border-border text-text-muted hover:bg-surface-muted"
               }`}
             >
               {f.label}
-            </button>
+            </Button>
           ))}
           <div className="relative ml-auto w-full sm:w-64">
             <Search size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-text-muted" aria-hidden="true" />
-            <input
+            <Input
               type="search"
               aria-label="Tìm kiếm đơn hàng theo tên khách, mã đơn, số điện thoại"
               placeholder="Tìm tên khách, mã đơn, SĐT…"
               value={search}
               onChange={(e) => { setSearch(e.target.value); onClearFocus?.() }}
-              className="h-8 w-full rounded-lg border border-border bg-surface pl-8 pr-7 text-caption text-foreground placeholder:text-text-muted focus:border-primary focus:outline-hidden"
+              className="h-8 w-full rounded-lg border border-border bg-surface pl-8 pr-7 text-caption text-text placeholder:text-text-muted focus:border-primary focus:outline-hidden"
             />
             {search && (
-              <button
+              <Button variant="ghost"
                 type="button"
                 aria-label="Xoá tìm kiếm"
                 onClick={() => setSearch("")}
-                className="absolute right-2 top-1/2 -translate-y-1/2 text-text-muted hover:text-foreground"
+                className="h-auto p-0 font-[inherit] gap-0 absolute right-2 top-1/2 -translate-y-1/2 text-text-muted hover:text-text"
               >
                 <X size={12} aria-hidden="true" />
-              </button>
+              </Button>
             )}
           </div>
         </div>
@@ -124,7 +125,7 @@ export function AdminBrochurePaymentTab({ focusOrderId = null, onClearFocus }: {
           <p role="alert" className="p-4 text-body-sm text-danger">{orders.error.message}</p>
         ) : orders.isLoading ? (
           <div className="p-4 flex flex-col gap-2" aria-busy="true">
-            {[0, 1, 2].map((i) => <div key={i} className="h-12 rounded-lg bg-surface-muted animate-pulse" />)}
+            {[0, 1, 2].map((i) => <div key={i} className="h-12 rounded-lg bg-surface-muted animate-pulse motion-reduce:animate-none" />)}
           </div>
         ) : orders.items.length === 0 ? (
           <p className="p-8 text-center text-body-sm text-text-muted">Không có đơn nào trong mục này.</p>

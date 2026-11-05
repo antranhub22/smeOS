@@ -19,7 +19,7 @@ export function CoordinatorProgressStrip(props: { status: string; productionStat
           >
             {s.state === "done" ? <Check size={14} aria-hidden="true" /> : null}
           </span>
-          <span className={`text-caption ${s.state === "pending" ? "text-text-muted" : "font-semibold text-foreground"}`}>
+          <span className={`text-caption ${s.state === "pending" ? "text-text-muted" : "font-semibold text-text"}`}>
             {s.label}
             <span className="sr-only">{s.state === "done" ? " (đã xong)" : s.state === "current" ? " (đang làm)" : " (chưa tới)"}</span>
           </span>

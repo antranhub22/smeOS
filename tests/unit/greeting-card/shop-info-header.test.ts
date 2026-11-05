@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest"
 import { createElement } from "react"
 import { renderToStaticMarkup } from "react-dom/server"
 import { safeEmail, safeWebUrl, shopSocialLinks, shopWebsites, toShopContact, websiteLabel } from "@/modules/greeting-card/domain/shop-contact"
-import { ShopInfoSheet } from "@/components/greeting-card/customer/shop-info-sheet"
+import { ShopInfoContent } from "@/components/greeting-card/customer/shop-info-sheet"
 import { OrderReview } from "@/components/greeting-card/customer/order-review"
 
 /** Khung "Thông tin cửa hàng" ở thanh trên cùng của link gửi khách (PO 08/10/2026). */
@@ -34,7 +34,7 @@ describe("thông tin cửa hàng — dữ liệu", () => {
 
 describe("thông tin cửa hàng — giao diện", () => {
   it("hiện hotline (không bấm gọi), email, website, địa chỉ; cam kết mở sẵn khi vào từ nút cam kết", () => {
-    const html = renderToStaticMarkup(createElement(ShopInfoSheet, { shop, section: "commitments", onClose: () => undefined }))
+    const html = renderToStaticMarkup(createElement(ShopInfoContent, { shop, section: "commitments" }))
     expect(html).toContain("0901234567")
     expect(html).not.toContain("tel:")
     expect(html).toContain("lienhe@thaomoc.vn")
@@ -47,7 +47,7 @@ describe("thông tin cửa hàng — giao diện", () => {
 
   it("mặc định cam kết thu gọn; tiệm chưa khai email/website thì ẩn", () => {
     const bare = toShopContact({ name: "Tiệm A", phone: null, address: null, logoUrl: null, commitments: [{ id: "c", title: "T", customerText: "Nội dung" }] })
-    const html = renderToStaticMarkup(createElement(ShopInfoSheet, { shop: bare, section: "info", onClose: () => undefined }))
+    const html = renderToStaticMarkup(createElement(ShopInfoContent, { shop: bare, section: "info" }))
     expect(html).toContain("Cam kết của cửa hàng (1)")
     expect(html).not.toContain("Nội dung")
     expect(html).not.toContain("Hotline")

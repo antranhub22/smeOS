@@ -1,8 +1,12 @@
 "use client"
 
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import { Checkbox } from "@/components/ui/checkbox"
+import { Textarea } from "@/components/ui/textarea"
 import React, { useState } from "react"
-import { PackageX, X } from "@/components/ui/icons"
+import { PackageX } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
+import { Dialog } from "@/components/ui/dialog"
 import { apiSend } from "@/components/greeting-card/greeting-api"
 import {
   DELIVERY_FAILURE_LABEL,
@@ -38,33 +42,30 @@ export function DeliveryFailedModal({ orderId, orderCode, onClose, onDone }: { o
   }
 
   return (
-    <div role="presentation" className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-end sm:items-center justify-center p-4" onKeyDown={(e) => e.key === "Escape" && onClose()}>
-      <div role="dialog" aria-modal="true" aria-labelledby="delivery-failed-title" className="bg-surface rounded-2xl border border-border shadow-xl w-full max-w-md p-5 flex flex-col gap-4">
-        <div className="flex items-center justify-between">
-          <h3 id="delivery-failed-title" className="text-body font-extrabold text-foreground flex items-center gap-2">
-            <PackageX size={18} className="text-warning" aria-hidden="true" /> Giao không thành công — #{orderCode}
-          </h3>
-          <button type="button" aria-label="Đóng" onClick={onClose} className="text-text-muted hover:text-foreground"><X size={18} /></button>
-        </div>
+    <Dialog open onOpenChange={(o) => { if (!o && !busy) onClose() }} size="sm"
+      title={<span className="flex items-center gap-2"><PackageX size={18} className="text-warning" aria-hidden="true" /> Giao không thành công — #{orderCode}</span>}>
+      <div className="flex flex-col gap-4">
         <p className="text-body-sm text-text-muted">Đơn chuyển sang <strong>chờ giao lại</strong>. Khách được báo và có thể đổi giờ hoặc địa chỉ giao trên trang theo dõi.</p>
 
         <fieldset className="flex flex-col gap-2" disabled={busy}>
-          <legend className="text-body-sm font-bold text-foreground mb-1">Lý do</legend>
+          <legend className="text-body-sm font-bold text-text mb-1">Lý do</legend>
+          <RadioGroup aria-label="Lý do" value={reason} onValueChange={(v) => setReason(v as DeliveryFailureReason)} className="flex flex-col gap-2">
           {DELIVERY_FAILURE_REASONS.map((r) => (
             <label key={r} className={`flex min-h-11 cursor-pointer items-center gap-2 rounded-xl border px-3 py-2 text-body-sm ${reason === r ? "border-primary bg-primary/5" : "border-border"}`}>
-              <input type="radio" name="delivery-failed-reason" checked={reason === r} onChange={() => setReason(r)} />
+              <RadioGroupItem value={r} />
               <span>{DELIVERY_FAILURE_LABEL[r]}</span>
             </label>
           ))}
+          </RadioGroup>
         </fieldset>
 
         <label className="sr-only" htmlFor="delivery-failed-note">Ghi chú</label>
-        <textarea id="delivery-failed-note" rows={2} maxLength={FAILURE_NOTE_MAX} value={note} onChange={(e) => setNote(e.target.value)}
+        <Textarea id="delivery-failed-note" rows={2} maxLength={FAILURE_NOTE_MAX} value={note} onChange={(e) => setNote(e.target.value)}
           placeholder={reason === "OTHER" ? "Ghi rõ lý do (bắt buộc)" : "Ghi chú: đã gọi mấy cuộc, giờ nào, người nhận hẹn lại lúc nào…"}
-          className="w-full rounded-xl border border-border bg-surface-muted p-3 text-body-sm text-foreground resize-none focus:outline-none focus:ring-2 focus:ring-primary/40" />
+          className="w-full rounded-xl border border-border bg-surface-muted p-3 text-body-sm text-text resize-none focus:outline-none focus:ring-2 focus:ring-primary/40" />
 
-        <label className="flex min-h-11 items-start gap-2 text-body-sm text-foreground">
-          <input type="checkbox" checked={chargeFee} onChange={(e) => setChargeFee(e.target.checked)} className="mt-1" />
+        <label className="flex min-h-11 items-start gap-2 text-body-sm text-text">
+          <Checkbox checked={chargeFee} onCheckedChange={(checked) => setChargeFee((checked === true))} className="mt-1" />
           <span>Tính phí giao lại theo cài đặt của tiệm <span className="text-text-muted">(bỏ chọn nếu lỗi do cửa hàng / shipper)</span></span>
         </label>
 
@@ -76,6 +77,6 @@ export function DeliveryFailedModal({ orderId, orderCode, onClose, onDone }: { o
           </Button>
         </div>
       </div>
-    </div>
+    </Dialog>
   )
 }

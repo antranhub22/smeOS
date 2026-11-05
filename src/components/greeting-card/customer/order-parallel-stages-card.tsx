@@ -50,7 +50,7 @@ export function OrderParallelStagesCard({
             : "bg-info-bg/50 border-info/30 text-info"
         }`}
       >
-        <div className="flex items-center gap-2 font-bold text-body-sm text-foreground">
+        <div className="flex items-center gap-2 font-bold text-body-sm text-text">
           {hasMoney ? (
             <CheckCircle2 size={18} className="text-success shrink-0" />
           ) : (
@@ -83,7 +83,7 @@ export function OrderParallelStagesCard({
             : "bg-info-bg/50 border-info/30 text-info"
         }`}
       >
-        <div className="flex items-center gap-2 font-bold text-body-sm text-foreground">
+        <div className="flex items-center gap-2 font-bold text-body-sm text-text">
           {isRejected ? (
             <XCircle size={18} className="text-danger shrink-0" />
           ) : isAccepted ? (

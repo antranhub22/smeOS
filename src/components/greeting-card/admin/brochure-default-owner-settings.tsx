@@ -1,5 +1,6 @@
 "use client"
 
+import { NativeSelect } from "@/components/ui/select"
 import React, { useState } from "react"
 import { UserCheck } from "@/components/ui/icons"
 import { apiSend, useApi } from "@/components/greeting-card/greeting-api"
@@ -39,18 +40,18 @@ export function BrochureDefaultOwnerSettings() {
     <section className="flex flex-col gap-3 rounded-2xl border border-border bg-surface p-5 shadow-sm">
       <div className="flex items-center gap-2">
         <UserCheck size={18} className="text-primary" aria-hidden="true" />
-        <h3 className="text-title-sm font-extrabold text-foreground">Người phụ trách link cũ</h3>
+        <h3 className="text-title-sm font-extrabold text-text">Người phụ trách link cũ</h3>
       </div>
       <p className="text-caption text-text-muted">
         Link sao chép trong smeOS luôn thuộc người đã bấm sao chép. Đơn đến từ link đã gửi hoặc đã đăng trước đây giao cho người này.
       </p>
       <label className="flex flex-col gap-1 text-body-sm">
         <span className="sr-only">Người phụ trách link cũ</span>
-        <select value={current} disabled={saving || !org.data} onChange={(e) => void save(e.target.value)}
-          className="h-11 rounded-xl border border-border bg-surface px-3 text-body-sm text-foreground">
+        <NativeSelect value={current} disabled={saving || !org.data} onChange={(e) => void save(e.target.value)}
+          className="h-11 rounded-xl border border-border bg-surface px-3 text-body-sm text-text">
           <option value="">Chủ tiệm (mặc định)</option>
           {options.map((m) => <option key={m.userId} value={m.userId}>{m.name}</option>)}
-        </select>
+        </NativeSelect>
       </label>
       {message && <p role="status" className={`text-caption font-medium ${message.ok ? "text-success" : "text-danger"}`}>{message.text}</p>}
     </section>

@@ -1,5 +1,6 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
 import { useMemo, useState } from "react"
 import type { GreetingCatalogProduct } from "@/modules/greeting-card/domain/greeting-card-types"
 import { AuxPage, EmptyCatalog, ProductTile, useShortlist } from "./aux/aux-kit"
@@ -36,19 +37,19 @@ export function ColorMoodboardDeck({ products, catalogName, selectedProductId, o
           {[{ id: null, label: "Tất cả", swatch: ALL_MOODS_SWATCH }, ...moods].map((m) => {
             const active = moodId === m.id
             return (
-              <button
+              <Button variant="ghost"
                 key={m.id ?? "all"}
                 type="button"
                 aria-pressed={active}
                 onClick={() => setMoodId(m.id)}
-                className="flex w-16 shrink-0 flex-col items-center gap-1.5"
+                className="h-auto p-0 font-[inherit] flex w-16 shrink-0 flex-col items-center gap-1.5"
               >
                 <span
                   className={`h-14 w-14 rounded-full border border-black/10 transition-transform ${active ? "scale-105 ring-2 ring-text ring-offset-2 ring-offset-bg" : ""}`}
                   style={{ background: m.swatch }}
                 />
                 <span className={`text-center text-caption leading-tight ${active ? "font-bold text-text" : "text-text-muted"}`}>{m.label}</span>
-              </button>
+              </Button>
             )
           })}
         </div>

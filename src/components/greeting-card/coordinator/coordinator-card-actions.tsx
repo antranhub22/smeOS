@@ -102,13 +102,13 @@ export function CoordinatorCardActions({
         </Button>
       )}
 
-      <button
+      <Button variant="ghost"
         type="button"
         onClick={() => onOpen({ type: "cancel-proposal", orderId: order.id, orderCode: order.code, totalVnd: order.total_vnd, paidVnd: order.paid_vnd, deliveryStatus: order.delivery_status })}
-        className="col-span-2 text-caption text-text-muted hover:text-danger hover:underline text-center pt-1 transition-colors"
+        className="h-auto p-0 font-[inherit] gap-0 col-span-2 text-caption text-text-muted hover:text-danger hover:underline text-center pt-1 transition-colors"
       >
         Đề xuất Hủy / Hoàn tiền đơn này
-      </button>
+      </Button>
     </div>
   )
 }

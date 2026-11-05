@@ -1,5 +1,8 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
+import { NativeSelect } from "@/components/ui/select"
+import { Textarea } from "@/components/ui/textarea"
 import React, { useId } from "react"
 import { Calendar, Home, Clock, Car, Bike, Plane, CheckCircle2 } from "@/components/ui/icons"
 import { ViDateInput } from "./vi-date-input"
@@ -118,7 +121,7 @@ export function HomestayOrderFields({
       {/* 1. KHỐI LỊCH NHẬN & TRẢ PHÒNG */}
       <div className="p-4 rounded-xl border border-primary/20 bg-primary/5 flex flex-col gap-3">
         <div className="flex items-center justify-between">
-          <div className="text-body-sm font-extrabold text-foreground flex items-center gap-2">
+          <div className="text-body-sm font-extrabold text-text flex items-center gap-2">
             <Calendar size={17} className="text-primary" />
             <span>Thời gian lưu trú</span>
           </div>
@@ -129,7 +132,7 @@ export function HomestayOrderFields({
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
-            <label htmlFor={`${uid}-checkInDate`} className="block text-caption font-bold text-foreground mb-1">
+            <label htmlFor={`${uid}-checkInDate`} className="block text-caption font-bold text-text mb-1">
               Ngày nhận phòng (Check-in) <span className="text-danger">*</span>
             </label>
             <ViDateInput
@@ -153,7 +156,7 @@ export function HomestayOrderFields({
           </div>
 
           <div>
-            <label htmlFor={`${uid}-checkOutDate`} className="block text-caption font-bold text-foreground mb-1">
+            <label htmlFor={`${uid}-checkOutDate`} className="block text-caption font-bold text-text mb-1">
               Ngày trả phòng (Check-out) <span className="text-danger">*</span>
             </label>
             <ViDateInput
@@ -184,11 +187,11 @@ export function HomestayOrderFields({
 
         {/* Khung giờ nhận phòng */}
         <div>
-          <label htmlFor={`${uid}-checkInTime`} className="block text-caption font-bold text-foreground mb-1">
+          <label htmlFor={`${uid}-checkInTime`} className="block text-caption font-bold text-text mb-1">
             Giờ nhận phòng dự kiến
           </label>
           <div className="relative">
-            <select
+            <NativeSelect
               id={`${uid}-checkInTime`}
               value={checkInTimeSlot}
               onChange={(e) => onTimeSlotChange(e.target.value)}
@@ -200,7 +203,7 @@ export function HomestayOrderFields({
                   {slot}
                 </option>
               ))}
-            </select>
+            </NativeSelect>
             <Clock size={15} className="absolute right-3 top-3.5 text-text-muted pointer-events-none" />
           </div>
         </div>
@@ -225,20 +228,20 @@ export function HomestayOrderFields({
 
       {/* 3. KHỐI ĐỊA ĐIỂM HOMESTAY & PHƯƠNG TIỆN */}
       <div className="p-4 rounded-xl border border-border bg-surface-muted/30 flex flex-col gap-3">
-        <div className="flex items-center gap-2 text-body-sm font-extrabold text-foreground">
+        <div className="flex items-center gap-2 text-body-sm font-extrabold text-text">
           <Home size={17} className="text-primary" />
           <span>Địa điểm lưu trú & Đón tiếp</span>
         </div>
 
-        <div className="p-3 rounded-lg border border-border bg-background text-body-sm">
-          <div className="font-bold text-foreground">{homestayName || "Homestay / Biệt thự nghỉ dưỡng"}</div>
+        <div className="p-3 rounded-lg border border-border bg-bg text-body-sm">
+          <div className="font-bold text-text">{homestayName || "Homestay / Biệt thự nghỉ dưỡng"}</div>
           <div className="text-text-muted text-caption mt-0.5">
             {homestayAddress || "Quý khách đến trực tiếp cơ sở để nhận phòng. Quản gia sẽ đón tiếp và bàn giao chìa khóa."}
           </div>
         </div>
 
         <div>
-          <label className="block text-caption font-bold text-foreground mb-1.5">
+          <label className="block text-caption font-bold text-text mb-1.5">
             Phương tiện di chuyển đến (để chuẩn bị chỗ đỗ xe)
           </label>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
@@ -246,19 +249,19 @@ export function HomestayOrderFields({
               const Icon = opt.icon
               const active = transitMethod === opt.key
               return (
-                <button
+                <Button variant="outline"
                   type="button"
                   key={opt.key}
                   onClick={() => onTransitChange(active ? "" : opt.key)}
-                  className={`p-2.5 rounded-lg border text-caption font-bold flex items-center gap-2 transition text-left ${
+                  className={`justify-start p-2.5 rounded-lg border text-caption font-bold flex items-center gap-2 transition text-left ${
                     active
-                      ? "border-primary bg-primary/10 text-primary"
-                      : "border-border bg-background text-foreground hover:border-primary/40"
+                      ? "border-primary bg-primary/10 text-primary hover:bg-primary/10"
+                      : "border-border bg-bg text-text hover:border-primary/40 hover:bg-bg"
                   }`}
                 >
                   <Icon size={16} />
                   <span>{opt.label}</span>
-                </button>
+                </Button>
               )
             })}
           </div>
@@ -268,10 +271,10 @@ export function HomestayOrderFields({
       {/* 4. GHI CHÚ CHO QUẢN GIA / CHỦ NHÀ */}
       {showSpecialRequests && (
       <div>
-        <label htmlFor={`${uid}-specialRequests`} className="block text-caption font-bold text-foreground mb-1">
+        <label htmlFor={`${uid}-specialRequests`} className="block text-caption font-bold text-text mb-1">
           Yêu cầu đặc biệt cho Quản gia / Chủ nhà
         </label>
-        <textarea
+        <Textarea
           id={`${uid}-specialRequests`}
           rows={3}
           maxLength={500}

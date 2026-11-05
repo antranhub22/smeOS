@@ -1,5 +1,6 @@
 "use client"
 
+import { Input } from "@/components/ui/input"
 import { useState } from "react"
 import { ArrowLeft, Loader2, Send } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
@@ -24,7 +25,7 @@ interface StepCustomerProps {
 }
 
 const inputClass =
-  "h-11 w-full rounded-xl border bg-background px-3.5 text-body text-foreground placeholder:text-text-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+  "h-11 w-full rounded-xl border bg-bg px-3.5 text-body text-text placeholder:text-text-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
 
 export function StepCustomer(props: StepCustomerProps) {
   const [submitting, setSubmitting] = useState(false)
@@ -50,21 +51,21 @@ export function StepCustomer(props: StepCustomerProps) {
   return (
     <form onSubmit={handleSubmit} aria-labelledby="step-customer-title" className="flex flex-col gap-5" noValidate>
       <header>
-        <h2 id="step-customer-title" className="text-title font-bold text-foreground">
+        <h2 id="step-customer-title" className="text-title font-bold text-text">
           Gửi riêng cho một khách
         </h2>
         <p className="mt-1 text-body-sm text-text-muted">
-          Bộ sưu tập <strong className="text-foreground">{props.catalogName}</strong>. Thẻ sẽ chào đúng tên khách (ví dụ
+          Bộ sưu tập <strong className="text-text">{props.catalogName}</strong>. Thẻ sẽ chào đúng tên khách (ví dụ
           “Dành riêng cho chị Lan”) và bạn theo dõi được khách đã mở thẻ hay đặt hoa chưa.
         </p>
       </header>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
         <div className="flex flex-col gap-1.5">
-          <label htmlFor="customer-name" className="text-body-sm font-bold text-foreground">
+          <label htmlFor="customer-name" className="text-body-sm font-bold text-text">
             Tên khách hiển thị trên thẻ
           </label>
-          <input
+          <Input
             id="customer-name"
             autoFocus
             maxLength={80}
@@ -75,10 +76,10 @@ export function StepCustomer(props: StepCustomerProps) {
           />
         </div>
         <div className="flex flex-col gap-1.5">
-          <label htmlFor="customer-phone" className="text-body-sm font-bold text-foreground">
+          <label htmlFor="customer-phone" className="text-body-sm font-bold text-text">
             Số điện thoại <span className="font-normal text-text-muted">(không bắt buộc)</span>
           </label>
-          <input
+          <Input
             id="customer-phone"
             type="tel"
             inputMode="tel"
@@ -108,7 +109,7 @@ export function StepCustomer(props: StepCustomerProps) {
           Quay lại
         </Button>
         <Button type="submit" size="sm" disabled={submitting} className="gap-1.5">
-          {submitting ? <Loader2 size={16} className="animate-spin" aria-hidden="true" /> : <Send size={16} aria-hidden="true" />}
+          {submitting ? <Loader2 size={16} className="animate-spin motion-reduce:animate-none" aria-hidden="true" /> : <Send size={16} aria-hidden="true" />}
           {submitting ? "Đang tạo link…" : "Tạo link gửi khách"}
         </Button>
       </footer>

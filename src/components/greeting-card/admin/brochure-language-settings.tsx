@@ -1,8 +1,12 @@
 "use client"
 
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import { Checkbox } from "@/components/ui/checkbox"
+import { Textarea } from "@/components/ui/textarea"
 import React, { useState } from "react"
-import { Globe2, Lock, CheckCircle2, AlertCircle, Save, Loader2, Sparkles, Send, Clock, X } from "@/components/ui/icons"
+import { Globe2, Lock, CheckCircle2, AlertCircle, Save, Loader2, Sparkles, Send, Clock } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
+import { Dialog } from "@/components/ui/dialog"
 import { apiSend, useApi } from "@/components/greeting-card/greeting-api"
 import {
   BROCHURE_LANGUAGE_POLICY_KEY,
@@ -93,17 +97,17 @@ export function BrochureLanguageSettings() {
   }
 
   if (!policy) {
-    return <div className="h-44 rounded-2xl bg-surface-muted animate-pulse" aria-busy="true" />
+    return <div className="h-44 rounded-2xl bg-surface-muted animate-pulse motion-reduce:animate-none" aria-busy="true" />
   }
 
   return (
     <div className="p-6 rounded-2xl border border-border bg-surface shadow-xs space-y-5">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-border pb-4">
         <div>
-          <h3 className="text-base font-extrabold text-foreground flex items-center gap-2">
+          <h3 className="text-title-sm font-extrabold text-text flex items-center gap-2">
             <Globe2 size={18} className="text-primary" /> Ngôn Ngữ & Trải Nghiệm Khách Quốc Tế
           </h3>
-          <p className="text-xs text-text-muted mt-1 leading-relaxed">
+          <p className="text-meta text-text-muted mt-1 leading-relaxed">
             Thiết lập ngôn ngữ hiển thị trên Thẻ Chào để gửi cho kiều bào và khách hàng quốc tế.
           </p>
         </div>
@@ -125,18 +129,23 @@ export function BrochureLanguageSettings() {
       <form onSubmit={handleSave} className="space-y-5">
         {/* Bảng lựa chọn ngôn ngữ */}
         <div className="space-y-3">
-          <label className="block text-body-sm font-bold text-foreground">
+          <label className="block text-body-sm font-bold text-text">
             1. Danh sách ngôn ngữ trên Thẻ Chào
           </label>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <RadioGroup
+            aria-label="Ngôn ngữ mặc định"
+            value={policy.defaultLocale}
+            onValueChange={(v) => handleSetDefault(v as typeof policy.defaultLocale)}
+            className="grid grid-cols-1 md:grid-cols-2 gap-3"
+          >
             {/* Tiếng Việt */}
-            <div className="p-3.5 rounded-xl border border-border bg-background flex items-center justify-between">
+            <div className="p-3.5 rounded-xl border border-border bg-bg flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <span className="text-2xl">🇻🇳</span>
+                <span className="text-display-lg">🇻🇳</span>
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="text-body-sm font-bold text-foreground">Tiếng Việt</span>
+                    <span className="text-body-sm font-bold text-text">Tiếng Việt</span>
                     <span className="text-caption px-1.5 py-0.2 rounded font-semibold bg-primary/10 text-primary">
                       Mặc định
                     </span>
@@ -147,17 +156,10 @@ export function BrochureLanguageSettings() {
 
               <div className="flex items-center gap-3">
                 <label className="flex items-center gap-1.5 text-caption cursor-pointer">
-                  <input
-                    type="radio"
-                    name="defaultLocale"
-                    checked={policy.defaultLocale === "vi"}
-                    onChange={() => handleSetDefault("vi")}
-                    className="text-primary focus:ring-primary/20"
-                  />
-                  <span className="font-medium text-foreground">Mặc định</span>
+                  <RadioGroupItem value="vi" />
+                  <span className="font-medium text-text">Mặc định</span>
                 </label>
-                <input
-                  type="checkbox"
+                <Checkbox
                   checked={true}
                   disabled={true}
                   className="h-4 w-4 rounded border-border text-primary cursor-not-allowed opacity-70"
@@ -171,15 +173,15 @@ export function BrochureLanguageSettings() {
                 isEnUnlocked
                   ? policy.activeLocales.includes("en")
                     ? "border-primary/40 bg-primary/5"
-                    : "border-border bg-background"
+                    : "border-border bg-bg"
                   : "border-dashed border-border bg-surface-muted/50 opacity-80"
               }`}
             >
               <div className="flex items-center gap-3">
-                <span className="text-2xl">🇬🇧</span>
+                <span className="text-display-lg">🇬🇧</span>
                 <div>
                   <div className="flex items-center gap-2">
-                    <span className="text-body-sm font-bold text-foreground">English (Tiếng Anh)</span>
+                    <span className="text-body-sm font-bold text-text">English (Tiếng Anh)</span>
                     {!isEnUnlocked && (
                       <span className="inline-flex items-center gap-1 text-caption px-1.5 py-0.2 rounded font-semibold bg-surface-alt text-text-muted border border-border">
                         <Lock size={10} /> Khóa
@@ -195,22 +197,15 @@ export function BrochureLanguageSettings() {
               <div className="flex items-center gap-3">
                 {isEnUnlocked && policy.activeLocales.includes("en") && (
                   <label className="flex items-center gap-1.5 text-caption cursor-pointer">
-                    <input
-                      type="radio"
-                      name="defaultLocale"
-                      checked={policy.defaultLocale === "en"}
-                      onChange={() => handleSetDefault("en")}
-                      className="text-primary focus:ring-primary/20"
-                    />
-                    <span className="font-medium text-foreground">Mặc định</span>
+                    <RadioGroupItem value="en" />
+                    <span className="font-medium text-text">Mặc định</span>
                   </label>
                 )}
 
                 {isEnUnlocked ? (
-                  <input
-                    type="checkbox"
+                  <Checkbox
                     checked={policy.activeLocales.includes("en")}
-                    onChange={() => handleToggleLocale("en")}
+                    onCheckedChange={() => handleToggleLocale("en")}
                     className="h-4 w-4 rounded border-border text-primary focus:ring-primary/20 cursor-pointer"
                   />
                 ) : policy.pendingRequest ? (
@@ -227,7 +222,7 @@ export function BrochureLanguageSettings() {
                       setUnlockSuccess(false)
                       setUnlockNote("")
                     }}
-                    className="h-8 gap-1.5 text-xs font-bold border-primary/30 text-primary hover:bg-primary/5"
+                    className="h-8 gap-1.5 text-meta font-bold border-primary/30 text-primary hover:bg-primary/5"
                   >
                     <Sparkles size={13} />
                     <span>Yêu Cầu Unlock</span>
@@ -235,22 +230,21 @@ export function BrochureLanguageSettings() {
                 )}
               </div>
             </div>
-          </div>
+          </RadioGroup>
         </div>
 
         {/* Tùy chọn hiển thị bộ chuyển đổi ngôn ngữ */}
         {policy.activeLocales.length > 1 && (
           <div className="p-4 rounded-xl border border-primary/20 bg-primary/5 flex items-start justify-between gap-4">
             <div>
-              <p className="text-body-sm font-bold text-foreground">Nút chuyển đổi ngôn ngữ trên Thẻ Chào</p>
+              <p className="text-body-sm font-bold text-text">Nút chuyển đổi ngôn ngữ trên Thẻ Chào</p>
               <p className="text-caption text-text-muted mt-0.5">
                 Hiển thị nút chọn ngôn ngữ (🇻🇳 VI / 🇬🇧 EN) ở góc trên Thẻ chào để khách có thể linh hoạt đổi ngôn ngữ.
               </p>
             </div>
-            <input
-              type="checkbox"
+            <Checkbox
               checked={policy.enableLanguageSwitcher}
-              onChange={(e) => setDraft({ ...policy, enableLanguageSwitcher: e.target.checked })}
+              onCheckedChange={(checked) => setDraft({ ...policy, enableLanguageSwitcher: (checked === true) })}
               className="h-4 w-4 rounded border-border text-primary focus:ring-primary/20 cursor-pointer mt-1"
             />
           </div>
@@ -259,18 +253,18 @@ export function BrochureLanguageSettings() {
         {/* Hướng dẫn thanh toán quốc tế */}
         {policy.activeLocales.includes("en") && (
           <div className="space-y-2">
-            <label className="block text-body-sm font-bold text-foreground">
+            <label className="block text-body-sm font-bold text-text">
               2. Hướng dẫn thanh toán quốc tế (Wise / PayPal / Swift / Zelle)
             </label>
             <p className="text-caption text-text-muted">
               Nội dung này sẽ hiển thị riêng cho khách quốc tế khi xem Thẻ chào bằng Tiếng Anh (song song với mã QR nội địa).
             </p>
-            <textarea
+            <Textarea
               rows={3}
               placeholder="VD: For international payments, please transfer via Wise/PayPal to payment@yourshop.com or Swift Code: BFTVVNVX..."
               value={policy.internationalPaymentGuide ?? ""}
               onChange={(e) => setDraft({ ...policy, internationalPaymentGuide: e.target.value })}
-              className="w-full p-3 rounded-xl border border-border bg-background text-body-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 resize-none"
+              className="w-full p-3 rounded-xl border border-border bg-bg text-body-sm text-text focus:outline-none focus:ring-2 focus:ring-primary/20 resize-none"
             />
           </div>
         )}
@@ -296,7 +290,7 @@ export function BrochureLanguageSettings() {
             disabled={saving || !draft}
             className="gap-2 font-bold shadow-xs"
           >
-            {saving ? <Loader2 size={15} className="animate-spin" /> : <Save size={15} />}
+            {saving ? <Loader2 size={15} className="animate-spin motion-reduce:animate-none" /> : <Save size={15} />}
             <span>Lưu Thiết Lập Ngôn Ngữ</span>
           </Button>
         </div>
@@ -304,23 +298,9 @@ export function BrochureLanguageSettings() {
 
       {/* Modal gửi yêu cầu mở khóa Tiếng Anh lên Admin SaaS */}
       {openUnlockModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4">
-          <div className="bg-background rounded-2xl border border-border p-6 max-w-md w-full shadow-2xl space-y-4">
-            <div className="flex items-center justify-between border-b border-border pb-3">
-              <div className="flex items-center gap-2">
-                <Sparkles size={18} className="text-primary" />
-                <h4 className="text-body font-bold text-foreground">Yêu Cầu Mở Khóa Gói Quốc Tế</h4>
-              </div>
-              <button
-                type="button"
-                onClick={() => setOpenUnlockModal(false)}
-                aria-label="Đóng cửa sổ"
-                className="p-1.5 rounded-lg text-text-muted hover:bg-surface"
-              >
-                <X size={16} />
-              </button>
-            </div>
-
+        <Dialog open onOpenChange={(o) => { if (!o) setOpenUnlockModal(false) }} size="sm"
+          title={<span className="flex items-center gap-2"><Sparkles size={18} className="text-primary" />Yêu Cầu Mở Khóa Gói Quốc Tế</span>}>
+          <div className="space-y-4">
             {unlockSuccess ? (
               <div className="p-4 rounded-xl bg-success-bg border border-success/20 text-center space-y-2">
                 <CheckCircle2 size={32} className="text-success mx-auto" />
@@ -365,15 +345,15 @@ export function BrochureLanguageSettings() {
                 </p>
 
                 <div className="space-y-1.5">
-                  <label className="block text-caption font-bold text-foreground">
+                  <label className="block text-caption font-bold text-text">
                     Ghi chú hoặc lý do cần mở khóa (tùy chọn)
                   </label>
-                  <textarea
+                  <Textarea
                     rows={3}
                     placeholder="VD: Cửa hàng có nhiều khách hàng kiều bào đặt hoa giao tận nhà tại Việt Nam..."
                     value={unlockNote}
                     onChange={(e) => setUnlockNote(e.target.value)}
-                    className="w-full p-2.5 rounded-xl border border-border bg-surface text-body-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 resize-none"
+                    className="w-full p-2.5 rounded-xl border border-border bg-surface text-body-sm text-text focus:outline-none focus:ring-2 focus:ring-primary/20 resize-none"
                   />
                 </div>
 
@@ -391,14 +371,14 @@ export function BrochureLanguageSettings() {
                     disabled={requesting}
                     className="gap-2 font-bold shadow-xs"
                   >
-                    {requesting ? <Loader2 size={15} className="animate-spin" /> : <Send size={14} />}
+                    {requesting ? <Loader2 size={15} className="animate-spin motion-reduce:animate-none" /> : <Send size={14} />}
                     <span>Gửi Yêu Cầu Phê Duyệt</span>
                   </Button>
                 </div>
               </form>
             )}
           </div>
-        </div>
+        </Dialog>
       )}
     </div>
   )

@@ -1,5 +1,6 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
 import { useMemo, useState } from "react"
 import type { GreetingCatalogProduct } from "@/modules/greeting-card/domain/greeting-card-types"
 import { AuxPage, Chip, EmptyCatalog, ProductImage } from "./aux/aux-kit"
@@ -65,33 +66,33 @@ export function OccasionBudgetDeck({ products, catalogName, onSelectProduct }: O
         {results.length === 0 ? (
           <div className="rounded-2xl bg-surface-alt p-5 text-center">
             <p className="text-body-sm text-text-muted">Thử nới ngân sách hoặc chọn dịp khác nhé.</p>
-            <button
+            <Button variant="outline"
               type="button"
               onClick={() => {
                 setOccasion(null)
                 setBudget(null)
               }}
-              className="mt-3 h-10 rounded-full border border-border bg-surface px-4 text-body-sm font-semibold"
+              className="gap-0 mt-3 h-10 rounded-full border border-border bg-surface px-4 text-body-sm font-semibold hover:bg-surface"
             >
               Xem tất cả mẫu
-            </button>
+            </Button>
           </div>
         ) : (
           <ul className="flex flex-col gap-3">
             {results.map((p) => (
               <li key={p.id} className="flex gap-3 rounded-2xl border border-border bg-surface p-3">
-                <button type="button" onClick={() => setOpen(p)} className="h-28 w-24 shrink-0 overflow-hidden rounded-xl bg-surface-alt" aria-label={`Chi tiết ${p.name}`}>
+                <Button variant="ghost" type="button" onClick={() => setOpen(p)} className="font-[inherit] gap-0 h-28 w-24 shrink-0 overflow-hidden rounded-xl bg-surface-alt hover:bg-surface-alt" aria-label={`Chi tiết ${p.name}`}>
                   <ProductImage product={p} />
-                </button>
+                </Button>
                 <div className="flex min-w-0 flex-1 flex-col">
                   <ProductInfo product={p} level="standard" size="sm" muted="var(--color-text-muted)" titleClassName="font-semibold" />
                   <div className="mt-auto flex gap-2 pt-2">
-                    <button type="button" onClick={() => onSelectProduct(p)} className="h-10 flex-1 rounded-xl bg-primary text-body-sm font-bold text-white">
+                    <Button variant="primary" type="button" onClick={() => onSelectProduct(p)} className="gap-0 h-10 flex-1 rounded-xl bg-primary text-body-sm font-bold text-white hover:bg-primary">
                       Đặt mẫu
-                    </button>
-                    <button type="button" onClick={() => setOpen(p)} className="h-10 rounded-xl border border-border px-3 text-body-sm font-semibold">
+                    </Button>
+                    <Button variant="outline" type="button" onClick={() => setOpen(p)} className="gap-0 h-10 rounded-xl border border-border px-3 text-body-sm font-semibold">
                       Chi tiết
-                    </button>
+                    </Button>
                   </div>
                 </div>
               </li>

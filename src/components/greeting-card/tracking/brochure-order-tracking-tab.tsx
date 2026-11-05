@@ -70,10 +70,10 @@ export function BrochureOrderTrackingTab() {
               ? "Đang xem việc của Điều phối (nhận đơn, chuẩn bị phòng, đón khách)."
               : `Đang xem việc của Điều phối (nhận đơn, ${terms.makerAction.toLowerCase()}, giao hàng).`}
           </span>
-          <button type="button" onClick={() => change({ owner: "" })}
-            className="inline-flex h-8 items-center gap-1 rounded-xl border border-border px-2.5 font-bold text-foreground hover:bg-surface-muted">
+          <Button variant="outline" type="button" onClick={() => change({ owner: "" })}
+            className="inline-flex h-8 items-center gap-1 rounded-xl border border-border px-2.5 font-bold text-text hover:bg-surface-muted">
             <X size={13} aria-hidden="true" /> Xem tất cả đơn và link
-          </button>
+          </Button>
         </div>
       )}
 

@@ -1,5 +1,6 @@
 "use client"
 
+import { Input } from "@/components/ui/input"
 import React, { useState } from "react"
 import { AlertOctagon, CheckCircle2, RefreshCw, XCircle } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
@@ -64,11 +65,11 @@ function CancellationRequestCard({ row, onDone }: { row: PendingRow; onDone: () 
         <div className="flex flex-col gap-0.5">
           <div className="flex items-center gap-1.5">
             <AlertOctagon size={14} className="text-danger shrink-0" />
-            <span className="text-body-sm font-extrabold text-foreground">{typeLabel}</span>
+            <span className="text-body-sm font-extrabold text-text">{typeLabel}</span>
             <span className="rounded-full bg-danger/10 px-1.5 py-0.5 text-caption font-bold text-danger">Chờ duyệt</span>
           </div>
           <p className="text-caption text-text-muted">
-            Đơn <strong className="text-foreground">#{payload.orderCode}</strong> · {timeAgoShort(row.created_at)}
+            Đơn <strong className="text-text">#{payload.orderCode}</strong> · {timeAgoShort(row.created_at)}
           </p>
         </div>
         {(payload.refundAmountVnd ?? 0) > 0 && (
@@ -79,7 +80,7 @@ function CancellationRequestCard({ row, onDone }: { row: PendingRow; onDone: () 
       {isInTransit(row.delivery_status) && (
         <p role="alert" className="rounded-lg bg-warning-bg px-2.5 py-2 text-caption font-semibold text-warning-text">⚠ {IN_TRANSIT_CANCEL_WARNING}</p>
       )}
-      <div className="rounded-lg border border-border bg-surface px-2.5 py-2 text-body-sm text-foreground">
+      <div className="rounded-lg border border-border bg-surface px-2.5 py-2 text-body-sm text-text">
         <span className="font-bold text-text-muted">Lý do:</span> {payload.reason}
       </div>
       {(payload.refundAmountVnd ?? 0) > 0 || payload.type === "FULL_REFUND" ? (
@@ -87,19 +88,19 @@ function CancellationRequestCard({ row, onDone }: { row: PendingRow; onDone: () 
       ) : null}
 
       <div className="flex gap-3 text-caption text-text-muted">
-        <span>Tổng đơn: <strong className="text-foreground">{vnd(payload.totalVnd)}</strong></span>
+        <span>Tổng đơn: <strong className="text-text">{vnd(payload.totalVnd)}</strong></span>
         <span>Đã thu: <strong className="text-success">{vnd(payload.paidVnd)}</strong></span>
       </div>
 
       {error && <p role="alert" className="text-caption font-semibold text-danger">{error}</p>}
 
-      <input
+      <Input
         type="text"
         placeholder="Ghi chú phản hồi (tùy chọn)..."
         value={note}
         onChange={(e) => setNote(e.target.value)}
         disabled={busy}
-        className="h-8 w-full rounded-lg border border-border bg-background px-2.5 text-caption text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+        className="h-8 w-full rounded-lg border border-border bg-bg px-2.5 text-caption text-text focus:outline-none focus:ring-1 focus:ring-primary"
       />
 
       <div className="flex items-center justify-end gap-2">
@@ -155,14 +156,14 @@ export function PendingCancellationPanel() {
             )}
           </h3>
         </div>
-        <button
+        <Button variant="ghost"
           type="button"
           aria-label="Làm mới danh sách đề xuất hủy/hoàn"
           onClick={() => void mutate()}
-          className="p-1.5 rounded-lg text-text-muted hover:text-foreground hover:bg-surface-muted"
+          className="font-[inherit] gap-0 p-1.5 rounded-lg text-text-muted hover:text-text hover:bg-surface-muted"
         >
-          <RefreshCw size={14} className={isLoading ? "animate-spin" : ""} />
-        </button>
+          <RefreshCw size={14} className={isLoading ? "animate-spin motion-reduce:animate-none" : ""} />
+        </Button>
       </div>
 
       {isLoading && rows.length === 0 ? (

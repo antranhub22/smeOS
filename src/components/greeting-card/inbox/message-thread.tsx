@@ -1,5 +1,6 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
 import React, { useEffect, useRef, useState } from "react"
 import { CornerUpLeft } from "@/components/ui/icons"
 import { apiSend, useApi } from "@/components/greeting-card/greeting-api"
@@ -50,9 +51,9 @@ export function MessageThread({ target, stepKey = "GENERAL", title, onClose, onB
       title={title ?? thread.data?.data.label ?? "Trao đổi nội bộ"}
       onClose={onClose}
       leading={onBack && (
-        <button type="button" onClick={onBack} className="inline-flex h-11 items-center rounded-full px-3 text-body-sm font-bold text-primary hover:bg-surface-muted">
+        <Button variant="ghost" type="button" onClick={onBack} className="gap-0 inline-flex h-11 items-center rounded-full px-3 text-body-sm font-bold text-primary hover:bg-surface-muted">
           ‹ Hộp việc
-        </button>
+        </Button>
       )}
       footer={<MessageComposer target={target} stepKey={stepKey} replyTo={replyTo} onCancelReply={() => setReplyTo(null)} onSent={() => { void thread.mutate(); onChanged?.() }} />}
     >
@@ -61,21 +62,21 @@ export function MessageThread({ target, stepKey = "GENERAL", title, onClose, onB
         {thread.error ? (
           <p role="alert" className="rounded-xl bg-danger-bg p-3 text-body-sm text-danger">{(thread.error as Error).message}</p>
         ) : thread.isLoading ? (
-          [0, 1, 2].map((i) => <div key={i} className={`h-16 w-3/4 animate-pulse rounded-2xl bg-surface-muted ${i % 2 ? "self-end" : ""}`} />)
+          [0, 1, 2].map((i) => <div key={i} className={`h-16 w-3/4 animate-pulse motion-reduce:animate-none rounded-2xl bg-surface-muted ${i % 2 ? "self-end" : ""}`} />)
         ) : messages.length === 0 ? (
           <p className="py-10 text-center text-body-sm text-text-muted">Chưa có trao đổi nào. Chọn người nhận và gửi tin đầu tiên bên dưới.</p>
         ) : (
           messages.map((m) => (
             <article key={m.id} className={`flex max-w-[85%] flex-col gap-1 ${m.mine ? "self-end items-end" : "self-start"}`}>
               <p className="text-caption text-text-muted">
-                <strong className="text-foreground">{m.mine ? "Bạn" : m.senderName}</strong> · {m.senderRoleLabel}
+                <strong className="text-text">{m.mine ? "Bạn" : m.senderName}</strong> · {m.senderRoleLabel}
                 {m.toLabel && <> → {m.toLabel}</>} · {timeAgo(m.createdAt, now)}
               </p>
               <div className={`whitespace-pre-wrap break-words rounded-2xl px-3 py-2 text-body ${
-                m.mine ? "bg-primary text-white" : m.unread ? "border border-primary/40 bg-primary/5 text-foreground" : "bg-surface text-foreground border border-border"
+                m.mine ? "bg-primary text-white" : m.unread ? "border border-primary/40 bg-primary/5 text-text" : "bg-surface text-text border border-border"
               }`}>
                 {m.discount && (
-                  <p className={`mb-1 text-body-sm font-extrabold ${m.mine ? "text-white" : "text-foreground"}`}>
+                  <p className={`mb-1 text-body-sm font-extrabold ${m.mine ? "text-white" : "text-text"}`}>
                     {m.kind === "DISCOUNT_REQUEST" ? `Xin giảm ${m.discount.label}` : m.discount.status === "APPROVED"
                       ? `Đã duyệt giảm ${(m.discount.approvedVnd ?? 0).toLocaleString("vi-VN")}đ` : "Không duyệt giảm giá"}
                   </p>
@@ -141,10 +142,10 @@ export function MessageThread({ target, stepKey = "GENERAL", title, onClose, onB
               <div className="flex items-center gap-2">
                 {m.stepKey !== "GENERAL" && <span className="rounded-full bg-surface-muted px-2 text-caption text-text-muted">{m.stepTitle}</span>}
                 {!m.mine && m.kind === "MESSAGE" && (
-                  <button type="button" onClick={() => setReplyTo({ id: m.id, senderName: m.senderName })}
+                  <Button variant="ghost" type="button" onClick={() => setReplyTo({ id: m.id, senderName: m.senderName })}
                     className="inline-flex h-9 items-center gap-1 rounded-lg px-2 text-caption font-bold text-primary hover:bg-primary/10">
                     <CornerUpLeft size={13} aria-hidden="true" /> Trả lời
-                  </button>
+                  </Button>
                 )}
               </div>
             </article>

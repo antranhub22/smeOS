@@ -1,5 +1,7 @@
 "use client"
 
+import { useConfirmDialog } from "@/components/ui/confirm-dialog"
+import { Checkbox } from "@/components/ui/checkbox"
 import React, { useState } from "react"
 import {
   Sliders,
@@ -24,6 +26,7 @@ import {
 } from "@/modules/greeting-card/domain/chain-dispatch-policy"
 
 export function ChainDispatchSettings() {
+  const [confirm, confirmDialog] = useConfirmDialog()
   const org = useApi<{ settings?: Record<string, unknown> | null }>("/api/v1/organizations/current")
   const [draft, setDraft] = useState<ChainDispatchPolicy | null>(null)
   const [saving, setSaving] = useState(false)
@@ -55,8 +58,8 @@ export function ChainDispatchSettings() {
     setMessage(null)
   }
 
-  const handleResetDefaults = () => {
-    if (window.confirm("Khôi phục toàn bộ tiêu chuẩn bắn đơn chuỗi về mặc định của hệ thống?")) {
+  const handleResetDefaults = async () => {
+    if (await confirm({ title: "Khôi phục tiêu chuẩn phân đơn chuỗi về mặc định?", consequence: "Mọi tiêu chuẩn đang chỉnh sẽ trở về mặc định của hệ thống. Thay đổi chỉ có hiệu lực khi bấm Lưu.", confirmLabel: "Khôi phục mặc định" })) {
       setDraft({ ...DEFAULT_CHAIN_DISPATCH_POLICY })
       setMessage(null)
     }
@@ -89,14 +92,15 @@ export function ChainDispatchSettings() {
   }
 
   if (!policy) {
-    return <div className="h-44 rounded-2xl bg-surface-muted animate-pulse" aria-busy="true" />
+    return <div className="h-44 rounded-2xl bg-surface-muted animate-pulse motion-reduce:animate-none" aria-busy="true" />
   }
 
   return (
     <form onSubmit={handleSave} className="bg-surface rounded-2xl border border-border p-5 sm:p-6 shadow-sm flex flex-col gap-6">
+      {confirmDialog}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-border">
         <div>
-          <h3 className="text-title font-extrabold text-foreground flex items-center gap-2">
+          <h3 className="text-title font-extrabold text-text flex items-center gap-2">
             <Radio size={22} className="text-primary" />
             Điều Phối Gia Công Tự Động (Chuỗi Cửa Hàng)
           </h3>
@@ -130,7 +134,7 @@ export function ChainDispatchSettings() {
       {/* Bật/Tắt Cơ Chế Tự Động */}
       <div className="flex items-center justify-between p-4 rounded-xl bg-surface-muted border border-border">
         <div>
-          <span className="text-body font-bold text-foreground block">
+          <span className="text-body font-bold text-text block">
             Tự động chọn cửa hàng & phát lệnh (mặc định)
           </span>
           <span className="text-caption text-text-muted">
@@ -139,10 +143,9 @@ export function ChainDispatchSettings() {
             Điều phối vẫn có thể chọn thủ công cho từng đơn lúc xác nhận tiền.
           </span>
         </div>
-        <input
-          type="checkbox"
+        <Checkbox
           checked={policy.enabled}
-          onChange={(e) => handleUpdate("enabled", e.target.checked)}
+          onCheckedChange={(checked) => handleUpdate("enabled", (checked === true))}
           className="w-5 h-5 accent-primary cursor-pointer rounded"
         />
       </div>
@@ -151,7 +154,7 @@ export function ChainDispatchSettings() {
       <div className="flex items-center justify-between p-4 rounded-xl bg-primary/5 border border-primary/20">
         <div>
           <div className="flex items-center gap-2">
-            <span className="text-body font-bold text-foreground block">
+            <span className="text-body font-bold text-text block">
               Tự động duyệt xác nhận đơn khi Chi nhánh chốt nhận
             </span>
             <span className="text-caption font-bold px-1.5 py-0.5 rounded bg-primary/20 text-primary uppercase">
@@ -162,10 +165,9 @@ export function ChainDispatchSettings() {
             Khi bật (Khuyên dùng): Ngay khi Shop bấm nhận đơn, hệ thống tự động xác nhận đơn và chuyển thẳng sang sản xuất (Điều phối không cần bấm duyệt tay). Tắt đi nếu muốn Điều phối phải kiểm duyệt lại một lần nữa.
           </span>
         </div>
-        <input
-          type="checkbox"
+        <Checkbox
           checked={policy.autoConfirmOnBranchCommit}
-          onChange={(e) => handleUpdate("autoConfirmOnBranchCommit", e.target.checked)}
+          onCheckedChange={(checked) => handleUpdate("autoConfirmOnBranchCommit", (checked === true))}
           className="w-5 h-5 accent-primary cursor-pointer rounded"
         />
       </div>
@@ -173,12 +175,12 @@ export function ChainDispatchSettings() {
       {/* Cấu Hình Tiêu Chuẩn Lọc & Thời Gian */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div className="p-4 rounded-xl border border-border bg-surface flex flex-col gap-3">
-          <h4 className="text-body-sm font-bold text-foreground flex items-center gap-1.5">
+          <h4 className="text-body-sm font-bold text-text flex items-center gap-1.5">
             <Send size={16} className="text-primary" /> Tiêu chuẩn Bắn đơn & Thời gian
           </h4>
 
           <div>
-            <label className="text-caption font-semibold text-foreground block mb-1">
+            <label className="text-caption font-semibold text-text block mb-1">
               Số chi nhánh mời cùng lúc (Top N): <strong>{policy.topN} chi nhánh</strong>
             </label>
             <input
@@ -192,7 +194,7 @@ export function ChainDispatchSettings() {
           </div>
 
           <div>
-            <label className="text-caption font-semibold text-foreground block mb-1">
+            <label className="text-caption font-semibold text-text block mb-1">
               Thời gian chờ phản hồi mỗi vòng: <strong>{policy.claimTimeoutMinutes} phút</strong>
             </label>
             <input
@@ -206,7 +208,7 @@ export function ChainDispatchSettings() {
           </div>
 
           <div>
-            <label className="text-caption font-semibold text-foreground block mb-1">
+            <label className="text-caption font-semibold text-text block mb-1">
               Thời hạn hủy sau khi nhận: <strong>{policy.cancellationGraceMinutes} phút</strong>
             </label>
             <input
@@ -220,7 +222,7 @@ export function ChainDispatchSettings() {
           </div>
 
           <div>
-            <label className="text-caption font-semibold text-foreground block mb-1">
+            <label className="text-caption font-semibold text-text block mb-1">
               Bán kính quét tối đa: <strong>{policy.maxRadiusKm} km</strong>
             </label>
             <input
@@ -236,12 +238,12 @@ export function ChainDispatchSettings() {
 
         {/* Trọng Số Chấm Điểm Chi Nhánh */}
         <div className="p-4 rounded-xl border border-border bg-surface flex flex-col gap-3">
-          <h4 className="text-body-sm font-bold text-foreground flex items-center gap-1.5">
+          <h4 className="text-body-sm font-bold text-text flex items-center gap-1.5">
             <Sliders size={16} className="text-primary" /> Trọng số Chấm điểm & Xếp hạng
           </h4>
 
           <div>
-            <div className="flex justify-between text-caption font-semibold text-foreground mb-1">
+            <div className="flex justify-between text-caption font-semibold text-text mb-1">
               <span>Khoảng cách gần người nhận:</span>
               <span className="font-bold text-primary">{policy.scoringWeights.distance}%</span>
             </div>
@@ -257,7 +259,7 @@ export function ChainDispatchSettings() {
           </div>
 
           <div>
-            <div className="flex justify-between text-caption font-semibold text-foreground mb-1">
+            <div className="flex justify-between text-caption font-semibold text-text mb-1">
               <span>Điểm chất lượng KPI chi nhánh:</span>
               <span className="font-bold text-primary">{policy.scoringWeights.qualityScore}%</span>
             </div>
@@ -273,7 +275,7 @@ export function ChainDispatchSettings() {
           </div>
 
           <div>
-            <div className="flex justify-between text-caption font-semibold text-foreground mb-1">
+            <div className="flex justify-between text-caption font-semibold text-text mb-1">
               <span>Độ sẵn sàng (Ít việc dở dang):</span>
               <span className="font-bold text-primary">{policy.scoringWeights.workload}%</span>
             </div>
@@ -297,23 +299,22 @@ export function ChainDispatchSettings() {
       {/* Cấu Hình Tự Động Nhắc Việc Theo Mốc Tiến Độ */}
       <div className="p-4 rounded-xl border border-border bg-surface flex flex-col gap-3">
         <div className="flex items-center justify-between pb-2 border-b border-border">
-          <h4 className="text-body-sm font-bold text-foreground flex items-center gap-1.5">
+          <h4 className="text-body-sm font-bold text-text flex items-center gap-1.5">
             <BellRing size={16} className="text-primary" /> Tự động Nhắc việc Đa Kênh Theo Tiến Độ
           </h4>
           <label className="flex items-center gap-2 text-caption cursor-pointer">
-            <input
-              type="checkbox"
+            <Checkbox
               checked={policy.milestoneReminders.enabled}
-              onChange={(e) => handleMilestoneChange("enabled", e.target.checked)}
+              onCheckedChange={(checked) => handleMilestoneChange("enabled", (checked === true))}
               className="w-4 h-4 accent-primary rounded"
             />
-            <span className="font-semibold text-foreground">Bật nhắc việc Bot</span>
+            <span className="font-semibold text-text">Bật nhắc việc Bot</span>
           </label>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-1">
           <div className="p-3 rounded-lg bg-surface-muted border border-border">
-            <span className="text-caption font-bold text-foreground block mb-1">
+            <span className="text-caption font-bold text-text block mb-1">
               Nhắc chụp ảnh QC:
             </span>
             <span className="text-body font-black text-primary">
@@ -323,7 +324,7 @@ export function ChainDispatchSettings() {
           </div>
 
           <div className="p-3 rounded-lg bg-surface-muted border border-border">
-            <span className="text-caption font-bold text-foreground block mb-1">
+            <span className="text-caption font-bold text-text block mb-1">
               Nhắc bàn giao Shipper:
             </span>
             <span className="text-body font-black text-primary">
@@ -333,7 +334,7 @@ export function ChainDispatchSettings() {
           </div>
 
           <div className="p-3 rounded-lg bg-surface-muted border border-border">
-            <span className="text-caption font-bold text-foreground block mb-1">
+            <span className="text-caption font-bold text-text block mb-1">
               Cảnh báo vi phạm SLA:
             </span>
             <span className="text-body font-black text-danger">

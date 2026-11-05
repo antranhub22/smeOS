@@ -1,5 +1,6 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
 import { useState } from "react"
 import { MessageCircle, Sparkles } from "@/components/ui/icons"
 import type { GreetingCatalogProduct } from "@/modules/greeting-card/domain/greeting-card-types"
@@ -26,7 +27,7 @@ export function UnavailablePanel({ theme, product, products, onJump, onContact }
       </p>
       <div className="grid grid-cols-2 gap-2">
         {similar.length > 0 && (
-          <button
+          <Button variant="ghost"
             type="button"
             onClick={() => setOpen((v) => !v)}
             aria-expanded={open}
@@ -35,10 +36,10 @@ export function UnavailablePanel({ theme, product, products, onJump, onContact }
           >
             <Sparkles size={16} aria-hidden="true" />
             Xem mẫu tương tự
-          </button>
+          </Button>
         )}
         {onContact && (
-          <button
+          <Button variant="outline"
             type="button"
             onClick={onContact}
             className={`flex h-12 items-center justify-center gap-2 rounded-2xl border text-body-sm font-semibold ${similar.length === 0 ? "col-span-2" : ""}`}
@@ -46,22 +47,22 @@ export function UnavailablePanel({ theme, product, products, onJump, onContact }
           >
             <MessageCircle size={16} aria-hidden="true" />
             Liên hệ shop
-          </button>
+          </Button>
         )}
       </div>
       {open && (
         <ul className="flex flex-col gap-1.5">
           {similar.map((p) => (
             <li key={p.id}>
-              <button
+              <Button variant="outline"
                 type="button"
                 onClick={() => onJump(p.id)}
-                className="flex h-11 w-full items-center justify-between gap-3 rounded-xl border px-3 text-body-sm"
+                className="font-[inherit] flex h-11 w-full items-center justify-between gap-3 rounded-xl border px-3 text-body-sm"
                 style={{ borderColor: theme.controlBorder, background: theme.controlBg }}
               >
                 <span className="truncate font-semibold">{p.name}</span>
                 <span className="shrink-0 tabular-nums">{productPriceText(p)}</span>
-              </button>
+              </Button>
             </li>
           ))}
         </ul>

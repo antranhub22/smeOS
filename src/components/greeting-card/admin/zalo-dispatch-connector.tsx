@@ -48,7 +48,7 @@ export function ZaloDispatchConnector() {
             <MessageCircle size={22} />
           </div>
           <div>
-            <h3 className="text-body font-extrabold text-foreground">Nhận đơn gia công qua Zalo</h3>
+            <h3 className="text-body font-extrabold text-text">Nhận đơn gia công qua Zalo</h3>
             <p className="text-caption text-text-muted mt-0.5">
               Chi nhánh chưa dùng Telegram vẫn nhận được lời mời và nhắc việc qua Zalo
             </p>
@@ -62,7 +62,7 @@ export function ZaloDispatchConnector() {
           disabled={isLoading || isValidating}
           className="self-start sm:self-auto flex items-center gap-1.5"
         >
-          <RefreshCw size={14} className={isValidating ? "animate-spin" : ""} />
+          <RefreshCw size={14} className={isValidating ? "animate-spin motion-reduce:animate-none" : ""} />
           <span>Cập nhật</span>
         </Button>
       </div>
@@ -75,7 +75,7 @@ export function ZaloDispatchConnector() {
 
       {info?.configured && (
         <>
-          <ol className="text-body-sm text-foreground flex flex-col gap-1 list-decimal pl-5">
+          <ol className="text-body-sm text-text flex flex-col gap-1 list-decimal pl-5">
             <li>
               Nhân viên chi nhánh mở Zalo, bấm Quan tâm trang Zalo của hệ thống
               {info.followUrl && (
@@ -97,7 +97,7 @@ export function ZaloDispatchConnector() {
             {branches.map((b) => (
               <div key={b.branchCode} className="flex items-center justify-between gap-3 p-3 rounded-xl border border-border">
                 <div className="min-w-0">
-                  <div className="text-body-sm font-bold text-foreground truncate">{b.name}</div>
+                  <div className="text-body-sm font-bold text-text truncate">{b.name}</div>
                   <div className="text-caption text-text-muted flex items-center gap-1">
                     {b.linked ? (
                       <>
@@ -108,15 +108,15 @@ export function ZaloDispatchConnector() {
                     )}
                   </div>
                 </div>
-                <button
+                <Button variant="outline"
                   type="button"
                   onClick={() => copy(b.linkCode)}
-                  className="font-mono text-body-sm font-bold px-3 py-1.5 rounded-lg bg-surface-muted border border-border inline-flex items-center gap-1.5 shrink-0"
+                  className="font-mono text-body-sm font-bold px-3 py-1.5 rounded-lg bg-surface-muted border border-border inline-flex items-center gap-1.5 shrink-0 hover:bg-surface-muted"
                   aria-label={`Sao chép mã liên kết của ${b.name}`}
                 >
                   {b.linkCode}
                   {copied === b.linkCode ? <CheckCircle2 size={14} className="text-success" /> : <Copy size={14} />}
-                </button>
+                </Button>
               </div>
             ))}
             {branches.length === 0 && (
