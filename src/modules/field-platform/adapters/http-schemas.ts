@@ -62,3 +62,22 @@ export const setCatalogValueOverrideSchema = z.object({
   label: z.string().trim().max(200).optional(),
   isEnabled: z.boolean().optional(),
 })
+
+/** Cửa hàng tự tạo trường riêng (checklist ALG 1.9, `D18`). */
+export const createShopFieldSchema = z.object({
+  entity: z.enum(["ORDER", "PARTNER"]),
+  label: z.string().trim().min(1).max(120),
+  dataType: z.enum(CUSTOM_FIELD_DATA_TYPES as [CustomFieldDataType, ...CustomFieldDataType[]]),
+  requirement: requirementSchema.optional(),
+  visibility: visibilitySchema.optional(),
+  placeholder: z.string().trim().max(200).optional(),
+})
+
+/** Cửa hàng ẩn/hiện, đổi nhãn, nâng mức một trường (`D18`). */
+export const updateShopFieldSchema = z.object({
+  key: z.string().trim().min(1).max(120),
+  label: z.string().trim().min(1).max(120).optional(),
+  isEnabled: z.boolean().optional(),
+  requirement: requirementSchema.optional(),
+  visibility: visibilitySchema.optional(),
+})

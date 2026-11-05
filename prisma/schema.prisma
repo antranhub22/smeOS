@@ -219,6 +219,7 @@ model organizations {
   order_payments                order_payments[]
   order_exceptions              order_exceptions[]
   field_config_overrides        field_config_overrides[]
+  owned_field_definitions       field_definitions[]      @relation("field_definition_owner")
   order_info_requests           order_info_requests[]
   order_change_requests         order_change_requests[]
   product_change_requests       product_change_requests[]
@@ -2205,13 +2206,19 @@ model field_definitions {
   /// bị tắt qua `field_config_overrides`; false = "trường tự tạo chỉ áp
   /// cho tổ chức này" — cần override `is_enabled = true` mới thấy (6.1).
   default_enabled     Boolean                 @default(true)
+  /// Checklist ALG 1.9: null = trường của nền tảng (lõi hoặc quản trị nền tảng
+  /// tạo); có giá trị = trường cửa hàng tự tạo, chỉ tổ chức đó thấy và ghi.
+  owner_organization_id String?
   created_by          String?
   updated_by          String?
   created_at          DateTime                @default(now())
   updated_at          DateTime                @updatedAt
 
+  owner_organization organizations? @relation("field_definition_owner", fields: [owner_organization_id], references: [id], onDelete: Cascade)
+
   @@index([entity])
   @@index([catalog_key])
+  @@index([owner_organization_id])
 }
 
 /// Một danh mục (ví dụ `order_priority`, `service_level`…). `governance`

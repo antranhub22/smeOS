@@ -29,7 +29,7 @@ Worker Python đọc lược đồ sinh sẵn, không tự khai bảng.
 | `partner_marketplace_stores` | Chợ đối tác (PO 31/10/2026): hồ sơ khảo sát cửa hàng TIỀM NĂNG, chưa là tenant nên không thuộc tổ chức nào. Đọc `N1`, ghi `N17`, xoá `N18` (chỉ superadmin). `match_key` (tên chuẩn hoá) duy nhất; `profile` JSONB giữ đủ 75 cột khảo sát; `photo_keys` là nguồn registry kho (`platform/…`) |
 | `partner_marketplace_share_links` | Link chia sẻ chợ đối tác (PO 01/11/2026): xem danh sách đã che không cần đăng nhập. Cấp nền tảng, không thuộc tổ chức. Tạo/huỷ `N17`. Chỉ lưu `token_hash` (SHA-256, duy nhất); `expires_at` do người tạo chọn (1–365 ngày); `revoked_at` khi huỷ; `view_count`/`last_viewed_at` |
 | `market_sources` · `trend_signals` · `trend_timeseries` · `topics` · `topic_signals` · `topic_scores` · `research_runs` · `provider_health` | Dữ liệu nghiên cứu thị trường cấp nền tảng (Market Intelligence Engine, Đợt A) — thu thập xu hướng chung toàn ngành, không thuộc một tổ chức nào; chỉ có `content_opportunities` thuộc tenant |
-| `field_definitions` · `field_catalogs` · `field_catalog_values` | Nền quản trị trường (ĐP-3, 26/09/2026) — sổ đăng ký trường (lõi và tự tạo) và danh mục giá trị của TOÀN hệ thống, cùng hạng với `platform_operators`/`ai_models`. `field_config_overrides` (ghi đè THEO TỪNG tổ chức) NGƯỢC LẠI có `organization_id` — thuộc tenant, không nằm trong danh sách này. Xem mục 22b |
+| `field_definitions` · `field_catalogs` · `field_catalog_values` | Nền quản trị trường (ĐP-3, 26/09/2026) — sổ đăng ký trường (lõi và tự tạo) và danh mục giá trị của TOÀN hệ thống, cùng hạng với `platform_operators`/`ai_models`. `field_config_overrides` (ghi đè THEO TỪNG tổ chức) NGƯỢC LẠI có `organization_id` — thuộc tenant, không nằm trong danh sách này. Trường cửa hàng tự tạo (checklist ALG 1.9) nằm trong `field_definitions` với `owner_organization_id` = tổ chức sở hữu: chỉ tổ chức đó đọc/ghi, Console nền tảng không liệt kê, hạn mức 50 trường/thực thể tính riêng từng tổ chức. Xem mục 22b |
 | `integration_governance` | Trung tâm Tích hợp (30/10/2026) — khoá/cấp sẵn tích hợp theo tầng `(connector_key, tier, scope_id)`; `scope_id` là `GLOBAL` (Mẹ), `industry:<key>` (Ngành) hoặc id tổ chức chuỗi. Cùng mẫu với `notification_*`. Xem mục 36 |
 
 | `platform_settings` | Cấu hình cấp nền tảng, một dòng mỗi khoá, chỉ Console vận hành ghi (mã `N12`) — vd ma trận điều hướng theo ngành áp cho MỌI tổ chức cùng ngành. Xem mục 31 |
@@ -2461,13 +2461,17 @@ model field_definitions {
   floor_internal_only Boolean                  @default(false)
   status              field_status             @default(ACTIVE)
   default_enabled     Boolean                  @default(true)
+  owner_organization_id String?                // null = trường nền tảng; có giá trị = trường cửa hàng tự tạo
   created_by          String?
   updated_by          String?
   created_at          DateTime                 @default(now())
   updated_at          DateTime                 @updatedAt
 
+  owner_organization organizations? @relation("field_definition_owner", fields: [owner_organization_id], references: [id], onDelete: Cascade)
+
   @@index([entity])
   @@index([catalog_key])
+  @@index([owner_organization_id])
 }
 
 model field_catalogs {
@@ -2516,7 +2520,7 @@ model field_config_overrides {
 }
 ```
 
-Kiến trúc hai lớp (Đặc tả trường §16.2): **lớp mã** là `src/modules/field-platform/domain/core-field-registry.ts` (khoá, kiểu dữ liệu, mức sàn — không đổi lúc chạy, mỗi module tự khai trường của mình, vd. `src/modules/coordinator/contracts/field-registry.ts`); **lớp cấu hình** là `field_definitions` (platform-wide, quản trị nền tảng sửa qua `N12`) cộng `field_config_overrides` (riêng một tổ chức). `field-rules.ts` là nơi DUY NHẤT cộng hai lớp (`computeEffectiveFieldConfig`) — không route/component nào tự cộng lấy.
+Kiến trúc hai lớp (Đặc tả trường §16.2): **lớp mã** là `src/modules/field-platform/domain/core-field-registry.ts` (khoá, kiểu dữ liệu, mức sàn — không đổi lúc chạy, mỗi module tự khai trường của mình, vd. `src/modules/coordinator/contracts/field-registry.ts`); **lớp cấu hình** là `field_definitions` (platform-wide, quản trị nền tảng sửa qua `N12`) cộng `field_config_overrides` (riêng một tổ chức). `field-rules.ts` là nơi DUY NHẤT cộng hai lớp (`computeEffectiveFieldConfig`) — không route/component nào tự cộng lấy. Cửa hàng (năng lực `D18`, chỉ Điều hành) ghi được hai việc trong phạm vi sàn (`shop-field-floor.ts`): tạo trường riêng (`owner_organization_id`) và ghi đè trường nền tảng của chính mình (ẩn trường không bắt buộc, đổi nhãn, nâng mức yêu cầu); ghi vào `audit_logs` của tổ chức.
 
 Mức sàn không cấu hình được (5 điều, Đặc tả trường §16.2): (1) `floor_internal_only = true` thì không cấu hình nào mở được hiển thị ra ngoài `INTERNAL`; (2) không hạ được `requirement` của trường lõi xuống dưới mức khai trong lớp mã; (3) `field_catalog_values` không xoá cứng, chỉ `is_active`; (4) `field_catalog_values.code` và `field_definitions.key` không đổi được sau khi tạo; (5) mọi thao tác ghi vào `platform_audit_logs`.
 

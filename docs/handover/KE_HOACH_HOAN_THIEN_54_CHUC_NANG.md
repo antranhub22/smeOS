@@ -176,13 +176,15 @@ Mọi bảng mới có `organization_id` + `@@index([organization_id])` (trừ b
 |---|---:|---:|
 | 1 | 13 | 13 |
 | 2 | 11 | 11 |
-| 3 | 6 | 5 |
+| 3 | 6 | 6 |
 | 4 | 9 | 0 |
 | 5 | 6 | 0 |
 | 6 | 8 | 0 |
 | 7 | 1 | 0 |
-| **Tổng** | **54** | **29** |
+| **Tổng** | **54** | **30** |
 
 Đợt 2 hoàn thiện đủ 11/11 chức năng. Phần mở rộng còn theo dõi: link giao riêng cho shipper thuê ngoài (4.5), đưa đơn Thẻ Chào vào hàng đợi của tài khoản thợ (4.13), giá vốn theo phiên bản (2.4), ẩn mẫu bị khoá khỏi danh sách trên link theo ngày khách chọn trước (2.8). Shipper nội bộ được gắn đơn theo số điện thoại Điều phối ghi khi điều xe; Điều hành nhập số điện thoại nhân viên ở màn Thành viên.
+
+Đợt 3 hoàn thiện đủ 6/6 chức năng: phí chế tác theo kiểu dáng và hệ số ngày lễ (3.6), phiên bản và phí vận chuyển trên báo giá (3.8), lịch sử phiên bản báo giá (3.10), link báo giá có ảnh mẫu và tải PNG/PDF A6 (3.11), ưu đãi hạng khách và phụ phí giờ cao điểm (3.1), trường dữ liệu do cửa hàng cấu hình (1.9, mã năng lực `D18`, migration `20261105120000_field_definition_owner`).
 
 Khi mọi đợt hoàn tất, báo cáo ánh xạ đạt 123/123 chức năng Hoàn thiện và checklist bàn giao ALG đủ điều kiện nghiệm thu.

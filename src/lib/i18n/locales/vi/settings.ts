@@ -60,6 +60,7 @@ export const settingsVi = {
     brochureFlow: "8. Thẻ Chào & Quy Trình",
     aiChannels: "9. AI & Kênh",
     collectionProfile: "10. Thu Thập Chuỗi",
+    fields: "11. Trường Dữ Liệu",
   },
 } as const
 

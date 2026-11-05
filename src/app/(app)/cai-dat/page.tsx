@@ -27,6 +27,7 @@ import { OccasionsSettingsForm } from "@/components/organization/occasions-setti
 import { BrochureFlowSettingsTab } from "@/components/organization/brochure-flow-settings-tab"
 import { AiChannelsSettingsTab } from "@/components/organization/ai-channels-settings-tab"
 import { SettingsTabsNav, type SettingsTab } from "@/components/organization/settings-tabs-nav"
+import { ShopFieldsSettingsTab } from "@/components/organization/shop-fields-settings-tab"
 import { BROCHURE_PAYMENT_SETTINGS_KEY } from "@/modules/greeting-card/domain/brochure-commerce-rules"
 import {
   parseStorePolicies,
@@ -47,6 +48,7 @@ const VALID_TABS: SettingsTab[] = [
   "BROCHURE_FLOW",
   "AI_CHANNELS",
   "COLLECTION_PROFILE",
+  "FIELDS",
 ]
 
 function CaiDatTiemContent() {
@@ -314,6 +316,9 @@ function CaiDatTiemContent() {
 
       {/* MỤC 10: DANH MỤC THU THẬP CHUỖI (§9.5.8) */}
       {activeTab === "COLLECTION_PROFILE" && <ChainCollectionProfileManager />}
+
+      {/* MỤC 11: TRƯỜNG DỮ LIỆU CỦA CỬA HÀNG (checklist ALG 1.9) */}
+      {activeTab === "FIELDS" && <ShopFieldsSettingsTab />}
     </SettingsLayout>
   )
 }

@@ -24,7 +24,7 @@ Ký hiệu đường dẫn rút gọn: `org/` = `src/modules/organization/`, `gc
 
 | Nhóm | Nội dung | Số chức năng | Hoàn thiện | Dang dở | Chưa hoàn thành |
 |---|---|---:|---:|---:|---:|
-| 1 | Nền tảng chung & phân quyền | 19 | 17 | 2 | 0 |
+| 1 | Nền tảng chung & phân quyền | 19 | 18 | 1 | 0 |
 | 2 | Quản lý sản phẩm, mẫu hoa & hình ảnh | 9 | 9 | 0 | 0 |
 | 3 | Tạo & quản lý báo giá | 13 | 13 | 0 | 0 |
 | 4 | Tiếp nhận, quản lý & xử lý đơn hàng | 32 | 32 | 0 | 0 |
@@ -34,7 +34,7 @@ Ký hiệu đường dẫn rút gọn: `org/` = `src/modules/organization/`, `gc
 | 8 | Landing page bán hàng | 1 | 1 | 0 | 0 |
 | 9 | Chat nội bộ, đa chuỗi & phân quyền nâng cao | 14 | 10 | 3 | 1 |
 | 10 | Quản lý credit AI, hạn mức & thuê bao SaaS | 8 | 2 | 3 | 3 |
-| | **Tổng cộng** | **123** | **98** | **21** | **4** |
+| | **Tổng cộng** | **123** | **99** | **20** | **4** |
 
 Tỷ lệ: Hoàn thiện 78,9% · Dang dở 17,9% · Chưa hoàn thành 3,3%.
 
@@ -61,7 +61,7 @@ Tỷ lệ: Hoàn thiện 78,9% · Dang dở 17,9% · Chưa hoàn thành 3,3%.
 | 1.6 | Khai báo chi nhánh & tọa độ quận/huyện | Hoàn thiện | `schema:298-330` (`chain_branches`: địa chỉ, phường/quận/tỉnh, `service_wards`, `latitude/longitude`); `api/greeting-card/chain-branches/bulk-import/route.ts:56-58`; xếp hạng theo vùng `gc/domain/chain-dispatch-engine.ts`; `tt/chain-branch-area.test.ts:31,43`, `tt/chain-branches-table.test.ts:42-93` | Khai báo theo lô Excel; không có form thêm từng chi nhánh |
 | 1.7 | Khai báo dịp tặng hoa ngành chuẩn | Hoàn thiện | `api/occasions/route.ts:15-30`, `api/occasions/[id]/route.ts:17-19`; danh sách mặc định `org/infra/occasion-repository.ts:23-36`; `src/components/organization/occasions-settings-form.tsx` (thêm, sửa, bật/tắt); `tt/occasions-isolation.test.ts` (mặc định, thêm/sửa/tắt, Sale 403, tổ chức khác 404) | — |
 | 1.8 | Chính sách cửa hàng (ngân hàng, phụ thu lễ) | Hoàn thiện | Ngân hàng `gc/domain/store-payment-methods.ts:142`; % cọc `gc/domain/brochure-payment-policy.ts:20-22`; phụ phí và số đơn tối đa ngày lễ `gc/domain/holiday-policy.ts:1-30`; trần đơn theo khung giờ `gc/domain/slot-capacity.ts:1-40`; `tt/greeting-card-holiday.test.ts:60,68`, `tt/greeting-card-promotion-slot.test.ts:114,130`, `tt/greeting-card-payments.test.ts:68` | — |
-| 1.9 | Cấu hình trường dữ liệu linh hoạt theo shop | Dang dở | Tạo/ẩn trường chỉ qua Console nền tảng `api/platform/fields/route.ts`, `api/platform/organizations/[id]/field-overrides/route.ts`; cửa hàng chỉ đọc `api/field-config/route.ts:9`; `tp/field-registry.test.ts:47-165` (ca 165 khẳng định cửa hàng không ghi được) | Cửa hàng tự thêm/ẩn trường |
+| 1.9 | Cấu hình trường dữ liệu linh hoạt theo shop | Hoàn thiện | Cài đặt → Trường dữ liệu `src/components/organization/shop-fields-settings-tab.tsx` (chỉ Điều hành, mã `D18`): thêm trường riêng cho đơn/đối tác, ẩn/đổi tên trường không bắt buộc; `api/field-config/route.ts` (POST/PUT), `api/field-config/settings/route.ts`; trường riêng thuộc tổ chức `field_definitions.owner_organization_id`, hạn mức tính riêng từng cửa hàng `src/modules/field-platform/use-cases/manage-shop-fields.ts`; không hạ mức yêu cầu, không ẩn trường bắt buộc, không mở trường chỉ nội bộ `src/modules/field-platform/domain/shop-field-floor.ts`; Console nền tảng giữ `api/platform/fields`; `tt/field-config-tenant.test.ts`, `tp/field-registry.test.ts` | — |
 | 1.10 | Quản lý & mời thành viên | Hoàn thiện | `org/use-cases/staff-accounts.ts:29-58` tạo tài khoản kèm mật khẩu tạm, vai, chi nhánh, nhật ký; `src/app/(app)/cai-dat/thanh-vien/_components/add-staff-dialog.tsx`; `tt/staff-accounts.test.ts:46,58` | Luồng "Mời" (`org/use-cases/invite-member.ts:18-20`) chưa có bước nhận lời mời/mã mời |
 | 1.11 | Điều chỉnh/gỡ thành viên & thu hồi phiên ngay | Hoàn thiện | Gỡ: `api/members/[id]/route.ts` (F4), `tu/organization/remove-member.test.ts`; đổi vai: `org/use-cases/change-member-role.ts` (chặn tự đổi vai, ghi nhật ký vai trước/sau); quyền tính lại mỗi yêu cầu `org/use-cases/resolve-session.ts`; `tt/member-role-change.test.ts` | — |
 | 1.12 | 6 vai trò mặc định | Hoàn thiện | Vai hệ thống Điều hành, Điều phối, Sale, Thợ cắm hoa (`tho_cam`), Shipper (`shipper`), Kế toán (`ke_toan`) `org/domain/system-roles.ts`; bộ quyền mặc định theo PO Q7 `src/core/rbac/capability-catalog.ts` (R17 việc chế tác được giao, R18 đơn được giao đi giao, R19 xem đối soát; Kế toán không có R9/R10/R11/R16); trang chủ theo vai `org/domain/role-ux-operations.ts`, `src/app/(app)/page.tsx`, `src/components/dashboard/florist-queue-home.tsx`, `shipper-runs-home.tsx`, `accounting-workspace.tsx`; `src/core/rbac/capability-catalog.test.ts`, `org/domain/role-ux-catalog.test.ts`, `tt/system-roles.test.ts` | — |

@@ -600,7 +600,10 @@ Mọi route nhận `:id` là id HOẶC mã đơn (`FLR-YYMMDD-NNNN`); tổ chứ
 | POST | `/coordinator/partners` | `R4` · `F2` | Đối tác gia công (`R4`): trùng mã trong tổ chức → 409. Cấp tài khoản đối tác chuỗi (thân có `partnerStoreName`/`contactEmail`, `F2`): không gửi `password` → sinh mật khẩu ngẫu nhiên, trả `temporaryPassword` đúng một lần (email đã có tài khoản thì giữ mật khẩu cũ, không trả); `password` gửi lên tối thiểu 10 ký tự |
 | POST | `/coordinator/partners/link-existing` | `F2` | Liên kết cửa hàng đã có tài khoản (email hoặc slug) làm đối tác chuỗi; mở phòng chat nội bộ 1-1 |
 | PATCH | `/coordinator/partners/:id` | `R4` | Sửa hồ sơ, tạm ngưng/mở lại |
-| GET | `/field-config` | `R1` | ĐP-3 — cấu hình trường hiệu lực cho tổ chức của người gọi (lớp mã + cấu hình nền tảng + ghi đè theo tổ chức đã cộng sẵn), `?entity=ORDER\|PARTNER`. CHỈ ĐỌC — route tenant không ghi được vào `field_definitions`/`field_config_overrides`, xem mục 21b |
+| GET | `/field-config` | `R1` | ĐP-3 — cấu hình trường hiệu lực cho tổ chức của người gọi (lớp mã + cấu hình nền tảng + ghi đè theo tổ chức + trường riêng của tổ chức), `?entity=ORDER\|PARTNER` |
+| POST | `/field-config` | `D18` | Checklist ALG 1.9 — cửa hàng tạo trường riêng `{ entity, label, dataType, requirement?, visibility?, placeholder? }` (không gồm kiểu chọn từ danh mục); khoá máy sinh `cf_…`; tối đa 50 trường/thực thể/tổ chức. 201 |
+| PUT | `/field-config` | `D18` | `{ key, label?, isEnabled?, requirement?, visibility? }` — trường riêng: sửa trực tiếp; trường nền tảng: ghi đè của chính tổ chức, không hạ mức yêu cầu, không ẩn trường bắt buộc, không mở trường chỉ nội bộ (400). Trường riêng của tổ chức khác → 404 |
+| GET | `/field-config/settings` | `D18` | Danh sách cho màn Cài đặt → Trường dữ liệu: trường nền tảng kèm mức sàn (`floorRequirement`, `canHide`) và trường riêng (gồm trường đang ẩn), `?entity=ORDER\|PARTNER` |
 | GET | `/field-config/catalogs` | `R1` | ĐP-4a.1 — danh mục (§2.15) cho form nhập liệu tenant (T01…), `?keys=priority,serviceLevel,...` (bỏ trống trả hết). CHỈ giá trị đang `is_active`. Khác `/platform/catalogs` (đòi `N12`): route này chỉ đòi đăng nhập tổ chức, không có thao tác ghi |
 
 ## 16. Số liệu và hồ sơ phong cách — M11

@@ -53,7 +53,8 @@ export async function createCustomField(
   let key = slugifyCustomFieldKey(input.label)
   // Nhãn trùng nhau sinh cùng khoá — thêm hậu tố cho tới khi không trùng.
   let suffix = 2
-  while (existingKeys.has(key) || coreKeys.has(key)) {
+  // Khoá duy nhất toàn bảng — gồm cả trường riêng của cửa hàng (không nằm trong `list`)
+  while (existingKeys.has(key) || coreKeys.has(key) || (await repo.keyExists(key))) {
     key = `${slugifyCustomFieldKey(input.label)}_${suffix}`
     suffix += 1
   }
