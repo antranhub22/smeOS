@@ -1,5 +1,6 @@
 "use client"
 
+import { Input } from "@/components/ui/input"
 import React, { useState } from "react"
 import { Bell, Loader2, Save, ShieldCheck } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
@@ -149,14 +150,14 @@ export function StaffNotifySettings() {
               <h5 className="text-body-sm font-bold text-text">Cấu hình Telegram Bot</h5>
               <p className="text-caption text-text-muted">Nhập Bot Token từ @BotFather và Chat ID nhóm hoặc cá nhân</p>
               <div className="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
-                <input
+                <Input
                   type="password"
                   placeholder="Telegram Bot Token (để trống giữ nguyên)"
                   value={credentials.telegramBotToken ?? ""}
                   onChange={(e) => setCredentials({ ...credentials, telegramBotToken: e.target.value })}
                   className="h-9 w-full rounded-lg border border-border bg-surface px-3 text-body-sm text-text"
                 />
-                <input
+                <Input
                   type="text"
                   placeholder="Default Chat ID (vd: -100123456789)"
                   value={credentials.telegramChatId ?? ""}

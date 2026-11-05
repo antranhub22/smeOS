@@ -1,5 +1,6 @@
 "use client"
 
+import { Input } from "@/components/ui/input"
 import React, { useId, useState } from "react"
 import { apiSend } from "@/components/greeting-card/greeting-api"
 import { Button } from "@/components/ui/button"
@@ -36,7 +37,7 @@ export function TrackingVerifyForm({ orderCode, onVerified }: { orderCode: strin
         Bạn là người đặt? Nhập 4 số cuối số điện thoại để xem đầy đủ địa chỉ và lời nhắn thiệp.
       </label>
       <div className="flex gap-2">
-        <input
+        <Input
           id={`${uid}-last4`} inputMode="numeric" maxLength={4} value={value} autoComplete="off"
           onChange={(e) => setValue(e.target.value.replace(/\D/g, ""))}
           className="h-11 w-28 rounded-lg border border-border bg-bg px-3 text-center tracking-widest text-text"

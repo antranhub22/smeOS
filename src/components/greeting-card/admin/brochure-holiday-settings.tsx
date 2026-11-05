@@ -1,5 +1,6 @@
 "use client"
 
+import { Input } from "@/components/ui/input"
 import React, { useState } from "react"
 import { ViDateInput } from "@/components/greeting-card/customer/vi-date-input"
 import { CalendarHeart, Loader2, Plus, Save, Trash2 } from "@/components/ui/icons"
@@ -108,7 +109,7 @@ export function BrochureHolidaySettings() {
             {rows.map((r, i) => (
               <li key={r.id} className="rounded-xl border border-border p-3 flex flex-col gap-2">
                 <div className="flex flex-wrap items-center gap-2">
-                  <input aria-label="Tên ngày lễ" value={r.name} maxLength={HOLIDAY_NAME_MAX} placeholder="VD: Valentine" onChange={(e) => patch(i, { name: e.target.value })} className={`${FIELD} flex-1 min-w-40`} />
+                  <Input aria-label="Tên ngày lễ" value={r.name} maxLength={HOLIDAY_NAME_MAX} placeholder="VD: Valentine" onChange={(e) => patch(i, { name: e.target.value })} className={`${FIELD} flex-1 min-w-40`} />
                   <ViDateInput compact ariaLabel="Ngày" value={r.date} onChange={(date) => patch(i, { date })} wrapperClassName="w-44" className={FIELD} />
                   <label className="flex items-center gap-1.5 text-body-sm text-text">
                     <input type="checkbox" checked={r.yearly} onChange={(e) => patch(i, { yearly: e.target.checked })} /> Lặp lại hằng năm
@@ -119,13 +120,13 @@ export function BrochureHolidaySettings() {
                 </div>
                 <div className="flex flex-wrap items-center gap-3 text-body-sm">
                   <label className="flex items-center gap-2"><span className="text-text-muted">Chốt đơn giao trong ngày lúc</span>
-                    <input inputMode="numeric" value={r.cutoff} placeholder="VD: 12" onChange={(e) => patch(i, { cutoff: e.target.value })} className={`${FIELD} w-16`} />
+                    <Input inputMode="numeric" value={r.cutoff} placeholder="VD: 12" onChange={(e) => patch(i, { cutoff: e.target.value })} className={`${FIELD} w-16`} />
                     <span className="text-text-muted">giờ</span></label>
                   <label className="flex items-center gap-2"><span className="text-text-muted">Tối đa</span>
-                    <input inputMode="numeric" value={r.maxOrders} onChange={(e) => patch(i, { maxOrders: e.target.value })} className={`${FIELD} w-24`} />
+                    <Input inputMode="numeric" value={r.maxOrders} onChange={(e) => patch(i, { maxOrders: e.target.value })} className={`${FIELD} w-24`} />
                     <span className="text-text-muted">đơn</span></label>
                   <label className="flex items-center gap-2"><span className="text-text-muted">Phụ phí</span>
-                    <input inputMode="numeric" value={r.surcharge} placeholder="0" onChange={(e) => patch(i, { surcharge: e.target.value })} className={`${FIELD} w-32`} />
+                    <Input inputMode="numeric" value={r.surcharge} placeholder="0" onChange={(e) => patch(i, { surcharge: e.target.value })} className={`${FIELD} w-32`} />
                     <span className="text-text-muted">đ</span></label>
                 </div>
               </li>

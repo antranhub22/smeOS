@@ -1,5 +1,6 @@
 "use client"
 
+import { Input } from "@/components/ui/input"
 import React, { useState } from "react"
 import { AlertOctagon, CheckCircle2, RefreshCw, XCircle } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
@@ -93,7 +94,7 @@ function CancellationRequestCard({ row, onDone }: { row: PendingRow; onDone: () 
 
       {error && <p role="alert" className="text-caption font-semibold text-danger">{error}</p>}
 
-      <input
+      <Input
         type="text"
         placeholder="Ghi chú phản hồi (tùy chọn)..."
         value={note}

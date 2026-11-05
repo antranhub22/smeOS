@@ -1,5 +1,6 @@
 "use client"
 
+import { Input } from "@/components/ui/input"
 import React, { useState } from "react"
 import { BellRing, Loader2, Save, Send } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
@@ -133,7 +134,7 @@ export function BrochureNotifySettings() {
             {NOTIFY_EVENTS.map((ev) => (
               <label key={ev} className="flex flex-col gap-1 text-caption">
                 <span>{NOTIFY_EVENT_LABELS[ev]}</span>
-                <input value={tpl[ev] ?? ""} maxLength={32} onChange={(e) => setTemplates({ ...tpl, [ev]: e.target.value })} className={FIELD} />
+                <Input value={tpl[ev] ?? ""} maxLength={32} onChange={(e) => setTemplates({ ...tpl, [ev]: e.target.value })} className={FIELD} />
               </label>
             ))}
           </div>
@@ -147,7 +148,7 @@ export function BrochureNotifySettings() {
       <div className="flex flex-wrap items-center justify-end gap-2">
         {saved?.configured && (
           <>
-            <input
+            <Input
               type="tel"
               aria-label="SĐT nhận tin thử"
               placeholder="SĐT nhận tin thử"

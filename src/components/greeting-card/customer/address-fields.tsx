@@ -1,3 +1,4 @@
+import { Input } from "@/components/ui/input"
 import React, { useState } from "react"
 import { ADDRESS_PART_MAX, type AddressParts } from "@/modules/greeting-card/domain/delivery-address"
 import {
@@ -111,7 +112,7 @@ export function AddressFields(props: {
         <label htmlFor={`${idPrefix}-street`} className="mb-1 block text-caption font-semibold text-text-muted">
           {isEn ? "Street / Village" : "Đường / Thôn / Ấp"} <span className="text-danger">*</span>
         </label>
-        <input
+        <Input
           id={`${idPrefix}-street`}
           type="text"
           required
@@ -127,7 +128,7 @@ export function AddressFields(props: {
         <label htmlFor={`${idPrefix}-houseNumber`} className="mb-1 block text-caption font-semibold text-text-muted">
           {isEn ? "House / Building / Unit No." : "Số nhà / Tòa nhà / Phòng"} <span className="text-danger">*</span>
         </label>
-        <input
+        <Input
           id={`${idPrefix}-houseNumber`}
           type="text"
           required

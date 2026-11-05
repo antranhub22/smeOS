@@ -1,5 +1,6 @@
 "use client"
 
+import { Textarea } from "@/components/ui/textarea"
 import React, { useState } from "react"
 import { AlertTriangle, ShieldAlert, Loader2 } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
@@ -71,7 +72,7 @@ export function BypassRequestModal({
             <label htmlFor="bypass-reason" className="block text-caption font-bold text-text mb-1.5">
               Lý do bất khả kháng (Bắt buộc) <span className="text-danger">*</span>
             </label>
-            <textarea
+            <Textarea
               id="bypass-reason"
               required
               rows={3}

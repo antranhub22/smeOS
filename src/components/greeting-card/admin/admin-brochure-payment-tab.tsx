@@ -1,5 +1,6 @@
 "use client"
 
+import { Input } from "@/components/ui/input"
 import React, { useState } from "react"
 import { RefreshCw, Settings, ShieldCheck, Search, X } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
@@ -100,7 +101,7 @@ export function AdminBrochurePaymentTab({ focusOrderId = null, onClearFocus }: {
           ))}
           <div className="relative ml-auto w-full sm:w-64">
             <Search size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-text-muted" aria-hidden="true" />
-            <input
+            <Input
               type="search"
               aria-label="Tìm kiếm đơn hàng theo tên khách, mã đơn, số điện thoại"
               placeholder="Tìm tên khách, mã đơn, SĐT…"

@@ -1,5 +1,6 @@
 "use client"
 
+import { Input } from "@/components/ui/input"
 import React from "react"
 import { CalendarDays } from "@/components/ui/icons"
 import { viDeliveryDate, viShortDate } from "@/modules/greeting-card/domain/delivery-schedule"
@@ -59,7 +60,7 @@ export function ViDateInput({
 
   return (
     <div className={`relative ${wrapperClassName ?? ""}`}>
-      <input
+      <Input
         id={id}
         aria-label={ariaLabel}
         type="date"

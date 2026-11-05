@@ -1,5 +1,6 @@
 "use client"
 
+import { Input } from "@/components/ui/input"
 import React, { useState } from "react"
 import { ArrowLeft, Package, Plus, Trash2, Search, Loader2, CheckCircle, ShieldCheck } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
@@ -152,7 +153,7 @@ export function CatalogDetailPanel({ catalogId, catalogName, onBack }: Props) {
           <div className="flex flex-col gap-4">
             <div className="relative">
               <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" />
-              <input
+              <Input
                 type="text"
                 placeholder="Tìm tên sản phẩm..."
                 value={productSearch}

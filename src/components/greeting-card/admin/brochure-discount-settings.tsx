@@ -1,5 +1,6 @@
 "use client"
 
+import { Input } from "@/components/ui/input"
 import React, { useState } from "react"
 import { BadgePercent } from "@/components/ui/icons"
 import { apiSend, useApi } from "@/components/greeting-card/greeting-api"
@@ -42,7 +43,7 @@ export function BrochureDiscountSettings() {
       <p className="text-caption text-text-muted">Sale chỉ xin được và Điều hành chỉ duyệt được trong mức này. Đặt 0 để tắt xin giảm giá.</p>
       <div className="flex items-center gap-2">
         <label htmlFor="max-discount" className="sr-only">Phần trăm giảm tối đa</label>
-        <input id="max-discount" type="number" inputMode="numeric" min={0} max={100} value={value}
+        <Input id="max-discount" type="number" inputMode="numeric" min={0} max={100} value={value}
           onChange={(e) => { setEdited(e.target.value); setMessage(null) }}
           className="h-11 w-24 rounded-xl border border-border bg-surface px-3 text-right text-body text-text" />
         <span className="text-body-sm text-text-muted">%</span>

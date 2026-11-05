@@ -1,5 +1,6 @@
 "use client"
 
+import { Input } from "@/components/ui/input"
 import { IN_TRANSIT_CANCEL_WARNING, isInTransit } from "@/modules/greeting-card/domain/cancellation-request"
 import React, { useState } from "react"
 import { PaymentCheckPanel } from "./payment-check-panel"
@@ -232,7 +233,7 @@ export function AdminOrderActionDialog({
             <span className="text-caption font-bold">
               {type === "quote" ? "Tổng tiền báo giá (đ)" : amountLabel}
             </span>
-            <input inputMode="numeric" required value={amount} onChange={(e) => setAmount(e.target.value)} disabled={isBlocked} className={FIELD} />
+            <Input inputMode="numeric" required value={amount} onChange={(e) => setAmount(e.target.value)} disabled={isBlocked} className={FIELD} />
           </label>
         )}
         {(type === "collect" || type === "quote") && <PaymentCheckPanel order={order} />}
@@ -241,7 +242,7 @@ export function AdminOrderActionDialog({
             <span className="text-caption font-bold">
               {type === "collect" ? "Mã giao dịch ngân hàng (không bắt buộc)" : type === "quote" ? "Lý do giá chốt (không bắt buộc)" : type === "cancel" ? "Lý do huỷ *" : "Lý do hoàn tiền *"}
             </span>
-            <input
+            <Input
               value={text}
               maxLength={type === "collect" ? 100 : type === "quote" ? 300 : 500}
               required={type === "cancel" || type === "refund"}
@@ -256,7 +257,7 @@ export function AdminOrderActionDialog({
           <div role="alert" className="p-3.5 rounded-xl bg-danger-bg border border-danger/30 flex flex-col gap-2">
             <span className="font-bold text-caption text-danger">Chưa nhận được tiền khách báo chuyển?</span>
             <p className="text-body-sm text-text/80">Trang của khách sẽ quay lại chờ chuyển khoản và hiện lại mã QR. Sự việc được ghi vào lịch sử đơn.</p>
-            <input value={rejectReason} maxLength={500} onChange={(e) => setRejectReason(e.target.value)} placeholder="Lý do (vd: bill sai tài khoản, chuyển thiếu)" aria-label="Lý do chưa nhận được tiền" className={FIELD} />
+            <Input value={rejectReason} maxLength={500} onChange={(e) => setRejectReason(e.target.value)} placeholder="Lý do (vd: bill sai tài khoản, chuyển thiếu)" aria-label="Lý do chưa nhận được tiền" className={FIELD} />
             <div className="flex justify-end gap-2">
               <Button type="button" variant="outline" onClick={() => setRejecting(false)} disabled={busy}>Quay lại</Button>
               <Button type="button" variant="secondary" onClick={() => void rejectReported()} disabled={busy} className="bg-danger hover:bg-danger/90 text-white">

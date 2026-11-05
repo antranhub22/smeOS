@@ -1,5 +1,6 @@
 "use client"
 
+import { Input } from "@/components/ui/input"
 import { useState } from "react"
 import { ADDRESS_PART_MAX } from "@/modules/greeting-card/domain/delivery-address"
 
@@ -33,7 +34,7 @@ export function PickOrTypeField(props: {
       </label>
       {showInput ? (
         <div className="flex flex-col gap-1">
-          <input
+          <Input
             id={id}
             type="text"
             required={required}

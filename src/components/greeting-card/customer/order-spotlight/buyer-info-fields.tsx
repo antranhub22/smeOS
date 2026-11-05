@@ -1,5 +1,6 @@
 "use client"
 
+import { Input } from "@/components/ui/input"
 import React from "react"
 import { ORDER_FIELD_MAX } from "@/modules/greeting-card/domain/greeting-card-rules"
 
@@ -41,7 +42,7 @@ export function BuyerInfoFields({
           <label htmlFor={`${idPrefix}-customerName`} className={LABEL}>
             Họ tên của bạn <span className="text-danger">*</span>
           </label>
-          <input
+          <Input
             type="text"
             required
             placeholder="VD: Nguyễn Văn A"
@@ -57,7 +58,7 @@ export function BuyerInfoFields({
           <label htmlFor={`${idPrefix}-customerPhone`} className={LABEL}>
             Số điện thoại của bạn <span className="text-danger">*</span>
           </label>
-          <input
+          <Input
             type="tel"
             required
             placeholder="VD: 0901234567"
@@ -75,7 +76,7 @@ export function BuyerInfoFields({
         <label htmlFor={`${idPrefix}-customerEmail`} className={LABEL}>
           Email <span className="text-caption font-normal text-text-muted">(tùy chọn)</span>
         </label>
-        <input
+        <Input
           type="email"
           placeholder="VD: email@example.com"
           value={customerEmail}

@@ -1,5 +1,6 @@
 "use client"
 
+import { Input } from "@/components/ui/input"
 import React, { useState } from "react"
 import {
   CheckCircle2,
@@ -279,7 +280,7 @@ export function SubcontractStepProof({
               <label htmlFor="pod-note" className="block text-caption font-bold text-text mb-1">
                 Ghi chú người nhận / giao hàng (tùy chọn)
               </label>
-              <input
+              <Input
                 id="pod-note"
                 type="text"
                 value={note}

@@ -1,5 +1,6 @@
 "use client"
 
+import { Input } from "@/components/ui/input"
 import React, { useState } from "react"
 import { Loader2, Plus, Save, Trash2, Truck } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
@@ -144,7 +145,7 @@ export function BrochureShippingSettings() {
             )}
             {current.zones.map((z, i) => (
               <li key={z.id} className="flex gap-2 items-center">
-                <input
+                <Input
                   aria-label="Tên khu vực"
                   value={z.name}
                   maxLength={80}
@@ -152,7 +153,7 @@ export function BrochureShippingSettings() {
                   onChange={(e) => edit({ ...current, zones: current.zones.map((x, j) => (j === i ? { ...x, name: e.target.value } : x)) })}
                   className={`${FIELD} flex-1`}
                 />
-                <input
+                <Input
                   aria-label="Phí giao (đ)"
                   inputMode="numeric"
                   value={z.fee}
@@ -183,7 +184,7 @@ export function BrochureShippingSettings() {
             </Button>
             <label className="flex items-center gap-2 text-body-sm">
               <span className="text-text-muted">Miễn phí giao cho đơn từ</span>
-              <input
+              <Input
                 inputMode="numeric"
                 value={current.freeOver}
                 placeholder="Bỏ trống = không miễn"
@@ -196,7 +197,7 @@ export function BrochureShippingSettings() {
           <div className="flex flex-wrap items-center gap-3 border-t border-border pt-3">
             <label className="flex items-center gap-2 text-body-sm">
               <span className="text-text-muted">Nhận giao trong ngày đến</span>
-              <input
+              <Input
                 inputMode="numeric"
                 value={current.cutoff}
                 placeholder="VD: 16"
@@ -207,7 +208,7 @@ export function BrochureShippingSettings() {
             </label>
             <label className="flex items-center gap-2 text-body-sm">
               <span className="text-text-muted">Chuẩn bị tối thiểu</span>
-              <input
+              <Input
                 inputMode="decimal"
                 value={current.prep}
                 placeholder="2"
@@ -218,7 +219,7 @@ export function BrochureShippingSettings() {
             </label>
             <label className="flex items-center gap-2 text-body-sm">
               <span className="text-text-muted">Phí giao lại khi giao không thành công</span>
-              <input
+              <Input
                 inputMode="numeric"
                 value={current.redelivery}
                 placeholder="Bỏ trống = không thu"

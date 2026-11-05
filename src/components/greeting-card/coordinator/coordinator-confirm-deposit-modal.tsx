@@ -1,5 +1,6 @@
 "use client"
 
+import { Input } from "@/components/ui/input"
 import React, { useState } from "react"
 import Image from "next/image"
 import { CheckCircle2, Banknote } from "@/components/ui/icons"
@@ -94,7 +95,7 @@ export function CoordinatorConfirmDepositModal({
 
         <label className="flex flex-col gap-1">
           <span className="text-caption font-bold">Ghi chú (không bắt buộc)</span>
-          <input
+          <Input
             value={note}
             onChange={(e) => setNote(e.target.value)}
             maxLength={500}

@@ -1,5 +1,6 @@
 "use client"
 
+import { Textarea } from "@/components/ui/textarea"
 import React, { useState } from "react"
 import { Check, Shuffle } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
@@ -115,7 +116,7 @@ export function SubstitutePanel({
       </button>
 
       <label className="sr-only" htmlFor="substitute-note">Ghi chú cho tiệm</label>
-      <textarea id="substitute-note" rows={2} maxLength={SUBSTITUTE_NOTE_MAX} value={note} onChange={(e) => setNote(e.target.value)} disabled={busy}
+      <Textarea id="substitute-note" rows={2} maxLength={SUBSTITUTE_NOTE_MAX} value={note} onChange={(e) => setNote(e.target.value)} disabled={busy}
         placeholder={choice === "CANCEL" ? "Lý do huỷ (bắt buộc)" : "Ghi chú cho tiệm (không bắt buộc), vd. ưu tiên tông hồng nhạt"}
         className="w-full rounded-xl border border-border bg-surface p-3 text-body-sm text-text resize-none focus:outline-none focus:ring-2 focus:ring-primary/40" />
 

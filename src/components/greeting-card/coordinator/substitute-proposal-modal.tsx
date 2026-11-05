@@ -1,5 +1,6 @@
 "use client"
 
+import { Textarea } from "@/components/ui/textarea"
 import React, { useState } from "react"
 import { Check, Shuffle } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
@@ -103,7 +104,7 @@ export function SubstituteProposalModal({ orderId, orderCode, onClose, onDone }:
             )}
 
             <label className="text-body-sm font-bold text-text" htmlFor="substitute-reason">Lý do (khách sẽ đọc)</label>
-            <textarea id="substitute-reason" rows={2} maxLength={SUBSTITUTE_REASON_MAX} value={reason} onChange={(e) => setReason(e.target.value)} disabled={busy || pending}
+            <Textarea id="substitute-reason" rows={2} maxLength={SUBSTITUTE_REASON_MAX} value={reason} onChange={(e) => setReason(e.target.value)} disabled={busy || pending}
               placeholder="Vd: Hoa hồng Ecuador hôm nay về bị dập, tiệm xin đề xuất mẫu tương đương"
               className="w-full rounded-xl border border-border bg-surface-muted p-3 text-body-sm text-text resize-none focus:outline-none focus:ring-2 focus:ring-primary/40" />
           </>

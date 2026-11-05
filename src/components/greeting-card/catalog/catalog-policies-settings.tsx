@@ -1,5 +1,6 @@
 "use client"
 
+import { Input } from "@/components/ui/input"
 import React, { useState } from "react"
 import { Gift, ShieldCheck, FileText, Check, Loader2 } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
@@ -268,7 +269,7 @@ export function CatalogPoliciesSettings({ catalogId, currentFilters, onSaved }: 
           <span>Thời gian khách duyệt ảnh hoàn thiện (Phút)</span>
         </h4>
         <div className="flex items-center gap-3">
-          <input
+          <Input
             type="number"
             min={1}
             max={60}

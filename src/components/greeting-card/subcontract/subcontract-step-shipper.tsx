@@ -1,5 +1,6 @@
 "use client"
 
+import { Input } from "@/components/ui/input"
 import React, { useState } from "react"
 import {
   Truck,
@@ -264,7 +265,7 @@ export function SubcontractStepShipper({
               <label htmlFor="shipper-name" className="block text-caption font-bold text-text mb-1">
                 Tên Shipper / Tài xế phụ trách <span className="text-danger">*</span>
               </label>
-              <input
+              <Input
                 id="shipper-name"
                 type="text"
                 value={shipperName}
@@ -278,7 +279,7 @@ export function SubcontractStepShipper({
               <label htmlFor="shipper-phone" className="block text-caption font-bold text-text mb-1">
                 Số điện thoại Shipper <span className="text-danger">*</span>
               </label>
-              <input
+              <Input
                 id="shipper-phone"
                 type="tel"
                 value={shipperPhone}
@@ -292,7 +293,7 @@ export function SubcontractStepShipper({
               <label htmlFor="shipper-note" className="block text-caption font-bold text-text mb-1">
                 Ghi chú điều phối (tùy chọn)
               </label>
-              <input
+              <Input
                 id="shipper-note"
                 type="text"
                 value={shipperNote}

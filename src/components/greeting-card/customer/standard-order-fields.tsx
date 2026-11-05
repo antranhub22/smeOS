@@ -1,5 +1,6 @@
 "use client"
 
+import { Input } from "@/components/ui/input"
 import React from "react"
 import { ORDER_FIELD_MAX } from "@/modules/greeting-card/domain/greeting-card-rules"
 import type { ShippingConfig } from "@/modules/greeting-card/domain/brochure-pricing"
@@ -69,7 +70,7 @@ export function StandardOrderFields({
           <label htmlFor={`${idPrefix}-recipientName`} className="block text-body-sm font-bold text-text mb-1">
             Họ tên {recipientLabel} <span className="text-danger">*</span>
           </label>
-          <input
+          <Input
             type="text"
             required
             placeholder="VD: Trần Thị B"
@@ -85,7 +86,7 @@ export function StandardOrderFields({
           <label htmlFor={`${idPrefix}-recipientPhone`} className="block text-body-sm font-bold text-text mb-1">
             Số điện thoại người nhận <span className="text-danger">*</span>
           </label>
-          <input
+          <Input
             type="tel"
             required
             placeholder="VD: 0912345678"

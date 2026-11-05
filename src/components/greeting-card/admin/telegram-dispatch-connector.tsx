@@ -1,5 +1,6 @@
 "use client"
 
+import { Input } from "@/components/ui/input"
 import React, { useState } from "react"
 import {
   Bot,
@@ -268,7 +269,7 @@ export function TelegramDispatchConnector() {
             <label className="block text-caption font-semibold text-text mb-1">
               Chat ID nhận tin: <span className="text-danger">*</span>
             </label>
-            <input
+            <Input
               type="text"
               placeholder="-100... hoặc user ID"
               value={testChatId}
@@ -283,7 +284,7 @@ export function TelegramDispatchConnector() {
               Nội dung tùy chỉnh (Tùy chọn):
             </label>
             <div className="flex gap-2">
-              <input
+              <Input
                 type="text"
                 placeholder="Để trống để dùng tin nhắn mẫu Điều Phối..."
                 value={testMessage}

@@ -1,5 +1,6 @@
 "use client"
 
+import { Input } from "@/components/ui/input"
 import React from "react"
 import { Search, Plus, Trash2, Loader2, CheckCircle } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
@@ -145,7 +146,7 @@ export function CatalogProductPicker({ catalogId, compact = false, onItemCountCh
               size={14}
               className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted"
             />
-            <input
+            <Input
               type="text"
               placeholder="Tìm tên hoặc mã sản phẩm..."
               value={ci.searchQuery}

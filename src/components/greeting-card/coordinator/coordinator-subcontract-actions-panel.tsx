@@ -14,6 +14,8 @@
  *  - First-Wins Mutex: nút tự động disable khi node đã completed
  */
 
+import { Textarea } from "@/components/ui/textarea"
+import { Input } from "@/components/ui/input"
 import React, { useRef, useState } from "react"
 import {
   Camera, Truck, CheckCircle2, Clock, AlertTriangle,
@@ -258,21 +260,21 @@ function M3SetShipperAction({
 
       {open && (
         <form onSubmit={submit} className="flex flex-col gap-2 p-3 rounded-xl border border-border bg-surface-muted">
-          <input
+          <Input
             required
             placeholder="Tên Shipper *"
             value={name}
             onChange={(e) => setName(e.target.value)}
             className="h-8 rounded-lg border border-border bg-surface px-3 text-caption focus:outline-none focus:ring-1 focus:ring-primary"
           />
-          <input
+          <Input
             required
             placeholder="SĐT Shipper * (vd: 0912345678)"
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
             className="h-8 rounded-lg border border-border bg-surface px-3 text-caption focus:outline-none focus:ring-1 focus:ring-primary"
           />
-          <input
+          <Input
             placeholder="Ghi chú (không bắt buộc)"
             value={note}
             onChange={(e) => setNote(e.target.value)}
@@ -403,7 +405,7 @@ function M4ConfirmDeliveryAction({
           <p className="text-caption text-warning font-bold">
             ⚠️ Xác nhận giao hàng không có ảnh giao hàng. Vui lòng ghi rõ lý do:
           </p>
-          <textarea
+          <Textarea
             rows={2}
             placeholder="Lý do không có ảnh (vd: Shipper quên chụp, Khách từ chối chụp...)"
             value={reason}

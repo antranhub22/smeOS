@@ -1,5 +1,6 @@
 "use client"
 
+import { Input } from "@/components/ui/input"
 import React, { useState } from "react"
 import { Button } from "@/components/ui/button"
 import { Dialog } from "@/components/ui/dialog"
@@ -88,7 +89,7 @@ export function CoordinatorConfirmBalanceModal({
 
         <label className="flex flex-col gap-1">
           <span className="text-caption font-bold">Ghi chú (không bắt buộc)</span>
-          <input
+          <Input
             value={note}
             onChange={(e) => setNote(e.target.value)}
             maxLength={500}

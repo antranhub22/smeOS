@@ -1,5 +1,6 @@
 "use client"
 
+import { Input } from "@/components/ui/input"
 import React from "react"
 import type { ShippingConfig } from "@/modules/greeting-card/domain/brochure-pricing"
 import { useI18n } from "@/lib/i18n"
@@ -78,7 +79,7 @@ export function DeliveryTimePicker({
       {custom && (
         <label className="flex items-center gap-2 text-body-sm text-text-muted">
           <span className="shrink-0">{isEn ? "Deliver at" : "Giao lúc"}</span>
-          <input
+          <Input
             type="time"
             aria-label={isEn ? "Specific delivery time" : "Giờ giao cụ thể"}
             min={minTimeStr}

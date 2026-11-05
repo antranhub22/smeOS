@@ -1,5 +1,6 @@
 "use client"
 
+import { Textarea } from "@/components/ui/textarea"
 import React, { useId } from "react"
 import { Calendar, Home, Clock, Car, Bike, Plane, CheckCircle2 } from "@/components/ui/icons"
 import { ViDateInput } from "./vi-date-input"
@@ -271,7 +272,7 @@ export function HomestayOrderFields({
         <label htmlFor={`${uid}-specialRequests`} className="block text-caption font-bold text-text mb-1">
           Yêu cầu đặc biệt cho Quản gia / Chủ nhà
         </label>
-        <textarea
+        <Textarea
           id={`${uid}-specialRequests`}
           rows={3}
           maxLength={500}

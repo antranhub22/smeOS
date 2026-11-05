@@ -1,5 +1,6 @@
 "use client"
 
+import { Input } from "@/components/ui/input"
 import React, { useState } from "react"
 import { useSWRConfig } from "swr"
 import { Clock, Pencil, Phone, Send, User } from "@/components/ui/icons"
@@ -83,8 +84,8 @@ export function LinkCustomerCard({
       {editing && (
         <div className="flex flex-col gap-2 rounded-xl border border-border bg-surface p-3">
           <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-            <input aria-label="Tên khách" placeholder="Tên khách (VD: Chị Lan)" maxLength={100} value={name} onChange={(e) => setName(e.target.value)} className={INPUT} />
-            <input aria-label="Số điện thoại khách" placeholder="SĐT (không bắt buộc)" inputMode="tel" maxLength={15} value={phone} onChange={(e) => setPhone(e.target.value)} className={INPUT} />
+            <Input aria-label="Tên khách" placeholder="Tên khách (VD: Chị Lan)" maxLength={100} value={name} onChange={(e) => setName(e.target.value)} className={INPUT} />
+            <Input aria-label="Số điện thoại khách" placeholder="SĐT (không bắt buộc)" inputMode="tel" maxLength={15} value={phone} onChange={(e) => setPhone(e.target.value)} className={INPUT} />
           </div>
           {error && <p role="alert" className="text-caption font-medium text-danger">{error}</p>}
           <div className="flex justify-end gap-2">

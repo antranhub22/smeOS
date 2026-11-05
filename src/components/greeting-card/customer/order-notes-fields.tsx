@@ -1,5 +1,6 @@
 "use client"
 
+import { Textarea } from "@/components/ui/textarea"
 import React from "react"
 import { ORDER_FIELD_MAX } from "@/modules/greeting-card/domain/greeting-card-rules"
 import { DELIVERY_NOTE_MAX, MAP_URL_MAX } from "@/modules/greeting-card/domain/delivery-note"
@@ -90,7 +91,7 @@ export function OrderNoteField({
     return (
       <div>
         {label}
-        <textarea
+        <Textarea
           rows={kind === "cardMessage" ? 2 : 3}
           placeholder={placeholder}
           value={value}

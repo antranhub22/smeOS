@@ -1,5 +1,6 @@
 "use client"
 
+import { Input } from "@/components/ui/input"
 import React, { useState } from "react"
 import { Timer, CheckCircle2, AlertCircle } from "@/components/ui/icons"
 import { apiSend, useApi } from "@/components/greeting-card/greeting-api"
@@ -88,7 +89,7 @@ export function BrochureStepTimeoutSettings() {
               </p>
             </div>
             <div className="flex items-center gap-2 shrink-0">
-              <input
+              <Input
                 type="number"
                 min={1}
                 max={720}
@@ -128,7 +129,7 @@ export function BrochureStepTimeoutSettings() {
               </p>
             </div>
             <div className="flex items-center gap-2 shrink-0">
-              <input
+              <Input
                 type="number"
                 min={1}
                 max={168}
@@ -168,7 +169,7 @@ export function BrochureStepTimeoutSettings() {
               </p>
             </div>
             <div className="flex items-center gap-2 shrink-0">
-              <input
+              <Input
                 type="number"
                 min={5}
                 max={1440}
@@ -208,7 +209,7 @@ export function BrochureStepTimeoutSettings() {
               </p>
             </div>
             <div className="flex items-center gap-2 shrink-0">
-              <input
+              <Input
                 type="number"
                 min={5}
                 max={120}

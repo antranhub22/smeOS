@@ -1,5 +1,6 @@
 "use client"
 
+import { Textarea } from "@/components/ui/textarea"
 import React, { useState } from "react"
 import { Loader2, Send, X } from "@/components/ui/icons"
 import { apiSend, useApi } from "@/components/greeting-card/greeting-api"
@@ -101,7 +102,7 @@ export function MessageComposer({ target, stepKey, replyTo, onCancelReply, onSen
       )}
       <div className="flex items-end gap-2">
         <label className="sr-only" htmlFor="message-body">Nội dung tin nhắn</label>
-        <textarea
+        <Textarea
           id="message-body"
           value={body}
           maxLength={MAX_MESSAGE_LENGTH}

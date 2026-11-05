@@ -1,5 +1,6 @@
 "use client"
 
+import { Input } from "@/components/ui/input"
 import React, { useState } from "react"
 import { AlertTriangle, CheckCircle2, Coins, RotateCcw, Save } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
@@ -29,7 +30,7 @@ function NumberField(props: { label: string; value: number; onChange: (v: number
     <label className="flex items-center justify-between gap-3 text-body-sm text-text">
       <span>{props.label}</span>
       <span className="flex items-center gap-1.5">
-        <input
+        <Input
           type="number"
           min={0}
           step={props.step ?? 1}
@@ -171,7 +172,7 @@ export function CraftFeeSettings() {
         <p className="text-caption text-text-muted">Ngày cao điểm cố định: {spec.peakDays.length ? spec.peakDays.map((d) => d.label).join(", ") : "chưa có"}.</p>
         <label className="flex flex-col gap-1 text-body-sm text-text">
           Thêm ngày cao điểm (năm-tháng-ngày, cách nhau bằng dấu phẩy — vd. Tết, Trung thu)
-          <input
+          <Input
             type="text"
             defaultValue={policy.extraPeakDates.join(", ")}
             onBlur={(e) => set("extraPeakDates", e.target.value.split(",").map((s) => s.trim()).filter((s) => /^\d{4}-\d{2}-\d{2}$/.test(s)))}

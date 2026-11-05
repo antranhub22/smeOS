@@ -1,5 +1,6 @@
 "use client"
 
+import { Input } from "@/components/ui/input"
 import React, { useState } from "react"
 import { AlertOctagon, CheckCircle2, Loader2, XCircle } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
@@ -70,7 +71,7 @@ export function CancellationDecision({
 
       {error && <p role="alert" className="text-caption font-semibold text-danger">{error}</p>}
 
-      <input
+      <Input
         type="text"
         placeholder="Ghi chú phản hồi cho người đề xuất..."
         value={note}

@@ -1,5 +1,6 @@
 "use client"
 
+import { Textarea } from "@/components/ui/textarea"
 import React, { useState } from "react"
 import { Loader2 } from "@/components/ui/icons"
 import { apiSend } from "@/components/greeting-card/greeting-api"
@@ -47,7 +48,7 @@ export function ChangeDecision({ requestId, changes, note, expectedFeeDeltaVnd, 
         <p className="text-body-sm text-warning">Duyệt sẽ cộng thêm {expectedFeeDeltaVnd.toLocaleString("vi-VN")}đ phí giao vào đơn.</p>
       )}
       <label className="sr-only" htmlFor={`change-note-${requestId}`}>Lời nhắn cho khách</label>
-      <textarea id={`change-note-${requestId}`} rows={2} value={reply} maxLength={500} onChange={(e) => setReply(e.target.value)}
+      <Textarea id={`change-note-${requestId}`} rows={2} value={reply} maxLength={500} onChange={(e) => setReply(e.target.value)}
         placeholder="Lời nhắn cho khách (bắt buộc khi không đồng ý)"
         className="min-h-11 rounded-xl border border-border bg-surface px-3 py-2 text-body-sm text-text placeholder:text-text-muted" />
       {error && <p role="alert" className="rounded-lg bg-danger-bg px-3 py-2 text-body-sm text-danger">{error}</p>}

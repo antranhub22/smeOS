@@ -1,5 +1,7 @@
 "use client"
 
+import { Textarea } from "@/components/ui/textarea"
+import { Input } from "@/components/ui/input"
 import React, { useRef, useState } from "react"
 import { Clock, Printer, Copy, Check, Sparkles, MapPin, Eye, EyeOff, Layers, MessageSquare, ShieldCheck, XCircle } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
@@ -230,7 +232,7 @@ export function BrochureFloristJobTab({
                   💰 Giá gia công trên thẻ:
                 </span>
                 <div className="relative">
-                  <input
+                  <Input
                     type="text"
                     inputMode="numeric"
                     value={suggestedCraftFee ? suggestedCraftFee.toLocaleString("vi-VN") : ""}
@@ -284,7 +286,7 @@ export function BrochureFloristJobTab({
                 <label htmlFor="florist-custom-note" className="font-bold text-text flex items-center gap-1.5">
                   <span>📝 Lưu ý & Ghi chú cho {terms.makerTitle.toLowerCase()}:</span>
                 </label>
-                <textarea
+                <Textarea
                   id="florist-custom-note"
                   rows={2}
                   value={floristNote}

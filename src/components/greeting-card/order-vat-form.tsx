@@ -1,5 +1,6 @@
 "use client"
 
+import { Input } from "@/components/ui/input"
 import React, { useState } from "react"
 import { Receipt } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
@@ -81,10 +82,10 @@ export function OrderVatForm({ vat, onSaved }: { vat: OrderVatData; onSaved: (ne
             </span>
           </div>
           <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
-            <input className={inputClass} placeholder="Tên công ty" value={companyName} onChange={(e) => setCompanyName(e.target.value)} />
-            <input className={inputClass} placeholder="Mã số thuế" inputMode="numeric" value={taxCode} onChange={(e) => setTaxCode(e.target.value)} />
-            <input className={`${inputClass} sm:col-span-2`} placeholder="Địa chỉ xuất hoá đơn" value={companyAddress} onChange={(e) => setCompanyAddress(e.target.value)} />
-            <input className={`${inputClass} sm:col-span-2`} placeholder="Email nhận hoá đơn" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+            <Input className={inputClass} placeholder="Tên công ty" value={companyName} onChange={(e) => setCompanyName(e.target.value)} />
+            <Input className={inputClass} placeholder="Mã số thuế" inputMode="numeric" value={taxCode} onChange={(e) => setTaxCode(e.target.value)} />
+            <Input className={`${inputClass} sm:col-span-2`} placeholder="Địa chỉ xuất hoá đơn" value={companyAddress} onChange={(e) => setCompanyAddress(e.target.value)} />
+            <Input className={`${inputClass} sm:col-span-2`} placeholder="Email nhận hoá đơn" type="email" value={email} onChange={(e) => setEmail(e.target.value)} />
           </div>
         </>
       )}

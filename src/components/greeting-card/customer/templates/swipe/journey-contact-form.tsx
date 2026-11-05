@@ -1,5 +1,6 @@
 "use client"
 
+import { Input } from "@/components/ui/input"
 import React, { useState } from "react"
 import { Gift, UserCheck } from "@/components/ui/icons"
 import { useI18n } from "@/lib/i18n"
@@ -105,7 +106,7 @@ export function JourneyContactForm({
           <label htmlFor="intake-name" className="block text-body-sm font-semibold mb-1" style={{ color: theme.stageText }}>
             {t("greetingCard.customer.journey.yourName")} <span className="text-danger">*</span>
           </label>
-          <input
+          <Input
             id="intake-name"
             type="text"
             required
@@ -123,7 +124,7 @@ export function JourneyContactForm({
             {t("greetingCard.customer.journey.phone")}{" "}
             <span className="text-caption font-normal opacity-70">{t("greetingCard.customer.journey.optional")}</span>
           </label>
-          <input
+          <Input
             id="intake-phone"
             type="tel"
             autoComplete="tel"
@@ -140,7 +141,7 @@ export function JourneyContactForm({
             {t("greetingCard.customer.journey.email")}{" "}
             <span className="text-caption font-normal opacity-70">{t("greetingCard.customer.journey.optional")}</span>
           </label>
-          <input
+          <Input
             id="intake-email"
             type="email"
             autoComplete="email"

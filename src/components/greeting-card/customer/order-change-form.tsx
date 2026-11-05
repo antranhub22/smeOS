@@ -1,5 +1,7 @@
 "use client"
 
+import { Textarea } from "@/components/ui/textarea"
+import { Input } from "@/components/ui/input"
 import React, { useId, useState } from "react"
 import { Send, X } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
@@ -111,11 +113,11 @@ export function OrderChangeForm({
         </div>
         <div>
           <label htmlFor={`${uid}-rname`} className={LABEL}>Tên người nhận</label>
-          <input id={`${uid}-rname`} value={v.recipientName} maxLength={ORDER_FIELD_MAX.name} onChange={(e) => set({ recipientName: e.target.value })} className={INPUT} />
+          <Input id={`${uid}-rname`} value={v.recipientName} maxLength={ORDER_FIELD_MAX.name} onChange={(e) => set({ recipientName: e.target.value })} className={INPUT} />
         </div>
         <div>
           <label htmlFor={`${uid}-rphone`} className={LABEL}>SĐT người nhận mới</label>
-          <input id={`${uid}-rphone`} type="tel" inputMode="tel" maxLength={15} placeholder="Để trống nếu không đổi" value={v.recipientPhone} onChange={(e) => set({ recipientPhone: e.target.value })} className={INPUT} />
+          <Input id={`${uid}-rphone`} type="tel" inputMode="tel" maxLength={15} placeholder="Để trống nếu không đổi" value={v.recipientPhone} onChange={(e) => set({ recipientPhone: e.target.value })} className={INPUT} />
         </div>
       </div>
 
@@ -140,21 +142,21 @@ export function OrderChangeForm({
       ) : (
       <div>
         <label htmlFor={`${uid}-card`} className={LABEL}>Nội dung thiệp mừng / băng rôn</label>
-        <textarea id={`${uid}-card`} rows={2} value={v.cardMessage} maxLength={ORDER_FIELD_MAX.cardMessage} onChange={(e) => set({ cardMessage: e.target.value })} className={`${INPUT} h-auto p-3 resize-none`} />
+        <Textarea id={`${uid}-card`} rows={2} value={v.cardMessage} maxLength={ORDER_FIELD_MAX.cardMessage} onChange={(e) => set({ cardMessage: e.target.value })} className={`${INPUT} h-auto p-3 resize-none`} />
         <p className="mt-1 text-right text-caption text-text-muted">{v.cardMessage.length}/{ORDER_FIELD_MAX.cardMessage} ký tự</p>
       </div>
       )}
       <div>
         <label htmlFor={`${uid}-dnote`} className={LABEL}>Ghi chú cho người giao hoa</label>
-        <input id={`${uid}-dnote`} value={v.deliveryNote} maxLength={DELIVERY_NOTE_MAX} onChange={(e) => set({ deliveryNote: e.target.value })} className={INPUT} />
+        <Input id={`${uid}-dnote`} value={v.deliveryNote} maxLength={DELIVERY_NOTE_MAX} onChange={(e) => set({ deliveryNote: e.target.value })} className={INPUT} />
       </div>
       <div>
         <label htmlFor={`${uid}-map`} className={LABEL}>Link vị trí trên Google Maps</label>
-        <input id={`${uid}-map`} type="url" inputMode="url" value={v.mapUrl} maxLength={MAP_URL_MAX} placeholder="Để trống nếu không có" onChange={(e) => set({ mapUrl: e.target.value })} className={INPUT} />
+        <Input id={`${uid}-map`} type="url" inputMode="url" value={v.mapUrl} maxLength={MAP_URL_MAX} placeholder="Để trống nếu không có" onChange={(e) => set({ mapUrl: e.target.value })} className={INPUT} />
       </div>
       <div>
         <label htmlFor={`${uid}-note`} className={LABEL}>Lời nhắn cho cửa hàng (không bắt buộc)</label>
-        <input id={`${uid}-note`} value={v.note} maxLength={CHANGE_NOTE_MAX} placeholder="VD: Người nhận đi công tác, nhờ giao chiều" onChange={(e) => set({ note: e.target.value })} className={INPUT} />
+        <Input id={`${uid}-note`} value={v.note} maxLength={CHANGE_NOTE_MAX} placeholder="VD: Người nhận đi công tác, nhờ giao chiều" onChange={(e) => set({ note: e.target.value })} className={INPUT} />
       </div>
 
       {error && <p role="alert" className="rounded-lg bg-danger-bg px-3 py-2 text-body-sm text-danger">{error}</p>}

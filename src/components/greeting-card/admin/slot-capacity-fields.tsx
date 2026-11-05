@@ -1,5 +1,6 @@
 "use client"
 
+import { Input } from "@/components/ui/input"
 import React from "react"
 import { DELIVERY_SLOTS } from "@/modules/greeting-card/domain/delivery-schedule"
 import { DEFAULT_SLOT_CAPACITY } from "@/modules/greeting-card/domain/slot-capacity"
@@ -23,7 +24,7 @@ export function SlotCapacityFields({ value, onChange }: { value: SlotCapacityDra
       <legend className="text-body-sm font-bold text-text">Số đơn tối đa mỗi khung giờ</legend>
       <label className="flex items-center gap-2 text-body-sm">
         <span className="text-text-muted">Mọi khung giờ:</span>
-        <input
+        <Input
           inputMode="numeric"
           aria-label="Số đơn tối đa mỗi khung giờ"
           value={value.all}
@@ -37,7 +38,7 @@ export function SlotCapacityFields({ value, onChange }: { value: SlotCapacityDra
         {DELIVERY_SLOTS.map((s) => (
           <label key={s.id} className="flex items-center gap-1.5 text-caption text-text-muted">
             <span>{s.label}</span>
-            <input
+            <Input
               inputMode="numeric"
               aria-label={`Số đơn tối đa khung ${s.label}`}
               value={value.perSlot[s.id] ?? ""}

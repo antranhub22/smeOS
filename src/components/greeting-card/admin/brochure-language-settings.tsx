@@ -1,5 +1,6 @@
 "use client"
 
+import { Textarea } from "@/components/ui/textarea"
 import React, { useState } from "react"
 import { Globe2, Lock, CheckCircle2, AlertCircle, Save, Loader2, Sparkles, Send, Clock } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
@@ -266,7 +267,7 @@ export function BrochureLanguageSettings() {
             <p className="text-caption text-text-muted">
               Nội dung này sẽ hiển thị riêng cho khách quốc tế khi xem Thẻ chào bằng Tiếng Anh (song song với mã QR nội địa).
             </p>
-            <textarea
+            <Textarea
               rows={3}
               placeholder="VD: For international payments, please transfer via Wise/PayPal to payment@yourshop.com or Swift Code: BFTVVNVX..."
               value={policy.internationalPaymentGuide ?? ""}
@@ -355,7 +356,7 @@ export function BrochureLanguageSettings() {
                   <label className="block text-caption font-bold text-text">
                     Ghi chú hoặc lý do cần mở khóa (tùy chọn)
                   </label>
-                  <textarea
+                  <Textarea
                     rows={3}
                     placeholder="VD: Cửa hàng có nhiều khách hàng kiều bào đặt hoa giao tận nhà tại Việt Nam..."
                     value={unlockNote}

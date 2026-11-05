@@ -1,5 +1,6 @@
 "use client"
 
+import { Input } from "@/components/ui/input"
 import React, { useState } from "react"
 import { CheckCircle2, Wallet } from "@/components/ui/icons"
 import type { BrochureQuote } from "@/modules/greeting-card/domain/brochure-pricing"
@@ -38,7 +39,7 @@ export function PaymentCodeField({
         <span className="text-caption text-text-muted">{t("greetingCard.customer.options.paymentCodeSub")}</span>
       </div>
       <div className="flex gap-2">
-        <input
+        <Input
           type="text"
           value={input}
           maxLength={40}

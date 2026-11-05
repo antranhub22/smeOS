@@ -1,5 +1,6 @@
 "use client"
 
+import { Textarea } from "@/components/ui/textarea"
 import React, { useState } from "react"
 import { CheckCircle2, ClipboardCheck, XCircle, AlertTriangle } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
@@ -133,7 +134,7 @@ export function AdminConfirmOrderModal({
                 </span>
               )}
             </div>
-            <textarea
+            <Textarea
               id="admin-confirm-order-note"
               rows={3}
               maxLength={500}
@@ -168,7 +169,7 @@ export function AdminConfirmOrderModal({
                 </button>
               ))}
             </div>
-            <textarea
+            <Textarea
               id="admin-reject-order-reason"
               rows={3}
               maxLength={500}

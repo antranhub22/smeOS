@@ -1,5 +1,7 @@
 "use client"
 
+import { Textarea } from "@/components/ui/textarea"
+import { Input } from "@/components/ui/input"
 import React, { useState } from "react"
 import { defaultInquiryMessage, INQUIRY_MESSAGE_MAX } from "@/modules/crm/domain/product-inquiry"
 import { readApiError } from "@/components/greeting-card/api-error"
@@ -57,21 +59,21 @@ export function ProductInquiryForm({ inquiryUrl, product, variantName }: Props) 
     <form onSubmit={submit} className="flex flex-col gap-2 rounded-xl border border-border p-3" noValidate>
       <label className="flex flex-col gap-1">
         <span className="text-caption font-bold text-text">Tên của bạn</span>
-        <input value={name} onChange={(e) => setName(e.target.value)} autoComplete="name" className={`${FIELD} h-10`} />
+        <Input value={name} onChange={(e) => setName(e.target.value)} autoComplete="name" className={`${FIELD} h-10`} />
         {errors.customerName && <span className="text-caption text-danger">{errors.customerName}</span>}
       </label>
       <label className="flex flex-col gap-1">
         <span className="text-caption font-bold text-text">Số điện thoại</span>
-        <input value={phone} onChange={(e) => setPhone(e.target.value)} inputMode="tel" autoComplete="tel" className={`${FIELD} h-10`} />
+        <Input value={phone} onChange={(e) => setPhone(e.target.value)} inputMode="tel" autoComplete="tel" className={`${FIELD} h-10`} />
         {errors.customerPhone && <span className="text-caption text-danger">{errors.customerPhone}</span>}
       </label>
       <label className="flex flex-col gap-1">
         <span className="text-caption font-bold text-text">Bạn cần tư vấn gì?</span>
-        <textarea value={message} onChange={(e) => setMessage(e.target.value)} maxLength={INQUIRY_MESSAGE_MAX} rows={3} className={`${FIELD} py-2`} />
+        <Textarea value={message} onChange={(e) => setMessage(e.target.value)} maxLength={INQUIRY_MESSAGE_MAX} rows={3} className={`${FIELD} py-2`} />
         {errors.message && <span className="text-caption text-danger">{errors.message}</span>}
       </label>
       {/* Ô bẫy: người thật không thấy, máy tự điền */}
-      <input type="text" tabIndex={-1} autoComplete="off" aria-hidden="true" value={website} onChange={(e) => setWebsite(e.target.value)} className="hidden" />
+      <Input type="text" tabIndex={-1} autoComplete="off" aria-hidden="true" value={website} onChange={(e) => setWebsite(e.target.value)} className="hidden" />
       {errors.form && <span className="text-caption text-danger">{errors.form}</span>}
       <button type="submit" disabled={sending} className="h-11 rounded-xl bg-primary font-bold text-white disabled:opacity-50">
         {sending ? "Đang gửi…" : "Gửi tin nhắn"}

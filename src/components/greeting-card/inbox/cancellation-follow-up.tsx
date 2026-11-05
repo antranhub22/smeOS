@@ -1,5 +1,6 @@
 "use client"
 
+import { Input } from "@/components/ui/input"
 import React, { useState } from "react"
 import { CheckCircle2, Loader2 } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
@@ -52,7 +53,7 @@ export function CancellationFollowUp({ requestId, refundDueVnd, reason, onDone }
         )}
       </div>
       {error && <p role="alert" className="text-caption font-semibold text-danger">{error}</p>}
-      <input
+      <Input
         type="text"
         placeholder="Ghi chú (mã giao dịch hoàn tiền, đã gọi khách...)"
         value={note}

@@ -1,5 +1,6 @@
 "use client"
 
+import { Input } from "@/components/ui/input"
 import React from "react"
 import { Users } from "@/components/ui/icons"
 
@@ -62,7 +63,7 @@ export function HomestayGuestFields({
             <label htmlFor={`${uid}-guestName`} className="block text-caption font-bold text-text mb-1">
               Người đại diện nhận phòng <span className="text-danger">*</span>
             </label>
-            <input
+            <Input
               type="text"
               required
               id={`${uid}-guestName`}
@@ -76,7 +77,7 @@ export function HomestayGuestFields({
             <label htmlFor={`${uid}-guestPhone`} className="block text-caption font-bold text-text mb-1">
               Số điện thoại người nhận phòng <span className="text-danger">*</span>
             </label>
-            <input
+            <Input
               type="tel"
               required
               id={`${uid}-guestPhone`}

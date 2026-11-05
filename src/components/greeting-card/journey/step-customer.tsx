@@ -1,5 +1,6 @@
 "use client"
 
+import { Input } from "@/components/ui/input"
 import { useState } from "react"
 import { ArrowLeft, Loader2, Send } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
@@ -64,7 +65,7 @@ export function StepCustomer(props: StepCustomerProps) {
           <label htmlFor="customer-name" className="text-body-sm font-bold text-text">
             Tên khách hiển thị trên thẻ
           </label>
-          <input
+          <Input
             id="customer-name"
             autoFocus
             maxLength={80}
@@ -78,7 +79,7 @@ export function StepCustomer(props: StepCustomerProps) {
           <label htmlFor="customer-phone" className="text-body-sm font-bold text-text">
             Số điện thoại <span className="font-normal text-text-muted">(không bắt buộc)</span>
           </label>
-          <input
+          <Input
             id="customer-phone"
             type="tel"
             inputMode="tel"

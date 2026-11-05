@@ -1,5 +1,6 @@
 "use client"
 
+import { Textarea } from "@/components/ui/textarea"
 import React, { useState } from "react"
 import { Camera, Image as ImageIcon, Truck, UserCheck } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
@@ -204,7 +205,7 @@ function CoordinatorTaskModal({
 
         {"note" in cfg ? (
           <>
-            <textarea
+            <Textarea
               rows={3}
               autoFocus
               maxLength={500}

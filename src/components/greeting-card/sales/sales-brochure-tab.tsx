@@ -1,5 +1,6 @@
 "use client"
 
+import { Input } from "@/components/ui/input"
 import React, { useState } from "react"
 import { ChevronDown, Plus, RefreshCw, Search, X } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
@@ -114,7 +115,7 @@ export function SalesBrochureTab({ initialOpenCreate = false, onNavigateToCatalo
           ))}
           <div className="relative min-w-[200px] flex-1 sm:max-w-xs">
             <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" aria-hidden="true" />
-            <input
+            <Input
               type="search"
               aria-label="Tìm kiếm theo tên khách, mã đơn, số điện thoại"
               placeholder="Tìm tên khách, mã đơn, SĐT…"

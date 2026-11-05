@@ -1,5 +1,6 @@
 "use client"
 
+import { Input } from "@/components/ui/input"
 import React, { useState } from "react"
 import { markPersonalLinkCopied } from "@/components/greeting-card/share/tracked-copy"
 import { Check, Copy } from "@/components/ui/icons"
@@ -110,11 +111,11 @@ export function SalesCreateLinkModal({ catalogs, onClose, onCreated, onNavigateT
             </label>
             <label className="flex flex-col gap-1">
               <span className="text-caption font-bold text-text">Tên khách hàng (không bắt buộc)</span>
-              <input type="text" maxLength={100} placeholder="VD: Anh Minh" value={customerName} onChange={(e) => setCustomerName(e.target.value)} className={INPUT} />
+              <Input type="text" maxLength={100} placeholder="VD: Anh Minh" value={customerName} onChange={(e) => setCustomerName(e.target.value)} className={INPUT} />
             </label>
             <label className="flex flex-col gap-1">
               <span className="text-caption font-bold text-text">Số điện thoại khách (không bắt buộc)</span>
-              <input type="tel" maxLength={15} placeholder="VD: 0901234567" value={customerPhone} onChange={(e) => setCustomerPhone(e.target.value)} className={INPUT} />
+              <Input type="tel" maxLength={15} placeholder="VD: 0901234567" value={customerPhone} onChange={(e) => setCustomerPhone(e.target.value)} className={INPUT} />
             </label>
             <p className="text-caption text-text-muted">{LINK_LIFETIME_HINT}</p>
             <div className="flex items-center justify-end gap-2 pt-2">

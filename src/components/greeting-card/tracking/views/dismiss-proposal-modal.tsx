@@ -1,5 +1,7 @@
 "use client"
 
+import { Textarea } from "@/components/ui/textarea"
+import { Input } from "@/components/ui/input"
 import React, { useState } from "react"
 import { EyeOff, AlertTriangle } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
@@ -104,7 +106,7 @@ export function DismissProposalModal({ item, onClose, onSuccess }: DismissPropos
               <label htmlFor="dismiss-custom-reason" className="block text-caption font-semibold text-text mb-1">
                 Chi tiết lý do khác <span className="text-danger">*</span>
               </label>
-              <input
+              <Input
                 id="dismiss-custom-reason"
                 type="text"
                 value={customReason}
@@ -121,7 +123,7 @@ export function DismissProposalModal({ item, onClose, onSuccess }: DismissPropos
             <label htmlFor="dismiss-note" className="block text-caption font-semibold text-text mb-1">
               Ghi chú thêm (tùy chọn)
             </label>
-            <textarea
+            <Textarea
               id="dismiss-note"
               value={note}
               onChange={(e) => setNote(e.target.value)}

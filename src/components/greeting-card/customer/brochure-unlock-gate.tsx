@@ -1,5 +1,6 @@
 "use client"
 
+import { Input } from "@/components/ui/input"
 import { useState, type FormEvent } from "react"
 import { useRouter } from "next/navigation"
 import { Loader2, LockKeyhole } from "@/components/ui/icons"
@@ -45,7 +46,7 @@ export function BrochureUnlockGate({ sendCode, shop }: { sendCode: string; shop:
         <p className="text-body text-text-muted">Link này đã được mở trên thiết bị khác. Để bảo vệ đơn hàng, vui lòng nhập 4 số cuối số điện thoại người đặt hoa.</p>
         <form onSubmit={submit} className="mt-2 flex w-full flex-col gap-2">
           <label htmlFor="phone-last4" className="sr-only">4 số cuối số điện thoại người đặt</label>
-          <input
+          <Input
             id="phone-last4"
             inputMode="numeric"
             autoComplete="off"

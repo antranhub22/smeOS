@@ -1,5 +1,6 @@
 "use client"
 
+import { Input } from "@/components/ui/input"
 import React, { useState } from "react"
 import { Timer } from "@/components/ui/icons"
 import { apiSend, useApi } from "@/components/greeting-card/greeting-api"
@@ -75,7 +76,7 @@ export function BrochureStepSlaSettings() {
                 </label>
                 <label className="flex items-center gap-1 text-caption text-text-muted">
                   <span className="sr-only">Số phút tối đa cho bước {title}</span>
-                  <input
+                  <Input
                     type="number"
                     min={1}
                     max={MAX_SLA_MINUTES}

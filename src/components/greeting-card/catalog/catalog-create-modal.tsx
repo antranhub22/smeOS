@@ -1,5 +1,7 @@
 "use client"
 
+import { Textarea } from "@/components/ui/textarea"
+import { Input } from "@/components/ui/input"
 import React, { useState } from "react"
 import { Check, Loader2 } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
@@ -59,7 +61,7 @@ export function CatalogCreateModal({ onClose, onCreated }: { onClose: () => void
           {error && <p role="alert" className="p-3 rounded-xl bg-danger-bg text-danger text-body-sm">{error}</p>}
           <div>
             <label className="block text-caption font-bold text-text mb-1">Mã nhận dạng *</label>
-            <input
+            <Input
               type="text"
               placeholder="VD: 20-10-basic, valentine-2027"
               value={createForm.code}
@@ -70,7 +72,7 @@ export function CatalogCreateModal({ onClose, onCreated }: { onClose: () => void
           </div>
           <div>
             <label className="block text-caption font-bold text-text mb-1">Tên {catalogHeading.toLowerCase()} *</label>
-            <input
+            <Input
               type="text"
               placeholder={placeholderName}
               value={createForm.name}
@@ -92,7 +94,7 @@ export function CatalogCreateModal({ onClose, onCreated }: { onClose: () => void
           </div>
           <div>
             <label className="block text-caption font-bold text-text mb-1">Mô tả (không bắt buộc)</label>
-            <textarea
+            <Textarea
               placeholder="Ghi chú nội bộ về bộ sưu tập này..."
               value={createForm.description}
               onChange={(e) => setCreateForm((f) => ({ ...f, description: e.target.value }))}

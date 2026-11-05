@@ -1,5 +1,6 @@
 "use client"
 
+import { Input } from "@/components/ui/input"
 import { useState } from "react"
 import { Loader2 } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
@@ -79,7 +80,7 @@ export function CatalogFormDialog(props: CatalogFormDialogProps) {
           <label htmlFor="catalog-name" className="text-body-sm font-bold text-text">
             Tên bộ sưu tập
           </label>
-          <input
+          <Input
             id="catalog-name"
             autoFocus
             required
@@ -94,7 +95,7 @@ export function CatalogFormDialog(props: CatalogFormDialogProps) {
           <label htmlFor="catalog-code" className="text-body-sm font-bold text-text">
             Đuôi link {codeRequired ? "" : <span className="font-normal text-text-muted">(không bắt buộc)</span>}
           </label>
-          <input
+          <Input
             id="catalog-code"
             required={codeRequired}
             maxLength={60}

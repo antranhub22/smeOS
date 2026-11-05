@@ -1,5 +1,6 @@
 "use client"
 
+import { Textarea } from "@/components/ui/textarea"
 import React, { useState } from "react"
 import { CheckCircle2, ShieldCheck, XCircle } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
@@ -115,7 +116,7 @@ export function CoordinatorAcceptRejectModal({
                 </span>
               )}
             </div>
-            <textarea
+            <Textarea
               id="coordinator-accept-note"
               rows={3}
               maxLength={500}
@@ -152,7 +153,7 @@ export function CoordinatorAcceptRejectModal({
                 </button>
               ))}
             </div>
-            <textarea
+            <Textarea
               id="coordinator-reject-reason"
               rows={3}
               maxLength={500}

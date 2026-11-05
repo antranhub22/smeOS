@@ -1,5 +1,6 @@
 "use client"
 
+import { Input } from "@/components/ui/input"
 import React, { useState } from "react"
 import { ViDateInput } from "@/components/greeting-card/customer/vi-date-input"
 import {
@@ -96,7 +97,7 @@ export function TrackingToolbar({ state, onChange, onApplyView, onRefresh }: Pro
           {/* Ô TÌM KIẾM THÔNG MINH */}
           <div className="relative flex-1 min-w-[180px] sm:max-w-xs">
             <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" aria-hidden="true" />
-            <input
+            <Input
               type="search"
               aria-label="Tìm kiếm đơn hàng"
               value={state.q}

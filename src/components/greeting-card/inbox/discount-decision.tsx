@@ -1,5 +1,7 @@
 "use client"
 
+import { Textarea } from "@/components/ui/textarea"
+import { Input } from "@/components/ui/input"
 import React, { useState } from "react"
 import { Loader2 } from "@/components/ui/icons"
 import { apiSend } from "@/components/greeting-card/greeting-api"
@@ -58,7 +60,7 @@ export function DiscountDecision({ requestId, baseTotalVnd, requestedVnd, percen
           Duyệt mức khác
           {choice === "OTHER" && (
             <>
-              <input aria-label="Phần trăm duyệt" type="number" inputMode="numeric" min={1} max={maxPercent} value={otherPercent}
+              <Input aria-label="Phần trăm duyệt" type="number" inputMode="numeric" min={1} max={maxPercent} value={otherPercent}
                 onChange={(e) => setOtherPercent(e.target.value)}
                 className="h-9 w-16 rounded-lg border border-border bg-surface px-2 text-right text-body-sm" />
               % {otherVnd > 0 && <span className="text-text-muted">= {vnd(otherVnd)}</span>}
@@ -69,7 +71,7 @@ export function DiscountDecision({ requestId, baseTotalVnd, requestedVnd, percen
       {option("REJECT", "Không duyệt")}
       <p className="text-caption text-text-muted">Tối đa {maxPercent}% · giá đơn {vnd(baseTotalVnd)}</p>
       <label className="sr-only" htmlFor={`note-${requestId}`}>Ghi chú cho sale</label>
-      <textarea id={`note-${requestId}`} rows={2} value={note} maxLength={500} onChange={(e) => setNote(e.target.value)}
+      <Textarea id={`note-${requestId}`} rows={2} value={note} maxLength={500} onChange={(e) => setNote(e.target.value)}
         placeholder={choice === "REJECT" ? "Lý do không duyệt (bắt buộc)" : "Ghi chú cho sale (vd. Duyệt 5% thay vì 10%)"}
         className="min-h-11 rounded-xl border border-border bg-surface px-3 py-2 text-body-sm text-text placeholder:text-text-muted" />
       {error && <p role="alert" className="rounded-lg bg-danger-bg px-3 py-2 text-body-sm text-danger">{error}</p>}

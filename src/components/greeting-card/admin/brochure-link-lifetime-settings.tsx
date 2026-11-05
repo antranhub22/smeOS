@@ -1,5 +1,6 @@
 "use client"
 
+import { Input } from "@/components/ui/input"
 import React, { useState } from "react"
 import { Hourglass } from "@/components/ui/icons"
 import { apiSend, useApi } from "@/components/greeting-card/greeting-api"
@@ -55,7 +56,7 @@ export function BrochureLinkLifetimeSettings() {
       ) : (
         <label className="flex items-center gap-2 text-body-sm text-text">
           <span>Link dùng được trong</span>
-          <input
+          <Input
             type="number"
             min={MIN_LINK_LIFETIME_HOURS}
             max={MAX_LINK_LIFETIME_HOURS}

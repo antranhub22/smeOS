@@ -1,5 +1,6 @@
 "use client"
 
+import { Input } from "@/components/ui/input"
 import React, { useState } from "react"
 import { Minus, Plus, Ticket } from "@/components/ui/icons"
 import type { ShippingConfig, BrochureQuote } from "@/modules/greeting-card/domain/brochure-pricing"
@@ -120,7 +121,7 @@ export function BrochureOrderOptions({ variants, priceDimensions, basePrice, shi
           </span>
         </div>
         <div className="flex gap-2">
-          <input
+          <Input
             type="text"
             value={voucherInput}
             maxLength={40}

@@ -1,5 +1,6 @@
 "use client"
 
+import { Input } from "@/components/ui/input"
 import React from "react"
 import { Wallet, Tag } from "@/components/ui/icons"
 
@@ -34,7 +35,7 @@ export function OrderCodeFields({
           <Wallet size={13} className="text-primary" aria-hidden="true" />
           Mã thanh toán
         </span>
-        <input
+        <Input
           type="text"
           id={`${uid}-paymentCode`}
           value={paymentCode}
@@ -51,7 +52,7 @@ export function OrderCodeFields({
           <Tag size={13} className="text-primary" aria-hidden="true" />
           Mã ưu đãi
         </span>
-        <input
+        <Input
           type="text"
           id={`${uid}-promoCode`}
           value={promoCode}

@@ -1,5 +1,6 @@
 "use client"
 
+import { Input } from "@/components/ui/input"
 import React from "react"
 import { Timer, ArrowDownLeft } from "@/components/ui/icons"
 import {
@@ -145,7 +146,7 @@ export function CatalogStepTimeoutOverride({ storePolicy, override, onChange }: 
               <span>1. Tự hủy nếu không mở link</span>
             </label>
             <div className="flex items-center gap-1.5 shrink-0">
-              <input
+              <Input
                 type="number"
                 min={1}
                 max={720}
@@ -172,7 +173,7 @@ export function CatalogStepTimeoutOverride({ storePolicy, override, onChange }: 
               <span>2. Tự hủy nếu không chọn mẫu</span>
             </label>
             <div className="flex items-center gap-1.5 shrink-0">
-              <input
+              <Input
                 type="number"
                 min={1}
                 max={168}
@@ -199,7 +200,7 @@ export function CatalogStepTimeoutOverride({ storePolicy, override, onChange }: 
               <span>3. Tự hủy nếu chưa cọc / chuyển khoản</span>
             </label>
             <div className="flex items-center gap-1.5 shrink-0">
-              <input
+              <Input
                 type="number"
                 min={5}
                 max={1440}
@@ -226,7 +227,7 @@ export function CatalogStepTimeoutOverride({ storePolicy, override, onChange }: 
               <span>4. Tự duyệt ảnh thành phẩm nếu khách im lặng</span>
             </label>
             <div className="flex items-center gap-1.5 shrink-0">
-              <input
+              <Input
                 type="number"
                 min={5}
                 max={120}

@@ -1,5 +1,7 @@
 "use client"
 
+import { Textarea } from "@/components/ui/textarea"
+import { Input } from "@/components/ui/input"
 import React, { useState } from "react"
 import { AlertTriangle, Loader2, DollarSign } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
@@ -136,7 +138,7 @@ export function CancellationProposalModal({
                 Số tiền đề xuất hoàn (VNĐ) <span className="text-danger">*</span>
               </label>
               <div className="relative">
-                <input
+                <Input
                   id="refund-amount"
                   type="number"
                   min="1000"
@@ -159,7 +161,7 @@ export function CancellationProposalModal({
             <label htmlFor="cancel-reason" className="block text-body-sm font-bold text-text mb-1">
               Lý do đề xuất <span className="text-danger">*</span>
             </label>
-            <textarea
+            <Textarea
               id="cancel-reason"
               required
               rows={2}
@@ -174,7 +176,7 @@ export function CancellationProposalModal({
             <label htmlFor="cancel-note" className="block text-body-sm font-bold text-text mb-1">
               Ghi chú thêm cho Điều hành (tùy chọn)
             </label>
-            <input
+            <Input
               id="cancel-note"
               type="text"
               placeholder="VD: Đã xin ý kiến khách qua Zalo..."
