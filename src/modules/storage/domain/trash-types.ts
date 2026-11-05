@@ -3,7 +3,49 @@
  * Pure TypeScript — No Prisma or external infrastructure imports.
  */
 
-export type TrashItemType = "RAW_ASSET" | "APPROVED_ANALYSIS" | "PRODUCT"
+/**
+ * Loại của Kho dữ liệu v2 vào thùng rác (L-4, PO 05/11/2026: 30 ngày rồi xoá
+ * vĩnh viễn tất cả — kể cả thẻ chào đã có phiên khách; đơn hàng giữ lại).
+ */
+export const LIBRARY_TRASH_TYPES = ["VIDEO", "CONTENT", "CATALOG", "GREETING_CATALOG", "LANDING"] as const
+export type LibraryTrashType = (typeof LIBRARY_TRASH_TYPES)[number]
+
+export type TrashItemType = "RAW_ASSET" | "APPROVED_ANALYSIS" | "PRODUCT" | LibraryTrashType
+export const TRASH_ITEM_TYPES = ["RAW_ASSET", "APPROVED_ANALYSIS", "PRODUCT", ...LIBRARY_TRASH_TYPES] as const
+
+export function isLibraryTrashType(type: string): type is LibraryTrashType {
+  return (LIBRARY_TRASH_TYPES as readonly string[]).includes(type)
+}
+
+/** `asset_usages.source_type` tương ứng — mục đang được dùng thì không vào thùng rác/không xoá. */
+export const LIBRARY_TRASH_SOURCE: Readonly<Record<LibraryTrashType, string>> = {
+  VIDEO: "video",
+  CONTENT: "content",
+  CATALOG: "catalog",
+  GREETING_CATALOG: "greeting_catalog",
+  LANDING: "landing",
+}
+
+/** Nhãn loại mục trong Thùng rác và hộp xác nhận. */
+export const TRASH_TYPE_LABEL: Readonly<Record<TrashItemType, string>> = {
+  RAW_ASSET: "Ảnh gốc",
+  APPROVED_ANALYSIS: "Ảnh đã duyệt",
+  PRODUCT: "Sản phẩm",
+  VIDEO: "Video",
+  CONTENT: "Nội dung",
+  CATALOG: "Catalog",
+  GREETING_CATALOG: "Thẻ chào",
+  LANDING: "Landing page",
+}
+
+/** Chủ ngữ trong thông báo chặn xoá. */
+export const LIBRARY_TRASH_SUBJECT: Readonly<Record<LibraryTrashType, string>> = {
+  VIDEO: "Video",
+  CONTENT: "Nội dung",
+  CATALOG: "Catalog",
+  GREETING_CATALOG: "Thẻ chào",
+  LANDING: "Landing page",
+}
 
 export interface TrashItem {
   id: string

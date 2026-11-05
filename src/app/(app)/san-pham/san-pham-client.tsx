@@ -32,6 +32,7 @@ import {
 } from "@/components/products/product-filter-types"
 import { ProductBulkStatusBar } from "@/components/products/product-bulk-status-bar"
 import { AiProductEnrichmentModal } from "@/components/products/ai-product-enrichment-modal"
+import { OneImageKitDialog } from "@/components/products/one-image-kit-dialog"
 import { PageHeader } from "@/components/ui/page-header"
 
 
@@ -45,6 +46,7 @@ export function SanPhamClient({ initialPage }: { initialPage: ProductListPage<Pr
   const [priceMode, setPriceMode] = useState<PriceModeFilter>("all")
   const [viewMode, setViewMode] = useState<"grid" | "table">("grid")
   const [trashTarget, setTrashTarget] = useState<TrashConfirmTarget | null>(null)
+  const [kitOpen, setKitOpen] = useState(false)
   const [selectedProduct, setSelectedProduct] = useState<ProductItem | null>(null)
   const [onlyProposals, setOnlyProposals] = useState(false)
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
@@ -157,6 +159,11 @@ export function SanPhamClient({ initialPage }: { initialPage: ProductListPage<Pr
             <FileSpreadsheet size={14} className="text-success" />
             <span className="hidden sm:inline">{t("products.header.importExcel")}</span>
           </Button>}
+          {session.can("H3") && <Button type="button" variant="outline" size="sm" onClick={() => setKitOpen(true)} className="flex items-center gap-1.5 h-9"
+            title="Một ảnh → thẻ sản phẩm, nội dung bán hàng, giá vốn, bài đăng và thẻ A6">
+            <Sparkles size={14} className="text-primary" /><span className="hidden sm:inline">Bộ nội dung từ 1 ảnh</span>
+          </Button>}
+          {kitOpen && <OneImageKitDialog open onOpenChange={setKitOpen} />}
           <Button
             type="button"
             variant="outline"

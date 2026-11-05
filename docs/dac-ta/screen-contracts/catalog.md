@@ -116,3 +116,10 @@ acceptance:
 ### Đánh giá khách (30/10/2026)
 - Mục mở rộng "Đánh giá khách hiện trên trang" ở màn quản lý catalog và màn tạo landing (`components/catalog/reviews/`): thêm, sửa, ẩn/hiện, xoá (hộp xác nhận R3). Quyền `J1`.
 - Trang khách hiện tối đa 6 đánh giá đang bật, điểm trung bình và số lượng tính từ dữ liệu thật; không có đánh giá thì mục tự ẩn. Không gắn nhãn "Đã mua hàng" (chủ tiệm tự nhập, không đối chiếu được đơn).
+
+### Nút Đặt hàng / Liên hệ trên trang khách (04/11/2026, theo Đơn hàng đa nguồn §3.2)
+- Một nguồn sự thật: `entryActions` máy chủ giải sẵn (`LANDING` khi có cấu hình chiến dịch, còn lại `CATALOG`); thiếu thì mặc định hệ thống (`components/catalog/public/public-entry.ts`).
+- **Bật Đặt hàng:** nút trên thẻ sản phẩm là "Đặt hàng" → mở thẳng form đặt hàng trong chi tiết mẫu; thanh đáy di động là "Chọn mẫu để đặt hàng" (cuộn tới bộ sưu tập), Zalo/Gọi thành nút phụ.
+- **Tắt Liên hệ:** ẩn Zalo/Gọi ở thanh đáy, thẻ sản phẩm, header, chi tiết mẫu và khối để lại số. Chỉ bật Liên hệ: như trước (Nhắn Zalo đặt hoa + Gọi).
+- Bản xem trước landing đọc cài đặt nguồn Landing (`GET /orders/entry-actions`, cần `R1`); không đọc được thì xem theo mặc định và ghi chú rõ dưới khung.
+- Chi tiết mẫu bỏ các cam kết viết cứng ("3–5 ngày", "tặng thiệp & banner", "chụp ảnh duyệt", "đã gồm thuế & thiệp") — chưa phải cam kết tiệm khai.

@@ -8,6 +8,7 @@ import { Dialog } from "@/components/ui/dialog"
 import { SkeletonBlock } from "@/components/ui/skeleton"
 import { FlowerImage } from "@/components/greeting-card/flower-image"
 import { apiSend, useApi } from "@/components/greeting-card/greeting-api"
+import { FlowerSubstituteForm } from "./flower-substitute-form"
 import {
   SUBSTITUTE_CHOICE_LABEL,
   SUBSTITUTE_MAX_OPTIONS,
@@ -38,6 +39,8 @@ export function SubstituteProposalModal({ orderId, orderCode, onClose, onDone }:
   const [reason, setReason] = useState("")
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  // Đổi cả mẫu, hoặc chỉ một loại hoa phụ (ALG 5.14)
+  const [mode, setMode] = useState<"product" | "flower">("product")
   const info = data?.data
   const pending = info?.latest?.status === "PENDING"
   const invalid =
@@ -62,8 +65,15 @@ export function SubstituteProposalModal({ orderId, orderCode, onClose, onDone }:
 
   return (
     <Dialog open onOpenChange={(o) => { if (!o && !busy) onClose() }} size="md"
-      title={<span className="flex items-center gap-2"><Shuffle size={18} className="text-primary" aria-hidden="true" /> Đề xuất mẫu khác — #{orderCode}</span>}>
+      title={<span className="flex items-center gap-2"><Shuffle size={18} className="text-primary" aria-hidden="true" /> Đề xuất thay đổi — #{orderCode}</span>}>
       <div className="flex flex-col gap-4">
+        <div className="grid grid-cols-2 gap-2" role="group" aria-label="Loại đề xuất">
+          {([["product", "Đổi cả mẫu"], ["flower", "Đổi một thành phần phụ"]] as const).map(([key, label]) => (
+            <Button key={key} type="button" variant="outline" size="sm" aria-pressed={mode === key} disabled={busy} onClick={() => setMode(key)}
+              className={mode === key ? "border-primary bg-primary/5 hover:bg-primary/5" : ""}>{label}</Button>
+          ))}
+        </div>
+        {mode === "flower" ? <FlowerSubstituteForm orderId={orderId} onClose={onClose} onDone={onDone} /> : <>
 
         {isLoading && <SkeletonBlock lines={3} label="Đang tải mẫu trong bộ sưu tập" />}
         {loadError && <p role="alert" className="text-danger text-caption">{loadError.message}</p>}
@@ -117,6 +127,7 @@ export function SubstituteProposalModal({ orderId, orderCode, onClose, onDone }:
             {busy ? "Đang gửi..." : "Gửi đề xuất cho khách"}
           </Button>
         </div>
+        </>}
       </div>
     </Dialog>
   )

@@ -42,7 +42,8 @@ const USAGE_LABEL: Readonly<Record<AssetUsage, string>> = {
   channel_usage: "bài đăng hoặc kênh bán đang chạy",
 }
 
-export function assetInUseMessage(usages: readonly AssetUsage[]): string {
+export function assetInUseMessage(usages: readonly AssetUsage[], subject = "Ảnh"): string {
   const labels = [...new Set(usages)].map((u) => USAGE_LABEL[u])
-  return `Ảnh đang được dùng làm ${labels.join(", ")} nên chưa xoá được. Gỡ ảnh khỏi nơi đang dùng trước.`
+  const object = subject === "Ảnh" ? "ảnh" : "mục này"
+  return `${subject} đang được dùng làm ${labels.join(", ")} nên chưa xoá được. Gỡ ${object} khỏi nơi đang dùng trước.`
 }

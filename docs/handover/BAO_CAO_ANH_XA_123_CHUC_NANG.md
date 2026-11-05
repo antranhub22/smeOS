@@ -28,15 +28,15 @@ Ký hiệu đường dẫn rút gọn: `org/` = `src/modules/organization/`, `gc
 | 2 | Quản lý sản phẩm, mẫu hoa & hình ảnh | 9 | 9 | 0 | 0 |
 | 3 | Tạo & quản lý báo giá | 13 | 13 | 0 | 0 |
 | 4 | Tiếp nhận, quản lý & xử lý đơn hàng | 32 | 32 | 0 | 0 |
-| 5 | Thẻ Chào mẫu hoa & trang khách hàng | 15 | 10 | 5 | 0 |
+| 5 | Thẻ Chào mẫu hoa & trang khách hàng | 15 | 15 | 0 | 0 |
 | 6 | Báo cáo hoạt động & tài chính | 9 | 9 | 0 | 0 |
-| 7 | AI phân tích, nội dung & marketing | 3 | 1 | 2 | 0 |
+| 7 | AI phân tích, nội dung & marketing | 3 | 3 | 0 | 0 |
 | 8 | Landing page bán hàng | 1 | 1 | 0 | 0 |
-| 9 | Chat nội bộ, đa chuỗi & phân quyền nâng cao | 14 | 13 | 1 | 0 |
+| 9 | Chat nội bộ, đa chuỗi & phân quyền nâng cao | 14 | 14 | 0 | 0 |
 | 10 | Quản lý credit AI, hạn mức & thuê bao SaaS | 8 | 7 | 0 | 1 |
-| | **Tổng cộng** | **123** | **113** | **9** | **1** |
+| | **Tổng cộng** | **123** | **121** | **1** | **1** |
 
-Tỷ lệ: Hoàn thiện 91,9% · Dang dở 7,3% · Chưa hoàn thành 0,8%.
+Tỷ lệ: Hoàn thiện 98,4% · Dang dở 0,8% · Chưa hoàn thành 0,8%.
 
 ### Một chức năng chưa hoàn thành
 
@@ -146,18 +146,18 @@ Tỷ lệ: Hoàn thiện 91,9% · Dang dở 7,3% · Chưa hoàn thành 0,8%.
 | 5.1 | Tạo bộ mẫu Thẻ Chào theo chủ đề/dịp | Hoàn thiện | `schema:3101-3122`; `api/greeting-card/catalogs`; `tt/greeting-card.test.ts:33`, `tt/greeting-catalog-products-events.test.ts:52-80` | — |
 | 5.2 | Chia sẻ link rút gọn gắn mã nhân viên bán | Hoàn thiện | `tt/greeting-card-share-links.test.ts:59,98,113`; `gc/domain/sales-funnel.ts` | — |
 | 5.3 | Cấu hình thời hạn & thu hồi link Thẻ Chào | Hoàn thiện | `tt/greeting-card-link-lifetime.test.ts:48,55,66,84`; `api/store-share-link/revoke` | — |
-| 5.4 | Tự tạo mã QR & ảnh ghép 3-4 mẫu | Dang dở | `gc/use-cases/catalog-collage.ts:10` (tối đa 3 ảnh); `api/greeting-card/catalogs/[id]/collage`; `gc/use-cases/__tests__/catalog-collage.test.ts` | Ảnh ghép 4 mẫu; mã QR trong ảnh ghép |
-| 5.5 | Công tắc cấu hình ẩn/hiện giá & thành phần | Dang dở | `gc/domain/display-fields.ts:8,12`; `api/greeting-card/display-settings/route.ts`; `tu/greeting-card/display-fields.test.ts` | Tắt hiển thị giá (giá là trường bắt buộc); công tắc thông tin giảm giá |
+| 5.4 | Tự tạo mã QR & ảnh ghép 3-4 mẫu | Hoàn thiện | Ảnh ghép 1–4 ô theo số mẫu có ảnh (từ 4 mẫu: lưới 2×2, nhãn "+N" cho phần còn lại) và mã QR mở đúng link đang chia sẻ (`/g`, `/b`, `/s`, `/bst`) sinh bằng `src/core/media/qr-engine.ts`: `gc/use-cases/catalog-collage.ts` (`buildCollage`, `collageQr`), `src/components/greeting-card/og/catalog-collage-image.tsx`; ảnh xem trước `src/app/{g,b,s,bst}/**/opengraph-image.tsx`; `gc/use-cases/__tests__/catalog-collage.test.ts` | — |
+| 5.5 | Công tắc cấu hình ẩn/hiện giá & thành phần | Hoàn thiện | Trường thành phần bật/tắt theo mẫu `gc/domain/display-fields.ts`; công tắc giá và thông tin giảm giá cho cả cửa hàng `gc/domain/price-visibility.ts`: tắt giá → phản hồi công khai không còn con số giá, khách thấy "Liên hệ báo giá", đơn vẫn nhận và chờ báo giá (`get-public-greeting-catalog.ts`, `get-greeting-catalog.ts`, `brochure-session-access.ts`, `submit-public-catalog-order.ts`); tắt giảm giá → không danh sách ưu đãi, không băng rôn, báo giá và đơn không áp ưu đãi (`greeting-template-registry.ts`, `brochure-quote.ts`, `place-brochure-order.ts`); cài đặt `api/greeting-card/display-settings/route.ts` (R2 + L4), `src/components/greeting-card/journey/display-settings-dialog.tsx`; `tu/greeting-card/display-fields.test.ts`, `tt/greeting-card-storefront.test.ts` | — |
 | 5.6 | Bảng bán hàng realtime theo dõi hành vi khách | Hoàn thiện | `gc/domain/sales-funnel.ts:1-30`; `src/components/greeting-card/tracking/views/kanban-view.tsx:28` (làm mới 30 giây); `tu/greeting-card/sale-kanban.test.ts`, `tt/greeting-card-scope.test.ts:101` | — |
 | 5.7 | Màn hình "Hộp thư việc hôm nay" ưu tiên | Hoàn thiện | `gc/domain/inbox.ts:15-312`; `src/components/greeting-card/inbox/inbox-panel.tsx`; `tt/greeting-card-coordinator-rules.test.ts:111`, `tu/greeting-card/single-store-vs-chain-workflow.test.ts:280` | — |
 | 5.8 | Cấu hình phân quyền xem đơn Sale | Hoàn thiện | `api/greeting-card/sale-visibility/route.ts:15-24`; `tt/greeting-card-scope.test.ts:78-101`, `tt/greeting-card-sale-scope-actions.test.ts:58,67` | — |
-| 5.9 | Khách xem mẫu hoa (vuốt, thả tim) | Dang dở | Mẫu vuốt `src/components/greeting-card/customer/templates/swipe-brochure-engine.tsx:79-82` (lọc giá); thả tim `tt/greeting-catalog-hearts.test.ts:42,62`; `tests/e2e/brochure-swipe.spec.ts` | Lọc theo màu trong mẫu vuốt (chỉ có ở mẫu bảng màu riêng) |
+| 5.9 | Khách xem mẫu hoa (vuốt, thả tim) | Hoàn thiện | Mẫu vuốt `src/components/greeting-card/customer/templates/swipe-brochure-engine.tsx` lọc theo tông màu (dùng chung dữ liệu màu với mẫu Bảng màu, có màu chủ đạo từ Master Index) và khoảng giá cùng lúc — `templates/aux/catalog-filters.ts` (`filterSwipeDeck`), `templates/swipe/swipe-color-filter.tsx`; thả tim `tt/greeting-catalog-hearts.test.ts:42,62`; `tu/greeting-card/template-catalog-filters.test.ts`; `tests/e2e/brochure-swipe.spec.ts` | — |
 | 5.10 | Đặt hoa trực tiếp từ Thẻ Chào | Hoàn thiện | `src/components/greeting-card/customer/variant-step-picker.tsx`, `brochure-order-form.tsx`; `tt/greeting-card-checkout.test.ts:67`, `tt/greeting-card-order-policies.test.ts:64-83` | — |
 | 5.11 | Nút "Nhắn tư vấn mẫu này" gắn mã sản phẩm | Hoàn thiện | `gc/domain/collection-browse.ts:69-72`; `gc/use-cases/submit-product-inquiry.test.ts` | — |
 | 5.12 | Trang khách xem tiến độ cắm & ảnh thành phẩm | Hoàn thiện | `gc/use-cases/get-brochure-tracking.ts:143-170` (không trả ghi chú nội bộ/giá vốn, che thông tin khi chưa xác minh); `tt/greeting-card-hardening.test.ts` | — |
 | 5.13 | Khách duyệt ảnh QC thành phẩm trong 10 phút | Hoàn thiện | `gc/domain/balance-collection.ts:13,44`; `tt/greeting-card-coordinator-rules.test.ts:99`, `tt/subcontract-customer-photo.test.ts:102,120` | — |
-| 5.14 | Đề xuất thay loại hoa thiếu qua link duyệt | Dang dở | `gc/use-cases/substitute.ts:42-77` (đổi cả mẫu sang mẫu khác cùng bộ sưu tập, kèm lý do); `tt/greeting-card-substitute.test.ts:65,78,104` | Thay một loại hoa phụ kèm ảnh hoa thay thế do tiệm chụp |
-| 5.15 | Màn hình cảm ơn, mã giảm giá & đặt lại đơn | Dang dở | `src/components/greeting-card/customer/customer-thank-you-card.tsx`; đặt thêm đơn `tt/greeting-card-reorder-photos.test.ts:89` | Tặng mã giảm giá cho đơn kế tiếp; test màn cảm ơn |
+| 5.14 | Đề xuất thay loại hoa thiếu qua link duyệt | Hoàn thiện | Đổi cả mẫu `gc/use-cases/substitute.ts`; đổi một thành phần phụ kèm ảnh tiệm chụp và lý do, khách đồng ý/không trên trang theo dõi, đồng ý thì công thức cắm của đơn đổi đúng dòng (giữ số lượng, vai trò, ghi hoa cũ): `gc/domain/flower-substitute.ts`, `gc/infra/flower-substitute-repository.ts` (một đề xuất chờ mỗi đơn, khoá theo đơn), `gc/use-cases/flower-substitute.ts`; `api/greeting-card/orders/[id]/flower-substitute/route.ts` (R3), `api/public/brochure/tracking/[code]/flower-substitute-response/route.ts`; giao diện `src/components/greeting-card/coordinator/flower-substitute-form.tsx`, `src/components/greeting-card/customer/flower-substitute-panel.tsx`; hành trình ảnh chặng 01, 02, 09, không gọi AI, không trừ credit (PO Q12); `tt/greeting-card-substitute.test.ts`, `tu/greeting-card/flower-substitute.test.ts` | — |
+| 5.15 | Màn hình cảm ơn, mã giảm giá & đặt lại đơn | Hoàn thiện | Màn cảm ơn `src/components/greeting-card/customer/customer-thank-you-card.tsx`, `thank-you-voucher-box.tsx`; mã giảm giá dùng một lần gắn khách đặt, phát một lần cho mỗi đơn khi đơn hoàn tất, chỉ người đặt đã xác minh thấy: `gc/domain/thank-you-voucher.ts`, `gc/use-cases/thank-you-voucher.ts`, `src/modules/promotions/infra/thank-you-voucher-repository.ts` (khoá theo đơn), `gc/use-cases/get-brochure-tracking.ts`; tiệm bật/tắt và đặt % giảm trong cài đặt hiển thị Thẻ chào; lưu thông tin người đặt trên máy khách khi khách đồng ý `src/components/greeting-card/customer/saved-buyer.ts`, `use-order-draft.ts`; đặt thêm đơn `tt/greeting-card-reorder-photos.test.ts:89`; `tt/thank-you-voucher.test.ts`, `tu/greeting-card/thank-you-voucher.test.ts` | — |
 
 ### Nhóm 6 — Báo cáo hoạt động & tài chính (9)
 
@@ -178,8 +178,8 @@ Tỷ lệ: Hoàn thiện 91,9% · Dang dở 7,3% · Chưa hoàn thành 0,8%.
 | STT | Chức năng | Trạng thái | Bằng chứng | Còn thiếu |
 |---|---|---|---|---|
 | 7.1 | AI nhận diện ảnh mẫu (loại hoa, cành, màu) | Hoàn thiện | `api/vision/analyses` (sửa trước khi duyệt, duyệt tạo sản phẩm); `src/modules/usage/domain/pricing.ts:32` (1 credit); `tt/vision-analyses.test.ts:64-230` | — |
-| 7.2 | Bộ nội dung marketing tự động từ 1 ảnh | Dang dở | Phân tích ảnh → thẻ sản phẩm (`tt/vision-analyses.test.ts:170`); nội dung bán hàng `src/modules/product-copies/domain/product-copy-rules.ts:28-59`; thẻ A6 chỉ trong thư viện mẫu `src/app/(app)/kho-templates` | Luồng tự động một bước từ 1 ảnh; đề xuất giá vốn; bài viết Facebook/Zalo; đóng gói Thẻ Chào A6 |
-| 7.3 | Màn hình kiểm tra sẵn sàng sản phẩm ra thị trường | Dang dở | `src/modules/products/domain/product-readiness.ts:55-90` (ảnh, danh mục, giá/BOM); `product-readiness.test.ts` | Tiêu chí bài viết; chặn đưa ra bán khi chưa đủ (API sản phẩm không gọi kiểm tra này) |
+| 7.2 | Bộ nội dung marketing tự động từ 1 ảnh | Hoàn thiện | Luồng một bước `src/modules/journey/use-cases/one-image-kit.ts`, `domain/one-image-kit.ts`: nhận diện ảnh (job `vision.analyze`) → kiểm tra → duyệt tạo thẻ sản phẩm nháp → nội dung bán hàng (job `product.copy.generate`) → giá vốn đề xuất từ BOM × đơn giá nguyên liệu `src/modules/costing/use-cases/costing-service.ts` (`suggestCostFromBom`) → bài đăng Facebook/Zalo (job `content.generate`) → thẻ A6 (`print_renditions`); mỗi bước AI trừ credit lúc tạo job và hoàn khi hỏng, chuỗi dừng ở bước hỏng và giữ đầu ra trước; chặng 01, 02, 06, 08, 09, 10 (PO Q12); `api/products/one-image-kit/route.ts`, `api/products/one-image-kit/run/route.ts`; giao diện `src/components/products/one-image-kit-dialog.tsx` trên `/san-pham`; `tt/one-image-kit.test.ts` (AI giả lập ở tầng HTTP) | — |
+| 7.3 | Màn hình kiểm tra sẵn sàng sản phẩm ra thị trường | Hoàn thiện | `src/modules/products/domain/product-readiness.ts` (ảnh, danh mục, giá/BOM, bài viết bán hàng đã duyệt — 5 tiêu chí); màn kiểm tra `src/components/dashboard/product-manager-workspace.tsx` (danh sách sản phẩm kèm `hasApprovedCopy`); mở bán khi chưa đủ điều kiện vẫn lưu, phản hồi kèm danh sách còn thiếu (PO 05/11/2026: chỉ cảnh báo, không chặn) `api/products/[id]/route.ts`, `api/products/bulk-status/route.ts`, `src/components/products/product-bulk-status-bar.tsx`; `product-readiness.test.ts`, `tt/products-readiness.test.ts` | — |
 
 ### Nhóm 8 — Landing page bán hàng (1)
 
@@ -193,7 +193,7 @@ Tỷ lệ: Hoàn thiện 91,9% · Dang dở 7,3% · Chưa hoàn thành 0,8%.
 |---|---|---|---|---|
 | 9.1 | Trao đổi / chat nội bộ trên từng đơn | Hoàn thiện | `api/greeting-card/messages` (+ `/read`); `api/internal-chat`; `schema:3435` (`last_read_at`); không có API xoá tin; `tt/greeting-card-messages.test.ts:64,90,101`, `tt/internal-chat-isolation.test.ts:48-79` | Thợ cắm chưa có vai tài khoản (xem 1.12) |
 | 9.2 | Hồ sơ thương hiệu | Hoàn thiện | `schema:772-795`; AI đọc `src/modules/product-copies/adapters/product-copy-adapter.ts:23,99`, `src/modules/content-engine/infra/read-shop-context.ts:63`; `tt/cach-ly-endpoint.test.ts:157` | — |
-| 9.3 | Hồ sơ kinh doanh | Dang dở | `schema:744-763` (tên pháp lý, SĐT, địa chỉ, mô tả); `read-shop-context.ts:55-70` | Trường thông điệp, khách mục tiêu |
+| 9.3 | Hồ sơ kinh doanh | Hoàn thiện | `schema` `business_profiles` (tên pháp lý, SĐT, địa chỉ, mô tả, thông điệp thương hiệu, khách mục tiêu — migration `20261105230000_business_profile_brand_audience`); `api/business-profile/route.ts` (F1/F2); form `src/components/profiles/business-profile-form.tsx`, `brand-audience-fields.tsx`; ngữ cảnh AI `src/modules/content-engine/infra/read-shop-context.ts`, `domain/brief-builder.ts`; `tt/cach-ly-endpoint.test.ts`, `tu/content-engine/brief-brand-audience.test.ts` | — |
 | 9.4 | Thư viện tài nguyên & thùng rác 30 ngày | Hoàn thiện | `src/modules/storage/domain/trash-types.ts:29`; `api/storage/trash/[id]/restore`; `tt/storage-trash.test.ts:51-68`, `tt/storage-lifecycle.test.ts:45-63` | — |
 | 9.5 | Quản lý kết nối Webhook/API key | Hoàn thiện | `api/integration-tokens` (cấp, thu hồi, `[id]/rotate`), F9 trần cứng; `tt/integration.test.ts:78`, `src/modules/integration/use-cases/__tests__/integration-use-cases.test.ts:120` | — |
 | 9.6 | Quản lý tác vụ nền & chạy lại tác vụ lỗi | Hoàn thiện | `api/jobs/[id]/{cancel,retry,events}`; `src/modules/jobs/use-cases/scan-stuck-jobs.ts`; `tt/job-retry-backoff.test.ts:35,45`, `tp/dead-letter-jobs.test.ts:45,60` | — |

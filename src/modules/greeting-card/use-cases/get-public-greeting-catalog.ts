@@ -6,6 +6,7 @@ import { toPublicCatalogFilters } from "../domain/greeting-template-registry"
 import type { ShopContact } from "../domain/shop-contact"
 import { getShopContact } from "./get-shop-contact"
 import { loadPolicyGovernance } from "@/modules/organization/use-cases/governance-matrix"
+import { applyPriceVisibility, readPriceVisibility } from "../domain/price-visibility"
 
 export type PublicGreetingCatalogResult =
   | {
@@ -37,7 +38,10 @@ export async function mapCatalogToPublicResult(
   // Batch resolve asset storage keys (chống N+1) — giá theo Product Master, không bịa giá
   const assetMap = await repo.getAssetsStorageMap(catalog.organization_id, collectImageAssetIds(catalog.items))
   // Mẫu tạm hết hàng không hiện cho khách
-  const products: GreetingCatalogProduct[] = catalog.items.map((item) => toCatalogProduct(item, assetMap)).filter((p) => p.available !== false)
+  const visibility = readPriceVisibility(catalog.organization.settings)
+  const products: GreetingCatalogProduct[] = catalog.items
+    .map((item) => applyPriceVisibility(toCatalogProduct(item, assetMap), visibility))
+    .filter((p) => p.available !== false)
 
   const shop = await repo.getShopProfile(catalog.organization_id)
 

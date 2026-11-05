@@ -18,6 +18,9 @@ export interface UpsertBusinessProfileInput {
   tax_code?: string | null | undefined
   description?: string | null | undefined
   operating_hours?: Record<string, unknown> | null | undefined
+  /** Checklist ALG 9.3 — bỏ trống (undefined) thì giữ giá trị đang lưu */
+  brand_message?: string | null | undefined
+  target_customers?: string[] | null | undefined
 }
 
 export interface IBusinessProfileRepository {

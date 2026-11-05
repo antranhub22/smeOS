@@ -591,7 +591,7 @@ model assets {
  * `GeneratedLandingPackage`, `input` là yêu cầu đã gửi (dịp, sản phẩm, chỉ dẫn).
  */
 model landing_pages {
-  id              String   @id @default(uuid())
+  id              String    @id @default(uuid())
   organization_id String
   title           String
   page_type       String?
@@ -599,12 +599,16 @@ model landing_pages {
   input           Json
   content         Json
   created_by      String
-  created_at      DateTime @default(now()) @db.Timestamptz(3)
+  created_at      DateTime  @default(now()) @db.Timestamptz(3)
+  // Thùng rác 30 ngày (Kho dữ liệu v2, L-4 — PO 05/11/2026): quá hạn thì cron xoá vĩnh viễn.
+  trashed_at      DateTime? @db.Timestamptz(3)
+  purge_after     DateTime? @db.Timestamptz(3)
 
   organization organizations @relation(fields: [organization_id], references: [id])
 
   @@index([organization_id])
   @@index([organization_id, created_at])
+  @@index([purge_after])
 }
 
 /**
@@ -972,24 +976,27 @@ model audit_logs {
 // module (Checklist P4).
 
 model business_profiles {
-  id              String   @id @default(uuid())
-  organization_id String
-  legal_name      String?
-  display_name    String
+  id               String   @id @default(uuid())
+  organization_id  String
+  legal_name       String?
+  display_name     String
   /// @pii business
-  phone           String?
+  phone            String?
   /// @pii business
-  email           String?
+  email            String?
   /// @pii business
-  address         String?
-  website         String?
-  social_links    Json?
+  address          String?
+  website          String?
+  social_links     Json?
   /// @pii business
-  tax_code        String?
-  description     String?
-  operating_hours Json?
-  created_at      DateTime @default(now()) @db.Timestamptz(3)
-  updated_at      DateTime @updatedAt @db.Timestamptz(3)
+  tax_code         String?
+  description      String?
+  operating_hours  Json?
+  /// Thông điệp thương hiệu và khách mục tiêu (checklist ALG 9.3) — đưa vào ngữ cảnh AI viết nội dung
+  brand_message    String?
+  target_customers Json? // danh sách nhóm khách, vd ["Văn phòng tặng sếp", "Cặp đôi"]
+  created_at       DateTime @default(now()) @db.Timestamptz(3)
+  updated_at       DateTime @updatedAt @db.Timestamptz(3)
 
   organization organizations @relation(fields: [organization_id], references: [id])
 
@@ -1652,12 +1659,16 @@ model catalog_links {
   revoked_by      String?
   created_by      String
   created_at      DateTime  @default(now()) @db.Timestamptz(3)
+  // Thùng rác 30 ngày (Kho dữ liệu v2, L-4 — PO 05/11/2026): quá hạn thì cron xoá vĩnh viễn.
+  trashed_at      DateTime? @db.Timestamptz(3)
+  purge_after     DateTime? @db.Timestamptz(3)
   updated_at      DateTime  @updatedAt @db.Timestamptz(3)
 
   organization organizations @relation(fields: [organization_id], references: [id])
 
   @@index([organization_id])
   @@index([slug])
+  @@index([purge_after])
 }
 
 /// Công cụ 11 — link công khai của hồ sơ cửa hàng (/ch/<slug>). Mỗi tổ chức tối đa
@@ -1841,8 +1852,11 @@ model video_jobs {
   cost_credits    Int     @default(0)
   error_message   String?
 
-  created_at DateTime @default(now()) @db.Timestamptz(3)
-  updated_at DateTime @updatedAt @db.Timestamptz(3)
+  created_at  DateTime  @default(now()) @db.Timestamptz(3)
+  // Thùng rác 30 ngày (Kho dữ liệu v2, L-4 — PO 05/11/2026): quá hạn thì cron xoá vĩnh viễn.
+  trashed_at  DateTime? @db.Timestamptz(3)
+  purge_after DateTime? @db.Timestamptz(3)
+  updated_at  DateTime  @updatedAt @db.Timestamptz(3)
 
   organization organizations  @relation(fields: [organization_id], references: [id])
   scenes       video_scenes[]
@@ -1857,6 +1871,7 @@ model video_jobs {
   @@index([script_approval])
   @@index([video_approval])
   @@index([product_id]) // khoá ngoại cần index (ADR-015 O-1)
+  @@index([purge_after])
 }
 
 model video_scenes {
@@ -3026,8 +3041,11 @@ model content_generations {
   created_by      String
   approved_by     String?
 
-  created_at DateTime @default(now()) @db.Timestamptz(3)
-  updated_at DateTime @updatedAt @db.Timestamptz(3)
+  created_at  DateTime  @default(now()) @db.Timestamptz(3)
+  // Thùng rác 30 ngày (Kho dữ liệu v2, L-4 — PO 05/11/2026): quá hạn thì cron xoá vĩnh viễn.
+  trashed_at  DateTime? @db.Timestamptz(3)
+  purge_after DateTime? @db.Timestamptz(3)
+  updated_at  DateTime  @updatedAt @db.Timestamptz(3)
 
   organization organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
 
@@ -3037,6 +3055,7 @@ model content_generations {
   @@index([organization_id, asset_id, topic_id, mode])
   @@index([organization_id, created_at])
   @@index([product_id]) // khoá ngoại cần index (ADR-015 O-1)
+  @@index([purge_after])
 }
 
 /// Giọng nhân bản của chủ tiệm (Khu vực C — Voice Clone, 24/09/2026). TENANT.
@@ -3509,17 +3528,20 @@ model decision_registry {
 
 /// Danh mục mẫu hoa dùng để tạo thẻ chào (Chuẩn hoặc Client Catalog)
 model greeting_catalogs {
-  id              String   @id @default(uuid())
+  id              String    @id @default(uuid())
   organization_id String
   code            String // 20-10, 8-3, sinh-nhat, cc
   name            String
-  type            String   @default("STANDARD") // STANDARD | CLIENT
+  type            String    @default("STANDARD") // STANDARD | CLIENT
   description     String?
   filters         Json? // Bộ lọc dịp, mức giá, màu sắc khi tạo Client Catalog
-  is_active       Boolean  @default(true)
+  is_active       Boolean   @default(true)
   created_by      String
-  created_at      DateTime @default(now()) @db.Timestamptz(3)
-  updated_at      DateTime @updatedAt @db.Timestamptz(3)
+  created_at      DateTime  @default(now()) @db.Timestamptz(3)
+  // Thùng rác 30 ngày (Kho dữ liệu v2, L-4 — PO 05/11/2026): quá hạn thì cron xoá vĩnh viễn.
+  trashed_at      DateTime? @db.Timestamptz(3)
+  purge_after     DateTime? @db.Timestamptz(3)
+  updated_at      DateTime  @updatedAt @db.Timestamptz(3)
 
   organization organizations               @relation(fields: [organization_id], references: [id], onDelete: Cascade)
   items        greeting_catalog_products[]
@@ -3530,6 +3552,7 @@ model greeting_catalogs {
 
   @@unique([organization_id, code])
   @@index([organization_id])
+  @@index([purge_after])
 }
 
 /// Sản phẩm gán vào Catalog Thẻ chào (tham chiếu Product Master SSOT)

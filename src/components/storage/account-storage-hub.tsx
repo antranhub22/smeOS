@@ -41,7 +41,7 @@ import { StorageTrashTab } from "@/components/storage/storage-trash-tab"
 import { readApiError } from "@/components/greeting-card/api-error"
 import { formatDate } from "@/lib/i18n/formatters"
 
-import { buildOverflowActions, buildPrimaryActions, buildStorageTabs, libraryTypeOf, type StorageTab } from "@/components/storage/storage-hub-tabs"
+import { buildOverflowActions, buildPrimaryActions, buildStorageTabs, libraryTypeOf, trashTypeForLibrary, type StorageTab } from "@/components/storage/storage-hub-tabs"
 import { LibraryPanel } from "@/components/storage/library/library-panel"
 import { useLibrarySummary } from "@/components/storage/library/use-library-summary"
 
@@ -431,8 +431,8 @@ export function AccountStorageHub({
           type={activeLibraryType ?? scopedRawType}
           showScope={showScope}
           onTrash={
-            isExecutive && (activeLibraryType === "ai_image" || scopedRawType)
-              ? (item) => setTrashTarget({ id: item.id, name: item.title || "Ảnh", imageUrl: item.thumbnail_url, type: "RAW_ASSET" })
+            isExecutive && trashTypeForLibrary(activeLibraryType ?? scopedRawType ?? "audio")
+              ? (item) => setTrashTarget({ id: item.id, name: item.title || "Mục", imageUrl: item.thumbnail_url, type: trashTypeForLibrary(item.type)! })
               : undefined
           }
         />

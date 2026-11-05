@@ -1,11 +1,16 @@
 import { describe, expect, it } from "vitest"
 import type { GreetingCatalogProduct } from "@/modules/greeting-card/domain/greeting-card-types"
+import { createElement } from "react"
+import { renderToStaticMarkup } from "react-dom/server"
 import {
   budgetsOf,
+  filterSwipeDeck,
+  findMood,
   matchProducts,
   moodsOf,
   occasionsOf,
 } from "@/components/greeting-card/customer/templates/aux/catalog-filters"
+import { SwipeColorFilter } from "@/components/greeting-card/customer/templates/swipe/swipe-color-filter"
 import { getSwipeTheme } from "@/components/greeting-card/customer/templates/swipe/swipe-themes"
 
 const p = (o: Partial<GreetingCatalogProduct>): GreetingCatalogProduct => ({
@@ -48,6 +53,33 @@ describe("bộ lọc mẫu bổ trợ", () => {
     expect(moodsOf([p({ name: "Bó hồng đỏ" })]).map((m) => m.id)).toEqual(["red"])
     expect(moodsOf([p({ name: "Bó hồng phấn" })]).map((m) => m.id)).toEqual(["pink"])
     expect(moodsOf([p({ name: "Kệ hoa" })])).toEqual([])
+  })
+})
+
+describe("lọc màu trên mẫu vuốt (ALG 5.9)", () => {
+  const deck = [
+    p({ id: "do", name: "Bó A", color: "Đỏ", price: 400_000 }),
+    p({ id: "trang", name: "Giỏ B", color: "Trắng", price: 900_000 }),
+    p({ id: "do-dat", name: "Bó hồng đỏ lớn", price: 1_500_000 }),
+  ]
+  it("màu chủ đạo từ Master Index cũng xếp được tông", () => {
+    expect(moodsOf(deck).map((m) => m.id)).toEqual(["red", "white"])
+  })
+  it("lọc theo tông, theo giá, và cả hai cùng lúc", () => {
+    const red = findMood("red")
+    expect(filterSwipeDeck(deck, { mood: null, inRange: null })).toBe(deck)
+    expect(filterSwipeDeck(deck, { mood: red, inRange: null }).map((x) => x.id)).toEqual(["do", "do-dat"])
+    expect(filterSwipeDeck(deck, { mood: red, inRange: (x) => (x.price ?? 0) < 1_000_000 }).map((x) => x.id)).toEqual(["do"])
+    expect(findMood("khong-co")).toBeNull()
+  })
+  it("hàng chip chỉ hiện khi có từ hai tông; tông đang chọn đánh dấu aria-pressed", () => {
+    const theme = getSwipeTheme("01")
+    const moods = moodsOf(deck)
+    const html = renderToStaticMarkup(createElement(SwipeColorFilter, { moods, activeId: "red", theme, onPick: () => {} }))
+    expect(html).toContain("Lọc theo tông màu")
+    expect(html).toContain("Tất cả")
+    expect(html).toMatch(/aria-pressed="true"[^>]*>.*Đỏ rực rỡ/)
+    expect(renderToStaticMarkup(createElement(SwipeColorFilter, { moods: moods.slice(0, 1), activeId: null, theme, onPick: () => {} }))).toBe("")
   })
 })
 

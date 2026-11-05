@@ -13,6 +13,9 @@ export type BusinessProfileDetail = {
   tax_code: string | null
   description: string | null
   operating_hours: Record<string, unknown> | null
+  /** Checklist ALG 9.3 */
+  brand_message: string | null
+  target_customers: string[]
 }
 
 /**
@@ -37,5 +40,7 @@ export async function getBusinessProfile(
     tax_code: profile.tax_code,
     description: profile.description,
     operating_hours: (profile.operating_hours as Record<string, unknown> | null) ?? null,
+    brand_message: profile.brand_message,
+    target_customers: Array.isArray(profile.target_customers) ? profile.target_customers.filter((x): x is string => typeof x === "string") : [],
   }
 }

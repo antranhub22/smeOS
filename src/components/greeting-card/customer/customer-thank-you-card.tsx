@@ -3,6 +3,9 @@
 import { Heart, FileText, CheckCircle2 } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { ReorderButton } from "./reorder-button"
+import { ThankYouVoucherBox, type ThankYouVoucherData } from "./thank-you-voucher-box"
+
+export type { ThankYouVoucherData }
 
 /** Mục trên trang theo dõi mà hai nút "Xem lại" cuộn tới. */
 export const THANK_YOU_TARGET = { details: "order-details-section", progress: "progress-evidence-section" } as const
@@ -13,11 +16,14 @@ interface CustomerThankYouCardProps {
   orderCode: string
   /** Có link → nút "Đặt đơn mới" mở link mới (mã đơn mới), đơn này giữ nguyên. */
   sendCode?: string | null | undefined
+  /** Mã giảm giá dùng một lần cho đơn sau, chỉ người đặt đã xác minh (ALG 5.15) */
+  voucher?: ThankYouVoucherData | null | undefined
 }
 
 export function CustomerThankYouCard({
   orderCode,
   sendCode,
+  voucher,
 }: CustomerThankYouCardProps) {
   return (
     <section
@@ -41,6 +47,8 @@ export function CustomerThankYouCard({
         <p className="mt-2 max-w-md text-body-sm text-text-muted leading-relaxed">
           Đơn hàng <strong className="text-text">#{orderCode}</strong> đã được trao gửi trọn vẹn và chu đáo đến người nhận. Sự hài lòng của bạn là niềm vinh hạnh lớn nhất của chúng tôi.
         </p>
+
+        {voucher && <ThankYouVoucherBox voucher={voucher} />}
 
         {/* 3 Nút Tác vụ chính */}
         <div className="mt-6 flex w-full max-w-sm flex-col gap-2.5">

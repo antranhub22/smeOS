@@ -9,6 +9,7 @@ import type { GeneratedLandingPackage } from "@/modules/content-engine/domain/la
 import { useTenantProfile } from "@/lib/hooks/use-tenant-profile"
 import { StorefrontPreviewIframe } from "./public/storefront-preview-iframe"
 import { buildLandingPreview } from "./landing-publish-payload"
+import type { EntryActions } from "@/modules/orders/domain/entry-actions"
 import { toPublicReview, type PublicShopReview, type ShopReview } from "@/modules/shop-reviews/domain/review-rules"
 
 export interface EnabledSectionsConfig {
@@ -77,6 +78,15 @@ export function LandingCampaignPreview({
       .then((r) => (r.ok ? r.json() : { data: [] }))
       .then((j: { data?: ShopReview[] }) => setReviews((j.data ?? []).filter((r) => r.isVisible).slice(0, 6).map(toPublicReview)))
       .catch(() => setReviews([]))
+  }, [])
+  // Nút Đặt hàng / Liên hệ của nguồn Landing (Điều hành cài ở Đơn hàng); không đọc được → mặc định hệ thống
+  const [entryActions, setEntryActions] = useState<EntryActions | null>(null)
+  useEffect(() => {
+    fetch("/api/v1/orders/entry-actions")
+      .then((r) => (r.ok ? r.json() : null))
+      .then((j: { sources?: { code: string; effective: EntryActions }[] } | null) =>
+        setEntryActions(j?.sources?.find((x) => x.code === "LANDING")?.effective ?? null))
+      .catch(() => setEntryActions(null))
   }, [])
 
   return (
@@ -165,9 +175,15 @@ export function LandingCampaignPreview({
               primaryColor: "#7A2E42",
               logoUrl: null,
             },
-            reviews
+            reviews,
+            entryActions ?? undefined
           )}
         />
+        {!entryActions && (
+          <p className="mt-2 text-caption text-text-muted">
+            Nút Đặt hàng / Liên hệ đang xem theo mặc định — Điều hành có thể đã đổi trong mục Đơn hàng.
+          </p>
+        )}
       </div>
     </div>
   )

@@ -1,3 +1,4 @@
+import type { Prisma } from "@/generated/prisma/client"
 import { prisma } from "@/core/tenancy/infra/prisma"
 import { scopedWhere, type TenantContext } from "@/core/tenancy"
 import { MAX_OUTBOX_ATTEMPTS } from "@/modules/assets/domain/asset-lifecycle"
@@ -25,13 +26,7 @@ export async function deleteAssetAndEnqueuePayloads(
   return prisma.$transaction(async (tx) => {
     const removed = await tx.assets.deleteMany({ where: scopedWhere(ctx, { id: asset.id }) })
     if (removed.count === 0) return false
-    for (const key of payloadKeysToPurge(ctx.organizationId, asset)) {
-      await tx.storage_outbox.upsert({
-        where: { op_storage_key: { op: DELETE_OP, storage_key: key } },
-        create: { organization_id: ctx.organizationId, op: DELETE_OP, storage_key: key, asset_id: asset.id },
-        update: { done_at: null, attempts: 0, last_error: null },
-      })
-    }
+    await enqueuePayloadDeletes(tx, ctx, payloadKeysToPurge(ctx.organizationId, asset), asset.id)
     await new AuditLogRepository(tx).record(ctx, {
       action,
       entityType: "asset",
@@ -40,6 +35,22 @@ export async function deleteAssetAndEnqueuePayloads(
     })
     return true
   })
+}
+
+/** Ghi hàng đợi xoá payload cho các khoá đã lọc — gọi TRONG transaction xoá bản ghi. */
+export async function enqueuePayloadDeletes(
+  tx: Prisma.TransactionClient,
+  ctx: TenantContext,
+  keys: readonly string[],
+  sourceId: string | null
+): Promise<void> {
+  for (const key of keys) {
+    await tx.storage_outbox.upsert({
+      where: { op_storage_key: { op: DELETE_OP, storage_key: key } },
+      create: { organization_id: ctx.organizationId, op: DELETE_OP, storage_key: key, asset_id: sourceId },
+      update: { done_at: null, attempts: 0, last_error: null },
+    })
+  }
 }
 
 /** Việc chờ xử lý của mọi tổ chức — chỉ cron hệ thống gọi. */

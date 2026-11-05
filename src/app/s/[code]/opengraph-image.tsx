@@ -13,6 +13,6 @@ export default async function Image({ params }: { params: Promise<{ code: string
   if (!preview) {
     return renderCatalogCollage({ catalogName: "Bộ Sưu Tập Sản Phẩm", shopName: null, priceLabel: null, logo: null, productCount: 0, images: [] })
   }
-  const data = await catalogCollageById(preview.catalogId)
+  const data = await catalogCollageById(preview.catalogId, `/s/${code.toUpperCase()}`)
   return renderCatalogCollage(data ?? { catalogName: preview.name, shopName: null, priceLabel: null, logo: null, productCount: 0, images: [] })
 }

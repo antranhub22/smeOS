@@ -8,6 +8,7 @@ import { GreetingCardRepository, getGreetingCardRepository } from "../infra/gree
 import { validateCustomerOrderInput, normalizePhone } from "../domain/greeting-card-rules"
 import type { CustomerOrderSubmitInput, GreetingCatalogProduct } from "../domain/greeting-card-types"
 import { collectImageAssetIds, snapshotOf, toCatalogProduct } from "./brochure-product-mapper"
+import { applyPriceVisibility, readPriceVisibility } from "../domain/price-visibility"
 import { assertPhoneQuota, placeBrochureOrder, type BrochureOrderResult } from "./place-brochure-order"
 import { paymentInstructionsFor } from "./payment-instructions"
 import { BrochureCheckoutRepository, getBrochureCheckoutRepository } from "../infra/brochure-checkout-repository"
@@ -34,7 +35,7 @@ async function orderableFromCatalog(
   const item = catalog.items.find((i) => i.product.id === productId)
   if (!item) throw notFound()
   const urls = await repo.getAssetsStorageMap(catalog.organization_id, collectImageAssetIds([item]))
-  const product = toCatalogProduct(item, urls)
+  const product = applyPriceVisibility(toCatalogProduct(item, urls), readPriceVisibility(catalog.organization.settings))
   if (product.available === false) throw conflict(SOLD_OUT_MESSAGE)
   return { catalog, product }
 }

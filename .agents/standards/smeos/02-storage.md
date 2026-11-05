@@ -31,6 +31,7 @@
 | Audit bắt buộc cho route xuất dữ liệu | ✅ | `tests/unit/architecture/export-audit.test.ts` |
 | Xoá vĩnh viễn + outbox + audit cùng transaction | ✅ | `tests/tenant/storage-lifecycle.test.ts` |
 | Legal hold tệp + tổ chức (API, thùng rác, cron, outbox, bàn giao) | ✅ | `tests/tenant/storage-lifecycle.test.ts` |
+| Thùng rác 30 ngày + xoá vĩnh viễn cho video, nội dung, catalog, thẻ chào, landing page (L-4) | ✅ 05/11/2026 | `tests/tenant/library-trash.test.ts`, `manage-trash.test.ts` |
 | Chặn xoá ảnh đang được dùng (chứng từ thanh toán, ảnh sản phẩm, logo, video, bản in, chiến dịch…) — API, thùng rác, cron (bỏ qua) | ✅ 04/11/2026 | `tests/unit/architecture/asset-usage-guard.test.ts` (mọi cột `*asset_id*` phải khai), `tests/tenant/storage-lifecycle.test.ts` |
 | Xoá payload thật | 🟡 sau cờ `STORAGE_DELETE_PAYLOADS=enabled`, **mặc định tắt** tới khi có backup object store (SDAGF D-06) | — |
 | Số ngày thùng rác | ✅ `TRASH_RETENTION_DAYS` + `trashExpiresAt()` (`storage/domain/trash-types.ts`) | nợ #196 (đã trả) |

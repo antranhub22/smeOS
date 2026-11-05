@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto"
 import { afterAll, beforeEach, describe, expect, it } from "vitest"
 import { disconnectDatabase, resetDatabase } from "../helpers/database"
 import { createTenant, type Tenant } from "../helpers/fixtures"
@@ -10,6 +11,7 @@ import { selectBrochureProduct } from "@/modules/greeting-card/use-cases/select-
 import { submitBrochureOrder } from "@/modules/greeting-card/use-cases/submit-brochure-order"
 import { proposeSubstitute, respondSubstitute, substituteOptions } from "@/modules/greeting-card/use-cases/substitute"
 import { getBrochureTracking } from "@/modules/greeting-card/use-cases/get-brochure-tracking"
+import { flowerSubstituteOptions, proposeFlowerSubstitute, respondFlowerSubstitute } from "@/modules/greeting-card/use-cases/flower-substitute"
 
 /** Đề xuất mẫu thay thế (08/10/2026): mẫu cùng bộ sưu tập, khách chọn, giữ giá, cách ly tổ chức. */
 
@@ -115,5 +117,65 @@ describe("greeting-card: đề xuất mẫu thay thế", () => {
 
     await prisma.orders.update({ where: { id: order.orderId }, data: { delivery_status: "DELIVERING" } })
     expect(await codeOf(proposeSubstitute(staffA, order.orderId, { reason: "Hết hoa hồng", productIds: [y.id] }))).toBe("CONFLICT")
+  })
+
+  const FLOWERS = [
+    { flowerName: "Hồng Ecuador", quantity: 10, unit: "cành", color: "Đỏ", role: "Chủ đạo" },
+    { flowerName: "Baby trắng", quantity: 3, unit: "cành", color: "Trắng", role: "Lấp đầy" },
+  ]
+  async function photoOf(t: Tenant) {
+    return prisma.assets.create({ data: {
+      id: randomUUID(), organization_id: t.organizationId, kind: "ORIGINAL", state: "READY", version: 1,
+      storage_key: `org/${t.organizationId}/unfiled/${randomUUID()}.jpg`, mime_type: "image/jpeg", created_by: t.userId,
+    } })
+  }
+
+  it("đổi một loại hoa phụ (ALG 5.14): có ảnh tiệm chụp, khách đồng ý → công thức của đơn đổi đúng dòng", async () => {
+    const { order, y } = await placeOrder()
+    const item = await prisma.order_items.findFirstOrThrow({ where: { order_id: order.orderId } })
+    await prisma.order_items.update({ where: { id: item.id }, data: { metadata: { ...(item.metadata as object), flowers: FLOWERS } } })
+    const opts = await flowerSubstituteOptions(staffA, order.orderId)
+    expect(opts.lines.map((l) => l.flowerName)).toEqual(["Baby trắng"])
+    expect(await codeOf(flowerSubstituteOptions(staffB, order.orderId))).toBe("NOT_FOUND")
+
+    const photo = await photoOf(a)
+    const foreign = await photoOf(b)
+    const input = { reason: "Baby trắng hôm nay hết", lineIndex: 1, replacementName: "Cẩm chướng", replacementColor: "Hồng nhạt", photoAssetId: photo.id }
+    expect(await codeOf(proposeFlowerSubstitute(staffA, order.orderId, { ...input, photoAssetId: foreign.id }))).toBe("VALIDATION_FAILED")
+    expect(await codeOf(proposeFlowerSubstitute(staffA, order.orderId, { ...input, lineIndex: 0 }))).toBe("VALIDATION_FAILED")
+    expect(await codeOf(proposeFlowerSubstitute(staffB, order.orderId, input))).toBe("NOT_FOUND")
+    const proposal = await proposeFlowerSubstitute(staffA, order.orderId, input)
+    expect(await codeOf(proposeSubstitute(staffA, order.orderId, { reason: "Hết hoa hồng", productIds: [y.id] }))).toBe("CONFLICT")
+
+    const tracking = await getBrochureTracking(order.orderCode, PROOF)
+    const pending = tracking.status === "FOUND" ? tracking.order.flowerSubstitute?.pending : null
+    expect(pending).toMatchObject({ id: proposal.id, originalFlower: "Baby trắng", replacementFlower: "Cẩm chướng" })
+    expect(pending?.photoUrl).toBeTruthy()
+    expect(JSON.stringify(pending)).not.toContain(photo.id)
+    const anon = await getBrochureTracking(order.orderCode)
+    expect(anon.status === "FOUND" && anon.order.flowerSubstitute).toBeNull()
+
+    expect(await codeOf(respondFlowerSubstitute(req(), order.orderCode, { phoneLast4: "0000" }, { proposalId: proposal.id, choice: "ACCEPT" }))).toBe("NOT_FOUND")
+    const answered = await respondFlowerSubstitute(req(), order.orderCode, PROOF, { proposalId: proposal.id, choice: "ACCEPT" })
+    expect(answered).toMatchObject({ status: "ANSWERED", choice: "ACCEPT" })
+    const row = await prisma.orders.findUniqueOrThrow({ where: { id: order.orderId }, include: { items: true } })
+    const flowers = (row.items[0]?.metadata as { flowers: Array<Record<string, unknown>> }).flowers
+    expect(flowers[0]).toMatchObject({ flowerName: "Hồng Ecuador", color: "Đỏ" })
+    expect(flowers[1]).toMatchObject({ flowerName: "Cẩm chướng", color: "Hồng nhạt", quantity: 3, role: "Lấp đầy", substitutedFrom: { flowerName: "Baby trắng" } })
+    expect(Number(row.total_vnd)).toBe(500000)
+    expect(row.internal_note).toContain('[Đổi hoa] Khách đồng ý thay "Baby trắng" bằng "Cẩm chướng"')
+    expect(await codeOf(respondFlowerSubstitute(req(), order.orderCode, PROOF, { proposalId: proposal.id, choice: "DECLINE" }))).toBe("NOT_FOUND")
+  })
+
+  it("khách không đồng ý đổi hoa → công thức giữ nguyên, tiệm được nhắc liên hệ", async () => {
+    const { order } = await placeOrder()
+    const item = await prisma.order_items.findFirstOrThrow({ where: { order_id: order.orderId } })
+    await prisma.order_items.update({ where: { id: item.id }, data: { metadata: { ...(item.metadata as object), flowers: FLOWERS } } })
+    const photo = await photoOf(a)
+    const proposal = await proposeFlowerSubstitute(staffA, order.orderId, { reason: "Baby trắng hôm nay hết", lineIndex: 1, replacementName: "Cẩm chướng", photoAssetId: photo.id })
+    await respondFlowerSubstitute(req(), order.orderCode, PROOF, { proposalId: proposal.id, choice: "DECLINE", note: "Giữ baby giúp mình" })
+    const row = await prisma.orders.findUniqueOrThrow({ where: { id: order.orderId }, include: { items: true } })
+    expect((row.items[0]?.metadata as { flowers: Array<{ flowerName: string }> }).flowers[1]?.flowerName).toBe("Baby trắng")
+    expect(row.internal_note).toContain("cửa hàng liên hệ khách trước khi cắm")
   })
 })

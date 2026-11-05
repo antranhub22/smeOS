@@ -1,6 +1,7 @@
 import { describe, it, expect, vi } from "vitest"
 import type { TenantContext } from "@/core/tenancy"
 import type { ITrashRepository } from "../../domain/repositories/trash-repository.interface"
+import type { ILibraryTrashRepository } from "../../domain/repositories/library-trash-repository.interface"
 import type { TrashItem } from "../../domain/trash-types"
 import {
   getTrashList,
@@ -28,6 +29,63 @@ function createMockRepo(overrides: Partial<ITrashRepository> = {}): ITrashReposi
     ...overrides,
   }
 }
+
+function createMockLibrary(overrides: Partial<ILibraryTrashRepository> = {}): ILibraryTrashRepository {
+  return {
+    list: vi.fn().mockResolvedValue([]),
+    move: vi.fn().mockResolvedValue(true),
+    restore: vi.fn().mockResolvedValue(true),
+    findUsages: vi.fn().mockResolvedValue([]),
+    permanentDelete: vi.fn().mockResolvedValue("deleted"),
+    ...overrides,
+  }
+}
+
+describe("Thùng rác Kho dữ liệu — video, nội dung, catalog, thẻ chào, landing (L-4)", () => {
+  const ctx = createMockContext(["G3"])
+  const noAssetUsages = vi.fn().mockResolvedValue([])
+
+  it("chuyển vào/khôi phục/xoá vĩnh viễn đi qua kho thùng rác thư viện, không qua kho ảnh", async () => {
+    const repo = createMockRepo()
+    const library = createMockLibrary()
+    await moveToTrash(ctx, { id: "v1", type: "VIDEO" }, repo, noAssetUsages, library)
+    await restoreFromTrash(ctx, { id: "v1", type: "VIDEO" }, repo, library)
+    await permanentDelete(ctx, { id: "v1", type: "VIDEO" }, repo, noAssetUsages, library)
+    expect(library.move).toHaveBeenCalledWith(ctx, "VIDEO", "v1")
+    expect(library.restore).toHaveBeenCalledWith(ctx, "VIDEO", "v1")
+    expect(library.permanentDelete).toHaveBeenCalledWith(ctx, "VIDEO", "v1", "trash.permanent_delete")
+    expect(repo.moveToTrash).not.toHaveBeenCalled()
+    expect(repo.permanentDelete).not.toHaveBeenCalled()
+  })
+
+  it("mục đang dùng trong chiến dịch thì 409 với chủ ngữ đúng loại, không đụng dữ liệu", async () => {
+    const library = createMockLibrary({ findUsages: vi.fn().mockResolvedValue(["campaign"]) })
+    await expect(moveToTrash(ctx, { id: "v1", type: "VIDEO" }, createMockRepo(), noAssetUsages, library)).rejects.toMatchObject({
+      status: 409,
+      message: expect.stringContaining("Video đang được dùng làm gói chiến dịch"),
+    })
+    await expect(permanentDelete(ctx, { id: "v1", type: "VIDEO" }, createMockRepo(), noAssetUsages, library)).rejects.toMatchObject({ status: 409 })
+    expect(library.move).not.toHaveBeenCalled()
+    expect(library.permanentDelete).not.toHaveBeenCalled()
+  })
+
+  it("legal hold → 409; không thấy → 404; không phải Điều hành → từ chối", async () => {
+    const hold = createMockLibrary({ permanentDelete: vi.fn().mockResolvedValue("legal_hold") })
+    await expect(permanentDelete(ctx, { id: "c1", type: "CATALOG" }, createMockRepo(), noAssetUsages, hold)).rejects.toMatchObject({ status: 409 })
+    const missing = createMockLibrary({ move: vi.fn().mockResolvedValue(false) })
+    await expect(moveToTrash(ctx, { id: "x", type: "LANDING" }, createMockRepo(), noAssetUsages, missing)).rejects.toMatchObject({ status: 404 })
+    await expect(
+      moveToTrash(createMockContext(["X"]), { id: "x", type: "CONTENT" }, createMockRepo(), noAssetUsages, createMockLibrary())
+    ).rejects.toMatchObject({ code: "CAPABILITY_DENIED" })
+  })
+
+  it("danh sách thùng rác gộp cả hai nguồn, mới nhất trước", async () => {
+    const at = (d: string) => ({ trashedAt: d, expiresAt: d, daysRemaining: 1, name: "x" })
+    const repo = createMockRepo({ listTrash: vi.fn().mockResolvedValue([{ id: "a", type: "RAW_ASSET", ...at("2026-11-01T00:00:00Z") }]) })
+    const library = createMockLibrary({ list: vi.fn().mockResolvedValue([{ id: "g", type: "GREETING_CATALOG", ...at("2026-11-03T00:00:00Z") }]) })
+    expect((await getTrashList(ctx, repo, library)).map((i) => i.id)).toEqual(["g", "a"])
+  })
+})
 
 describe("Storage Use-Cases with ITrashRepository Port", () => {
   describe("Phân quyền vai trò Điều hành (requireExecutiveRole)", () => {
@@ -58,7 +116,7 @@ describe("Storage Use-Cases with ITrashRepository Port", () => {
         listTrash: vi.fn().mockResolvedValue(mockItems),
       })
 
-      const result = await getTrashList(ctx, repo)
+      const result = await getTrashList(ctx, repo, createMockLibrary())
       expect(result).toHaveLength(1)
       expect(result[0]?.id).toBe("item_1")
       expect(repo.listTrash).toHaveBeenCalledWith(ctx)

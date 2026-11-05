@@ -1,6 +1,7 @@
 -- Đối soát số dư (ADR-013 D-I6, bước I-3): bảng ghi các đơn có paid_vnd lệch tổng order_payments.
 -- Bảng mới, không chạm dữ liệu cũ.
 BEGIN;
+SET LOCAL lock_timeout = '30s';
 
 -- CreateEnum
 CREATE TYPE "reconciliation_kind" AS ENUM ('ORDER_PAID_MISMATCH');

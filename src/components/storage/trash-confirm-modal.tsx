@@ -8,10 +8,11 @@ import { ShieldCheck } from "@/components/ui/icon-set/shield-check"
 import { Loader2 } from "@/components/ui/icon-set/loader2"
 import { Button } from "@/components/ui/button"
 import { Dialog } from "@/components/ui/dialog"
+import { TRASH_TYPE_LABEL, type TrashItemType } from "@/modules/storage/domain/trash-types"
 
 export interface TrashConfirmTarget {
   id: string
-  type: "RAW_ASSET" | "APPROVED_ANALYSIS" | "PRODUCT"
+  type: TrashItemType
   name: string
   code?: string | null | undefined
   imageUrl?: string | null | undefined
@@ -29,12 +30,7 @@ export function TrashConfirmModal({ target, onClose, onConfirm }: TrashConfirmMo
 
   if (!target) return null
 
-  const typeLabel =
-    target.type === "PRODUCT"
-      ? "Sản phẩm sản phẩm"
-      : target.type === "RAW_ASSET"
-      ? "Ảnh gốc"
-      : "Ảnh phân tích"
+  const typeLabel = TRASH_TYPE_LABEL[target.type]
 
   async function handleConfirm() {
     if (!target || submitting) return

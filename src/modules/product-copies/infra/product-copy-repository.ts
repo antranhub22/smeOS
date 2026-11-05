@@ -87,6 +87,17 @@ export class ProductCopyRepository implements IProductCopyRepository {
     });
   }
 
+  /** Sản phẩm (trong danh sách) đã có bài viết bán hàng được duyệt — tiêu chí sẵn sàng 7.3. */
+  async approvedProductIds(ctx: TenantContext, productIds: string[]): Promise<Set<string>> {
+    if (productIds.length === 0) return new Set()
+    const rows = await this.db.product_copies.findMany({
+      where: scopedWhere(ctx, { product_id: { in: productIds }, approval_state: "APPROVED" as approval_state }),
+      select: { product_id: true },
+      distinct: ["product_id"],
+    })
+    return new Set(rows.map((r) => r.product_id).filter((id): id is string => Boolean(id)))
+  }
+
   async listPendingApproval(ctx: TenantContext): Promise<product_copies[]> {
     return this.db.product_copies.findMany({
       where: scopedWhere(ctx, { approval_state: "PENDING" as approval_state }),
