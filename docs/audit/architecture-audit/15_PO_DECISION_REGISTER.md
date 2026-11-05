@@ -53,6 +53,10 @@
 | D-45 | Chuẩn mã cũ | Theo đề xuất: Screen Contract cho trang mới/được sửa; tách tệp khi chạm vào | Thêm test bắt buộc |
 | D-47 | Thẻ chào (05/11/2026) | **Gỡ đóng băng.** Thẻ chào được sửa khi hợp nhất mô hình đơn hàng và khách hàng (audit kiến trúc CSDL 4 tầng, bước 2–3) | Bỏ `the-chao-freeze.test.ts` + manifest; giữ toàn bộ test hành vi Thẻ chào; nguyên tắc B5 (test khoá hành vi trước khi sửa) vẫn áp dụng — `KIEN_TRUC_SSOT_DON_HANG_DA_NGUON.md` §0 |
 | D-48 | Tầng Ngành (05/11/2026) | **Cần, làm sau.** Tầng Ngành dùng cho mô hình affiliate bán sản phẩm nhiều ngành. Hiện tập trung StoreOS, ChainOS, SaaS Mother cho ngành Điện hoa – hoa tươi | Chưa thêm dữ liệu tầng Ngành; thiết kế cây tổ chức (bước 2) phải chừa chỗ cho tầng Ngành và quan hệ affiliate, không cần sửa lược đồ lớn khi bật |
+| D-49 | Tìm khách (05/11/2026) | **Tìm theo 4 số cuối** số điện thoại; khớp đủ số chỉ dùng nội bộ (chống trùng, gắn khách) | ADR-014 D-P3: `phone_hash` + `phone_last4`; bỏ tìm theo phần giữa số |
+| D-50 | Hạn lưu chứng từ — trả lời I-2 (05/11/2026) | **Mức thường dùng** (PO giao agent đề xuất): chứng từ ghi sổ 10 năm · tài liệu kế toán khác 5 năm · giao nhận 12 tháng · nhật ký kiểm toán 5 năm · log/hội thoại/lead 3 tháng (D-28) | ADR-014 D-P4; đổi mốc qua `retention_policies`; cần kế toán/pháp lý xác nhận trước khi cam kết với khách |
+| D-51 | Vùng dữ liệu (05/11/2026) | **B** — thêm vùng Việt Nam bằng triển khai riêng; triển khai chung giữ Singapore | ADR-014 D-P7, ADR-016 S-6; `data_region` mặc định `sg`; khách triển khai chung vẫn cần hồ sơ chuyển dữ liệu ra nước ngoài |
+| D-52 | Gói CSDL — trả lời I-7 (05/11/2026) | **Theo giai đoạn** (PO giao agent đề xuất): Basic lớn hơn + PITR 7 ngày + export ngoài ngay; Pro + HA khi ký chuỗi có SLA; hạ tầng riêng theo hợp đồng. Cảnh báo (I-5): email + nhóm Telegram người vận hành | ADR-015 D-O2; còn chờ PO duyệt con số chi phí và cho địa chỉ nhận cảnh báo |
 
 ## 2. Chấp nhận rủi ro (PO chọn khác đề xuất)
 
@@ -88,10 +92,10 @@ Content engine đã chuyển về `smeOS` (P27: `/noi-dung` gọi thẳng `conte
 |---|---|---|---|
 | **D-46** | Đăng bài mạng xã hội (đang phụ thuộc SocialFlow) | a) Xây đăng bài ngay trong `smeOS` → bỏ SocialFlow · b) Giữ SocialFlow làm dịch vụ ngoài · c) Bỏ tính năng | **ĐÃ QUYẾT 01/11/2026: a** — phương án chi tiết ở `17_SOCIALFLOW_REPLACEMENT_PLAN.md` (Workstream S); câu hỏi phụ S-1…S-5 ở `17` §7 |
 | I-1 | Danh sách mã quyền mong muốn cho `product_manager`; nhãn mới cho `crm` và `customer_service` (D-06) | PO cung cấp | — |
-| I-2 | "3 tháng" áp cho loại dữ liệu nào? Dữ liệu đơn hàng/chứng từ thường phải lưu lâu hơn theo pháp luật kế toán, thuế | a) 3 tháng cho log, thông báo, hội thoại, dữ liệu marketing; dữ liệu đơn hàng giữ theo nghĩa vụ pháp lý nhưng ẩn danh hoá thông tin cá nhân sau 3 tháng kể từ khi hoàn tất đơn · b) 3 tháng cho mọi dữ liệu | ★ **a**; nên hỏi ý kiến pháp lý |
+| I-2 | "3 tháng" áp cho loại dữ liệu nào? Dữ liệu đơn hàng/chứng từ thường phải lưu lâu hơn theo pháp luật kế toán, thuế | a) 3 tháng cho log, thông báo, hội thoại, dữ liệu marketing; dữ liệu đơn hàng giữ theo nghĩa vụ pháp lý nhưng ẩn danh hoá thông tin cá nhân sau 3 tháng kể từ khi hoàn tất đơn · b) 3 tháng cho mọi dữ liệu | ★ **a**; nên hỏi ý kiến pháp lý → trả lời ở **D-50** (05/11/2026) |
 | I-3 | Nội dung SLA: giờ hỗ trợ, thời gian phản hồi P1/P2/P3, kênh báo sự cố | PO cung cấp | — |
 | I-4 | Tệp cấu hình agent (`CLAUDE.md`, `.agents/`, `.claude/`) có đi kèm bản giao không? | a) Không (giữ `export-ignore`) · b) Có | ★ **a** |
-| I-5 | Ai nhận cảnh báo Sentry/Render? | Email/kênh | — |
+| I-5 | Ai nhận cảnh báo Sentry/Render? | Email/kênh | — → đề xuất ở **D-52** (05/11/2026), chờ địa chỉ |
 | I-6 | Ngày mục tiêu sẵn sàng thương mại | Ngày | — |
-| I-7 | Ngân sách hạ tầng: gói CSDL có PITR, pre-deploy, Sentry | Duyệt chi phí | — |
+| I-7 | Ngân sách hạ tầng: gói CSDL có PITR, pre-deploy, Sentry | Duyệt chi phí | — → trả lời ở **D-52** (05/11/2026), chờ con số chi phí |
 | A-1 | Giả định D-12: phí dùng làm tròn **lên** credit nguyên; nạp tiền làm tròn **xuống** credit nguyên, phần lẻ hiện trên phiếu thu | Xác nhận / sửa | — |

@@ -53,8 +53,10 @@ cần test khoá hành vi trước.
 - [ ] PO duyệt ADR-012, ADR-013, ADR-014, ADR-015, ADR-016 (đổi trạng thái thành `ĐÃ CHỐT`)
 - [ ] ADR-012 §6: (1) nhượng quyền xem báo cáo chuỗi? (2) công cụ tách chi nhánh thành tổ chức? (3) `FLOWER_NETWORK` khác `CHAIN`?
 - [ ] ADR-013 §6: chủ tổ chức xem nhật ký truy cập trong ứng dụng? mốc bật RLS chặn thật?
-- [ ] ADR-014 §6: tìm khách bằng đủ số / 4 số cuối? hạn lưu chứng từ (I-2, cần pháp lý)? vùng dữ liệu A hay B?
-- [ ] ADR-015 §6: ngân sách gói CSDL (I-7)? người nhận cảnh báo (I-5)? quy mô thử tải đúng khách đầu (D-40)?
+- [x] ADR-014 §6: tìm theo 4 số cuối (D-49) · hạn lưu mức thường dùng (D-50) · vùng dữ liệu B (D-51)
+- [ ] Kế toán/pháp lý xác nhận bảng hạn lưu D-50 trước khi cam kết với khách
+- [x] ADR-015 §6: gói CSDL theo giai đoạn + kênh cảnh báo (D-52)
+- [ ] PO duyệt con số chi phí giai đoạn G-a; cho email + nhóm Telegram nhận cảnh báo; xác nhận quy mô thử tải (D-40)
 - [ ] ADR-016 §6: gói nào được `SHARED_PLUS` / `DEDICATED`? hạn giữ dữ liệu sau khi khách rời?
 - [ ] Ghi mọi câu trả lời vào `15_PO_DECISION_REGISTER.md` (mã D-49 trở đi)
 
