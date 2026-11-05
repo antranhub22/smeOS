@@ -13,6 +13,16 @@ const UI_DENSITY_STORAGE_KEY = "smeos_ui_density"
 
 const UiSystemContext = createContext<UiSystemContextValue | null>(null)
 
+/** Density người dùng đã chọn và lưu ở localStorage; `null` khi chưa chọn hoặc không đọc được. */
+export function readStoredDensity(storage: Pick<Storage, "getItem"> | undefined = globalThis.localStorage): UiDensity | null {
+  try {
+    const value = storage?.getItem(UI_DENSITY_STORAGE_KEY)
+    return value === "compact" || value === "comfortable" ? value : null
+  } catch {
+    return null
+  }
+}
+
 /**
  * Giữ nguyên object config khi density đọc từ localStorage trùng giá trị đang dùng. Một object mới
  * làm context đổi ngay sau hydrate: React bỏ HTML máy chủ của segment trang còn chờ chunk JS và
@@ -34,18 +44,14 @@ export function UiSystemProvider({
     ...initialConfig,
   }))
 
-  // Hydrate density from localStorage if user customized personal density preference (ADR-011 D-UI-03)
+  // Density cá nhân (ADR-011 D-UI-03): đọc ngay khi gắn, trước khi effect bên dưới ghi density hiện
+  // tại vào localStorage — đọc muộn hơn thì chỉ đọc lại giá trị vừa ghi và lựa chọn của người dùng mất.
   useEffect(() => {
+    const storedDensity = readStoredDensity()
+    if (!storedDensity) return
     void Promise.resolve().then(() => {
-      try {
-        const storedDensity = localStorage.getItem(UI_DENSITY_STORAGE_KEY)
-        if (storedDensity === "compact" || storedDensity === "comfortable") {
-          setConfig((prev) => withStoredDensity(prev, storedDensity))
-          document.documentElement.setAttribute("data-density", storedDensity)
-        }
-      } catch {
-        // Fallback silently if storage unavailable
-      }
+      setConfig((prev) => withStoredDensity(prev, storedDensity))
+      document.documentElement.setAttribute("data-density", storedDensity)
     })
   }, [])
 

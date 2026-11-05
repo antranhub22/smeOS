@@ -57,9 +57,11 @@ Giới hạn của lần kiểm:
 - **Tương phản:** 3 preset ở giao diện sáng; hệ thống chưa có chế độ tối.
 - **Trang công khai:** `/b`, `/bst`, `/g` kiểm cả trạng thái có dữ liệu (bộ sưu tập và link gửi tạo qua API trong bộ kiểm) và trạng thái không tìm thấy; `/subcontract` kiểm cả trạng thái có lời mời gia công (đơn và token chi nhánh tạo trong database test) và trạng thái không tìm thấy. Ba trang không tìm thấy `/b`, `/g`, `/subcontract` không có liên kết nào để quay lại.
 - **Trình đọc màn hình** (VoiceOver, NVDA) chưa kiểm theo quyết định PO 03/11/2026.
-- **Lỗi đã biết trong vùng PO khoá:** ô tìm kiếm đơn trên `/don-hang` (`src/components/greeting-card/coordinator/coordinator-brochure-tab.tsx`, vùng Thẻ chào) chỉ đổi màu viền khi nhận tiêu điểm, không có vòng tiêu điểm (2.4.7). Huy hiệu "Ưu đãi …" trên trang đặt hàng của khách `/b`, `/bst`, `/g` (`src/components/greeting-card/customer/templates/swipe/journey-contact-form.tsx`) dùng `text-danger` trên `bg-danger-bg`, tương phản 4,23:1 (cần 4,5:1; sửa bằng `text-danger-text`). Trang Thẻ Gia Công của chi nhánh `/subcontract/[orderCode]` (`src/components/greeting-card/subcontract/subcontract-spotlight-shell.tsx`): nhãn phụ ("Thù lao gia công", ô nhãn `px-3`) thiếu tương phản ở preset `modern-slate` và `pure-swiss`; preset mặc định đạt. Chưa sửa khi chưa có PO duyệt; bộ kiểm ghi ở `KNOWN_FROZEN`.
+- **Vùng PO khoá:** các lỗi trong vùng Thẻ chào đã sửa theo duyệt của PO ngày 05/11/2026 (mốc khoá cập nhật cùng commit); bộ kiểm không còn mục `KNOWN_FROZEN` nào.
 
-Lỗi đã sửa trong lần kiểm này: nút hiện/ẩn mật khẩu thiếu tên; ô nhập đăng nhập thiếu vòng tiêu điểm; huy hiệu trạng thái dùng `text-danger`/`text-warning` trên nền nhạt (đổi sang `text-danger-text`/`text-warning-text`); ô chọn và ô số thiếu tên ở tạo sản phẩm, cài đặt, ưu đãi; thẻ ngành bị làm mờ dưới ngưỡng tương phản; `PageHeader` và thanh lọc ma trận quản trị gây cuộn ngang ở 640px.
+Lỗi đã sửa trong vùng Thẻ chào (PO duyệt 05/11/2026): ô tìm kiếm đơn trên `/don-hang` (`coordinator-brochure-tab.tsx`) có vòng tiêu điểm khi dùng bàn phím (2.4.7); huy hiệu "Ưu đãi …" trên `/b`, `/bst`, `/g` (`journey-contact-form.tsx`) đổi sang `text-danger-text`; nhãn "Thù lao gia công" trên `/subcontract/[orderCode]` (`subcontract-spotlight-shell.tsx`) dùng màu chữ chính, đạt ở cả 3 preset.
+
+Lỗi đã sửa trong lần kiểm trước: nút hiện/ẩn mật khẩu thiếu tên; ô nhập đăng nhập thiếu vòng tiêu điểm; huy hiệu trạng thái dùng `text-danger`/`text-warning` trên nền nhạt (đổi sang `text-danger-text`/`text-warning-text`); ô chọn và ô số thiếu tên ở tạo sản phẩm, cài đặt, ưu đãi; thẻ ngành bị làm mờ dưới ngưỡng tương phản; `PageHeader` và thanh lọc ma trận quản trị gây cuộn ngang ở 640px.
 
 ## 4. Cơ chế trợ năng có trong mã
 

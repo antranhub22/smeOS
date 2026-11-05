@@ -191,7 +191,7 @@ export function SubcontractSpotlightShell({
           </h2>
         </div>
         <div className="text-right">
-          <span className="text-caption text-text-muted block">Thù lao gia công</span>
+          <span className="text-caption font-semibold text-text block">Thù lao gia công</span>
           <span className="text-title font-black text-primary">
             {subcontractPriceVnd.toLocaleString("vi-VN")} đ
           </span>
