@@ -3,7 +3,7 @@
 import { Textarea } from "@/components/ui/textarea"
 import { Input } from "@/components/ui/input"
 import { useEffect, useRef, useState } from "react"
-import { ImagePlus } from "@/components/ui/icons"
+import { ImagePlus } from "@/components/ui/icon-set/image-plus"
 import { Button } from "@/components/ui/button"
 import { SkeletonBlock } from "@/components/ui/skeleton"
 import { apiSend, useApi } from "@/components/greeting-card/greeting-api"

@@ -2,7 +2,7 @@
 
 import { Textarea } from "@/components/ui/textarea"
 import { useState } from "react"
-import { Shuffle } from "@/components/ui/icons"
+import { Shuffle } from "@/components/ui/icon-set/shuffle"
 import { Button } from "@/components/ui/button"
 import { FlowerImage } from "@/components/greeting-card/flower-image"
 import { apiSend } from "@/components/greeting-card/greeting-api"
