@@ -16,6 +16,7 @@ export function CreateOccasionSizeCard({ value }: { value: ProductOccasionSize }
           <label htmlFor="product-occasions" className="mb-1 block text-caption font-semibold text-text">Dịp phù hợp</label>
           <MultiSelectDropdown
             id="product-occasions"
+            ariaLabel="Dịp phù hợp"
             options={value.occasions.map((o) => o.name)}
             value={value.selectedNames}
             onChange={value.setSelectedNames}
