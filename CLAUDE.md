@@ -11,7 +11,7 @@ Status `CANONICAL` · owner: Product Owner (PO) · changes need PO approval. Loa
 4. **Architecture:** `domain/` never imports Prisma/infra; Prisma only in `infra/`; provider SDKs only in `adapters/`.
 5. **AI:** every call goes through `callCapability` (`src/core/ai/gateway.ts`) — no direct provider calls; every retry/loop is bounded.
 6. **UI text** is natural Vietnamese; semantic tokens only; no tech codes (`M01a`, `P2`…) on screen.
-7. **≤ 350 lines per file.**
+7. **≤ 350 lines per file**; files over it must not grow; data-only `.ts` may be exempted (`docs/plan/k11-file-size-policy.md`).
 8. **No secrets / customer data / `.env` content** in code, logs, commits or replies.
 9. **Never report done with a red gate**; never skip/disable a test.
 
