@@ -70,7 +70,9 @@ describe("cách ly tenant — mã giảm giá và bảng giá", () => {
     const claim = (orderId: string) =>
       prisma.$transaction((tx) => getVoucherRedemptionRepository(tx).claim({ organizationId: a.organizationId, voucherId: voucher.id, orderId, customerId: null }))
 
-    const results = await Promise.all(["o1", "o2", "o3", "o4"].map(claim))
+    // Đơn và khách phải có thật: vouchers.order_id, voucher_redemptions.order_id/customer_id có khoá ngoại.
+    const orders = await Promise.all(["V1", "V2", "V3", "V4"].map((code) => makeOrder(a, code)))
+    const results = await Promise.all(orders.map(claim))
     expect(results.filter(Boolean)).toHaveLength(2)
     expect(await prisma.vouchers.findUniqueOrThrow({ where: { id: voucher.id } })).toMatchObject({ used_count: 2, is_used: true })
 
@@ -87,8 +89,10 @@ describe("cách ly tenant — mã giảm giá và bảng giá", () => {
     const { id } = (await readJson(await issue(a, { mode: "SHARED", shared_code: "MOT", per_customer_limit: 1 }))) as { id: string }
     const voucher = await prisma.vouchers.findFirstOrThrow({ where: { batch_id: id } })
     const claim = (orderId: string) =>
-      prisma.$transaction((tx) => getVoucherRedemptionRepository(tx).claim({ organizationId: a.organizationId, voucherId: voucher.id, orderId, customerId: "khach-1" }))
-    expect(await Promise.all([claim("o1"), claim("o2")])).toEqual(expect.arrayContaining([true, false]))
+      prisma.$transaction((tx) => getVoucherRedemptionRepository(tx).claim({ organizationId: a.organizationId, voucherId: voucher.id, orderId, customerId: customer.id }))
+    const customer = await prisma.customers.create({ data: { organization_id: a.organizationId, code: "KH-0001", name: "Khách 1", phone: "0900000001" } })
+    const [o1, o2] = await Promise.all([makeOrder(a, "M1"), makeOrder(a, "M2")])
+    expect(await Promise.all([claim(o1), claim(o2)])).toEqual(expect.arrayContaining([true, false]))
   })
 
   it("bảng giá của tổ chức A: B không xem, không tắt được (404)", async () => {
@@ -107,3 +111,11 @@ describe("cách ly tenant — mã giảm giá và bảng giá", () => {
     expect(listB.data).toHaveLength(0)
   })
 })
+
+async function makeOrder(tenant: Tenant, code: string): Promise<string> {
+  const order = await prisma.orders.create({
+    data: { organization_id: tenant.organizationId, code, created_by: tenant.userId, total_vnd: 0, balance_vnd: 0 },
+    select: { id: true },
+  })
+  return order.id
+}

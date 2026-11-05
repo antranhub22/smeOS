@@ -40,8 +40,13 @@ export class JobEventRepository {
         select: { seq: true },
       })
       const seq = (last?.seq ?? 0) + 1
+      // organization_id sao từ job cha — khoá ghép (job_id, organization_id) giữ hai bên khớp.
+      const job = await tx.generation_jobs.findUniqueOrThrow({
+        where: { id: jobId },
+        select: { organization_id: true },
+      })
       return tx.job_events.create({
-        data: { job_id: jobId, seq, event, payload: payload as InputJsonValue },
+        data: { job_id: jobId, organization_id: job.organization_id, seq, event, payload: payload as InputJsonValue },
       })
     })
   }

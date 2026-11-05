@@ -125,5 +125,7 @@ const items = await db.myTable.findMany({
 2. **`exactOptionalPropertyTypes: true`** — Không gán `undefined`. Bỏ key hoặc dùng `T | undefined`.
 3. **Migration đã chạy** — KHÔNG sửa tay file trong `prisma/migrations/`.
 4. **Index** — Mọi bảng tenant có index dẫn đầu bằng `organization_id`. Query thường xuyên → thêm composite index.
+5. **Khoá ghép tenant** (05/11/2026) — bảng con như `order_events`, `order_payments`, `product_variants`, `job_events` trỏ về `(cha_id, organization_id)`. Khi tạo lồng (`order: { … events: { create: … } }`) KHÔNG truyền `organization_id` trong khối con — Prisma tự lấy từ cha. Bảng mới có cha thuộc tenant: dùng cùng cách, cha thêm `@@unique([id, organization_id])`.
+6. **Timestamptz** — mọi cột `DateTime` khai `@db.Timestamptz(3)`; cột mới cũng vậy.
 
 > Xem thêm: skill `api-development` §7 cho tenant trong use-case. Skill `testing` §4 cho tenant test.

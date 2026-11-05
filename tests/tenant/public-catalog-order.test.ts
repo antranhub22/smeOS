@@ -33,9 +33,11 @@ describe("cách ly tenant — đặt hàng trên catalog công khai", () => {
     const leadB = await prisma.leads.create({
       data: { organization_id: b.organizationId, name: "Lan", phone: "0901234567", source: "MANUAL", consent_at: new Date(), consent_version: "x" },
     })
-    const r = await placePublicCatalogOrder("catalog-a", { productId: "p1", quantity: 1, name: "Lan", phone: "0901234567", address: "12 Lê Lợi" }, undefined, {
+    // Sản phẩm phải có thật: order_items.product_id có khoá ngoại về products.
+    const product = await prisma.products.create({ data: { organization_id: a.organizationId, code: "HH01", name: "Bó hồng" } })
+    const r = await placePublicCatalogOrder("catalog-a", { productId: product.id, quantity: 1, name: "Lan", phone: "0901234567", address: "12 Lê Lợi" }, undefined, {
       catalogLinks: new CatalogLinkRepository(),
-      catalog: async () => ({ status: "ACTIVE", entryActions: { order: true, contact: true }, products: [{ id: "p1", code: "HH01", name: "Bó hồng", price: 450_000 }] }) as never,
+      catalog: async () => ({ status: "ACTIVE", entryActions: { order: true, contact: true }, products: [{ id: product.id, code: "HH01", name: "Bó hồng", price: 450_000 }] }) as never,
       repo: new PublicOrderRepository(),
       customers: new BrochureCheckoutRepository(),
       isMember: isActiveOrgMember,

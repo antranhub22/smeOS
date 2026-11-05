@@ -132,7 +132,6 @@ export class OrderRepository implements IOrderRepository {
           lead_id: input.leadId ?? null,
           events: {
             create: {
-              organization_id: organizationId,
               axis: "order",
               to_value: "DRAFT",
               actor_id: createdBy,
