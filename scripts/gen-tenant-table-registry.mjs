@@ -15,20 +15,31 @@ export function parseSchema(schemaText) {
     const [, name, body] = m
     const tenant = /^\s+organization_id\s/m.test(body)
     const parents = new Set()
+    const pii = {}
+    let pendingPii = null
     for (const line of body.split("\n")) {
+      const label = line.match(/^\s+\/\/\/\s*@pii\s+(\w+)/)
+      if (label) { pendingPii = label[1]; continue }
+      const field = line.match(/^\s+(\w+)\s+\w/)
+      if (field && !line.trim().startsWith("//")) {
+        if (pendingPii) pii[field[1]] = pendingPii
+        pendingPii = null
+      }
       const rel = line.match(/^\s+\w+\s+(\w+)\??\s+@relation\(/)
       if (rel && /fields:\s*\[/.test(line) && rel[1] !== name) parents.add(rel[1])
     }
-    models.set(name, { scope: tenant ? "TENANT" : "GLOBAL", parents: [...parents].sort() })
+    models.set(name, { scope: tenant ? "TENANT" : "GLOBAL", parents: [...parents].sort(), pii })
   }
   return new Map([...models].sort(([a], [b]) => a.localeCompare(b)))
 }
 
 export function buildRegistrySource(schemaText) {
   const models = parseSchema(schemaText)
-  const rows = [...models].map(([name, { scope, parents }]) => {
+  const rows = [...models].map(([name, { scope, parents, pii }]) => {
     const p = parents.length ? `[${parents.map((x) => `"${x}"`).join(", ")}]` : "[]"
-    return `  ${name}: { scope: "${scope}", parents: ${p} },`
+    const cols = Object.entries(pii).sort(([a], [b]) => a.localeCompare(b))
+    const q = cols.length ? `, pii: { ${cols.map(([c, k]) => `${c}: "${k}"`).join(", ")} }` : ""
+    return `  ${name}: { scope: "${scope}", parents: ${p}${q} },`
   })
   const tenant = [...models].filter(([, v]) => v.scope === "TENANT").map(([n]) => `  "${n}",`)
   return [
@@ -37,11 +48,16 @@ export function buildRegistrySource(schemaText) {
     "",
     'export type TableScope = "TENANT" | "GLOBAL"',
     "",
+    "/** contact · address · tax · identity = dữ liệu cá nhân; business = liên hệ của doanh nghiệp (không mã hoá). */",
+    'export type PiiCategory = "contact" | "address" | "tax" | "identity" | "free_text" | "business"',
+    "",
     "export interface TableEntry {",
     "  /** TENANT = có cột organization_id; GLOBAL = bảng nền tảng hoặc của người dùng. */",
     "  readonly scope: TableScope",
     "  /** Bảng mà bảng này trỏ khoá ngoại tới (không gồm chính nó) — thứ tự xuất/nhập. */",
     "  readonly parents: readonly string[]",
+    "  /** Cột dữ liệu cá nhân theo nhãn `/// @pii <loại>` trong schema (ADR-014 D-P1). */",
+    "  readonly pii?: Readonly<Record<string, PiiCategory>>",
     "}",
     "",
     "export const TABLE_REGISTRY: Readonly<Record<string, TableEntry>> = {",

@@ -94,10 +94,13 @@ enum user_approval_status {
 
 model users {
   id                   String               @id @default(uuid())
+  /// @pii contact
   email                String               @unique
   password_hash        String?
+  /// @pii identity
   name                 String?
   avatar_url           String?
+  /// @pii contact
   phone                String?
   locale               String               @default("vi")
   // Mặc định APPROVED: tài khoản có sẵn, nhân viên được mời, tài khoản tạo bằng script vận hành
@@ -308,6 +311,7 @@ model branches {
   organization_id String
   name            String
   code            String
+  /// @pii business
   address         String?
   is_active       Boolean  @default(true)
   created_at      DateTime @default(now()) @db.Timestamptz(3)
@@ -337,6 +341,7 @@ model chain_branches {
   organization_id      String
   branch_code          String
   name                 String
+  /// @pii business
   address              String?
   /// Khu vực hành chính (PO 22/10/2026) — sàng lọc theo phường/quận/tỉnh khi không có toạ độ
   ward                 String?
@@ -970,11 +975,15 @@ model business_profiles {
   organization_id String
   legal_name      String?
   display_name    String
+  /// @pii business
   phone           String?
+  /// @pii business
   email           String?
+  /// @pii business
   address         String?
   website         String?
   social_links    Json?
+  /// @pii business
   tax_code        String?
   description     String?
   operating_hours Json?
@@ -1927,6 +1936,7 @@ model orders {
   card_message     String? // lời nhắn thiệp, tách khỏi ghi chú nội bộ
   internal_note    String?
   delivery_window  Json? // ngày và khung giờ đã hẹn
+  /// @pii address
   delivery_address Json?
 
   /// Hoá đơn VAT (PO 15/10/2026). Bật VAT → total_vnd = giá trước thuế + vat_amount_vnd.
@@ -1934,9 +1944,13 @@ model orders {
   vat_enabled         Boolean @default(false)
   vat_rate            Int     @default(10)
   vat_amount_vnd      Decimal @default(0) @db.Decimal(14, 2)
+  /// @pii tax
   vat_company_name    String?
+  /// @pii tax
   vat_tax_code        String?
+  /// @pii tax
   vat_company_address String?
+  /// @pii tax
   vat_email           String?
 
   created_by String
@@ -2088,9 +2102,13 @@ model customers {
   id                String        @id @default(uuid())
   organization_id   String
   code              String // KH-0001, KH-0002
+  /// @pii identity
   name              String
+  /// @pii contact
   phone             String
+  /// @pii contact
   email             String?
+  /// @pii address
   address           String?
   tier              customer_tier @default(NEW)
   notes             String?
@@ -2133,6 +2151,7 @@ model customer_occasions {
   date                 String // MM-DD hoặc YYYY-MM-DD
   is_recurring         Boolean  @default(true)
   reminder_days_before Int      @default(7)
+  /// @pii identity
   recipient_name       String?
   notes                String?
   created_at           DateTime @default(now()) @db.Timestamptz(3)
@@ -3152,7 +3171,9 @@ model partners {
   organization_id String
   code            String
   name            String
+  /// @pii contact
   phone           String
+  /// @pii address
   address         String?
   district        String?
   province        String?
@@ -3194,11 +3215,13 @@ model order_coordinations {
   /// Ảnh mẫu tải lên lúc tiếp nhận (id `assets`), khi không lấy từ Product Master.
   sample_asset_id       String?
   shipper_name          String?
+  /// @pii contact
   shipper_phone         String?
   carrier               String?
   /// PICKED_UP · ON_THE_WAY · DELIVERED_SUCCESS · DELIVERY_FAILED (F12).
   delivery_state        String?
   pod_asset_id          String?
+  /// @pii identity
   pod_recipient_name    String?
   pod_captured_at       DateTime?               @db.Timestamptz(3)
   partner_payout_vnd    Decimal?                @db.Decimal(14, 2)
@@ -3534,7 +3557,9 @@ model greeting_sessions {
   catalog_id                     String
   send_code                      String // T01-001, T01-002...
   sale_id                        String // Người tạo link chào khách
+  /// @pii identity
   customer_name                  String?
+  /// @pii contact
   customer_phone                 String?
   status                         String    @default("CREATED") // CREATED | OPENED | BROWSING | SELECTED | ORDER_SUBMITTED | PAYMENT_REPORTED | COMPLETED
   selected_product_id            String?
@@ -3814,9 +3839,13 @@ model chain_partnerships {
   status           String   @default("ACTIVE") // PENDING | ACTIVE | SUSPENDED | TERMINATED
   capacity_daily   Int      @default(10)
   commission_rate  Decimal?
+  /// @pii identity
   contact_name     String?
+  /// @pii contact
   contact_phone    String?
+  /// @pii contact
   contact_email    String?
+  /// @pii business
   address          String?
   province         String?
   district         String?
@@ -4300,7 +4329,9 @@ model leads {
   id                 String    @id @default(uuid())
   organization_id    String
   customer_id        String?
+  /// @pii identity
   name               String
+  /// @pii contact
   phone              String
   message            String?
   source             String // CATALOG_LINK | SHORT_LINK | LANDING | CHAT | MANUAL
@@ -4398,6 +4429,7 @@ model partner_marketplace_stores {
   match_key        String   @unique
   shop_name        String
   tier             String
+  /// @pii business
   address          String   @default("")
   /// Toàn bộ hồ sơ khảo sát (PartnerStoreMarketplaceEntity, trừ id)
   profile          Json

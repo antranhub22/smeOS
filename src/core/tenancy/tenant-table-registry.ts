@@ -3,11 +3,16 @@
 
 export type TableScope = "TENANT" | "GLOBAL"
 
+/** contact · address · tax · identity = dữ liệu cá nhân; business = liên hệ của doanh nghiệp (không mã hoá). */
+export type PiiCategory = "contact" | "address" | "tax" | "identity" | "free_text" | "business"
+
 export interface TableEntry {
   /** TENANT = có cột organization_id; GLOBAL = bảng nền tảng hoặc của người dùng. */
   readonly scope: TableScope
   /** Bảng mà bảng này trỏ khoá ngoại tới (không gồm chính nó) — thứ tự xuất/nhập. */
   readonly parents: readonly string[]
+  /** Cột dữ liệu cá nhân theo nhãn `/// @pii <loại>` trong schema (ADR-014 D-P1). */
+  readonly pii?: Readonly<Record<string, PiiCategory>>
 }
 
 export const TABLE_REGISTRY: Readonly<Record<string, TableEntry>> = {
@@ -19,17 +24,17 @@ export const TABLE_REGISTRY: Readonly<Record<string, TableEntry>> = {
   asset_usages: { scope: "TENANT", parents: ["campaigns", "organizations", "short_links"] },
   assets: { scope: "TENANT", parents: ["organizations", "products"] },
   audit_logs: { scope: "TENANT", parents: ["organizations"] },
-  branches: { scope: "TENANT", parents: ["organizations"] },
+  branches: { scope: "TENANT", parents: ["organizations"], pii: { address: "business" } },
   brand_library_items: { scope: "TENANT", parents: ["organizations"] },
   brand_library_versions: { scope: "TENANT", parents: ["brand_library_items", "organizations"] },
   brand_profiles: { scope: "TENANT", parents: ["organizations"] },
-  business_profiles: { scope: "TENANT", parents: ["organizations"] },
+  business_profiles: { scope: "TENANT", parents: ["organizations"], pii: { address: "business", email: "business", phone: "business", tax_code: "business" } },
   campaign_packages: { scope: "TENANT", parents: ["organizations", "products"] },
   campaigns: { scope: "TENANT", parents: ["organizations"] },
   capability_overrides: { scope: "TENANT", parents: ["organizations", "roles"] },
   catalog_links: { scope: "TENANT", parents: ["organizations"] },
-  chain_branches: { scope: "TENANT", parents: ["organizations"] },
-  chain_partnerships: { scope: "GLOBAL", parents: ["organizations"] },
+  chain_branches: { scope: "TENANT", parents: ["organizations"], pii: { address: "business" } },
+  chain_partnerships: { scope: "GLOBAL", parents: ["organizations"], pii: { address: "business", contact_email: "contact", contact_name: "identity", contact_phone: "contact" } },
   chat_channel_integrations: { scope: "TENANT", parents: ["organizations"] },
   chat_conversations: { scope: "TENANT", parents: ["customers", "organizations"] },
   chat_messages: { scope: "TENANT", parents: ["chat_conversations", "organizations"] },
@@ -40,9 +45,9 @@ export const TABLE_REGISTRY: Readonly<Record<string, TableEntry>> = {
   credit_transactions: { scope: "TENANT", parents: ["organizations"] },
   customer_consents: { scope: "TENANT", parents: ["customers", "organizations"] },
   customer_interactions: { scope: "TENANT", parents: ["asset_usages", "customers", "organizations"] },
-  customer_occasions: { scope: "TENANT", parents: ["customers", "organizations"] },
+  customer_occasions: { scope: "TENANT", parents: ["customers", "organizations"], pii: { recipient_name: "identity" } },
   customer_segments: { scope: "TENANT", parents: ["organizations"] },
-  customers: { scope: "TENANT", parents: ["organizations"] },
+  customers: { scope: "TENANT", parents: ["organizations"], pii: { address: "address", email: "contact", name: "identity", phone: "contact" } },
   decision_registry: { scope: "GLOBAL", parents: [] },
   field_catalog_values: { scope: "GLOBAL", parents: ["field_catalogs"] },
   field_catalogs: { scope: "GLOBAL", parents: [] },
@@ -60,7 +65,7 @@ export const TABLE_REGISTRY: Readonly<Record<string, TableEntry>> = {
   greeting_messages: { scope: "TENANT", parents: ["greeting_sessions", "orders", "organizations"] },
   greeting_notifications: { scope: "TENANT", parents: ["orders", "organizations"] },
   greeting_payment_events: { scope: "TENANT", parents: ["orders", "organizations"] },
-  greeting_sessions: { scope: "TENANT", parents: ["greeting_catalogs", "orders", "organizations", "products"] },
+  greeting_sessions: { scope: "TENANT", parents: ["greeting_catalogs", "orders", "organizations", "products"], pii: { customer_name: "identity", customer_phone: "contact" } },
   greeting_share_links: { scope: "TENANT", parents: ["greeting_catalogs", "organizations"] },
   idempotency_keys: { scope: "TENANT", parents: ["organizations"] },
   integration_connections: { scope: "TENANT", parents: ["organizations"] },
@@ -74,7 +79,7 @@ export const TABLE_REGISTRY: Readonly<Record<string, TableEntry>> = {
   job_events: { scope: "TENANT", parents: ["generation_jobs", "organizations"] },
   journey_runs: { scope: "TENANT", parents: ["organizations", "workspaces"] },
   landing_pages: { scope: "TENANT", parents: ["organizations"] },
-  leads: { scope: "TENANT", parents: ["customers", "orders", "organizations", "short_links"] },
+  leads: { scope: "TENANT", parents: ["customers", "orders", "organizations", "short_links"], pii: { name: "identity", phone: "contact" } },
   link_events: { scope: "TENANT", parents: ["organizations", "short_links"] },
   market_sources: { scope: "GLOBAL", parents: [] },
   material_price_history: { scope: "TENANT", parents: ["materials", "organizations"] },
@@ -92,18 +97,18 @@ export const TABLE_REGISTRY: Readonly<Record<string, TableEntry>> = {
   order_approval_requests: { scope: "TENANT", parents: ["orders", "organizations"] },
   order_assignments: { scope: "TENANT", parents: ["orders", "organizations"] },
   order_change_requests: { scope: "TENANT", parents: ["orders", "organizations"] },
-  order_coordinations: { scope: "TENANT", parents: ["orders", "organizations", "partners"] },
+  order_coordinations: { scope: "TENANT", parents: ["orders", "organizations", "partners"], pii: { pod_recipient_name: "identity", shipper_phone: "contact" } },
   order_events: { scope: "TENANT", parents: ["orders", "organizations"] },
   order_exceptions: { scope: "TENANT", parents: ["orders", "organizations"] },
   order_info_requests: { scope: "TENANT", parents: ["orders", "organizations"] },
   order_items: { scope: "TENANT", parents: ["orders", "organizations", "product_variants", "products"] },
   order_payments: { scope: "TENANT", parents: ["orders", "organizations"] },
   order_qc_records: { scope: "TENANT", parents: ["orders", "organizations"] },
-  orders: { scope: "TENANT", parents: ["branches", "customers", "greeting_sessions", "leads", "organizations", "vouchers"] },
+  orders: { scope: "TENANT", parents: ["branches", "customers", "greeting_sessions", "leads", "organizations", "vouchers"], pii: { delivery_address: "address", vat_company_address: "tax", vat_company_name: "tax", vat_email: "tax", vat_tax_code: "tax" } },
   organizations: { scope: "GLOBAL", parents: [] },
   partner_marketplace_share_links: { scope: "GLOBAL", parents: [] },
-  partner_marketplace_stores: { scope: "GLOBAL", parents: [] },
-  partners: { scope: "TENANT", parents: ["organizations"] },
+  partner_marketplace_stores: { scope: "GLOBAL", parents: [], pii: { address: "business" } },
+  partners: { scope: "TENANT", parents: ["organizations"], pii: { address: "address", phone: "contact" } },
   platform_audit_logs: { scope: "GLOBAL", parents: [] },
   platform_operators: { scope: "GLOBAL", parents: ["users"] },
   platform_role_capabilities: { scope: "GLOBAL", parents: ["platform_operators"] },
@@ -150,7 +155,7 @@ export const TABLE_REGISTRY: Readonly<Record<string, TableEntry>> = {
   trend_timeseries: { scope: "GLOBAL", parents: ["topics"] },
   usage: { scope: "TENANT", parents: ["organizations", "workspaces"] },
   usage_limits: { scope: "TENANT", parents: ["organizations"] },
-  users: { scope: "GLOBAL", parents: [] },
+  users: { scope: "GLOBAL", parents: [], pii: { email: "contact", name: "identity", phone: "contact" } },
   video_jobs: { scope: "TENANT", parents: ["organizations", "products"] },
   video_scenes: { scope: "TENANT", parents: ["organizations", "video_jobs"] },
   voice_clones: { scope: "TENANT", parents: ["organizations"] },

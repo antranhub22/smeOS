@@ -20,6 +20,19 @@ describe("sổ bảng-thuộc-tenant", () => {
     expect([...TENANT_SCOPED_TABLES]).toEqual(tenant)
   })
 
+  it("cột có tên kiểu dữ liệu cá nhân phải có nhãn `/// @pii` (ADR-014 D-P1)", () => {
+    const schema = readFileSync(SCHEMA_PATH, "utf8")
+    const pattern = /(phone|email|address|tax_code|customer_name|recipient_name|contact_name|vat_company)/i
+    const missing: string[] = []
+    for (const [, model, body] of schema.matchAll(/^model (\w+) \{([\s\S]*?)^\}/gm)) {
+      for (const line of (body ?? "").split("\n")) {
+        const col = line.match(/^\s+(\w+)\s+(String|Json)\??/)?.[1]
+        if (col && pattern.test(col) && !TABLE_REGISTRY[model ?? ""]?.pii?.[col]) missing.push(`${model}.${col}`)
+      }
+    }
+    expect(missing, "thêm `/// @pii <loại>` ngay trên cột").toEqual([])
+  })
+
   it("bảng tenant chỉ trỏ khoá ngoại tới bảng có trong sổ", () => {
     for (const [name, entry] of Object.entries(TABLE_REGISTRY)) {
       for (const parent of entry.parents) expect(TABLE_REGISTRY[parent], `${name} → ${parent}`).toBeDefined()
