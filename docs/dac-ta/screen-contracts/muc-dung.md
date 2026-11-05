@@ -1,3 +1,19 @@
+---
+id: SCR-STORE-muc-dung
+tier: STORE
+module: muc-dung
+route: /muc-dung
+archetype: A
+snapshots:
+  - 390x844
+  - 1280x800
+acceptance:
+  - Tiêu đề cấp 1 qua PageHeader/ToolHero (ADR-011 D-UI-05)
+  - Tối đa 1 nút chính (primary) theo K2
+  - Đủ trạng thái tải, rỗng, lỗi, không quyền
+  - Không vi phạm axe-core critical/serious ở 390px và 1280px
+---
+
 # Screen Contract — Mức Dùng & Hạn Mức Credit Của Tiệm
 
 **Tuyến:** `/muc-dung` · **Tệp chính:** `src/app/(app)/muc-dung/page.tsx`, `src/components/usage/monthly-limit-card.tsx`, `subscription-card.tsx` · **Cập nhật:** 05/11/2026 · **Thẻ:** T5.D7

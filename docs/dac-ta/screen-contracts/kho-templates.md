@@ -1,3 +1,19 @@
+---
+id: SCR-STORE-kho-templates
+tier: STORE
+module: products
+route: /kho-templates
+archetype: B
+snapshots:
+  - 390x844
+  - 1280x800
+acceptance:
+  - Tiêu đề cấp 1 qua PageHeader/ToolHero (ADR-011 D-UI-05)
+  - Tối đa 1 nút chính (primary) theo K2
+  - Đủ trạng thái tải, rỗng, lỗi, không quyền
+  - Không vi phạm axe-core critical/serious ở 390px và 1280px
+---
+
 # Screen Contract — Kho Templates Hệ Thống
 
 **Tuyến:** `/kho-templates` · **Tệp chính:** `src/app/(app)/kho-templates/page.tsx` · **Cập nhật:** 27/09/2026 · **Thẻ:** T5.C6

@@ -1,3 +1,19 @@
+---
+id: SCR-STORE-gia
+tier: STORE
+module: products
+route: /gia
+archetype: F
+snapshots:
+  - 390x844
+  - 1280x800
+acceptance:
+  - Tiêu đề cấp 1 qua PageHeader/ToolHero (ADR-011 D-UI-05)
+  - Tối đa 1 nút chính (primary) theo K2
+  - Đủ trạng thái tải, rỗng, lỗi, không quyền
+  - Không vi phạm axe-core critical/serious ở 390px và 1280px
+---
+
 # Screen Contract — Tính giá sản phẩm (`/gia`)
 
 **Tuyến:** `/gia` · **Tệp chính:** `src/app/(app)/gia/page.tsx`, `pricing-calculator-card.tsx`, `pricing-rules-config-card.tsx`, `customer-tier-pricing-card.tsx` · **Cập nhật:** 05/11/2026 · **Thẻ:** T5.B6

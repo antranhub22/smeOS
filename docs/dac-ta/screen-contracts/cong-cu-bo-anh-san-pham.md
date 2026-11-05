@@ -1,3 +1,19 @@
+---
+id: SCR-STORE-cong-cu-bo-anh-san-pham
+tier: STORE
+module: product-image-set
+route: /cong-cu/bo-anh-san-pham
+archetype: E
+snapshots:
+  - 390x844
+  - 1280x800
+acceptance:
+  - Tiêu đề cấp 1 qua PageHeader/ToolHero (ADR-011 D-UI-05)
+  - Tối đa 1 nút chính (primary) theo K2
+  - Đủ trạng thái tải, rỗng, lỗi, không quyền
+  - Không vi phạm axe-core critical/serious ở 390px và 1280px
+---
+
 # Screen Contract — Tạo bộ ảnh sản phẩm đa kênh
 
 **Tuyến:** `/cong-cu/bo-anh-san-pham` · **Tệp chính:** `src/components/product-image-set/product-image-set-flow.tsx` (cờ `ux_pd_bo_anh_san_pham`; tắt cờ → `product-image-set-client.tsx`) · **Cập nhật:** 29/10/2026 · **Thẻ:** PD đợt A-1

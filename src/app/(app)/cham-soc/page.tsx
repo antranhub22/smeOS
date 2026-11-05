@@ -1,18 +1,15 @@
 "use client"
 
 import React, { useState, use } from "react"
-import { Heart } from "@/components/ui/icon-set/heart"
 import { History } from "@/components/ui/icon-set/history"
 import { Users } from "@/components/ui/icon-set/users"
 import { Sparkles } from "@/components/ui/icon-set/sparkles"
-import { ArrowLeft } from "@/components/ui/icon-set/arrow-left"
 import { Button } from "@/components/ui/button"
-import { MobileMenuButton } from "@/components/layout/mobile-nav-context"
+import { PageHeader } from "@/components/ui/page-header"
 import { useSession } from "@/lib/session"
 import { CareWorkflow } from "@/components/marketing-center/care/care-workflow"
 import { RecentInteractionsList } from "@/components/marketing-center/care/recent-interactions-list"
 import type { CareCardAssetCode } from "@/modules/care-cards/domain/care-card"
-import Link from "next/link"
 
 interface PageProps {
   searchParams?: Promise<{ asset?: string }>
@@ -30,57 +27,43 @@ export default function CustomerCarePage({ searchParams }: PageProps) {
 
   return (
     <div className="min-h-screen bg-bg pb-16">
-      {/* Top Header */}
-      <header className="sticky top-0 z-30 bg-surface/90 backdrop-blur-md border-b border-border">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <MobileMenuButton />
-            <Link
-              href="/cong-cu"
-              className="p-1.5 rounded-lg text-text-muted hover:text-text hover:bg-surface-alt transition-colors"
-              title="Quay lại Trung tâm công cụ"
-            >
-              <ArrowLeft className="w-5 h-5" />
-            </Link>
-            <div>
-              <div className="flex items-center gap-2">
-                <Heart className="w-5 h-5 text-primary" aria-hidden="true" />
-                <h2 className="text-title-sm font-bold text-text">Chăm sóc khách hàng</h2>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
+        <PageHeader
+          title="Chăm sóc khách hàng"
+          description="Gắn kết khách cũ, gửi thiệp tri ân và nhắc lịch chăm sóc"
+          backHref="/cong-cu"
+          backLabel="Trung tâm công cụ"
+          actions={
+              <div role="group" aria-label="Chế độ xem" className="flex items-center p-1 rounded-xl bg-surface-alt border border-border">
+                <Button
+                  type="button"
+                  variant={activeTab === "workflow" ? "secondary" : "ghost"}
+                  aria-pressed={activeTab === "workflow"}
+                  size="sm"
+                  onClick={() => setActiveTab("workflow")}
+                  className="flex items-center gap-1.5 px-3 py-1.5 h-auto text-caption font-semibold"
+                >
+                  <Sparkles className="w-4 h-4" />
+                  <span>Gửi chăm sóc</span>
+                </Button>
+                <Button
+                  type="button"
+                  variant={activeTab === "history" ? "secondary" : "ghost"}
+                  aria-pressed={activeTab === "history"}
+                  size="sm"
+                  onClick={() => setActiveTab("history")}
+                  className="flex items-center gap-1.5 px-3 py-1.5 h-auto text-caption font-semibold"
+                >
+                  <History className="w-4 h-4" />
+                  <span>Nhật ký tương tác</span>
+                </Button>
               </div>
-              <p className="text-caption text-text-muted hidden sm:block">
-                Gắn kết khách cũ, gửi thiệp tri ân và nhắc lịch chăm sóc
-              </p>
-            </div>
-          </div>
-
-          {/* Navigation Tabs */}
-          <div className="flex items-center p-1 rounded-xl bg-surface-alt border border-border">
-            <Button
-              type="button"
-              variant={activeTab === "workflow" ? "secondary" : "ghost"}
-              size="sm"
-              onClick={() => setActiveTab("workflow")}
-              className="flex items-center gap-1.5 px-3 py-1.5 h-auto text-caption font-semibold"
-            >
-              <Sparkles className="w-4 h-4" />
-              <span>Gửi chăm sóc</span>
-            </Button>
-            <Button
-              type="button"
-              variant={activeTab === "history" ? "secondary" : "ghost"}
-              size="sm"
-              onClick={() => setActiveTab("history")}
-              className="flex items-center gap-1.5 px-3 py-1.5 h-auto text-caption font-semibold"
-            >
-              <History className="w-4 h-4" />
-              <span>Nhật ký tương tác</span>
-            </Button>
-          </div>
-        </div>
-      </header>
+          }
+        />
+      </div>
 
       {/* Main Content Area */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
         {activeTab === "workflow" ? (
           <CareWorkflow
             initialAssetCode={initialAssetCode}
@@ -98,7 +81,7 @@ export default function CustomerCarePage({ searchParams }: PageProps) {
             <RecentInteractionsList />
           </div>
         )}
-      </main>
+      </div>
     </div>
   )
 }

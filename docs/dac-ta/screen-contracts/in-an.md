@@ -1,3 +1,19 @@
+---
+id: SCR-STORE-in-an
+tier: STORE
+module: print
+route: /in-an
+archetype: E
+snapshots:
+  - 390x844
+  - 1280x800
+acceptance:
+  - Tiêu đề cấp 1 qua PageHeader/ToolHero (ADR-011 D-UI-05)
+  - Tối đa 1 nút chính (primary) theo K2
+  - Đủ trạng thái tải, rỗng, lỗi, không quyền
+  - Không vi phạm axe-core critical/serious ở 390px và 1280px
+---
+
 # Screen Contract — Ấn phẩm & In ấn chất lượng cao (Print & Preflight Workspace)
 
 **Tuyến:** `/in-an` · **Tệp chính:** `src/app/(app)/in-an/page.tsx`, `src/components/marketing-center/print/` · **Cập nhật:** 01/11/2026 (PO 01/11/2026, PR-6) · **Thẻ:** Module 06 Ấn phẩm & Vật phẩm tại quầy · **Asset:** #58–#67 (10 ấn phẩm kết nối workspace chuẩn nhà in)

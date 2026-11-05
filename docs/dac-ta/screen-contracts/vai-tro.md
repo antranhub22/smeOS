@@ -1,3 +1,19 @@
+---
+id: SCR-STORE-vai-tro
+tier: STORE
+module: organization
+route: /vai-tro
+archetype: B
+snapshots:
+  - 390x844
+  - 1280x800
+acceptance:
+  - Tiêu đề cấp 1 qua PageHeader/ToolHero (ADR-011 D-UI-05)
+  - Tối đa 1 nút chính (primary) theo K2
+  - Đủ trạng thái tải, rỗng, lỗi, không quyền
+  - Không vi phạm axe-core critical/serious ở 390px và 1280px
+---
+
 # Screen Contract — Danh mục vai trò (`/vai-tro`)
 
 **Tuyến:** `/vai-tro` · **Tệp chính:** `src/app/(app)/vai-tro/page.tsx` · **Cập nhật:** 26/09/2026 · **Thẻ:** T5.A3

@@ -1,3 +1,19 @@
+---
+id: SCR-STORE-hoi-thoai
+tier: STORE
+module: organization
+route: /hoi-thoai
+archetype: B
+snapshots:
+  - 390x844
+  - 1280x800
+acceptance:
+  - Tiêu đề cấp 1 qua PageHeader/ToolHero (ADR-011 D-UI-05)
+  - Tối đa 1 nút chính (primary) theo K2
+  - Đủ trạng thái tải, rỗng, lỗi, không quyền
+  - Không vi phạm axe-core critical/serious ở 390px và 1280px
+---
+
 # Screen Contract — AI Chat Assistant & Hội Thoại Bán Hàng (`/hoi-thoai`, `/hoi-thoai/kenh-tich-hop`)
 
 **Tuyến:** `/hoi-thoai`, `/hoi-thoai/kenh-tich-hop` · **Tệp chính:** `src/app/(app)/hoi-thoai/page.tsx`, `kenh-tich-hop/page.tsx`, `channel-config-modal.tsx` · **Cập nhật:** 26/09/2026 · **Thẻ:** T5.B4
