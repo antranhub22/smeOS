@@ -1,4 +1,5 @@
 import type { TenantContext } from "@/core/tenancy"
+import { parsePeakHours, parseTierDiscount } from "@/modules/products/domain/customer-tier-pricing"
 import {
   mergeEffectiveFloorCeilingRatio,
   mergeEffectivePricingConfig,
@@ -33,5 +34,8 @@ export async function getPricingRules(
     surcharge_groups: config.surchargeGroups,
     optimal_price_ratio: config.optimalPriceRatio,
     floor_ceiling_ratio: floorCeilingRatio,
+    // Checklist ALG 3.1 — áp ở báo giá Thẻ Chào theo phạm vi tổ chức
+    customer_tier_discount: parseTierDiscount(rows.find((r) => r.key === "customer_tier_discount" && r.branch_id === null)?.value),
+    peak_hour_surcharge: parsePeakHours(rows.find((r) => r.key === "peak_hour_surcharge" && r.branch_id === null)?.value),
   }
 }

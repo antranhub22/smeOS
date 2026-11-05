@@ -1,4 +1,5 @@
 import { randomBytes } from "node:crypto"
+import { signStorageUrl } from "@/modules/assets/infra/storage-signing"
 import { scopedWhere, type TenantContext } from "@/core/tenancy"
 import { prisma } from "@/core/tenancy/infra/prisma"
 import type { Prisma, quotation_status } from "@/generated/prisma/client"
@@ -68,6 +69,7 @@ export class QuotationRepository implements IQuotationRepository {
         valid_until: dto.validUntil ?? null,
         subtotal: dto.subtotal,
         discount_amount: dto.discountAmount,
+        shipping_fee: dto.shippingFee,
         total_amount: dto.totalAmount,
         terms: dto.terms ?? null,
         notes: dto.notes ?? null,
@@ -77,6 +79,7 @@ export class QuotationRepository implements IQuotationRepository {
             organization_id: ctx.organizationId,
             product_id: it.productId ?? null,
             name: it.name,
+            variant_label: it.variantLabel ?? null,
             qty: it.qty,
             unit_price: it.unitPrice,
             total_price: it.totalPrice,
@@ -117,7 +120,16 @@ export class QuotationRepository implements IQuotationRepository {
       where: { public_token: token, status: { not: "DRAFT" } },
       include: PUBLIC_QUOTATION_INCLUDE,
     })
-    return row ? toPublicView(row) : null
+    if (!row) return null
+    // Ảnh mẫu: chỉ ký asset thuộc đúng tổ chức sở hữu báo giá (checklist ALG 3.11)
+    const assetIds = row.items.flatMap((it) => (it.product?.images[0] ? [it.product.images[0].asset_id] : []))
+    const urls = new Map<string, string>()
+    if (assetIds.length > 0) {
+      const assets = await prisma.assets.findMany({ where: { id: { in: assetIds }, organization_id: row.organization_id }, select: { id: true, storage_key: true } })
+      const exp = Date.now() + PUBLIC_IMAGE_TTL_MS
+      for (const a of assets) urls.set(a.id, `/api/v1/storage/${a.storage_key}?exp=${exp}&sig=${signStorageUrl(a.storage_key, exp)}`)
+    }
+    return toPublicView(row, urls)
   }
 
   findForeignReferences(ctx: TenantContext, refs: QuotationReferences): Promise<string[]> {
@@ -207,6 +219,7 @@ export class QuotationRepository implements IQuotationRepository {
     if (dto.validUntil !== undefined) updateData.valid_until = dto.validUntil
     if (dto.subtotal !== undefined) updateData.subtotal = dto.subtotal
     if (dto.discountAmount !== undefined) updateData.discount_amount = dto.discountAmount
+    if (dto.shippingFee !== undefined) updateData.shipping_fee = dto.shippingFee
     if (dto.totalAmount !== undefined) updateData.total_amount = dto.totalAmount
     if (dto.terms !== undefined) updateData.terms = dto.terms
     if (dto.notes !== undefined) updateData.notes = dto.notes
@@ -223,6 +236,7 @@ export class QuotationRepository implements IQuotationRepository {
           organization_id: ctx.organizationId,
           product_id: it.productId ?? null,
           name: it.name,
+          variant_label: it.variantLabel ?? null,
           qty: it.qty,
           unit_price: it.unitPrice,
           total_price: it.totalPrice,
@@ -264,6 +278,8 @@ export class QuotationRepository implements IQuotationRepository {
     return counts
   }
 }
+
+const PUBLIC_IMAGE_TTL_MS = 7 * 86_400_000
 
 let repositoryInstance: IQuotationRepository | null = null
 

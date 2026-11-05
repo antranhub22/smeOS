@@ -12,12 +12,16 @@ import type {
   UpdateQuotationDTO,
 } from "../domain/repositories/quotation-repository.interface"
 import { getQuotationRepository } from "../infra/quotation-repository"
+import { QuotationRevisionRepository } from "../infra/quotation-revision-repository"
+import { quotationSnapshot } from "../domain/quotation-revision"
 import type { CreateQuotationItemInput } from "./create-quotation.use-case"
 
 export interface UpdateQuotationInput {
   status?: QuotationStatus | undefined
   validUntil?: Date | string | null | undefined
   discountAmount?: number | undefined
+  /** Phí vận chuyển (checklist ALG 3.8) */
+  shippingFee?: number | undefined
   terms?: string | null | undefined
   notes?: string | null | undefined
   items?: CreateQuotationItemInput[] | undefined
@@ -28,6 +32,7 @@ export async function updateQuotationUseCase(
   id: string,
   input: UpdateQuotationInput,
   repo: IQuotationRepository = getQuotationRepository(),
+  revisions: Pick<QuotationRevisionRepository, "add"> = new QuotationRevisionRepository(),
 ): Promise<Quotation> {
   const existing = await repo.findById(ctx, id)
   if (!existing) {
@@ -64,7 +69,7 @@ export async function updateQuotationUseCase(
     dto.notes = input.notes?.trim() ?? null
   }
 
-  if (input.items !== undefined || input.discountAmount !== undefined) {
+  if (input.items !== undefined || input.discountAmount !== undefined || input.shippingFee !== undefined) {
     const rawItems = input.items ?? existing.items
     const itemErr = validateQuotationItems(rawItems)
     if (itemErr) {
@@ -72,21 +77,24 @@ export async function updateQuotationUseCase(
     }
 
     const effectiveDiscount = input.discountAmount ?? existing.discountAmount
-    const { subtotal, discountAmount, totalAmount } = calculateQuotationTotals(
+    const { subtotal, discountAmount, shippingFee, totalAmount } = calculateQuotationTotals(
       rawItems,
       effectiveDiscount,
+      input.shippingFee ?? existing.shippingFee,
     )
     // Giá dưới sàn: Sale bị chặn, Điều hành (C10) lưu được (checklist ALG 3.4)
-    await assertNotBelowFloor(ctx, rawItems.map((it) => ({ productId: it.productId, quantity: Math.max(1, Math.floor(it.qty)) })), totalAmount)
+    await assertNotBelowFloor(ctx, rawItems.map((it) => ({ productId: it.productId, quantity: Math.max(1, Math.floor(it.qty)) })), totalAmount - shippingFee)
 
     dto.subtotal = subtotal
     dto.discountAmount = discountAmount
+    dto.shippingFee = shippingFee
     dto.totalAmount = totalAmount
 
     if (input.items !== undefined) {
       dto.items = input.items.map((it) => ({
         productId: it.productId ?? null,
         name: it.name.trim(),
+        variantLabel: it.variantLabel?.trim() || null,
         qty: Math.max(1, Math.floor(it.qty)),
         unitPrice: Math.max(0, Math.round(it.unitPrice)),
         totalPrice: Math.max(1, Math.floor(it.qty)) * Math.max(0, Math.round(it.unitPrice)),
@@ -95,6 +103,9 @@ export async function updateQuotationUseCase(
     }
   }
 
+  // Sửa nội dung (không phải chỉ đổi trạng thái) → lưu ảnh chụp bản trước khi sửa (checklist ALG 3.10)
+  const contentChanged = Object.keys(dto).some((k) => k !== "status")
+  if (contentChanged) await revisions.add(ctx, id, quotationSnapshot(existing))
   return repo.update(ctx, id, dto)
 }
 

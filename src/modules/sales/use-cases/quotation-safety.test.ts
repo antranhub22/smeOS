@@ -27,6 +27,7 @@ const accepted: Quotation = {
   status: "ACCEPTED",
   subtotal: 100,
   discountAmount: 0,
+  shippingFee: 0,
   totalAmount: 100,
   createdBy: "user-a",
   createdAt: new Date(),

@@ -63,6 +63,8 @@ export const publicQuoteBodySchema = z.object({
   selectedPromotionId: z.string().max(80).optional(),
   /** Ngày giao — để báo khung giờ đã kín và phụ phí ngày lễ */
   deliveryDate: z.string().max(10).optional(),
+  /** Khung giờ giao — phụ phí giờ cao điểm (checklist ALG 3.1) */
+  deliveryTimeSlot: z.string().max(40).optional(),
 })
 
 export function issuesToDetails(issues: z.core.$ZodIssue[]): Record<string, string> {

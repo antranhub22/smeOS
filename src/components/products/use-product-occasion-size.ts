@@ -17,6 +17,8 @@ export function useProductOccasionSize() {
   const [selectedNames, setSelectedNames] = useState("")
   const [heightCm, setHeightCm] = useState("")
   const [widthCm, setWidthCm] = useState("")
+  /** Kiểu dáng tính phí chế tác ngày lễ (PO Q8, checklist ALG 3.6) */
+  const [craftStyle, setCraftStyle] = useState("")
 
   useEffect(() => {
     fetch("/api/v1/occasions")
@@ -35,10 +37,11 @@ export function useProductOccasionSize() {
     return {
       ...(occasionCodes.length > 0 ? { occasionCodes } : {}),
       ...(h > 0 && w > 0 ? { dimensions: { heightCm: h, widthCm: w } } : {}),
+      ...(craftStyle ? { craftStyle } : {}),
     }
-  }, [occasions, selectedNames, heightCm, widthCm])
+  }, [occasions, selectedNames, heightCm, widthCm, craftStyle])
 
-  return { occasions, selectedNames, setSelectedNames, heightCm, setHeightCm, widthCm, setWidthCm, attributes }
+  return { occasions, selectedNames, setSelectedNames, heightCm, setHeightCm, widthCm, setWidthCm, craftStyle, setCraftStyle, attributes }
 }
 
 export type ProductOccasionSize = ReturnType<typeof useProductOccasionSize>

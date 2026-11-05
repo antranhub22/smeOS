@@ -18,18 +18,68 @@ export interface UpsertCustomFieldInput {
   sensitivity: "NORMAL" | "PII" | "SENSITIVE"
   defaultEnabled: boolean
   createdBy: string
+  /** Checklist ALG 1.9 — trường cửa hàng tự tạo; bỏ trống = trường nền tảng. */
+  ownerOrganizationId?: string | null
 }
 
 export class FieldDefinitionRepository {
+  /** Trường của nền tảng (lõi và quản trị nền tảng tạo) — không gồm trường riêng của cửa hàng. */
   list(entity?: string): Promise<field_definitions[]> {
     return prisma.field_definitions.findMany({
-      ...(entity ? { where: { entity } } : {}),
+      where: { owner_organization_id: null, ...(entity ? { entity } : {}) },
+      orderBy: [{ entity: "asc" }, { key: "asc" }],
+    })
+  }
+
+  /** Trường nền tảng cộng trường riêng của đúng một tổ chức (checklist ALG 1.9). */
+  listVisibleTo(organizationId: string, entity?: string): Promise<field_definitions[]> {
+    return prisma.field_definitions.findMany({
+      where: {
+        OR: [{ owner_organization_id: null }, { owner_organization_id: organizationId }],
+        ...(entity ? { entity } : {}),
+      },
       orderBy: [{ entity: "asc" }, { key: "asc" }],
     })
   }
 
   findByKey(key: string): Promise<field_definitions | null> {
     return prisma.field_definitions.findUnique({ where: { key } })
+  }
+
+  async keyExists(key: string): Promise<boolean> {
+    return (await prisma.field_definitions.count({ where: { key } })) > 0
+  }
+
+  /** Số trường riêng của một tổ chức trên một thực thể — hạn mức tính riêng từng cửa hàng. */
+  countOwned(organizationId: string, entity: string): Promise<number> {
+    return prisma.field_definitions.count({ where: { owner_organization_id: organizationId, entity } })
+  }
+
+  /** Trường riêng của tổ chức hoặc trường nền tảng; trường riêng của tổ chức khác → null. */
+  findVisibleByKey(organizationId: string, key: string): Promise<field_definitions | null> {
+    return prisma.field_definitions.findFirst({
+      where: { key, OR: [{ owner_organization_id: null }, { owner_organization_id: organizationId }] },
+    })
+  }
+
+  /** Sửa trường riêng — điều kiện chủ sở hữu nằm trong câu lệnh ghi, không ghi được trường của tổ chức khác. */
+  async patchOwned(
+    organizationId: string,
+    key: string,
+    patch: { label?: string; requirement?: "OPTIONAL" | "RECOMMENDED" | "REQUIRED"; visibility?: unknown; status?: "ACTIVE" | "INACTIVE" },
+    actorUserId: string,
+  ): Promise<field_definitions | null> {
+    const res = await prisma.field_definitions.updateMany({
+      where: { key, owner_organization_id: organizationId },
+      data: {
+        ...(patch.label !== undefined ? { label: patch.label } : {}),
+        ...(patch.requirement !== undefined ? { requirement: patch.requirement } : {}),
+        ...(patch.visibility !== undefined ? { visibility: patch.visibility as InputJsonValue } : {}),
+        ...(patch.status !== undefined ? { status: patch.status } : {}),
+        updated_by: actorUserId,
+      },
+    })
+    return res.count === 0 ? null : prisma.field_definitions.findFirst({ where: { key, owner_organization_id: organizationId } })
   }
 
   /**
@@ -93,6 +143,7 @@ export class FieldDefinitionRepository {
         sensitivity: input.sensitivity,
         status: "ACTIVE",
         default_enabled: input.defaultEnabled,
+        owner_organization_id: input.ownerOrganizationId ?? null,
         created_by: input.createdBy,
         updated_by: input.createdBy,
       },

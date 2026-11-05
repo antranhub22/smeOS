@@ -15,7 +15,7 @@ acceptance:
 
 # Screen Contract — Cài Đặt Tiệm & Cấu Hình Hoạt Động
 
-**Tuyến:** `/cai-dat` · **Tệp chính:** `src/app/(app)/cai-dat/page.tsx` · **Cập nhật:** 04/11/2026 · **Thẻ:** T5.D9
+**Tuyến:** `/cai-dat` · **Tệp chính:** `src/app/(app)/cai-dat/page.tsx`, `src/components/organization/shop-fields-settings-tab.tsx` · **Cập nhật:** 05/11/2026 · **Thẻ:** T5.D9
 
 ## 1. Vai và mục đích
 - Vai chính (03b): `store_manager`, `operations_manager`
@@ -28,6 +28,7 @@ acceptance:
 - API:
   - `GET /api/v1/business-profile` → Đọc thông tin cơ bản của tiệm
   - `PUT /api/v1/business-profile` → Lưu thông tin cơ bản của tiệm (cần quyền `F2` hoặc `H4`)
+  - Tab "Trường dữ liệu" (chỉ hiện khi có `D18`, mặc định Điều hành): `GET /api/v1/field-config/settings`, `POST /api/v1/field-config` (thêm trường riêng), `PUT /api/v1/field-config` (ẩn/hiện, đổi tên)
 - Khối: 3 khối chính:
   1. Hướng dẫn chuẩn hóa K1 (`FeatureGuidanceCard` duy nhất)
   2. Lưới liên kết sâu 4 phân hệ thiết lập (`/ho-so`, `/cai-dat-ai`, `/ket-noi`, `/bo-may`)
@@ -46,6 +47,7 @@ acceptance:
 ## 4. Hành động
 - Chính (1): `Lưu cài đặt tiệm` (`variant: "primary"`, chỉ kích hoạt khi form dirty).
 - Phụ (4): Các thẻ liên kết sâu (`Link` có focus-visible và hover effect).
+- Tab "Trường dữ liệu": chọn Đơn hàng/Đối tác; mỗi trường có ô đổi tên ("Lưu tên" chỉ hiện khi đã sửa) và công tắc Hiện/Ẩn — trường bắt buộc của hệ thống hiện "Luôn hiện", công tắc khoá; khối "Thêm trường riêng" (tên, kiểu: Chữ ngắn/Đoạn văn/Số/Số tiền/Ngày/Số điện thoại, công tắc "Bắt buộc nhập", nút "Thêm trường").
 
 ## 5. Content budget
 - Nút nổi: Đúng 1 primary action trên toàn màn hình.
@@ -72,11 +74,11 @@ acceptance:
 
 ## 10. Dữ liệu và quyền
 - Nguồn sự thật: Bảng `business_profiles`.
-- Quyền: `F2` (sửa hồ sơ) hoặc `H4` (điều hành).
+- Quyền: `F2` (sửa hồ sơ) hoặc `H4` (điều hành). Trường dữ liệu: `D18` (trần cứng Điều hành); trường riêng lưu ở `field_definitions.owner_organization_id`, ghi đè trường hệ thống ở `field_config_overrides`; không hạ được mức sàn của hệ thống.
 
 ## 11. Component
 - Dùng lại: `Button`, `SkeletonBlock`, `FeatureGuidanceCard`.
-- Tạo mới: Không.
+- Tạo mới: `ShopFieldsSettingsTab` (dùng `Badge`, `Input`, `Switch`, `InlineError`, `SkeletonBlock`).
 
 ## 12. Ma trận quyết định
 | Hiện tại | Mục tiêu | Quyết định | Lý do | Bằng chứng |

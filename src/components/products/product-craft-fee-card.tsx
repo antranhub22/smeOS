@@ -27,6 +27,8 @@ export function ProductCraftFeeCard({ productId, attributes, spec, onUpdated }: 
   const [level, setLevel] = useState<CraftComplexity | "">(
     attributes.craft_complexity === "EASY" || attributes.craft_complexity === "MEDIUM" || attributes.craft_complexity === "HARD" ? attributes.craft_complexity : ""
   )
+  // Kiểu dáng tính phí chế tác ngày lễ (PO Q8, checklist ALG 3.6)
+  const [craftStyle, setCraftStyle] = useState<string>(typeof attributes.craftStyle === "string" ? attributes.craftStyle : "")
   const [saving, setSaving] = useState(false)
   const [message, setMessage] = useState<{ ok: boolean; text: string } | null>(null)
 
@@ -34,7 +36,7 @@ export function ProductCraftFeeCard({ productId, attributes, spec, onUpdated }: 
     setSaving(true)
     setMessage(null)
     try {
-      const next: Record<string, unknown> = { ...attributes, craft_fee_vnd: fee > 0 ? fee : null, craft_complexity: level || null }
+      const next: Record<string, unknown> = { ...attributes, craft_fee_vnd: fee > 0 ? fee : null, craft_complexity: level || null, craftStyle: craftStyle || null }
       const res = await fetch(`/api/v1/products/${productId}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
@@ -70,6 +72,15 @@ export function ProductCraftFeeCard({ productId, attributes, spec, onUpdated }: 
           className="w-36 text-right font-bold"
         />
       </label>
+      {spec.styles && spec.styles.length > 0 && (
+        <label className="flex items-center justify-between gap-3 text-body-sm text-text">
+          Kiểu dáng (giá ngày lễ)
+          <NativeSelect value={craftStyle} onChange={(e) => setCraftStyle(e.target.value)} className="w-44">
+            <option value="">Chưa gắn</option>
+            {spec.styles.map((s) => <option key={s.key} value={s.key}>{s.label}</option>)}
+          </NativeSelect>
+        </label>
+      )}
       <label className="flex items-center justify-between gap-3 text-body-sm text-text">
         Độ khó khi làm
         <NativeSelect value={level} onChange={(e) => setLevel(e.target.value as CraftComplexity | "")} className="w-36">

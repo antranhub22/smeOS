@@ -11,6 +11,7 @@ import { InlineError } from "@/components/ui/inline-error"
 import { formatCurrency } from "@/lib/i18n/formatters"
 import { quotationApi } from "./quotation-api"
 import { QuotePreviewCard } from "./quote-preview-card"
+import { QuoteLineOptions } from "./quote-line-options"
 import type { ProductItem, QuotationRecord } from "./quotation-types"
 
 interface CustomerQuoteBuilderProps {
@@ -34,6 +35,8 @@ export function CustomerQuoteBuilder({
   const [categoryFilter, setCategoryFilter] = useState<string>("ALL")
   const [selectedIds, setSelectedIds] = useState<string[]>([])
   const [discountAmount, setDiscountAmount] = useState<number>(0)
+  const [variantOf, setVariantOf] = useState<Record<string, string>>({})
+  const [shippingFee, setShippingFee] = useState<number>(0)
   const [validDays, setValidDays] = useState<number>(7)
   const [terms, setTerms] = useState<string>("Giá đã bao gồm chi phí đóng gói & thiệp.")
   const [notes, setNotes] = useState<string>("")
@@ -55,10 +58,16 @@ export function CustomerQuoteBuilder({
     setSelectedIds((prev) => (prev.includes(id) ? prev.filter((i) => i !== id) : [...prev, id]))
   }
 
-  const selectedProducts = products.filter((p) => selectedIds.includes(p.id))
+  // Dòng báo giá theo phiên bản đã chọn: giá và tên phiên bản thay cho giá gốc (checklist ALG 3.8)
+  const chosen = products.filter((p) => selectedIds.includes(p.id))
+  const optionFor = (p: ProductItem) => (p.options ?? []).find((o) => o.id === variantOf[p.id]) ?? null
+  const selectedProducts = chosen.map((p) => {
+    const o = optionFor(p)
+    return o ? { ...p, price: o.priceVnd, title: `${p.title} — ${o.name}` } : p
+  })
   const subtotal = selectedProducts.reduce((sum, p) => sum + p.price, 0)
   const effectiveDiscount = Math.max(0, Math.min(discountAmount, subtotal))
-  const totalAmount = Math.max(0, subtotal - effectiveDiscount)
+  const totalAmount = Math.max(0, subtotal - effectiveDiscount) + shippingFee
 
   const handleCopyText = () => {
     const textLines = selectedProducts.map(
@@ -77,13 +86,15 @@ export function CustomerQuoteBuilder({
     try {
       const validUntil = new Date(Date.now() + validDays * 86400000).toISOString()
       const quote = await quotationApi.create({
-        items: selectedProducts.map((p) => ({
+        items: chosen.map((p) => ({
           productId: p.id,
           name: p.title,
+          variantLabel: optionFor(p)?.name ?? null,
           qty: 1,
-          unitPrice: p.price,
+          unitPrice: optionFor(p)?.priceVnd ?? p.price,
         })),
         discountAmount: effectiveDiscount,
+        shippingFee,
         validUntil,
         terms,
         notes: notes || null,
@@ -208,6 +219,15 @@ export function CustomerQuoteBuilder({
 
       {/* Right Column: Live Quote Card Preview & Actions (5 cols) */}
       <div className="lg:col-span-5 space-y-4">
+        {chosen.length > 0 && (
+          <QuoteLineOptions
+            products={chosen}
+            variantOf={variantOf}
+            onVariantChange={(id, optionId) => setVariantOf({ ...variantOf, [id]: optionId })}
+            shippingFee={shippingFee}
+            onShippingChange={setShippingFee}
+          />
+        )}
         <QuotePreviewCard
           selectedProducts={selectedProducts}
           sampleProductLabel={sampleProductLabel}

@@ -85,6 +85,7 @@ const TENANT_TABLES = [
   "voucher_batches",
   // Marketing & Sales Center (01/11/2026) — con trước cha
   "quotation_items",
+  "quotation_revisions",
   "quotations",
   "customer_interactions",
   "print_renditions",

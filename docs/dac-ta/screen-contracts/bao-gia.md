@@ -18,6 +18,7 @@
    - Hệ thống tự động tính: Tiền hàng (`subtotal`), Giảm giá (`discountAmount`), Tổng thanh toán (`totalAmount`).
    - Bấm "Lưu báo giá & Lấy link": tạo bản ghi trong CSDL `quotations`, cập nhật trạng thái `SENT`.
    - Sinh link công khai `/bg/[token]` (token ngẫu nhiên 256 bit, không phải mã BG-xxxx) khi báo giá đã gửi; bản nháp không có link. Sao chép gửi Zalo/tin nhắn.
+   - Soạn báo giá: chọn phiên bản kích cỡ cho từng mẫu và nhập phí vận chuyển (`QuoteLineOptions`); mỗi báo giá trong danh sách có mục "Lịch sử sửa" (các phiên bản trước).
    - Khi gắn với Lead: tự động cập nhật trạng thái Lead sang `QUOTATION_SENT`.
 2. **Báo giá đối tác (Gia công):**
    - Chọn nhanh sản phẩm từ kho hoặc nhập yêu cầu sản xuất.
@@ -41,5 +42,5 @@
 - Bảng CSDL: `quotations`, `quotation_items` (kết nối `leads`, `customers`, `orders`, `asset_usages`).
 - Nguồn đơn: `orders.source = 'QUOTATION'`.
 - Quyền: `R15` (tạo/sửa/chuyển đổi), `Q1` (xem danh sách/chi tiết).
-- Trang công khai: `/bg/[token]` — truy cập không cần đăng nhập, chỉ đọc các trường công khai (tên người nhận, dòng hàng, tổng tiền, điều khoản); không số điện thoại, ghi chú nội bộ; báo giá nháp trả 404; không lập chỉ mục.
+- Trang công khai: `/bg/[token]` — truy cập không cần đăng nhập, chỉ đọc các trường công khai (tên người nhận, dòng hàng kèm ảnh mẫu, phiên bản và thành phần hoa, phí vận chuyển, tổng tiền, điều khoản); không số điện thoại, ghi chú nội bộ, giá vốn; báo giá nháp trả 404; không lập chỉ mục. Nút "Tải ảnh" (PNG) và "Tải PDF A6" (`QuoteExportButtons`, `html-to-image` + `jspdf`) chụp đúng khung báo giá.
 
