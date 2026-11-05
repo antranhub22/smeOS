@@ -130,6 +130,7 @@ export class GreetingCatalogRepository {
 
     return this.db.greeting_catalogs.findMany({
       where: scopedWhere(ctx, {
+        trashed_at: null, // trong thùng rác (Kho dữ liệu) thì không hiện
         ...(status === "active" ? { is_active: true } : status === "archived" ? { is_active: false } : {}),
         ...(options.createdBy ? { created_by: options.createdBy } : {}),
         ...(minCreatedAt ? { created_at: { gte: minCreatedAt } } : {}),

@@ -329,6 +329,10 @@ model assets {
 
 `video_jobs.created_by String?` (29/10/2026, migration `20261029200000_video_jobs_created_by`): người tạo video để Kho dữ liệu xếp theo chi nhánh; job trước đó null (tính là trụ sở).
 
+### 5.0a Thùng rác Kho dữ liệu (L-4, PO 05/11/2026)
+
+`video_jobs`, `content_generations`, `catalog_links`, `greeting_catalogs`, `landing_pages` có `trashed_at`, `purge_after` (`@db.Timestamptz(3)`, `@@index([purge_after])`, migration `20261105230000_library_trash_columns`). Quá `purge_after` cron xoá vĩnh viễn (`storage/use-cases/sweep-storage-lifecycle.ts`); xoá `greeting_catalogs` cascade `greeting_sessions`, `greeting_catalog_products`, `greeting_share_links`, `greeting_catalog_events`; `orders.source_session_id` → null.
+
 ### 5.0 Landing page đã sinh — `landing_pages` (Kho dữ liệu v2, L-1)
 
 `POST /content-engine/landing-generate` lưu mỗi lượt sinh để tìm lại trong Kho dữ liệu (`GET /storage/library?type=landing`, `J1`). Lỗi lưu không chặn kết quả sinh.
