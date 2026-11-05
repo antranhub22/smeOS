@@ -4,6 +4,7 @@ import React, { useState } from "react"
 import { markPersonalLinkCopied } from "@/components/greeting-card/share/tracked-copy"
 import { Check, Copy } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
+import { Dialog } from "@/components/ui/dialog"
 import { apiSend } from "@/components/greeting-card/greeting-api"
 import { LINK_LIFETIME_HINT, linkExpiryLabel, type CatalogOption } from "./sales-types"
 import { useI18n } from "@/lib/i18n"
@@ -59,10 +60,9 @@ export function SalesCreateLinkModal({ catalogs, onClose, onCreated, onNavigateT
   }
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="create-link-title">
-      <div className="w-full max-w-md bg-surface rounded-2xl border border-border p-6 shadow-xl flex flex-col gap-4">
-        <h3 id="create-link-title" className="text-title font-extrabold text-text">Tạo Thẻ Chào Gửi Khách Hàng</h3>
-
+    <Dialog open onOpenChange={(o) => { if (!o && !creating) onClose() }} size="sm"
+      title="Tạo Thẻ Chào Gửi Khách Hàng">
+      <div className="flex flex-col gap-4">
         {createdLink ? (
           <div className="flex flex-col gap-3 py-2">
             <div className="p-3 bg-success-bg border border-success/30 rounded-xl text-success text-body-sm font-bold flex items-center gap-2">
@@ -126,6 +126,6 @@ export function SalesCreateLinkModal({ catalogs, onClose, onCreated, onNavigateT
           </form>
         )}
       </div>
-    </div>
+    </Dialog>
   )
 }

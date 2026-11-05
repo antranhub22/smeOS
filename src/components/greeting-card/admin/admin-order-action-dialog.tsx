@@ -4,6 +4,7 @@ import { IN_TRANSIT_CANCEL_WARNING, isInTransit } from "@/modules/greeting-card/
 import React, { useState } from "react"
 import { PaymentCheckPanel } from "./payment-check-panel"
 import { Button } from "@/components/ui/button"
+import { Dialog } from "@/components/ui/dialog"
 import { apiSend } from "@/components/greeting-card/greeting-api"
 import { type BrochurePaymentPolicy } from "@/modules/greeting-card/domain/brochure-payment-policy"
 import { readPaymentPlan } from "@/modules/greeting-card/domain/payment-plan"
@@ -175,11 +176,8 @@ export function AdminOrderActionDialog({
   }
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/40 flex items-end sm:items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="order-action-title">
-      <form onSubmit={submit} className="bg-surface rounded-2xl border border-border shadow-xl w-full max-w-md p-5 flex flex-col gap-4">
-        <h3 id="order-action-title" className="text-body font-extrabold text-text">
-          {dialogTitle} — #{order.code}
-        </h3>
+    <Dialog open onOpenChange={(o) => { if (!o && !busy) onClose() }} size="sm" title={`${dialogTitle} — #${order.code}`}>
+      <form onSubmit={submit} className="flex flex-col gap-4">
         <p className="text-body-sm text-text-muted">
           Tổng đơn {vnd(order.total_vnd)} · Đã thu {vnd(order.paid_vnd)} · Còn {vnd(Math.max(0, order.total_vnd - order.paid_vnd))}
         </p>
@@ -289,7 +287,7 @@ export function AdminOrderActionDialog({
           </Button>
         </div>
       </form>
-    </div>
+    </Dialog>
   )
 }
 

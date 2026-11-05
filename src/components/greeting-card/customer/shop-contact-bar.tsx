@@ -1,7 +1,8 @@
 "use client"
 
+import { Dialog } from "@/components/ui/dialog"
 import { useState, useEffect } from "react"
-import { ChevronDown, MessageCircle, QrCode, X } from "@/components/ui/icons"
+import { ChevronDown, MessageCircle, QrCode } from "@/components/ui/icons"
 import type { ShopContact } from "@/modules/greeting-card/domain/shop-contact"
 import { generateQRCodeDataUrl } from "@/core/media/qr-engine"
 import { SHOP_INFO_EVENT, ShopInfoSheet, ShopLogo, type ShopInfoSection } from "./shop-info-sheet"
@@ -102,24 +103,9 @@ export function ShopContactBar({ shop, inquiry }: ShopContactBarProps) {
 
       {/* Modal hiển thị QR Code Zalo */}
       {showQrModal && qrImageUrl && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="zalo-qr-title"
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-xs"
-        >
-          <div className="relative w-full max-w-xs rounded-2xl border border-border bg-surface p-6 shadow-xl text-center flex flex-col items-center">
-            <button
-              type="button"
-              onClick={() => setShowQrModal(false)}
-              aria-label="Đóng mã QR"
-              className="absolute top-3 right-3 p-1.5 rounded-lg text-text-muted hover:text-text hover:bg-surface-muted transition-colors"
-            >
-              <X size={18} />
-            </button>
-            <h3 id="zalo-qr-title" className="text-title-sm font-extrabold text-text mb-1">
-              Quét mã kết nối Zalo
-            </h3>
+        <Dialog open onOpenChange={(o) => { if (!o) setShowQrModal(false) }} size="sm"
+          title="Quét mã kết nối Zalo">
+          <div className="flex flex-col items-center text-center">
             <p className="text-caption text-text-muted mb-4">
               Mở Zalo trên điện thoại và quét mã để liên hệ với {shop.name}
             </p>
@@ -137,7 +123,7 @@ export function ShopContactBar({ shop, inquiry }: ShopContactBarProps) {
               </p>
             )}
           </div>
-        </div>
+        </Dialog>
       )}
     </>
   )

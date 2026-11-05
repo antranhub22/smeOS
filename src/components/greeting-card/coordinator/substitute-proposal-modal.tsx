@@ -1,8 +1,9 @@
 "use client"
 
 import React, { useState } from "react"
-import { Check, Shuffle, X } from "@/components/ui/icons"
+import { Check, Shuffle } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
+import { Dialog } from "@/components/ui/dialog"
 import { SkeletonBlock } from "@/components/ui/skeleton"
 import { FlowerImage } from "@/components/greeting-card/flower-image"
 import { apiSend, useApi } from "@/components/greeting-card/greeting-api"
@@ -59,14 +60,9 @@ export function SubstituteProposalModal({ orderId, orderCode, onClose, onDone }:
   }
 
   return (
-    <div role="presentation" className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-end sm:items-center justify-center p-4" onKeyDown={(e) => e.key === "Escape" && onClose()}>
-      <div role="dialog" aria-modal="true" aria-labelledby="substitute-title" className="bg-surface rounded-2xl border border-border shadow-xl w-full max-w-lg max-h-[90vh] overflow-y-auto p-5 flex flex-col gap-4">
-        <div className="flex items-center justify-between">
-          <h3 id="substitute-title" className="text-body font-extrabold text-text flex items-center gap-2">
-            <Shuffle size={18} className="text-primary" aria-hidden="true" /> Đề xuất mẫu khác — #{orderCode}
-          </h3>
-          <button type="button" aria-label="Đóng" onClick={onClose} className="text-text-muted hover:text-text"><X size={18} /></button>
-        </div>
+    <Dialog open onOpenChange={(o) => { if (!o && !busy) onClose() }} size="md"
+      title={<span className="flex items-center gap-2"><Shuffle size={18} className="text-primary" aria-hidden="true" /> Đề xuất mẫu khác — #{orderCode}</span>}>
+      <div className="flex flex-col gap-4">
 
         {isLoading && <SkeletonBlock lines={3} label="Đang tải mẫu trong bộ sưu tập" />}
         {loadError && <p role="alert" className="text-danger text-caption">{loadError.message}</p>}
@@ -121,6 +117,6 @@ export function SubstituteProposalModal({ orderId, orderCode, onClose, onDone }:
           </Button>
         </div>
       </div>
-    </div>
+    </Dialog>
   )
 }

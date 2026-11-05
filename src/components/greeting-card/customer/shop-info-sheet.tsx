@@ -1,7 +1,8 @@
 "use client"
 
+import { BottomSheet } from "@/components/ui/bottom-sheet"
 import React, { useState } from "react"
-import { ChevronDown, Globe, Mail, MapPin, Phone, ShieldCheck, X } from "@/components/ui/icons"
+import { ChevronDown, Globe, Mail, MapPin, Phone, ShieldCheck } from "@/components/ui/icons"
 import { websiteLabel, type ShopContact } from "@/modules/greeting-card/domain/shop-contact"
 
 /** Sự kiện mở khung từ nơi khác trên trang (vd. "Xem cam kết của cửa hàng" ở bước xác nhận đơn). */
@@ -38,24 +39,23 @@ function Line({ icon: Icon, children }: { icon: typeof Phone; children: React.Re
  * Cam kết của cửa hàng. Ô tiệm chưa khai thì ẩn.
  */
 export function ShopInfoSheet({ shop, section, onClose }: { shop: ShopContact; section: ShopInfoSection; onClose: () => void }) {
+  return (
+    <BottomSheet open onOpenChange={(o) => { if (!o) onClose() }}
+      title={<span className="flex items-center gap-3"><ShopLogo shop={shop} size="h-10 w-10" /><span className="min-w-0 truncate">{shop.name}</span></span>}>
+      <ShopInfoContent shop={shop} section={section} />
+    </BottomSheet>
+  )
+}
+
+/** Nội dung khung "Thông tin cửa hàng" — tách khỏi `BottomSheet` để kiểm bằng render tĩnh. */
+export function ShopInfoContent({ shop, section }: { shop: ShopContact; section: ShopInfoSection }) {
   const [showCommitments, setShowCommitments] = useState(section === "commitments")
   const commitments = shop.commitments ?? []
   const links = [...(shop.websites ?? []).map((url) => ({ label: websiteLabel(url), url })), ...(shop.socialLinks ?? [])]
 
   return (
-    <div role="presentation" className="fixed inset-0 z-50 flex items-end justify-center bg-black/40 backdrop-blur-xs sm:items-center sm:p-4"
-      onClick={(e) => e.target === e.currentTarget && onClose()} onKeyDown={(e) => e.key === "Escape" && onClose()}>
-      <div role="dialog" aria-modal="true" aria-labelledby="shop-info-title"
-        className="flex max-h-[85vh] w-full max-w-md flex-col overflow-y-auto rounded-t-3xl border border-border bg-surface p-5 shadow-xl sm:rounded-3xl">
-        <div className="flex items-center gap-3">
-          <ShopLogo shop={shop} size="h-14 w-14" />
-          <h2 id="shop-info-title" className="min-w-0 flex-1 text-title-sm font-extrabold text-text">{shop.name}</h2>
-          <button type="button" onClick={onClose} aria-label="Đóng thông tin cửa hàng" className="flex h-11 w-11 items-center justify-center rounded-full text-text-muted hover:bg-surface-muted hover:text-text">
-            <X size={20} />
-          </button>
-        </div>
-
-        <ul className="mt-3 divide-y divide-border">
+      <div className="flex flex-col">
+        <ul className="divide-y divide-border">
           {shop.phone && (
             <Line icon={Phone}>
               <span className="text-caption text-text-muted">Hotline</span>
@@ -109,6 +109,5 @@ export function ShopInfoSheet({ shop, section, onClose }: { shop: ShopContact; s
           </div>
         )}
       </div>
-    </div>
   )
 }

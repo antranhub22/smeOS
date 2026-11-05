@@ -1,8 +1,9 @@
 "use client"
 
 import React, { useState } from "react"
-import { AlertTriangle, Loader2, X, DollarSign } from "@/components/ui/icons"
+import { AlertTriangle, Loader2, DollarSign } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
+import { Dialog } from "@/components/ui/dialog"
 import { apiSend } from "@/components/greeting-card/greeting-api"
 import {
   IN_TRANSIT_CANCEL_WARNING,
@@ -88,28 +89,9 @@ export function CancellationProposalModal({
   }
 
   return (
-    <div
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="cancel-modal-title"
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-xs"
-    >
-      <div className="relative w-full max-w-md rounded-2xl border border-border bg-surface p-6 shadow-2xl">
-        <button
-          type="button"
-          onClick={onClose}
-          aria-label="Đóng"
-          className="absolute top-4 right-4 p-1.5 rounded-lg text-text-muted hover:text-text hover:bg-surface-muted"
-        >
-          <X size={18} />
-        </button>
-
-        <div className="flex items-center gap-2 text-danger mb-1">
-          <AlertTriangle size={20} />
-          <h3 id="cancel-modal-title" className="text-title-sm font-extrabold text-text">
-            Đề xuất Hủy / Hoàn tiền đơn #{orderCode}
-          </h3>
-        </div>
+    <Dialog open onOpenChange={(o) => { if (!o && !busy) onClose() }} size="sm"
+      title={<span className="flex items-center gap-2"><AlertTriangle size={20} className="text-danger" />Đề xuất Hủy / Hoàn tiền đơn #{orderCode}</span>}>
+      <div className="flex flex-col">
         <p className="text-caption text-text-muted mb-4">
           Tổng đơn: <strong className="text-text">{totalVnd.toLocaleString("vi-VN")}đ</strong> · Đã thu:{" "}
           <strong className="text-success">{paidVnd.toLocaleString("vi-VN")}đ</strong>
@@ -218,6 +200,6 @@ export function CancellationProposalModal({
           </div>
         </form>
       </div>
-    </div>
+    </Dialog>
   )
 }

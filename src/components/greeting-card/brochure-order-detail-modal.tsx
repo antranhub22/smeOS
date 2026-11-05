@@ -1,7 +1,8 @@
 "use client"
 
-import React, { useEffect, useState } from "react"
-import { X, Clock, MapPin, User, Phone, Flower2, CheckCircle2 } from "@/components/ui/icons"
+import { Dialog } from "@/components/ui/dialog"
+import React, { useState } from "react"
+import { Clock, MapPin, User, Phone, Flower2, CheckCircle2 } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { FlowerImage } from "@/components/greeting-card/flower-image"
 import { EvidenceTimelineDiagram } from "./evidence-timeline-diagram"
@@ -86,12 +87,6 @@ export function BrochureOrderDetailModal({ target: inputTarget, onClose, onOpenN
     { key: "customer", label: "Thẻ đơn khách hàng" },
     { key: "florist", label: orderTerms.makerTabLabel },
   ]
-  useEffect(() => {
-    if (!inputTarget) return
-    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") onClose() }
-    window.addEventListener("keydown", onKey)
-    return () => window.removeEventListener("keydown", onKey)
-  }, [inputTarget, onClose])
 
   if (!inputTarget) return null
   const target: OrderDetailModalTarget = savedCustomer && savedCustomer.key === inputTarget.sessionId
@@ -104,142 +99,112 @@ export function BrochureOrderDetailModal({ target: inputTarget, onClose, onOpenN
 
   return (
     <>
-      <div
-        role="presentation"
-        className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-xs"
-        onClick={onClose}
-      >
-        <div
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="detail-modal-title"
-          className="flex max-h-[90vh] w-full max-w-2xl flex-col overflow-hidden rounded-3xl border border-border bg-surface shadow-2xl"
-          onClick={(e) => e.stopPropagation()}
-        >
-        {/* Header */}
-        <header className="flex items-center justify-between border-b border-border p-5">
-          <div className="flex flex-col gap-1">
-            <div className="flex flex-wrap items-center gap-2">
-              <span className="font-mono text-title-sm font-extrabold text-text">
-                {target.orderCode ? `#${target.orderCode}` : `Link ${target.sendCode}`}
-              </span>
-              {target.currentStepTitle && (
-                <span className="rounded-full bg-primary/10 px-2.5 py-0.5 text-caption font-bold text-primary">
-                  {target.currentStepTitle}
-                </span>
-              )}
-              <StaffNametagGroup
-                item={{
-                  currentStepId: target.currentStepId ?? undefined,
-                  productionStatus: target.productionStatus,
-                  deliveryStatus: target.deliveryStatus,
-                  saleId: target.saleId,
-                  saleName: target.saleName ?? undefined,
-                  coordinatorId: target.coordinatorId,
-                  coordinatorName: target.coordinatorName ?? undefined,
-                }}
-              />
-            </div>
-            <p className="text-caption text-text-muted">
-              Khách hàng: <strong className="text-text">{target.customerName || "Khách lẻ"}</strong>
-            </p>
-          </div>
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label="Đóng"
-            className="rounded-xl p-1.5 text-text-muted hover:bg-surface-alt hover:text-text"
-          >
-            <X size={20} />
-          </button>
-        </header>
-
-        {/* MỐC THỜI GIAN GIAO HÀNG / LƯU TRÚ TO NỔI BẬT */}
-        <div className="border-b border-border bg-primary/5 px-5 py-3">
-          <div className="flex flex-wrap items-center justify-between gap-2">
-            <div className="flex items-center gap-2 text-primary">
-              <Clock size={20} className="shrink-0" />
-              <div>
-                <span className="text-caption font-bold uppercase tracking-wider text-text-muted block">
-                  {orderTerms.deliveryTimeLabel}
-                </span>
-                <span className="text-body font-black text-primary">
-                  {target.deliveryTimeSlot || orderTerms.fallbackTimeSlotText}
-                  {target.deliveryDate ? ` · Ngày ${target.deliveryDate}` : ""}
-                </span>
+      <Dialog open onOpenChange={(o) => { if (!o) onClose() }} size="lg"
+        title={
+          <span className="flex flex-wrap items-center gap-2">
+          <span className="font-mono text-title-sm font-extrabold text-text">
+            {target.orderCode ? `#${target.orderCode}` : `Link ${target.sendCode}`}
+          </span>
+          {target.currentStepTitle && (
+            <span className="rounded-full bg-primary/10 px-2.5 py-0.5 text-caption font-bold text-primary">
+              {target.currentStepTitle}
+            </span>
+          )}
+          <StaffNametagGroup
+            item={{
+              currentStepId: target.currentStepId ?? undefined,
+              productionStatus: target.productionStatus,
+              deliveryStatus: target.deliveryStatus,
+              saleId: target.saleId,
+              saleName: target.saleName ?? undefined,
+              coordinatorId: target.coordinatorId,
+              coordinatorName: target.coordinatorName ?? undefined,
+            }}
+          />
+          </span>
+        }
+        description={<>Khách hàng: <strong className="text-text">{target.customerName || "Khách lẻ"}</strong></>}
+        subHeader={
+          <>
+            {/* MỐC THỜI GIAN GIAO HÀNG / LƯU TRÚ TO NỔI BẬT */}
+            <div className="border-b border-border bg-primary/5 px-5 py-3">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <div className="flex items-center gap-2 text-primary">
+                  <Clock size={20} className="shrink-0" />
+                  <div>
+                    <span className="text-caption font-bold uppercase tracking-wider text-text-muted block">
+                      {orderTerms.deliveryTimeLabel}
+                    </span>
+                    <span className="text-body font-black text-primary">
+                      {target.deliveryTimeSlot || orderTerms.fallbackTimeSlotText}
+                      {target.deliveryDate ? ` · Ngày ${target.deliveryDate}` : ""}
+                    </span>
+                  </div>
+                </div>
+                {target.deliveryZone && (
+                  <span className="inline-flex items-center gap-1 rounded-lg border border-primary/20 bg-surface px-2.5 py-1 text-caption font-bold text-primary">
+                    <MapPin size={13} />
+                    {target.deliveryZone}
+                  </span>
+                )}
               </div>
             </div>
-            {target.deliveryZone && (
-              <span className="inline-flex items-center gap-1 rounded-lg border border-primary/20 bg-surface px-2.5 py-1 text-caption font-bold text-primary">
-                <MapPin size={13} />
-                {target.deliveryZone}
-              </span>
-            )}
-          </div>
-        </div>
 
-        {/* Tab switcher: Chi tiết · Lịch sử · Thẻ đơn khách · Thẻ gia công/chuẩn bị */}
-        <div role="tablist" className="flex shrink-0 items-stretch gap-1 overflow-x-auto border-b border-border px-5">
-          {tabs.filter((t) => t.key !== "florist" || canShowFloristJob).map((t) => (
-            <button
-              key={t.key}
-              type="button"
-              role="tab"
-              aria-selected={activeTab === t.key}
-              onClick={() => setActiveTab(t.key)}
-              className={`-mb-px inline-flex min-h-11 shrink-0 items-center whitespace-nowrap border-b-2 px-3 text-body-sm font-bold leading-none transition-colors ${
-                activeTab === t.key ? "border-primary text-primary" : "border-transparent text-text-muted hover:text-text"
-              }`}
-            >
-              {t.label}
-            </button>
-          ))}
-        </div>
-
-        {/* Modal Body */}
-        <div className="flex-1 overflow-y-auto p-5">
-          {activeTab === "timeline" ? (
-            <div className="flex flex-col gap-5">
-            <OrderHistoryPanel orderId={target.orderId} sessionId={target.sessionId} />
-            <EvidenceTimelineDiagram
-              orderId={target.orderId}
-              sessionId={target.sessionId}
-              orderCode={target.orderCode}
-              customerName={target.customerName}
-              customerPhone={target.customerPhone}
-              recipientName={target.recipientName}
-              recipientPhone={target.recipientPhone}
-              deliveryAddress={target.deliveryAddress}
-              deliveryTimeSlot={target.deliveryTimeSlot}
-              productName={target.productName}
-              totalVnd={target.totalVnd}
-              paidVnd={target.paidVnd}
-            />
+            {/* Tab switcher: Chi tiết · Lịch sử · Thẻ đơn khách · Thẻ gia công/chuẩn bị */}
+            <div role="tablist" className="flex shrink-0 items-stretch gap-1 overflow-x-auto px-5">
+              {tabs.filter((t) => t.key !== "florist" || canShowFloristJob).map((t) => (
+                <button
+                  key={t.key}
+                  type="button"
+                  role="tab"
+                  aria-selected={activeTab === t.key}
+                  onClick={() => setActiveTab(t.key)}
+                  className={`-mb-px inline-flex min-h-11 shrink-0 items-center whitespace-nowrap border-b-2 px-3 text-body-sm font-bold leading-none transition-colors ${
+                    activeTab === t.key ? "border-primary text-primary" : "border-transparent text-text-muted hover:text-text"
+                  }`}
+                >
+                  {t.label}
+                </button>
+              ))}
             </div>
-          ) : activeTab === "customer" ? (
-            <BrochureCustomerOrderTab target={target} />
-          ) : activeTab === "florist" ? (
-            <BrochureFloristJobTab
-              target={target}
-              onClose={onClose}
-              onAcceptedOrRejected={onCancellationProposed}
-            />
-          ) : (
-            <OrderDetailInfoTab target={target} onCustomerSaved={(c) => setSavedCustomer({ key: target.sessionId ?? "", ...c })} />
-          )}
-        </div>
-
-        {/* Footer Actions */}
-        {activeTab !== "florist" && (
-          <OrderDetailFooter
+          </>
+        }
+        footer={activeTab !== "florist" ? (
+          <div className="-mx-5 -my-3 flex-1 sm:-mx-6 sm:-my-3.5">
+            <OrderDetailFooter target={target} onClose={onClose} onOpenNotes={onOpenNotes} onCancellationProposed={onCancellationProposed} />
+          </div>
+        ) : undefined}
+      >
+        {activeTab === "timeline" ? (
+          <div className="flex flex-col gap-5">
+          <OrderHistoryPanel orderId={target.orderId} sessionId={target.sessionId} />
+          <EvidenceTimelineDiagram
+            orderId={target.orderId}
+            sessionId={target.sessionId}
+            orderCode={target.orderCode}
+            customerName={target.customerName}
+            customerPhone={target.customerPhone}
+            recipientName={target.recipientName}
+            recipientPhone={target.recipientPhone}
+            deliveryAddress={target.deliveryAddress}
+            deliveryTimeSlot={target.deliveryTimeSlot}
+            productName={target.productName}
+            totalVnd={target.totalVnd}
+            paidVnd={target.paidVnd}
+          />
+          </div>
+        ) : activeTab === "customer" ? (
+          <BrochureCustomerOrderTab target={target} />
+        ) : activeTab === "florist" ? (
+          <BrochureFloristJobTab
             target={target}
             onClose={onClose}
-            onOpenNotes={onOpenNotes}
-            onCancellationProposed={onCancellationProposed}
+            onAcceptedOrRejected={onCancellationProposed}
           />
+        ) : (
+          <OrderDetailInfoTab target={target} onCustomerSaved={(c) => setSavedCustomer({ key: target.sessionId ?? "", ...c })} />
         )}
-      </div>
-    </div>
+      </Dialog>
     </>
   )
 }

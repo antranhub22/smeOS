@@ -1,8 +1,9 @@
 "use client"
 
 import React, { useState } from "react"
-import { AlertTriangle, ShieldAlert, Loader2, X } from "@/components/ui/icons"
+import { AlertTriangle, ShieldAlert, Loader2 } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
+import { Dialog } from "@/components/ui/dialog"
 
 export interface BypassRequestModalProps {
   isOpen: boolean
@@ -47,32 +48,11 @@ export function BypassRequestModal({
   }
 
   return (
-    <div
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="bypass-modal-title"
-      className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 animate-in fade-in"
-    >
-      <div className="w-full max-w-md bg-surface rounded-2xl border border-border shadow-xl overflow-hidden flex flex-col animate-in zoom-in-95">
-        {/* Header */}
-        <div className="p-4 bg-warning/10 border-b border-warning/20 flex items-center justify-between">
-          <div className="flex items-center gap-2 text-warning font-extrabold text-body-sm">
-            <ShieldAlert size={18} />
-            <span id="bypass-modal-title">Xin Bỏ Qua: {stepTitle}</span>
-          </div>
-          <button
-            type="button"
-            onClick={onClose}
-            disabled={submitting}
-            aria-label="Đóng"
-            className="p-1 rounded-lg hover:bg-black/5 text-text-muted hover:text-text cursor-pointer"
-          >
-            <X size={16} />
-          </button>
-        </div>
-
+    <Dialog open onOpenChange={(o) => { if (!o && !submitting) onClose() }} size="sm"
+      title={<span className="flex items-center gap-2"><ShieldAlert size={18} className="text-warning" />Xin Bỏ Qua: {stepTitle}</span>}>
+      <div className="flex flex-col">
         {/* Warning Content */}
-        <form onSubmit={handleSubmit} className="p-4 sm:p-5 flex flex-col gap-4">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <div className="p-3.5 rounded-xl bg-danger-bg border border-danger/30 flex flex-col gap-2 text-caption">
             <div className="flex items-center gap-2 text-danger font-extrabold">
               <AlertTriangle size={16} className="shrink-0" />
@@ -135,6 +115,6 @@ export function BypassRequestModal({
           </div>
         </form>
       </div>
-    </div>
+    </Dialog>
   )
 }

@@ -1,5 +1,6 @@
 "use client"
 
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import React, { useState } from "react"
 import { Sparkles, Layers } from "@/components/ui/icons"
 import type { GreetingCatalogProduct } from "@/modules/greeting-card/domain/greeting-card-types"
@@ -50,7 +51,6 @@ export function GreetingTemplateRenderer({
   const [activeTemplate, setActiveTemplate] = useState<GreetingTemplateId>(() =>
     resolveGreetingTemplateId(templateId)
   )
-  const [showSwitchMenu, setShowSwitchMenu] = useState(false)
 
   // Đồng bộ khi cha đổi templateId (điều chỉnh state trong lúc render, không dùng effect)
   const [syncedTemplateId, setSyncedTemplateId] = useState(templateId)
@@ -68,58 +68,39 @@ export function GreetingTemplateRenderer({
       {/* Subtle Floating Template Switcher (Cho phép khách/nhân viên đổi mẫu xem nhanh) */}
       {showTemplateSwitcher && (
         <div className="w-full max-w-sm flex items-center justify-between px-4 mb-2">
-          <button
-            type="button"
-            onClick={() => setShowSwitchMenu((prev) => !prev)}
-            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface border border-border text-text-muted hover:text-text text-caption font-medium transition-colors shadow-2xs cursor-pointer"
-            title="Nhấn để đổi mẫu giao diện trải nghiệm"
-          >
-            <Layers size={13} className="text-primary" />
-            <span>Mẫu: <strong>{currentDef.name}</strong></span>
-            <span className="text-caption text-primary underline ml-0.5">Đổi</span>
-          </button>
-
-          {showSwitchMenu && (
-            <>
-              <button
-                type="button"
-                aria-label="Đóng menu chọn mẫu"
-                onClick={() => setShowSwitchMenu(false)}
-                className="fixed inset-0 z-30 bg-transparent cursor-default border-0 p-0 m-0"
-              />
-              <div className="absolute top-8 left-4 z-40 bg-surface rounded-2xl border border-border shadow-xl p-2 w-72 max-h-96 overflow-y-auto animate-in fade-in zoom-in-95 duration-150">
-                <div className="text-caption font-bold text-text-muted px-2 py-1 uppercase tracking-wider border-b border-border mb-1">
-                  Chọn Mẫu Giao Diện ({GREETING_TEMPLATE_LIST.length})
-                </div>
-                <div className="space-y-1">
-                  {GREETING_TEMPLATE_LIST.map((tpl) => (
-                    <button
-                      key={tpl.id}
-                      type="button"
-                      onClick={() => {
-                        setActiveTemplate(tpl.id)
-                        setShowSwitchMenu(false)
-                      }}
-                      className={`w-full text-left p-2 rounded-xl text-caption transition-colors flex items-center justify-between ${
-                        activeTemplate === tpl.id
-                          ? "bg-selected text-primary font-bold"
-                          : "hover:bg-surface-muted text-text"
-                      }`}
-                    >
-                      <div className="min-w-0 pr-2">
-                        <div className="font-semibold truncate">
-                          {tpl.styleNumber ? `${tpl.styleNumber}. ` : ""}
-                          {tpl.name}
-                        </div>
-                        <div className="text-caption text-text-muted truncate">{tpl.badge}</div>
-                      </div>
-                      {activeTemplate === tpl.id && <Sparkles size={13} className="text-primary shrink-0" />}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </>
-          )}
+          <DropdownMenu>
+            <DropdownMenuTrigger
+              className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface border border-border text-text-muted hover:text-text text-caption font-medium transition-colors shadow-2xs cursor-pointer"
+              title="Nhấn để đổi mẫu giao diện trải nghiệm"
+            >
+              <Layers size={13} className="text-primary" />
+              <span>Mẫu: <strong>{currentDef.name}</strong></span>
+              <span className="text-caption text-primary underline ml-0.5">Đổi</span>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-72 max-h-96 overflow-y-auto p-2">
+              <DropdownMenuLabel className="text-caption font-bold text-text-muted px-2 py-1 uppercase tracking-wider border-b border-border mb-1">
+                Chọn Mẫu Giao Diện ({GREETING_TEMPLATE_LIST.length})
+              </DropdownMenuLabel>
+              {GREETING_TEMPLATE_LIST.map((tpl) => (
+                <DropdownMenuItem
+                  key={tpl.id}
+                  onClick={() => setActiveTemplate(tpl.id)}
+                  className={`justify-between rounded-xl p-2 text-caption ${
+                    activeTemplate === tpl.id ? "bg-selected text-primary font-bold" : "text-text"
+                  }`}
+                >
+                  <div className="min-w-0 pr-2">
+                    <div className="font-semibold truncate">
+                      {tpl.styleNumber ? `${tpl.styleNumber}. ` : ""}
+                      {tpl.name}
+                    </div>
+                    <div className="text-caption text-text-muted truncate">{tpl.badge}</div>
+                  </div>
+                  {activeTemplate === tpl.id && <Sparkles size={13} className="text-primary shrink-0" />}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       )}
 

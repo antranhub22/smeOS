@@ -1,8 +1,9 @@
 "use client"
 
 import React, { useState } from "react"
-import { HelpCircle, X, BookOpen, Shield, Users, Sparkles } from "@/components/ui/icons"
+import { HelpCircle, BookOpen, Shield, Users, Sparkles } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
+import { Dialog } from "@/components/ui/dialog"
 import { cn } from "@/lib/utils"
 import { useI18n } from "@/lib/i18n"
 
@@ -33,35 +34,9 @@ export function BrochureUserGuideModal() {
       </button>
 
       {open && (
-        <div
-          role="presentation"
-          className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4"
-          onKeyDown={(e) => e.key === "Escape" && setOpen(false)}
-        >
-          <div
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="guide-modal-title"
-            className="bg-surface rounded-3xl border border-border shadow-2xl w-full max-w-2xl max-h-[85vh] flex flex-col overflow-hidden"
-          >
-            {/* Header */}
-            <header className="flex items-center justify-between border-b border-border p-5">
-              <div className="flex items-center gap-2">
-                <BookOpen size={20} className="text-primary" />
-                <h2 id="guide-modal-title" className="text-title-sm font-extrabold text-text">
-                  Hướng dẫn Thẻ chào & {ti("sampleProduct")}
-                </h2>
-              </div>
-              <button
-                type="button"
-                onClick={() => setOpen(false)}
-                aria-label="Đóng hướng dẫn"
-                className="text-text-muted hover:text-text p-1.5 rounded-xl hover:bg-surface-alt"
-              >
-                <X size={20} />
-              </button>
-            </header>
-
+        <Dialog open onOpenChange={(o) => { if (!o) setOpen(false) }} size="lg"
+          title={<span className="flex items-center gap-2"><BookOpen size={20} className="text-primary" />Hướng dẫn Thẻ chào & {ti("sampleProduct")}</span>}>
+          <div className="-m-5 sm:-m-6 flex flex-col">
             {/* Role Tabs */}
             <div className="flex border-b border-border bg-surface-alt px-5 pt-2">
               <button
@@ -182,7 +157,7 @@ export function BrochureUserGuideModal() {
               </Button>
             </footer>
           </div>
-        </div>
+        </Dialog>
       )}
     </>
   )

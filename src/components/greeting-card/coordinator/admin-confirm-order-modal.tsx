@@ -1,8 +1,9 @@
 "use client"
 
 import React, { useState } from "react"
-import { CheckCircle2, ClipboardCheck, X, XCircle, AlertTriangle } from "@/components/ui/icons"
+import { CheckCircle2, ClipboardCheck, XCircle, AlertTriangle } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
+import { Dialog } from "@/components/ui/dialog"
 import { apiSend } from "@/components/greeting-card/greeting-api"
 
 interface AdminConfirmOrderModalProps {
@@ -78,39 +79,21 @@ export function AdminConfirmOrderModal({
   }
 
   return (
-    <div
-      role="presentation"
-      className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-end sm:items-center justify-center p-4"
-      onKeyDown={(e) => e.key === "Escape" && onClose()}
-    >
-      <div
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="admin-confirm-order-modal-title"
-        className="bg-surface rounded-2xl border border-border shadow-xl w-full max-w-md p-5 flex flex-col gap-4"
-      >
-        {/* Header */}
-        <div className="flex items-center justify-between">
-          <h3
-            id="admin-confirm-order-modal-title"
-            className="text-body font-extrabold text-text flex items-center gap-2"
-          >
-            {isConfirm ? (
-              <>
-                <ClipboardCheck size={20} className="text-success" aria-hidden="true" />
-                Xác nhận Đơn hàng — #{orderCode}
-              </>
-            ) : (
-              <>
-                <XCircle size={20} className="text-danger" aria-hidden="true" />
-                Từ chối Đơn hàng — #{orderCode}
-              </>
-            )}
-          </h3>
-          <button type="button" aria-label="Đóng" onClick={onClose} className="text-text-muted hover:text-text">
-            <X size={18} />
-          </button>
-        </div>
+    <Dialog open onOpenChange={(o) => { if (!o && !busy) onClose() }} size="sm"
+      title={<span className="flex items-center gap-2">
+          {isConfirm ? (
+            <>
+              <ClipboardCheck size={20} className="text-success" aria-hidden="true" />
+              Xác nhận Đơn hàng — #{orderCode}
+            </>
+          ) : (
+            <>
+              <XCircle size={20} className="text-danger" aria-hidden="true" />
+              Từ chối Đơn hàng — #{orderCode}
+            </>
+          )}
+        </span>}>
+      <div className="flex flex-col gap-4">
 
         {/* Context info */}
         <div
@@ -235,6 +218,6 @@ export function AdminConfirmOrderModal({
           )}
         </div>
       </div>
-    </div>
+    </Dialog>
   )
 }

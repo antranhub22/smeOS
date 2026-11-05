@@ -1,7 +1,8 @@
 "use client"
 
+import { BottomSheet } from "@/components/ui/bottom-sheet"
 import { useEffect, useState } from "react"
-import { History, X, ChevronRight } from "@/components/ui/icons"
+import { History, ChevronRight } from "@/components/ui/icons"
 import { customerOrderStatusLabel, type FamilyMember } from "@/modules/greeting-card/domain/order-family"
 import { familyHref } from "./use-order-family"
 
@@ -40,17 +41,10 @@ export function OrderHistorySheet({ members, currentSendCode }: { members: Famil
       </div>
 
       {open && (
-        <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center" role="dialog" aria-modal="true" aria-labelledby="order-history-title">
-          {/* Bấm ra ngoài để đóng */}
-          <button type="button" aria-label="Đóng lịch sử đơn hàng" tabIndex={-1} onClick={() => setOpen(false)} className="absolute inset-0 bg-black/40" />
-          <div className="relative flex max-h-[85vh] w-full max-w-md flex-col rounded-t-2xl bg-surface shadow-xl sm:rounded-2xl">
-            <div className="flex items-center justify-between border-b border-border px-4 py-3">
-              <h2 id="order-history-title" className="text-body font-bold text-text">Lịch sử đơn hàng</h2>
-              <button type="button" onClick={() => setOpen(false)} aria-label="Đóng" className="inline-flex h-11 w-11 items-center justify-center rounded-xl text-text-muted hover:bg-surface-muted">
-                <X size={18} aria-hidden="true" />
-              </button>
-            </div>
-            <ul className="flex flex-col divide-y divide-border overflow-y-auto">
+        <BottomSheet open onOpenChange={(o) => { if (!o) setOpen(false) }}
+          title="Lịch sử đơn hàng">
+          <div className="-m-5">
+            <ul className="flex flex-col divide-y divide-border">
               {list.map((m) => {
                 const current = m.sendCode === currentSendCode
                 const body = (
@@ -84,7 +78,7 @@ export function OrderHistorySheet({ members, currentSendCode }: { members: Famil
               })}
             </ul>
           </div>
-        </div>
+        </BottomSheet>
       )}
     </>
   )

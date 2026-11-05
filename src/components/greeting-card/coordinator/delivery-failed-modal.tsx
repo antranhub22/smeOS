@@ -1,8 +1,9 @@
 "use client"
 
 import React, { useState } from "react"
-import { PackageX, X } from "@/components/ui/icons"
+import { PackageX } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
+import { Dialog } from "@/components/ui/dialog"
 import { apiSend } from "@/components/greeting-card/greeting-api"
 import {
   DELIVERY_FAILURE_LABEL,
@@ -38,14 +39,9 @@ export function DeliveryFailedModal({ orderId, orderCode, onClose, onDone }: { o
   }
 
   return (
-    <div role="presentation" className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-end sm:items-center justify-center p-4" onKeyDown={(e) => e.key === "Escape" && onClose()}>
-      <div role="dialog" aria-modal="true" aria-labelledby="delivery-failed-title" className="bg-surface rounded-2xl border border-border shadow-xl w-full max-w-md p-5 flex flex-col gap-4">
-        <div className="flex items-center justify-between">
-          <h3 id="delivery-failed-title" className="text-body font-extrabold text-text flex items-center gap-2">
-            <PackageX size={18} className="text-warning" aria-hidden="true" /> Giao không thành công — #{orderCode}
-          </h3>
-          <button type="button" aria-label="Đóng" onClick={onClose} className="text-text-muted hover:text-text"><X size={18} /></button>
-        </div>
+    <Dialog open onOpenChange={(o) => { if (!o && !busy) onClose() }} size="sm"
+      title={<span className="flex items-center gap-2"><PackageX size={18} className="text-warning" aria-hidden="true" /> Giao không thành công — #{orderCode}</span>}>
+      <div className="flex flex-col gap-4">
         <p className="text-body-sm text-text-muted">Đơn chuyển sang <strong>chờ giao lại</strong>. Khách được báo và có thể đổi giờ hoặc địa chỉ giao trên trang theo dõi.</p>
 
         <fieldset className="flex flex-col gap-2" disabled={busy}>
@@ -76,6 +72,6 @@ export function DeliveryFailedModal({ orderId, orderCode, onClose, onDone }: { o
           </Button>
         </div>
       </div>
-    </div>
+    </Dialog>
   )
 }

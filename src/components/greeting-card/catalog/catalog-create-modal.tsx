@@ -1,8 +1,9 @@
 "use client"
 
 import React, { useState } from "react"
-import { Check, Loader2, X } from "@/components/ui/icons"
+import { Check, Loader2 } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
+import { Dialog } from "@/components/ui/dialog"
 import { apiSend } from "@/components/greeting-card/greeting-api"
 import { useI18n } from "@/lib/i18n"
 
@@ -51,19 +52,9 @@ export function CatalogCreateModal({ onClose, onCreated }: { onClose: () => void
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-      <div className="bg-bg rounded-2xl shadow-2xl border border-border w-full max-w-md mx-4 p-6 flex flex-col gap-4">
-        <div className="flex items-center justify-between">
-          <h3 className="text-title-sm font-extrabold text-text">Tạo {catalogHeading} Mới</h3>
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label="Đóng form tạo bộ sưu tập"
-            className="p-1.5 rounded-lg hover:bg-surface text-text-muted hover:text-text"
-          >
-            <X size={18} />
-          </button>
-        </div>
+    <Dialog open onOpenChange={(o) => { if (!o && !creating) onClose() }} size="sm"
+      title={`Tạo ${catalogHeading} Mới`}>
+      <div className="flex flex-col gap-4">
         <form onSubmit={handleCreate} className="flex flex-col gap-3.5">
           {error && <p role="alert" className="p-3 rounded-xl bg-danger-bg text-danger text-body-sm">{error}</p>}
           <div>
@@ -124,6 +115,6 @@ export function CatalogCreateModal({ onClose, onCreated }: { onClose: () => void
           </div>
         </form>
       </div>
-    </div>
+    </Dialog>
   )
 }

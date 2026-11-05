@@ -1,8 +1,9 @@
 "use client"
 
 import React, { useState } from "react"
-import { Globe2, Lock, CheckCircle2, AlertCircle, Save, Loader2, Sparkles, Send, Clock, X } from "@/components/ui/icons"
+import { Globe2, Lock, CheckCircle2, AlertCircle, Save, Loader2, Sparkles, Send, Clock } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
+import { Dialog } from "@/components/ui/dialog"
 import { apiSend, useApi } from "@/components/greeting-card/greeting-api"
 import {
   BROCHURE_LANGUAGE_POLICY_KEY,
@@ -304,23 +305,9 @@ export function BrochureLanguageSettings() {
 
       {/* Modal gửi yêu cầu mở khóa Tiếng Anh lên Admin SaaS */}
       {openUnlockModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-xs p-4">
-          <div className="bg-bg rounded-2xl border border-border p-6 max-w-md w-full shadow-2xl space-y-4">
-            <div className="flex items-center justify-between border-b border-border pb-3">
-              <div className="flex items-center gap-2">
-                <Sparkles size={18} className="text-primary" />
-                <h4 className="text-body font-bold text-text">Yêu Cầu Mở Khóa Gói Quốc Tế</h4>
-              </div>
-              <button
-                type="button"
-                onClick={() => setOpenUnlockModal(false)}
-                aria-label="Đóng cửa sổ"
-                className="p-1.5 rounded-lg text-text-muted hover:bg-surface"
-              >
-                <X size={16} />
-              </button>
-            </div>
-
+        <Dialog open onOpenChange={(o) => { if (!o) setOpenUnlockModal(false) }} size="sm"
+          title={<span className="flex items-center gap-2"><Sparkles size={18} className="text-primary" />Yêu Cầu Mở Khóa Gói Quốc Tế</span>}>
+          <div className="space-y-4">
             {unlockSuccess ? (
               <div className="p-4 rounded-xl bg-success-bg border border-success/20 text-center space-y-2">
                 <CheckCircle2 size={32} className="text-success mx-auto" />
@@ -398,7 +385,7 @@ export function BrochureLanguageSettings() {
               </form>
             )}
           </div>
-        </div>
+        </Dialog>
       )}
     </div>
   )

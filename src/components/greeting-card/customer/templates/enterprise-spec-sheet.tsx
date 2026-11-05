@@ -1,7 +1,7 @@
 "use client"
 
-import { useEffect } from "react"
-import { X } from "@/components/ui/icons"
+import { BottomSheet } from "@/components/ui/bottom-sheet"
+import { Button } from "@/components/ui/button"
 import type { GreetingCatalogProduct } from "@/modules/greeting-card/domain/greeting-card-types"
 import { productPriceText } from "./product-info/product-display"
 import { ProductImage } from "./aux/aux-kit"
@@ -19,60 +19,39 @@ interface EnterpriseSpecSheetProps {
  * của sản phẩm — không tự thêm kích thước, thành phần hay cam kết.
  */
 export function EnterpriseSpecSheet({ product, isOpen, onClose, onSelectProduct }: EnterpriseSpecSheetProps) {
-  useEffect(() => {
-    if (!isOpen) return
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose()
-    window.addEventListener("keydown", onKey)
-    const prev = document.body.style.overflow
-    document.body.style.overflow = "hidden"
-    return () => {
-      window.removeEventListener("keydown", onKey)
-      document.body.style.overflow = prev
-    }
-  }, [isOpen, onClose])
-
-  if (!isOpen) return null
-
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center" role="dialog" aria-modal="true" aria-labelledby="spec-title">
-      <button type="button" aria-label="Đóng" onClick={onClose} className="absolute inset-0 bg-black/55 backdrop-blur-[2px] animate-in fade-in duration-200" />
-      <div className="relative flex max-h-[92dvh] w-full max-w-[480px] flex-col overflow-hidden rounded-t-[28px] bg-surface text-text shadow-2xl animate-in slide-in-from-bottom duration-300">
+    <BottomSheet
+      open={isOpen}
+      onOpenChange={(o) => { if (!o) onClose() }}
+      title={product.name}
+      className="max-w-[480px] bg-surface text-text"
+      footer={
+        <Button
+          type="button"
+          onClick={() => onSelectProduct(product)}
+          className="h-12 w-full justify-between rounded-2xl px-5 text-body font-bold shadow-md"
+        >
+          <span>Đặt mẫu này</span>
+          <span className="tabular-nums">{productPriceText(product)}</span>
+        </Button>
+      }
+    >
+      <div className="-m-5 flex flex-col">
         <div className="relative aspect-[4/3] w-full shrink-0 bg-surface-alt">
           <ProductImage product={product} />
-          <span aria-hidden="true" className="absolute left-1/2 top-2.5 h-1.5 w-10 -translate-x-1/2 rounded-full bg-white/80" />
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label="Đóng chi tiết"
-            className="absolute right-3 top-3 flex h-10 w-10 items-center justify-center rounded-full bg-black/45 text-white backdrop-blur-md"
-          >
-            <X size={20} aria-hidden="true" />
-          </button>
         </div>
-
-        <div className="min-h-0 flex-1 overflow-y-auto px-5 pb-4 pt-5">
+        <div className="px-5 pb-4 pt-5">
           <ProductInfo
             product={product}
             level="full"
             size="lg"
-            as="h2"
+            as="h3"
             id="spec-title"
             muted="var(--color-text-muted)"
             titleClassName="font-serif text-display font-medium tracking-tight"
           />
         </div>
-
-        <div className="shrink-0 border-t border-border px-5 pb-[max(env(safe-area-inset-bottom),16px)] pt-3">
-          <button
-            type="button"
-            onClick={() => onSelectProduct(product)}
-            className="flex h-12 w-full items-center justify-between rounded-2xl bg-primary px-5 text-body font-bold text-white shadow-md active:scale-[0.99]"
-          >
-            <span>Đặt mẫu này</span>
-            <span className="tabular-nums">{productPriceText(product)}</span>
-          </button>
-        </div>
       </div>
-    </div>
+    </BottomSheet>
   )
 }

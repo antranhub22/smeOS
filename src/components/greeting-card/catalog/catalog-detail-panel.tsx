@@ -1,8 +1,9 @@
 "use client"
 
 import React, { useState } from "react"
-import { ArrowLeft, Package, Plus, Trash2, Search, Loader2, X, CheckCircle, ShieldCheck } from "@/components/ui/icons"
+import { ArrowLeft, Package, Plus, Trash2, Search, Loader2, CheckCircle, ShieldCheck } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
+import { Dialog } from "@/components/ui/dialog"
 import { useConfirmDialog } from "@/components/ui/confirm-dialog"
 import { useSession } from "@/lib/session"
 import { useCatalogItems } from "./use-catalog-items"
@@ -146,19 +147,9 @@ export function CatalogDetailPanel({ catalogId, catalogName, onBack }: Props) {
 
       {/* Add Product Modal */}
       {isAddOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-          <div className="bg-bg rounded-2xl shadow-2xl border border-border w-full max-w-lg mx-4 p-5 flex flex-col gap-4 max-h-[80vh]">
-            <div className="flex items-center justify-between">
-              <h3 className="text-title-sm font-extrabold text-text">Chọn {ti("sampleProduct").toLowerCase()} thêm vào bộ sưu tập</h3>
-              <button
-                type="button"
-                onClick={() => { setIsAddOpen(false); setProductSearch("") }}
-                aria-label={`Đóng modal chọn ${ti("sampleProduct").toLowerCase()}`}
-                className="p-1.5 rounded-lg hover:bg-surface text-text-muted"
-              >
-                <X size={18} />
-              </button>
-            </div>
+        <Dialog open onOpenChange={(o) => { if (!o) { setIsAddOpen(false); setProductSearch("") } }} size="md"
+          title={`Chọn ${ti("sampleProduct").toLowerCase()} thêm vào bộ sưu tập`}>
+          <div className="flex flex-col gap-4">
             <div className="relative">
               <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" />
               <input
@@ -218,7 +209,7 @@ export function CatalogDetailPanel({ catalogId, catalogName, onBack }: Props) {
               Xong
             </Button>
           </div>
-        </div>
+        </Dialog>
       )}
 
       {/* Products Grid */}

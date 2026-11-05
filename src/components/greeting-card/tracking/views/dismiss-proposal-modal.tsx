@@ -1,8 +1,9 @@
 "use client"
 
 import React, { useState } from "react"
-import { EyeOff, AlertTriangle, X } from "@/components/ui/icons"
+import { EyeOff, AlertTriangle } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
+import { Dialog } from "@/components/ui/dialog"
 import type { TrackingViewItem } from "@/modules/greeting-card/domain/tracking-views"
 import { DISMISSAL_REASONS, type DismissalReasonId } from "@/modules/greeting-card/domain/dismissal-policy"
 
@@ -68,38 +69,11 @@ export function DismissProposalModal({ item, onClose, onSuccess }: DismissPropos
   const orderTitle = item.orderCode || item.sendCode || "Đơn hàng"
 
   return (
-    <div
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="dismiss-modal-title"
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-xs"
-    >
-      <div className="w-full max-w-md rounded-2xl border border-border bg-surface p-5 shadow-xl animate-in fade-in zoom-in-95 duration-150">
-        <div className="flex items-center justify-between border-b border-border/60 pb-3">
-          <div className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-danger-bg text-danger">
-              <EyeOff size={18} aria-hidden="true" />
-            </div>
-            <div>
-              <h2 id="dismiss-modal-title" className="text-body font-bold text-text">
-                Bỏ hiển thị: {orderTitle}
-              </h2>
-              <p className="text-caption text-text-muted">
-                {item.customerName || "Khách hàng"} · {item.productName || "Sản phẩm"}
-              </p>
-            </div>
-          </div>
-          <button
-            type="button"
-            onClick={onClose}
-            className="rounded-lg p-1 text-text-muted hover:bg-surface-muted hover:text-text cursor-pointer"
-            aria-label="Đóng"
-          >
-            <X size={18} />
-          </button>
-        </div>
-
-        <form onSubmit={handleSubmit} className="mt-4 flex flex-col gap-3.5">
+    <Dialog open onOpenChange={(o) => { if (!o && !submitting) onClose() }} size="sm"
+      title={<span className="flex items-center gap-2"><EyeOff size={18} className="text-danger" aria-hidden="true" />Bỏ hiển thị: {orderTitle}</span>}
+      description={`${item.customerName || "Khách hàng"} · ${item.productName || "Sản phẩm"}`}>
+      <div className="flex flex-col">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-3.5">
           <div className="rounded-xl border border-warning-border bg-warning-bg/40 p-3 text-caption text-warning-text flex items-start gap-2">
             <AlertTriangle size={15} className="shrink-0 mt-0.5 text-warning" aria-hidden="true" />
             <span>
@@ -179,6 +153,6 @@ export function DismissProposalModal({ item, onClose, onSuccess }: DismissPropos
           </div>
         </form>
       </div>
-    </div>
+    </Dialog>
   )
 }

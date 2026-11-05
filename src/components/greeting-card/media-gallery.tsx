@@ -1,7 +1,9 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
+import { Dialog } from "@/components/ui/dialog"
 import { useEffect, useState } from "react"
-import { ChevronLeft, ChevronRight, Play, X } from "@/components/ui/icons"
+import { ChevronLeft, ChevronRight, Play } from "@/components/ui/icons"
 
 /** URL ký sẵn có đuôi tệp trong đường dẫn; video nhận theo đuôi. */
 export function isVideoUrl(url: string): boolean {
@@ -18,7 +20,6 @@ export function MediaGallery({ urls, label }: { urls: readonly string[]; label: 
   useEffect(() => {
     if (open === null) return
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setOpen(null)
       if (e.key === "ArrowRight") setOpen((i) => (i === null ? i : (i + 1) % urls.length))
       if (e.key === "ArrowLeft") setOpen((i) => (i === null ? i : (i - 1 + urls.length) % urls.length))
     }
@@ -57,28 +58,26 @@ export function MediaGallery({ urls, label }: { urls: readonly string[]; label: 
       </ul>
 
       {current && open !== null && (
-        <div role="dialog" aria-modal="true" aria-label={label} className="fixed inset-0 z-50 flex items-center justify-center bg-text/90 p-4">
-          <button type="button" aria-label="Đóng" onClick={() => setOpen(null)} className="absolute right-3 top-3 rounded-full bg-surface/20 p-2 text-surface">
-            <X size={22} aria-hidden="true" />
-          </button>
-          {urls.length > 1 && (
-            <>
-              <button type="button" aria-label="Ảnh trước" onClick={() => setOpen((open - 1 + urls.length) % urls.length)} className="absolute left-2 rounded-full bg-surface/20 p-2 text-surface">
-                <ChevronLeft size={24} aria-hidden="true" />
-              </button>
-              <button type="button" aria-label="Ảnh sau" onClick={() => setOpen((open + 1) % urls.length)} className="absolute right-2 rounded-full bg-surface/20 p-2 text-surface">
-                <ChevronRight size={24} aria-hidden="true" />
-              </button>
-            </>
-          )}
-          {isVideoUrl(current) ? (
-            <video src={current} controls autoPlay playsInline className="max-h-[85dvh] max-w-full rounded-lg" />
-          ) : (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img src={current} alt={`${label} ${open + 1}`} className="max-h-[85dvh] max-w-full rounded-lg object-contain" />
-          )}
-          <p className="absolute bottom-4 text-body-sm text-surface">{open + 1}/{urls.length}</p>
-        </div>
+        <Dialog open onOpenChange={(o) => { if (!o) setOpen(null) }} size="lg" title={label} description={`${open + 1}/${urls.length}`}>
+          <div className="flex flex-col items-center gap-3">
+            {isVideoUrl(current) ? (
+              <video src={current} controls autoPlay playsInline className="max-h-[70dvh] max-w-full rounded-lg" />
+            ) : (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img src={current} alt={`${label} ${open + 1}`} className="max-h-[70dvh] max-w-full rounded-lg object-contain" />
+            )}
+            {urls.length > 1 && (
+              <div className="flex items-center gap-2">
+                <Button type="button" variant="outline" size="icon" aria-label="Ảnh trước" onClick={() => setOpen((open - 1 + urls.length) % urls.length)}>
+                  <ChevronLeft size={22} aria-hidden="true" />
+                </Button>
+                <Button type="button" variant="outline" size="icon" aria-label="Ảnh sau" onClick={() => setOpen((open + 1) % urls.length)}>
+                  <ChevronRight size={22} aria-hidden="true" />
+                </Button>
+              </div>
+            )}
+          </div>
+        </Dialog>
       )}
     </>
   )
