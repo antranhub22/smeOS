@@ -17,6 +17,7 @@ import { FeatureGuidanceCard } from "@/components/templates/shared/feature-guida
 import { PageHeader } from "@/components/ui/page-header"
 import { EmptyState } from "@/components/ui/empty-state"
 import { MonthlyLimitCard } from "@/components/usage/monthly-limit-card"
+import { SubscriptionCard } from "@/components/usage/subscription-card"
 
 interface UsageSummary {
   by_feature: Array<{
@@ -157,6 +158,8 @@ export default function MucDungPage() {
           </div>
         </div>
       </div>
+
+      {can("D1") && <SubscriptionCard />}
 
       <MonthlyLimitCard canSetAi={can("U2")} />
 

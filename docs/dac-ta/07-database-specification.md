@@ -531,7 +531,7 @@ model usage {
 Sổ cái credit (checklist ALG 10.6): mọi thay đổi `organizations.credit_balance` ghi một dòng `credit_transactions` trong cùng giao dịch, qua `OrganizationRepository` (`tryDeductCredit`/`tryDeductCreditFor` → `USAGE`, `refundCredit` → `REFUND`, `topUpCredit` → `TOPUP`/`GIFT`/`REFUND`, tạo tổ chức có credit khởi tạo → `GIFT`). Số dư luôn bằng tổng `amount`; migration mở sổ ghi một dòng `OPENING` cho số dư đang có. Console nạp/tặng/hoàn qua `POST /platform/organizations/:id/credits` (`N3`, bắt buộc lý do, ghi `platform_audit_logs`).
 
 ```prisma
-enum credit_transaction_kind { OPENING  TOPUP  GIFT  REFUND  USAGE }
+enum credit_transaction_kind { OPENING  TOPUP  GIFT  REFUND  USAGE  EXPIRE }
 
 model credit_transactions {
   id              String                  @id @default(uuid())
@@ -585,6 +585,55 @@ model provider_cost_entries {
 
   @@index([organization_id])
   @@index([organization_id, occurred_at])
+}
+```
+
+Gói thuê bao (checklist ALG 10.7, PO Q9). Một tổ chức một thuê bao; giá theo kỳ nhập ở Console (`N19`). Hoá đơn kỳ đầu hạn trả ngay — chưa thu thì `OVERDUE` (chỉ xem); kỳ sau sinh 7 ngày trước `current_period_end`, hạn = ngày bắt đầu kỳ sau. Ghi đã thu (SePay theo `code` trong nội dung chuyển khoản, hoặc Console) dời kỳ hiện tại; `payment_reference` duy nhất chống ghi trùng. `plan_credit_period`/`plan_credit_granted`: credit tặng theo gói của tháng (PO Q10) — đầu tháng cấp `GIFT`, phần tháng trước chưa dùng thu hồi `EXPIRE`. Gói đang thuê bao quyết định tính năng (`entitlement-service`), đứng trước `organizations.credit_plan`. Tài khoản nhận tiền của nền tảng ở `platform_settings.platform_billing_account`.
+
+```prisma
+enum subscription_cycle          { MONTHLY  YEARLY }
+enum subscription_status         { ACTIVE  OVERDUE  CANCELLED }
+enum subscription_invoice_status { PENDING  PAID  VOID }
+
+model subscriptions {
+  id                       String              @id @default(uuid())
+  organization_id          String              @unique
+  plan                     String              // EXPERIENCE · STARTER · PRO · FLOWER_NETWORK · ENTERPRISE
+  cycle                    subscription_cycle
+  price_vnd                Int
+  included_credits_monthly Int                 @default(0)
+  status                   subscription_status @default(ACTIVE)
+  current_period_start     DateTime
+  current_period_end       DateTime
+  plan_credit_period       String?
+  plan_credit_granted      Int                 @default(0)
+  created_by               String?
+  created_at               DateTime            @default(now())
+  updated_at               DateTime            @updatedAt
+
+  @@index([organization_id])
+}
+
+model subscription_invoices {
+  id                String                      @id @default(uuid())
+  organization_id   String
+  subscription_id   String
+  code              String                      @unique   // TB + 8 ký tự, nội dung chuyển khoản
+  period_start      DateTime
+  period_end        DateTime
+  amount_vnd        Int
+  status            subscription_invoice_status @default(PENDING)
+  due_at            DateTime
+  paid_at           DateTime?
+  payment_reference String?                     @unique
+  reminded_7d       Boolean                     @default(false)
+  reminded_1d       Boolean                     @default(false)
+  created_at        DateTime                    @default(now())
+  updated_at        DateTime                    @updatedAt
+
+  @@unique([subscription_id, period_start])
+  @@index([organization_id])
+  @@index([status, due_at])
 }
 ```
 

@@ -2,6 +2,7 @@ import { AppError } from "@/core/http/errors"
 import { requireCapability } from "@/core/rbac/capabilities"
 import type { TenantContext } from "@/core/tenancy"
 import { OrganizationRepository } from "@/modules/organization/infra/organization-repository"
+import { findSubscription } from "@/modules/subscription/infra/subscription-repository"
 
 /**
  * Động cơ Quản lý Gói dịch vụ & Quyền năng lực Thương mại (Commercial Feature Entitlement).
@@ -127,7 +128,11 @@ export async function requireFeatureAccess(
     throw new AppError("INTERNAL", "Không tìm thấy thông tin tổ chức")
   }
 
-  const plan = resolvePlanFromOrg(org.credit_plan, org.type)
+  // Gói đang thuê bao (checklist ALG 10.7) đứng trước `credit_plan` cũ
+  const subscription = await findSubscription(ctx.organizationId)
+  const plan = subscription && subscription.status !== "CANCELLED" && subscription.plan in PLAN_FEATURES
+    ? (subscription.plan as CommercialPlan)
+    : resolvePlanFromOrg(org.credit_plan, org.type)
   if (!hasPlanEntitlement(plan, featureKey)) {
     throw new AppError(
       "ENTITLEMENT_REQUIRED",

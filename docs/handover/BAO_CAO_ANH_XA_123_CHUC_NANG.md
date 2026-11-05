@@ -32,18 +32,17 @@ Ký hiệu đường dẫn rút gọn: `org/` = `src/modules/organization/`, `gc
 | 6 | Báo cáo hoạt động & tài chính | 9 | 3 | 6 | 0 |
 | 7 | AI phân tích, nội dung & marketing | 3 | 1 | 2 | 0 |
 | 8 | Landing page bán hàng | 1 | 1 | 0 | 0 |
-| 9 | Chat nội bộ, đa chuỗi & phân quyền nâng cao | 14 | 11 | 2 | 1 |
-| 10 | Quản lý credit AI, hạn mức & thuê bao SaaS | 8 | 6 | 1 | 1 |
-| | **Tổng cộng** | **123** | **104** | **17** | **2** |
+| 9 | Chat nội bộ, đa chuỗi & phân quyền nâng cao | 14 | 13 | 1 | 0 |
+| 10 | Quản lý credit AI, hạn mức & thuê bao SaaS | 8 | 7 | 0 | 1 |
+| | **Tổng cộng** | **123** | **107** | **15** | **1** |
 
-Tỷ lệ: Hoàn thiện 84,6% · Dang dở 13,8% · Chưa hoàn thành 1,6%.
+Tỷ lệ: Hoàn thiện 87,0% · Dang dở 12,2% · Chưa hoàn thành 0,8%.
 
-### Hai chức năng chưa hoàn thành
+### Một chức năng chưa hoàn thành
 
 | STT | Chức năng | Lý do |
 |---|---|---|
-| 9.10 | Khởi tạo tổ chức & khởi tạo gói dịch vụ | Console không có chức năng tạo tổ chức, không có chỗ gán gói |
-| 10.8 | Cấu hình trỏ tên miền riêng | Không có mã xử lý tên miền riêng |
+| 10.8 | Cấu hình trỏ tên miền riêng | Không có mã xử lý tên miền riêng; PO Q11 hoãn sang đợt sau |
 
 ## 3. Chi tiết theo nhóm
 
@@ -199,9 +198,9 @@ Tỷ lệ: Hoàn thiện 84,6% · Dang dở 13,8% · Chưa hoàn thành 1,6%.
 | 9.5 | Quản lý kết nối Webhook/API key | Hoàn thiện | `api/integration-tokens` (cấp, thu hồi, `[id]/rotate`), F9 trần cứng; `tt/integration.test.ts:78`, `src/modules/integration/use-cases/__tests__/integration-use-cases.test.ts:120` | — |
 | 9.6 | Quản lý tác vụ nền & chạy lại tác vụ lỗi | Hoàn thiện | `api/jobs/[id]/{cancel,retry,events}`; `src/modules/jobs/use-cases/scan-stuck-jobs.ts`; `tt/job-retry-backoff.test.ts:35,45`, `tp/dead-letter-jobs.test.ts:45,60` | — |
 | 9.7 | Cấu hình chính sách & trần chi phí AI tháng | Hoàn thiện | `schema:1202-1218` (`allowed_models`, `cost_ceiling` mỗi lượt, `privacy_floor`); lọc nội dung `api/content-guard/validate`; trần credit AI theo tháng do Điều hành đặt (`U2`) `api/usage/limits/route.ts`, `src/modules/usage/use-cases/monthly-limits.ts`, chặn mọi lượt AI tính phí khi trừ credit (job, chạy lại) `src/modules/usage/infra/usage-limit-repository.ts`; `tt/ai-policy.test.ts:41-125`, `tt/usage-limits.test.ts` | — |
-| 9.8 | Console quản trị nền tảng đa cửa hàng | Dang dở | `src/app/(platform)/van-hanh/to-chuc`, `suc-khoe`; `api/platform/health`; `tp/system-health-queue.test.ts:47` | Doanh thu thuê bao |
+| 9.8 | Console quản trị nền tảng đa cửa hàng | Hoàn thiện | `src/app/(platform)/van-hanh/to-chuc`, `suc-khoe`; tổng quan Console: số cửa hàng theo trạng thái thuê bao, doanh thu thuê bao đã thu 6 tháng, sức khoẻ hệ thống khi có N5 `api/platform/overview/route.ts`, `src/modules/platform/use-cases/platform-overview.ts`, `src/components/platform/subscription-overview-card.tsx`; nạp credit theo từng tổ chức thay nút nạp chung giả lập ở trang chủ Console; `tp/subscriptions.test.ts` | — |
 | 9.9 | Luồng thẩm định & duyệt đăng ký tổ chức mới | Hoàn thiện | `org/use-cases/sign-up.ts`; `api/platform/registrations/[userId]/decision`; `tp/registration-approval.test.ts:47-77`, `tt/registration-approval.test.ts:30-59` | — |
-| 9.10 | Khởi tạo tổ chức & khởi tạo gói dịch vụ | Chưa hoàn thành | `api/platform/organizations/route.ts` chỉ có GET; `organizations.credit_plan` không có chỗ ghi trong ứng dụng (`src/core/entitlements/entitlement-service.ts:130` chỉ đọc) | Toàn bộ chức năng |
+| 9.10 | Khởi tạo tổ chức & khởi tạo gói dịch vụ | Hoàn thiện | Console tạo tổ chức `api/platform/organizations/route.ts` (POST, N7; gán gói thêm N19), `src/modules/platform/use-cases/create-organization.ts`: cửa hàng theo ngành, workspace vận hành, chủ tiệm vai Điều hành với mật khẩu tạm buộc đổi lần đầu (1.4), gói thuê bao (10.7), nhật ký nền tảng không chứa mật khẩu; màn `src/components/platform/create-organization-card.tsx`; `tp/subscriptions.test.ts` (thiếu mã → 403, chủ tiệm đăng nhập được, có gói, có nhật ký) | — |
 | 9.11 | Duyệt 2 bước cho thao tác nhạy cảm | Hoàn thiện | Phiếu duyệt: đổi thông tin/giá mẫu (2.7), huỷ đơn (4.7), giảm giá (3.7); giá dưới sàn chỉ có hiệu lực khi Điều hành duyệt/lập `src/modules/costing/use-cases/price-floor-guard.ts`; ghi thu chờ xác nhận (1.16); `tt/below-floor.test.ts`, `tt/payment-confirmation.test.ts`, `tt/product-governance.test.ts` | — |
 | 9.12 | Cơ chế chặn tự nâng quyền chính mình | Hoàn thiện | Tự duyệt mặc định tắt `org/domain/self-approval-policy.ts`; chốt chung `org/use-cases/assert-not-self-approval.ts` ở giảm giá, huỷ đơn, đề xuất sửa mẫu, giao trước thu sau, xác nhận sổ thu; không tự đổi vai (1.11), không thao tác trên tài khoản của mình `org/use-cases/staff-accounts.ts`; vai tuỳ chỉnh không vượt trần cứng (1.13); `tt/self-approval.test.ts`, `tt/member-role-change.test.ts` | — |
 | 9.13 | Cách ly phân quyền dữ liệu theo chi nhánh | Hoàn thiện | `src/core/tenancy/branch-scope.ts` (nhân viên gắn chi nhánh, không có F7); áp ở đơn đa nguồn, bảng việc, hàng đợi điều phối, xuất Excel, đơn điều phối, danh sách/bảng/phễu Thẻ Chào, sản phẩm và tồn kho; đơn mới mang chi nhánh người tạo, đơn Thẻ Chào mang chi nhánh Sale `gc/infra/sale-branch.ts`; chi nhánh gia công thấy đơn của mình (R14); `tt/branch-scope.test.ts`, `tt/branch-portal.test.ts` | — |
@@ -217,7 +216,7 @@ Tỷ lệ: Hoàn thiện 84,6% · Dang dở 13,8% · Chưa hoàn thành 1,6%.
 | 10.4 | Ghi nhận chi phí thật (USD/VND) đo lợi nhuận | Hoàn thiện | Chi phí AI thật `src/core/ai/gateway.ts` ghi `ai_requests.cost_usd`; chi phí tin SMS/ZNS theo giá vốn tham chiếu `provider_cost_entries` (migration `20261105170000_provider_cost_entries`) `src/modules/usage/infra/provider-cost-repository.ts`, ghi khi gửi thành công `gc/use-cases/notify-customer.ts`; tỷ giá USD→VND, giá trị credit, giá vốn mỗi tin nhập ở Console `api/platform/credit-pricing/route.ts`; báo cáo biên lợi nhuận theo tháng và theo tổ chức `api/platform/margin/route.ts` (N4), `src/modules/usage/domain/platform-margin.ts`, `src/components/platform/platform-margin-card.tsx`; `tp/platform-margin.test.ts`, `tu/usage/platform-margin.test.ts`, `tt/greeting-card-notifications.test.ts` | — |
 | 10.5 | Cảnh báo khi credit AI còn dưới 20% | Hoàn thiện | Sự kiện `CREDIT_LOW` (số dư dưới 20% lần nạp gần nhất, không có thì 20% hạn mức tháng) và `USAGE_LIMIT_NEAR` (80% hạn mức tháng hoặc trần AI) `src/modules/notification/domain/events/store-operation-events.ts`; phát nền sau lần trừ, một lần mỗi kỳ (cờ trong `usage_limits` bật cùng giao dịch) `src/modules/usage/use-cases/credit-alerts.ts`; `tt/usage-limits.test.ts` | — |
 | 10.6 | Admin nạp / hoàn / tặng credit khuyến mãi | Hoàn thiện | Sổ cái `credit_transactions` (migration `20261105150000_credit_transactions`, dòng `OPENING` cho số dư sẵn có); mọi thay đổi số dư đi qua `org/infra/organization-repository.ts` và ghi sổ cùng giao dịch `org/infra/credit-ledger.ts` (trừ khi chạy job, hoàn job, phí kênh chat, credit khởi tạo, script nạp); Console nạp/tặng/hoàn có lý do `api/platform/organizations/[id]/credits/route.ts` (N1 đọc, N3 ghi, nhật ký nền tảng), `src/components/platform/credit-ledger-panel.tsx`, mã VietQR nạp ghi thật `src/components/platform/vietqr-topup-modal.tsx`; `tp/credit-ledger.test.ts`, `tt/credit-ledger-isolation.test.ts` | — |
-| 10.7 | Quản lý & thu phí thuê bao SaaS | Dang dở | Gói định nghĩa tĩnh `src/modules/platform/domain/vietqr-billing.ts:31-64`; quyền theo gói `src/core/entitlements/entitlement-service.ts:9-130`; `vietqr-billing.test.ts`, `entitlement-service.test.ts` | Gán gói cho tổ chức, theo dõi kỳ gia hạn tháng/năm, thu phí |
+| 10.7 | Quản lý & thu phí thuê bao SaaS | Hoàn thiện | Bảng `subscriptions`, `subscription_invoices` (migration `20261105180000_subscriptions`), chu kỳ tháng/năm, giá theo kỳ nhập ở Console (PO Q9) `api/platform/organizations/[id]/subscription/route.ts` (N19, mã năng lực mới); hoá đơn VietQR vào tài khoản nền tảng Console khai `api/platform/billing-account/route.ts`, nội dung = mã hoá đơn; SePay tự đối soát `api/billing/sepay/route.ts` (khoá `SEPAY_PLATFORM_API_KEY`, chưa có thì tắt), Console xác nhận tay `api/platform/subscription-invoices/[id]/mark-paid/route.ts`; nhắc gia hạn 7 ngày/1 ngày, quá hạn chuyển chỉ xem ngay (402 `SUBSCRIPTION_OVERDUE`) `src/modules/subscription/use-cases/subscription-guard.ts`, `org/use-cases/resolve-session.ts`; credit tặng theo gói cấp đầu tháng, phần thừa hết hạn (PO Q10); `entitlement-service` đọc gói từ `subscriptions`; màn cửa hàng `src/components/usage/subscription-card.tsx`, Console `subscription-panel.tsx`, `billing-account-card.tsx`; `tt/subscription-guard.test.ts`, `tp/subscriptions.test.ts`, `tu/subscription-rules.test.ts` | — |
 | 10.8 | Cấu hình trỏ tên miền riêng (Custom Domain) | Chưa hoàn thành | Không có mã xử lý tên miền riêng (`src/proxy.ts` không đọc host) | Toàn bộ chức năng |
 
 ## 4. Kết quả chạy test

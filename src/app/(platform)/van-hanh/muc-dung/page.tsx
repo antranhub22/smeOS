@@ -20,6 +20,7 @@ import { formatNumber } from "@/lib/i18n/formatters"
 import { PageHeader } from "@/components/ui/page-header"
 import { CreditPricingCard } from "@/components/platform/credit-pricing-card"
 import { PlatformMarginCard } from "@/components/platform/platform-margin-card"
+import { BillingAccountCard } from "@/components/platform/billing-account-card"
 
 type PlatformUsageRow = {
   organizationId: string
@@ -134,6 +135,8 @@ export default function MucDungPage() {
       <CreditPricingCard />
 
       <PlatformMarginCard />
+
+      <BillingAccountCard />
 
       {/* 3. Cảnh báo trần hạn mức Quota (AI-05) */}
       {metrics.topConsumers.length > 0 && (

@@ -13,9 +13,9 @@ import { VietQrTopupModal } from "./vietqr-topup-modal"
 
 type Kind = "TOPUP" | "GIFT" | "REFUND"
 interface Monthly { period: string; credit: { used: number; limit: number | null } }
-interface Entry { id: string; kind: Kind | "OPENING" | "USAGE"; amount: number; balanceAfter: number; reason: string | null; createdAt: string }
+interface Entry { id: string; kind: Kind | "OPENING" | "USAGE" | "EXPIRE"; amount: number; balanceAfter: number; reason: string | null; createdAt: string }
 
-const KIND_LABEL: Record<Entry["kind"], string> = { OPENING: "Số dư đầu", TOPUP: "Nạp", GIFT: "Tặng", REFUND: "Hoàn", USAGE: "Dùng" }
+const KIND_LABEL: Record<Entry["kind"], string> = { OPENING: "Số dư đầu", TOPUP: "Nạp", GIFT: "Tặng", REFUND: "Hoàn", USAGE: "Dùng", EXPIRE: "Hết hạn" }
 
 /** Console → tổ chức → Credit: số dư, nạp/tặng/hoàn có lý do, sổ cái gần nhất (checklist ALG 10.6). */
 export function CreditLedgerPanel({ organizationId, orgCode, onChanged }: { organizationId: string; orgCode: string; onChanged?: () => void }) {

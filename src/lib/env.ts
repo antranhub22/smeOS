@@ -36,6 +36,9 @@ const schema = z.object({
   // ("enabled") sau khi kho đã có bản sao lưu (D-06); thiếu = tắt.
   STORAGE_DELETE_PAYLOADS: z.enum(["enabled", "disabled"]).optional(),
   OPENAI_API_KEY: z.string().optional(),
+  // Khoá webhook SePay của tài khoản nhận tiền thuê bao nền tảng (checklist ALG 10.7). Thiếu thì
+  // đối soát tự động tắt; Console vẫn xác nhận tay được.
+  SEPAY_PLATFORM_API_KEY: z.string().min(16).optional(),
   // Nhà cung cấp nội dung tương đương OpenAI (PO 25/09/2026) — thiếu khoá thì
   // bên đó bị bỏ qua trong chuỗi lùi, không làm hỏng khởi động.
   ANTHROPIC_API_KEY: z.string().optional(),

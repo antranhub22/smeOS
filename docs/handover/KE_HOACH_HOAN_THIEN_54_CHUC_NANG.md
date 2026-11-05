@@ -177,14 +177,16 @@ Mọi bảng mới có `organization_id` + `@@index([organization_id])` (trừ b
 | 1 | 13 | 13 |
 | 2 | 11 | 11 |
 | 3 | 6 | 6 |
-| 4 | 9 | 5 |
+| 4 | 9 | 8 |
 | 5 | 6 | 0 |
 | 6 | 8 | 0 |
 | 7 | 1 | 0 |
-| **Tổng** | **54** | **35** |
+| **Tổng** | **54** | **38** |
 
 Đợt 2 hoàn thiện đủ 11/11 chức năng. Phần mở rộng còn theo dõi: link giao riêng cho shipper thuê ngoài (4.5), đưa đơn Thẻ Chào vào hàng đợi của tài khoản thợ (4.13), giá vốn theo phiên bản (2.4), ẩn mẫu bị khoá khỏi danh sách trên link theo ngày khách chọn trước (2.8). Shipper nội bộ được gắn đơn theo số điện thoại Điều phối ghi khi điều xe; Điều hành nhập số điện thoại nhân viên ở màn Thành viên.
 
 Đợt 3 hoàn thiện đủ 6/6 chức năng: phí chế tác theo kiểu dáng và hệ số ngày lễ (3.6), phiên bản và phí vận chuyển trên báo giá (3.8), lịch sử phiên bản báo giá (3.10), link báo giá có ảnh mẫu và tải PNG/PDF A6 (3.11), ưu đãi hạng khách và phụ phí giờ cao điểm (3.1), trường dữ liệu do cửa hàng cấu hình (1.9, mã năng lực `D18`, migration `20261105120000_field_definition_owner`).
+
+Đợt 4 hoàn thiện 8/9 chức năng; 10.8 (tên miền riêng) hoãn theo PO Q11. Sổ cái credit (10.6), hạn mức credit tháng và trần AI (10.3, 9.7), cảnh báo credit (10.5), chi phí thật và biên lợi nhuận (10.4), gói thuê bao với hoá đơn VietQR và SePay (10.7, mã năng lực `N19`), Console tạo tổ chức (9.10) và tổng quan (9.8). Migration: `20261105150000_credit_transactions`, `20261105160000_usage_limits`, `20261105170000_provider_cost_entries`, `20261105180000_subscriptions`. Đối soát SePay bật khi cấu hình `SEPAY_PLATFORM_API_KEY`; Console cần khai tài khoản nhận tiền và giá từng gói. Vòng đời thuê bao xét khi cửa hàng thao tác, không cần lịch chạy nền. Còn theo dõi: đơn đặt qua link công khai vẫn nhận khi cửa hàng quá hạn.
 
 Khi mọi đợt hoàn tất, báo cáo ánh xạ đạt 123/123 chức năng Hoàn thiện và checklist bàn giao ALG đủ điều kiện nghiệm thu.

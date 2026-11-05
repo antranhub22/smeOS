@@ -144,6 +144,8 @@ const TENANT_TABLES = [
   "credit_transactions",
   "usage_limits",
   "provider_cost_entries",
+  "subscription_invoices",
+  "subscriptions",
   "job_events",
   "generation_jobs",
   "idempotency_keys",

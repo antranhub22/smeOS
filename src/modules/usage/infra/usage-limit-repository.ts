@@ -122,3 +122,11 @@ export async function monthlySnapshot(orgId: string): Promise<MonthlySnapshot> {
   }
   return { period, credit: pick("CREDIT", pricing.defaultMonthlyLimit), ai: pick("AI", null) }
 }
+
+/** Credit đã dùng trong một kỳ (dòng CREDIT) — tính phần credit tặng theo gói hết hạn. */
+export async function creditUsedInPeriod(db: DbClient, orgId: string, period: string): Promise<number> {
+  const row = await db.usage_limits.findUnique({
+    where: { organization_id_service_period: { organization_id: orgId, service: "CREDIT", period } }, select: { used: true },
+  })
+  return row?.used ?? 0
+}

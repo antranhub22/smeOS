@@ -39,6 +39,7 @@ const NO_CAPABILITY_GUARD: Record<string, string> = {
   "storage/[...key]": "URL ký sẵn — verifyStorageSignature",
   "content-guard/validate": "kiểm từ cấm trên văn bản gửi lên — không đọc/ghi dữ liệu tổ chức",
   "field-config/catalogs": "chỉ đọc nhãn danh mục đang active cho form nhập liệu (ĐP-4a.1)",
+  "billing/sepay": "webhook SePay của tài khoản nhận tiền thuê bao nền tảng — không có phiên, gác bằng khoá SEPAY_PLATFORM_API_KEY (checklist ALG 10.7)",
   "chat/public/widget": "khung chat AI trên trang công khai do công cụ SMEOS tạo — tổ chức suy từ slug, giới hạn tần suất (đặc tả 06 mục 17)",
   "media/background-removal": "đã đóng ở P24 — luôn trả 409",
   // Thông báo của CHÍNH người dùng — truy vấn luôn lọc theo user + tổ chức của phiên.

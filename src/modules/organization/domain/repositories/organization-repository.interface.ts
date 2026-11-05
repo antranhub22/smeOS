@@ -7,7 +7,7 @@
 import type { TenantContext } from "@/core/tenancy"
 
 /** Sổ cái credit (checklist ALG 10.6) — loại dòng và thông tin đi kèm mỗi lần đổi số dư. */
-export type CreditEntryKind = "OPENING" | "TOPUP" | "GIFT" | "REFUND" | "USAGE"
+export type CreditEntryKind = "OPENING" | "TOPUP" | "GIFT" | "REFUND" | "USAGE" | "EXPIRE"
 export type CreditService = "AI" | "SMS" | "ZNS" | "CHAT" | "SUBSCRIPTION"
 export interface CreditEntryMeta {
   service?: CreditService | null | undefined
@@ -76,6 +76,9 @@ export interface IOrganizationRepository {
 
   /** Hoàn credit khi job thất bại hoặc bị huỷ. */
   refundCredit(ctx: TenantContext, amount: number, meta?: CreditEntryMeta): Promise<void>
+
+  /** Thu hồi credit tặng hết hạn. */
+  expireCredit(organizationId: string, amount: number, meta?: CreditEntryMeta): Promise<number>
 
   /** Hoàn credit cho đường không có phiên. */
   refundCreditFor(organizationId: string, amount: number, meta?: CreditEntryMeta): Promise<void>

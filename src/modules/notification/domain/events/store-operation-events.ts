@@ -260,4 +260,33 @@ export const STORE_OPERATION_EVENTS: NotificationEventDefinition[] = [
       { roleKey: "store_admin", channels: ["APP_INBOX", "TELEGRAM"], priority: "URGENT", dispatchMode: "BROADCAST" },
     ],
   },
+  // ── Gói thuê bao (checklist ALG 10.7) ─────────────────────────────────
+  {
+    key: "SUBSCRIPTION_RENEWAL_DUE",
+    label: "Sắp tới hạn gia hạn gói",
+    description: "Nhắc 7 ngày và 1 ngày trước hạn thanh toán hoá đơn gia hạn gói dịch vụ",
+    group: "AI",
+    tier: "STORE",
+    version: 1,
+    defaultVisibleToTiers: [],
+    iconName: "Clock",
+    deepLinkTemplate: "/muc-dung",
+    roleDefaults: [
+      { roleKey: "store_admin", channels: ["APP_INBOX", "TELEGRAM"], priority: "URGENT", dispatchMode: "BROADCAST" },
+    ],
+  },
+  {
+    key: "SUBSCRIPTION_OVERDUE",
+    label: "Gói quá hạn thanh toán",
+    description: "Hoá đơn gói dịch vụ tới hạn chưa thanh toán — tài khoản chuyển sang chỉ xem",
+    group: "AI",
+    tier: "STORE",
+    version: 1,
+    defaultVisibleToTiers: [],
+    iconName: "AlertCircle",
+    deepLinkTemplate: "/muc-dung",
+    roleDefaults: [
+      { roleKey: "store_admin", channels: ["APP_INBOX", "TELEGRAM"], priority: "URGENT", dispatchMode: "BROADCAST" },
+    ],
+  },
 ]

@@ -222,6 +222,8 @@ model organizations {
   credit_transactions           credit_transactions[]
   usage_limits                  usage_limits[]
   provider_cost_entries         provider_cost_entries[]
+  subscription                  subscriptions?
+  subscription_invoices         subscription_invoices[]
   owned_field_definitions       field_definitions[]      @relation("field_definition_owner")
   order_info_requests           order_info_requests[]
   order_change_requests         order_change_requests[]
@@ -695,13 +697,15 @@ model job_events {
  */
 /// Sổ cái credit (checklist ALG 10.6): mọi thay đổi `organizations.credit_balance` ghi một dòng cùng
 /// giao dịch — số dư = tổng `amount`. OPENING: số dư lúc bật sổ; TOPUP: nạp mua; GIFT: tặng;
-/// REFUND: hoàn lại (job hỏng, Console hoàn); USAGE: trừ khi dùng (số âm). Chỉ ghi thêm.
+/// REFUND: hoàn lại (job hỏng, Console hoàn); USAGE: trừ khi dùng (số âm); EXPIRE: credit tặng theo gói còn
+/// thừa cuối tháng bị thu hồi (PO Q10). Chỉ ghi thêm.
 enum credit_transaction_kind {
   OPENING
   TOPUP
   GIFT
   REFUND
   USAGE
+  EXPIRE
 }
 
 model credit_transactions {
@@ -722,6 +726,75 @@ model credit_transactions {
 
   @@index([organization_id])
   @@index([organization_id, created_at])
+}
+
+/// Gói thuê bao của tổ chức (checklist ALG 10.7, PO Q9). Một tổ chức một thuê bao. Giá theo kỳ nhập ở Console.
+/// Kỳ tiếp theo có hoá đơn `subscription_invoices`; tới `current_period_end` mà hoá đơn kỳ sau chưa thu thì
+/// tổ chức chuyển sang chỉ xem dữ liệu ngay (không ân hạn). `plan_credit_*`: credit tặng theo gói của tháng.
+enum subscription_cycle {
+  MONTHLY
+  YEARLY
+}
+
+enum subscription_status {
+  ACTIVE
+  OVERDUE
+  CANCELLED
+}
+
+enum subscription_invoice_status {
+  PENDING
+  PAID
+  VOID
+}
+
+model subscriptions {
+  id                       String              @id @default(uuid())
+  organization_id          String              @unique
+  plan                     String // EXPERIENCE · STARTER · PRO · FLOWER_NETWORK · ENTERPRISE
+  cycle                    subscription_cycle
+  price_vnd                Int
+  included_credits_monthly Int                 @default(0)
+  status                   subscription_status @default(ACTIVE)
+  current_period_start     DateTime
+  current_period_end       DateTime
+  plan_credit_period       String?
+  plan_credit_granted      Int                 @default(0)
+  created_by               String?
+  created_at               DateTime            @default(now())
+  updated_at               DateTime            @updatedAt
+
+  organization organizations           @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+  invoices     subscription_invoices[]
+
+  @@index([organization_id])
+}
+
+model subscription_invoices {
+  id                String                      @id @default(uuid())
+  organization_id   String
+  subscription_id   String
+  /// Mã ghi trong nội dung chuyển khoản để SePay đối soát
+  code              String                      @unique
+  period_start      DateTime
+  period_end        DateTime
+  amount_vnd        Int
+  status            subscription_invoice_status @default(PENDING)
+  due_at            DateTime
+  paid_at           DateTime?
+  /// Mã giao dịch (SePay hoặc xác nhận tay) — chống ghi trùng
+  payment_reference String?                     @unique
+  reminded_7d       Boolean                     @default(false)
+  reminded_1d       Boolean                     @default(false)
+  created_at        DateTime                    @default(now())
+  updated_at        DateTime                    @updatedAt
+
+  organization organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+  subscription subscriptions @relation(fields: [subscription_id], references: [id], onDelete: Cascade)
+
+  @@unique([subscription_id, period_start])
+  @@index([organization_id])
+  @@index([status, due_at])
 }
 
 /// Chi phí thật phía nhà cung cấp ngoài AI (checklist ALG 10.4): mỗi tin SMS/ZNS gửi thành công một dòng,

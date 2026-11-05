@@ -177,6 +177,18 @@ export class OrganizationRepository implements IOrganizationRepository {
     return this.refundCreditFor(ctx.organizationId, amount, meta)
   }
 
+  /** Thu hồi credit tặng theo gói hết hạn cuối tháng (PO Q10) — không tính vào hạn mức dùng. */
+  async expireCredit(organizationId: string, amount: number, meta: CreditEntryMeta = {}): Promise<number> {
+    if (amount <= 0) return 0
+    const result = await this.db.organizations.updateMany({
+      where: { id: organizationId, credit_balance: { gte: amount } },
+      data: { credit_balance: { decrement: amount } },
+    })
+    if (result.count === 0) return 0
+    await appendCreditEntry(this.db, organizationId, "EXPIRE", -amount, meta)
+    return amount
+  }
+
   /** Hoàn credit cho đường không có phiên (tin nhắn gửi lỗi sau khi đã trừ). */
   async refundCreditFor(organizationId: string, amount: number, meta: CreditEntryMeta = {}): Promise<void> {
     if (amount <= 0) return
