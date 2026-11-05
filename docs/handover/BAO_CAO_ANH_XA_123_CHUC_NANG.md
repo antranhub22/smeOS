@@ -29,14 +29,14 @@ Ký hiệu đường dẫn rút gọn: `org/` = `src/modules/organization/`, `gc
 | 3 | Tạo & quản lý báo giá | 13 | 13 | 0 | 0 |
 | 4 | Tiếp nhận, quản lý & xử lý đơn hàng | 32 | 32 | 0 | 0 |
 | 5 | Thẻ Chào mẫu hoa & trang khách hàng | 15 | 10 | 5 | 0 |
-| 6 | Báo cáo hoạt động & tài chính | 9 | 3 | 6 | 0 |
+| 6 | Báo cáo hoạt động & tài chính | 9 | 9 | 0 | 0 |
 | 7 | AI phân tích, nội dung & marketing | 3 | 1 | 2 | 0 |
 | 8 | Landing page bán hàng | 1 | 1 | 0 | 0 |
 | 9 | Chat nội bộ, đa chuỗi & phân quyền nâng cao | 14 | 13 | 1 | 0 |
 | 10 | Quản lý credit AI, hạn mức & thuê bao SaaS | 8 | 7 | 0 | 1 |
-| | **Tổng cộng** | **123** | **107** | **15** | **1** |
+| | **Tổng cộng** | **123** | **113** | **9** | **1** |
 
-Tỷ lệ: Hoàn thiện 87,0% · Dang dở 12,2% · Chưa hoàn thành 0,8%.
+Tỷ lệ: Hoàn thiện 91,9% · Dang dở 7,3% · Chưa hoàn thành 0,8%.
 
 ### Một chức năng chưa hoàn thành
 
@@ -163,15 +163,15 @@ Tỷ lệ: Hoàn thiện 87,0% · Dang dở 12,2% · Chưa hoàn thành 0,8%.
 
 | STT | Chức năng | Trạng thái | Bằng chứng | Còn thiếu |
 |---|---|---|---|---|
-| 6.1 | Báo cáo tổng hợp đơn hàng & tỷ lệ hủy/trễ | Dang dở | `src/modules/orders/domain/business-reporting.ts:40-105`; `src/app/(app)/so-lieu/page.tsx:73`; `business-reporting.test.ts:53-83` | Chọn kỳ thời gian; tỷ lệ đơn trễ; trang chỉ tính trên tối đa 100 đơn gần nhất |
-| 6.2 | Báo cáo doanh thu thực thu vs dự kiến | Dang dở | Tổng doanh thu `business-reporting.ts:22`; số còn phải thu `gc/domain/tracking-views.ts:237` | Báo cáo tách thực thu/dự kiến; bấm số liệu xem danh sách đơn |
-| 6.3 | Báo cáo sản phẩm bán chạy & tông màu ưa thích | Dang dở | Xếp hạng theo số đơn và doanh thu `business-reporting.ts:18-22`; mẫu nhiều tim `gc/domain/catalog-channel.ts:14` | Thống kê màu sắc, phong cách |
+| 6.1 | Báo cáo tổng hợp đơn hàng & tỷ lệ hủy/trễ | Hoàn thiện | Trang Báo cáo theo kỳ `src/app/(app)/bao-cao/page.tsx` (chọn khoảng ngày, nhóm ngày/tuần/tháng); số đơn, hoàn tất, huỷ, giao trễ hẹn (sau giờ hẹn Điều phối/cuối khung giờ/cuối ngày giao), đang trễ, tính trên toàn bộ đơn trong kỳ phía máy chủ `api/reports/orders/route.ts` (R20), `src/modules/reporting/domain/order-revenue-report.ts`, `report-period.ts`; `tt/reports.test.ts`, `tu/reporting/report-rules.test.ts` | — |
+| 6.2 | Báo cáo doanh thu thực thu vs dự kiến | Hoàn thiện | Dự kiến (đơn chưa huỷ) và thực thu (khoản thu đã xác nhận trừ hoàn) theo kỳ `api/reports/revenue/route.ts`; bấm một kỳ mở danh sách đơn của kỳ (`?detail=orders`) `src/components/reporting/order-revenue-panels.tsx`; `tt/reports.test.ts` | — |
+| 6.3 | Báo cáo sản phẩm bán chạy & tông màu ưa thích | Hoàn thiện | Xếp hạng mẫu theo số lượng và giá trị, tỷ trọng màu chủ đạo (`attributes.mainColor`/`color`) và phong cách (`style`/`craftStyle`) `api/reports/products/route.ts`, `src/modules/reporting/domain/product-performance-report.ts`; `tt/reports.test.ts` | — |
 | 6.4 | Báo cáo phễu chuyển đổi Thẻ Chào & Sale | Hoàn thiện | `api/greeting-card/stats/route.ts` (theo sale); `gc/use-cases/catalog-channel-events.ts:31` (theo kênh và từng bộ sưu tập); `tt/greeting-card-scope.test.ts:101`, `gc/domain/__tests__/link-expiry-and-funnel.test.ts` | — |
-| 6.5 | Báo cáo hiệu suất (Sale/Thợ/Shipper) | Dang dở | Doanh số theo Sale `gc/domain/sales-funnel.ts` (`revenueVnd`) | Sản lượng theo thợ; tỷ lệ giao đúng giờ theo shipper |
-| 6.6 | Báo cáo đối chiếu thu tiền: sổ thu vs ngân hàng | Dang dở | `schema:2916-2918` (`payment_method`); `src/components/greeting-card/admin/unmatched-payments-panel.tsx`; sheet "Sổ thu tiền" trong file xuất | Báo cáo dòng tiền theo hình thức thu đối chiếu sao kê |
+| 6.5 | Báo cáo hiệu suất (Sale/Thợ/Shipper) | Hoàn thiện | Doanh số theo Sale, sản lượng theo thợ (phân công đang hiệu lực, xong khi sẵn sàng/đã giao), tỷ lệ giao đúng giờ theo shipper (khớp thành viên qua số điện thoại) `api/reports/performance/route.ts`; `tt/reports.test.ts` | — |
+| 6.6 | Báo cáo đối chiếu thu tiền: sổ thu vs ngân hàng | Hoàn thiện | Dòng tiền theo hình thức thu (chuyển khoản/VietQR, tiền mặt, thẻ, ví, thu hộ); theo ngày, sổ thu chuyển khoản so với giao dịch ngân hàng nhận qua SePay (đã khớp, chưa khớp, lệch), danh sách giao dịch chưa khớp `api/reports/cashflow/route.ts`, `src/modules/reporting/domain/cashflow-report.ts`, `src/components/reporting/cashflow-panel.tsx`; `tt/reports.test.ts` | — |
 | 6.7 | Báo cáo truy vết lịch sử đơn giải quyết khiếu nại | Hoàn thiện | `src/components/greeting-card/evidence-timeline-diagram.tsx:100-145`; `tt/greeting-card-tracking-views.test.ts:68,96` | — |
 | 6.8 | Xuất báo cáo tài chính ra Excel (.xlsx) | Hoàn thiện | `src/modules/orders/use-cases/export-orders.ts:83-238` (4 sheet: Đơn hàng, Chi tiết SP, Sổ thu tiền, Thẻ Chào); `export-orders.test.ts:29,108`; `tu/architecture/export-audit.test.ts`, `export-capability.test.ts` | — |
-| 6.9 | Báo cáo tiêu thụ hạn mức AI theo kỳ | Dang dở | `api/usage/summary/route.ts` (G8) → `src/modules/usage/use-cases/get-usage-summary.ts`, `src/modules/usage/infra/usage-repository.ts:108-121` | Lọc theo kỳ (đang tính toàn thời gian); so với gói đã đăng ký; test |
+| 6.9 | Báo cáo tiêu thụ hạn mức AI theo kỳ | Hoàn thiện | `api/usage/summary/route.ts?period=YYYY-MM` (G8) lọc theo tháng, kèm hạn mức tháng, trần AI và credit tặng theo gói `src/modules/usage/use-cases/get-usage-summary.ts`; ô "Xem theo tháng" ở `src/app/(app)/muc-dung/page.tsx`; `tt/usage-summary.test.ts` | — |
 
 ### Nhóm 7 — AI phân tích, nội dung & marketing (3)
 

@@ -15,7 +15,7 @@ acceptance:
 
 # Screen Contract — Báo Cáo Số Liệu & Học Phong Cách (Analytics & Learning)
 
-**Tuyến:** `/so-lieu` · **Tệp chính:** `src/app/(app)/so-lieu/page.tsx` · **Cập nhật:** 27/09/2026 · **Thẻ:** T5.D1
+**Tuyến:** `/so-lieu` · **Tệp chính:** `src/app/(app)/so-lieu/page.tsx` · **Cập nhật:** 05/11/2026 · nút "Báo cáo theo kỳ" ở đầu trang (chỉ hiện khi có `R20`) mở `/bao-cao` · **Thẻ:** T5.D1
 
 ## 1. Vai và mục đích
 - Vai chính (03b): `store_manager`, `marketing_specialist`, `analyst` · Vai phụ: `lead_marketing`

@@ -313,11 +313,18 @@ Trả về chỉ những mục người gọi có năng lực duyệt. Nếu cô
 | GET | `/usage/summary` | `G8` |
 | GET | `/usage/limits` | `G8` |
 | PUT | `/usage/limits` | `U2` |
+| GET | `/reports/orders` | `R20` |
+| GET | `/reports/revenue` | `R20` |
+| GET | `/reports/products` | `R20` |
+| GET | `/reports/performance` | `R20` |
+| GET | `/reports/cashflow` | `R20` |
 | GET | `/subscription` | `D1` |
 | POST | `/billing/sepay` | — (khoá `SEPAY_PLATFORM_API_KEY`) |
 | GET | `/audit-logs` | `G9` |
 
 `/usage/summary` trả số lượt theo `feature`, credit đã dùng, credit còn lại, chia theo chi nhánh nếu tổ chức là Chuỗi.
+
+`/reports/*` (Đợt 5, checklist ALG 6.1, 6.2, 6.3, 6.5, 6.6; Điều hành và Kế toán): `?from=YYYY-MM-DD&to=YYYY-MM-DD&granularity=day|week|month` (giờ Việt Nam, mặc định 30 ngày gần nhất, tối đa 366 ngày; sai → 400), theo đơn tạo trong kỳ và phạm vi chi nhánh của người xem (9.13). `orders`: tổng, hoàn tất (đã giao/hoàn tất), huỷ, giao trễ hẹn (sau giờ hẹn Điều phối, cuối khung giờ hẹn, hoặc cuối ngày giao), đang trễ, theo từng kỳ. `revenue`: dự kiến (đơn chưa huỷ) và thực thu (khoản thu đã xác nhận, trừ hoàn); `?detail=orders` trả danh sách đơn của kỳ (tối đa 200). `products`: xếp hạng theo số lượng và giá trị, tỷ trọng màu chủ đạo và phong cách. `performance`: doanh số theo Sale, sản lượng theo thợ (phân công đang hiệu lực), giao đúng giờ theo shipper (khớp thành viên qua số điện thoại). `cashflow`: theo hình thức thu; theo ngày, sổ thu chuyển khoản so với giao dịch ngân hàng nhận qua SePay (đã khớp, chưa khớp, lệch), danh sách giao dịch chưa khớp. `/usage/summary?period=YYYY-MM` (6.9): lọc theo tháng, kèm `monthly_limit`, `ai_limit` và `plan` (credit tặng mỗi tháng).
 
 `/subscription` (checklist ALG 10.7): gói, kỳ hiện tại, trạng thái và hoá đơn của cửa hàng kèm mã VietQR (nội dung chuyển khoản = mã hoá đơn `TB…`). Gói `OVERDUE` (hoá đơn tới hạn chưa thu, PO Q9 không ân hạn) → mọi yêu cầu ghi của cửa hàng trả 402 `SUBSCRIPTION_OVERDUE`, yêu cầu đọc vẫn được. Hoá đơn kỳ sau sinh 7 ngày trước hết kỳ, nhắc `SUBSCRIPTION_RENEWAL_DUE` 7 ngày và 1 ngày trước hạn; quá hạn phát `SUBSCRIPTION_OVERDUE`; credit tặng theo gói cấp đầu tháng, phần tháng trước chưa dùng thu hồi (`EXPIRE`). Xét khi cửa hàng gửi yêu cầu, không cần lịch chạy nền. `POST /billing/sepay`: SePay báo giao dịch vào tài khoản nền tảng (`Authorization: Apikey …`; chưa cấu hình khoá → 404); khớp mã hoá đơn và đủ tiền → ghi đã thu, mã giao dịch SePay chống ghi trùng; không khớp để Console xác nhận tay.
 

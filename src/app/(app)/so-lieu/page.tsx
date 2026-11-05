@@ -165,14 +165,21 @@ export default function AnalyticsPage() {
           title="Báo cáo kinh doanh"
           tip="Số liệu bán hàng, mức dùng và hiệu quả quảng cáo của cửa hàng."
           actions={
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setAdModalOpen(true)}
-              className="flex items-center gap-1.5 text-caption font-semibold text-primary border-primary/30 hover:bg-primary/5"
-            >
-              <TrendingUp size={14} /> Hiệu quả quảng cáo
-            </Button>
+            <div className="flex flex-wrap gap-2">
+              {can("R20") && (
+                <Button variant="outline" size="sm" onClick={() => router.push("/bao-cao")} className="text-caption font-semibold">
+                  Báo cáo theo kỳ
+                </Button>
+              )}
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setAdModalOpen(true)}
+                className="flex items-center gap-1.5 text-caption font-semibold text-primary border-primary/30 hover:bg-primary/5"
+              >
+                <TrendingUp size={14} /> Hiệu quả quảng cáo
+              </Button>
+            </div>
           }
         />
       }

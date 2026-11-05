@@ -29,6 +29,7 @@ acceptance:
 - API:
   - `GET /api/v1/usage/summary` → Tổng hợp mức dùng theo tính năng và số dư credit (cần quyền `G8`)
   - `GET /api/v1/usage` → Danh sách lịch sử giao dịch trừ/hoàn credit (cần quyền `G8`)
+  - `GET /api/v1/usage/summary?period=YYYY-MM` → Mức dùng của một tháng, kèm hạn mức tháng và credit tặng theo gói; ô "Xem theo tháng" cạnh nút "Làm mới" (bỏ trống = toàn thời gian)
   - `GET /api/v1/subscription` → Gói thuê bao, kỳ hiện tại, hoá đơn cần trả kèm mã VietQR (cần quyền `D1`)
   - `GET /api/v1/usage/limits` → Hạn mức tháng: tổng credit và phần AI đã dùng/hạn mức (cần quyền `G8`); `PUT` đặt trần credit AI (cần quyền `U2`)
 - Khối: 6 khối (Hướng dẫn K1 `FeatureGuidanceCard`, Thẻ tổng quan số dư & credit đã dùng, Gói dịch vụ `SubscriptionCard` — chỉ hiện khi có `D1` và tổ chức đã có gói: tên gói, giá theo kỳ, hạn kỳ, huy hiệu trạng thái, cảnh báo "chỉ xem" khi quá hạn, mỗi hoá đơn chờ thu có ảnh mã VietQR + ngân hàng + số tài khoản + nội dung chuyển khoản, Hạn mức tháng `MonthlyLimitCard` — thanh tiến độ đổi màu ở 80%/100%, ô "Trần credit AI mỗi tháng" + nút "Lưu trần AI" chỉ hiện khi có `U2`, Bảng phân bổ theo phân hệ, Nhật ký giao dịch gần nhất)

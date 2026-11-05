@@ -34,7 +34,7 @@ describe("ba vai hệ thống Thợ cắm hoa, Shipper, Kế toán", () => {
     }
     expect(await codes("tho_cam")).toEqual(["A1", "A2", "G1", "G2", "R17"])
     expect(await codes("shipper")).toEqual(["A1", "A2", "G2", "R18"])
-    expect(await codes("ke_toan")).toEqual(["A1", "A2", "F1", "G8", "Q1", "R1", "R13", "R19"])
+    expect(await codes("ke_toan")).toEqual(["A1", "A2", "F1", "G8", "Q1", "R1", "R13", "R19", "R20"])
   })
 
   it("Thợ cắm và Shipper không xem được danh sách đơn; Kế toán xem được đơn và đối soát ngân hàng", async () => {

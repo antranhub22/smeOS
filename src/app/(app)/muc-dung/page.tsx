@@ -18,6 +18,8 @@ import { PageHeader } from "@/components/ui/page-header"
 import { EmptyState } from "@/components/ui/empty-state"
 import { MonthlyLimitCard } from "@/components/usage/monthly-limit-card"
 import { SubscriptionCard } from "@/components/usage/subscription-card"
+import { Input } from "@/components/ui/input"
+import { formatNumber } from "@/lib/i18n/formatters"
 
 interface UsageSummary {
   by_feature: Array<{
@@ -27,6 +29,10 @@ interface UsageSummary {
   }>
   credit_used: number
   credit_balance: number
+  /** Có khi lọc theo tháng (checklist ALG 6.9) */
+  period?: string
+  monthly_limit?: number | null
+  plan?: { code: string; included_credits_monthly: number } | null
 }
 
 interface UsageRow {
@@ -47,13 +53,14 @@ export default function MucDungPage() {
   const [history, setHistory] = useState<UsageRow[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [period, setPeriod] = useState("")
 
   const fetchData = useCallback(async () => {
     try {
       setLoading(true)
       setError(null)
       const [sumRes, listRes] = await Promise.all([
-        fetch("/api/v1/usage/summary"),
+        fetch(period ? `/api/v1/usage/summary?period=${period}` : "/api/v1/usage/summary"),
         fetch("/api/v1/usage?limit=30"),
       ])
 
@@ -71,7 +78,7 @@ export default function MucDungPage() {
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [period])
 
   useEffect(() => {
     if (canView) {
@@ -118,6 +125,8 @@ export default function MucDungPage() {
           title="Mức dùng"
           description={<>Tổ chức: <span className="font-semibold text-text">{orgName || "Mặc định"}</span></>}
         />
+        <div className="flex items-center gap-2">
+        <Input type="month" value={period} onChange={(e) => setPeriod(e.target.value)} className="h-9 w-40" aria-label="Xem theo tháng" />
         <Button
           variant="outline"
           size="sm"
@@ -128,6 +137,7 @@ export default function MucDungPage() {
           <RefreshCw size={13} className={loading ? "animate-spin motion-reduce:animate-none" : ""} />
           Làm mới
         </Button>
+        </div>
       </div>
 
       {/* 2. Thẻ số liệu tổng quan (Metric Rules: số đo thực tế từ backend) */}
@@ -150,11 +160,15 @@ export default function MucDungPage() {
             <Activity size={24} />
           </div>
           <div>
-            <div className="text-caption text-text-muted font-medium">Tổng Credit đã sử dụng</div>
+            <div className="text-caption text-text-muted font-medium">{summary?.period ? `Credit đã dùng tháng ${summary.period.slice(5)}/${summary.period.slice(0, 4)}` : "Tổng Credit đã sử dụng"}</div>
             <div className="text-display font-black text-text mt-0.5">
               {loading ? "..." : (summary?.credit_used ?? 0).toLocaleString("vi-VN")}
             </div>
-            <div className="text-caption text-text-muted mt-0.5">Tính trên tất cả các tính năng đã chạy</div>
+            <div className="text-caption text-text-muted mt-0.5">
+              {summary?.period
+                ? `Hạn mức tháng: ${summary.monthly_limit == null ? "không giới hạn" : formatNumber(summary.monthly_limit)}${summary.plan ? ` · gói tặng ${formatNumber(summary.plan.included_credits_monthly)} credit/tháng` : ""}`
+                : "Tính trên tất cả các tính năng đã chạy"}
+            </div>
           </div>
         </div>
       </div>
