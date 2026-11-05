@@ -50,11 +50,11 @@ Giá trị thật trên mọi môi trường: NOT VERIFIED (không đọc `.env`
 | `worker` | Python 3.11 → cài `ffmpeg` → `pip install` → `pytest tests -q` |
 | `e2e-ux` | build → `playwright test tests/e2e/ux` (Chromium) → lưu `test-results/` khi đỏ |
 
-CD: không có job `deploy` trong CI. `render.yaml` đặt `autoDeploy: true` + `branch: main` cho cả 5 dịch vụ deploy từ mã (`smeos-web`, 3 worker, cron) nên Render tự deploy khi `main` đổi — chạy blueprint một lần là đủ, không cần deploy hook (PO 05/11/2026, thay cơ chế P0-02). Cổng "chỉ deploy bản đã qua kiểm" chuyển sang ruleset `main` của GitHub. Node ghim `NODE_VERSION=22`, worker ghim `PYTHON_VERSION=3.11.9` theo CI. Bất biến của blueprint được gác bằng `tests/unit/architecture/render-blueprint-tu-du.test.ts`. Trạng thái các lần chạy CI/CD: NOT VERIFIED.
+CD: không có job `deploy` trong CI. `render.yaml` đặt `autoDeployTrigger: checksPass` + `branch: main` cho cả 5 dịch vụ deploy từ mã (`smeos-web`, 3 worker, cron): Render tự deploy khi `main` đổi **nhưng chỉ sau khi check CI của commit đó xanh** — chạy blueprint một lần là đủ, không cần deploy hook (PO 05/11/2026, thay cách thực thi P0-02, giữ nguyên bảo đảm D-14). Commit không sinh check nào thì không deploy. Node ghim `NODE_VERSION=22`, worker ghim `PYTHON_VERSION=3.11.9` theo CI. Bất biến của blueprint được gác bằng `tests/unit/architecture/render-blueprint-tu-du.test.ts`. Trạng thái các lần chạy CI/CD: NOT VERIFIED.
 
 ## 14.5 Hosting (theo `render.yaml`)
 
-Bảy tài nguyên, tất cả vùng `singapore`. Năm dịch vụ deploy từ mã đều đặt `autoDeploy: true` + `branch: main` (05/11/2026) — chạy blueprint một lần là Render tự deploy mỗi khi `main` đổi.
+Bảy tài nguyên, tất cả vùng `singapore`. Năm dịch vụ deploy từ mã đều đặt `autoDeployTrigger: checksPass` + `branch: main` (05/11/2026) — chạy blueprint một lần là Render tự deploy mỗi khi `main` đổi và check CI xanh.
 
 | Dịch vụ | Loại | Runtime | Lệnh build / start | Gói |
 |---|---|---|---|---|

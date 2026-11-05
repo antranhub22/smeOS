@@ -2,10 +2,14 @@
 # Docs: https://render.com/docs/infrastructure-as-code
 #
 # Blueprint TỰ ĐỦ: New → Blueprint, trỏ vào repo này là xong (PO 05/11/2026).
-#   • Mọi dịch vụ đặt `autoDeploy: true` + `branch: main` → Render tự deploy mỗi lần
-#     `main` đổi. KHÔNG cần deploy hook, KHÔNG cần secret `RENDER_DEPLOY_HOOK_*`,
-#     KHÔNG có job `deploy` trong CI (thay P0-02: cổng "CI xanh mới deploy" chuyển sang
-#     ruleset `main` — bắt buộc PR + 5 check xanh, nên `main` luôn đã xanh trước khi merge).
+#   • Mọi dịch vụ đặt `autoDeployTrigger: checksPass` + `branch: main` → Render tự deploy
+#     khi `main` đổi, NHƯNG chỉ sau khi check CI của commit đó xanh. KHÔNG cần deploy hook,
+#     KHÔNG cần secret `RENDER_DEPLOY_HOOK_*`, KHÔNG có job `deploy` trong CI.
+#     Cổng "chỉ deploy bản đã qua kiểm" (P0-02, D-14) vì vậy được GIỮ NGUYÊN, chỉ đổi nơi
+#     thực thi: từ job `deploy` sang chính Render. Commit KHÔNG có check nào, hoặc có check
+#     đỏ, đều KHÔNG deploy — hỏng theo hướng an toàn (không deploy), không phải deploy bừa.
+#     Ruleset `main` của GitHub vẫn nên bật, nhưng giờ là lớp phòng vệ thứ hai, không còn
+#     là cổng duy nhất.
 #   • Bốn biến BẮT BUỘC của mã nguồn (`src/lib/env.ts`) đều tự có:
 #     DATABASE_URL (`fromDatabase`), SESSION_SECRET / SSO_SESSION_SECRET /
 #     INTEGRATION_TOKEN_SECRET (`generateValue`). CRON_SECRET cũng `generateValue`,
@@ -27,7 +31,7 @@ services:
     buildCommand: npm ci --include=dev && npx prisma generate && npm run db:deploy && npm run db:seed && npm run build
     startCommand: npm run start
     healthCheckPath: /api/health
-    autoDeploy: true # blueprint là đủ: Render tự deploy khi `main` đổi (PO 05/11/2026)
+    autoDeployTrigger: checksPass # tự deploy `main` NHƯNG chỉ khi CI xanh (PO 05/11/2026)
     branch: main
     envVars:
       - key: DATABASE_URL
@@ -161,7 +165,7 @@ services:
     rootDir: workers
     buildCommand: pip install -r requirements.txt
     startCommand: python -m media_ai.jobs.worker
-    autoDeploy: true # blueprint là đủ: Render tự deploy khi `main` đổi (PO 05/11/2026)
+    autoDeployTrigger: checksPass # tự deploy `main` NHƯNG chỉ khi CI xanh (PO 05/11/2026)
     branch: main
     envVars:
       # Ghim runtime theo CI (job `worker` dùng Python 3.11).
@@ -211,7 +215,7 @@ services:
     rootDir: workers
     buildCommand: pip install -r requirements.txt
     startCommand: python -m media_ai.video.video_worker
-    autoDeploy: true # blueprint là đủ: Render tự deploy khi `main` đổi (PO 05/11/2026)
+    autoDeployTrigger: checksPass # tự deploy `main` NHƯNG chỉ khi CI xanh (PO 05/11/2026)
     branch: main
     envVars:
       # Ghim runtime theo CI (job `worker` dùng Python 3.11).
@@ -249,7 +253,7 @@ services:
     rootDir: workers
     buildCommand: pip install -r requirements.txt
     startCommand: python -m vision.jobs.worker
-    autoDeploy: true # blueprint là đủ: Render tự deploy khi `main` đổi (PO 05/11/2026)
+    autoDeployTrigger: checksPass # tự deploy `main` NHƯNG chỉ khi CI xanh (PO 05/11/2026)
     branch: main
     envVars:
       # Ghim runtime theo CI (job `worker` dùng Python 3.11).
@@ -285,7 +289,7 @@ services:
     runtime: node
     region: singapore
     schedule: "*/5 * * * *"
-    autoDeploy: true # blueprint là đủ: Render tự deploy khi `main` đổi (PO 05/11/2026)
+    autoDeployTrigger: checksPass # tự deploy `main` NHƯNG chỉ khi CI xanh (PO 05/11/2026)
     branch: main
     buildCommand: echo "no build"
     startCommand: >-

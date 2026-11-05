@@ -58,18 +58,19 @@
 - [x] ~~`render.yaml`: `autoDeploy: false` cho web + 3 worker~~ — **thay cơ chế (PO 05/11/2026)**
 - [x] ~~Hướng dẫn tạo secret deploy hook~~ — không còn deploy hook
 
-Cơ chế hiện hành: blueprint tự đủ. `render.yaml` đặt `autoDeploy: true` + `branch: main` cho cả 5
-dịch vụ deploy từ mã, CI không còn job `deploy`, không còn secret `RENDER_DEPLOY_HOOK_*`. Yêu cầu
-của PO: "chạy blueprint là tự động thiết lập deploy". Đổi lại, cổng "chỉ deploy bản đã qua kiểm"
-chuyển hoàn toàn sang ruleset `main` ở P0-03 — **ruleset trở thành bắt buộc, không còn là tăng cường**.
-- [x] `render.yaml`: `autoDeploy: true` cho web + 3 worker + cron, ghim `NODE_VERSION`/`PYTHON_VERSION`
+Cơ chế hiện hành: blueprint tự đủ. `render.yaml` đặt `autoDeployTrigger: checksPass` + `branch: main`
+cho cả 5 dịch vụ deploy từ mã, CI không còn job `deploy`, không còn secret `RENDER_DEPLOY_HOOK_*`.
+Đáp ứng cả hai yêu cầu cùng lúc: "chạy blueprint là tự động thiết lập deploy" (PO 05/11/2026) **và**
+bảo đảm gốc của D-14 "chỉ deploy bản đã qua kiểm" — Render chờ check CI xanh rồi mới deploy, commit
+không sinh check nào thì không deploy. Ruleset `main` ở P0-03 vẫn nên bật nhưng là lớp phòng vệ thứ hai.
+- [x] `render.yaml`: `autoDeployTrigger: checksPass` cho web + 3 worker + cron, ghim `NODE_VERSION`/`PYTHON_VERSION`
 - [x] Biến bắt buộc tự cấp (`generateValue`/`fromDatabase`); `CRON_SECRET` chia sẻ qua `fromService.envVarKey`
 - [x] Test gác bất biến blueprint: `tests/unit/architecture/render-blueprint-tu-du.test.ts`
 - [ ] Thử: sync blueprint trên Render tạo đủ 7 tài nguyên; push vào `main` tự deploy 5 dịch vụ
 
 ### P0-03 Cấu hình GitHub/Render — **[TAY]**
 - [x] ~~**[PO]** Thêm secret `RENDER_DEPLOY_HOOK_*` vào GitHub~~ — không còn cần (P0-02 đổi cơ chế)
-- [ ] **[PO]** Ruleset `main`: bắt buộc PR, 5 check xanh, chặn force push — **BẮT BUỘC**: đây là cổng duy nhất chặn bản chưa qua kiểm lên production
+- [ ] **[PO]** Ruleset `main`: bắt buộc PR, 5 check xanh, chặn force push — lớp phòng vệ thứ hai (chặn *merge* bản đỏ); cổng deploy do Render thực thi qua `autoDeployTrigger: checksPass`
 - [ ] **[PO]** Chuyển repo `smeOS` sang riêng tư (D-22)
 - [ ] **[PO]** Xác nhận Render deploy từ `smeOS`, rồi archive `floraos-core` (D-37)
 - [ ] Lưu ảnh chụp cấu hình vào runbook
