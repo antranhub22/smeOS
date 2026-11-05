@@ -1,3 +1,19 @@
+---
+id: SCR-STORE-thu-hut-khach
+tier: STORE
+module: acquisition
+route: /thu-hut-khach
+archetype: B
+snapshots:
+  - 390x844
+  - 1280x800
+acceptance:
+  - Tiêu đề cấp 1 qua PageHeader/ToolHero (ADR-011 D-UI-05)
+  - Tối đa 1 nút chính (primary) theo K2
+  - Đủ trạng thái tải, rỗng, lỗi, không quyền
+  - Không vi phạm axe-core critical/serious ở 390px và 1280px
+---
+
 # Screen Contract — Thu hút khách hàng
 
 **Tuyến:** `/thu-hut-khach` (`?tab=leads`) · **Tệp chính:** `src/app/(app)/thu-hut-khach/page.tsx` → `src/components/acquisition/acquisition-client.tsx` · **Cập nhật:** 01/11/2026 (PO PR-3: pipeline lead 10 trạng thái, progressive disclosure 4 nhóm) · **Thẻ:** Bước 4 (công cụ 12, 13, 21, 25)

@@ -1,3 +1,19 @@
+---
+id: SCR-STORE-cham-soc
+tier: STORE
+module: care-cards
+route: /cham-soc
+archetype: B
+snapshots:
+  - 390x844
+  - 1280x800
+acceptance:
+  - Tiêu đề cấp 1 qua PageHeader/ToolHero (ADR-011 D-UI-05)
+  - Tối đa 1 nút chính (primary) theo K2
+  - Đủ trạng thái tải, rỗng, lỗi, không quyền
+  - Không vi phạm axe-core critical/serious ở 390px và 1280px
+---
+
 # Screen Contract — Chăm sóc khách hàng (Customer Care)
 
 **Tuyến:** `/cham-soc` · **Tệp chính:** `src/app/(app)/cham-soc/page.tsx`, `src/components/marketing-center/care/`, `src/components/care-cards/` · **Cập nhật:** 01/11/2026 (PO 01/11/2026, PR-5) · **Thẻ:** Module 05 Chăm sóc · **Asset:** #48, #49, #50, #51, #52, #55 (Đã nâng lên Sẵn)

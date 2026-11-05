@@ -1,3 +1,19 @@
+---
+id: SCR-STORE-cong-cu-anh-san-pham
+tier: STORE
+module: product-photo-studio
+route: /cong-cu/anh-san-pham
+archetype: E
+snapshots:
+  - 390x844
+  - 1280x800
+acceptance:
+  - Tiêu đề cấp 1 qua PageHeader/ToolHero (ADR-011 D-UI-05)
+  - Tối đa 1 nút chính (primary) theo K2
+  - Đủ trạng thái tải, rỗng, lỗi, không quyền
+  - Không vi phạm axe-core critical/serious ở 390px và 1280px
+---
+
 # Screen Contract — Tạo ảnh sản phẩm chuyên nghiệp
 
 **Tuyến:** `/cong-cu/anh-san-pham` · **Tệp chính:** `src/components/product-photo-studio/product-photo-studio-flow.tsx` (cờ `ux_pd_anh_san_pham`; tắt cờ → `product-photo-studio-client.tsx`) · **Cập nhật:** 29/10/2026 · **Thẻ:** PD Giai đoạn 3 (pilot)

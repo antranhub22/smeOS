@@ -1,3 +1,19 @@
+---
+id: SCR-STORE-landing-page
+tier: STORE
+module: catalog
+route: /landing-page
+archetype: E
+snapshots:
+  - 390x844
+  - 1280x800
+acceptance:
+  - Tiêu đề cấp 1 qua PageHeader/ToolHero (ADR-011 D-UI-05)
+  - Tối đa 1 nút chính (primary) theo K2
+  - Đủ trạng thái tải, rỗng, lỗi, không quyền
+  - Không vi phạm axe-core critical/serious ở 390px và 1280px
+---
+
 # Screen Contract — Tạo landing page cửa hàng
 
 **Tuyến:** `/landing-page` · **Tệp chính:** `src/components/landing-page/landing-page-studio-client.tsx`, `src/components/catalog/landing-campaign-tab.tsx` · **Cập nhật:** 29/10/2026 · **Thẻ:** công cụ #08 chuyển Hoàn thiện (PO 29/10/2026)

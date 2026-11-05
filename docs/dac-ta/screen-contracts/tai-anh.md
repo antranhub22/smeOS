@@ -1,3 +1,19 @@
+---
+id: SCR-STORE-tai-anh
+tier: STORE
+module: storage
+route: /tai-anh
+archetype: D
+snapshots:
+  - 390x844
+  - 1280x800
+acceptance:
+  - Tiêu đề cấp 1 qua PageHeader/ToolHero (ADR-011 D-UI-05)
+  - Tối đa 1 nút chính (primary) theo K2
+  - Đủ trạng thái tải, rỗng, lỗi, không quyền
+  - Không vi phạm axe-core critical/serious ở 390px và 1280px
+---
+
 # Screen Contract — Quét & Dữ liệu sản phẩm AI (`/tai-anh`)
 
 **Tuyến:** `/tai-anh` · **Tệp chính:** `src/app/(app)/tai-anh/page.tsx` · **Cập nhật:** 26/09/2026 · **Thẻ:** T5.A4

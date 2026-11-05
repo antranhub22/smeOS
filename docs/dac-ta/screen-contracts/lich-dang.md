@@ -1,3 +1,19 @@
+---
+id: SCR-STORE-lich-dang
+tier: STORE
+module: lich-dang
+route: /lich-dang
+archetype: B
+snapshots:
+  - 390x844
+  - 1280x800
+acceptance:
+  - Tiêu đề cấp 1 qua PageHeader/ToolHero (ADR-011 D-UI-05)
+  - Tối đa 1 nút chính (primary) theo K2
+  - Đủ trạng thái tải, rỗng, lỗi, không quyền
+  - Không vi phạm axe-core critical/serious ở 390px và 1280px
+---
+
 # Screen Contract — Lịch Đăng Bài & Xuất Bản Đa Kênh
 
 **Tuyến:** `/lich-dang` · **Tệp chính:** `src/app/(app)/lich-dang/page.tsx` · **Cập nhật:** 27/09/2026 · **Thẻ:** T5.C5
