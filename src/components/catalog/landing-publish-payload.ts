@@ -7,6 +7,7 @@ import type { GeneratedLandingPackage } from "@/modules/content-engine/domain/la
 import type { PublicCatalogResult, PublicCatalogShop } from "@/modules/catalog-links/use-cases/get-public-catalog"
 import { landingVisualFor } from "@/modules/landing-page/domain/archetype-style"
 import type { PublicShopReview } from "@/modules/shop-reviews/domain/review-rules"
+import type { EntryActions } from "@/modules/orders/domain/entry-actions"
 import type { CatalogProduct } from "./catalog-management-tab"
 import type { EnabledSectionsConfig } from "./landing-campaign-preview"
 
@@ -43,7 +44,13 @@ export function buildLandingPublishBody(d: LandingDraft) {
 }
 
 /** Dựng đúng dữ liệu trang khách sẽ nhận sau khi xuất bản, để vẽ bản xem trước bằng chính trang đó. */
-export function buildLandingPreview(d: LandingDraft, shop: PublicCatalogShop, reviews: PublicShopReview[] = []): PublicCatalogResult {
+export function buildLandingPreview(
+  d: LandingDraft,
+  shop: PublicCatalogShop,
+  reviews: PublicShopReview[] = [],
+  /** Cài đặt nút Đặt hàng / Liên hệ của nguồn LANDING; không có thì trang dùng mặc định hệ thống */
+  entryActions?: EntryActions | undefined
+): PublicCatalogResult {
   const body = buildLandingPublishBody(d)
   return {
     status: "ACTIVE",
@@ -71,6 +78,7 @@ export function buildLandingPreview(d: LandingDraft, shop: PublicCatalogShop, re
       enabledSections: d.enabledSections as unknown as Record<string, boolean>,
     },
     reviews,
+    ...(entryActions ? { entryActions } : {}),
     templateId: body.filters.template_id,
     styleId: body.filters.style_id,
   }
