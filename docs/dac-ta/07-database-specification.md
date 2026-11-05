@@ -3587,6 +3587,7 @@ model quotations {
   valid_until        DateTime?
   subtotal           Decimal          @default(0) @db.Decimal(12, 2)
   discount_amount    Decimal          @default(0) @db.Decimal(12, 2)
+  shipping_fee       Decimal          @default(0) @db.Decimal(12, 2) // phí vận chuyển, cộng sau ưu đãi
   total_amount       Decimal          @default(0) @db.Decimal(12, 2)
   terms              String?          // Điều kiện & điều khoản báo giá
   notes              String?          // Ghi chú nội bộ
@@ -3601,6 +3602,7 @@ model quotations {
   asset_usage     asset_usages?    @relation(fields: [asset_usage_id], references: [id], onDelete: SetNull)
   converted_order orders?          @relation("quotation_converted_order", fields: [converted_order_id], references: [id], onDelete: SetNull)
   items           quotation_items[]
+  revisions       quotation_revisions[]
 
   @@unique([organization_id, code])
   @@index([organization_id])
@@ -3617,6 +3619,7 @@ model quotation_items {
   quotation_id    String
   product_id      String?
   name            String
+  variant_label   String?  // phiên bản kích cỡ khách chọn, ví dụ "Lớn"
   qty             Int      @default(1)
   unit_price      Decimal  @default(0) @db.Decimal(12, 2)
   total_price     Decimal  @default(0) @db.Decimal(12, 2)
@@ -3631,6 +3634,24 @@ model quotation_items {
   @@index([organization_id])
   @@index([quotation_id])
   @@index([product_id])
+}
+
+/// Ảnh chụp báo giá trước mỗi lần sửa nội dung (dòng, tổng, người sửa, thời điểm).
+model quotation_revisions {
+  id              String   @id @default(uuid())
+  organization_id String
+  quotation_id    String
+  version         Int
+  snapshot        Json
+  created_by      String
+  created_at      DateTime @default(now())
+
+  organization organizations @relation(fields: [organization_id], references: [id])
+  quotation    quotations    @relation(fields: [quotation_id], references: [id], onDelete: Cascade)
+
+  @@unique([quotation_id, version])
+  @@index([organization_id])
+  @@index([organization_id, quotation_id])
 }
 
 /// Phân khúc khách hàng (Customer Segments) — Chăm sóc khách hàng (PO 01/11/2026, PR-5).

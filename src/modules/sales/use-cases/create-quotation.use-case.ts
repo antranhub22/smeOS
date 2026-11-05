@@ -12,6 +12,8 @@ import { getQuotationRepository } from "../infra/quotation-repository"
 export interface CreateQuotationItemInput {
   productId?: string | null | undefined
   name: string
+  /** Phiên bản kích cỡ khách chọn (checklist ALG 3.8) */
+  variantLabel?: string | null | undefined
   qty: number
   unitPrice: number
   note?: string | null | undefined
@@ -23,6 +25,8 @@ export interface CreateQuotationInput {
   assetUsageId?: string | null | undefined
   validUntil?: Date | string | null | undefined
   discountAmount?: number | undefined
+  /** Phí vận chuyển (checklist ALG 3.8) */
+  shippingFee?: number | undefined
   terms?: string | null | undefined
   notes?: string | null | undefined
   items: CreateQuotationItemInput[]
@@ -49,18 +53,20 @@ export async function createQuotationUseCase(
     throw notFound()
   }
 
-  const { subtotal, discountAmount, totalAmount } = calculateQuotationTotals(
+  const { subtotal, discountAmount, shippingFee, totalAmount } = calculateQuotationTotals(
     input.items,
     input.discountAmount ?? 0,
+    input.shippingFee ?? 0,
   )
   // Giá dưới sàn: Sale bị chặn, Điều hành (C10) lưu được (checklist ALG 3.4)
-  await assertNotBelowFloor(ctx, input.items.map((it) => ({ productId: it.productId, quantity: Math.max(1, Math.floor(it.qty)) })), totalAmount)
+  await assertNotBelowFloor(ctx, input.items.map((it) => ({ productId: it.productId, quantity: Math.max(1, Math.floor(it.qty)) })), totalAmount - shippingFee)
 
   const code = await repo.generateNextCode(ctx)
 
   const items = input.items.map((it) => ({
     productId: it.productId ?? null,
     name: it.name.trim(),
+    variantLabel: it.variantLabel?.trim() || null,
     qty: Math.max(1, Math.floor(it.qty)),
     unitPrice: Math.max(0, Math.round(it.unitPrice)),
     totalPrice: Math.max(1, Math.floor(it.qty)) * Math.max(0, Math.round(it.unitPrice)),
@@ -78,6 +84,7 @@ export async function createQuotationUseCase(
     validUntil: validUntilDate,
     subtotal,
     discountAmount,
+    shippingFee,
     totalAmount,
     terms: input.terms?.trim() ?? null,
     notes: input.notes?.trim() ?? null,

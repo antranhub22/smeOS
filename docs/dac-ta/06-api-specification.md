@@ -1157,8 +1157,9 @@ Kế hoạch: `docs/kien-truc/Nâng cấp tasks/SMEOS_Marketing_Sales_Center/03_
 | GET | `/quotations` | `R15` hoặc `Q1` | Lọc `status`, `leadId`, `customerId`, `search`; cursor + `limit` ≤ 100; kèm `counts` |
 | POST | `/quotations` | `R15` | Tạo báo giá nháp, mã nội bộ `BG-xxxx`, token công khai ngẫu nhiên 256 bit |
 | GET | `/quotations/:id` | `R15` hoặc `Q1` | |
-| PATCH | `/quotations/:id` | `R15` | Báo giá đã chuyển thành đơn không sửa được |
+| PATCH | `/quotations/:id` | `R15` | Báo giá đã chuyển thành đơn không sửa được · nhận `shippingFee` và `items[].variantLabel`; tổng = tạm tính − ưu đãi + phí vận chuyển |
 | POST | `/quotations/:id/send` | `R15` | Sang `SENT`; lead gắn kèm sang `QUOTATION_SENT` |
+| GET | `/quotations/:id/revisions` | `R15` | Các phiên bản trước của báo giá, mới nhất trước: `{ version, snapshot, createdBy, createdAt }`; mỗi lần sửa nội dung (dòng, ưu đãi, phí vận chuyển, hạn, điều khoản, ghi chú) lưu ảnh chụp bản trước đó, đổi trạng thái không lưu · báo giá tổ chức khác → 404 |
 | POST | `/quotations/:id/convert` | `R15` | Tạo đơn nguồn `QUOTATION` qua cổng nhận đơn chung; hai lệnh đồng thời chỉ một lệnh tạo đơn |
 | GET | `/public/quotation/:token` | — *(token ngẫu nhiên trong URL)* | Không đăng nhập; giới hạn 60 lượt/phút; báo giá nháp → 404; không trả số điện thoại, ghi chú nội bộ, mã tổ chức |
 

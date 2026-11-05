@@ -1,5 +1,6 @@
 "use client"
 
+import { QuotationRevisions } from "./quotation-revisions"
 import { useEffect, useState } from "react"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
@@ -154,6 +155,7 @@ export function QuotationsListView({ onSelectQuotation }: QuotationsListViewProp
                       {q.items.map((it) => `${it.name} (x${it.qty})`).join(", ")}
                     </span>
                   </div>
+                  <QuotationRevisions quotationId={q.id} />
                 </div>
 
                 <div className="flex flex-col sm:items-end gap-2">

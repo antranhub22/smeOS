@@ -68,6 +68,7 @@ export class QuotationRepository implements IQuotationRepository {
         valid_until: dto.validUntil ?? null,
         subtotal: dto.subtotal,
         discount_amount: dto.discountAmount,
+        shipping_fee: dto.shippingFee,
         total_amount: dto.totalAmount,
         terms: dto.terms ?? null,
         notes: dto.notes ?? null,
@@ -77,6 +78,7 @@ export class QuotationRepository implements IQuotationRepository {
             organization_id: ctx.organizationId,
             product_id: it.productId ?? null,
             name: it.name,
+            variant_label: it.variantLabel ?? null,
             qty: it.qty,
             unit_price: it.unitPrice,
             total_price: it.totalPrice,
@@ -207,6 +209,7 @@ export class QuotationRepository implements IQuotationRepository {
     if (dto.validUntil !== undefined) updateData.valid_until = dto.validUntil
     if (dto.subtotal !== undefined) updateData.subtotal = dto.subtotal
     if (dto.discountAmount !== undefined) updateData.discount_amount = dto.discountAmount
+    if (dto.shippingFee !== undefined) updateData.shipping_fee = dto.shippingFee
     if (dto.totalAmount !== undefined) updateData.total_amount = dto.totalAmount
     if (dto.terms !== undefined) updateData.terms = dto.terms
     if (dto.notes !== undefined) updateData.notes = dto.notes
@@ -223,6 +226,7 @@ export class QuotationRepository implements IQuotationRepository {
           organization_id: ctx.organizationId,
           product_id: it.productId ?? null,
           name: it.name,
+          variant_label: it.variantLabel ?? null,
           qty: it.qty,
           unit_price: it.unitPrice,
           total_price: it.totalPrice,

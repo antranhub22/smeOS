@@ -30,6 +30,8 @@ export interface QuotationItem {
   id?: string | undefined
   productId?: string | null | undefined
   name: string
+  /** Phiên bản kích cỡ khách chọn cho dòng, ví dụ "Lớn" (checklist ALG 3.8) */
+  variantLabel?: string | null | undefined
   qty: number
   unitPrice: number
   totalPrice: number
@@ -49,6 +51,8 @@ export interface Quotation {
   validUntil?: Date | null | undefined
   subtotal: number
   discountAmount: number
+  /** Phí vận chuyển, cộng sau ưu đãi (checklist ALG 3.8) */
+  shippingFee: number
   totalAmount: number
   terms?: string | null | undefined
   notes?: string | null | undefined
@@ -72,6 +76,7 @@ export interface PublicQuotationView {
   validUntil: Date | null
   subtotal: number
   discountAmount: number
+  shippingFee: number
   totalAmount: number
   terms: string | null
   createdAt: Date
@@ -79,6 +84,7 @@ export interface PublicQuotationView {
   items: Array<{
     id: string
     name: string
+    variantLabel: string | null
     qty: number
     unitPrice: number
     totalPrice: number
@@ -124,13 +130,15 @@ export function calculateItemTotal(qty: number, unitPrice: number): number {
   return safeQty * safePrice
 }
 
-/** Tính tổng tiền đơn báo giá: subtotal, discount, total */
+/** Tính tổng tiền đơn báo giá: tạm tính − ưu đãi + phí vận chuyển (checklist ALG 3.8) */
 export function calculateQuotationTotals(
   items: Array<{ qty: number; unitPrice: number }>,
   discountAmount = 0,
+  shippingFee = 0,
 ): {
   subtotal: number
   discountAmount: number
+  shippingFee: number
   totalAmount: number
 } {
   const subtotal = items.reduce(
@@ -138,11 +146,13 @@ export function calculateQuotationTotals(
     0,
   )
   const validDiscount = Math.max(0, Math.min(Math.round(discountAmount || 0), subtotal))
-  const totalAmount = Math.max(0, subtotal - validDiscount)
+  const validShipping = Math.max(0, Math.round(shippingFee || 0))
+  const totalAmount = Math.max(0, subtotal - validDiscount) + validShipping
 
   return {
     subtotal,
     discountAmount: validDiscount,
+    shippingFee: validShipping,
     totalAmount,
   }
 }
