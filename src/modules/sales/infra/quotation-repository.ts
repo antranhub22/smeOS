@@ -76,7 +76,6 @@ export class QuotationRepository implements IQuotationRepository {
         created_by: dto.createdBy,
         items: {
           create: dto.items.map((it) => ({
-            organization_id: ctx.organizationId,
             product_id: it.productId ?? null,
             name: it.name,
             variant_label: it.variantLabel ?? null,
@@ -233,7 +232,6 @@ export class QuotationRepository implements IQuotationRepository {
       updateData.items = {
         deleteMany: {},
         create: dto.items.map((it) => ({
-          organization_id: ctx.organizationId,
           product_id: it.productId ?? null,
           name: it.name,
           variant_label: it.variantLabel ?? null,
