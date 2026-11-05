@@ -20,6 +20,8 @@ Kiểm tra sức khoẻ: Render gọi `GET /api/health` (tiến trình + CSDL). 
 
 Danh sách đầy đủ và giải thích: `.env.example`; giá trị thật chỉ nằm trong Render (đều `sync: false`, không có trong repo).
 
+Bốn biến bắt buộc để app khởi động (`src/lib/env.ts`) do blueprint tự cấp, **không phải nhập tay**: `DATABASE_URL` (`fromDatabase`), `SESSION_SECRET`, `SSO_SESSION_SECRET`, `INTEGRATION_TOKEN_SECRET` (`generateValue`). `CRON_SECRET` cũng `generateValue` ở `smeos-web`; cron lấy lại đúng giá trị đó qua `fromService.envVarKey` nên hai dịch vụ luôn khớp. Mọi khoá `sync: false` còn lại là tuỳ chọn: thiếu thì tính năng tương ứng tắt, blueprint vẫn sync và app vẫn chạy. Link công khai rơi về `RENDER_EXTERNAL_URL` do Render tự cấp; chỉ khi gắn tên miền riêng mới thêm `NEXT_PUBLIC_APP_URL` trên Render.
+
 | Nhóm | Biến | Thiếu thì sao |
 |---|---|---|
 | Bắt buộc khởi động | `DATABASE_URL`, `SESSION_SECRET`, `INTEGRATION_TOKEN_SECRET`, `SSO_SESSION_SECRET` | ứng dụng dừng ngay lúc khởi động (`src/lib/env.ts`) |
@@ -36,7 +38,8 @@ Zalo OA của **từng tiệm** (chat bán hàng) không dùng biến môi trư�
 ## 3. Triển khai bản mới
 
 1. Mở PR vào `main`; CI (`.github/workflows/ci.yml`) phải xanh: typecheck, lint ratchet, UX lint, unit, tenant, platform, build, E2E, worker pytest, gitleaks, `npm audit` (high), ratchet thuật ngữ ngành (job `industry-terms`).
-2. Merge → CI chạy lại trên `main`; **chỉ khi cả 5 job xanh**, job `deploy` gọi deploy hook của 4 dịch vụ Render (`smeos-web` + 3 worker) với đúng commit vừa qua CI. `render.yaml` đặt `autoDeploy: false` — merge khi CI đỏ không deploy. Deploy hook lấy ở *Render → dịch vụ → Settings → Deploy Hook*, lưu thành GitHub secret `RENDER_DEPLOY_HOOK_WEB`, `RENDER_DEPLOY_HOOK_WORKER_MEDIA`, `RENDER_DEPLOY_HOOK_WORKER_VIDEO`, `RENDER_DEPLOY_HOOK_WORKER_VISION`; thiếu secret → job `deploy` đỏ. Deploy tay khẩn cấp: nút *Manual Deploy* trên Render.
+2. Merge → `render.yaml` đặt `autoDeploy: true` cho cả 5 dịch vụ, nên Render tự deploy commit mới của `main` (web + 3 worker + cron). Không có job `deploy` trong CI, không có deploy hook, không có secret `RENDER_DEPLOY_HOOK_*` (PO 05/11/2026). Deploy tay khẩn cấp: nút *Manual Deploy* trên Render.
+   **Cổng "chỉ phát hành bản đã qua kiểm" nằm ở GitHub, không ở Render:** Render deploy song song với CI, không chờ CI xanh. Ruleset `main` (*Settings → Rules → Rulesets*) phải bắt buộc pull request + 5 check (`web`, `worker`, `e2e-ux`, `security`, `industry-terms`) và chặn push trực tiếp/force push — khi đó mọi commit vào `main` đều đã xanh trước khi merge. Thiếu ruleset thì một push trực tiếp vào `main` lên production mà không qua cổng nào.
 3. Render build `smeos-web`. Bước build chạy `npm run db:deploy` (`prisma migrate deploy`) **trước** `build`; migration lỗi → build dừng, bản cũ vẫn chạy.
 4. Sau khi deploy: kiểm `/api/health`, đăng nhập một tài khoản Điều hành, mở trang chủ và một đơn hàng.
 

@@ -1,5 +1,19 @@
 # render.yaml — smeOS Infrastructure as Code
 # Docs: https://render.com/docs/infrastructure-as-code
+#
+# Blueprint TỰ ĐỦ: New → Blueprint, trỏ vào repo này là xong (PO 05/11/2026).
+#   • Mọi dịch vụ đặt `autoDeploy: true` + `branch: main` → Render tự deploy mỗi lần
+#     `main` đổi. KHÔNG cần deploy hook, KHÔNG cần secret `RENDER_DEPLOY_HOOK_*`,
+#     KHÔNG có job `deploy` trong CI (thay P0-02: cổng "CI xanh mới deploy" chuyển sang
+#     ruleset `main` — bắt buộc PR + 5 check xanh, nên `main` luôn đã xanh trước khi merge).
+#   • Bốn biến BẮT BUỘC của mã nguồn (`src/lib/env.ts`) đều tự có:
+#     DATABASE_URL (`fromDatabase`), SESSION_SECRET / SSO_SESSION_SECRET /
+#     INTEGRATION_TOKEN_SECRET (`generateValue`). CRON_SECRET cũng `generateValue`,
+#     cron lấy lại đúng giá trị đó qua `fromService.envVarKey` — không còn phải tự tay
+#     đặt cùng một giá trị ở hai dịch vụ.
+#   • Các khoá `sync: false` còn lại đều KHÔNG bắt buộc để app chạy: thiếu thì tính năng
+#     tương ứng (AI, kho tệp, Zalo, Messenger…) tắt. Điền sau trong Render khi cần,
+#     không chặn lần sync blueprint đầu tiên.
 
 services:
   # ══════════════════════════════════════════════
@@ -13,7 +27,7 @@ services:
     buildCommand: npm ci --include=dev && npx prisma generate && npm run db:deploy && npm run db:seed && npm run build
     startCommand: npm run start
     healthCheckPath: /api/health
-    autoDeploy: false # deploy qua job `deploy` của CI khi mọi cổng xanh (P0-02)
+    autoDeploy: true # blueprint là đủ: Render tự deploy khi `main` đổi (PO 05/11/2026)
     branch: main
     envVars:
       - key: DATABASE_URL
@@ -21,6 +35,18 @@ services:
           name: smeos-postgres
           property: connectionString
       - key: NODE_ENV
+        value: production
+      # Ghim runtime theo CI (`.github/workflows/ci.yml` dùng Node 22.x). Không ghim thì
+      # Render chọn bản mặc định của nó và build có thể khác CI.
+      - key: NODE_VERSION
+        value: "22"
+      # `npm run start` là `next start -p 3200`. Khai cùng cổng để health check của Render
+      # gọi đúng chỗ, không phụ thuộc vào việc Render tự dò cổng đang mở.
+      - key: PORT
+        value: "3200"
+      # Khoá tính năng chưa mở cho khách (`src/lib/feature-lock.ts`). Biến NEXT_PUBLIC_ gắn
+      # lúc build nên phải khai ở đây; thiếu thì production mở hết tuyến còn đang khoá.
+      - key: NEXT_PUBLIC_APP_ENV
         value: production
       - key: SEED_DEV_DATA
         value: "false"
@@ -46,14 +72,16 @@ services:
           type: keyvalue
           name: smeos-redis
           property: connectionString
-      # Secret của endpoint cron nội bộ — đặt CÙNG MỘT giá trị ở đây và ở smeos-cron-dispatch-sweep.
+      # Secret của endpoint cron nội bộ. Render tự sinh ở đây; smeos-cron-dispatch-sweep
+      # lấy lại đúng giá trị này qua `fromService.envVarKey` nên không phải nhập tay.
       # Thiếu thì /api/v1/internal/* luôn từ chối trên production (rà soát 21/10/2026, H3).
       - key: CRON_SECRET
-        sync: false
-      # URL công khai của app (vd. https://app.smeos.vn) — dùng dựng link gửi chi nhánh/khách,
-      # kể cả khi request đến từ cron qua mạng nội bộ.
-      - key: NEXT_PUBLIC_APP_URL
-        sync: false
+        generateValue: true
+      # KHÔNG khai `NEXT_PUBLIC_APP_URL` ở đây: render.yaml không nội suy được chuỗi nên không
+      # dựng được "https://" + host của dịch vụ, mà khai `sync: false` thì lại thành một ô phải
+      # điền tay. Link công khai rơi về `RENDER_EXTERNAL_URL` do Render tự cấp
+      # (`src/lib/public-url.ts`), đúng cho tên miền *.onrender.com. Khi gắn tên miền riêng
+      # (vd. app.smeos.vn): thêm `NEXT_PUBLIC_APP_URL` trên Render → smeos-web → Environment.
       - key: OPENAI_API_KEY
         sync: false
       - key: ANTHROPIC_API_KEY
@@ -133,9 +161,12 @@ services:
     rootDir: workers
     buildCommand: pip install -r requirements.txt
     startCommand: python -m media_ai.jobs.worker
-    autoDeploy: false # deploy qua job `deploy` của CI khi mọi cổng xanh (P0-02)
+    autoDeploy: true # blueprint là đủ: Render tự deploy khi `main` đổi (PO 05/11/2026)
     branch: main
     envVars:
+      # Ghim runtime theo CI (job `worker` dùng Python 3.11).
+      - key: PYTHON_VERSION
+        value: "3.11.9"
       - key: DATABASE_URL
         fromDatabase:
           name: smeos-postgres
@@ -180,9 +211,12 @@ services:
     rootDir: workers
     buildCommand: pip install -r requirements.txt
     startCommand: python -m media_ai.video.video_worker
-    autoDeploy: false # deploy qua job `deploy` của CI khi mọi cổng xanh (P0-02)
+    autoDeploy: true # blueprint là đủ: Render tự deploy khi `main` đổi (PO 05/11/2026)
     branch: main
     envVars:
+      # Ghim runtime theo CI (job `worker` dùng Python 3.11).
+      - key: PYTHON_VERSION
+        value: "3.11.9"
       - key: DATABASE_URL
         fromDatabase:
           name: smeos-postgres
@@ -215,9 +249,12 @@ services:
     rootDir: workers
     buildCommand: pip install -r requirements.txt
     startCommand: python -m vision.jobs.worker
-    autoDeploy: false # deploy qua job `deploy` của CI khi mọi cổng xanh (P0-02)
+    autoDeploy: true # blueprint là đủ: Render tự deploy khi `main` đổi (PO 05/11/2026)
     branch: main
     envVars:
+      # Ghim runtime theo CI (job `worker` dùng Python 3.11).
+      - key: PYTHON_VERSION
+        value: "3.11.9"
       - key: DATABASE_URL
         fromDatabase:
           name: smeos-postgres
@@ -248,6 +285,8 @@ services:
     runtime: node
     region: singapore
     schedule: "*/5 * * * *"
+    autoDeploy: true # blueprint là đủ: Render tự deploy khi `main` đổi (PO 05/11/2026)
+    branch: main
     buildCommand: echo "no build"
     startCommand: >-
       curl -fsS -X POST "http://$WEB_HOSTPORT/api/v1/internal/chain-dispatch-sweep"
@@ -257,13 +296,20 @@ services:
       && curl -fsS -X POST "http://$WEB_HOSTPORT/api/v1/internal/integrations-sweep"
       -H "x-cron-secret: $CRON_SECRET" --max-time 60
     envVars:
+      - key: NODE_VERSION
+        value: "22"
       - key: WEB_HOSTPORT
         fromService:
           type: web
           name: smeos-web
           property: hostport
+      # Lấy lại đúng CRON_SECRET mà Render đã sinh cho smeos-web — hai dịch vụ luôn khớp,
+      # không còn ô phải điền tay ở hai nơi.
       - key: CRON_SECRET
-        sync: false
+        fromService:
+          type: web
+          name: smeos-web
+          envVarKey: CRON_SECRET
 
   # ══════════════════════════════════════════════
   # KEY VALUE (Redis) — bộ đếm giới hạn tần suất dùng chung các instance
