@@ -1,5 +1,6 @@
 "use client"
 
+import { useConfirmDialog } from "@/components/ui/confirm-dialog"
 import React, { useState } from "react"
 import {
   CheckCircle2,
@@ -61,6 +62,7 @@ export function SubcontractStepClaim({
   onCancelClaim,
   onCommitEarly,
 }: SubcontractStepClaimProps) {
+  const [confirm, confirmDialog] = useConfirmDialog()
   const [imageError, setImageError] = useState(false)
   const [loading, setLoading] = useState(false)
   const [errorMsg, setErrorMsg] = useState<string | null>(null)
@@ -78,7 +80,7 @@ export function SubcontractStepClaim({
   }
 
   async function handleCancel() {
-    if (!window.confirm("Bạn có chắc chắn muốn hủy nhận đơn này để nhường cho chi nhánh khác?")) {
+    if (!(await confirm({ title: "Huỷ nhận đơn này?", consequence: "Đơn sẽ được nhường cho chi nhánh khác.", confirmLabel: "Huỷ nhận đơn", tone: "danger" }))) {
       return
     }
     setLoading(true)
@@ -119,6 +121,7 @@ export function SubcontractStepClaim({
           : "border-border/60 bg-surface/70 opacity-60 hover:opacity-90"
       )}
     >
+      {confirmDialog}
       {/* Header bar của Bước 1 */}
       <Button variant="ghost"
         type="button"

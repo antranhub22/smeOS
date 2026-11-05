@@ -89,7 +89,7 @@ export function VideoReelsDeck({ products, catalogName, onSelectProduct }: Video
               </Button>
               {i === 0 && products.length > 1 && (
                 <p className="mt-3 flex items-center justify-center gap-1 text-caption text-white/70" aria-hidden="true">
-                  <ChevronUp size={14} className="animate-bounce" /> Vuốt lên để xem mẫu tiếp
+                  <ChevronUp size={14} className="animate-bounce motion-reduce:animate-none" /> Vuốt lên để xem mẫu tiếp
                 </p>
               )}
             </div>

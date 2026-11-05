@@ -75,7 +75,7 @@ export function CatalogDetailPanel({ catalogId, catalogName, onBack }: Props) {
   if (loading && !catalog) {
     return (
       <div className="flex items-center justify-center py-16 text-text-muted">
-        <Loader2 size={24} className="animate-spin mr-2" />
+        <Loader2 size={24} className="animate-spin motion-reduce:animate-none mr-2" />
         <span className="text-body-sm">Đang tải bộ sưu tập...</span>
       </div>
     )
@@ -193,7 +193,7 @@ export function CatalogDetailPanel({ catalogId, catalogName, onBack }: Props) {
                         className="font-[inherit] gap-0 p-2 rounded-lg bg-primary/10 hover:bg-primary/20 text-primary transition-colors shrink-0"
                       >
                         {addingId === product.id
-                          ? <Loader2 size={16} className="animate-spin" />
+                          ? <Loader2 size={16} className="animate-spin motion-reduce:animate-none" />
                           : <Plus size={16} />}
                       </Button>
                     </div>
@@ -259,7 +259,7 @@ export function CatalogDetailPanel({ catalogId, catalogName, onBack }: Props) {
                     className="font-[inherit] gap-0 absolute top-2 right-2 p-1.5 rounded-lg bg-black/50 hover:bg-danger/80 text-white"
                   >
                     {removingId === item.product.id
-                      ? <Loader2 size={12} className="animate-spin" />
+                      ? <Loader2 size={12} className="animate-spin motion-reduce:animate-none" />
                       : <Trash2 size={12} />}
                   </Button>}
                 </div>

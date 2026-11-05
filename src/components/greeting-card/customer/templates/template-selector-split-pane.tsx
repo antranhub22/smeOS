@@ -265,7 +265,7 @@ function LivePreviewPane({
             className="flex flex-col items-center justify-center gap-2 text-text-muted rounded-2xl bg-surface-muted"
           >
             <div
-              className="rounded-full border-2 border-primary/30 border-t-primary animate-spin"
+              className="rounded-full border-2 border-primary/30 border-t-primary animate-spin motion-reduce:animate-none"
               style={{ width: 20, height: 20 }}
             />
           </div>

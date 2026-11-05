@@ -1,5 +1,6 @@
 "use client"
 
+import { useConfirmDialog } from "@/components/ui/confirm-dialog"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Input } from "@/components/ui/input"
@@ -57,6 +58,7 @@ function Group({ title, children }: { title: string; children: React.ReactNode }
 
 /** Cài đặt → Phí gia công: tiệm chọn 1 trong 6 cách tính, phụ cấp và khoản trừ (PO 22/10/2026). */
 export function CraftFeeSettings() {
+  const [confirm, confirmDialog] = useConfirmDialog()
   const org = useApi<{ settings?: Record<string, unknown> | null }>("/api/v1/organizations/current")
   const [draft, setDraft] = useState<CraftFeePolicy | null>(null)
   const [saving, setSaving] = useState(false)
@@ -67,7 +69,7 @@ export function CraftFeeSettings() {
   const policy = draft ?? (org.data ? craftFeePolicyOf(settings) : null)
 
   if (org.data && !industryHasCraftFee) return null
-  if (!policy) return <div className="h-44 rounded-2xl bg-surface-muted animate-pulse" aria-busy="true" />
+  if (!policy) return <div className="h-44 rounded-2xl bg-surface-muted animate-pulse motion-reduce:animate-none" aria-busy="true" />
 
   const set = <K extends keyof CraftFeePolicy>(key: K, value: CraftFeePolicy[K]) => {
     setDraft({ ...policy, [key]: value })
@@ -94,6 +96,7 @@ export function CraftFeeSettings() {
 
   return (
     <form onSubmit={handleSave} className="bg-surface rounded-2xl border border-border p-5 sm:p-6 shadow-sm flex flex-col gap-5">
+      {confirmDialog}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-border">
         <div>
           <h3 className="text-title font-extrabold text-text flex items-center gap-2">
@@ -104,7 +107,7 @@ export function CraftFeeSettings() {
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <Button type="button" variant="outline" size="sm" className="h-9 text-caption" onClick={() => window.confirm("Khôi phục cách tính mặc định?") && setDraft(defaultCraftFeePolicy(spec))}>
+          <Button type="button" variant="outline" size="sm" className="h-9 text-caption" onClick={async () => { if (await confirm({ title: "Khôi phục cách tính mặc định?", consequence: "Cách tính đang chỉnh sẽ trở về mặc định. Thay đổi chỉ có hiệu lực khi bấm Lưu.", confirmLabel: "Khôi phục mặc định" })) setDraft(defaultCraftFeePolicy(spec)) }}>
             <RotateCcw size={14} className="mr-1" /> Mặc định
           </Button>
           <Button type="submit" variant="primary" size="sm" disabled={saving || !draft} className="h-9 font-bold">

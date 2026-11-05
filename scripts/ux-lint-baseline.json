@@ -12,8 +12,7 @@
       "R21": 2
     },
     "app/subcontract": {
-      "R20": 1,
-      "R23": 1
+      "R20": 1
     },
     "components/acquisition": {
       "R18": 1
@@ -55,13 +54,10 @@
       "R18": 35
     },
     "components/greeting-card": {
-      "R23": 95,
-      "R15": 7,
-      "R13": 9,
-      "R21": 9,
+      "R15": 1,
       "R18": 10,
-      "R20": 7,
       "R14": 6,
+      "R20": 6,
       "R1": 9
     },
     "components/journey": {
@@ -131,6 +127,6 @@
       "R18": 2
     }
   },
-  "total": 2458,
-  "updatedAt": "2026-11-05T06:07:21.847Z"
+  "total": 2337,
+  "updatedAt": "2026-11-05T07:26:12.100Z"
 }

@@ -145,7 +145,7 @@ export function TelegramDispatchConnector() {
           disabled={isLoading || isValidating}
           className="self-start sm:self-auto flex items-center gap-1.5"
         >
-          <RefreshCw size={14} className={isValidating ? "animate-spin" : ""} />
+          <RefreshCw size={14} className={isValidating ? "animate-spin motion-reduce:animate-none" : ""} />
           <span>Quét Chat ID mới</span>
         </Button>
       </div>

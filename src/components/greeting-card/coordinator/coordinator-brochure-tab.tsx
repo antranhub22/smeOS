@@ -109,7 +109,7 @@ export function CoordinatorBrochureTab({ canDecideInTransitCancel = false }: { c
           </p>
         </div>
         <Button type="button" variant="outline" size="sm" onClick={() => { loadOrders(); void work.refresh() }} className="gap-1.5 text-caption h-9">
-          <RefreshCw size={14} className={loading ? "animate-spin" : ""} />
+          <RefreshCw size={14} className={loading ? "animate-spin motion-reduce:animate-none" : ""} />
           <span>Làm mới</span>
         </Button>
       </div>

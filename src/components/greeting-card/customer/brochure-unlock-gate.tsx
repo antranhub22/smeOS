@@ -59,7 +59,7 @@ export function BrochureUnlockGate({ sendCode, shop }: { sendCode: string; shop:
           />
           {error && <p role="alert" className="text-body-sm text-danger">{error}</p>}
           <Button variant="primary" type="submit" disabled={busy} className="inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-primary text-body font-bold text-surface disabled:opacity-60 hover:bg-primary">
-            {busy && <Loader2 size={18} className="animate-spin" aria-hidden="true" />}
+            {busy && <Loader2 size={18} className="animate-spin motion-reduce:animate-none" aria-hidden="true" />}
             Xem đơn hàng
           </Button>
         </form>

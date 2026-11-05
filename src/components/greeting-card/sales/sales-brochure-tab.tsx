@@ -149,7 +149,7 @@ export function SalesBrochureTab({ initialOpenCreate = false, onNavigateToCatalo
         <p role="alert" className="rounded-xl bg-danger-bg p-4 text-body-sm text-danger">{work.error.message}</p>
       ) : work.isLoading ? (
         <div className="flex flex-col gap-3" aria-busy="true">
-          {[0, 1].map((i) => <div key={i} className="h-48 animate-pulse rounded-2xl bg-surface-muted" />)}
+          {[0, 1].map((i) => <div key={i} className="h-48 animate-pulse motion-reduce:animate-none rounded-2xl bg-surface-muted" />)}
         </div>
       ) : shown.length === 0 ? (
         <div className="rounded-2xl border border-dashed border-border p-8 text-center text-body-sm text-text-muted flex flex-col items-center gap-2">

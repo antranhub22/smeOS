@@ -191,7 +191,7 @@ export function CancellationProposalModal({
               disabled={busy}
               className="bg-danger hover:bg-danger-dark text-white font-bold gap-1.5"
             >
-              {busy && <Loader2 size={14} className="animate-spin" />}
+              {busy && <Loader2 size={14} className="animate-spin motion-reduce:animate-none" />}
               <span>Gửi Điều hành duyệt</span>
             </Button>
           </div>

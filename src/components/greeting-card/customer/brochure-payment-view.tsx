@@ -244,7 +244,7 @@ export function BrochurePaymentView({
         {internationalGuide && (
           <div className="w-full p-4 rounded-xl border border-primary/20 bg-primary/5 space-y-2 text-left">
             <div className="flex items-center gap-2 text-body-sm font-bold text-text">
-              <span className="text-base">🌍</span>
+              <span className="text-title">🌍</span>
               <span>International Payment (Wise / PayPal / Swift / Zelle)</span>
             </div>
             <p className="text-body-sm text-text/90 whitespace-pre-line leading-relaxed font-mono">

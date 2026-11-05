@@ -1030,7 +1030,7 @@ Ba quyết định dưới đây chặn go-live, không chặn việc dựng lư
 
 ## 6. Việc kế tiếp
 
-**Đợt giảm nợ UI thứ hai của nhánh Enterprise — Creative Studio XONG, Thẻ chào chờ PR riêng (05/11/2026).** 4 commit mới của nhánh `Hoan_Thien_Kien_Truc_He_Thong_UI_UX_Tieu_Chuan_Enterprise` không merge nguyên trạng (sửa 73 tệp Thẻ chào khoá, thêm lại `div role="button"`, cắt mất gợi ý phí credit). Phần Creative Studio dựng lại trên `main`, chỉ đổi giao diện: baseline UX lint 3.948 → 3.652, ESLint 58 → 57, ratchet `Intl` 173 → 172, không tệp mới nào quá 350 dòng. Thẻ chào (PO duyệt 05/11) làm ở PR riêng có E2E. Chi tiết: `docs/kien-truc/HANDOVER_READINESS_PLAN.md` §7b.
+**Đợt giảm nợ UI thứ hai của nhánh Enterprise — XONG mã, Thẻ chào chờ duyệt PR #122 (05/11/2026).** Creative Studio đã hợp nhất (PR #121). Thẻ chào (PO duyệt 05/11, chỉ giao diện) làm lại trên `main`: token cũ, 27 overlay, 443 điều khiển thô, hiệu ứng thiếu `motion-reduce`, `confirm()` và `<details>` tự viết đều chuyển sang thành phần chuẩn; nợ UX lint vùng Thẻ chào 1.336 → 32 (phần còn lại có lý do), toàn repo 3.948 → 2.337. Cần kiểm tay các màn Thẻ chào trên điện thoại và máy tính trước khi hợp nhất. Chi tiết: `docs/kien-truc/HANDOVER_READINESS_PLAN.md` §7b.
 
 **Hiệu năng và trợ năng sau bàn giao — XONG, chờ PR #115 vào `main` (04/11/2026).** Icon import theo từng module (`src/components/ui/icon-set/`), chunk icon dùng chung 836 KB không còn; TBT di động 133–233 ms, LCP di động cao nhất 1,77 s ở 6/6 tuyến (`docs/audit/ui-architecture-audit/12_PERFORMANCE_REPORT.md`). `UiSystemProvider` giữ nguyên context khi hydrate. Bộ kiểm trợ năng có trang `/subcontract` với lời mời gia công thật. Còn lại: kiểm bằng trình đọc màn hình, ảnh mốc `-darwin`, các lỗi đã biết trong vùng Thẻ chào chờ PO duyệt.
 

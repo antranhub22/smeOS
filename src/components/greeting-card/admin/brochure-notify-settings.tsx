@@ -1,5 +1,6 @@
 "use client"
 
+import { Disclosure } from "@/components/ui/disclosure"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Input } from "@/components/ui/input"
 import React, { useState } from "react"
@@ -126,8 +127,7 @@ export function BrochureNotifySettings() {
       {ch === "ZNS" && <ZnsTemplateGuide />}
 
       {ch === "ZNS" && (
-        <details className="text-body-sm">
-          <summary className="cursor-pointer font-bold">Mã mẫu tin ZNS theo mốc</summary>
+        <Disclosure label="Mã mẫu tin ZNS theo mốc" className="text-body-sm">
           <p className="text-caption text-text-muted my-2">
             Mẫu cần các tham số: order_code, customer_name, shop_name, status, amount, tracking_url. Bỏ trống = không gửi mốc đó.
           </p>
@@ -139,7 +139,7 @@ export function BrochureNotifySettings() {
               </label>
             ))}
           </div>
-        </details>
+        </Disclosure>
       )}
 
       {message && (
@@ -163,7 +163,7 @@ export function BrochureNotifySettings() {
           </>
         )}
         <Button type="button" size="sm" disabled={busy || !saved} onClick={() => void save()} className="gap-1.5">
-          {busy ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} />} Lưu
+          {busy ? <Loader2 size={14} className="animate-spin motion-reduce:animate-none" /> : <Save size={14} />} Lưu
         </Button>
       </div>
     </section>

@@ -1,5 +1,6 @@
 "use client"
 
+import { useConfirmDialog } from "@/components/ui/confirm-dialog"
 import { Checkbox } from "@/components/ui/checkbox"
 import React, { useState } from "react"
 import {
@@ -25,6 +26,7 @@ import {
 } from "@/modules/greeting-card/domain/chain-dispatch-policy"
 
 export function ChainDispatchSettings() {
+  const [confirm, confirmDialog] = useConfirmDialog()
   const org = useApi<{ settings?: Record<string, unknown> | null }>("/api/v1/organizations/current")
   const [draft, setDraft] = useState<ChainDispatchPolicy | null>(null)
   const [saving, setSaving] = useState(false)
@@ -56,8 +58,8 @@ export function ChainDispatchSettings() {
     setMessage(null)
   }
 
-  const handleResetDefaults = () => {
-    if (window.confirm("Khôi phục toàn bộ tiêu chuẩn bắn đơn chuỗi về mặc định của hệ thống?")) {
+  const handleResetDefaults = async () => {
+    if (await confirm({ title: "Khôi phục tiêu chuẩn phân đơn chuỗi về mặc định?", consequence: "Mọi tiêu chuẩn đang chỉnh sẽ trở về mặc định của hệ thống. Thay đổi chỉ có hiệu lực khi bấm Lưu.", confirmLabel: "Khôi phục mặc định" })) {
       setDraft({ ...DEFAULT_CHAIN_DISPATCH_POLICY })
       setMessage(null)
     }
@@ -90,11 +92,12 @@ export function ChainDispatchSettings() {
   }
 
   if (!policy) {
-    return <div className="h-44 rounded-2xl bg-surface-muted animate-pulse" aria-busy="true" />
+    return <div className="h-44 rounded-2xl bg-surface-muted animate-pulse motion-reduce:animate-none" aria-busy="true" />
   }
 
   return (
     <form onSubmit={handleSave} className="bg-surface rounded-2xl border border-border p-5 sm:p-6 shadow-sm flex flex-col gap-6">
+      {confirmDialog}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-border">
         <div>
           <h3 className="text-title font-extrabold text-text flex items-center gap-2">

@@ -311,7 +311,7 @@ export function SubcontractStepShipper({
             >
               {submitting ? (
                 <>
-                  <Loader2 size={16} className="animate-spin" /> Đang cập nhật...
+                  <Loader2 size={16} className="animate-spin motion-reduce:animate-none" /> Đang cập nhật...
                 </>
               ) : (
                 <>

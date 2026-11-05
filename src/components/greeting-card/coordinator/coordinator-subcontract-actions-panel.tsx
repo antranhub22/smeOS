@@ -126,7 +126,7 @@ function M2UploadQcAction({
         className="h-8 text-caption gap-1.5 border-primary/40 text-primary hover:bg-primary/5"
       >
         {state === "loading" ? (
-          <span className="animate-pulse">Đang tải lên…</span>
+          <span className="animate-pulse motion-reduce:animate-none">Đang tải lên…</span>
         ) : (
           <>
             <Upload size={13} />

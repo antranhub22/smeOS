@@ -114,7 +114,7 @@ export function PaymentProofUploader({
             />
             {uploading && (
               <div className="absolute inset-0 bg-bg/60 flex items-center justify-center">
-                <Loader2 size={22} className="animate-spin text-primary" />
+                <Loader2 size={22} className="animate-spin motion-reduce:animate-none text-primary" />
               </div>
             )}
           </div>

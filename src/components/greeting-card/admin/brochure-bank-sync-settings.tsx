@@ -1,5 +1,6 @@
 "use client"
 
+import { useConfirmDialog } from "@/components/ui/confirm-dialog"
 import React, { useState } from "react"
 import { Check, Copy, Link2, Loader2 } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
@@ -14,6 +15,7 @@ interface IntegrationStatus {
  * tài khoản là đơn tự chuyển "đã thu". Khoá chỉ hiện MỘT lần lúc tạo.
  */
 export function BrochureBankSyncSettings() {
+  const [confirm, confirmDialog] = useConfirmDialog()
   const status = useApi<IntegrationStatus>("/api/v1/greeting-card/integrations")
   const [newKey, setNewKey] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
@@ -23,7 +25,7 @@ export function BrochureBankSyncSettings() {
   const webhookUrl = typeof window === "undefined" || !payment ? "" : `${window.location.origin}${payment.webhookPath}`
 
   async function run(method: "POST" | "DELETE") {
-    if (method === "POST" && payment?.enabled && !window.confirm("Tạo khoá mới? Khoá cũ trên SePay sẽ hết hiệu lực ngay.")) return
+    if (method === "POST" && payment?.enabled && !(await confirm({ title: "Tạo khoá mới?", consequence: "Khoá cũ trên SePay sẽ hết hiệu lực ngay.", confirmLabel: "Tạo khoá mới", tone: "danger" }))) return
     setBusy(true)
     setError(null)
     try {
@@ -50,6 +52,7 @@ export function BrochureBankSyncSettings() {
 
   return (
     <section className="bg-surface rounded-2xl border border-border p-5 shadow-sm flex flex-col gap-3">
+      {confirmDialog}
       <div className="flex items-start justify-between gap-2">
         <div className="flex items-center gap-2">
           <Link2 size={18} className="text-primary" />
@@ -85,7 +88,7 @@ export function BrochureBankSyncSettings() {
           <Button type="button" variant="outline" size="sm" disabled={busy} onClick={() => void run("DELETE")}>Tắt</Button>
         )}
         <Button type="button" size="sm" disabled={busy || !payment} onClick={() => void run("POST")} className="gap-1.5">
-          {busy && <Loader2 size={14} className="animate-spin" />}
+          {busy && <Loader2 size={14} className="animate-spin motion-reduce:animate-none" />}
           {payment?.enabled ? "Tạo khoá mới" : "Bật đối soát tự động"}
         </Button>
       </div>

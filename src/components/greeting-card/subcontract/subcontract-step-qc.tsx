@@ -1,5 +1,6 @@
 "use client"
 
+import { useConfirmDialog } from "@/components/ui/confirm-dialog"
 import React, { useState } from "react"
 import {
   CheckCircle2,
@@ -56,6 +57,7 @@ export function SubcontractStepQc({
   onQcUploaded,
   onBypassRequested,
 }: SubcontractStepQcProps) {
+  const [confirm, confirmDialog] = useConfirmDialog()
   const countdown = useStepCountdown(isUnlocked && !isCompleted ? deadlineMs : null)
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)
@@ -134,7 +136,7 @@ export function SubcontractStepQc({
   }
 
   async function handleDeleteQcPhoto(photoUrl: string) {
-    if (!confirm("Bạn có chắc chắn muốn xóa ảnh thành phẩm này không?")) return
+    if (!(await confirm({ title: "Xoá ảnh thành phẩm này?", consequence: "Ảnh sẽ bị gỡ khỏi bước kiểm tra chất lượng.", confirmLabel: "Xoá ảnh", tone: "danger" }))) return
     setErrorMsg(null)
     try {
       const res = await fetch(`/api/v1/public/subcontract/${encodeURIComponent(orderCode)}`, {
@@ -165,6 +167,7 @@ export function SubcontractStepQc({
           : "border-border/40 bg-surface/50 opacity-50 cursor-not-allowed"
       )}
     >
+      {confirmDialog}
       {/* Header bar của Bước 2 */}
       <Button variant="ghost"
         type="button"

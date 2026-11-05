@@ -50,7 +50,7 @@ export function InboxButton({ onOpenTarget }: { onOpenTarget: (t: InboxTarget) =
       >
         <Bell size={18} aria-hidden="true" className={open ? "text-primary" : "text-text-muted"} />
         {total > 0 && (
-          <span aria-hidden="true" className={`absolute -right-1.5 -top-1.5 min-w-5 rounded-full bg-danger px-1.5 text-center text-caption font-bold text-white ${fresh > 0 ? "animate-pulse ring-2 ring-danger/40" : ""}`}>
+          <span aria-hidden="true" className={`absolute -right-1.5 -top-1.5 min-w-5 rounded-full bg-danger px-1.5 text-center text-caption font-bold text-white ${fresh > 0 ? "animate-pulse motion-reduce:animate-none ring-2 ring-danger/40" : ""}`}>
             {total > 99 ? "99+" : total}
           </span>
         )}

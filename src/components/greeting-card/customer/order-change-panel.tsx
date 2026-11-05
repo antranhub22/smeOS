@@ -1,7 +1,8 @@
 "use client"
 
+import { Disclosure } from "@/components/ui/disclosure"
 import React, { useState } from "react"
-import { BellRing, Clock, History, PencilLine } from "@/components/ui/icons"
+import { BellRing, Clock, PencilLine } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import type { ShippingConfig } from "@/modules/greeting-card/domain/brochure-pricing"
 import type { ChangeItem, ChangeStatus, OrderChangeSnapshot } from "@/modules/greeting-card/domain/order-change-request"
@@ -119,10 +120,7 @@ export function OrderChangePanel({
       )}
 
       {change.history.some((h) => h.status !== "PENDING") && (
-        <details className="rounded-xl border border-border p-3">
-          <summary className="flex cursor-pointer items-center gap-2 text-body-sm font-bold text-text">
-            <History size={16} aria-hidden="true" /> Lịch sử thay đổi ({change.history.filter((h) => h.status !== "PENDING").length})
-          </summary>
+        <Disclosure label={`Lịch sử thay đổi (${change.history.filter((h) => h.status !== "PENDING").length})`}>
           <ol className="mt-3 flex flex-col gap-3">
             {change.history.filter((h) => h.status !== "PENDING").map((h) => (
               <li key={h.id} className="border-l-2 border-border pl-3">
@@ -135,7 +133,7 @@ export function OrderChangePanel({
               </li>
             ))}
           </ol>
-        </details>
+        </Disclosure>
       )}
     </section>
   )

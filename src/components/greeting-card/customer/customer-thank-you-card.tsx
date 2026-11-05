@@ -27,14 +27,14 @@ export function CustomerThankYouCard({
       {/* Banner cảm ơn trang trọng */}
       <div className="relative overflow-hidden bg-gradient-to-b from-primary/15 via-primary/5 to-surface p-6 sm:p-8 text-center flex flex-col items-center">
         <div className="mb-3 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-primary shadow-inner">
-          <Heart size={32} className="animate-pulse fill-primary/20" />
+          <Heart size={32} className="animate-pulse motion-reduce:animate-none fill-primary/20" />
         </div>
 
         <span className="rounded-full bg-primary/15 px-3 py-1 text-caption font-extrabold uppercase tracking-wider text-primary">
           Đơn hàng đã hoàn tất thành công
         </span>
 
-        <h3 className="mt-3 text-title font-black text-text sm:text-2xl">
+        <h3 className="mt-3 text-title font-black text-text sm:text-display-lg">
           Cảm ơn bạn đã tin chọn chúng tôi!
         </h3>
 

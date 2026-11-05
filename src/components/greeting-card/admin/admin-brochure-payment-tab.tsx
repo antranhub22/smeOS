@@ -55,7 +55,7 @@ export function AdminBrochurePaymentTab({ focusOrderId = null, onClearFocus }: {
             <span>Cài đặt</span>
           </Link>
           <Button type="button" variant="outline" size="sm" onClick={() => void orders.refresh()} className="gap-1.5 text-caption h-9">
-            <RefreshCw size={14} className={orders.isLoading ? "animate-spin" : ""} />
+            <RefreshCw size={14} className={orders.isLoading ? "animate-spin motion-reduce:animate-none" : ""} />
             <span>Làm mới</span>
           </Button>
         </div>
@@ -125,7 +125,7 @@ export function AdminBrochurePaymentTab({ focusOrderId = null, onClearFocus }: {
           <p role="alert" className="p-4 text-body-sm text-danger">{orders.error.message}</p>
         ) : orders.isLoading ? (
           <div className="p-4 flex flex-col gap-2" aria-busy="true">
-            {[0, 1, 2].map((i) => <div key={i} className="h-12 rounded-lg bg-surface-muted animate-pulse" />)}
+            {[0, 1, 2].map((i) => <div key={i} className="h-12 rounded-lg bg-surface-muted animate-pulse motion-reduce:animate-none" />)}
           </div>
         ) : orders.items.length === 0 ? (
           <p className="p-8 text-center text-body-sm text-text-muted">Không có đơn nào trong mục này.</p>

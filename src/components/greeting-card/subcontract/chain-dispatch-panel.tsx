@@ -1,5 +1,6 @@
 "use client"
 
+import { useConfirmDialog } from "@/components/ui/confirm-dialog"
 import React, { useState } from "react"
 import {
   Sparkles,
@@ -69,6 +70,7 @@ export function ChainDispatchPanel({
   suggestedCraftFee,
   onDispatched,
 }: ChainDispatchPanelProps) {
+  const [confirm, confirmDialog] = useConfirmDialog()
   const { data, isLoading, mutate } = useApi<ChainDispatchQueryResponse>(
     orderId ? `/api/v1/greeting-card/orders/${orderId}/chain-dispatch` : null
   )
@@ -127,7 +129,7 @@ export function ChainDispatchPanel({
   if (isLoading) {
     return (
       <div className="p-5 rounded-2xl border border-border bg-surface flex items-center justify-center gap-2 text-text-muted text-caption">
-        <Loader2 size={16} className="animate-spin text-primary" />
+        <Loader2 size={16} className="animate-spin motion-reduce:animate-none text-primary" />
         <span>Hệ thống đang quét và chấm điểm chi nhánh tối ưu...</span>
       </div>
     )
@@ -147,6 +149,7 @@ export function ChainDispatchPanel({
 
   return (
     <div className="p-4 rounded-2xl border-2 border-primary/30 bg-primary/5 flex flex-col gap-3.5">
+      {confirmDialog}
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-primary/15 pb-2.5">
         <div className="flex items-center gap-2">
@@ -203,8 +206,8 @@ export function ChainDispatchPanel({
               type="button"
               variant="outline"
               size="sm"
-              onClick={() => {
-                if (window.confirm("Bạn có chắc chắn muốn mở khóa để phát lệnh lại cho các chi nhánh khác?")) {
+              onClick={async () => {
+                if (await confirm({ title: "Mở khoá để phát lệnh lại?", consequence: "Lệnh sẽ được gửi lại cho các chi nhánh khác.", confirmLabel: "Mở khoá và phát lại" })) {
                   setDispatchResult(null)
                   mutate()
                 }
@@ -264,15 +267,15 @@ export function ChainDispatchPanel({
               disabled={isSubmitting}
               className="text-caption h-8 font-bold border-warning/50 text-warning hover:bg-warning/10"
             >
-              {isSubmitting ? <Loader2 size={12} className="animate-spin mr-1" /> : <Send size={12} className="mr-1" />}
+              {isSubmitting ? <Loader2 size={12} className="animate-spin motion-reduce:animate-none mr-1" /> : <Send size={12} className="mr-1" />}
               Gửi lại thông báo
             </Button>
             <Button
               type="button"
               variant="ghost"
               size="sm"
-              onClick={() => {
-                if (window.confirm("Hủy lệnh hiện tại và chọn lại chi nhánh?")) {
+              onClick={async () => {
+                if (await confirm({ title: "Huỷ lệnh hiện tại?", consequence: "Lệnh đang gửi sẽ bị huỷ để bạn chọn lại chi nhánh.", confirmLabel: "Huỷ lệnh", tone: "danger" })) {
                   setDispatchResult(null)
                   mutate()
                 }
@@ -390,7 +393,7 @@ export function ChainDispatchPanel({
             >
               {isSubmitting ? (
                 <>
-                  <Loader2 size={13} className="animate-spin" />
+                  <Loader2 size={13} className="animate-spin motion-reduce:animate-none" />
                   <span>Đang gửi tin nhắn...</span>
                 </>
               ) : (

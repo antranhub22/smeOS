@@ -97,17 +97,17 @@ export function BrochureLanguageSettings() {
   }
 
   if (!policy) {
-    return <div className="h-44 rounded-2xl bg-surface-muted animate-pulse" aria-busy="true" />
+    return <div className="h-44 rounded-2xl bg-surface-muted animate-pulse motion-reduce:animate-none" aria-busy="true" />
   }
 
   return (
     <div className="p-6 rounded-2xl border border-border bg-surface shadow-xs space-y-5">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-border pb-4">
         <div>
-          <h3 className="text-base font-extrabold text-text flex items-center gap-2">
+          <h3 className="text-title-sm font-extrabold text-text flex items-center gap-2">
             <Globe2 size={18} className="text-primary" /> Ngôn Ngữ & Trải Nghiệm Khách Quốc Tế
           </h3>
-          <p className="text-xs text-text-muted mt-1 leading-relaxed">
+          <p className="text-meta text-text-muted mt-1 leading-relaxed">
             Thiết lập ngôn ngữ hiển thị trên Thẻ Chào để gửi cho kiều bào và khách hàng quốc tế.
           </p>
         </div>
@@ -142,7 +142,7 @@ export function BrochureLanguageSettings() {
             {/* Tiếng Việt */}
             <div className="p-3.5 rounded-xl border border-border bg-bg flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <span className="text-2xl">🇻🇳</span>
+                <span className="text-display-lg">🇻🇳</span>
                 <div>
                   <div className="flex items-center gap-2">
                     <span className="text-body-sm font-bold text-text">Tiếng Việt</span>
@@ -178,7 +178,7 @@ export function BrochureLanguageSettings() {
               }`}
             >
               <div className="flex items-center gap-3">
-                <span className="text-2xl">🇬🇧</span>
+                <span className="text-display-lg">🇬🇧</span>
                 <div>
                   <div className="flex items-center gap-2">
                     <span className="text-body-sm font-bold text-text">English (Tiếng Anh)</span>
@@ -222,7 +222,7 @@ export function BrochureLanguageSettings() {
                       setUnlockSuccess(false)
                       setUnlockNote("")
                     }}
-                    className="h-8 gap-1.5 text-xs font-bold border-primary/30 text-primary hover:bg-primary/5"
+                    className="h-8 gap-1.5 text-meta font-bold border-primary/30 text-primary hover:bg-primary/5"
                   >
                     <Sparkles size={13} />
                     <span>Yêu Cầu Unlock</span>
@@ -290,7 +290,7 @@ export function BrochureLanguageSettings() {
             disabled={saving || !draft}
             className="gap-2 font-bold shadow-xs"
           >
-            {saving ? <Loader2 size={15} className="animate-spin" /> : <Save size={15} />}
+            {saving ? <Loader2 size={15} className="animate-spin motion-reduce:animate-none" /> : <Save size={15} />}
             <span>Lưu Thiết Lập Ngôn Ngữ</span>
           </Button>
         </div>
@@ -371,7 +371,7 @@ export function BrochureLanguageSettings() {
                     disabled={requesting}
                     className="gap-2 font-bold shadow-xs"
                   >
-                    {requesting ? <Loader2 size={15} className="animate-spin" /> : <Send size={14} />}
+                    {requesting ? <Loader2 size={15} className="animate-spin motion-reduce:animate-none" /> : <Send size={14} />}
                     <span>Gửi Yêu Cầu Phê Duyệt</span>
                   </Button>
                 </div>

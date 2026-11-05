@@ -1,5 +1,6 @@
 "use client"
 
+import { Disclosure } from "@/components/ui/disclosure"
 import { Button } from "@/components/ui/button"
 import React, { useCallback, useState } from "react"
 import { readSavedState, useSavedState } from "./use-saved-state"
@@ -227,12 +228,11 @@ export function BrochurePublicView({ catalog, products, shipping, shop }: Props)
             )}
 
             {selected.priceMode === "RANGE" && (
-              <details className="rounded-xl border border-border px-3 py-2">
-                <summary className="cursor-pointer text-body-sm font-semibold text-text">Muốn phiên bản theo ý bạn? Nhắn cửa hàng</summary>
+              <Disclosure label="Muốn phiên bản theo ý bạn? Nhắn cửa hàng">
                 <div className="mt-2">
                   <ProductContactActions shop={shop} inquiryUrl={`/api/v1/public/greeting-catalog/${catalog.id}/inquiry`} product={selected} />
                 </div>
-              </details>
+              </Disclosure>
             )}
 
             <Button variant="ghost"

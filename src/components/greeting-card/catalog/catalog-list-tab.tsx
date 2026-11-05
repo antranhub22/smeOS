@@ -169,7 +169,7 @@ export function CatalogListTab({ onSelectCatalog }: Props) {
             onClick={() => void loadCatalogs()}
             className="gap-1.5 text-caption h-9"
           >
-            <RefreshCw size={14} className={loading ? "animate-spin" : ""} />
+            <RefreshCw size={14} className={loading ? "animate-spin motion-reduce:animate-none" : ""} />
             <span>Làm mới</span>
           </Button>
           <Button
@@ -209,7 +209,7 @@ export function CatalogListTab({ onSelectCatalog }: Props) {
       {/* Catalog Grid */}
       {loading && catalogs.length === 0 ? (
         <div className="flex items-center justify-center py-16 text-text-muted">
-          <Loader2 size={24} className="animate-spin mr-2" />
+          <Loader2 size={24} className="animate-spin motion-reduce:animate-none mr-2" />
           <span className="text-body-sm">Đang tải danh sách...</span>
         </div>
       ) : catalogs.length === 0 && isFiltered ? (

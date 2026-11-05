@@ -46,7 +46,7 @@ export function LanguageToggle({ activeLocales = ["vi", "en"], className = "" }:
                 : "text-text-muted hover:bg-surface-muted hover:text-text"
             }`}
           >
-            <span className="text-sm leading-none">{meta.flag}</span>
+            <span className="text-title-sm leading-none">{meta.flag}</span>
             <span>{meta.label}</span>
           </Button>
         )

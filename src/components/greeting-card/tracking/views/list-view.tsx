@@ -1,5 +1,6 @@
 "use client"
 
+import { Disclosure } from "@/components/ui/disclosure"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import React from "react"
@@ -43,8 +44,7 @@ export function ListView({ qs, state, onChange, onOpen, onDetail, view = "list" 
   return (
     <div className="flex flex-col gap-3">
       {view === "list" && (
-        <details className="text-body-sm">
-          <summary className="cursor-pointer font-semibold text-text-muted">Cột hiển thị</summary>
+        <Disclosure label="Cột hiển thị" className="text-body-sm">
           <div className="mt-2 flex flex-wrap gap-3">
             {listColumns.map((c) => (
               <label key={c.id} className="flex items-center gap-1.5">
@@ -54,7 +54,7 @@ export function ListView({ qs, state, onChange, onOpen, onDetail, view = "list" 
               </label>
             ))}
           </div>
-        </details>
+        </Disclosure>
       )}
       <ViewState loading={list.isLoading} error={list.error} empty={!list.isLoading && list.items.length === 0}>
         <div className="overflow-x-auto rounded-2xl border border-border bg-surface">

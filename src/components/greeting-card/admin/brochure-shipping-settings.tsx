@@ -137,7 +137,7 @@ export function BrochureShippingSettings() {
       {org.error ? (
         <p role="alert" className="text-body-sm text-danger">{org.error.message}</p>
       ) : !current ? (
-        <div className="h-20 rounded-lg bg-surface-muted animate-pulse" aria-busy="true" />
+        <div className="h-20 rounded-lg bg-surface-muted animate-pulse motion-reduce:animate-none" aria-busy="true" />
       ) : (
         <>
           <ul className="flex flex-col gap-2">
@@ -257,7 +257,7 @@ export function BrochureShippingSettings() {
           {message?.text ?? "Phí giao được cộng vào tổng tiền và mã QR thanh toán của khách."}
         </p>
         <Button type="submit" size="sm" disabled={saving || !draft} className="gap-1.5 shrink-0">
-          {saving ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} />}
+          {saving ? <Loader2 size={14} className="animate-spin motion-reduce:animate-none" /> : <Save size={14} />}
           <span>Lưu phí giao</span>
         </Button>
       </div>

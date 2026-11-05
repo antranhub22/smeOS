@@ -201,7 +201,7 @@ export function StaffNotifySettings() {
 
           <div className="flex justify-end">
             <Button onClick={handleSave} disabled={busy} className="flex items-center gap-2">
-              {busy ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
+              {busy ? <Loader2 size={16} className="animate-spin motion-reduce:animate-none" /> : <Save size={16} />}
               Lưu cấu hình thông báo
             </Button>
           </div>

@@ -56,11 +56,11 @@ export function ChangeDecision({ requestId, changes, note, expectedFeeDeltaVnd, 
       <div className="flex gap-2">
         <Button variant="ghost" type="button" disabled={busy !== null} onClick={() => void decide(true)}
           className="inline-flex h-11 flex-1 items-center justify-center gap-2 rounded-xl bg-success px-4 text-body-sm font-bold text-white disabled:opacity-40 hover:bg-success">
-          {busy === "approve" && <Loader2 size={16} className="animate-spin" aria-hidden="true" />} Đồng ý cập nhật
+          {busy === "approve" && <Loader2 size={16} className="animate-spin motion-reduce:animate-none" aria-hidden="true" />} Đồng ý cập nhật
         </Button>
         <Button variant="ghost" type="button" disabled={busy !== null || reply.trim().length < 3} onClick={() => void decide(false)}
           className="inline-flex h-11 flex-1 items-center justify-center gap-2 rounded-xl bg-danger px-4 text-body-sm font-bold text-white disabled:opacity-40 hover:bg-danger">
-          {busy === "reject" && <Loader2 size={16} className="animate-spin" aria-hidden="true" />} Không đồng ý
+          {busy === "reject" && <Loader2 size={16} className="animate-spin motion-reduce:animate-none" aria-hidden="true" />} Không đồng ý
         </Button>
       </div>
     </div>

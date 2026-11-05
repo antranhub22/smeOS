@@ -56,7 +56,7 @@ export function DiscountRequestForm({ orderId, onSent }: { orderId: string; onSe
         className="min-h-11 rounded-xl border border-border bg-surface px-3 py-2 text-body text-text placeholder:text-text-muted" />
       <Button variant="primary" type="button" onClick={() => void send()} disabled={busy || !(n > 0) || reason.trim().length < 3}
         className="inline-flex h-11 items-center justify-center gap-2 rounded-xl bg-primary px-4 text-body-sm font-bold text-white hover:bg-primary-dark disabled:opacity-40">
-        {busy && <Loader2 size={16} className="animate-spin" aria-hidden="true" />}
+        {busy && <Loader2 size={16} className="animate-spin motion-reduce:animate-none" aria-hidden="true" />}
         Gửi Điều hành duyệt
       </Button>
     </div>

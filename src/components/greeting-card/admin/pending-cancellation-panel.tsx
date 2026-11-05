@@ -162,7 +162,7 @@ export function PendingCancellationPanel() {
           onClick={() => void mutate()}
           className="font-[inherit] gap-0 p-1.5 rounded-lg text-text-muted hover:text-text hover:bg-surface-muted"
         >
-          <RefreshCw size={14} className={isLoading ? "animate-spin" : ""} />
+          <RefreshCw size={14} className={isLoading ? "animate-spin motion-reduce:animate-none" : ""} />
         </Button>
       </div>
 

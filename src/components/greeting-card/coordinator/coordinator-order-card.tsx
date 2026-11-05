@@ -180,7 +180,7 @@ export function CoordinatorOrderCard({
               </span>
             )}
             {isUrgent && (
-              <span className="text-caption px-2 py-0.5 rounded-md bg-danger-bg text-danger font-extrabold animate-pulse">
+              <span className="text-caption px-2 py-0.5 rounded-md bg-danger-bg text-danger font-extrabold animate-pulse motion-reduce:animate-none">
                 HỎA TỐC
               </span>
             )}

@@ -121,7 +121,7 @@ export function MessageComposer({ target, stepKey, replyTo, onCancelReply, onSen
         />
         <Button variant="primary" type="button" onClick={() => void send()} disabled={!body.trim() || sending} aria-label="Gửi tin nhắn"
           className="font-[inherit] gap-0 inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary text-white hover:bg-primary-dark disabled:opacity-40">
-          {sending ? <Loader2 size={18} className="animate-spin" aria-hidden="true" /> : <Send size={18} aria-hidden="true" />}
+          {sending ? <Loader2 size={18} className="animate-spin motion-reduce:animate-none" aria-hidden="true" /> : <Send size={18} aria-hidden="true" />}
         </Button>
       </div>
     </div>

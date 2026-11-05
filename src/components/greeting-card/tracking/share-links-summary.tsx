@@ -24,7 +24,7 @@ export function ShareLinksSummary() {
       </Button>
       {open && (
         <ul className="divide-y divide-border border-t border-border">
-          {!links.data ? <li className="h-10 animate-pulse bg-surface-muted" aria-busy="true" />
+          {!links.data ? <li className="h-10 animate-pulse motion-reduce:animate-none bg-surface-muted" aria-busy="true" />
             : links.data.data.length === 0 ? <li className="p-3 text-body-sm text-text-muted">Chưa có ai sao chép link bộ sưu tập trong 30 ngày qua.</li>
             : links.data.data.map((l) => (
               <li key={l.code} className="flex flex-wrap items-center justify-between gap-x-3 gap-y-0.5 px-3 py-2 text-body-sm">

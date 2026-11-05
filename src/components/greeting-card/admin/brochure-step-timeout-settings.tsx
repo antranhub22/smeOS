@@ -69,7 +69,7 @@ export function BrochureStepTimeoutSettings() {
       </p>
 
       {savedPolicy === null ? (
-        <div className="h-40 rounded-xl bg-surface-muted animate-pulse" aria-busy="true" />
+        <div className="h-40 rounded-xl bg-surface-muted animate-pulse motion-reduce:animate-none" aria-busy="true" />
       ) : (
         <div className="space-y-3.5">
           {/* Bước 1: Quá hạn mở link */}
