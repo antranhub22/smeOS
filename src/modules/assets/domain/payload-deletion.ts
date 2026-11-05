@@ -18,3 +18,16 @@ export function payloadKeysToPurge(
   )
   return [...new Set(keys)]
 }
+
+/**
+ * Khoá tệp của một video được xoá khi xoá vĩnh viễn video (L-4): video dựng
+ * xong (`videos/<tổ chức>/…`) và bản phối âm (`org/<tổ chức>/…`). Khoá của tổ
+ * chức khác hoặc có `..` bị bỏ.
+ */
+export function videoPayloadKeysToPurge(organizationId: string, keys: readonly (string | null | undefined)[]): string[] {
+  const allowed = [`org/${organizationId}/`, `videos/${organizationId}/`]
+  const out = keys.filter(
+    (key): key is string => typeof key === "string" && allowed.some((p) => key.startsWith(p)) && !key.includes("..")
+  )
+  return [...new Set(out)]
+}

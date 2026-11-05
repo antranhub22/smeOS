@@ -66,7 +66,7 @@ export class ContentGenerationRepository implements IContentGenerationRepository
 
   /** Bản mới nhất khớp bộ lọc — dùng cho `GET /generations?asset_id&topic_id&mode` (tra, không tạo job). */
   findLatest(ctx: TenantContext, filter: LatestContentGenerationFilter): Promise<content_generations | null> {
-    const where: Prisma.content_generationsWhereInput = {}
+    const where: Prisma.content_generationsWhereInput = { trashed_at: null } // bản trong thùng rác không được dùng lại
     if (filter.assetId !== undefined) where.asset_id = filter.assetId
     if (filter.topicId !== undefined) where.topic_id = filter.topicId
     if (filter.scenePlanId !== undefined) where.scene_plan_id = filter.scenePlanId

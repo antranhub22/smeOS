@@ -70,7 +70,7 @@ acceptance:
 ## 6. Hành động
 - Chính (1, theo tab): Ảnh gốc `+ Tải ảnh mới`; Ảnh AI/Video/Âm thanh/Nội dung `+ Tạo mới` (dẫn tới công cụ tương ứng); Catalog `+ Tạo catalog`; Thẻ chào `+ Tạo thẻ chào`; Thùng rác: không có.
 - Phụ (≤ 2): `Làm mới`, `Tải về` (tab có tệp).
-- Trên thẻ: `Mở` (về công cụ gốc), `Chuyển vào thùng rác` (Điều hành; loại hỗ trợ thùng rác — v2: ảnh gốc, ảnh AI, ảnh đã duyệt, sản phẩm như v1; các loại khác §14 L-4).
+- Trên thẻ: `Mở` (về công cụ gốc), `Chuyển vào thùng rác` (Điều hành) cho ảnh gốc, ảnh AI, ảnh đã duyệt, sản phẩm, video, nội dung, catalog, thẻ chào, landing page (L-4). Âm thanh dùng nút xoá riêng của Creative Studio.
 - Menu `…`: tác vụ phụ còn lại.
 
 ## 7. Content budget
@@ -111,15 +111,16 @@ acceptance:
 - Landing page (L-1): bảng `landing_pages`, migration `20261029180000_landing_pages`; chỉ landing page sinh từ 29/10/2026.
 - Tách `storage-hub-tabs.ts`, `library/*`: `account-storage-hub.tsx` giảm 914 → ~855 dòng.
 - **Gắn nhãn loại tư liệu & Bộ lọc module nghiệp vụ (01/11/2026, PR-1):** Mọi mục trong Kho dữ liệu được gắn nhãn loại asset chuẩn (`asset_type.code`, `asset_type.name`, `asset_type.module`) thông qua `metadata.asset_type_code` hoặc suy luận theo luật `library-asset-mapping.ts`. Trên thẻ hiển thị chip loại tư liệu (`text-caption`) và hỗ trợ bộ lọc theo 6 module nghiệp vụ.
-- **Chưa làm, cần PO:** L-2 (kịch bản tư vấn lên máy chủ — đụng luồng tải ảnh `/tai-anh`, CLAUDE.md yêu cầu hỏi PO các chặng hành trình); L-4 (thùng rác cho video/nội dung/catalog/thẻ chào/landing — mỗi loại có ràng buộc riêng, ví dụ thẻ chào đang gắn đơn).
+- **L-4 thùng rác (PO 05/11/2026: xoá vĩnh viễn tất cả):** video, nội dung, catalog, thẻ chào, landing page vào thùng rác 30 ngày (`trashed_at/purge_after`, migration `20261105230000_library_trash_columns`), khôi phục được, quá hạn cron xoá vĩnh viễn (ghi audit; video xoá kèm tệp qua hàng đợi xoá). Vào thùng rác: biến khỏi công cụ gốc và Kho dữ liệu; **catalog** thu hồi link (khôi phục chỉ mở lại link do thùng rác thu hồi — mã Catalog đang đóng băng nên không sửa, logic nằm ở `storage/infra/library-trash-repository.ts`); **thẻ chào** ẩn (`is_active=false`), khôi phục vẫn ẩn để người dùng tự bật lại. **Hệ quả đã chốt:** xoá vĩnh viễn thẻ chào xoá cả phiên khách và nhật ký hành trình (cascade); đơn hàng và sổ thanh toán giữ lại (liên kết phiên → rỗng). Mục đang dùng ở chiến dịch/kênh bán (`asset_usages`, `campaign_packages`) và tổ chức đang legal hold → 409, cron bỏ qua.
+- **L-2 (PO 05/11/2026): chưa làm** — kịch bản tư vấn vẫn ở trình duyệt.
 
 ## 14. Quyết định PO (duyệt 29/10/2026 — chọn phương án đề xuất)
 | ID | Câu hỏi | Đề xuất |
 |---|---|---|
 | L-1 | Landing page không được lưu. Lưu lại để tìm được? | **Có** — bảng `landing_pages` (đổi schema, cần duyệt riêng). Trước khi có: ẩn tab Landing page |
-| L-2 | Kịch bản tư vấn chỉ ở localStorage (đổi máy là mất). Đưa lên máy chủ? | Đề xuất lưu máy chủ ở đợt sau; v2 giữ như v1 |
+| L-2 | Kịch bản tư vấn chỉ ở localStorage (đổi máy là mất). Đưa lên máy chủ? | **PO 05/11/2026: chưa làm** |
 | L-3 | Nhân viên chi nhánh thấy gì? | Chỉ mục của chi nhánh mình + mục "Trụ sở"; không có bộ chọn phạm vi |
-| L-4 | Thùng rác cho video/nội dung/catalog/thẻ chào? | Đợt sau; v2 các loại này chỉ có `Mở` |
+| L-4 | Thùng rác cho video/nội dung/catalog/thẻ chào? | **PO 05/11/2026: thùng rác 30 ngày rồi xoá vĩnh viễn tất cả, kể cả thẻ chào đã có phiên khách** — đã dựng (§13a) |
 
 ## 15. QA Matrix (03a §34)
 | Chiều | Kết quả | Ghi chú |

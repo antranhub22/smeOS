@@ -121,6 +121,7 @@ export class VideoJobRepository implements IVideoJobRepository {
 
     return this.db.video_jobs.findMany({
       where: scopedWhere(ctx, {
+        trashed_at: null, // trong thùng rác (Kho dữ liệu) thì không hiện
         ...(options.productId ? { product_id: options.productId } : {}),
         ...(options.format ? { format: options.format } : {}),
         ...(options.stage ? { stage: options.stage } : {}),
