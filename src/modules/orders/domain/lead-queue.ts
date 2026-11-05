@@ -1,7 +1,7 @@
 /**
  * Hàng đợi lead chung cho Sale (`docs/kien-truc/KIEN_TRUC_SSOT_DON_HANG_DA_NGUON.md` §3.3–3.4).
  * Pure TypeScript. Ghép hai nơi lưu lead mà KHÔNG chép dữ liệu: `leads` (nguồn mới) và phiên Thẻ chào
- * chưa có đơn (`greeting_sessions`, chỉ đọc — Thẻ chào đóng băng).
+ * chưa có đơn (`greeting_sessions`, chỉ đọc).
  */
 
 export type LeadHeat = "HOT" | "WARM" | "COLD"

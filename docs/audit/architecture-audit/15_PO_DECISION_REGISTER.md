@@ -6,7 +6,7 @@
 
 | Mã | Chủ đề | Quyết định | Hệ quả |
 |---|---|---|---|
-| D-01 | Tầng Ngành | **a** — chỉ là plugin mã; bỏ khỏi RBAC, thông báo, menu | Gỡ `INDUSTRY` khỏi khoá thông báo, sự kiện `industry_admin`, `nav-industry`, xem trước tầng; giữ khoá tích hợp theo `industry:<key>` do Mẹ đặt |
+| D-01 | Tầng Ngành | ~~**a** — chỉ là plugin mã~~ → sửa bởi **D-48** (05/11/2026) · **a** — chỉ là plugin mã; bỏ khỏi RBAC, thông báo, menu | Gỡ `INDUSTRY` khỏi khoá thông báo, sự kiện `industry_admin`, `nav-industry`, xem trước tầng; giữ khoá tích hợp theo `industry:<key>` do Mẹ đặt |
 | D-02 | Chuỗi → Cửa hàng | **c** — chi nhánh của chuỗi là dòng trong tổ chức chuỗi (phạm vi BRANCH); nhượng quyền/gia công là tenant riêng; một hàm tra cứu chung | `resolveTierChain`; thống nhất thực thể chi nhánh |
 | D-03 | Đối tác nhiều chuỗi | **b** — cho phép, có chuỗi chính | Cột `is_primary` + ràng buộc một chuỗi chính ACTIVE |
 | D-04 | Phạm vi chi nhánh | **a** — mọi mô-đun có dữ liệu chi nhánh, theo đợt | Phạm vi quyền vào `TenantContext`, lọc ở repository |
@@ -37,7 +37,7 @@
 | D-29 | Thay đổi lược đồ | **a** về nguyên tắc, xem từng PR | |
 | D-30 | RLS | **b** — giai đoạn enterprise | Ngoài phạm vi v1 |
 | D-31 | Thứ tự kênh Hub | Theo đề xuất: Zalo → SePay → eSMS → Telegram → Messenger → Email | |
-| D-32 | Thẻ chào | **a** — giữ đóng băng; chỉ thay adapter mỏng nối Hub | Cập nhật `the-chao-freeze.test.ts` cho phép đúng các adapter đó (PR riêng, PO duyệt) |
+| D-32 | Thẻ chào | ~~**a** — giữ đóng băng~~ → thay bởi **D-47** (05/11/2026) · **a** — giữ đóng băng; chỉ thay adapter mỏng nối Hub | Cập nhật `the-chao-freeze.test.ts` cho phép đúng các adapter đó (PR riêng, PO duyệt) |
 | D-33 | Kênh SMS/Zalo/Web Push | **a** — hoàn thiện cả ba | Web Push cần khoá VAPID, service worker, bảng đăng ký |
 | D-34 | AI ở worker | **a** — worker đọc chính sách AI chung từ CSDL | |
 | D-35 | Khoá công cụ API dùng chung | Theo đề xuất: không khoá API dùng chung; công cụ khác khoá cả API | |
@@ -51,6 +51,8 @@
 | D-43 | Sửa lỗi có sẵn | **a** — trong hạng mục riêng | Hạng mục P0-07 |
 | D-44 | Ngôn ngữ | **a** — chỉ tiếng Việt | i18n ngoài đường găng |
 | D-45 | Chuẩn mã cũ | Theo đề xuất: Screen Contract cho trang mới/được sửa; tách tệp khi chạm vào | Thêm test bắt buộc |
+| D-47 | Thẻ chào (05/11/2026) | **Gỡ đóng băng.** Thẻ chào được sửa khi hợp nhất mô hình đơn hàng và khách hàng (audit kiến trúc CSDL 4 tầng, bước 2–3) | Bỏ `the-chao-freeze.test.ts` + manifest; giữ toàn bộ test hành vi Thẻ chào; nguyên tắc B5 (test khoá hành vi trước khi sửa) vẫn áp dụng — `KIEN_TRUC_SSOT_DON_HANG_DA_NGUON.md` §0 |
+| D-48 | Tầng Ngành (05/11/2026) | **Cần, làm sau.** Tầng Ngành dùng cho mô hình affiliate bán sản phẩm nhiều ngành. Hiện tập trung StoreOS, ChainOS, SaaS Mother cho ngành Điện hoa – hoa tươi | Chưa thêm dữ liệu tầng Ngành; thiết kế cây tổ chức (bước 2) phải chừa chỗ cho tầng Ngành và quan hệ affiliate, không cần sửa lược đồ lớn khi bật |
 
 ## 2. Chấp nhận rủi ro (PO chọn khác đề xuất)
 
