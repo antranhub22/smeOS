@@ -15,6 +15,7 @@ import { sendZnsMessage, type FetchLike, type ZnsCredentials } from "../adapters
 import { sendEsmsMessage, type EsmsCredentials } from "../adapters/esms-adapter"
 import { OrganizationRepository } from "@/modules/organization/infra/organization-repository"
 import { readCreditPricing } from "@/modules/usage/infra/credit-pricing-store"
+import { recordProviderCost } from "@/modules/usage/infra/provider-cost-repository"
 import { expectedPayment, parsePaymentPolicy } from "../domain/brochure-payment-policy"
 import { policyForOrder } from "../domain/payment-plan"
 
@@ -38,6 +39,8 @@ export interface MessageCredits {
   costOf(channel: "ZNS" | "ESMS"): Promise<number>
   charge(organizationId: string, cost: number, channel: "ZNS" | "ESMS"): Promise<boolean>
   refund(organizationId: string, cost: number, channel: "ZNS" | "ESMS"): Promise<void>
+  /** Ghi chi phí thật theo giá vốn tham chiếu (checklist ALG 10.4) */
+  recordCost(organizationId: string, channel: "ZNS" | "ESMS", reference: string): Promise<void>
 }
 
 const serviceOf = (channel: "ZNS" | "ESMS") => (channel === "ZNS" ? "ZNS" : "SMS") as "ZNS" | "SMS"
@@ -53,6 +56,13 @@ const defaultMessageCredits: MessageCredits = {
       .catch(() => false),
   refund: (organizationId, cost, channel) =>
     new OrganizationRepository().refundCreditFor(organizationId, cost, { service: serviceOf(channel), reason: "Tin gửi lỗi" }),
+  async recordCost(organizationId, channel, reference) {
+    const pricing = await readCreditPricing()
+    await recordProviderCost(organizationId, {
+      provider: channel === "ZNS" ? "ZALO_ZNS" : "ESMS", service: serviceOf(channel),
+      costVnd: channel === "ZNS" ? pricing.znsCostVnd : pricing.smsCostVnd, reference,
+    })
+  },
 }
 
 /**
@@ -130,6 +140,7 @@ export async function notifyOrderEvent(
       messageId = result.messageId
     }
     await repo.finish(claim.id, { status: "SENT", providerMessageId: messageId })
+    await credits.recordCost(organizationId, channel, claim.id).catch(() => undefined)
     return "SENT"
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error)

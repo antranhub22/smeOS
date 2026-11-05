@@ -781,8 +781,9 @@ Chín route dưới đây cũng là console vận hành nền tảng (`PlatformC
 | GET | `/platform/organizations/:id/credits` | `N1` | Checklist ALG 10.6 — số dư và 50 dòng gần nhất của sổ cái `credit_transactions` |
 | POST | `/platform/organizations/:id/credits` | `N3` | `{ kind: TOPUP\|GIFT\|REFUND, amount, reason }` — nạp/tặng/hoàn có lý do (1–1.000.000 credit), ghi sổ cái và `platform_audit_logs`; tổ chức không có → 404 |
 | PUT | `/platform/organizations/:id/usage-limit` | `N3` | Checklist ALG 10.3 — `{ monthlyLimit: number \| null }` hạn mức credit/tháng của tổ chức (áp kỳ hiện tại và các tháng sau), ghi `platform_audit_logs` |
-| GET | `/platform/credit-pricing` | `N4` | PO Q10 — quy đổi credit: `smsCredit`, `znsCredit` (credit/tin, mặc định 0), `usdToVnd`, `creditValueVnd`, `defaultMonthlyLimit` |
+| GET | `/platform/credit-pricing` | `N4` | PO Q10 — quy đổi credit: `smsCredit`, `znsCredit` (credit/tin, mặc định 0), `usdToVnd`, `creditValueVnd`, `smsCostVnd`, `znsCostVnd` (giá vốn tham chiếu mỗi tin), `defaultMonthlyLimit` |
 | PUT | `/platform/credit-pricing` | `N3` | Sửa từng trường của quy đổi credit (lưu `platform_settings.credit_pricing`), ghi `platform_audit_logs` |
+| GET | `/platform/margin` | `N4` | Checklist ALG 10.4 — `?period=YYYY-MM` (mặc định tháng hiện tại, giờ Việt Nam): theo tổ chức có phát sinh — credit đã dùng sau hoàn, doanh thu (× `creditValueVnd`), chi phí (AI `ai_requests.cost_usd` × `usdToVnd` + `provider_cost_entries.cost_vnd`), biên và tỷ lệ; kèm dòng tổng |
 | GET | `/platform/behaviors` | `N12` | ĐP-3 3.15 — liệt kê mã hành vi có thật trong `field-platform/domain/behaviors.ts` cho một `behavior_kind` (`?kind=…`), để Console gợi ý khi thêm giá trị danh mục CÓ HÀNH VI. CHỈ ĐỌC, không thay luật kiểm ở `upsert-catalog-value.ts` |
 
 ## 22. Phân hệ Nghiên cứu Thị trường & Xu hướng (Market Intelligence Engine, Đợt A mở rộng)

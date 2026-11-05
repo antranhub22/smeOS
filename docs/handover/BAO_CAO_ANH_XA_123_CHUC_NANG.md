@@ -33,10 +33,10 @@ Ký hiệu đường dẫn rút gọn: `org/` = `src/modules/organization/`, `gc
 | 7 | AI phân tích, nội dung & marketing | 3 | 1 | 2 | 0 |
 | 8 | Landing page bán hàng | 1 | 1 | 0 | 0 |
 | 9 | Chat nội bộ, đa chuỗi & phân quyền nâng cao | 14 | 11 | 2 | 1 |
-| 10 | Quản lý credit AI, hạn mức & thuê bao SaaS | 8 | 5 | 2 | 1 |
-| | **Tổng cộng** | **123** | **103** | **18** | **2** |
+| 10 | Quản lý credit AI, hạn mức & thuê bao SaaS | 8 | 6 | 1 | 1 |
+| | **Tổng cộng** | **123** | **104** | **17** | **2** |
 
-Tỷ lệ: Hoàn thiện 83,7% · Dang dở 14,6% · Chưa hoàn thành 1,6%.
+Tỷ lệ: Hoàn thiện 84,6% · Dang dở 13,8% · Chưa hoàn thành 1,6%.
 
 ### Hai chức năng chưa hoàn thành
 
@@ -214,7 +214,7 @@ Tỷ lệ: Hoàn thiện 83,7% · Dang dở 14,6% · Chưa hoàn thành 1,6%.
 | 10.1 | Xem số dư credit AI & lịch sử tiêu thụ | Hoàn thiện | `src/modules/usage/domain/pricing.ts:31-80` (ảnh 1, tối ưu 2, video 5); `api/usage`, `api/usage/summary`; `src/app/(app)/muc-dung/page.tsx:57,142`; `tt/retry-recharge-credit.test.ts:50-79` | — |
 | 10.2 | Hoàn 100% credit AI khi tác vụ bị lỗi | Hoàn thiện | `src/modules/usage/domain/refund-policy.ts`; `src/modules/usage/use-cases/refund-job.ts:80`; `refund-policy.test.ts:13-18`, `tt/partial-refund.test.ts:83,143` | — |
 | 10.3 | Thiết lập hạn mức dịch vụ (trần AI, SMS, Zalo) | Hoàn thiện | PO Q10: mọi dịch vụ quy đổi về credit; bảng `usage_limits` (migration `20261105160000_usage_limits`), hạn mức credit/tháng Console đặt `api/platform/organizations/[id]/usage-limit/route.ts` (N3), quy đổi SMS/ZNS và hạn mức mặc định `api/platform/credit-pricing/route.ts`; chặn cùng giao dịch khi trừ credit, vượt → 422 `QUOTA_EXCEEDED`, không trừ số dư `src/modules/usage/infra/usage-limit-repository.ts`, `org/infra/organization-repository.ts`; tin SMS/ZNS trừ credit, gửi lỗi hoàn, hết credit thì bỏ tin `gc/use-cases/notify-customer.ts`; hiện ở Mức dùng `src/components/usage/monthly-limit-card.tsx` và Console `src/components/platform/credit-ledger-panel.tsx`, `credit-pricing-card.tsx`; `tt/usage-limits.test.ts`, `tt/greeting-card-notifications.test.ts`, `tp/credit-ledger.test.ts` | — |
-| 10.4 | Ghi nhận chi phí thật (USD/VND) đo lợi nhuận | Dang dở | `src/core/ai/gateway.ts:214-225` ghi `cost_usd`; `src/modules/ai-governance/use-cases/list-ai-requests.ts:95-116` | Quy đổi VND; chi phí SMS/ZNS; so với credit đã thu và lợi nhuận nền tảng |
+| 10.4 | Ghi nhận chi phí thật (USD/VND) đo lợi nhuận | Hoàn thiện | Chi phí AI thật `src/core/ai/gateway.ts` ghi `ai_requests.cost_usd`; chi phí tin SMS/ZNS theo giá vốn tham chiếu `provider_cost_entries` (migration `20261105170000_provider_cost_entries`) `src/modules/usage/infra/provider-cost-repository.ts`, ghi khi gửi thành công `gc/use-cases/notify-customer.ts`; tỷ giá USD→VND, giá trị credit, giá vốn mỗi tin nhập ở Console `api/platform/credit-pricing/route.ts`; báo cáo biên lợi nhuận theo tháng và theo tổ chức `api/platform/margin/route.ts` (N4), `src/modules/usage/domain/platform-margin.ts`, `src/components/platform/platform-margin-card.tsx`; `tp/platform-margin.test.ts`, `tu/usage/platform-margin.test.ts`, `tt/greeting-card-notifications.test.ts` | — |
 | 10.5 | Cảnh báo khi credit AI còn dưới 20% | Hoàn thiện | Sự kiện `CREDIT_LOW` (số dư dưới 20% lần nạp gần nhất, không có thì 20% hạn mức tháng) và `USAGE_LIMIT_NEAR` (80% hạn mức tháng hoặc trần AI) `src/modules/notification/domain/events/store-operation-events.ts`; phát nền sau lần trừ, một lần mỗi kỳ (cờ trong `usage_limits` bật cùng giao dịch) `src/modules/usage/use-cases/credit-alerts.ts`; `tt/usage-limits.test.ts` | — |
 | 10.6 | Admin nạp / hoàn / tặng credit khuyến mãi | Hoàn thiện | Sổ cái `credit_transactions` (migration `20261105150000_credit_transactions`, dòng `OPENING` cho số dư sẵn có); mọi thay đổi số dư đi qua `org/infra/organization-repository.ts` và ghi sổ cùng giao dịch `org/infra/credit-ledger.ts` (trừ khi chạy job, hoàn job, phí kênh chat, credit khởi tạo, script nạp); Console nạp/tặng/hoàn có lý do `api/platform/organizations/[id]/credits/route.ts` (N1 đọc, N3 ghi, nhật ký nền tảng), `src/components/platform/credit-ledger-panel.tsx`, mã VietQR nạp ghi thật `src/components/platform/vietqr-topup-modal.tsx`; `tp/credit-ledger.test.ts`, `tt/credit-ledger-isolation.test.ts` | — |
 | 10.7 | Quản lý & thu phí thuê bao SaaS | Dang dở | Gói định nghĩa tĩnh `src/modules/platform/domain/vietqr-billing.ts:31-64`; quyền theo gói `src/core/entitlements/entitlement-service.ts:9-130`; `vietqr-billing.test.ts`, `entitlement-service.test.ts` | Gán gói cho tổ chức, theo dõi kỳ gia hạn tháng/năm, thu phí |

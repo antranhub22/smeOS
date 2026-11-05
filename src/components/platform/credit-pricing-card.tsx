@@ -6,12 +6,14 @@ import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 
-interface Pricing { smsCredit: number; znsCredit: number; usdToVnd: number; creditValueVnd: number; defaultMonthlyLimit: number | null }
+interface Pricing { smsCredit: number; znsCredit: number; usdToVnd: number; creditValueVnd: number; smsCostVnd: number; znsCostVnd: number; defaultMonthlyLimit: number | null }
 const FIELDS: Array<{ key: keyof Pricing; label: string; hint: string }> = [
   { key: "smsCredit", label: "Credit mỗi tin SMS", hint: "0 = không thu" },
   { key: "znsCredit", label: "Credit mỗi tin Zalo ZNS", hint: "0 = không thu" },
   { key: "usdToVnd", label: "Tỷ giá USD → VND", hint: "Quy đổi chi phí nhà cung cấp" },
   { key: "creditValueVnd", label: "Giá trị 1 credit (đ)", hint: "Tính biên lợi nhuận" },
+  { key: "smsCostVnd", label: "Giá vốn mỗi tin SMS (đ)", hint: "Chi phí tham chiếu" },
+  { key: "znsCostVnd", label: "Giá vốn mỗi tin ZNS (đ)", hint: "Chi phí tham chiếu" },
   { key: "defaultMonthlyLimit", label: "Hạn mức credit/tháng mặc định", hint: "Bỏ trống = không giới hạn" },
 ]
 

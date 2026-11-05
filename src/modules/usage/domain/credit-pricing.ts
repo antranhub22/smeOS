@@ -13,12 +13,15 @@ export interface CreditPricing {
   usdToVnd: number
   /** Giá trị 1 credit theo VND để tính biên lợi nhuận (10.4) */
   creditValueVnd: number
+  /** Giá vốn tham chiếu mỗi tin SMS / ZNS (VND) — ghi `provider_cost_entries` (10.4) */
+  smsCostVnd: number
+  znsCostVnd: number
   /** Hạn mức credit/tháng mặc định cho tổ chức chưa đặt riêng; null = không giới hạn */
   defaultMonthlyLimit: number | null
 }
 
 export const DEFAULT_CREDIT_PRICING: CreditPricing = {
-  smsCredit: 0, znsCredit: 0, usdToVnd: 25_000, creditValueVnd: 1_000, defaultMonthlyLimit: null,
+  smsCredit: 0, znsCredit: 0, usdToVnd: 25_000, creditValueVnd: 1_000, smsCostVnd: 0, znsCostVnd: 0, defaultMonthlyLimit: null,
 }
 
 const num = (v: unknown, min: number, max: number): number | undefined =>
@@ -33,6 +36,8 @@ export function parseCreditPricing(raw: unknown): CreditPricing {
     znsCredit: Math.round(num(r.znsCredit, 0, 1000) ?? DEFAULT_CREDIT_PRICING.znsCredit),
     usdToVnd: num(r.usdToVnd, 1000, 100_000) ?? DEFAULT_CREDIT_PRICING.usdToVnd,
     creditValueVnd: num(r.creditValueVnd, 1, 1_000_000) ?? DEFAULT_CREDIT_PRICING.creditValueVnd,
+    smsCostVnd: Math.round(num(r.smsCostVnd, 0, 100_000) ?? DEFAULT_CREDIT_PRICING.smsCostVnd),
+    znsCostVnd: Math.round(num(r.znsCostVnd, 0, 100_000) ?? DEFAULT_CREDIT_PRICING.znsCostVnd),
     defaultMonthlyLimit: limit === null ? null : (num(limit, 0, 10_000_000) !== undefined ? Math.round(limit as number) : null),
   }
 }
@@ -43,6 +48,9 @@ export function creditPricingProblem(input: Record<string, unknown>): string | n
   if (input.znsCredit !== undefined && (num(input.znsCredit, 0, 1000) === undefined || !Number.isInteger(input.znsCredit))) return "Credit mỗi tin ZNS là số nguyên 0–1.000"
   if (input.usdToVnd !== undefined && num(input.usdToVnd, 1000, 100_000) === undefined) return "Tỷ giá USD→VND trong khoảng 1.000–100.000"
   if (input.creditValueVnd !== undefined && num(input.creditValueVnd, 1, 1_000_000) === undefined) return "Giá trị 1 credit trong khoảng 1–1.000.000đ"
+  for (const k of ["smsCostVnd", "znsCostVnd"] as const) {
+    if (input[k] !== undefined && num(input[k], 0, 100_000) === undefined) return "Giá vốn mỗi tin trong khoảng 0–100.000đ"
+  }
   const l = input.defaultMonthlyLimit
   if (l !== undefined && l !== null && (num(l, 0, 10_000_000) === undefined || !Number.isInteger(l))) return "Hạn mức mặc định là số nguyên 0–10.000.000 hoặc bỏ trống"
   return null

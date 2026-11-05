@@ -18,6 +18,8 @@ const bodySchema = z.object({
   znsCredit: z.number().optional(),
   usdToVnd: z.number().optional(),
   creditValueVnd: z.number().optional(),
+  smsCostVnd: z.number().optional(),
+  znsCostVnd: z.number().optional(),
   defaultMonthlyLimit: z.number().int().nullable().optional(),
 })
 

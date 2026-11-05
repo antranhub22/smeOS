@@ -570,6 +570,24 @@ model usage_limits {
 }
 ```
 
+Chi phí nhà cung cấp ngoài AI (checklist ALG 10.4): mỗi tin SMS/ZNS gửi khách thành công ghi một dòng theo giá vốn tham chiếu Console nhập (`credit_pricing.smsCostVnd`/`znsCostVnd`; 0 thì không ghi). Chi phí AI đọc thẳng `ai_requests.cost_usd`. Báo cáo `GET /platform/margin` cộng hai nguồn với credit đã dùng trong sổ cái.
+
+```prisma
+model provider_cost_entries {
+  id              String   @id @default(uuid())
+  organization_id String
+  provider        String   // ESMS · ZALO_ZNS
+  service         String   // SMS · ZNS
+  cost_usd        Float?
+  cost_vnd        Int
+  reference       String?
+  occurred_at     DateTime @default(now())
+
+  @@index([organization_id])
+  @@index([organization_id, occurred_at])
+}
+```
+
 **Một bảng usage duy nhất cho toàn hệ thống.** Mọi module ở cả ba repo ghi vào bảng này, phân biệt bằng `feature`. Không repo nào dựng bảng usage hay credit riêng — tách ra thì không tính được hạn mức trải nghiệm và không xuất được hoá đơn hợp nhất.
 
 **Ghi tại điểm tạo job phía core, không ghi ở worker.** Trình tự trong một giao dịch:
