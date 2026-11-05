@@ -67,8 +67,8 @@ cần test khoá hành vi trước.
 | [x] | O-1 [SCHEMA] Index cột con của 34 khoá ngoại + test CI "FK phải có index" (làm 61 khoá: gồm cả khoá cũ thiếu index — PR #135) | 015 | P2-F3 (một phần) | `migrate diff` sạch |
 | [x] | O-2 Khai `max` pool từng dịch vụ (web, 3 worker, cron) | 015 | — | Bảng tổng kết nối trong runbook — PR #135 |
 | [ ] | O-3 [VẬN HÀNH] Nâng gói CSDL (I-7) + `pg_stat_statements` + cảnh báo D-O8 | 015 | P1-02 | Cảnh báo thử tới người nhận I-5 |
-| [ ] | O-4 [VẬN HÀNH] Migration ở pre-deploy; production chỉ seed hệ thống | 015 | P1-01 | Build không chạm CSDL |
-| [ ] | O-5 Script CI kiểm expand/contract trên `migration.sql` mới | 015 | — | Ca thử: `DROP COLUMN` không chú thích → đỏ |
+| [x] | O-4 [VẬN HÀNH] Migration ở pre-deploy; production chỉ seed hệ thống | 015 | P1-01 | Build không chạm CSDL — PR #135; còn: export nhanh trước migration (cùng O-6) |
+| [x] | O-5 Script CI kiểm expand/contract trên `migration.sql` mới | 015 | — | Ca thử: `DROP COLUMN` không chú thích → đỏ — PR #135 |
 | [ ] | O-6 [VẬN HÀNH] Export đêm ra kho ngoài nhà cung cấp, giữ 35 ngày + 12 tháng | 015 | — | 7 bản liên tiếp |
 | [ ] | O-7 [VẬN HÀNH] Diễn tập PITR lần đầu + biên bản | 015 | P1-02 | RTO đo được ≤ 1 giờ |
 | [ ] | Dọn khoá `NOT VALID` còn sót của PR #127 (`VAN_HANH_CAP_NHAT_CSDL.md` §7) | 015 | — | 0 dòng `NOT convalidated` |
