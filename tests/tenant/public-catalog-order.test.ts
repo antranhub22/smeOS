@@ -9,6 +9,7 @@ import { isActiveOrgMember } from "@/modules/orders/infra/order-lead-link"
 import { PublicOrderRepository } from "@/modules/orders/infra/public-order-repository"
 import { ingestOrder } from "@/modules/orders/use-cases/ingest-order"
 import { placePublicCatalogOrder } from "@/modules/orders/use-cases/place-public-catalog-order"
+import { assertAcceptingPublicOrders } from "@/modules/subscription/use-cases/public-order-guard"
 
 /**
  * Đặt hàng công khai: đơn, khách và lead gắn vào đúng tổ chức của catalog (không nhận tổ chức từ client).
@@ -44,6 +45,7 @@ describe("cách ly tenant — đặt hàng trên catalog công khai", () => {
       ingest: ingestOrder,
       verifier: { name: "test", verify: async () => true },
       now: () => new Date(),
+      acceptsOrders: assertAcceptingPublicOrders,
     })
     const order = await prisma.orders.findFirstOrThrow({ where: { code: r.orderCode } })
     expect(order).toMatchObject({ organization_id: a.organizationId, source: "CATALOG", lead_id: null })

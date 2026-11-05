@@ -5,6 +5,7 @@
  * - Tạo đơn qua cổng chung `ingestOrder` (nguồn CATALOG/LANDING), gắn lead đang mở cùng SĐT, sale phụ trách mặc định.
  */
 
+import { assertAcceptingPublicOrders } from "@/modules/subscription/use-cases/public-order-guard"
 import type { HumanVerifier } from "@/core/ports/human-verification"
 import { AppError, notFound, validationFailed } from "@/core/http/errors"
 import type { TenantContext } from "@/core/tenancy"
@@ -43,6 +44,8 @@ export interface PublicOrderDeps {
   ingest: typeof ingestOrder
   verifier: HumanVerifier
   now: () => Date
+  /** Gói dịch vụ quá hạn → ném lỗi, không tạo đơn */
+  acceptsOrders: (organizationId: string) => Promise<void>
 }
 
 const defaultDeps = (): PublicOrderDeps => ({
@@ -54,6 +57,7 @@ const defaultDeps = (): PublicOrderDeps => ({
   ingest: ingestOrder,
   verifier: getHumanVerifier(),
   now: () => new Date(),
+  acceptsOrders: assertAcceptingPublicOrders,
 })
 
 export function validatePublicOrder(input: PublicOrderInput): Record<string, string> {
@@ -86,6 +90,8 @@ export async function placePublicCatalogOrder(slug: string, input: PublicOrderIn
   if (!product) throw validationFailed({ productId: "Mẫu không có trong bộ sưu tập này" })
 
   const organizationId = link.organization_id
+  // Gói dịch vụ của tiệm quá hạn thanh toán → không nhận đơn qua link công khai (PO 05/11/2026)
+  await deps.acceptsOrders(organizationId)
   const phone = normalizeInquiryPhone(input.phone)
   const now = deps.now()
   if ((await deps.repo.countRecentByPhone(organizationId, phone, new Date(now.getTime() - HOUR_MS))) >= PUBLIC_ORDER_PHONE_LIMIT_PER_HOUR) {
