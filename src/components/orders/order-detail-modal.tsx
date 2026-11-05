@@ -1,5 +1,6 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
 import React, { useState } from "react"
 import { Clock } from "@/components/ui/icon-set/clock"
 import { Loader2 } from "@/components/ui/icon-set/loader2"
@@ -138,7 +139,7 @@ export function OrderDetailModal({ orderId, onClose, onUpdated }: OrderDetailMod
         { key: "florist", label: `${makerTitle} (Ẩn giá)`, icon: <Flower2 className="h-3.5 w-3.5" /> },
         { key: "delivery", label: "Giao vận & Ấn phẩm A6", icon: <Truck className="h-3.5 w-3.5" /> },
       ] as const).map(({ key, label, icon }) => (
-        <button
+        <Button variant="ghost"
           type="button"
           key={key}
           onClick={() => setActiveTab(key)}
@@ -149,7 +150,7 @@ export function OrderDetailModal({ orderId, onClose, onUpdated }: OrderDetailMod
           }`}
         >
           {icon} {label}
-        </button>
+        </Button>
       ))}
     </div>
   )

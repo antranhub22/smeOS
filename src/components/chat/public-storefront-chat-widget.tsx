@@ -123,17 +123,17 @@ export function PublicStorefrontChatWidget({
       {/* NÚT BONG BÓNG TRÒN NỔI GÓC DƯỚI BÊN PHẢI */}
       <div className="fixed bottom-5 right-5 z-50">
         {!isOpen && (
-          <button
+          <Button variant="ghost"
             type="button"
             onClick={() => setIsOpen(true)}
-            className="group flex items-center gap-2 rounded-full bg-gradient-to-r from-primary via-primary/95 to-primary-dark p-3.5 text-white shadow-xl hover:shadow-2xl transition-all hover:scale-105 cursor-pointer"
+            className="font-[inherit] group flex items-center gap-2 rounded-full bg-gradient-to-r from-primary via-primary/95 to-primary-dark p-3.5 text-white shadow-xl hover:shadow-2xl transition-all hover:scale-105 cursor-pointer hover:bg-gradient-to-r"
             aria-label="Tư vấn đặt hoa"
           >
             <MessageCircle className="h-6 w-6 animate-pulse motion-reduce:animate-none" />
             <span className="hidden sm:inline-block pr-1 text-caption font-bold tracking-wide">
               Tư vấn đặt hoa
             </span>
-          </button>
+          </Button>
         )}
       </div>
 
@@ -154,14 +154,14 @@ export function PublicStorefrontChatWidget({
                 <div className="text-caption text-text-muted">Tư vấn sản phẩm & Báo giá trực tuyến</div>
               </div>
             </div>
-            <button
+            <Button variant="ghost"
               type="button"
               aria-label="Đóng"
               onClick={() => setIsOpen(false)}
-              className="rounded-lg p-1.5 text-text-muted hover:bg-black/5 cursor-pointer"
+              className="font-[inherit] gap-0 rounded-lg p-1.5 text-text-muted hover:bg-black/5 cursor-pointer"
             >
               <X className="h-4 w-4" />
-            </button>
+            </Button>
           </div>
 
           {/* Vùng tin nhắn */}
@@ -184,15 +184,15 @@ export function PublicStorefrontChatWidget({
                     "Kệ hoa khai trương trang trọng tone đỏ",
                     "Hoa tặng mẹ ngày lễ 20/10",
                   ].map((q, idx) => (
-                    <button
+                    <Button variant="outline"
                       type="button"
                       key={idx}
                       onClick={() => handleSendMessage(q)}
-                      className="w-full text-left rounded-xl border border-primary/20 bg-primary/5 p-2 text-caption font-medium text-text hover:bg-primary/10 flex items-center justify-between cursor-pointer"
+                      className="gap-0 w-full text-left rounded-xl border border-primary/20 bg-primary/5 p-2 text-caption font-medium text-text hover:bg-primary/10 flex items-center justify-between cursor-pointer"
                     >
                       <span className="truncate">{q}</span>
                       <ArrowRight className="h-3 w-3 text-primary shrink-0 ml-1" />
-                    </button>
+                    </Button>
                   ))}
                 </div>
               </div>
@@ -277,13 +277,13 @@ export function PublicStorefrontChatWidget({
           {messages.length > 0 && (
             <div className="px-3 py-1.5 bg-primary/5 border-t border-primary/10 flex items-center justify-between">
               <span className="text-caption text-text-muted">Chốt đơn từ tin nhắn?</span>
-              <button
+              <Button variant="ghost"
                 type="button"
                 onClick={() => handleOpenCheckout()}
-                className="inline-flex items-center gap-1 text-caption font-bold text-primary hover:underline cursor-pointer"
+                className="h-auto p-0 inline-flex items-center gap-1 text-caption font-bold text-primary hover:underline cursor-pointer"
               >
                 <Sparkles className="h-3 w-3" /> Trích xuất đơn VietQR →
-              </button>
+              </Button>
             </div>
           )}
 

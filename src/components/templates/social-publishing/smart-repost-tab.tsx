@@ -36,7 +36,7 @@ export function SmartRepostTab({
 
       {posts.length === 0 ? (
         <Card className="p-8 text-center border-dashed">
-          <div className="text-sm font-semibold text-text-muted">
+          <div className="text-body-sm font-semibold text-text-muted">
             Chưa có bài viết nào ở trạng thái đã xuất bản thành công.
           </div>
         </Card>
@@ -57,7 +57,7 @@ export function SmartRepostTab({
                 <Button
                   size="sm"
                   onClick={() => onSelectForRepost(item)}
-                  className="text-xs font-bold"
+                  className="text-caption font-bold"
                 >
                   Đăng lại
                 </Button>

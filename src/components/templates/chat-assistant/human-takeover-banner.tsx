@@ -28,20 +28,20 @@ export function HumanTakeoverBanner({
           <AlertCircle size={20} />
         </div>
         <div>
-          <div className="text-xs font-bold uppercase tracking-wider text-warning">
+          <div className="text-caption font-bold uppercase tracking-wider text-warning">
             Yêu cầu nhân viên can thiệp: {customerName}
           </div>
-          <div className="text-xs text-warning/90 mt-0.5">{reason}</div>
+          <div className="text-caption text-warning/90 mt-0.5">{reason}</div>
         </div>
       </div>
 
       <div className="flex items-center gap-2 shrink-0">
         {onDismiss && (
-          <Button variant="ghost" size="sm" onClick={onDismiss} className="text-warning hover:text-warning/70 text-xs">
+          <Button variant="ghost" size="sm" onClick={onDismiss} className="text-warning hover:text-warning/70 text-caption">
             Bỏ qua
           </Button>
         )}
-        <Button size="sm" onClick={onAcceptTakeover} className="bg-warning hover:bg-warning/90 text-white gap-1.5 text-xs">
+        <Button size="sm" onClick={onAcceptTakeover} className="bg-warning hover:bg-warning/90 text-white gap-1.5 text-caption">
           <UserCheck size={14} />
           Nhận xử lý ngay
         </Button>

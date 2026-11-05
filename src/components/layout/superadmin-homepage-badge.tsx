@@ -178,16 +178,16 @@ export function SuperadminHomepageBadge({ isDev = false }: Props) {
 
   return (
     <div ref={panelRef} className="relative inline-flex items-center">
-      <button
+      <Button variant="ghost"
         type="button"
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
         aria-haspopup="listbox"
         aria-label={`Homepage: ${config.label}. Click để đổi vai`}
-        className="flex items-center cursor-pointer"
+        className="h-auto p-0 font-[inherit] gap-0 flex items-center cursor-pointer"
       >
         {badgeContent}
-      </button>
+      </Button>
 
       {open && (
         <div
@@ -210,17 +210,17 @@ export function SuperadminHomepageBadge({ isDev = false }: Props) {
               const isLoading = loading === preset.roleKey
               return (
                 <li key={preset.roleKey} role="option" aria-selected={isActive}>
-                  <button
+                  <Button variant="ghost"
                     type="button"
                     disabled={isLoading}
                     onClick={() => {
                       if (!isLoading) applyOverride(preset)
                     }}
                     aria-disabled={isLoading}
-                    className={cn(
+                    className={cn("justify-start", 
                       "flex w-full items-center gap-2 px-3 py-2 text-left text-caption transition-colors cursor-pointer",
                       isActive
-                        ? "bg-primary/10 font-bold text-primary"
+                        ? "bg-primary/10 font-bold text-primary hover:bg-primary/10"
                         : "text-text hover:bg-surface-alt",
                       isLoading && "opacity-50 cursor-not-allowed"
                     )}
@@ -234,7 +234,7 @@ export function SuperadminHomepageBadge({ isDev = false }: Props) {
                     {isLoading && (
                       <span className="text-caption text-primary animate-pulse motion-reduce:animate-none">Đang nạp…</span>
                     )}
-                  </button>
+                  </Button>
                 </li>
               )
             })}

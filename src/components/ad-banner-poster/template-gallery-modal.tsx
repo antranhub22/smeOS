@@ -76,18 +76,18 @@ export function TemplateGalleryModal({
           {BANNER_TEMPLATE_CATEGORIES.map((cat) => {
             const isActive = cat.id === activeCategory
             return (
-              <button
+              <Button variant="ghost"
                 type="button"
                 key={cat.id}
                 onClick={() => setActiveCategory(cat.id)}
-                className={`px-3 py-1.5 rounded-lg text-caption font-semibold whitespace-nowrap transition-colors cursor-pointer ${
+                className={`gap-0 px-3 py-1.5 rounded-lg text-caption font-semibold whitespace-nowrap transition-colors cursor-pointer ${
                   isActive
-                    ? "bg-primary text-primary-foreground shadow-sm"
+                    ? "bg-primary text-primary-foreground shadow-sm hover:bg-primary"
                     : "bg-surface-alt text-text-muted hover:text-text hover:bg-border/60"
                 }`}
               >
                 {cat.label}
-              </button>
+              </Button>
             )
           })}
         </div>

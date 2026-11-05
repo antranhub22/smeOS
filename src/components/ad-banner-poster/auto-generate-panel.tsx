@@ -81,12 +81,12 @@ export function AutoGeneratePanel({
           className="hidden"
           onChange={handleFileUpload}
         />
-        <button
+        <Button variant="ghost"
           type="button"
           onClick={() => fileInputRef.current?.click()}
-          className={`block w-full relative border-2 border-dashed rounded-xl p-4 text-center cursor-pointer transition-all focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
+          className={`font-[inherit] gap-0 block w-full relative border-2 border-dashed rounded-xl p-4 text-center cursor-pointer transition-all focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
             productImageUrl
-              ? "border-primary/50 bg-primary/5"
+              ? "border-primary/50 bg-primary/5 hover:bg-primary/5"
               : "border-border hover:border-primary hover:bg-surface-alt"
           }`}
         >
@@ -120,7 +120,7 @@ export function AutoGeneratePanel({
               </span>
             </div>
           )}
-        </button>
+        </Button>
 
       </div>
 
@@ -146,18 +146,18 @@ export function AutoGeneratePanel({
           {PURPOSE_QUICK_TAGS.map((tag) => {
             const isSelected = occasionKey === tag.key
             return (
-              <button
+              <Button variant="outline"
                 type="button"
                 key={tag.key}
                 onClick={() => onOccasionChange(tag.key, tag.label.replace(/^[^\s]+\s/, ""))}
-                className={`py-1.5 px-2.5 rounded-lg text-caption font-medium text-left border transition-all truncate cursor-pointer ${
+                className={`justify-start gap-0 py-1.5 px-2.5 rounded-lg text-caption font-medium text-left border transition-all truncate cursor-pointer ${
                   isSelected
-                    ? "border-primary bg-primary/10 text-primary font-bold shadow-sm"
+                    ? "border-primary bg-primary/10 text-primary font-bold shadow-sm hover:bg-primary/10"
                     : "border-border bg-surface hover:bg-surface-alt text-text"
                 }`}
               >
                 {tag.label}
-              </button>
+              </Button>
             )
           })}
         </div>
@@ -191,13 +191,13 @@ export function AutoGeneratePanel({
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
           {/* Option A: Template Engine */}
-          <button
+          <Button variant="outline"
             type="button"
             onClick={() => onEngineChange("TEMPLATE_ENGINE")}
             aria-pressed={generationEngine === "TEMPLATE_ENGINE"}
-            className={`p-2.5 rounded-xl border text-left flex flex-col justify-between transition-all cursor-pointer ${
+            className={`font-[inherit] gap-0 p-2.5 rounded-xl border text-left flex flex-col justify-between transition-all cursor-pointer ${
               generationEngine === "TEMPLATE_ENGINE"
-                ? "border-primary bg-primary/5 ring-1 ring-primary shadow-sm"
+                ? "border-primary bg-primary/5 ring-1 ring-primary shadow-sm hover:bg-primary/5"
                 : "border-border bg-surface hover:bg-surface-alt"
             }`}
           >
@@ -214,16 +214,16 @@ export function AutoGeneratePanel({
                 Tự động ghép ảnh thật + chữ tiếng Việt sắc nét chuẩn in & mạng xã hội, sửa được từng từ.
               </p>
             </div>
-          </button>
+          </Button>
 
           {/* Option B: Single-Call AI */}
-          <button
+          <Button variant="outline"
             type="button"
             onClick={() => onEngineChange("AI_PROVIDER")}
             aria-pressed={generationEngine === "AI_PROVIDER"}
-            className={`p-2.5 rounded-xl border text-left flex flex-col justify-between transition-all cursor-pointer ${
+            className={`font-[inherit] gap-0 p-2.5 rounded-xl border text-left flex flex-col justify-between transition-all cursor-pointer ${
               generationEngine === "AI_PROVIDER"
-                ? "border-primary bg-primary/5 ring-1 ring-primary shadow-sm"
+                ? "border-primary bg-primary/5 ring-1 ring-primary shadow-sm hover:bg-primary/5"
                 : "border-border bg-surface hover:bg-surface-alt"
             }`}
           >
@@ -240,7 +240,7 @@ export function AutoGeneratePanel({
                 AI vẽ bố cục mới từ ảnh và mô tả của bạn trong một lần, có kiểm tra chất lượng tự động.
               </p>
             </div>
-          </button>
+          </Button>
         </div>
       </div>
 

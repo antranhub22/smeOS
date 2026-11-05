@@ -92,7 +92,7 @@ export function CancelFloristOrderModal({
         </div>
       }
     >
-      <div className="space-y-4 py-1 text-xs">
+      <div className="space-y-4 py-1 text-caption">
         {error && (
           <div className="p-3 rounded-xl bg-danger/10 border border-danger/20 text-danger font-medium">
             {error}
@@ -103,14 +103,14 @@ export function CancelFloristOrderModal({
           <label className="font-bold text-text block">Chọn nhanh lý do từ chối</label>
           <div className="flex flex-wrap gap-1.5">
             {QUICK_REASONS.map((tag) => (
-              <button
+              <Button variant="outline"
                 type="button"
                 key={tag}
                 onClick={() => handleSelectQuickReason(tag)}
-                className="cursor-pointer px-2.5 py-1 rounded-lg border border-border bg-surface-alt hover:bg-surface text-text font-medium text-caption transition-colors"
+                className="gap-0 cursor-pointer px-2.5 py-1 rounded-lg border border-border bg-surface-alt hover:bg-surface text-text font-medium text-caption transition-colors"
               >
                 + {tag}
-              </button>
+              </Button>
             ))}
           </div>
         </div>

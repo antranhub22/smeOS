@@ -96,7 +96,7 @@ export function OrderClosureModal({ isOpen, order, onClose, onSubmit }: OrderClo
               <span className="px-2 py-0.5 rounded bg-cool-100 text-cool-700 text-caption font-black uppercase border border-cool-200">
                 BƯỚC 7 • HOÀN TẤT ĐƠN
               </span>
-              <h3 className="text-base font-extrabold text-text">Nghiệm Thu & Đóng Đơn (T25/T26)</h3>
+              <h3 className="text-body font-extrabold text-text">Nghiệm Thu & Đóng Đơn (T25/T26)</h3>
             </div>
           </div>
         </div>
@@ -119,7 +119,7 @@ export function OrderClosureModal({ isOpen, order, onClose, onSubmit }: OrderClo
         </div>
       }
     >
-      <div className="p-1 flex flex-col gap-4 text-xs">
+      <div className="p-1 flex flex-col gap-4 text-caption">
         <div
           className={`p-4 rounded-xl border flex flex-col gap-2 ${
             sla.tone === "ok" ? "border-mint-200 bg-mint-50/50" : sla.tone === "late" ? "border-sand-200 bg-sand-50/50" : "border-border bg-surface-alt"
@@ -159,15 +159,15 @@ export function OrderClosureModal({ isOpen, order, onClose, onSubmit }: OrderClo
             <div className="flex items-center gap-2">
               <span className="font-bold text-text">Chấm đối tác {order.partnerName}:</span>
               {[1, 2, 3, 4, 5].map((star) => (
-                <button
+                <Button variant="ghost"
                   type="button"
                   key={star}
                   aria-label={`${star} sao`}
                   onClick={() => setPartnerRating(star)}
-                  className="p-0.5 cursor-pointer"
+                  className="font-[inherit] gap-0 p-0.5 cursor-pointer"
                 >
                   <Star size={20} className={star <= partnerRating ? "fill-sand-400 text-sand-500" : "text-cool-300"} />
-                </button>
+                </Button>
               ))}
             </div>
           )}

@@ -79,7 +79,7 @@ export function VisualStorytellingControls({
             <Camera size={15} strokeWidth={2.4} />
           </div>
           <div>
-            <div className="text-xs font-bold uppercase tracking-wider text-text">
+            <div className="text-caption font-bold uppercase tracking-wider text-text">
               Góc Chụp & Tương Tác Người Mẫu (Visual Storytelling)
             </div>
             <div className="text-caption text-text-muted">
@@ -95,7 +95,7 @@ export function VisualStorytellingControls({
           variant={isCarousel ? "primary" : "outline"}
           size="sm"
           onClick={() => onStorylineModeChange(isCarousel ? "single_shot" : "four_part_story_carousel")}
-          className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold transition select-none ${
+          className={`flex items-center gap-1.5 px-3 py-1.5 text-caption font-bold transition select-none ${
             isCarousel
               ? "bg-primary text-white border-primary shadow-xs"
               : "bg-surface-alt border-border text-text hover:border-primary/50"
@@ -110,7 +110,7 @@ export function VisualStorytellingControls({
       {isCarousel ? (
         <div className="flex flex-col gap-2.5 p-3 rounded-xl bg-primary/5 border border-primary/20">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-primary flex items-center gap-1.5">
+            <span className="text-caption font-bold text-primary flex items-center gap-1.5">
               <Sparkles size={13} />
               Kịch bản Chiến dịch Story Carousel (Tự động tạo đồng bộ 4 ảnh)
             </span>
@@ -141,26 +141,26 @@ export function VisualStorytellingControls({
                 const Icon = angle.icon
                 const isSelected = cameraAngle === angle.id
                 return (
-                  <button
+                  <Button variant="outline"
                     type="button"
                     disabled={disabled}
                     key={angle.id}
                     onClick={() => !disabled && onCameraAngleChange(angle.id)}
-                    className={`flex flex-col items-start p-2.5 rounded-xl border text-left transition select-none cursor-pointer ${
+                    className={`justify-start font-[inherit] gap-0 flex flex-col items-start p-2.5 rounded-xl border text-left transition select-none cursor-pointer ${
                       disabled ? "opacity-50 cursor-not-allowed" : ""
                     } ${
                       isSelected
-                        ? "border-primary bg-primary/5 text-primary shadow-xs ring-1 ring-primary/30"
-                        : "border-border bg-surface-alt hover:border-text-muted/40 text-text"
+                        ? "border-primary bg-primary/5 text-primary shadow-xs ring-1 ring-primary/30 hover:bg-primary/5"
+                        : "border-border bg-surface-alt hover:border-text-muted/40 text-text hover:bg-surface-alt"
                     }`}
                   >
                     <div className="flex items-center justify-between w-full mb-1">
                       <Icon size={14} className={isSelected ? "text-primary" : "text-text-muted"} />
                       {isSelected && <Check size={12} strokeWidth={3} className="text-primary" />}
                     </div>
-                    <div className="text-xs font-bold">{angle.label}</div>
+                    <div className="text-caption font-bold">{angle.label}</div>
                     <div className="text-caption text-text-muted line-clamp-1 mt-0.5">{angle.desc}</div>
-                  </button>
+                  </Button>
                 )
               })}
             </div>
@@ -177,17 +177,17 @@ export function VisualStorytellingControls({
                 const Icon = item.icon
                 const isSelected = humanInteraction === item.id
                 return (
-                  <button
+                  <Button variant="outline"
                     type="button"
                     disabled={disabled}
                     key={item.id}
                     onClick={() => !disabled && onHumanInteractionChange(item.id)}
-                    className={`flex flex-col items-start p-2.5 rounded-xl border text-left transition select-none cursor-pointer ${
+                    className={`justify-start font-[inherit] gap-0 flex flex-col items-start p-2.5 rounded-xl border text-left transition select-none cursor-pointer ${
                       disabled ? "opacity-50 cursor-not-allowed" : ""
                     } ${
                       isSelected
-                        ? "border-primary bg-primary/5 text-primary shadow-xs ring-1 ring-primary/30"
-                        : "border-border bg-surface-alt hover:border-text-muted/40 text-text"
+                        ? "border-primary bg-primary/5 text-primary shadow-xs ring-1 ring-primary/30 hover:bg-primary/5"
+                        : "border-border bg-surface-alt hover:border-text-muted/40 text-text hover:bg-surface-alt"
                     }`}
                   >
                     <div className="flex items-center justify-between w-full mb-1">
@@ -196,9 +196,9 @@ export function VisualStorytellingControls({
                         {item.badge}
                       </Badge>
                     </div>
-                    <div className="text-xs font-bold line-clamp-1">{item.label}</div>
+                    <div className="text-caption font-bold line-clamp-1">{item.label}</div>
                     <div className="text-caption text-text-muted line-clamp-1 mt-0.5">{item.desc}</div>
-                  </button>
+                  </Button>
                 )
               })}
             </div>

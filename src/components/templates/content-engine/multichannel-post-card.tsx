@@ -122,48 +122,48 @@ export function MultichannelPostCard({
         {/* Thanh chọn Kênh */}
         <div className="flex items-center gap-2 overflow-x-auto">
           {posts.map((post) => (
-            <button
+            <Button variant="ghost"
               type="button"
               key={post.channel}
               onClick={() => setSelectedChannel(post.channel)}
-              className={`rounded-full px-3.5 py-1.5 text-xs font-bold transition flex items-center gap-1.5 whitespace-nowrap cursor-pointer ${
+              className={`rounded-full px-3.5 py-1.5 text-caption font-bold transition flex items-center gap-1.5 whitespace-nowrap cursor-pointer ${
                 selectedChannel === post.channel
-                  ? "bg-primary text-white shadow-sm"
+                  ? "bg-primary text-white shadow-sm hover:bg-primary"
                   : "bg-surface text-text-muted hover:text-text hover:bg-surface-alt border border-border/50"
               }`}
             >
               {post.channel === "linkedin" && "💼"}
               {post.channelLabel}
-            </button>
+            </Button>
           ))}
         </div>
 
         {/* Chuyển đổi giữa Chế độ Xem trước thực tế và Biên tập chi tiết */}
         <div className="flex items-center gap-1 bg-surface p-1 rounded-xl border border-border flex-shrink-0 self-start sm:self-auto">
-          <button
+          <Button variant="ghost"
             type="button"
             onClick={() => setViewMode("preview")}
-            className={`px-3 py-1.5 text-xs font-bold rounded-lg transition flex items-center gap-1.5 cursor-pointer ${
+            className={`px-3 py-1.5 text-caption font-bold rounded-lg transition flex items-center gap-1.5 cursor-pointer ${
               viewMode === "preview"
-                ? "bg-primary text-white shadow-xs"
+                ? "bg-primary text-white shadow-xs hover:bg-primary"
                 : "text-text-muted hover:text-text"
             }`}
           >
             <Eye size={13} />
             <span>Xem trước thực tế</span>
-          </button>
-          <button
+          </Button>
+          <Button variant="ghost"
             type="button"
             onClick={() => setViewMode("edit")}
-            className={`px-3 py-1.5 text-xs font-bold rounded-lg transition flex items-center gap-1.5 cursor-pointer ${
+            className={`px-3 py-1.5 text-caption font-bold rounded-lg transition flex items-center gap-1.5 cursor-pointer ${
               viewMode === "edit"
-                ? "bg-primary text-white shadow-xs"
+                ? "bg-primary text-white shadow-xs hover:bg-primary"
                 : "text-text-muted hover:text-text"
             }`}
           >
             <Edit3 size={13} />
             <span>Biên tập chi tiết</span>
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -171,7 +171,7 @@ export function MultichannelPostCard({
       {viewMode === "preview" ? (
         <div className="py-2 bg-surface/30 rounded-xl p-4 border border-border/50">
           <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-bold text-text-muted flex items-center gap-1.5 uppercase tracking-wider">
+            <span className="text-caption font-bold text-text-muted flex items-center gap-1.5 uppercase tracking-wider">
               <Eye size={14} className="text-primary" />
               Giao diện bài đăng thực tế ({currentPost.channelLabel})
             </span>
@@ -179,7 +179,7 @@ export function MultichannelPostCard({
               variant="ghost"
               size="sm"
               onClick={() => setViewMode("edit")}
-              className="text-xs gap-1 text-primary hover:underline font-semibold h-7 px-2"
+              className="text-caption gap-1 text-primary hover:underline font-semibold h-7 px-2"
             >
               <Edit3 size={12} />
               Chỉnh sửa câu từ
@@ -207,10 +207,10 @@ export function MultichannelPostCard({
               onChange={(e) =>
                 onUpdatePost?.(currentPost.channel, { headline: e.target.value })
               }
-              className="w-full text-sm font-bold text-text border border-border rounded-lg px-3 py-1.5 bg-surface focus:outline-none focus:ring-1 focus:ring-primary"
+              className="w-full text-body-sm font-bold text-text border border-border rounded-lg px-3 py-1.5 bg-surface focus:outline-none focus:ring-1 focus:ring-primary"
             />
           ) : (
-            <div className="text-sm font-bold text-text">{currentPost.headline}</div>
+            <div className="text-body-sm font-bold text-text">{currentPost.headline}</div>
           )}
         </div>
 
@@ -226,10 +226,10 @@ export function MultichannelPostCard({
               onChange={(e) =>
                 onUpdatePost?.(currentPost.channel, { bodyText: e.target.value })
               }
-              className="w-full text-xs text-text border border-border rounded-lg p-3 bg-surface focus:outline-none focus:ring-1 focus:ring-primary leading-relaxed"
+              className="w-full text-caption text-text border border-border rounded-lg p-3 bg-surface focus:outline-none focus:ring-1 focus:ring-primary leading-relaxed"
             />
           ) : (
-            <div className="text-xs text-text leading-relaxed whitespace-pre-line bg-surface/50 p-3 rounded-lg border border-border/50">
+            <div className="text-caption text-text leading-relaxed whitespace-pre-line bg-surface/50 p-3 rounded-lg border border-border/50">
               {currentPost.bodyText}
             </div>
           )}
@@ -237,7 +237,7 @@ export function MultichannelPostCard({
 
         {/* Kịch bản quay TikTok nếu có */}
         {currentPost.channel === "tiktok" && currentPost.script && (
-          <div className="rounded-lg border border-border bg-surface p-3 text-xs flex flex-col gap-1.5">
+          <div className="rounded-lg border border-border bg-surface p-3 text-caption flex flex-col gap-1.5">
             <div className="font-bold text-primary flex items-center gap-1.5">
               <span>🎬</span> Gợi ý kịch bản quay video (30-45s)
             </div>
@@ -268,10 +268,10 @@ export function MultichannelPostCard({
               onChange={(e) =>
                 onUpdatePost?.(currentPost.channel, { cta: e.target.value })
               }
-              className="w-full text-xs text-text border border-border rounded-lg px-3 py-1.5 bg-surface focus:outline-none focus:ring-1 focus:ring-primary"
+              className="w-full text-caption text-text border border-border rounded-lg px-3 py-1.5 bg-surface focus:outline-none focus:ring-1 focus:ring-primary"
             />
           ) : (
-            <div className="text-xs font-medium text-primary italic">
+            <div className="text-caption font-medium text-primary italic">
               {currentPost.cta || "Nhắn tin cho tiệm để được tư vấn và nhận ưu đãi riêng nhé!"}
             </div>
           )}
@@ -291,7 +291,7 @@ export function MultichannelPostCard({
                   hashtags: e.target.value.split(" ").filter((t) => t.trim().length > 0),
                 })
               }
-              className="w-full text-xs text-primary border border-border rounded-lg px-3 py-1.5 bg-surface focus:outline-none focus:ring-1 focus:ring-primary"
+              className="w-full text-caption text-primary border border-border rounded-lg px-3 py-1.5 bg-surface focus:outline-none focus:ring-1 focus:ring-primary"
               placeholder="#HoaTuoi #Florist #HoaSinhNhat"
             />
           ) : (
@@ -314,19 +314,19 @@ export function MultichannelPostCard({
             variant="outline"
             size="sm"
             onClick={handleCopyZaloQuick}
-            className="gap-1.5 text-xs text-ocean-700 border-ocean-200 bg-ocean-50/50 hover:bg-ocean-50"
+            className="gap-1.5 text-caption text-ocean-700 border-ocean-200 bg-ocean-50/50 hover:bg-ocean-50"
           >
             {copiedZalo ? <Check size={14} className="text-secondary-text" /> : <MessageCircle size={14} />}
             {copiedZalo ? "Đã chép mẫu Zalo" : "Chép mẫu Zalo"}
           </Button>
-          <Button variant="secondary" size="sm" onClick={handleCopyAll} className="gap-1.5 text-xs">
+          <Button variant="secondary" size="sm" onClick={handleCopyAll} className="gap-1.5 text-caption">
             {copied ? <Check size={14} className="text-secondary-text" /> : <Copy size={14} />}
             {copied ? "Đã sao chép" : "Sao chép toàn bài"}
           </Button>
         </div>
 
         {onSchedulePost && (
-          <Button size="sm" onClick={() => onSchedulePost(currentPost)} className="gap-1.5 text-xs">
+          <Button size="sm" onClick={() => onSchedulePost(currentPost)} className="gap-1.5 text-caption">
             <Send size={14} />
             Duyệt bài này
           </Button>

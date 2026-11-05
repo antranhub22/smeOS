@@ -12,6 +12,7 @@
  * Sắp ra mắt: nhãn "Sắp ra mắt" + không bấm được.
  */
 
+import { Button } from "@/components/ui/button"
 import { useState, type ComponentType, type ReactNode } from "react"
 import { Tag } from "@/components/ui/icon-set/tag"
 import { cn } from "@/lib/utils"
@@ -46,8 +47,8 @@ function itemBaseClass(isSubItem: boolean, collapsed: boolean) {
     collapsed
       ? "h-10 justify-center px-0"
       : isSubItem
-        ? "h-8 gap-2.5 px-2.5 text-body-sm pointer-coarse:h-11"
-        : "h-9 gap-2.5 px-2.5 text-body-sm pointer-coarse:h-11"
+        ? "h-8 justify-start gap-2.5 px-2.5 text-body-sm pointer-coarse:h-11"
+        : "h-9 justify-start gap-2.5 px-2.5 text-body-sm pointer-coarse:h-11"
   )
 }
 
@@ -159,7 +160,7 @@ export function DesktopNavItem({
 
   return (
     <NavTooltip label={item.label} collapsed={collapsed}>
-      <button
+      <Button variant="ghost"
         type="button"
         onClick={onClick}
         aria-current={active ? "page" : undefined}
@@ -169,10 +170,9 @@ export function DesktopNavItem({
           "cursor-pointer",
           itemBaseClass(isSubItem, collapsed),
           active
-            ? "bg-primary-muted font-semibold text-primary"
+            ? "bg-primary-muted font-semibold text-primary hover:bg-primary-muted"
             : "text-text-muted hover:bg-surface-alt hover:text-text"
-        )}
-      >
+        )}>
         {active && !collapsed && !isSubItem && (
           <span className="absolute -left-3 top-1.5 bottom-1.5 w-1 rounded-r-full bg-primary" aria-hidden />
         )}
@@ -189,7 +189,7 @@ export function DesktopNavItem({
 
         {!collapsed && <span className="min-w-0 flex-1 truncate">{item.label}</span>}
         {!collapsed && trailing}
-      </button>
+      </Button>
     </NavTooltip>
   )
 }

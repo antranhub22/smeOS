@@ -136,10 +136,10 @@ export function SalesWorkspace() {
                 <ul className="flex flex-col">
                   {nhacViec.slice(0, 6).map((r) => (
                     <li key={`${r.customerId}-${r.occasionName}-${r.targetDate}`}>
-                      <button
+                      <Button variant="ghost"
                         type="button"
                         onClick={() => router.push("/khach-hang" as never)}
-                        className="flex min-h-11 w-full items-center gap-3 rounded-lg px-1 py-1.5 text-left hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-primary cursor-pointer"
+                        className="justify-start font-[inherit] flex min-h-11 w-full items-center gap-3 rounded-lg px-1 py-1.5 text-left hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-primary cursor-pointer"
                       >
                         <CalendarHeart size={17} className="flex-shrink-0 text-primary" aria-hidden="true" />
                         <span className="min-w-0 flex-1">
@@ -153,7 +153,7 @@ export function SalesWorkspace() {
                         <span className={r.daysLeft <= 2 ? "text-caption font-bold text-danger" : "text-caption font-bold text-text-muted"}>
                           {nhanNgayConLai(r.daysLeft)}
                         </span>
-                      </button>
+                      </Button>
                     </li>
                   ))}
                 </ul>
@@ -178,16 +178,16 @@ export function SalesWorkspace() {
                 <ul className="flex flex-col">
                   {donNhap.orders.map((o) => (
                     <li key={o.id}>
-                      <button
+                      <Button variant="ghost"
                         type="button"
                         onClick={() => router.push("/don-hang" as never)}
-                        className="flex min-h-11 w-full items-center justify-between gap-3 rounded-lg px-1 text-left hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-primary cursor-pointer"
+                        className="font-[inherit] flex min-h-11 w-full items-center justify-between gap-3 rounded-lg px-1 text-left hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-primary cursor-pointer"
                       >
                         <span className="text-body font-semibold">{o.code}</span>
                         <span className="flex items-center gap-1 text-body-sm font-bold text-text">
                           {formatCurrency(o.totalVnd)}                          <ChevronRight size={15} className="text-text-muted" aria-hidden="true" />
                         </span>
-                      </button>
+                      </Button>
                     </li>
                   ))}
                 </ul>

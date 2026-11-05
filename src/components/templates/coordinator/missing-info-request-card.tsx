@@ -35,7 +35,7 @@ export function MissingInfoRequestCard({
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <HelpCircle size={17} className="text-sand-600" />
-          <span className="text-xs font-bold text-sand-950">YÊU CẦU BỔ SUNG THÔNG TIN (T03)</span>
+          <span className="text-caption font-bold text-sand-950">YÊU CẦU BỔ SUNG THÔNG TIN (T03)</span>
           <Badge tone="warning" className="text-caption font-bold">
             Đơn #{orderCode}
           </Badge>
@@ -45,7 +45,7 @@ export function MissingInfoRequestCard({
         </div>
       </div>
 
-      <div className="text-xs flex flex-col gap-2">
+      <div className="text-caption flex flex-col gap-2">
         <span className="font-bold text-text">Các trường thông tin còn thiếu cần Sales bổ sung gấp:</span>
         <div className="space-y-2">
           {missingItems.map((item, idx) => (
@@ -62,13 +62,13 @@ export function MissingInfoRequestCard({
 
       <div className="flex items-center justify-end gap-2.5 pt-2 border-t border-dashed border-sand-200">
         {onResolved && (
-          <Button variant="outline" size="sm" onClick={onResolved} className="h-8 text-xs gap-1">
+          <Button variant="outline" size="sm" onClick={onResolved} className="h-8 text-caption gap-1">
             <CheckCircle2 size={13} />
             <span>Đã đủ thông tin</span>
           </Button>
         )}
         {onSendToSales && (
-          <Button size="sm" onClick={onSendToSales} className="bg-sand-600 hover:bg-sand-700 text-white h-8 text-xs gap-1 font-bold">
+          <Button size="sm" onClick={onSendToSales} className="bg-sand-600 hover:bg-sand-700 text-white h-8 text-caption gap-1 font-bold">
             <Send size={13} />
             <span>Gửi Yêu Cầu Cho Sales Qua Zalo / Chat</span>
           </Button>

@@ -280,39 +280,39 @@ export function ChainDataHub() {
         <div className="space-y-4">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-border/60 pb-3">
             <div className="flex items-center gap-2 flex-wrap">
-              <button
+              <Button variant="ghost"
                 type="button"
                 onClick={() => setFilterType("ALL")}
-                className={`cursor-pointer px-3 py-1 rounded-lg text-caption font-bold transition-colors ${
+                className={`gap-0 cursor-pointer px-3 py-1 rounded-lg text-caption font-bold transition-colors ${
                   filterType === "ALL"
-                    ? "bg-primary text-white"
-                    : "bg-surface border border-border text-text-muted hover:text-text"
+                    ? "bg-primary text-white hover:bg-primary"
+                    : "bg-surface border border-border text-text-muted hover:text-text hover:bg-surface"
                 }`}
               >
                 Tất cả ({stores.length})
-              </button>
-              <button
+              </Button>
+              <Button variant="ghost"
                 type="button"
                 onClick={() => setFilterType("DIRECT")}
-                className={`cursor-pointer px-3 py-1 rounded-lg text-caption font-bold transition-colors ${
+                className={`gap-0 cursor-pointer px-3 py-1 rounded-lg text-caption font-bold transition-colors ${
                   filterType === "DIRECT"
-                    ? "bg-primary text-white"
-                    : "bg-surface border border-border text-text-muted hover:text-text"
+                    ? "bg-primary text-white hover:bg-primary"
+                    : "bg-surface border border-border text-text-muted hover:text-text hover:bg-surface"
                 }`}
               >
                 Trực thuộc ({directCount})
-              </button>
-              <button
+              </Button>
+              <Button variant="ghost"
                 type="button"
                 onClick={() => setFilterType("PARTNER")}
-                className={`cursor-pointer px-3 py-1 rounded-lg text-caption font-bold transition-colors ${
+                className={`gap-0 cursor-pointer px-3 py-1 rounded-lg text-caption font-bold transition-colors ${
                   filterType === "PARTNER"
-                    ? "bg-primary text-white"
-                    : "bg-surface border border-border text-text-muted hover:text-text"
+                    ? "bg-primary text-white hover:bg-primary"
+                    : "bg-surface border border-border text-text-muted hover:text-text hover:bg-surface"
                 }`}
               >
                 Đối tác nhượng quyền ({partnerCount})
-              </button>
+              </Button>
             </div>
 
             <span className="text-caption text-text-muted font-medium">

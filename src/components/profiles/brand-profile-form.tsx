@@ -1,5 +1,8 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
+import { NativeSelect } from "@/components/ui/select"
+import { Input } from "@/components/ui/input"
 import React, { useState, useEffect } from "react"
 import { Type, Sparkles, ShieldAlert, Check, MessageSquareQuote, CheckCircle2 } from "@/components/ui/icons"
 import type { BrandProfileDetail } from "@/modules/profiles/use-cases/get-brand-profile"
@@ -9,10 +12,7 @@ import {
   BrandColorsSection,
   type BrandColors,
 } from "./brand-colors-section"
-import {
-  FLORIST_TONE_OPTIONS,
-  FLORIST_FORBIDDEN_GROUPS,
-} from "@/modules/profiles/domain/florist-advisor-catalog"
+import { FLORIST_TONE_OPTIONS, FLORIST_FORBIDDEN_GROUPS } from "@/modules/profiles/domain/florist-advisor-catalog"
 import { AiRewriteInput } from "./ai-rewrite-input"
 
 export interface BrandProfileFormProps {
@@ -196,7 +196,7 @@ export function BrandProfileForm({ initialData, onSave, saving }: BrandProfileFo
             <label className="block text-caption font-semibold text-text mb-1.5" htmlFor="brand-font-heading">
               Phông chữ tiêu đề
             </label>
-            <select id="brand-font-heading"
+            <NativeSelect id="brand-font-heading"
               value={fontHeading}
               onChange={(e) => setFontHeading(e.target.value)}
               className="w-full rounded-xl border border-border bg-surface px-3.5 py-2.5 text-body-sm text-text transition-all focus:border-primary focus:outline-none"
@@ -206,14 +206,14 @@ export function BrandProfileForm({ initialData, onSave, saving }: BrandProfileFo
                   {opt.label}
                 </option>
               ))}
-            </select>
+            </NativeSelect>
           </div>
 
           <div>
             <label className="block text-caption font-semibold text-text mb-1.5" htmlFor="brand-font-body">
               Phông chữ nội dung
             </label>
-            <select id="brand-font-body"
+            <NativeSelect id="brand-font-body"
               value={fontBody}
               onChange={(e) => setFontBody(e.target.value)}
               className="w-full rounded-xl border border-border bg-surface px-3.5 py-2.5 text-body-sm text-text transition-all focus:border-primary focus:outline-none"
@@ -223,7 +223,7 @@ export function BrandProfileForm({ initialData, onSave, saving }: BrandProfileFo
                   {opt.label}
                 </option>
               ))}
-            </select>
+            </NativeSelect>
           </div>
         </div>
       </div>
@@ -246,7 +246,7 @@ export function BrandProfileForm({ initialData, onSave, saving }: BrandProfileFo
             <label className="block text-body-sm font-bold text-text mb-1.5" htmlFor="brand-tone">
               Định vị Tông giọng Trợ lý AI
             </label>
-            <select id="brand-tone"
+            <NativeSelect id="brand-tone"
               value={toneOfVoice}
               onChange={(e) => setToneOfVoice(e.target.value)}
               className="w-full rounded-xl border border-border bg-surface px-3.5 py-2.5 text-body-sm text-text transition-all focus:border-primary focus:outline-none"
@@ -256,7 +256,7 @@ export function BrandProfileForm({ initialData, onSave, saving }: BrandProfileFo
                   {opt.label} — {opt.tagline}
                 </option>
               ))}
-            </select>
+            </NativeSelect>
 
             {/* Trích dẫn mẫu câu thoại minh họa */}
             {currentTone && (
@@ -276,7 +276,7 @@ export function BrandProfileForm({ initialData, onSave, saving }: BrandProfileFo
             <label className="block text-caption font-semibold text-text mb-1.5">
               Bộ Hashtags mặc định (phân cách bằng dấu phẩy)
             </label>
-            <input
+            <Input
               type="text"
               value={hashtagsText}
               onChange={(e) => setHashtagsText(e.target.value)}
@@ -315,14 +315,14 @@ export function BrandProfileForm({ initialData, onSave, saving }: BrandProfileFo
                 const isSelected = grp.words.every((w) => wordsList.includes(w))
 
                 return (
-                  <button
+                  <Button variant="outline"
                     key={grp.id}
                     type="button"
                     onClick={() => handleToggleForbiddenGroup(grp.words)}
-                    className={`rounded-xl border p-3 text-left transition-all ${
+                    className={`justify-start font-[inherit] gap-0 rounded-xl border p-3 text-left transition-all ${
                       isSelected
-                        ? "border-warning bg-warning/10"
-                        : "border-border bg-surface-alt/40 hover:border-warning/50"
+                        ? "border-warning bg-warning/10 hover:bg-warning/10"
+                        : "border-border bg-surface-alt/40 hover:border-warning/50 hover:bg-surface-alt/40"
                     }`}
                   >
                     <div className="flex items-center justify-between mb-1">
@@ -338,12 +338,12 @@ export function BrandProfileForm({ initialData, onSave, saving }: BrandProfileFo
                     <div className="text-caption text-text-muted leading-tight">
                       {grp.words.slice(0, 3).join(", ")}...
                     </div>
-                  </button>
+                  </Button>
                 )
               })}
             </div>
 
-            <input
+            <Input
               type="text"
               value={forbiddenWords}
               onChange={(e) => setForbiddenWords(e.target.value)}
@@ -359,10 +359,10 @@ export function BrandProfileForm({ initialData, onSave, saving }: BrandProfileFo
 
       {/* Nút lưu ở chân form */}
       <div className="flex justify-end pt-2">
-        <button
+        <Button variant="primary"
           type="submit"
           disabled={saving}
-          className="inline-flex items-center gap-2 rounded-xl bg-primary px-6 py-2.5 text-body-sm font-bold text-white shadow-xs transition-opacity hover:opacity-95 disabled:opacity-50"
+          className="inline-flex items-center gap-2 rounded-xl bg-primary px-6 py-2.5 text-body-sm font-bold text-white shadow-xs transition-opacity hover:opacity-95 disabled:opacity-50 hover:bg-primary"
         >
           {saving ? (
             <span>Đang lưu...</span>
@@ -377,7 +377,7 @@ export function BrandProfileForm({ initialData, onSave, saving }: BrandProfileFo
               <span>Lưu nhận diện thương hiệu</span>
             </>
           )}
-        </button>
+        </Button>
       </div>
     </form>
   )

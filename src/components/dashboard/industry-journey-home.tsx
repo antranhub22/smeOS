@@ -136,18 +136,18 @@ export function IndustryJourneyHome() {
           {Object.entries(INDUSTRY_REGISTRY).map(([key, plugin]) => {
             const isSelected = key === selectedIndustryKey
             return (
-              <button
+              <Button variant="ghost"
                 type="button"
                 key={key}
                 onClick={() => setSelectedIndustryKey(key)}
                 className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-caption font-bold transition-all shrink-0 cursor-pointer ${
                   isSelected
-                    ? "bg-primary text-white shadow-xs"
+                    ? "bg-primary text-white shadow-xs hover:bg-primary"
                     : "bg-surface-alt border border-border text-text hover:bg-surface"
                 }`}
               >
                 <span>{plugin.identity.name}</span>
-              </button>
+              </Button>
             )
           })}
         </div>

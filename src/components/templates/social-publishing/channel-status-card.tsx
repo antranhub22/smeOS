@@ -30,7 +30,7 @@ export function ChannelStatusCard({
   return (
     <Card className="rounded-2xl border border-border bg-surface p-5 shadow-sm flex flex-col gap-4">
       <div>
-        <div className="text-xs font-semibold text-text-muted">Đăng mạng xã hội Channel Integration</div>
+        <div className="text-caption font-semibold text-text-muted">Đăng mạng xã hội Channel Integration</div>
         <div className="text-title font-extrabold text-text">Trạng thái kết nối kênh</div>
       </div>
 
@@ -42,14 +42,14 @@ export function ChannelStatusCard({
           >
             <div className="flex items-center gap-2.5">
               <div
-                className={`flex h-8 w-8 items-center justify-center rounded-full text-xs font-bold ${
+                className={`flex h-8 w-8 items-center justify-center rounded-full text-caption font-bold ${
                   ch.isConnected ? "bg-secondary/15 text-secondary-text" : "bg-danger-bg text-danger"
                 }`}
               >
                 {ch.isConnected ? <CheckCircle2 size={16} /> : <AlertTriangle size={16} />}
               </div>
               <div>
-                <div className="text-xs font-bold text-text">{ch.name}</div>
+                <div className="text-caption font-bold text-text">{ch.name}</div>
                 <div className="text-caption text-text-muted">{ch.accountName}</div>
               </div>
             </div>
@@ -57,7 +57,7 @@ export function ChannelStatusCard({
             <div className="flex items-center gap-2">
               <span className="text-caption text-text-muted">{ch.lastSyncTime || "Vừa xong"}</span>
               {!ch.isConnected && onReconnect && (
-                <Button variant="outline" size="sm" onClick={() => onReconnect(ch.id)} className="gap-1 h-7 text-xs">
+                <Button variant="outline" size="sm" onClick={() => onReconnect(ch.id)} className="gap-1 h-7 text-caption">
                   <RefreshCw size={12} />
                   Kết nối lại
                 </Button>

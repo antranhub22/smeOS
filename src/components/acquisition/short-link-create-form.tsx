@@ -51,16 +51,16 @@ export function ShortLinkCreateForm({ onCreated, onCancel }: { onCreated: (link:
     <form onSubmit={submit} className="space-y-4 rounded-2xl border border-border bg-surface p-4 sm:p-5">
       <div role="group" aria-label="Loại" className="grid grid-cols-1 gap-2 sm:grid-cols-2">
         {KIND_OPTIONS.map((opt) => (
-          <button
+          <Button variant="outline"
             type="button"
             key={opt.id}
             aria-pressed={kind === opt.id}
             onClick={() => setKind(opt.id)}
-            className={`cursor-pointer rounded-xl border p-3 text-left transition-colors focus:outline-none focus:ring-2 focus:ring-primary ${kind === opt.id ? "border-primary bg-primary/5" : "border-border hover:bg-surface-alt"}`}
+            className={`justify-start font-[inherit] gap-0 cursor-pointer rounded-xl border p-3 text-left transition-colors focus:outline-none focus:ring-2 focus:ring-primary ${kind === opt.id ? "border-primary bg-primary/5 hover:bg-primary/5" : "border-border hover:bg-surface-alt"}`}
           >
             <div className="text-body-sm font-semibold text-text">{opt.label}</div>
             <div className="text-caption text-text-muted">{opt.hint}</div>
-          </button>
+          </Button>
         ))}
       </div>
 

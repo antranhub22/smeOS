@@ -150,7 +150,7 @@ export function PaymentLedgerModal({ isOpen, order, onClose, onRecorded }: Payme
             <Wallet size={18} />
           </div>
           <div>
-            <h3 className="text-base font-extrabold text-text">Sổ Thu — Đơn #{order.orderCode}</h3>
+            <h3 className="text-body font-extrabold text-text">Sổ Thu — Đơn #{order.orderCode}</h3>
           </div>
         </div>
       }
@@ -163,19 +163,19 @@ export function PaymentLedgerModal({ isOpen, order, onClose, onRecorded }: Payme
         </div>
       }
     >
-      <div className="p-1 flex flex-col gap-4 text-xs">
+      <div className="p-1 flex flex-col gap-4 text-caption">
         <div className="grid grid-cols-3 gap-2 p-3.5 rounded-xl border border-border bg-surface-alt">
           <div>
             <span className="text-text-muted block">Tổng</span>
-            <strong className="text-text text-sm">{fmtVnd(order.unitPriceVnd)}</strong>
+            <strong className="text-text text-body-sm">{fmtVnd(order.unitPriceVnd)}</strong>
           </div>
           <div>
             <span className="text-text-muted block">Đã thu</span>
-            <strong className="text-mint-700 text-sm">{fmtVnd(order.paidVnd)}</strong>
+            <strong className="text-mint-700 text-body-sm">{fmtVnd(order.paidVnd)}</strong>
           </div>
           <div>
             <span className="text-text-muted block">Còn phải thu</span>
-            <strong className={`text-sm ${order.balanceVnd > 0 ? "text-alert-700" : "text-mint-700"}`}>{fmtVnd(order.balanceVnd)}</strong>
+            <strong className={`text-body-sm ${order.balanceVnd > 0 ? "text-alert-700" : "text-mint-700"}`}>{fmtVnd(order.balanceVnd)}</strong>
           </div>
           <div className="col-span-3">
             <span className={`inline-block px-2 py-0.5 rounded border text-caption font-bold ${statusTag.className}`}>{statusTag.label}</span>

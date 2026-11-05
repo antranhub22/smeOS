@@ -131,7 +131,7 @@ export function ExperienceGrid() {
               const Icon = FEATURE_ICONS[mod.id]
               const route = routeForFeature(mod.id)
               return (
-                <button
+                <Button variant="ghost"
                   type="button"
                   disabled={mod.disabled}
                   key={mod.id}
@@ -141,7 +141,7 @@ export function ExperienceGrid() {
                     openFeature(mod)
                   }}
                   aria-disabled={mod.disabled}
-                  className={cn(
+                  className={cn("justify-start", 
                     "flex cursor-pointer items-center gap-3 rounded-lg px-3 py-2 text-left text-body font-medium transition-colors",
                     mod.disabled && "opacity-40 cursor-not-allowed",
                     !mod.disabled && route && "hover:bg-surface-alt",
@@ -151,7 +151,7 @@ export function ExperienceGrid() {
                   <Icon size={18} strokeWidth={1.8} className="text-primary" />
                   <span className="flex-1">{mod.name}</span>
                   <StatusBadge status={mod.status ?? "chua_co"} />
-                </button>
+                </Button>
               )
             })}
           </div>
@@ -167,13 +167,13 @@ export function ExperienceGrid() {
             </div>
           </div>
           <Progress value={(remaining / TRIAL_LIMIT) * 100} />
-          <button
+          <Button variant="ghost"
             type="button"
             onClick={() => setHienThongBaoNangCap((v) => !v)}
-            className="w-fit cursor-pointer text-meta font-bold text-primary hover:underline focus-visible:outline-2 focus-visible:outline-primary"
+            className="h-auto p-0 gap-0 w-fit cursor-pointer text-meta font-bold text-primary hover:underline focus-visible:outline-2 focus-visible:outline-primary"
           >
             Chuyển sang tổ chức thật →
-          </button>
+          </Button>
           {hienThongBaoNangCap && (
             <div className="flex items-start gap-1.5 rounded-lg bg-surface px-2.5 py-2">
               <Info size={13} strokeWidth={1.8} className="mt-0.5 flex-shrink-0 text-text-muted" />
@@ -219,19 +219,19 @@ export function ExperienceGrid() {
                   <Icon size={22} strokeWidth={1.8} className={cn("text-primary", disabled && "opacity-50")} />
                 </div>
                 <div>
-                  <button
+                  <Button variant="ghost"
                     type="button"
                     disabled={disabled}
                     onClick={() => {
                       if (!disabled) openFeature(mod)
                     }}
-                    className={cn(
+                    className={cn("h-auto p-0 justify-start gap-0", 
                       "cursor-pointer text-left text-body font-bold text-text hover:text-primary transition-colors focus-visible:outline-2 focus-visible:outline-primary",
                       disabled && "cursor-not-allowed hover:text-text"
                     )}
                   >
                     {mod.name}
-                  </button>
+                  </Button>
                   <div className="mt-0.5 text-caption leading-snug text-text-muted">{mod.desc}</div>
                 </div>
                 <StatusBadge status={mod.status ?? "chua_co"} />

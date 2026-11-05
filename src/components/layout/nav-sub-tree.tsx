@@ -5,6 +5,7 @@
  * Dùng cho "Báo cáo" (nhóm Việc hôm nay) và "Ma trận quản trị" (nhóm thiết lập).
  */
 
+import { Button } from "@/components/ui/button"
 import type { ComponentType } from "react"
 import { ChevronDown } from "@/components/ui/icon-set/chevron-down"
 import { cn } from "@/lib/utils"
@@ -42,16 +43,16 @@ export function NavSubTree({
 
   return (
     <>
-      <button
+      <Button variant="ghost"
         type="button"
         onClick={onToggle}
         aria-expanded={open}
-        className={cn(
+        className={cn("justify-start", 
           "group relative flex h-9 w-full items-center gap-2.5 rounded-lg px-2.5 text-left text-body-sm font-medium",
           "transition-colors duration-150 pointer-coarse:h-11",
           "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-inset",
           highlight
-            ? "bg-primary-muted font-semibold text-primary"
+            ? "bg-primary-muted font-semibold text-primary hover:bg-primary-muted"
             : "text-text-muted hover:bg-surface-alt hover:text-text"
         )}
       >
@@ -75,7 +76,7 @@ export function NavSubTree({
             !open && "-rotate-90"
           )}
         />
-      </button>
+      </Button>
 
       {open && (
         <div className="ml-5 flex flex-col gap-px border-l border-border pl-2">

@@ -11,6 +11,7 @@
  * SRP: File này chỉ phụ trách render nhóm Công cụ. Storage ở nav-toolkit-shortcuts.ts.
  */
 
+import { Button } from "@/components/ui/button"
 import { useState, useEffect, useCallback, useRef, useMemo, useSyncExternalStore } from "react"
 import { Plus } from "@/components/ui/icon-set/plus"
 import { X } from "@/components/ui/icon-set/x"
@@ -242,38 +243,38 @@ export function ToolkitShortcutsGroup({
                 onClick={() => onNavigate(entry.href)}
               />
               {/* Nút bỏ pin — hiện khi hover */}
-              <button
+              <Button variant="ghost"
                 type="button"
                 aria-label={`Bỏ ghim "${entry.label}"`}
                 onClick={(e) => {
                   e.stopPropagation()
                   handleUnpin(entry.navKey)
                 }}
-                className={cn(
-                  "absolute right-1.5 z-10 flex h-6 w-6 items-center justify-center rounded-md bg-surface",
+                className={cn("font-[inherit] gap-0", 
+                  "absolute right-1.5 z-10 flex h-6 w-6 items-center justify-center rounded-md bg-surface hover:bg-surface",
                   "text-text-muted transition-opacity duration-150 hover:bg-danger-bg hover:text-danger",
                   "opacity-0 group-hover/shortcut:opacity-100 focus-visible:opacity-100"
                 )}
               >
                 <X size={11} />
-              </button>
+              </Button>
             </div>
           ))}
 
           {/* 4. Nút thêm shortcut */}
           {shortcutEntries.length < MAX_SHORTCUTS && (
             <div className="relative" ref={pickerRef}>
-              <button
+              <Button variant="ghost"
                 type="button"
                 id="btn-add-toolkit-shortcut"
                 aria-label="Thêm lối tắt công cụ"
                 aria-expanded={pickerOpen}
                 onClick={() => setPickerOpen((v) => !v)}
-                className={cn(
+                className={cn("justify-start font-[inherit]", 
                   "flex h-9 w-full items-center gap-2.5 rounded-lg px-2.5 text-left text-body-sm pointer-coarse:h-11",
                   "text-text-muted transition-colors duration-150 hover:bg-surface-alt hover:text-text",
                   "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40 focus-visible:ring-inset",
-                  pickerOpen && "bg-surface-alt text-text"
+                  pickerOpen && "bg-surface-alt text-text hover:bg-surface-alt"
                 )}
               >
                 <span className="flex size-4.5 shrink-0 items-center justify-center rounded-md border border-dashed border-border">
@@ -283,7 +284,7 @@ export function ToolkitShortcutsGroup({
                 <span className="text-caption tabular-nums text-text-muted">
                   {shortcutEntries.length}/{MAX_SHORTCUTS}
                 </span>
-              </button>
+              </Button>
 
               {/* Picker dropdown */}
               {pickerOpen && (
@@ -301,14 +302,14 @@ export function ToolkitShortcutsGroup({
 
           {/* Khi đã đủ MAX: chỉ hiện nút reset nếu đã tùy chỉnh */}
           {mounted && shortcutEntries.length >= MAX_SHORTCUTS && hasCustomShortcuts(orgId) && (
-            <button
+            <Button variant="ghost"
               type="button"
               onClick={handleReset}
-              className="flex h-8 w-full items-center gap-2.5 rounded-lg px-2.5 text-meta text-text-muted transition-colors hover:bg-surface-alt hover:text-text"
+              className="font-[inherit] flex h-8 w-full items-center gap-2.5 rounded-lg px-2.5 text-meta text-text-muted transition-colors hover:bg-surface-alt hover:text-text"
             >
               <RotateCcw size={11} aria-hidden />
               <span>Đặt lại mặc định</span>
-            </button>
+            </Button>
           )}
         </>
       )}

@@ -1,5 +1,6 @@
 "use client"
 
+import { Input } from "@/components/ui/input"
 import React, { useEffect, useState } from "react"
 import { X } from "@/components/ui/icon-set/x"
 import { Users } from "@/components/ui/icon-set/users"
@@ -135,18 +136,18 @@ export function PartnerAssignmentModal({
               <Users size={18} />
             </div>
             <div>
-              <h2 className="text-base font-extrabold text-text">Phân Công Đối Tác / Thợ Chế Tác (Template T06)</h2>
+              <h2 className="text-body font-extrabold text-text">Phân Công Đối Tác / Thợ Chế Tác (Template T06)</h2>
               <p className="text-caption text-text-muted">
                 Đơn #{orderCode}: {recipeTitle} · Hẹn giao: {deliveryTargetTime}
               </p>
             </div>
           </div>
-          <button onClick={onClose} aria-label="Đóng" className="p-1.5 rounded-lg hover:bg-surface-alt text-text-muted">
+          <Button variant="ghost" type="submit" onClick={onClose} aria-label="Đóng" className="font-[inherit] gap-0 p-1.5 rounded-lg hover:bg-surface-alt text-text-muted">
             <X size={18} />
-          </button>
+          </Button>
         </div>
 
-        <div className="p-6 flex flex-col gap-4 text-xs">
+        <div className="p-6 flex flex-col gap-4 text-caption">
           <div className="p-3.5 rounded-xl bg-surface-alt border border-border flex items-start gap-2.5">
             <MapPin size={15} className="text-alert-600 shrink-0 mt-0.5" />
             <div>
@@ -156,7 +157,7 @@ export function PartnerAssignmentModal({
           </div>
 
           <div className="flex items-center justify-between">
-            <span className="font-bold text-text text-xs">Đối tác đang nhận đơn của tiệm:</span>
+            <span className="font-bold text-text text-caption">Đối tác đang nhận đơn của tiệm:</span>
             <Button type="button" size="sm" variant="outline" onClick={() => setShowAdd((v) => !v)} className="gap-1">
               <Plus size={13} /> Thêm đối tác
             </Button>
@@ -164,12 +165,12 @@ export function PartnerAssignmentModal({
 
           {showAdd && (
             <div className="p-3 rounded-xl border border-dashed border-alert-300 bg-alert-50/40 grid grid-cols-1 sm:grid-cols-2 gap-2">
-              <input className={input} placeholder="Mã (vd XUONG-BD)" value={draft.code} onChange={(e) => setDraft({ ...draft, code: e.target.value })} />
-              <input className={input} placeholder="Tên xưởng / thợ" value={draft.name} onChange={(e) => setDraft({ ...draft, name: e.target.value })} />
-              <input className={input} placeholder="Số điện thoại" value={draft.phone} onChange={(e) => setDraft({ ...draft, phone: e.target.value })} />
-              <input className={input} placeholder="Quận/Huyện" value={draft.district} onChange={(e) => setDraft({ ...draft, district: e.target.value })} />
-              <input className={input} placeholder="Tỉnh/Thành phố" value={draft.province} onChange={(e) => setDraft({ ...draft, province: e.target.value })} />
-              <input
+              <Input className={input} placeholder="Mã (vd XUONG-BD)" value={draft.code} onChange={(e) => setDraft({ ...draft, code: e.target.value })} />
+              <Input className={input} placeholder="Tên xưởng / thợ" value={draft.name} onChange={(e) => setDraft({ ...draft, name: e.target.value })} />
+              <Input className={input} placeholder="Số điện thoại" value={draft.phone} onChange={(e) => setDraft({ ...draft, phone: e.target.value })} />
+              <Input className={input} placeholder="Quận/Huyện" value={draft.district} onChange={(e) => setDraft({ ...draft, district: e.target.value })} />
+              <Input className={input} placeholder="Tỉnh/Thành phố" value={draft.province} onChange={(e) => setDraft({ ...draft, province: e.target.value })} />
+              <Input
                 className={input}
                 type="number"
                 min={1}
@@ -208,7 +209,7 @@ export function PartnerAssignmentModal({
                         onChange={() => setSelectedPartnerId(p.id)}
                         className="text-alert-600 focus:ring-alert-500"
                       />
-                      <span className="font-extrabold text-text text-sm">{p.name}</span>
+                      <span className="font-extrabold text-text text-body-sm">{p.name}</span>
                       <Badge tone={p.tier === "STANDARD" ? "neutral" : "warning"} className="text-caption">
                         {p.tier}
                       </Badge>
@@ -237,7 +238,7 @@ export function PartnerAssignmentModal({
 
           <div>
             <label className="font-bold text-text block mb-1">Lời nhắn giao việc cho đối tác:</label>
-            <input
+            <Input
               type="text"
               placeholder="Ví dụ: kiểm tra kỹ chất lượng nguyên vật liệu, gửi ảnh thành phẩm trước 16:15"
               value={notes}

@@ -1,5 +1,6 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
 import React from "react"
 import { Store } from "@/components/ui/icon-set/store"
 import { Palette } from "@/components/ui/icon-set/palette"
@@ -65,19 +66,19 @@ export function SettingsTabsNav({
         const Icon = tab.icon
         const isActive = activeTab === tab.key
         return (
-          <button
+          <Button variant="ghost"
             type="button"
             key={tab.key}
             onClick={() => onSelectTab(tab.key)}
             className={`flex items-center gap-2 px-3.5 py-2.5 rounded-xl text-caption font-bold transition-all whitespace-nowrap cursor-pointer ${
               isActive
-                ? "bg-primary text-primary-foreground shadow-xs"
+                ? "bg-primary text-primary-foreground shadow-xs hover:bg-primary"
                 : "text-text-muted hover:text-text hover:bg-surface-alt"
             }`}
           >
             <Icon size={15} />
             <span>{tab.label}</span>
-          </button>
+          </Button>
         )
       })}
     </div>

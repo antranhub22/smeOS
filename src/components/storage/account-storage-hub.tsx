@@ -1,5 +1,6 @@
 "use client"
 
+import { Input } from "@/components/ui/input"
 import { useState, useEffect, useMemo } from "react"
 import { useRouter } from "next/navigation"
 import type { Route } from "next"
@@ -40,13 +41,7 @@ import { StorageTrashTab } from "@/components/storage/storage-trash-tab"
 import { readApiError } from "@/components/greeting-card/api-error"
 import { formatDate } from "@/lib/i18n/formatters"
 
-import {
-  buildOverflowActions,
-  buildPrimaryActions,
-  buildStorageTabs,
-  libraryTypeOf,
-  type StorageTab,
-} from "@/components/storage/storage-hub-tabs"
+import { buildOverflowActions, buildPrimaryActions, buildStorageTabs, libraryTypeOf, type StorageTab } from "@/components/storage/storage-hub-tabs"
 import { LibraryPanel } from "@/components/storage/library/library-panel"
 import { useLibrarySummary } from "@/components/storage/library/use-library-summary"
 
@@ -394,7 +389,7 @@ export function AccountStorageHub({
               <span className="text-meta font-bold text-accent-text uppercase tracking-wider">Kho ảnh & nội dung</span>
               <Badge tone="neutral" className="font-semibold text-caption">{library.isChain ? "Chuỗi" : "Cửa hàng"}</Badge>
             </div>
-            <h2 className="mt-1 text-xl font-extrabold text-text tracking-tight">
+            <h2 className="mt-1 text-title font-extrabold text-text tracking-tight">
               Mọi thứ cửa hàng đã tạo, ở một chỗ
             </h2>
             <p className="text-body-sm text-text-muted mt-0.5">
@@ -405,7 +400,7 @@ export function AccountStorageHub({
           {/* Search Box */}
           <div className="relative w-full sm:w-72">
             <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-text-muted" />
-            <input
+            <Input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -447,7 +442,7 @@ export function AccountStorageHub({
       {activeTab === "raw" && !scopedRawType && (
         <div className="flex flex-col gap-4">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-text-muted uppercase tracking-wider">
+            <span className="text-caption font-bold text-text-muted uppercase tracking-wider">
               Danh sách ảnh gốc ({filteredRawAssets.length} ảnh)
             </span>
             <Button
@@ -455,7 +450,7 @@ export function AccountStorageHub({
               size="sm"
               onClick={fetchRawAssets}
               disabled={loadingRaw}
-              className="text-xs gap-1.5"
+              className="text-caption gap-1.5"
             >
               <RefreshCw size={13} className={loadingRaw ? "animate-spin motion-reduce:animate-none" : ""} />
               Làm mới kho ảnh
@@ -463,7 +458,7 @@ export function AccountStorageHub({
           </div>
 
           {errorRaw && (
-            <div className="rounded-xl border border-danger/30 bg-danger-bg p-3.5 text-xs text-danger flex items-center gap-2">
+            <div className="rounded-xl border border-danger/30 bg-danger-bg p-3.5 text-caption text-danger flex items-center gap-2">
               <AlertCircle size={15} />
               {errorRaw}
             </div>
@@ -472,8 +467,8 @@ export function AccountStorageHub({
           {filteredRawAssets.length === 0 && !loadingRaw && (
             <Card className="p-8 text-center bg-surface-alt border-dashed">
               <ImageIcon size={32} className="mx-auto text-text-muted mb-2 opacity-50" />
-              <div className="text-sm font-bold text-text">Chưa có ảnh gốc nào</div>
-              <p className="text-xs text-text-muted mt-1 max-w-sm mx-auto">
+              <div className="text-body-sm font-bold text-text">Chưa có ảnh gốc nào</div>
+              <p className="text-caption text-text-muted mt-1 max-w-sm mx-auto">
                 Tải ảnh sản phẩm từ thiết bị lên tại tab &quot;Phân tích ảnh mới&quot; để lưu trữ và bắt đầu nhận diện hoa tự động.
               </p>
             </Card>
@@ -510,16 +505,16 @@ export function AccountStorageHub({
                     {asset.name}
                   </div>
                   <div className="flex items-center gap-1.5">
-                    <button
+                    <Button variant="secondary"
                       type="button"
                       onClick={() => handleSelectRaw(asset)}
-                      className="flex flex-1 items-center justify-center rounded-lg text-xs h-7 gap-1 bg-primary hover:bg-primary-dark text-white font-semibold focus-visible:outline-2 focus-visible:outline-primary"
+                      className="flex flex-1 items-center justify-center rounded-lg text-caption h-7 gap-1 font-semibold"
                     >
                       <Sparkles size={12} />
                       Phân tích
-                    </button>
+                    </Button>
                     {isExecutive && !asset.isLocal && (
-                      <button
+                      <Button variant="outline"
                         type="button"
                         onClick={() =>
                           setTrashTarget({
@@ -530,11 +525,11 @@ export function AccountStorageHub({
                           })
                         }
                         aria-label="Chuyển ảnh vào thùng rác"
-                        className="flex items-center justify-center h-7 w-7 border border-border text-text-muted hover:text-danger hover:bg-danger-bg shrink-0 rounded-lg"
+                        className="font-[inherit] gap-0 flex items-center justify-center h-7 w-7 border border-border text-text-muted hover:text-danger hover:bg-danger-bg shrink-0 rounded-lg"
                         title="Chuyển vào thùng rác 30 ngày (Chỉ Điều hành)"
                       >
                         <Trash2 size={13} />
-                      </button>
+                      </Button>
                     )}
                   </div>
                 </div>
@@ -548,7 +543,7 @@ export function AccountStorageHub({
       {activeTab === "approved" && (
         <div className="flex flex-col gap-4">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-text-muted uppercase tracking-wider">
+            <span className="text-caption font-bold text-text-muted uppercase tracking-wider">
               Danh sách ảnh đã duyệt ({filteredApprovedItems.length})
             </span>
             <Button
@@ -556,7 +551,7 @@ export function AccountStorageHub({
               size="sm"
               onClick={fetchApprovedAnalyses}
               disabled={loadingApproved}
-              className="text-xs gap-1.5"
+              className="text-caption gap-1.5"
             >
               <RefreshCw size={13} className={loadingApproved ? "animate-spin motion-reduce:animate-none" : ""} />
               Làm mới danh sách
@@ -564,7 +559,7 @@ export function AccountStorageHub({
           </div>
 
           {errorApproved && (
-            <div className="rounded-xl border border-danger/30 bg-danger-bg p-3.5 text-xs text-danger flex items-center gap-2">
+            <div className="rounded-xl border border-danger/30 bg-danger-bg p-3.5 text-caption text-danger flex items-center gap-2">
               <AlertCircle size={15} />
               {errorApproved}
             </div>
@@ -573,8 +568,8 @@ export function AccountStorageHub({
           {filteredApprovedItems.length === 0 && !loadingApproved && (
             <Card className="p-8 text-center bg-surface-alt border-dashed">
               <Layers size={32} className="mx-auto text-text-muted mb-2 opacity-50" />
-              <div className="text-sm font-bold text-text">Chưa có phân tích nào được phê duyệt</div>
-              <p className="text-xs text-text-muted mt-1 max-w-sm mx-auto">
+              <div className="text-body-sm font-bold text-text">Chưa có phân tích nào được phê duyệt</div>
+              <p className="text-caption text-text-muted mt-1 max-w-sm mx-auto">
                 Hãy chuyển sang trang {ti("scanButtonLabel") || "Quét ảnh"} để nhận diện và duyệt ảnh trước khi tạo bài giới thiệu và tư vấn.
               </p>
             </Card>
@@ -661,7 +656,7 @@ export function AccountStorageHub({
                       variant="outline"
                       size="sm"
                       onClick={() => handleSelectApproved(item, "m01b")}
-                      className="flex-1 text-xs h-8 gap-1 border-border font-semibold text-text hover:text-primary"
+                      className="flex-1 text-caption h-8 gap-1 border-border font-semibold text-text hover:text-primary"
                     >
                       <Sparkles size={13} className="text-accent" />
                       Tạo bài giới thiệu
@@ -669,7 +664,7 @@ export function AccountStorageHub({
                     <Button variant="primary"
                       size="sm"
                       onClick={() => handleSelectApproved(item, "m01c")}
-                      className="flex-1 text-xs h-8 gap-1 font-bold"
+                      className="flex-1 text-caption h-8 gap-1 font-bold"
                     >
                       <Tag size={13} />
                       Tạo thẻ chào
@@ -704,10 +699,10 @@ export function AccountStorageHub({
       {activeTab === "finalized" && (
         <div className="flex flex-col gap-4">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-text-muted uppercase tracking-wider">
+            <span className="text-caption font-bold text-text-muted uppercase tracking-wider">
               Danh sách kịch bản tư vấn ({filteredFinalizedPitches.length})
             </span>
-            <span className="text-xs text-text-muted">
+            <span className="text-caption text-text-muted">
               Bấm &quot;Sao chép kịch bản&quot; để gửi khách hàng.
             </span>
           </div>
@@ -715,8 +710,8 @@ export function AccountStorageHub({
           {filteredFinalizedPitches.length === 0 && (
             <Card className="p-8 text-center bg-surface-alt border-dashed">
               <CheckCircle2 size={32} className="mx-auto text-success mb-2 opacity-60" />
-              <div className="text-sm font-bold text-text">Chưa có kịch bản tư vấn nào</div>
-              <p className="text-xs text-text-muted mt-1 max-w-sm mx-auto">
+              <div className="text-body-sm font-bold text-text">Chưa có kịch bản tư vấn nào</div>
+              <p className="text-caption text-text-muted mt-1 max-w-sm mx-auto">
                 Khi bạn duyệt thẻ chào sản phẩm và kịch bản tư vấn, nội dung sẽ được lưu vào đây để dùng lại.
               </p>
             </Card>
@@ -797,7 +792,7 @@ export function AccountStorageHub({
                       variant="outline"
                       size="sm"
                       onClick={() => handleSelectFinalized(pitch)}
-                      className="flex-1 text-xs h-8 gap-1 font-semibold text-text hover:text-primary"
+                      className="flex-1 text-caption h-8 gap-1 font-semibold text-text hover:text-primary"
                     >
                       <Eye size={13} /> Xem thẻ chào
                     </Button>
@@ -805,7 +800,7 @@ export function AccountStorageHub({
                     <Button variant="secondary"
                       size="sm"
                       onClick={() => handleQuickCopyZalo(pitch)}
-                      className={`flex-1 text-xs h-8 gap-1 font-bold ${
+                      className={`flex-1 text-caption h-8 gap-1 font-bold ${
                         isCopied ? "bg-success text-white" : "bg-primary hover:bg-primary/90 text-white"
                       }`}
                     >

@@ -36,12 +36,12 @@ export function FloristJobBom({
     <>
     {/* BOM Flowers */}
     <div>
-      <div className="text-xs font-bold text-text-muted uppercase tracking-wider mb-2 flex items-center gap-1.5">
+      <div className="text-caption font-bold text-text-muted uppercase tracking-wider mb-2 flex items-center gap-1.5">
         <Layers size={13} className="text-primary" />
         <span>DANH MỤC NGUYÊN PHỤ LIỆU & VẬT TƯ CHI TIẾT</span>
       </div>
       <div className="rounded-xl border border-border overflow-hidden">
-        <table className="w-full text-left text-xs">
+        <table className="w-full text-left text-caption">
           <thead className="bg-surface-alt border-b border-border text-text-muted font-bold">
             <tr>
               <th className="px-3 py-2">Tên vật tư / nguyên liệu</th>
@@ -72,7 +72,7 @@ export function FloristJobBom({
 
     {/* Foliage, Wrapping, Accessories */}
     {(foliage.length > 0 || wrapping.length > 0 || accessories.length > 0) && (
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-xs">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5 text-caption">
         {foliage.length > 0 && (
           <div className="p-2.5 rounded-xl bg-surface-alt border border-border">
             <span className="font-bold text-text block mb-1">🌿 Lá & cành đệm:</span>

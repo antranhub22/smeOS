@@ -100,7 +100,7 @@ export function VideoPlayerCard({
     <Card className="rounded-2xl border border-border bg-surface p-5 shadow-sm flex flex-col items-center gap-4">
       <div className="w-full flex items-center justify-between">
         <div>
-          <div className="text-xs font-semibold text-text-muted">Video Studio Video Preview</div>
+          <div className="text-caption font-semibold text-text-muted">Video Studio Video Preview</div>
           <div className="text-title font-extrabold text-text">{title}</div>
         </div>
         <Badge tone="success">Chuẩn 9:16 Mobile</Badge>
@@ -140,38 +140,38 @@ export function VideoPlayerCard({
           }`}
         >
           <div className="flex items-center justify-between">
-            <div className="text-xs font-bold text-white/90">@smeOS Studio</div>
+            <div className="text-caption font-bold text-white/90">@smeOS Studio</div>
             {normalizedVideoUrl && (
-              <button
+              <Button variant="ghost"
                 type="button"
                 onClick={handleToggleMute}
-                className="pointer-events-auto flex h-7 w-7 items-center justify-center rounded-full bg-black/40 text-white backdrop-blur-md hover:bg-black/60 transition cursor-pointer"
+                className="font-[inherit] gap-0 pointer-events-auto flex h-7 w-7 items-center justify-center rounded-full bg-black/40 text-white backdrop-blur-md hover:bg-black/60 transition cursor-pointer"
                 aria-label={isMuted ? "Bật âm thanh" : "Tắt âm thanh"}
               >
                 {isMuted ? <VolumeX size={14} /> : <Volume2 size={14} />}
-              </button>
+              </Button>
             )}
           </div>
 
           <div className="flex flex-col gap-2">
-            <div className="text-sm font-extrabold text-white">{productName}</div>
-            <div className="text-xs font-semibold text-accent-text">{price}</div>
+            <div className="text-body-sm font-extrabold text-white">{productName}</div>
+            <div className="text-caption font-semibold text-accent-text">{price}</div>
             <div className="mt-1 flex items-center justify-center">
-              <button
+              <Button variant="ghost"
                 type="button"
                 onClick={handleTogglePlay}
-                className="pointer-events-auto flex h-12 w-12 items-center justify-center rounded-full bg-white/25 text-white backdrop-blur-md hover:bg-white/40 transition hover:scale-105 active:scale-95 shadow-md cursor-pointer"
+                className="font-[inherit] gap-0 pointer-events-auto flex h-12 w-12 items-center justify-center rounded-full bg-white/25 text-white backdrop-blur-md hover:bg-white/40 transition hover:scale-105 active:scale-95 shadow-md cursor-pointer"
                 aria-label={isPlaying ? "Tạm dừng video" : "Phát video"}
               >
                 {isPlaying ? <Pause size={20} /> : <Play size={20} className="ml-0.5" />}
-              </button>
+              </Button>
             </div>
           </div>
         </div>
       </div>
 
       <div className="w-full flex items-center justify-between border-t border-border pt-4">
-        <div className="text-xs text-text-muted">Định dạng MP4 1080x1920</div>
+        <div className="text-caption text-text-muted">Định dạng MP4 1080x1920</div>
         <div className="flex items-center gap-2">
           {onShare && (
             <Button variant="secondary" size="sm" onClick={onShare} className="gap-1.5">

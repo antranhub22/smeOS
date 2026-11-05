@@ -90,13 +90,13 @@ export function CoordinatorReminderCard({
           >
             {reminder.title}
           </span>
-          <button
+          <Button variant="ghost"
             type="button"
             onClick={() => onViewOrder?.(reminder.orderId)}
-            className="text-body-sm font-bold text-text hover:text-primary transition-colors cursor-pointer"
+            className="h-auto p-0 gap-0 text-body-sm font-bold text-text hover:text-primary transition-colors cursor-pointer"
           >
             Đơn #{reminder.orderCode}
-          </button>
+          </Button>
         </div>
 
         {/* Trạng thái quá hạn / sắp đến */}

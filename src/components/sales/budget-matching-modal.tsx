@@ -151,21 +151,21 @@ export function BudgetMatchingModal({
             </div>
             <div className="flex items-center gap-1.5">
               {priceBudgets.map((qb) => (
-                <button
+                <Button variant="outline"
                   type="button"
                   key={qb.id}
                   onClick={() => {
                     setMinPrice(qb.min)
                     setMaxPrice(qb.max ?? qb.min * 2)
                   }}
-                  className={`px-2 py-0.5 rounded text-caption font-medium transition border cursor-pointer ${
+                  className={`gap-0 px-2 py-0.5 rounded text-caption font-medium transition border cursor-pointer ${
                     minPrice === qb.min && maxPrice === (qb.max ?? qb.min * 2)
-                      ? "border-primary bg-primary/10 text-primary font-bold"
-                      : "border-border bg-surface text-muted hover:border-primary/30"
+                      ? "border-primary bg-primary/10 text-primary font-bold hover:bg-primary/10"
+                      : "border-border bg-surface text-muted hover:border-primary/30 hover:bg-surface"
                   }`}
                 >
                   {qb.label}
-                </button>
+                </Button>
               ))}
             </div>
           </div>

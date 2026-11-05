@@ -35,10 +35,10 @@ export function UiStudioDrawer() {
     <>
       {/* Floating Toggle Button */}
       <div className="fixed bottom-24 right-6 z-40">
-        <button
+        <Button variant="outline"
           type="button"
           onClick={() => setIsOpen((prev) => !prev)}
-          className="group relative flex items-center gap-2 px-3 py-2.5 rounded-full bg-surface border border-border shadow-md hover:shadow-lg transition-all duration-200 hover:scale-105 text-text cursor-pointer"
+          className="font-[inherit] group relative flex items-center gap-2 px-3 py-2.5 rounded-full bg-surface border border-border shadow-md hover:shadow-lg transition-all duration-200 hover:scale-105 text-text cursor-pointer hover:bg-surface"
           title="Tùy biến Giao diện & UI Presets"
           aria-label="Mở bảng điều khiển giao diện"
         >
@@ -51,7 +51,7 @@ export function UiStudioDrawer() {
           <span className="text-caption uppercase font-mono px-1.5 py-0.5 rounded-full bg-primary-subtle text-primary border border-primary/20">
             {currentPreset.name.split(" ")[0]}
           </span>
-        </button>
+        </Button>
       </div>
 
       {/* Drawer Overlay */}
@@ -106,20 +106,20 @@ export function UiStudioDrawer() {
                       const isSelected = config.density === item.id
                       const Icon = item.icon
                       return (
-                        <button
+                        <Button variant="outline"
                           type="button"
                           key={item.id}
                           onClick={() => setDensity(item.id)}
                           className={`p-2.5 rounded-xl border text-center transition-all flex flex-col items-center gap-1 cursor-pointer ${
                             isSelected
-                              ? "border-primary bg-primary-subtle text-primary font-bold shadow-xs"
-                              : "border-border bg-surface text-text-muted hover:border-border-strong hover:text-text"
+                              ? "border-primary bg-primary-subtle text-primary font-bold shadow-xs hover:bg-primary-subtle"
+                              : "border-border bg-surface text-text-muted hover:border-border-strong hover:text-text hover:bg-surface"
                           }`}
                         >
                           <Icon className="w-3.5 h-3.5" />
                           <span className="text-caption font-semibold leading-tight">{item.label}</span>
                           <span className="text-caption text-text-muted leading-tight">{item.desc}</span>
-                        </button>
+                        </Button>
                       )
                     })}
                   </div>

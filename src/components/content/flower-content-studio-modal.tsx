@@ -148,14 +148,14 @@ export function FlowerContentStudioModal({
             <label className="block text-caption font-semibold text-text mb-1.5">Sắc thái giọng văn (Tone of Voice)</label>
             <div className="grid grid-cols-1 gap-1.5">
               {(Object.keys(TONE_LABELS) as ToneOfVoice[]).map((t) => (
-                <button
+                <Button variant="outline"
                   type="button"
                   key={t}
                   onClick={() => setTone(t)}
-                  className={`cursor-pointer text-left px-3 py-2 rounded-lg border transition focus:outline-none focus:ring-2 focus:ring-primary ${
+                  className={`justify-start font-[inherit] gap-0 cursor-pointer text-left px-3 py-2 rounded-lg border transition focus:outline-none focus:ring-2 focus:ring-primary ${
                     tone === t
-                      ? "border-primary bg-primary/10"
-                      : "border-border bg-surface hover:border-primary/40"
+                      ? "border-primary bg-primary/10 hover:bg-primary/10"
+                      : "border-border bg-surface hover:border-primary/40 hover:bg-surface"
                   }`}
                 >
                   <div className="flex items-center justify-between">
@@ -165,7 +165,7 @@ export function FlowerContentStudioModal({
                     {tone === t && <Badge tone="accent" className="text-caption">Đang chọn</Badge>}
                   </div>
                   <p className="text-caption text-text-muted mt-0.5">{TONE_LABELS[t].desc}</p>
-                </button>
+                </Button>
               ))}
             </div>
           </div>

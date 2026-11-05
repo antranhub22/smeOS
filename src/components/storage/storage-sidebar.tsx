@@ -1,5 +1,6 @@
 "use client"
 
+import { Input } from "@/components/ui/input"
 import { useState, useMemo } from "react"
 import { Folder } from "@/components/ui/icon-set/folder"
 import { Layers } from "@/components/ui/icon-set/layers"
@@ -19,11 +20,7 @@ import { ArrowRight } from "@/components/ui/icon-set/arrow-right"
 import { Clock } from "@/components/ui/icon-set/clock"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import {
-  type SalesPitchData,
-  generateZaloPitchScript,
-  formatCurrencyVnd,
-} from "@/modules/products/domain/sales-pitch-template"
+import { type SalesPitchData, generateZaloPitchScript, formatCurrencyVnd } from "@/modules/products/domain/sales-pitch-template"
 import type { RawAssetItem, ApprovedAnalysisItem } from "./account-storage-hub"
 
 export type SidebarFilter = "all" | "raw" | "approved" | "finalized"
@@ -148,15 +145,15 @@ export function StorageSidebar({
   if (isCollapsed) {
     return (
       <div className="flex flex-col items-center py-4 px-2 border-r border-border bg-surface w-14 flex-shrink-0 h-full">
-        <button
+        <Button variant="ghost"
           type="button"
           onClick={() => setIsCollapsed(false)}
-          className="p-2 rounded-xl bg-surface-alt hover:bg-primary/10 hover:text-primary transition-colors text-text-muted mb-4"
+          className="font-[inherit] gap-0 p-2 rounded-xl bg-surface-alt hover:bg-primary/10 hover:text-primary transition-colors text-text-muted mb-4"
           title="Mở rộng Kho Dữ Liệu"
         >
           <ChevronRight size={18} />
-        </button>
-        <div className="writing-vertical text-xs font-bold text-text-muted tracking-wider uppercase mt-4 flex items-center gap-2">
+        </Button>
+        <div className="writing-vertical text-caption font-bold text-text-muted tracking-wider uppercase mt-4 flex items-center gap-2">
           <Folder size={14} className="rotate-90 text-primary" />
           <span>Kho Dữ Liệu</span>
         </div>
@@ -187,83 +184,83 @@ export function StorageSidebar({
           </div>
           <div className="flex items-center gap-1">
             {onRefresh && (
-              <button
+              <Button variant="ghost"
                 type="button"
                 onClick={onRefresh}
-                className="p-1.5 rounded-lg text-text-muted hover:bg-surface-alt hover:text-text transition-colors"
+                className="font-[inherit] gap-0 p-1.5 rounded-lg text-text-muted hover:bg-surface-alt hover:text-text transition-colors"
                 title="Làm mới kho dữ liệu"
               >
                 <RefreshCw size={13} className={loading ? "animate-spin motion-reduce:animate-none" : ""} />
-              </button>
+              </Button>
             )}
-            <button
+            <Button variant="ghost"
               type="button"
               onClick={() => setIsCollapsed(true)}
-              className="p-1.5 rounded-lg text-text-muted hover:bg-surface-alt hover:text-text transition-colors"
+              className="font-[inherit] gap-0 p-1.5 rounded-lg text-text-muted hover:bg-surface-alt hover:text-text transition-colors"
               title="Thu gọn sidebar"
             >
               <ChevronLeft size={16} />
-            </button>
+            </Button>
           </div>
         </div>
 
         {/* Search input */}
         <div className="relative">
           <Search size={13} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-text-muted" />
-          <input
+          <Input
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Tìm theo tên, nguyên liệu..."
-            className="w-full pl-7 pr-2.5 py-1.5 rounded-xl border border-border bg-surface-alt text-xs outline-none focus:border-primary transition-colors"
+            className="w-full pl-7 pr-2.5 py-1.5 rounded-xl border border-border bg-surface-alt text-caption outline-none focus:border-primary transition-colors"
           />
         </div>
 
         {/* Filter Pills */}
         <div className="flex items-center gap-1 overflow-x-auto pb-0.5 text-caption no-scrollbar">
-          <button
+          <Button variant="ghost"
             type="button"
             onClick={() => setFilter("all")}
-            className={`px-2 py-0.5 rounded-lg font-medium whitespace-nowrap transition-colors ${
-              filter === "all" ? "bg-primary text-white font-bold" : "bg-surface-alt text-text-muted hover:text-text"
+            className={`gap-0 px-2 py-0.5 rounded-lg font-medium whitespace-nowrap transition-colors ${
+              filter === "all" ? "bg-primary text-white font-bold hover:bg-primary" : "bg-surface-alt text-text-muted hover:text-text hover:bg-surface-alt"
             }`}
           >
             Tất cả ({unifiedItems.length})
-          </button>
-          <button
+          </Button>
+          <Button variant="ghost"
             type="button"
             onClick={() => setFilter("raw")}
-            className={`px-2 py-0.5 rounded-lg font-medium whitespace-nowrap transition-colors ${
-              filter === "raw" ? "bg-warning text-white font-bold" : "bg-surface-alt text-text-muted hover:text-text"
+            className={`gap-0 px-2 py-0.5 rounded-lg font-medium whitespace-nowrap transition-colors ${
+              filter === "raw" ? "bg-warning text-white font-bold hover:bg-warning" : "bg-surface-alt text-text-muted hover:text-text hover:bg-surface-alt"
             }`}
           >
             Ảnh gốc ({rawAssets.length})
-          </button>
-          <button
+          </Button>
+          <Button variant="ghost"
             type="button"
             onClick={() => setFilter("approved")}
-            className={`px-2 py-0.5 rounded-lg font-medium whitespace-nowrap transition-colors ${
-              filter === "approved" ? "bg-info text-white font-bold" : "bg-surface-alt text-text-muted hover:text-text"
+            className={`gap-0 px-2 py-0.5 rounded-lg font-medium whitespace-nowrap transition-colors ${
+              filter === "approved" ? "bg-info text-white font-bold hover:bg-info" : "bg-surface-alt text-text-muted hover:text-text hover:bg-surface-alt"
             }`}
           >
             Đã duyệt định lượng ({approvedAnalyses.length})
-          </button>
-          <button
+          </Button>
+          <Button variant="ghost"
             type="button"
             onClick={() => setFilter("finalized")}
-            className={`px-2 py-0.5 rounded-lg font-medium whitespace-nowrap transition-colors ${
-              filter === "finalized" ? "bg-success text-white font-bold" : "bg-surface-alt text-text-muted hover:text-text"
+            className={`gap-0 px-2 py-0.5 rounded-lg font-medium whitespace-nowrap transition-colors ${
+              filter === "finalized" ? "bg-success text-white font-bold hover:bg-success" : "bg-surface-alt text-text-muted hover:text-text hover:bg-surface-alt"
             }`}
           >
             Sale Pitch ({finalizedPitches.length})
-          </button>
+          </Button>
         </div>
       </div>
 
       {/* Cards Scrollable List */}
       <div className="flex-1 overflow-y-auto p-2.5 flex flex-col gap-2">
         {filteredItems.length === 0 && (
-          <div className="py-12 text-center text-xs text-text-muted flex flex-col items-center gap-2 px-4">
+          <div className="py-12 text-center text-caption text-text-muted flex flex-col items-center gap-2 px-4">
             <ImageIcon size={24} className="opacity-40" />
             <span>Không tìm thấy thẻ sản phẩm phù hợp</span>
           </div>
@@ -318,7 +315,7 @@ export function StorageSidebar({
                     e.stopPropagation()
                     onSelectRawPhoto(rawAsset)
                   }}
-                  className="w-full text-xs h-7 gap-1 bg-primary hover:bg-primary/90 text-white font-bold"
+                  className="w-full text-caption h-7 gap-1 bg-primary hover:bg-primary/90 text-white font-bold"
                 >
                   <Sparkles size={12} />
                   Kích hoạt phân tích AI (Nhận diện sản phẩm) →

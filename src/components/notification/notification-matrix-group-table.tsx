@@ -6,6 +6,7 @@
  */
 "use client"
 
+import { Button } from "@/components/ui/button"
 import { ChevronDown } from "@/components/ui/icon-set/chevron-down"
 import { ChevronRight } from "@/components/ui/icon-set/chevron-right"
 import { useState } from "react"
@@ -47,10 +48,10 @@ export function NotificationMatrixGroupTable({
   return (
     <div className="rounded-xl border border-border bg-surface overflow-hidden">
       {/* Group Header — Click to expand/collapse */}
-      <button
+      <Button variant="ghost"
         type="button"
         onClick={() => setExpanded(!expanded)}
-        className="w-full flex cursor-pointer items-center justify-between px-4 py-3 bg-surface-alt hover:bg-surface-alt/80 transition-colors focus:outline-none focus:ring-2 focus:ring-primary"
+        className="font-[inherit] gap-0 w-full flex cursor-pointer items-center justify-between px-4 py-3 bg-surface-alt hover:bg-surface-alt/80 transition-colors focus:outline-none focus:ring-2 focus:ring-primary"
       >
         <div className="flex items-center gap-2">
           {expanded ? (
@@ -63,7 +64,7 @@ export function NotificationMatrixGroupTable({
             ({section.events.length} sự kiện)
           </span>
         </div>
-      </button>
+      </Button>
 
       {/* Matrix Table */}
       {expanded && (

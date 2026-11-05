@@ -53,7 +53,7 @@ export function FloristTicketCard({
     <Card className="rounded-2xl border border-border bg-surface p-5 shadow-sm flex flex-col gap-4">
       <div className="flex items-center justify-between">
         <div>
-          <div className="text-xs font-semibold text-text-muted">Lệnh sản xuất: {makerAction} (Xưởng)</div>
+          <div className="text-caption font-semibold text-text-muted">Lệnh sản xuất: {makerAction} (Xưởng)</div>
           <div className="text-title font-extrabold text-text">Đơn #{orderCode}: {productName}</div>
         </div>
         <Badge tone="danger" className="gap-1 font-bold">
@@ -73,13 +73,13 @@ export function FloristTicketCard({
         )}
 
         <div className="flex-1 flex flex-col gap-2">
-          <div className="text-xs text-text-muted">
+          <div className="text-caption text-text-muted">
             {makerTitle}: <span className="font-bold text-text">{floristName}</span> • Quy cách: <span className="font-bold text-text">{wrapStyle}</span>
           </div>
 
           <div className="rounded-lg border border-border bg-surface-alt/40 p-2.5">
-            <div className="text-xs font-bold text-text mb-1.5">{recipeTitle}:</div>
-            <div className="grid grid-cols-2 gap-1.5 text-xs">
+            <div className="text-caption font-bold text-text mb-1.5">{recipeTitle}:</div>
+            <div className="grid grid-cols-2 gap-1.5 text-caption">
               {items.map((it, idx) => (
                 <div key={idx} className="flex items-center justify-between text-text">
                   <span>• {it.flowerName} ({it.color})</span>
@@ -90,7 +90,7 @@ export function FloristTicketCard({
           </div>
 
           {notes && (
-            <div className="rounded bg-warning-bg border border-warning/25 p-2 text-xs text-warning font-medium">
+            <div className="rounded bg-warning-bg border border-warning/25 p-2 text-caption text-warning font-medium">
               Lưu ý khách: {notes}
             </div>
           )}

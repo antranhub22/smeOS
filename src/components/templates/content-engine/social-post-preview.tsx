@@ -107,7 +107,7 @@ function FacebookPreview({
           </div>
           <div>
             <div className="flex items-center gap-1">
-              <span className="text-sm font-bold leading-none">{shopName}</span>
+              <span className="text-body-sm font-bold leading-none">{shopName}</span>
             </div>
             <div className="flex items-center gap-1 text-caption text-text-muted mt-0.5">
               <span>Vừa xong</span>
@@ -122,8 +122,8 @@ function FacebookPreview({
       </div>
 
       {/* Post Content */}
-      <div className="px-3.5 pb-3 text-xs leading-relaxed space-y-2">
-        <div className="font-bold text-sm text-cool-900">
+      <div className="px-3.5 pb-3 text-caption leading-relaxed space-y-2">
+        <div className="font-bold text-body-sm text-cool-900">
           {post.headline}
         </div>
         <div className="whitespace-pre-line text-cool-800">
@@ -157,7 +157,7 @@ function FacebookPreview({
         ) : (
           <div className="flex flex-col items-center gap-2">
             <span className="text-5xl">💐</span>
-            <div className="font-extrabold text-sm text-blush-950">{productName}</div>
+            <div className="font-extrabold text-body-sm text-blush-950">{productName}</div>
             <span className="text-caption font-semibold text-primary bg-white/80 px-3 py-1 rounded-full backdrop-blur-xs border border-primary-muted/50">
               {shopName || "Cửa hàng chính hãng"}
             </span>
@@ -166,7 +166,7 @@ function FacebookPreview({
       </div>
 
       {/* Action Buttons */}
-      <div className="px-1 py-1 grid grid-cols-3 text-cool-600 font-semibold text-xs text-center">
+      <div className="px-1 py-1 grid grid-cols-3 text-cool-600 font-semibold text-caption text-center">
         <span className="flex items-center justify-center gap-1.5 py-2 rounded-md hover:bg-cool-100 transition" aria-hidden="true">
           <ThumbsUp size={15} />
           <span>Thích</span>
@@ -197,12 +197,12 @@ function InstagramPreview({
       <div className="p-3 flex items-center justify-between border-b border-cool-100">
         <div className="flex items-center gap-2.5">
           <div className="w-8 h-8 rounded-full p-[2px] bg-gradient-to-tr from-sand-500 via-blush-500 to-orchid-600">
-            <div className="w-full h-full rounded-full bg-white flex items-center justify-center text-xs">
+            <div className="w-full h-full rounded-full bg-white flex items-center justify-center text-caption">
               🌸
             </div>
           </div>
           <div>
-            <div className="text-xs font-bold leading-none">cuahang.smeos</div>
+            <div className="text-caption font-bold leading-none">cuahang.smeos</div>
             <div className="text-caption text-text-muted mt-0.5">{shopName}</div>
           </div>
         </div>
@@ -225,7 +225,7 @@ function InstagramPreview({
         ) : (
           <div className="flex flex-col items-center gap-2">
             <span className="text-6xl">🌷</span>
-            <div className="font-extrabold text-sm text-cool-900">{productName}</div>
+            <div className="font-extrabold text-body-sm text-cool-900">{productName}</div>
             <div className="text-caption text-text-muted">Instagram Aesthetic Grid</div>
           </div>
         )}
@@ -242,10 +242,10 @@ function InstagramPreview({
           <Bookmark size={20} className="cursor-pointer" />
         </div>
 
-        <div className="text-xs font-bold mb-1.5">284 lượt thích</div>
+        <div className="text-caption font-bold mb-1.5">284 lượt thích</div>
 
         {/* Caption */}
-        <div className="text-xs leading-relaxed space-y-1">
+        <div className="text-caption leading-relaxed space-y-1">
           <span className="font-bold mr-1.5">cuahang.smeos</span>
           <span className="font-semibold">{post.headline}</span>
           <div className="text-cool-800 whitespace-pre-line mt-1">
@@ -283,7 +283,7 @@ function TikTokPreview({
   return (
     <div className="max-w-[320px] mx-auto rounded-2xl bg-black text-white shadow-2xl overflow-hidden aspect-[9/16] relative flex flex-col justify-between border-4 border-cool-900 font-sans">
       {/* Top Header */}
-      <div className="pt-3 px-4 flex items-center justify-center gap-4 text-xs font-bold z-10 text-cool-400">
+      <div className="pt-3 px-4 flex items-center justify-center gap-4 text-caption font-bold z-10 text-cool-400">
         <span>Đang theo dõi</span>
         <span className="text-white border-b-2 border-white pb-0.5">Dành cho bạn</span>
       </div>
@@ -302,9 +302,9 @@ function TikTokPreview({
         ) : (
           <div className="flex flex-col items-center gap-3 opacity-80">
             <span className="text-7xl">🌺</span>
-            <div className="text-sm font-extrabold">{productName}</div>
+            <div className="text-body-sm font-extrabold">{productName}</div>
             {post.script?.hook && (
-              <div className="bg-white/10 backdrop-blur-md px-3 py-1.5 rounded-lg text-xs text-blush-300 font-bold border border-blush-500/30">
+              <div className="bg-white/10 backdrop-blur-md px-3 py-1.5 rounded-lg text-caption text-blush-300 font-bold border border-blush-500/30">
                 Hook: &quot;{post.script.hook}&quot;
               </div>
             )}
@@ -313,10 +313,10 @@ function TikTokPreview({
       </div>
 
       {/* Right Action Column */}
-      <div className="absolute right-2.5 bottom-16 flex flex-col items-center gap-4 z-10 text-xs">
+      <div className="absolute right-2.5 bottom-16 flex flex-col items-center gap-4 z-10 text-caption">
         {/* Avatar with + */}
         <div className="relative">
-          <div className="w-10 h-10 rounded-full border-2 border-white bg-blush-500 flex items-center justify-center text-sm font-bold">
+          <div className="w-10 h-10 rounded-full border-2 border-white bg-blush-500 flex items-center justify-center text-body-sm font-bold">
             🌸
           </div>
           <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 bg-blush-500 text-white rounded-full w-4 h-4 flex items-center justify-center text-caption font-black">
@@ -360,12 +360,12 @@ function TikTokPreview({
 
       {/* Bottom Info Overlay */}
       <div className="p-3.5 z-10 bg-gradient-to-t from-black via-black/80 to-transparent pr-14 text-left">
-        <div className="text-sm font-extrabold flex items-center gap-1.5">
+        <div className="text-body-sm font-extrabold flex items-center gap-1.5">
           <span>@cuahang_smeos</span>
           <CheckCircle2 size={13} className="text-ocean-400 fill-ocean-400 text-black" />
         </div>
 
-        <div className="text-xs font-bold text-white mt-1 line-clamp-1">
+        <div className="text-caption font-bold text-white mt-1 line-clamp-1">
           {post.headline}
         </div>
 
@@ -404,11 +404,11 @@ function ZaloOAPreview({
       {/* Zalo Top Bar */}
       <div className="bg-[var(--color-zalo)] text-white p-3 flex items-center justify-between shadow-xs">
         <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-full bg-white text-[var(--color-zalo)] font-bold flex items-center justify-center text-xs">
+          <div className="w-8 h-8 rounded-full bg-white text-[var(--color-zalo)] font-bold flex items-center justify-center text-caption">
             🌸
           </div>
           <div>
-            <div className="text-xs font-bold flex items-center gap-1">
+            <div className="text-caption font-bold flex items-center gap-1">
               <span>{shopName}</span>
               <span className="text-caption bg-sand-400 text-sand-950 font-black px-1.5 py-0.2 rounded-full uppercase">
                 OA
@@ -417,7 +417,7 @@ function ZaloOAPreview({
             <div className="text-caption text-ocean-100">Đã xác thực doanh nghiệp</div>
           </div>
         </div>
-        <div className="text-xs font-semibold bg-white/20 px-2.5 py-1 rounded-full">
+        <div className="text-caption font-semibold bg-white/20 px-2.5 py-1 rounded-full">
           Zalo OA
         </div>
       </div>
@@ -432,11 +432,11 @@ function ZaloOAPreview({
 
         {/* Message Bubble */}
         <div className="bg-white rounded-2xl rounded-tl-xs p-3.5 shadow-xs border border-cool-200/60 space-y-2 text-cool-900">
-          <div className="text-sm font-extrabold text-[var(--color-zalo)]">
+          <div className="text-body-sm font-extrabold text-[var(--color-zalo)]">
             {post.headline}
           </div>
 
-          <div className="text-xs text-cool-700 leading-relaxed whitespace-pre-line">
+          <div className="text-caption text-cool-700 leading-relaxed whitespace-pre-line">
             {post.bodyText}
           </div>
 
@@ -453,25 +453,25 @@ function ZaloOAPreview({
               />
             ) : (
               <div className="flex flex-col items-center gap-1">
-                <span className="text-3xl">💐</span>
-                <span className="text-xs font-bold text-cool-800">{productName}</span>
+                <span className="text-display-lg">💐</span>
+                <span className="text-caption font-bold text-cool-800">{productName}</span>
                 <span className="text-caption text-text-muted">Mẫu sản phẩm mới nhất</span>
               </div>
             )}
           </div>
 
           {post.cta && (
-            <div className="text-xs font-bold text-warning bg-warning-bg p-2.5 rounded-lg border border-warning-border/60">
+            <div className="text-caption font-bold text-warning bg-warning-bg p-2.5 rounded-lg border border-warning-border/60">
               💬 {post.cta}
             </div>
           )}
 
           {/* Interactive OA Quick Action Buttons */}
           <div className="pt-2 border-t border-cool-100 grid grid-cols-2 gap-2">
-            <span className="py-2 px-3 rounded-lg bg-[var(--color-zalo)] text-white text-xs font-bold hover:bg-ocean-700 transition flex items-center justify-center gap-1" aria-hidden="true">
+            <span className="py-2 px-3 rounded-lg bg-[var(--color-zalo)] text-white text-caption font-bold hover:bg-ocean-700 transition flex items-center justify-center gap-1" aria-hidden="true">
               <span>Nhắn tin tư vấn</span>
             </span>
-            <span className="py-2 px-3 rounded-lg bg-cool-100 text-cool-800 text-xs font-bold hover:bg-cool-200 transition flex items-center justify-center gap-1" aria-hidden="true">
+            <span className="py-2 px-3 rounded-lg bg-cool-100 text-cool-800 text-caption font-bold hover:bg-cool-200 transition flex items-center justify-center gap-1" aria-hidden="true">
               <span>Xem album mẫu</span>
             </span>
           </div>

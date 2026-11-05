@@ -50,16 +50,16 @@ export function OrderClosureLearningCard({
           <div className="text-caption font-bold uppercase tracking-wider text-mint-900">
             Nghiệm Thu Vận Hành & Học Máy Đơn Hàng (T25 / T26 / T27)
           </div>
-          <h3 className="text-lg font-extrabold text-text">
+          <h3 className="text-title-sm font-extrabold text-text">
             Đóng Đơn #{orderCode}: {recipeTitle}
           </h3>
         </div>
-        <Badge tone={isOntime ? "success" : "warning"} className="font-bold px-3 py-1 text-xs">
+        <Badge tone={isOntime ? "success" : "warning"} className="font-bold px-3 py-1 text-caption">
           {isOntime ? "GIAO ĐÚNG HẸN SLA" : `TRỄ HẸN ${varianceMinutes} PHÚT`}
         </Badge>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-caption">
         <div className="p-3.5 rounded-xl bg-surface border border-border flex flex-col gap-1">
           <span className="text-text-muted font-medium flex items-center gap-1">
             <Clock size={12} />
@@ -85,23 +85,23 @@ export function OrderClosureLearningCard({
         </div>
       </div>
 
-      <div className="p-4 rounded-xl bg-surface border border-border flex flex-col gap-3 text-xs">
+      <div className="p-4 rounded-xl bg-surface border border-border flex flex-col gap-3 text-caption">
         <div className="flex items-center justify-between">
           <span className="font-bold text-text">Đánh giá chất lượng thực hiện của đối tác ({partnerName}):</span>
           <div className="flex items-center gap-1">
             {[1, 2, 3, 4, 5].map((star) => (
-              <button
+              <Button variant="ghost"
                 type="button"
                 aria-label="Đánh dấu yêu thích"
                 key={star}
                 onClick={() => setRating(star)}
-                className="cursor-pointer p-1 hover:scale-110 transition-transform"
+                className="font-[inherit] gap-0 cursor-pointer p-1 hover:scale-110 transition-transform"
               >
                 <Star
                   size={16}
                   className={star <= rating ? "text-sand-500 fill-sand-500" : "text-cool-300"}
                 />
-              </button>
+              </Button>
             ))}
           </div>
         </div>
@@ -122,7 +122,7 @@ export function OrderClosureLearningCard({
         </div>
 
         {onConfirmClosure && (
-          <Button onClick={handleComplete} className="bg-mint-600 hover:bg-mint-700 text-white font-bold gap-1.5 text-xs">
+          <Button onClick={handleComplete} className="bg-mint-600 hover:bg-mint-700 text-white font-bold gap-1.5 text-caption">
             <FileCheck size={14} />
             <span>Nghiệm Thu Hoàn Tất & Đóng Hồ Sơ</span>
           </Button>

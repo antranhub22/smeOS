@@ -236,10 +236,10 @@ export function CrmWorkspace() {
               <ul className="flex flex-col divide-y divide-border">
                 {reminders.slice(0, 6).map((r) => (
                   <li key={`${r.customerId}-${r.occasionName}-${r.targetDate}`}>
-                    <button
+                    <Button variant="ghost"
                       type="button"
                       onClick={() => router.push("/khach-hang" as Route)}
-                      className="flex cursor-pointer min-h-12 w-full items-center justify-between gap-3 rounded-lg px-2 py-2 text-left hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-primary"
+                      className="font-[inherit] flex cursor-pointer min-h-12 w-full items-center justify-between gap-3 rounded-lg px-2 py-2 text-left hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-primary"
                     >
                       <div className="min-w-0 flex-1">
                         <div className="truncate text-body font-semibold text-text">
@@ -262,7 +262,7 @@ export function CrmWorkspace() {
                       >
                         {nhanNgayConLai(r.daysLeft)}
                       </span>
-                    </button>
+                    </Button>
                   </li>
                 ))}
               </ul>
@@ -302,10 +302,10 @@ export function CrmWorkspace() {
                   const badge = nhanVongDoi(stage)
                   return (
                     <li key={customer.id}>
-                      <button
+                      <Button variant="ghost"
                         type="button"
                         onClick={() => router.push("/khach-hang" as Route)}
-                        className="flex cursor-pointer min-h-12 w-full items-center justify-between gap-3 rounded-lg px-2 py-2 text-left hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-primary"
+                        className="font-[inherit] flex cursor-pointer min-h-12 w-full items-center justify-between gap-3 rounded-lg px-2 py-2 text-left hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-primary"
                       >
                         <div className="min-w-0 flex-1">
                           <div className="flex items-center gap-2">
@@ -323,7 +323,7 @@ export function CrmWorkspace() {
                         <span className={`rounded-full px-2 py-0.5 text-caption font-bold ${badge.cls}`}>
                           {badge.label}
                         </span>
-                      </button>
+                      </Button>
                     </li>
                   )
                 })}

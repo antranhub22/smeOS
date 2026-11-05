@@ -101,7 +101,7 @@ export function ConfirmCraftAcceptanceModal({
         </div>
       }
     >
-      <div className="space-y-4 py-1 text-xs">
+      <div className="space-y-4 py-1 text-caption">
         {error && (
           <div className="p-3 rounded-xl bg-danger/10 border border-danger/20 text-danger font-medium">
             {error}
@@ -155,27 +155,27 @@ export function ConfirmCraftAcceptanceModal({
               Tỷ lệ chi phí: <strong className={isHighCost ? "text-warning" : "text-text"}>{feeRatio.toFixed(1)}%</strong> giá bán
             </span>
             <div className="flex items-center gap-1">
-              <button
+              <Button variant="outline"
                 type="button"
                 onClick={() => setAgreedFee(suggestedCraftFeeVnd)}
-                className="px-2 py-0.5 rounded bg-surface-alt border border-border text-text hover:bg-surface text-caption font-semibold cursor-pointer"
+                className="gap-0 px-2 py-0.5 rounded bg-surface-alt border border-border text-text hover:bg-surface text-caption font-semibold cursor-pointer"
               >
                 Mức gợi ý ({suggestedCraftFeeVnd.toLocaleString("vi-VN")}đ)
-              </button>
-              <button
+              </Button>
+              <Button variant="outline"
                 type="button"
                 onClick={() => setAgreedFee((prev) => Math.max(0, prev - 20000))}
-                className="px-1.5 py-0.5 rounded bg-surface-alt border border-border text-text hover:bg-surface text-caption cursor-pointer"
+                className="font-[inherit] gap-0 px-1.5 py-0.5 rounded bg-surface-alt border border-border text-text hover:bg-surface text-caption cursor-pointer"
               >
                 -20k
-              </button>
-              <button
+              </Button>
+              <Button variant="outline"
                 type="button"
                 onClick={() => setAgreedFee((prev) => prev + 20000)}
-                className="px-1.5 py-0.5 rounded bg-surface-alt border border-border text-text hover:bg-surface text-caption cursor-pointer"
+                className="font-[inherit] gap-0 px-1.5 py-0.5 rounded bg-surface-alt border border-border text-text hover:bg-surface text-caption cursor-pointer"
               >
                 +20k
-              </button>
+              </Button>
             </div>
           </div>
         </div>
@@ -203,7 +203,7 @@ export function ConfirmCraftAcceptanceModal({
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
             placeholder="Ví dụ: Đã chốt phụ thu nguyên liệu cao cấp 50k, bàn giao đúng 15h..."
-            className="w-full px-3 py-1.5 rounded-xl border border-border bg-surface text-text text-xs focus:outline-none focus:ring-1 focus:ring-primary"
+            className="w-full px-3 py-1.5 rounded-xl border border-border bg-surface text-text text-caption focus:outline-none focus:ring-1 focus:ring-primary"
           />
         </div>
       </div>

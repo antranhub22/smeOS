@@ -98,7 +98,7 @@ export function ConnectAccountModal({
             size="sm"
             onClick={onClose}
             disabled={isLoading}
-            className="text-xs"
+            className="text-caption"
           >
             Hủy
           </Button>
@@ -107,16 +107,16 @@ export function ConnectAccountModal({
             form="connect-account-form"
             size="sm"
             disabled={isLoading}
-            className="text-xs font-bold gap-1 shadow-xs"
+            className="text-caption font-bold gap-1 shadow-xs"
           >
             {isLoading ? "Đang lưu & Khởi tạo..." : "Lưu & Kết nối ngay"}
           </Button>
         </div>
       }
     >
-      <form id="connect-account-form" onSubmit={handleSubmit} className="flex flex-col gap-4 text-xs">
+      <form id="connect-account-form" onSubmit={handleSubmit} className="flex flex-col gap-4 text-caption">
         {validationError && (
-          <div className="p-3 rounded-xl bg-danger-bg border border-danger/30 text-xs font-semibold text-danger flex items-center gap-2">
+          <div className="p-3 rounded-xl bg-danger-bg border border-danger/30 text-caption font-semibold text-danger flex items-center gap-2">
             <AlertCircle size={15} className="flex-shrink-0" />
             <span>{validationError}</span>
           </div>
@@ -143,7 +143,7 @@ export function ConnectAccountModal({
                 : "taikhoan@gmail.com"
             }
             required
-            className="w-full rounded-xl border border-border bg-surface-alt px-3.5 py-2.5 text-xs text-text placeholder:text-text-muted/60 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/30"
+            className="w-full rounded-xl border border-border bg-surface-alt px-3.5 py-2.5 text-caption text-text placeholder:text-text-muted/60 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/30"
           />
         </div>
 
@@ -158,7 +158,7 @@ export function ConnectAccountModal({
             onChange={(e) => setPassword(e.target.value)}
             placeholder="••••••••••••"
             required
-            className="w-full rounded-xl border border-border bg-surface-alt px-3.5 py-2.5 text-xs text-text placeholder:text-text-muted/60 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/30"
+            className="w-full rounded-xl border border-border bg-surface-alt px-3.5 py-2.5 text-caption text-text placeholder:text-text-muted/60 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/30"
           />
           {initialUsername && (
             <p className="text-caption text-text-muted mt-1">
@@ -182,7 +182,7 @@ export function ConnectAccountModal({
                 value={pageId}
                 onChange={(e) => setPageId(e.target.value)}
                 placeholder="Ví dụ: 104829104812345"
-                className="w-full rounded-lg border border-border bg-surface px-3 py-1.5 text-xs text-text placeholder:text-text-muted/60 focus:border-primary focus:outline-none"
+                className="w-full rounded-lg border border-border bg-surface px-3 py-1.5 text-caption text-text placeholder:text-text-muted/60 focus:border-primary focus:outline-none"
               />
             </div>
             <div>
@@ -194,7 +194,7 @@ export function ConnectAccountModal({
                 value={pageAccessToken}
                 onChange={(e) => setPageAccessToken(e.target.value)}
                 placeholder="EAAB..."
-                className="w-full rounded-lg border border-border bg-surface px-3 py-1.5 text-xs text-text placeholder:text-text-muted/60 focus:border-primary focus:outline-none"
+                className="w-full rounded-lg border border-border bg-surface px-3 py-1.5 text-caption text-text placeholder:text-text-muted/60 focus:border-primary focus:outline-none"
               />
             </div>
           </div>

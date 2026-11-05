@@ -1,5 +1,6 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
 import React from "react"
 import { useRouter } from "next/navigation"
 import type { LucideIcon } from "@/components/ui/icon-set/wrap"
@@ -32,10 +33,10 @@ export function DongCanThiep({
   nguyCap,
 }: DongCanThiepProps) {
   return (
-    <button
+    <Button variant="ghost"
       type="button"
       onClick={onClick}
-      className="flex min-h-11 w-full items-center justify-between gap-3 rounded-lg px-1 text-left hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-primary cursor-pointer"
+      className="font-[inherit] flex min-h-11 w-full items-center justify-between gap-3 rounded-lg px-1 text-left hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-primary cursor-pointer"
     >
       <span className="flex items-center gap-2.5">
         <Icon size={17} strokeWidth={1.9} className={nguyCap ? "text-danger" : "text-text-muted"} />
@@ -45,7 +46,7 @@ export function DongCanThiep({
         {giaTri}
         <ChevronRight size={15} aria-hidden="true" />
       </span>
-    </button>
+    </Button>
   )
 }
 

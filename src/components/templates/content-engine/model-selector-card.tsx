@@ -84,7 +84,7 @@ export function ModelSelectorCard({
     <Card className="rounded-2xl border border-border bg-surface p-5 shadow-sm flex flex-col gap-4">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
         <div>
-          <div className="text-xs font-semibold text-text-muted">
+          <div className="text-caption font-semibold text-text-muted">
             Bước 4: Chọn Cỗ máy AI (Model Engine)
           </div>
           <div className="text-title font-extrabold text-text flex items-center gap-2">
@@ -93,7 +93,7 @@ export function ModelSelectorCard({
           </div>
         </div>
 
-        <div className="text-xs text-text-muted">
+        <div className="text-caption text-text-muted">
           Đang sử dụng:{" "}
           <strong className="text-primary font-bold">
             {AI_CONTENT_MODELS.find((m) => m.id === selectedProvider)?.name || selectedProvider}
@@ -165,7 +165,7 @@ export function ModelSelectorCard({
       {/* Thanh chốt hạ hành động sinh bài */}
       {onGenerate && (
         <div className="pt-3 border-t border-border flex flex-col sm:flex-row items-center justify-between gap-3">
-          <div className="text-xs text-text-muted">
+          <div className="text-caption text-text-muted">
             {(selectedChannelsCount ?? 0) === 0 ? (
               <span className="text-warning font-semibold flex items-center gap-1">
                 ⚠️ Vui lòng chọn ít nhất 1 kênh mạng xã hội ở Bước 3 để sinh bài viết.

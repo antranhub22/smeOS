@@ -1,5 +1,6 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
 import React from "react"
 import { InfoTip } from "@/components/ui/info-tip"
 import { IconTile, type IconTone } from "@/components/ui/app-icon"
@@ -40,13 +41,13 @@ function ModuleCard({ module, isDev, onOpen }: ModuleCardProps) {
       />
       <span className="text-caption font-semibold text-text-muted">Mục tiêu {module.order}</span>
       <h3 className="text-body-sm sm:text-title-sm font-bold leading-snug text-text mt-0.5">
-        <button
+        <Button variant="ghost"
           type="button"
           onClick={() => onOpen(module.key)}
-          className="after:absolute after:inset-0 after:rounded-2xl after:content-[''] focus-visible:outline-none focus-visible:after:ring-2 focus-visible:after:ring-ring group-hover:text-primary transition-colors cursor-pointer"
+          className="h-auto p-0 font-[inherit] gap-0 after:absolute after:inset-0 after:rounded-2xl after:content-[''] focus-visible:outline-none focus-visible:after:ring-2 focus-visible:after:ring-ring group-hover:text-primary transition-colors cursor-pointer"
         >
           {module.name}
-        </button>
+        </Button>
       </h3>
       <span className="mt-1 sm:mt-2 text-caption text-text-muted">
         {readyAssets > 0 ? `${readyAssets} ấn phẩm · ` : ""}
@@ -78,13 +79,13 @@ function StoreOperationsCard({
       />
       <span className="text-caption font-semibold text-text-muted">Khu vận hành</span>
       <h3 className="text-body-sm sm:text-title-sm font-bold leading-snug text-text mt-0.5">
-        <button
+        <Button variant="ghost"
           type="button"
           onClick={() => onOpen(section.key)}
-          className="after:absolute after:inset-0 after:rounded-2xl after:content-[''] focus-visible:outline-none focus-visible:after:ring-2 focus-visible:after:ring-ring group-hover:text-primary transition-colors cursor-pointer"
+          className="h-auto p-0 font-[inherit] gap-0 after:absolute after:inset-0 after:rounded-2xl after:content-[''] focus-visible:outline-none focus-visible:after:ring-2 focus-visible:after:ring-ring group-hover:text-primary transition-colors cursor-pointer"
         >
           {section.name}
-        </button>
+        </Button>
       </h3>
       <span className="mt-1 sm:mt-2 text-caption text-text-muted">
         {section.groups.length} nhóm · {totalTools} công cụ

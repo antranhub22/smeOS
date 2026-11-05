@@ -112,19 +112,19 @@ export function UseAssetForm({
             const info = DESTINATION_INFO[dest] ?? { label: dest, desc: "" }
             const isSelected = destination === dest
             return (
-              <button
+              <Button variant="outline"
                 type="button"
                 key={dest}
                 onClick={() => handleDestinationChange(dest)}
-                className={`rounded-2xl p-3 text-left cursor-pointer transition-all border bg-surface ${
+                className={`justify-start font-[inherit] gap-0 rounded-2xl p-3 text-left cursor-pointer transition-all border bg-surface hover:bg-surface ${
                   isSelected
-                    ? "border-primary bg-selected ring-1 ring-primary"
+                    ? "border-primary bg-selected ring-1 ring-primary hover:bg-selected"
                     : "border-border hover:border-text-muted/40"
                 }`}
               >
                 <div className="font-bold text-body-sm text-text">{info.label}</div>
                 <div className="text-caption text-text-muted mt-0.5 line-clamp-2">{info.desc}</div>
-              </button>
+              </Button>
             )
           })}
         </div>
@@ -140,18 +140,18 @@ export function UseAssetForm({
             const def = getCtaDefinition(cta)
             const isSelected = ctaCode === cta
             return (
-              <button
+              <Button variant="outline"
                 type="button"
                 key={cta}
                 onClick={() => setCtaCode(cta)}
-                className={`p-2 rounded-xl text-left border text-caption cursor-pointer transition-all ${
+                className={`justify-start gap-0 p-2 rounded-xl text-left border text-caption cursor-pointer transition-all ${
                   isSelected
-                    ? "border-primary bg-selected font-bold text-primary"
+                    ? "border-primary bg-selected font-bold text-primary hover:bg-selected"
                     : "border-border text-text hover:bg-surface-alt"
                 }`}
               >
                 <div>{def?.label ?? cta}</div>
-              </button>
+              </Button>
             )
           })}
         </div>

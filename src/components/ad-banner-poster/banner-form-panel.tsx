@@ -1,5 +1,6 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
 import React, { useState } from "react"
 import { Zap } from "@/components/ui/icon-set/zap"
 import { SlidersHorizontal } from "@/components/ui/icon-set/sliders-horizontal"
@@ -57,31 +58,31 @@ export function BannerFormPanel({
     <div className="rounded-xl border border-border bg-surface p-4 sm:p-5 shadow-sm space-y-4">
       {/* ── Mode Switcher Tabs ───────────────────────────────────────── */}
       <div className="flex items-center p-1 rounded-xl bg-surface-alt border border-border">
-        <button
+        <Button variant="ghost"
           type="button"
           onClick={() => setFormMode("AUTO")}
           className={`flex-1 py-1.5 px-3 rounded-lg text-caption font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
             formMode === "AUTO"
-              ? "bg-primary text-primary-foreground shadow-sm"
+              ? "bg-primary text-primary-foreground shadow-sm hover:bg-primary"
               : "text-text-muted hover:text-text"
           }`}
         >
           <Zap className="h-3.5 w-3.5" />
           <span>Tạo tự động</span>
-        </button>
+        </Button>
 
-        <button
+        <Button variant="ghost"
           type="button"
           onClick={() => setFormMode("MANUAL")}
           className={`flex-1 py-1.5 px-3 rounded-lg text-caption font-bold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
             formMode === "MANUAL"
-              ? "bg-primary text-primary-foreground shadow-sm"
+              ? "bg-primary text-primary-foreground shadow-sm hover:bg-primary"
               : "text-text-muted hover:text-text"
           }`}
         >
           <SlidersHorizontal className="h-3.5 w-3.5" />
           <span>Tùy biến chi tiết</span>
-        </button>
+        </Button>
       </div>
 
       {/* ── Active Panel Render ──────────────────────────────────────── */}

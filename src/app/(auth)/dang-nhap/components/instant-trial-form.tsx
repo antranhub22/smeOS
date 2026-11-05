@@ -109,14 +109,14 @@ export function InstantTrialForm({ onSwitchToLogin }: InstantTrialFormProps) {
           {allIndustries.map((ind) => {
             const isSelected = ind.key === industryKey
             return (
-              <button
+              <Button variant="outline"
                 type="button"
                 key={ind.key}
                 onClick={() => setIndustryKey(ind.key)}
-                className={`cursor-pointer flex flex-col items-start p-3 rounded-xl border text-left transition-all ${
+                className={`justify-start font-[inherit] gap-0 cursor-pointer flex flex-col items-start p-3 rounded-xl border text-left transition-all ${
                   isSelected
-                    ? "border-primary bg-primary/10 ring-2 ring-primary/30 shadow-xs"
-                    : "border-border bg-surface-alt/60 hover:border-primary/50"
+                    ? "border-primary bg-primary/10 ring-2 ring-primary/30 shadow-xs hover:bg-primary/10"
+                    : "border-border bg-surface-alt/60 hover:border-primary/50 hover:bg-surface-alt/60"
                 }`}
               >
                 <div className="flex items-center justify-between w-full mb-1">
@@ -126,7 +126,7 @@ export function InstantTrialForm({ onSwitchToLogin }: InstantTrialFormProps) {
                 <p className="text-caption text-text-muted line-clamp-2 leading-relaxed">
                   {ind.description}
                 </p>
-              </button>
+              </Button>
             )
           })}
         </div>

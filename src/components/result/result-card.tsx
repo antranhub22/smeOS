@@ -202,10 +202,10 @@ export function ResultCard({
       {/* Zone 3: Quality indicators */}
       {quality && (
         <div>
-          <button
+          <Button variant="ghost"
             type="button"
             onClick={() => setExpandedQuality(!expandedQuality)}
-            className="flex w-full cursor-pointer items-center justify-between rounded-lg bg-surface-alt px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
+            className="font-[inherit] gap-0 flex w-full cursor-pointer items-center justify-between rounded-lg bg-surface-alt px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary hover:bg-surface-alt"
           >
             <span className="flex items-center gap-2 text-body-sm font-bold text-text">
               <span className={cn("h-2 w-2 flex-shrink-0 rounded-full", meta.dot)} />
@@ -217,7 +217,7 @@ export function ResultCard({
             ) : (
               <ChevronDown size={14} className="text-text-muted" />
             )}
-          </button>
+          </Button>
           {expandedQuality && (
             <div className="mt-1.5 rounded-lg bg-surface-alt px-3 py-2 text-meta text-text-muted">
               {quality.score != null && (
