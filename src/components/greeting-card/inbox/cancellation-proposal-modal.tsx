@@ -1,5 +1,6 @@
 "use client"
 
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Textarea } from "@/components/ui/textarea"
 import { Input } from "@/components/ui/input"
 import React, { useState } from "react"
@@ -110,8 +111,8 @@ export function CancellationProposalModal({
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-3.5">
           <div>
-            <label className="block text-body-sm font-bold text-text mb-1.5">Hình thức đề xuất</label>
-            <div className="flex flex-col gap-2">
+            <span id="cancellation-type-label" className="block text-body-sm font-bold text-text mb-1.5">Hình thức đề xuất</span>
+            <RadioGroup aria-labelledby="cancellation-type-label" value={type} onValueChange={(v) => handleTypeChange(v as CancellationType)} className="flex flex-col gap-2">
               {(["CANCEL_ONLY", "FULL_REFUND", "PARTIAL_REFUND"] as CancellationType[]).map((t) => (
                 <label
                   key={t}
@@ -119,17 +120,11 @@ export function CancellationProposalModal({
                     type === t ? "border-primary bg-primary/5 font-semibold text-text" : "border-border text-text-muted"
                   }`}
                 >
-                  <input
-                    type="radio"
-                    name="cancellation-type"
-                    value={t}
-                    checked={type === t}
-                    onChange={() => handleTypeChange(t)}
-                  />
+                  <RadioGroupItem value={t} />
                   <span>{CANCELLATION_TYPE_LABEL[t]}</span>
                 </label>
               ))}
-            </div>
+            </RadioGroup>
           </div>
 
           {type !== "CANCEL_ONLY" && (

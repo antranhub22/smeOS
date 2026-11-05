@@ -1,5 +1,6 @@
 "use client"
 
+import { Checkbox } from "@/components/ui/checkbox"
 import { Input } from "@/components/ui/input"
 import React from "react"
 import { Timer, ArrowDownLeft } from "@/components/ui/icons"
@@ -71,10 +72,9 @@ export function CatalogStepTimeoutOverride({ storePolicy, override, onChange }: 
         </h4>
         <div className="flex items-center gap-2">
           <label className="flex items-center gap-2 text-caption font-bold text-text cursor-pointer">
-            <input
-              type="checkbox"
+            <Checkbox
               checked={!isCustom}
-              onChange={(e) => handleToggleMode(!e.target.checked)}
+              onCheckedChange={(checked) => handleToggleMode(!(checked === true))}
               className="rounded border-border text-primary focus:ring-primary"
             />
             <span>Kế thừa mặc định từ Hồ sơ tiệm</span>
@@ -137,10 +137,9 @@ export function CatalogStepTimeoutOverride({ storePolicy, override, onChange }: 
           {/* 1. Hủy nếu không mở link */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-2.5 rounded-lg border border-border bg-surface">
             <label className="flex items-center gap-2 text-caption font-bold text-text cursor-pointer">
-              <input
-                type="checkbox"
+              <Checkbox
                 checked={activeUnopened}
-                onChange={(e) => setField("autoCancelUnopened", e.target.checked)}
+                onCheckedChange={(checked) => setField("autoCancelUnopened", (checked === true))}
                 className="rounded border-border text-primary focus:ring-primary"
               />
               <span>1. Tự hủy nếu không mở link</span>
@@ -164,10 +163,9 @@ export function CatalogStepTimeoutOverride({ storePolicy, override, onChange }: 
           {/* 2. Hủy nếu không chọn mẫu */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-2.5 rounded-lg border border-border bg-surface">
             <label className="flex items-center gap-2 text-caption font-bold text-text cursor-pointer">
-              <input
-                type="checkbox"
+              <Checkbox
                 checked={activeBrowsing}
-                onChange={(e) => setField("autoCancelBrowsing", e.target.checked)}
+                onCheckedChange={(checked) => setField("autoCancelBrowsing", (checked === true))}
                 className="rounded border-border text-primary focus:ring-primary"
               />
               <span>2. Tự hủy nếu không chọn mẫu</span>
@@ -191,10 +189,9 @@ export function CatalogStepTimeoutOverride({ storePolicy, override, onChange }: 
           {/* 3. Hủy nếu chưa cọc */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-2.5 rounded-lg border border-border bg-surface">
             <label className="flex items-center gap-2 text-caption font-bold text-text cursor-pointer">
-              <input
-                type="checkbox"
+              <Checkbox
                 checked={activeUnpaid}
-                onChange={(e) => setField("autoCancelUnpaid", e.target.checked)}
+                onCheckedChange={(checked) => setField("autoCancelUnpaid", (checked === true))}
                 className="rounded border-border text-primary focus:ring-primary"
               />
               <span>3. Tự hủy nếu chưa cọc / chuyển khoản</span>
@@ -218,10 +215,9 @@ export function CatalogStepTimeoutOverride({ storePolicy, override, onChange }: 
           {/* 4. Tự duyệt ảnh */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 p-2.5 rounded-lg border border-border bg-surface">
             <label className="flex items-center gap-2 text-caption font-bold text-text cursor-pointer">
-              <input
-                type="checkbox"
+              <Checkbox
                 checked={activePhotoApprove}
-                onChange={(e) => setField("autoApprovePhotoOnTimeout", e.target.checked)}
+                onCheckedChange={(checked) => setField("autoApprovePhotoOnTimeout", (checked === true))}
                 className="rounded border-border text-primary focus:ring-primary"
               />
               <span>4. Tự duyệt ảnh thành phẩm nếu khách im lặng</span>

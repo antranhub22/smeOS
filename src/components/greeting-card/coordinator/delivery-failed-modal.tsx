@@ -1,5 +1,7 @@
 "use client"
 
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import { Checkbox } from "@/components/ui/checkbox"
 import { Textarea } from "@/components/ui/textarea"
 import React, { useState } from "react"
 import { PackageX } from "@/components/ui/icons"
@@ -47,12 +49,14 @@ export function DeliveryFailedModal({ orderId, orderCode, onClose, onDone }: { o
 
         <fieldset className="flex flex-col gap-2" disabled={busy}>
           <legend className="text-body-sm font-bold text-text mb-1">Lý do</legend>
+          <RadioGroup aria-label="Lý do" value={reason} onValueChange={(v) => setReason(v as DeliveryFailureReason)} className="flex flex-col gap-2">
           {DELIVERY_FAILURE_REASONS.map((r) => (
             <label key={r} className={`flex min-h-11 cursor-pointer items-center gap-2 rounded-xl border px-3 py-2 text-body-sm ${reason === r ? "border-primary bg-primary/5" : "border-border"}`}>
-              <input type="radio" name="delivery-failed-reason" checked={reason === r} onChange={() => setReason(r)} />
+              <RadioGroupItem value={r} />
               <span>{DELIVERY_FAILURE_LABEL[r]}</span>
             </label>
           ))}
+          </RadioGroup>
         </fieldset>
 
         <label className="sr-only" htmlFor="delivery-failed-note">Ghi chú</label>
@@ -61,7 +65,7 @@ export function DeliveryFailedModal({ orderId, orderCode, onClose, onDone }: { o
           className="w-full rounded-xl border border-border bg-surface-muted p-3 text-body-sm text-text resize-none focus:outline-none focus:ring-2 focus:ring-primary/40" />
 
         <label className="flex min-h-11 items-start gap-2 text-body-sm text-text">
-          <input type="checkbox" checked={chargeFee} onChange={(e) => setChargeFee(e.target.checked)} className="mt-1" />
+          <Checkbox checked={chargeFee} onCheckedChange={(checked) => setChargeFee((checked === true))} className="mt-1" />
           <span>Tính phí giao lại theo cài đặt của tiệm <span className="text-text-muted">(bỏ chọn nếu lỗi do cửa hàng / shipper)</span></span>
         </label>
 

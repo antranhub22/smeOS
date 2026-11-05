@@ -1,5 +1,6 @@
 "use client"
 
+import { Checkbox } from "@/components/ui/checkbox"
 import { Input } from "@/components/ui/input"
 import React, { useState } from "react"
 import { Bell, Loader2, Save, ShieldCheck } from "@/components/ui/icons"
@@ -99,10 +100,9 @@ export function StaffNotifySettings() {
         </div>
 
         <label className="relative inline-flex cursor-pointer items-center">
-          <input
-            type="checkbox"
+          <Checkbox
             checked={isEnabled}
-            onChange={(e) => setEnabled(e.target.checked)}
+            onCheckedChange={(checked) => setEnabled((checked === true))}
             className="peer sr-only"
           />
           <div className="h-6 w-11 rounded-full bg-surface-muted peer-checked:bg-primary peer-focus:outline-none after:absolute after:left-[2px] after:top-[2px] after:h-5 after:w-5 after:rounded-full after:bg-white after:transition-all after:content-[''] peer-checked:after:translate-x-full" />
@@ -176,10 +176,9 @@ export function StaffNotifySettings() {
                 const checked = activeEvents[evt] !== false
                 return (
                   <label key={evt} className="flex cursor-pointer items-center gap-2 rounded-lg border border-border bg-bg p-2.5">
-                    <input
-                      type="checkbox"
+                    <Checkbox
                       checked={checked}
-                      onChange={() => toggleEvent(evt)}
+                      onCheckedChange={() => toggleEvent(evt)}
                       className="rounded border-border text-primary focus:ring-primary"
                     />
                     <span className="text-body-sm text-text">{STAFF_NOTIFY_EVENT_LABELS[evt]}</span>

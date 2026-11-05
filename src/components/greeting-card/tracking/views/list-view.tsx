@@ -1,5 +1,6 @@
 "use client"
 
+import { Checkbox } from "@/components/ui/checkbox"
 import React from "react"
 import { ArrowDown, ArrowUp } from "@/components/ui/icons"
 import { usePagedList } from "@/components/greeting-card/greeting-api"
@@ -46,8 +47,8 @@ export function ListView({ qs, state, onChange, onOpen, onDetail, view = "list" 
           <div className="mt-2 flex flex-wrap gap-3">
             {listColumns.map((c) => (
               <label key={c.id} className="flex items-center gap-1.5">
-                <input type="checkbox" checked={state.columns.includes(c.id)}
-                  onChange={(e) => onChange({ columns: e.target.checked ? [...state.columns, c.id] : state.columns.filter((x) => x !== c.id) })} />
+                <Checkbox checked={state.columns.includes(c.id)}
+                  onCheckedChange={(checked) => onChange({ columns: (checked === true) ? [...state.columns, c.id] : state.columns.filter((x) => x !== c.id) })} />
                 {c.label}
               </label>
             ))}

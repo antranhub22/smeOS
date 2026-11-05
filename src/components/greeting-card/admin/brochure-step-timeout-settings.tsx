@@ -1,5 +1,6 @@
 "use client"
 
+import { Checkbox } from "@/components/ui/checkbox"
 import { Input } from "@/components/ui/input"
 import React, { useState } from "react"
 import { Timer, CheckCircle2, AlertCircle } from "@/components/ui/icons"
@@ -74,11 +75,9 @@ export function BrochureStepTimeoutSettings() {
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 rounded-xl border border-border bg-surface-alt">
             <div className="space-y-0.5">
               <label className="flex items-center gap-2 text-body-sm font-bold text-text cursor-pointer">
-                <input
-                  type="checkbox"
+                <Checkbox
                   checked={current.autoCancelUnopened}
-                  onChange={(e) =>
-                    setPolicy({ ...current, autoCancelUnopened: e.target.checked })
+                  onCheckedChange={(checked) => setPolicy({ ...current, autoCancelUnopened: (checked === true) })
                   }
                   className="rounded border-border text-primary focus:ring-primary"
                 />
@@ -114,11 +113,9 @@ export function BrochureStepTimeoutSettings() {
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 rounded-xl border border-border bg-surface-alt">
             <div className="space-y-0.5">
               <label className="flex items-center gap-2 text-body-sm font-bold text-text cursor-pointer">
-                <input
-                  type="checkbox"
+                <Checkbox
                   checked={current.autoCancelBrowsing}
-                  onChange={(e) =>
-                    setPolicy({ ...current, autoCancelBrowsing: e.target.checked })
+                  onCheckedChange={(checked) => setPolicy({ ...current, autoCancelBrowsing: (checked === true) })
                   }
                   className="rounded border-border text-primary focus:ring-primary"
                 />
@@ -154,11 +151,9 @@ export function BrochureStepTimeoutSettings() {
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 rounded-xl border border-border bg-surface-alt">
             <div className="space-y-0.5">
               <label className="flex items-center gap-2 text-body-sm font-bold text-text cursor-pointer">
-                <input
-                  type="checkbox"
+                <Checkbox
                   checked={current.autoCancelUnpaid}
-                  onChange={(e) =>
-                    setPolicy({ ...current, autoCancelUnpaid: e.target.checked })
+                  onCheckedChange={(checked) => setPolicy({ ...current, autoCancelUnpaid: (checked === true) })
                   }
                   className="rounded border-border text-primary focus:ring-primary"
                 />
@@ -194,11 +189,9 @@ export function BrochureStepTimeoutSettings() {
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 rounded-xl border border-border bg-surface-alt">
             <div className="space-y-0.5">
               <label className="flex items-center gap-2 text-body-sm font-bold text-text cursor-pointer">
-                <input
-                  type="checkbox"
+                <Checkbox
                   checked={current.autoApprovePhotoOnTimeout}
-                  onChange={(e) =>
-                    setPolicy({ ...current, autoApprovePhotoOnTimeout: e.target.checked })
+                  onCheckedChange={(checked) => setPolicy({ ...current, autoApprovePhotoOnTimeout: (checked === true) })
                   }
                   className="rounded border-border text-primary focus:ring-primary"
                 />

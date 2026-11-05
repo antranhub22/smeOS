@@ -1,5 +1,6 @@
 "use client"
 
+import { Checkbox } from "@/components/ui/checkbox"
 import { Input } from "@/components/ui/input"
 import React, { useState } from "react"
 import { BellRing, Loader2, Save, Send } from "@/components/ui/icons"
@@ -87,7 +88,7 @@ export function BrochureNotifySettings() {
           <h3 className="text-title-sm font-extrabold text-text">Thông báo khách (Zalo / SMS)</h3>
         </div>
         <label className="flex items-center gap-2 text-body-sm font-bold">
-          <input type="checkbox" checked={on} onChange={(e) => setEnabled(e.target.checked)} /> Bật
+          <Checkbox checked={on} onCheckedChange={(checked) => setEnabled((checked === true))} /> Bật
         </label>
       </div>
 

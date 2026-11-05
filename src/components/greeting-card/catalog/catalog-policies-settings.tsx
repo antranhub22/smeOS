@@ -1,5 +1,7 @@
 "use client"
 
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import { Checkbox } from "@/components/ui/checkbox"
 import { Input } from "@/components/ui/input"
 import React, { useState } from "react"
 import { Gift, ShieldCheck, FileText, Check, Loader2 } from "@/components/ui/icons"
@@ -147,10 +149,9 @@ export function CatalogPoliciesSettings({ catalogId, currentFilters, onSaved }: 
             <span>Ưu đãi áp dụng ({selectedPromos.length}/{policies.promotions.length})</span>
           </h4>
           <label className="flex items-center gap-2 cursor-pointer text-caption font-semibold text-text">
-            <input
-              type="checkbox"
+            <Checkbox
               checked={allowPromoChoice}
-              onChange={(e) => setAllowPromoChoice(e.target.checked)}
+              onCheckedChange={(checked) => setAllowPromoChoice((checked === true))}
               className="rounded border-border text-primary focus:ring-primary"
             />
             <span>Cho phép khách chọn 01 ưu đãi khi đặt hàng</span>
@@ -247,10 +248,9 @@ export function CatalogPoliciesSettings({ catalogId, currentFilters, onSaved }: 
       {/* PHỤ PHÍ NGÀY LỄ — giờ chốt & số đơn tối đa ngày lễ áp cả tiệm, phụ phí chỉ khi bộ sưu tập bật */}
       <div className="space-y-2 pt-3 border-t border-border">
         <label className="flex items-center gap-2 cursor-pointer text-body-sm font-extrabold text-text">
-          <input
-            type="checkbox"
+          <Checkbox
             checked={applyHolidaySurcharge}
-            onChange={(e) => setApplyHolidaySurcharge(e.target.checked)}
+            onCheckedChange={(checked) => setApplyHolidaySurcharge((checked === true))}
             className="rounded border-border text-primary focus:ring-primary"
           />
           <span>Áp dụng phụ phí ngày lễ cho bộ sưu tập này</span>
@@ -297,33 +297,20 @@ export function CatalogPoliciesSettings({ catalogId, currentFilters, onSaved }: 
           <span>Ảnh chụp chuyển khoản</span>
         </h4>
         <div className="flex flex-col gap-2">
+          <RadioGroup aria-label="Bắt buộc ảnh chuyển khoản" value={requirePaymentProofOverride === null ? "__default" : String(requirePaymentProofOverride)} onValueChange={(v) => setRequirePaymentProofOverride(v === "__default" ? null : v === "true")} className="flex flex-col gap-2">
           <label className="flex items-center gap-2 cursor-pointer text-body-sm">
-            <input
-              type="radio"
-              name="require-payment-proof-override"
-              checked={requirePaymentProofOverride === null}
-              onChange={() => setRequirePaymentProofOverride(null)}
-            />
+            <RadioGroupItem value={"__default"} />
             <span className="font-semibold text-text">Theo chính sách tiệm (Mặc định)</span>
           </label>
           <label className="flex items-center gap-2 cursor-pointer text-body-sm">
-            <input
-              type="radio"
-              name="require-payment-proof-override"
-              checked={requirePaymentProofOverride === true}
-              onChange={() => setRequirePaymentProofOverride(true)}
-            />
+            <RadioGroupItem value={"true"} />
             <span className="font-semibold text-text">Bắt buộc tải ảnh chuyển khoản</span>
           </label>
           <label className="flex items-center gap-2 cursor-pointer text-body-sm">
-            <input
-              type="radio"
-              name="require-payment-proof-override"
-              checked={requirePaymentProofOverride === false}
-              onChange={() => setRequirePaymentProofOverride(false)}
-            />
+            <RadioGroupItem value={"false"} />
             <span className="font-semibold text-text">Không bắt buộc tải ảnh (Cho phép bỏ qua)</span>
           </label>
+          </RadioGroup>
         </div>
         <p className="text-caption text-text-muted">
           Áp dụng cho khách xác nhận chuyển khoản đặt cọc và thanh toán phần còn lại của bộ sưu tập này.

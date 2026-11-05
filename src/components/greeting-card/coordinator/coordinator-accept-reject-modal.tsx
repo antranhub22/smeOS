@@ -1,5 +1,6 @@
 "use client"
 
+import { Checkbox } from "@/components/ui/checkbox"
 import { Textarea } from "@/components/ui/textarea"
 import React, { useState } from "react"
 import { CheckCircle2, ShieldCheck, XCircle } from "@/components/ui/icons"
@@ -127,7 +128,7 @@ export function CoordinatorAcceptRejectModal({
             />
             {autoMode && (
               <label className="flex items-center gap-2 text-body-sm text-text">
-                <input type="checkbox" checked={manualDispatch} onChange={(e) => setManualDispatch(e.target.checked)} />
+                <Checkbox checked={manualDispatch} onCheckedChange={(checked) => setManualDispatch((checked === true))} />
                 Tự chọn cửa hàng cho đơn này
               </label>
             )}

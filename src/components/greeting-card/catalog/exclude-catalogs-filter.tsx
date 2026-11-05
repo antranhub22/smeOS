@@ -1,5 +1,6 @@
 "use client"
 
+import { Checkbox } from "@/components/ui/checkbox"
 import { useState } from "react"
 import { Layers, Loader2 } from "@/components/ui/icons"
 import { useApi } from "@/components/greeting-card/greeting-api"
@@ -71,7 +72,7 @@ export function ExcludeCatalogsFilter({ currentCatalogId, selected, onChange, lo
               {catalogs.map((c) => (
                 <li key={c.id}>
                   <label className="flex min-h-9 cursor-pointer items-center gap-2 rounded-lg px-1.5 text-body-sm text-text hover:bg-surface-muted">
-                    <input type="checkbox" checked={selected.includes(c.id)} onChange={() => toggle(c.id)} className="h-4 w-4 accent-primary" />
+                    <Checkbox checked={selected.includes(c.id)} onCheckedChange={() => toggle(c.id)} className="h-4 w-4 accent-primary" />
                     <span className="flex-1 truncate">{c.name}</span>
                     {c._count && <span className="text-caption text-text-muted">{c._count.items} mẫu</span>}
                   </label>

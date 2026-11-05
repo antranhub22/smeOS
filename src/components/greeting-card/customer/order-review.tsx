@@ -1,5 +1,6 @@
 "use client"
 
+import { Checkbox } from "@/components/ui/checkbox"
 import { ArrowLeft, Check, Gift, ShieldCheck, FileText } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import type { BrochureQuote } from "@/modules/greeting-card/domain/brochure-pricing"
@@ -160,10 +161,9 @@ export function OrderReview(props: {
 
       {/* CHECKBOX XÁC NHẬN THỎA THUẬN (SPEC #2 D, #5) */}
       {needsTerms && <label className="flex items-start gap-2.5 p-3 rounded-xl border border-border bg-bg cursor-pointer select-none">
-        <input
-          type="checkbox"
+        <Checkbox
           checked={termsAgreed}
-          onChange={(e) => setTermsAgreed(e.target.checked)}
+          onCheckedChange={(checked) => setTermsAgreed((checked === true))}
           className="mt-0.5 rounded border-border text-primary focus:ring-primary w-4 h-4"
         />
         <span className="text-caption leading-relaxed text-text">

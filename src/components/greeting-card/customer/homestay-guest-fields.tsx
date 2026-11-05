@@ -1,5 +1,6 @@
 "use client"
 
+import { Checkbox } from "@/components/ui/checkbox"
 import { Input } from "@/components/ui/input"
 import React from "react"
 import { Users } from "@/components/ui/icons"
@@ -46,10 +47,9 @@ export function HomestayGuestFields({
 
         {!hideSelfToggle && (
         <label className="flex items-center gap-1.5 cursor-pointer text-caption font-bold text-primary">
-          <input
-            type="checkbox"
+          <Checkbox
             checked={isSelfBooking}
-            onChange={(e) => onSelfBookingToggle(e.target.checked)}
+            onCheckedChange={(checked) => onSelfBookingToggle((checked === true))}
             className="accent-primary rounded-sm"
           />
           <span>Tôi là người nhận phòng</span>

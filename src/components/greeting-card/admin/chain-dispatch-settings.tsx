@@ -1,5 +1,6 @@
 "use client"
 
+import { Checkbox } from "@/components/ui/checkbox"
 import React, { useState } from "react"
 import {
   Sliders,
@@ -139,10 +140,9 @@ export function ChainDispatchSettings() {
             Điều phối vẫn có thể chọn thủ công cho từng đơn lúc xác nhận tiền.
           </span>
         </div>
-        <input
-          type="checkbox"
+        <Checkbox
           checked={policy.enabled}
-          onChange={(e) => handleUpdate("enabled", e.target.checked)}
+          onCheckedChange={(checked) => handleUpdate("enabled", (checked === true))}
           className="w-5 h-5 accent-primary cursor-pointer rounded"
         />
       </div>
@@ -162,10 +162,9 @@ export function ChainDispatchSettings() {
             Khi bật (Khuyên dùng): Ngay khi Shop bấm nhận đơn, hệ thống tự động xác nhận đơn và chuyển thẳng sang sản xuất (Điều phối không cần bấm duyệt tay). Tắt đi nếu muốn Điều phối phải kiểm duyệt lại một lần nữa.
           </span>
         </div>
-        <input
-          type="checkbox"
+        <Checkbox
           checked={policy.autoConfirmOnBranchCommit}
-          onChange={(e) => handleUpdate("autoConfirmOnBranchCommit", e.target.checked)}
+          onCheckedChange={(checked) => handleUpdate("autoConfirmOnBranchCommit", (checked === true))}
           className="w-5 h-5 accent-primary cursor-pointer rounded"
         />
       </div>
@@ -301,10 +300,9 @@ export function ChainDispatchSettings() {
             <BellRing size={16} className="text-primary" /> Tự động Nhắc việc Đa Kênh Theo Tiến Độ
           </h4>
           <label className="flex items-center gap-2 text-caption cursor-pointer">
-            <input
-              type="checkbox"
+            <Checkbox
               checked={policy.milestoneReminders.enabled}
-              onChange={(e) => handleMilestoneChange("enabled", e.target.checked)}
+              onCheckedChange={(checked) => handleMilestoneChange("enabled", (checked === true))}
               className="w-4 h-4 accent-primary rounded"
             />
             <span className="font-semibold text-text">Bật nhắc việc Bot</span>

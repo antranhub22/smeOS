@@ -1,5 +1,6 @@
 "use client"
 
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import React from "react"
 import type { PublicAppliedPolicies } from "@/modules/greeting-card/domain/store-policy"
 import { customerChoosesPromotion } from "@/modules/greeting-card/domain/order-policies"
@@ -31,20 +32,20 @@ export function PromotionPicker({
         <span>{canChoose ? t("greetingCard.customer.options.promotions.chooseOne", { count: promos.length }) : t("greetingCard.customer.options.promotions.appliedPromo")}</span>
         <span className="text-caption font-normal text-primary">{canChoose && !value ? t("greetingCard.customer.options.promotions.required") : t("greetingCard.customer.options.promotions.onePerOrder")}</span>
       </div>
+      <RadioGroup
+        aria-label={t("greetingCard.customer.options.promotions.appliedPromo")}
+        value={value}
+        onValueChange={(v) => onChange(v as string)}
+        disabled={!canChoose}
+        className="flex flex-col gap-2"
+      >
       {shown.map((p) => (
         <label
           key={p.id}
-          className="flex items-start gap-2.5 text-body-sm text-text bg-bg p-2.5 rounded-lg border border-border cursor-pointer has-[:checked]:border-primary"
+          className={`flex items-start gap-2.5 text-body-sm text-text bg-bg p-2.5 rounded-lg border cursor-pointer ${canChoose && value === p.id ? "border-primary" : "border-border"}`}
         >
           {canChoose && (
-            <input
-              type="radio"
-              name="promotion"
-              value={p.id}
-              checked={value === p.id}
-              onChange={() => onChange(p.id)}
-              className="mt-0.5 accent-primary"
-            />
+            <RadioGroupItem value={p.id} className="mt-0.5" />
           )}
           <span>
             <span className="font-bold text-primary">{p.title}: </span>
@@ -52,6 +53,7 @@ export function PromotionPicker({
           </span>
         </label>
       ))}
+      </RadioGroup>
     </fieldset>
   )
 }

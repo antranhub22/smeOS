@@ -1,5 +1,6 @@
 "use client"
 
+import { Checkbox } from "@/components/ui/checkbox"
 import { Input } from "@/components/ui/input"
 import React from "react"
 import { ORDER_FIELD_MAX } from "@/modules/greeting-card/domain/greeting-card-rules"
@@ -95,11 +96,10 @@ export function BuyerInfoFields({
             sameAsRecipient ? "border-primary/50 bg-primary/5" : "border-border bg-bg hover:border-primary/40"
           }`}
         >
-          <input
+          <Checkbox
             id={`${idPrefix}-sameAsRecipient`}
-            type="checkbox"
             checked={sameAsRecipient}
-            onChange={(e) => onSameAsRecipientChange(e.target.checked)}
+            onCheckedChange={(checked) => onSameAsRecipientChange((checked === true))}
             className="h-5 w-5 shrink-0 accent-primary"
           />
           <span className="min-w-0">

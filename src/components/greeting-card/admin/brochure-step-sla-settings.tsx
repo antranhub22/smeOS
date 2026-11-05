@@ -1,5 +1,6 @@
 "use client"
 
+import { Checkbox } from "@/components/ui/checkbox"
 import { Input } from "@/components/ui/input"
 import React, { useState } from "react"
 import { Timer } from "@/components/ui/icons"
@@ -68,7 +69,7 @@ export function BrochureStepSlaSettings() {
             return (
               <li key={r.stepId} className="flex flex-wrap items-center gap-x-3 gap-y-1 px-3 py-2">
                 <label className="flex min-w-0 flex-1 items-start gap-2">
-                  <input type="checkbox" checked={s.enabled} onChange={(e) => patch(r.stepId, { enabled: e.target.checked })} className="mt-1" />
+                  <Checkbox checked={s.enabled} onCheckedChange={(checked) => patch(r.stepId, { enabled: (checked === true) })} className="mt-1" />
                   <span className="min-w-0">
                     <span className="block text-body-sm font-semibold text-text">{title}</span>
                     <span className="block text-caption text-text-muted">{r.waitingFor} · báo cho {STEP_OWNER_LABEL[r.owner]}</span>

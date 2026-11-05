@@ -1,5 +1,6 @@
 "use client"
 
+import { Checkbox } from "@/components/ui/checkbox"
 import React from "react"
 import { MapPin, Star, Layers } from "@/components/ui/icons"
 const AREA_LABEL: Record<string, string> = {
@@ -79,10 +80,9 @@ export function ChainBranchCard({ branch, isSelected, onToggle }: ChainBranchCar
           </div>
         </div>
 
-        <input
-          type="checkbox"
+        <Checkbox
           checked={isSelected}
-          onChange={() => onToggle(branch.branchId)}
+          onCheckedChange={() => onToggle(branch.branchId)}
           className="rounded border-border text-primary focus:ring-primary h-4 w-4 shrink-0 mt-0.5"
         />
       </div>

@@ -1,5 +1,6 @@
 "use client"
 
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Textarea } from "@/components/ui/textarea"
 import { Input } from "@/components/ui/input"
 import React, { useState } from "react"
@@ -46,7 +47,7 @@ export function DiscountDecision({ requestId, baseTotalVnd, requestedVnd, percen
 
   const option = (value: Choice, label: React.ReactNode) => (
     <label className={`flex min-h-11 cursor-pointer items-center gap-2 rounded-xl border px-3 py-2 text-body-sm ${choice === value ? "border-primary bg-primary/5" : "border-border"}`}>
-      <input type="radio" name={`decision-${requestId}`} checked={choice === value} onChange={() => setChoice(value)} />
+      <RadioGroupItem value={value} />
       <span>{label}</span>
     </label>
   )
@@ -54,6 +55,7 @@ export function DiscountDecision({ requestId, baseTotalVnd, requestedVnd, percen
   return (
     <fieldset className="flex flex-col gap-2" disabled={busy}>
       <legend className="sr-only">Quyết định giảm giá</legend>
+      <RadioGroup aria-label="Quyết định giảm giá" value={choice} onValueChange={(v) => setChoice(v as Choice)} className="flex flex-col gap-2">
       {option("AS_ASKED", <>Duyệt như xin: <strong>{percent ? `${percent}% · ` : ""}{vnd(requestedVnd)}</strong></>)}
       {option("OTHER", (
         <span className="flex flex-wrap items-center gap-2">
@@ -69,6 +71,7 @@ export function DiscountDecision({ requestId, baseTotalVnd, requestedVnd, percen
         </span>
       ))}
       {option("REJECT", "Không duyệt")}
+      </RadioGroup>
       <p className="text-caption text-text-muted">Tối đa {maxPercent}% · giá đơn {vnd(baseTotalVnd)}</p>
       <label className="sr-only" htmlFor={`note-${requestId}`}>Ghi chú cho sale</label>
       <Textarea id={`note-${requestId}`} rows={2} value={note} maxLength={500} onChange={(e) => setNote(e.target.value)}

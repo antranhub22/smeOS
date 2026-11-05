@@ -1,5 +1,6 @@
 "use client"
 
+import { Checkbox } from "@/components/ui/checkbox"
 import React, { useState } from "react"
 import {
   SlidersHorizontal,
@@ -181,10 +182,9 @@ export function BrochureWorkflowSettings() {
                   Bật: Chỉ tài khoản Điều hành mới bấm được &quot;Xác nhận tiền về&quot;. Tắt: Cho phép Điều phối và Sale xác nhận cọc ngay khi thấy bill.
                 </p>
               </div>
-              <input
-                type="checkbox"
+              <Checkbox
                 checked={policy.requireAdminDepositApproval}
-                onChange={(e) => handleToggle("requireAdminDepositApproval", e.target.checked)}
+                onCheckedChange={(checked) => handleToggle("requireAdminDepositApproval", (checked === true))}
                 className="mt-1 h-5 w-5 rounded border-border text-primary focus:ring-primary/20"
               />
             </div>
@@ -212,10 +212,9 @@ export function BrochureWorkflowSettings() {
                   Bật: Phải có ảnh thành phẩm hoàn chỉnh mới cho xuất giao. Tắt: Cho phép bấm &quot;Bỏ qua ảnh&quot; với đơn gấp hoặc khách quen.
                 </p>
               </div>
-              <input
-                type="checkbox"
+              <Checkbox
                 checked={policy.requireFinishedPhoto}
-                onChange={(e) => handleToggle("requireFinishedPhoto", e.target.checked)}
+                onCheckedChange={(checked) => handleToggle("requireFinishedPhoto", (checked === true))}
                 className="mt-1 h-5 w-5 rounded border-border text-primary focus:ring-primary/20"
               />
             </div>
@@ -253,10 +252,9 @@ export function BrochureWorkflowSettings() {
                   Bật: Đơn cọc bắt buộc thu nốt lần 2 mới mở nút Giao Ship. Tắt: Mở nút giao ngay (cho phép thu tiền mặt COD).
                 </p>
               </div>
-              <input
-                type="checkbox"
+              <Checkbox
                 checked={policy.requireFullPaymentBeforeDispatch}
-                onChange={(e) => handleToggle("requireFullPaymentBeforeDispatch", e.target.checked)}
+                onCheckedChange={(checked) => handleToggle("requireFullPaymentBeforeDispatch", (checked === true))}
                 className="mt-1 h-5 w-5 rounded border-border text-primary focus:ring-primary/20"
               />
             </div>
@@ -271,10 +269,9 @@ export function BrochureWorkflowSettings() {
                   Bật: Shipper phải tải ảnh người nhận mới bấm Hoàn tất. Tắt: Cho phép bấm hoàn tất trực tiếp 1 click.
                 </p>
               </div>
-              <input
-                type="checkbox"
+              <Checkbox
                 checked={policy.requireDeliveryProofPhoto}
-                onChange={(e) => handleToggle("requireDeliveryProofPhoto", e.target.checked)}
+                onCheckedChange={(checked) => handleToggle("requireDeliveryProofPhoto", (checked === true))}
                 className="mt-1 h-5 w-5 rounded border-border text-primary focus:ring-primary/20"
               />
             </div>
@@ -290,10 +287,9 @@ export function BrochureWorkflowSettings() {
                 </p>
               </div>
               <div className="flex items-center gap-2">
-                <input
-                  type="checkbox"
+                <Checkbox
                   checked={policy.allowSlaEscalation}
-                  onChange={(e) => handleToggle("allowSlaEscalation", e.target.checked)}
+                  onCheckedChange={(checked) => handleToggle("allowSlaEscalation", (checked === true))}
                   className="h-5 w-5 rounded border-border text-primary focus:ring-primary/20"
                 />
                 {policy.allowSlaEscalation && (

@@ -1,5 +1,7 @@
 "use client"
 
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import { Checkbox } from "@/components/ui/checkbox"
 import { Textarea } from "@/components/ui/textarea"
 import React, { useState } from "react"
 import { Globe2, Lock, CheckCircle2, AlertCircle, Save, Loader2, Sparkles, Send, Clock } from "@/components/ui/icons"
@@ -131,7 +133,12 @@ export function BrochureLanguageSettings() {
             1. Danh sách ngôn ngữ trên Thẻ Chào
           </label>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+          <RadioGroup
+            aria-label="Ngôn ngữ mặc định"
+            value={policy.defaultLocale}
+            onValueChange={(v) => handleSetDefault(v as typeof policy.defaultLocale)}
+            className="grid grid-cols-1 md:grid-cols-2 gap-3"
+          >
             {/* Tiếng Việt */}
             <div className="p-3.5 rounded-xl border border-border bg-bg flex items-center justify-between">
               <div className="flex items-center gap-3">
@@ -149,17 +156,10 @@ export function BrochureLanguageSettings() {
 
               <div className="flex items-center gap-3">
                 <label className="flex items-center gap-1.5 text-caption cursor-pointer">
-                  <input
-                    type="radio"
-                    name="defaultLocale"
-                    checked={policy.defaultLocale === "vi"}
-                    onChange={() => handleSetDefault("vi")}
-                    className="text-primary focus:ring-primary/20"
-                  />
+                  <RadioGroupItem value="vi" />
                   <span className="font-medium text-text">Mặc định</span>
                 </label>
-                <input
-                  type="checkbox"
+                <Checkbox
                   checked={true}
                   disabled={true}
                   className="h-4 w-4 rounded border-border text-primary cursor-not-allowed opacity-70"
@@ -197,22 +197,15 @@ export function BrochureLanguageSettings() {
               <div className="flex items-center gap-3">
                 {isEnUnlocked && policy.activeLocales.includes("en") && (
                   <label className="flex items-center gap-1.5 text-caption cursor-pointer">
-                    <input
-                      type="radio"
-                      name="defaultLocale"
-                      checked={policy.defaultLocale === "en"}
-                      onChange={() => handleSetDefault("en")}
-                      className="text-primary focus:ring-primary/20"
-                    />
+                    <RadioGroupItem value="en" />
                     <span className="font-medium text-text">Mặc định</span>
                   </label>
                 )}
 
                 {isEnUnlocked ? (
-                  <input
-                    type="checkbox"
+                  <Checkbox
                     checked={policy.activeLocales.includes("en")}
-                    onChange={() => handleToggleLocale("en")}
+                    onCheckedChange={() => handleToggleLocale("en")}
                     className="h-4 w-4 rounded border-border text-primary focus:ring-primary/20 cursor-pointer"
                   />
                 ) : policy.pendingRequest ? (
@@ -237,7 +230,7 @@ export function BrochureLanguageSettings() {
                 )}
               </div>
             </div>
-          </div>
+          </RadioGroup>
         </div>
 
         {/* Tùy chọn hiển thị bộ chuyển đổi ngôn ngữ */}
@@ -249,10 +242,9 @@ export function BrochureLanguageSettings() {
                 Hiển thị nút chọn ngôn ngữ (🇻🇳 VI / 🇬🇧 EN) ở góc trên Thẻ chào để khách có thể linh hoạt đổi ngôn ngữ.
               </p>
             </div>
-            <input
-              type="checkbox"
+            <Checkbox
               checked={policy.enableLanguageSwitcher}
-              onChange={(e) => setDraft({ ...policy, enableLanguageSwitcher: e.target.checked })}
+              onCheckedChange={(checked) => setDraft({ ...policy, enableLanguageSwitcher: (checked === true) })}
               className="h-4 w-4 rounded border-border text-primary focus:ring-primary/20 cursor-pointer mt-1"
             />
           </div>

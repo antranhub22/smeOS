@@ -1,5 +1,6 @@
 "use client"
 
+import { Checkbox } from "@/components/ui/checkbox"
 import { Input } from "@/components/ui/input"
 import React, { useState } from "react"
 import { Receipt } from "@/components/ui/icons"
@@ -58,7 +59,7 @@ export function OrderVatForm({ vat, onSaved }: { vat: OrderVatData; onSaved: (ne
   return (
     <div className="flex flex-col gap-3 rounded-2xl border border-border bg-surface p-4">
       <label className="flex items-center gap-2 text-body-sm font-bold text-text">
-        <input type="checkbox" checked={enabled} onChange={(e) => setEnabled(e.target.checked)} className="h-4 w-4 accent-primary" />
+        <Checkbox checked={enabled} onCheckedChange={(checked) => setEnabled((checked === true))} className="h-4 w-4 accent-primary" />
         <Receipt size={15} className="text-primary" />
         <span>Xuất hoá đơn VAT</span>
       </label>

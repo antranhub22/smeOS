@@ -1,5 +1,7 @@
 "use client"
 
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import { Checkbox } from "@/components/ui/checkbox"
 import { Input } from "@/components/ui/input"
 import React, { useState } from "react"
 import { AlertTriangle, CheckCircle2, Coins, RotateCcw, Save } from "@/components/ui/icons"
@@ -119,17 +121,19 @@ export function CraftFeeSettings() {
       )}
 
       <Group title="Cách tính">
+        <RadioGroup aria-label="Cách tính" value={policy.method} onValueChange={(v) => set("method", v as CraftFeePolicy["method"])} className="flex flex-col gap-2">
         {CRAFT_FEE_METHODS.map((method) => (
           <label key={method} className="flex items-start gap-2.5 cursor-pointer">
-            <input type="radio" name="craft-fee-method" checked={policy.method === method} onChange={() => set("method", method)} className="mt-1 accent-primary" />
+            <RadioGroupItem value={method} className="mt-1" />
             <span>
               <span className="block text-body-sm font-bold text-text">{METHOD_TEXT[method].title}</span>
               <span className="block text-caption text-text-muted">{METHOD_TEXT[method].hint}</span>
             </span>
           </label>
         ))}
+        </RadioGroup>
         <label className="flex items-center gap-2 pt-1 text-body-sm text-text">
-          <input type="checkbox" checked={policy.base === "AFTER_DISCOUNT"} onChange={(e) => set("base", e.target.checked ? "AFTER_DISCOUNT" : "LIST_PRICE")} className="accent-primary" />
+          <Checkbox checked={policy.base === "AFTER_DISCOUNT"} onCheckedChange={(checked) => set("base", (checked === true) ? "AFTER_DISCOUNT" : "LIST_PRICE")} className="accent-primary" />
           Tính trên giá sau khi trừ mã giảm giá (mặc định: giá niêm yết)
         </label>
       </Group>

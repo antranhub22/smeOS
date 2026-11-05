@@ -1,5 +1,6 @@
 "use client"
 
+import { Checkbox } from "@/components/ui/checkbox"
 import { Input } from "@/components/ui/input"
 import React, { useState } from "react"
 import { ViDateInput } from "@/components/greeting-card/customer/vi-date-input"
@@ -112,7 +113,7 @@ export function BrochureHolidaySettings() {
                   <Input aria-label="Tên ngày lễ" value={r.name} maxLength={HOLIDAY_NAME_MAX} placeholder="VD: Valentine" onChange={(e) => patch(i, { name: e.target.value })} className={`${FIELD} flex-1 min-w-40`} />
                   <ViDateInput compact ariaLabel="Ngày" value={r.date} onChange={(date) => patch(i, { date })} wrapperClassName="w-44" className={FIELD} />
                   <label className="flex items-center gap-1.5 text-body-sm text-text">
-                    <input type="checkbox" checked={r.yearly} onChange={(e) => patch(i, { yearly: e.target.checked })} /> Lặp lại hằng năm
+                    <Checkbox checked={r.yearly} onCheckedChange={(checked) => patch(i, { yearly: (checked === true) })} /> Lặp lại hằng năm
                   </label>
                   <button type="button" aria-label={`Xoá ${r.name || "ngày lễ"}`} onClick={() => edit(rows.filter((_, j) => j !== i))} className="ml-auto p-2 rounded-lg text-text-muted hover:text-danger hover:bg-danger-bg">
                     <Trash2 size={16} />

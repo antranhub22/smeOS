@@ -1,5 +1,6 @@
 "use client"
 
+import { Checkbox } from "@/components/ui/checkbox"
 import { Input } from "@/components/ui/input"
 import React, { useState } from "react"
 import { Loader2, Plus, Save, Trash2, Truck } from "@/components/ui/icons"
@@ -240,11 +241,11 @@ export function BrochureShippingSettings() {
           <SlotCapacityFields value={current.capacity} onChange={(capacity) => edit({ ...current, capacity })} />
           <div className="flex flex-col gap-2 border-t border-border pt-3 text-body-sm">
             <label className="flex items-center gap-2 cursor-pointer">
-              <input type="checkbox" checked={current.freeAll} onChange={(e) => edit({ ...current, freeAll: e.target.checked })} className="accent-primary" />
+              <Checkbox checked={current.freeAll} onCheckedChange={(checked) => edit({ ...current, freeAll: (checked === true) })} className="accent-primary" />
               <span><strong>Miễn phí giao hàng cho mọi đơn</strong> (khách không trả phí giao ở mọi khu vực)</span>
             </label>
             <label className="flex items-center gap-2 cursor-pointer">
-              <input type="checkbox" checked={current.vouchers} onChange={(e) => edit({ ...current, vouchers: e.target.checked })} className="accent-primary" />
+              <Checkbox checked={current.vouchers} onCheckedChange={(checked) => edit({ ...current, vouchers: (checked === true) })} className="accent-primary" />
               <span>Cho khách nhập <strong>mã giảm giá</strong> (tắt = ẩn ô nhập mã)</span>
             </label>
           </div>
