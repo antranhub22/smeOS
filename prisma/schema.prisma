@@ -219,6 +219,7 @@ model organizations {
   order_payments                order_payments[]
   order_exceptions              order_exceptions[]
   field_config_overrides        field_config_overrides[]
+  credit_transactions           credit_transactions[]
   owned_field_definitions       field_definitions[]      @relation("field_definition_owner")
   order_info_requests           order_info_requests[]
   order_change_requests         order_change_requests[]
@@ -690,6 +691,37 @@ model job_events {
  * tạo `generation_jobs` (`YC-U3`). Worker không bao giờ ghi bảng này
  * (`YC-U4`).
  */
+/// Sổ cái credit (checklist ALG 10.6): mọi thay đổi `organizations.credit_balance` ghi một dòng cùng
+/// giao dịch — số dư = tổng `amount`. OPENING: số dư lúc bật sổ; TOPUP: nạp mua; GIFT: tặng;
+/// REFUND: hoàn lại (job hỏng, Console hoàn); USAGE: trừ khi dùng (số âm). Chỉ ghi thêm.
+enum credit_transaction_kind {
+  OPENING
+  TOPUP
+  GIFT
+  REFUND
+  USAGE
+}
+
+model credit_transactions {
+  id              String                  @id @default(uuid())
+  organization_id String
+  kind            credit_transaction_kind
+  amount          Int // dương = cộng, âm = trừ
+  balance_after   Int
+  /// AI · SMS · ZNS · CHAT · SUBSCRIPTION — nhóm dịch vụ để báo cáo, null với nạp/tặng
+  service         String?
+  reason          String?
+  /// job_id, mã hoá đơn… để đối soát ngược
+  reference       String?
+  actor_id        String?
+  created_at      DateTime                @default(now())
+
+  organization organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+
+  @@index([organization_id])
+  @@index([organization_id, created_at])
+}
+
 model usage {
   id              String   @id @default(uuid())
   organization_id String

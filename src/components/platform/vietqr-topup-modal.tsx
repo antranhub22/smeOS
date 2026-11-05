@@ -25,6 +25,8 @@ export interface VietQrTopupModalProps {
   onOpenChange: (open: boolean) => void
   orgCode?: string | undefined
   onPaymentSuccess?: ((creditsAdded: number) => void) | undefined
+  /** Có thì xác nhận nạp ghi thật vào sổ cái credit của tổ chức (Console, `N3` — checklist ALG 10.6). */
+  organizationId?: string | undefined
 }
 
 export function VietQrTopupModal({
@@ -32,7 +34,9 @@ export function VietQrTopupModal({
   onOpenChange,
   orgCode = "SHOPHOA",
   onPaymentSuccess,
+  organizationId,
 }: VietQrTopupModalProps) {
+  const [confirmError, setConfirmError] = useState<string | null>(null)
   const [activeTab, setActiveTab] = useState<"CREDITS" | "PLANS">("CREDITS")
   const [selectedTopup, setSelectedTopup] = useState<CreditTopupOption>(CREDIT_TOPUP_OPTIONS[1]!)
   const [selectedPlan, setSelectedPlan] = useState<SubscriptionPlan>(SUBSCRIPTION_PLANS[1]!)
@@ -79,9 +83,21 @@ export function VietQrTopupModal({
     }
   }
 
-  const handleConfirmPaid = () => {
-    setIsSuccess(true)
+  const handleConfirmPaid = async () => {
     const credits = activeTab === "CREDITS" ? selectedTopup.totalCredits : selectedPlan.includedCreditsMonthly
+    if (organizationId && activeTab === "CREDITS") {
+      setConfirmError(null)
+      const res = await fetch(`/api/v1/platform/organizations/${organizationId}/credits`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ kind: "TOPUP", amount: credits, reason: `Chuyển khoản VietQR ${qrData.transferSyntax}` }),
+      }).catch(() => null)
+      if (!res?.ok) {
+        setConfirmError("Chưa ghi được khoản nạp. Kiểm tra quyền nạp credit rồi thử lại.")
+        return
+      }
+    }
+    setIsSuccess(true)
     setTimeout(() => {
       onPaymentSuccess?.(credits)
       onOpenChange(false)
@@ -112,13 +128,13 @@ export function VietQrTopupModal({
         <div className="flex items-center justify-between w-full">
           <div className="flex items-center gap-1.5 text-caption text-text-muted">
             <ShieldCheck size={14} className="text-success" />
-            Xử lý tự động 24/7 · Nạp Credit tức thì sau 30 giây
+            {confirmError ?? "Nhân viên vận hành xác nhận sau khi tiền về tài khoản"}
           </div>
           <div className="flex items-center gap-2">
             <Button
               variant="primary"
               disabled={isSuccess}
-              onClick={handleConfirmPaid}
+              onClick={() => void handleConfirmPaid()}
             >
               {isSuccess ? (
                 <>

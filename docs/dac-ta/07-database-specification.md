@@ -528,6 +528,28 @@ model usage {
 }
 ```
 
+Sổ cái credit (checklist ALG 10.6): mọi thay đổi `organizations.credit_balance` ghi một dòng `credit_transactions` trong cùng giao dịch, qua `OrganizationRepository` (`tryDeductCredit`/`tryDeductCreditFor` → `USAGE`, `refundCredit` → `REFUND`, `topUpCredit` → `TOPUP`/`GIFT`/`REFUND`, tạo tổ chức có credit khởi tạo → `GIFT`). Số dư luôn bằng tổng `amount`; migration mở sổ ghi một dòng `OPENING` cho số dư đang có. Console nạp/tặng/hoàn qua `POST /platform/organizations/:id/credits` (`N3`, bắt buộc lý do, ghi `platform_audit_logs`).
+
+```prisma
+enum credit_transaction_kind { OPENING  TOPUP  GIFT  REFUND  USAGE }
+
+model credit_transactions {
+  id              String                  @id @default(uuid())
+  organization_id String
+  kind            credit_transaction_kind
+  amount          Int                     // dương = cộng, âm = trừ
+  balance_after   Int
+  service         String?                 // AI · SMS · ZNS · CHAT · SUBSCRIPTION
+  reason          String?
+  reference       String?                 // job_id, mã hoá đơn…
+  actor_id        String?
+  created_at      DateTime                @default(now())
+
+  @@index([organization_id])
+  @@index([organization_id, created_at])
+}
+```
+
 **Một bảng usage duy nhất cho toàn hệ thống.** Mọi module ở cả ba repo ghi vào bảng này, phân biệt bằng `feature`. Không repo nào dựng bảng usage hay credit riêng — tách ra thì không tính được hạn mức trải nghiệm và không xuất được hoá đơn hợp nhất.
 
 **Ghi tại điểm tạo job phía core, không ghi ở worker.** Trình tự trong một giao dịch:

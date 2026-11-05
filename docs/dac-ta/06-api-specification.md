@@ -774,6 +774,8 @@ Chín route dưới đây cũng là console vận hành nền tảng (`PlatformC
 | POST | `/platform/catalogs/:key/values` | `N12` | Thêm giá trị mới. Danh mục CÓ HÀNH VI bắt buộc `behavior` là mã có thật trong `behaviors.ts`; danh mục ĐÓNG từ chối → 400 |
 | PUT | `/platform/organizations/:id/field-overrides` | `N12` | Ghi đè CHỈ áp cho một tổ chức — trường (`target: "field"`) hoặc giá trị danh mục (`target: "catalogValue"`) |
 | GET | `/platform/organizations/:id/field-preview` | `N12` | ĐP-3 3.15 — "tổ chức này sẽ thấy gì" sau khi cộng ghi đè, `?entity=ORDER\|PARTNER`. Dùng chung phép tính với `/field-config` (tenant), chỉ khác ngữ cảnh gọi. CHỈ ĐỌC |
+| GET | `/platform/organizations/:id/credits` | `N1` | Checklist ALG 10.6 — số dư và 50 dòng gần nhất của sổ cái `credit_transactions` |
+| POST | `/platform/organizations/:id/credits` | `N3` | `{ kind: TOPUP\|GIFT\|REFUND, amount, reason }` — nạp/tặng/hoàn có lý do (1–1.000.000 credit), ghi sổ cái và `platform_audit_logs`; tổ chức không có → 404 |
 | GET | `/platform/behaviors` | `N12` | ĐP-3 3.15 — liệt kê mã hành vi có thật trong `field-platform/domain/behaviors.ts` cho một `behavior_kind` (`?kind=…`), để Console gợi ý khi thêm giá trị danh mục CÓ HÀNH VI. CHỈ ĐỌC, không thay luật kiểm ở `upsert-catalog-value.ts` |
 
 ## 22. Phân hệ Nghiên cứu Thị trường & Xu hướng (Market Intelligence Engine, Đợt A mở rộng)

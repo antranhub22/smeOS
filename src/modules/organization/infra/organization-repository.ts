@@ -11,6 +11,7 @@ import type {
 } from "../domain/repositories/organization-repository.interface"
 
 import type { DbClient } from "./db-client"
+import { appendCreditEntry, type CreditEntryKind, type CreditEntryMeta } from "./credit-ledger"
 
 function mapOrganization(org: organizations): OrganizationEntity {
   return {
@@ -93,6 +94,8 @@ export class OrganizationRepository implements IOrganizationRepository {
       data.settings = input.settings as InputJsonValue
     }
     const row = await this.db.organizations.create({ data })
+    // Credit khởi tạo (dùng thử) vào sổ cái như một khoản tặng (checklist ALG 10.6)
+    if (row.credit_balance > 0) await appendCreditEntry(this.db, row.id, "GIFT", row.credit_balance, { reason: "Credit khởi tạo khi mở tài khoản" })
     return mapOrganization(row)
   }
 
@@ -105,14 +108,22 @@ export class OrganizationRepository implements IOrganizationRepository {
    * `QUOTA_EXCEEDED` (422) và toàn bộ giao dịch cha rollback, nên job không
    * bao giờ được tạo khi hạn mức chặn (`YC-U3`).
    */
-  async tryDeductCredit(ctx: TenantContext, cost: number): Promise<boolean> {
+  async tryDeductCredit(ctx: TenantContext, cost: number, meta: CreditEntryMeta = {}): Promise<boolean> {
+    return this.tryDeductCreditFor(ctx.organizationId, cost, { actorId: ctx.userId, ...meta })
+  }
+
+  /** Như `tryDeductCredit` cho đường không có phiên người dùng (khách chat qua kênh). */
+  async tryDeductCreditFor(organizationId: string, cost: number, meta: CreditEntryMeta = {}): Promise<boolean> {
     if (cost <= 0) return true
     const result = await this.db.organizations.updateMany({
-      where: { id: ctx.organizationId, credit_balance: { gte: cost } },
+      where: { id: organizationId, credit_balance: { gte: cost } },
       data: { credit_balance: { decrement: cost } },
     })
-    return result.count > 0
+    if (result.count === 0) return false
+    await appendCreditEntry(this.db, organizationId, "USAGE", -cost, meta)
+    return true
   }
+
 
   /**
    * Nạp credit cho một tổ chức — thao tác của NGƯỜI VẬN HÀNH NỀN TẢNG, không
@@ -127,7 +138,12 @@ export class OrganizationRepository implements IOrganizationRepository {
    *
    * Trả số dư mới, hoặc `null` nếu không có tổ chức nào mang `id` đó.
    */
-  async topUpCredit(organizationId: string, amount: number): Promise<number | null> {
+  async topUpCredit(
+    organizationId: string,
+    amount: number,
+    kind: Extract<CreditEntryKind, "TOPUP" | "GIFT" | "REFUND"> = "TOPUP",
+    meta: CreditEntryMeta = {},
+  ): Promise<number | null> {
     if (!Number.isInteger(amount) || amount <= 0) {
       throw new RangeError("Số credit nạp phải là số nguyên dương")
     }
@@ -136,18 +152,20 @@ export class OrganizationRepository implements IOrganizationRepository {
       data: { credit_balance: { increment: amount } },
     })
     if (result.count === 0) return null
-    const organization = await this.db.organizations.findUnique({ where: { id: organizationId } })
-    return organization?.credit_balance ?? null
+    return appendCreditEntry(this.db, organizationId, kind, amount, meta)
   }
 
+
   /** Hoàn credit — job bị Identity Guard từ chối, quyết định D3. */
-  async refundCredit(ctx: TenantContext, amount: number): Promise<void> {
+  async refundCredit(ctx: TenantContext, amount: number, meta: CreditEntryMeta = {}): Promise<void> {
     if (amount <= 0) return
-    await this.db.organizations.updateMany({
+    const result = await this.db.organizations.updateMany({
       where: { id: ctx.organizationId },
       data: { credit_balance: { increment: amount } },
     })
+    if (result.count > 0) await appendCreditEntry(this.db, ctx.organizationId, "REFUND", amount, meta)
   }
+
 
   /**
    * Danh sách tổ chức người dùng là thành viên — nguồn của `GET /organizations`

@@ -3,6 +3,7 @@
  * Quản lý lưu trữ cấu hình kênh tích hợp, cách ly theo TenantContext.
  */
 
+import { OrganizationRepository } from "@/modules/organization/infra/organization-repository"
 import type { Prisma, chat_channel_integrations } from "@/generated/prisma/client"
 import { prisma } from "@/core/tenancy/infra/prisma"
 import type { TenantContext } from "@/core/tenancy"
@@ -137,17 +138,11 @@ export class ChatChannelRepository {
     channel: SupportedChatChannel,
     senderId: string
   ): Promise<boolean> {
-    const org = await prisma.organizations.findUnique({
-      where: { id: organizationId },
-      select: { credit_balance: true },
+    // Trừ có điều kiện (chống đua) và ghi sổ cái credit (checklist ALG 10.6)
+    const deducted = await new OrganizationRepository().tryDeductCreditFor(organizationId, costCredit, {
+      service: "CHAT", reason: `Trả lời AI qua ${channel}`,
     })
-
-    if (!org || org.credit_balance < costCredit) return false
-
-    await prisma.organizations.update({
-      where: { id: organizationId },
-      data: { credit_balance: { decrement: costCredit } },
-    })
+    if (!deducted) return false
 
     await prisma.usage.create({
       data: {

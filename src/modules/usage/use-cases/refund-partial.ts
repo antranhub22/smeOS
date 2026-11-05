@@ -46,7 +46,7 @@ export async function refundPartial(
       status: "PARTIAL_REFUND",
       metadata: { reason: lyDo },
     })
-    await getOrganizationRepository(tx).refundCredit(ctx, hoan)
+    await getOrganizationRepository(tx).refundCredit(ctx, hoan, { service: "AI", reason: lyDo, reference: jobId })
     return { refunded: hoan }
   })
 }

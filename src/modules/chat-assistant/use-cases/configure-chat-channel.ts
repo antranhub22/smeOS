@@ -68,7 +68,7 @@ export async function configureChatChannel(
 
     // Nếu là kênh có phí và cần trừ credit gia hạn / mua mới
     if (check.requiredCredit > 0) {
-      const deducted = await deps.orgRepo.tryDeductCredit(ctx, check.requiredCredit)
+      const deducted = await deps.orgRepo.tryDeductCredit(ctx, check.requiredCredit, { service: "CHAT", reason: `Phí kênh ${input.channel}` })
       if (!deducted) {
         throw new AppError("QUOTA_EXCEEDED", "Không thể trừ credit của tổ chức")
       }
