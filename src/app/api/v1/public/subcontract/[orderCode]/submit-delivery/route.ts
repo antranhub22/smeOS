@@ -1,4 +1,6 @@
 import { randomUUID } from "crypto"
+import { statusAfterDelivery } from "@/modules/greeting-card/domain/order-settlement"
+import { completeIfSettled } from "@/modules/greeting-card/infra/order-settlement"
 import { prepareLateDeliveryDeduction } from "@/modules/greeting-card/use-cases/craft-fee-deductions"
 import { CraftFeeFactsRepository } from "@/modules/greeting-card/infra/craft-fee-facts-repository"
 import { conflict, unprocessable, validationFailed } from "@/core/http/errors"
@@ -179,10 +181,12 @@ export const POST = handle<[{ params: Promise<{ orderCode: string }> }]>(async (
   const deliveredAt = new Date().toISOString()
   // Giao trễ giờ hẹn → trừ phí gia công theo % tiệm cài (mặc định 0%)
   const applyLateFee = await prepareLateDeliveryDeduction(order.organization_id, order.id, new CraftFeeFactsRepository(), new Date(deliveredAt))
+  // Giao xong còn nợ → "Đã giao — chờ thu đủ" (checklist ALG 4.26)
+  const settledStatus = statusAfterDelivery({ totalVnd: Number(order.total_vnd), paidVnd: Number(order.paid_vnd) })
   const saved = await store.applyStep({
     organizationId: order.organization_id,
     orderId: order.id,
-    order: { delivery_status: "DELIVERED", status: "COMPLETED" },
+    order: { delivery_status: "DELIVERED", status: settledStatus },
     require: SUBCONTRACT_STEP_PRECONDITION.POD,
     metadata: (current) => {
       const podPhotos = [...(Array.isArray(current.pod_photos) ? (current.pod_photos as string[]) : []), storageKey]
@@ -200,13 +204,14 @@ export const POST = handle<[{ params: Promise<{ orderCode: string }> }]>(async (
       {
         axis: "status",
         fromValue: order.status,
-        toValue: "COMPLETED",
+        toValue: settledStatus,
         actorId: `branch_${branchId}`,
-        reason: "[Hoàn Tất] Đơn hàng hoàn thành sau khi xác nhận giao hoa thành công.",
+        reason: settledStatus === "COMPLETED" ? "[Hoàn Tất] Đơn hàng hoàn thành sau khi xác nhận giao hoa thành công." : "[Đã giao] Chờ thu đủ tiền trước khi hoàn tất.",
       },
     ],
   })
   if (!saved) throw conflict(SUBCONTRACT_STEP_NOT_ALLOWED.POD)
+  await completeIfSettled(order.organization_id, order.id)
 
   // 1. Tự động gửi thông báo chúc mừng & cảm ơn khách hàng kèm ảnh giao hàng
   try {
@@ -268,7 +273,7 @@ export const POST = handle<[{ params: Promise<{ orderCode: string }> }]>(async (
     data: {
       orderCode: order.code,
       deliveryStatus: "DELIVERED",
-      orderStatus: "COMPLETED",
+      orderStatus: settledStatus,
       deliveredAt,
       photoUrl: publicPhotoUrl,
       note: note || null,

@@ -151,9 +151,12 @@ describe("Brochure Workflow Policy Domain Tests", () => {
         expect(canRoleApproveDeposit("COORDINATOR", STANDARD_WORKFLOW_POLICY, { isOverdueSla: false })).toBe(false)
         expect(canRoleApproveDeposit("SALE", STANDARD_WORKFLOW_POLICY, { isOverdueSla: false })).toBe(false)
 
-        // When overdue SLA and escalation allowed
-        expect(canRoleApproveDeposit("COORDINATOR", STANDARD_WORKFLOW_POLICY, { isOverdueSla: true })).toBe(true)
-        expect(canRoleApproveDeposit("SALE", STANDARD_WORKFLOW_POLICY, { isOverdueSla: true })).toBe(true)
+        // Quá hạn: mặc định KHÔNG uỷ quyền (PO 04/11/2026, Q3b — ALG 1.16); Điều hành bật công tắc thì được
+        expect(canRoleApproveDeposit("COORDINATOR", STANDARD_WORKFLOW_POLICY, { isOverdueSla: true })).toBe(false)
+        expect(canRoleApproveDeposit("SALE", STANDARD_WORKFLOW_POLICY, { isOverdueSla: true })).toBe(false)
+        const escalation = { ...STANDARD_WORKFLOW_POLICY, allowSlaEscalation: true }
+        expect(canRoleApproveDeposit("COORDINATOR", escalation, { isOverdueSla: true })).toBe(true)
+        expect(canRoleApproveDeposit("SALE", escalation, { isOverdueSla: true })).toBe(true)
 
         // When order is urgent
         expect(canRoleApproveDeposit("COORDINATOR", STANDARD_WORKFLOW_POLICY, { isUrgent: true })).toBe(true)
@@ -167,10 +170,17 @@ describe("Brochure Workflow Policy Domain Tests", () => {
     })
 
     describe("canBypassFinishedPhoto / canBypassDeliveryPhoto (PO 15/10/2026)", () => {
-      it("gói Tinh gọn và Tiêu chuẩn cho bỏ qua ảnh", () => {
+      it("gói Tinh gọn và Tiêu chuẩn cho bỏ qua ảnh thành phẩm nhưng bắt buộc ảnh giao (PO 04/11/2026)", () => {
         expect(canBypassFinishedPhoto(LEAN_WORKFLOW_POLICY)).toBe(true)
         expect(canBypassFinishedPhoto(STANDARD_WORKFLOW_POLICY)).toBe(true)
-        expect(canBypassDeliveryPhoto(STANDARD_WORKFLOW_POLICY)).toBe(true)
+        expect(canBypassDeliveryPhoto(LEAN_WORKFLOW_POLICY)).toBe(false)
+        expect(canBypassDeliveryPhoto(STANDARD_WORKFLOW_POLICY)).toBe(false)
+      })
+
+      it("chưa cấu hình gì: bắt buộc ảnh giao; Điều hành tắt công tắc thì được bỏ qua", () => {
+        expect(canBypassDeliveryPhoto(parseBrochureWorkflowPolicy({}))).toBe(false)
+        const off = { ...serializeWorkflowPolicy(STANDARD_WORKFLOW_POLICY), preset: "CUSTOM", require_delivery_proof_photo: false }
+        expect(canBypassDeliveryPhoto(parseBrochureWorkflowPolicy({ [BROCHURE_WORKFLOW_POLICY_KEY]: off }))).toBe(true)
       })
 
       it("gói Nghiêm ngặt bắt buộc cả hai ảnh", () => {
@@ -185,10 +195,12 @@ describe("Brochure Workflow Policy Domain Tests", () => {
         expect(canBypassFinishedPhoto(policy)).toBe(true)
       })
 
-      it("tiệm cấu hình cũ (brochure_policy) được bỏ qua ảnh", () => {
+      it("tiệm cấu hình cũ (brochure_policy) giữ đúng công tắc ảnh người nhận", () => {
         const policy = parseBrochureWorkflowPolicy({ brochure_policy: { require_product_photo_qc: true, require_recipient_photo: true } })
         expect(canBypassFinishedPhoto(policy)).toBe(true)
-        expect(canBypassDeliveryPhoto(policy)).toBe(true)
+        expect(canBypassDeliveryPhoto(policy)).toBe(false)
+        const off = parseBrochureWorkflowPolicy({ brochure_policy: { require_recipient_photo: false } })
+        expect(canBypassDeliveryPhoto(off)).toBe(true)
       })
 
       it("Tự chỉnh theo đúng công tắc đã bật", () => {

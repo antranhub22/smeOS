@@ -72,7 +72,7 @@ export class AccountApprovalRepository {
         approval_status: status,
         approval_decided_at: new Date(),
         approval_decided_by: decidedBy,
-        ...(passwordHash ? { password_hash: passwordHash } : {}),
+        ...(passwordHash ? { password_hash: passwordHash, must_change_password: true } : {}),
       },
     })
     if (updated.count === 0) throw conflict("Tài khoản này vừa được người khác xử lý.")

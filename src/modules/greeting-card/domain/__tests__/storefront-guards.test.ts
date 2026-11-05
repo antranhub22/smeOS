@@ -4,6 +4,12 @@ import { isProductAvailable } from "../product-availability"
 import { areaOnly, maskPersonName, phoneLast4Matches } from "../tracking-privacy"
 
 describe("isProductAvailable", () => {
+  it("mẫu tạm ngưng hoặc đã lưu trữ không bán trên link khách (checklist ALG 2.3)", () => {
+    expect(isProductAvailable({ status: "PAUSED" })).toBe(false)
+    expect(isProductAvailable({ status: "ARCHIVED" })).toBe(false)
+    expect(isProductAvailable({ status: "ACTIVE" })).toBe(true)
+  })
+
   const row = (status: string, quantity_available: number | null = null) => ({ branch_id: "b1", status, quantity_available })
   it("chưa gắn chi nhánh hoặc chưa khai tồn kho → còn bán", () => {
     expect(isProductAvailable({ branch_id: null, inventory: [row("OUT_OF_STOCK")] })).toBe(true)

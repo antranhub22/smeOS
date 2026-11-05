@@ -77,11 +77,11 @@ export function ProviderOrderSettings({ canEdit }: { canEdit: boolean }) {
   }
 
   if (loadFailed) {
-    return <p className="text-xs text-text-muted">Không tải được danh mục nhà cung cấp (cần quyền tạo nội dung `I1`).</p>
+    return <p className="text-caption text-text-muted">Không tải được danh mục nhà cung cấp (cần quyền tạo nội dung `I1`).</p>
   }
   if (!kinds) {
     return (
-      <p className="flex items-center gap-2 text-xs text-text-muted">
+      <p className="flex items-center gap-2 text-caption text-text-muted">
         <Loader2 size={13} className="animate-spin motion-reduce:animate-none" /> Đang tải danh mục nhà cung cấp...
       </p>
     )
@@ -91,7 +91,7 @@ export function ProviderOrderSettings({ canEdit }: { canEdit: boolean }) {
     <div className="flex flex-col gap-4">
       {message && (
         <div
-          className={`flex items-center gap-2 rounded-xl border p-3 text-xs ${message.ok ? "border-success/30 bg-success/10 text-success" : "border-danger/30 bg-danger/10 text-danger-text"}`}
+          className={`flex items-center gap-2 rounded-xl border p-3 text-caption ${message.ok ? "border-success/30 bg-success/10 text-success" : "border-danger/30 bg-danger/10 text-danger-text"}`}
         >
           {message.ok ? <CheckCircle2 size={15} /> : <AlertCircle size={15} />}
           <span>{message.text}</span>
@@ -105,9 +105,9 @@ export function ProviderOrderSettings({ canEdit }: { canEdit: boolean }) {
           return (
             <div key={kind} className="flex flex-col gap-2 rounded-xl border border-border bg-surface p-4">
               <div className="flex items-start justify-between gap-2">
-                <h3 className="text-sm font-bold text-text">{view.label}</h3>
+                <h3 className="text-body-sm font-bold text-text">{view.label}</h3>
                 {canEdit && (
-                  <Button size="sm" variant={dirty ? "primary" : "outline"} disabled={!dirty || saving !== null} onClick={() => void save(kind)} className="text-xs">
+                  <Button size="sm" variant={dirty ? "primary" : "outline"} disabled={!dirty || saving !== null} onClick={() => void save(kind)} className="text-caption">
                     {saving === kind ? "Đang lưu..." : "Lưu thứ tự"}
                   </Button>
                 )}
@@ -116,10 +116,10 @@ export function ProviderOrderSettings({ canEdit }: { canEdit: boolean }) {
                 {order.map((key, i) => {
                   const p = view.providers.find((x) => x.key === key)
                   return (
-                    <li key={key} className="flex items-center gap-2 rounded-lg border border-border bg-background px-2.5 py-1.5">
+                    <li key={key} className="flex items-center gap-2 rounded-lg border border-border bg-surface-alt px-2.5 py-1.5">
                       <span className="w-4 text-caption font-bold text-text-muted">{i + 1}</span>
                       <span className="flex-1 min-w-0">
-                        <span className="block truncate text-xs font-semibold text-text">
+                        <span className="block truncate text-caption font-semibold text-text">
                           {p?.label ?? key} <span className="font-normal text-text-muted">— {p?.vendor}</span>
                         </span>
                         <span className="block truncate text-caption text-text-muted">{p?.note}</span>
@@ -131,12 +131,12 @@ export function ProviderOrderSettings({ canEdit }: { canEdit: boolean }) {
                       )}
                       {canEdit && (
                         <span className="flex shrink-0 gap-0.5">
-                          <button type="button" aria-label="Lên" disabled={i === 0} onClick={() => move(kind, i, -1)} className="inline-flex h-8 w-8 items-center justify-center rounded text-text-muted hover:bg-surface disabled:opacity-30">
+                          <Button type="button" variant="ghost" size="xs" aria-label="Lên" disabled={i === 0} onClick={() => move(kind, i, -1)} className="h-8 w-8 p-0 text-text-muted">
                             <ArrowUp size={13} />
-                          </button>
-                          <button type="button" aria-label="Xuống" disabled={i === order.length - 1} onClick={() => move(kind, i, 1)} className="inline-flex h-8 w-8 items-center justify-center rounded text-text-muted hover:bg-surface disabled:opacity-30">
+                          </Button>
+                          <Button type="button" variant="ghost" size="xs" aria-label="Xuống" disabled={i === order.length - 1} onClick={() => move(kind, i, 1)} className="h-8 w-8 p-0 text-text-muted">
                             <ArrowDown size={13} />
-                          </button>
+                          </Button>
                         </span>
                       )}
                     </li>

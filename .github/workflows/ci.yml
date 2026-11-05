@@ -194,35 +194,15 @@ jobs:
           path: test-results/
           retention-days: 7
 
-  # Deploy production CHỈ khi mọi cổng xanh (P0-02, D-14). `render.yaml` đặt `autoDeploy: false`,
-  # nên đây là đường deploy duy nhất của `main`. Mỗi dịch vụ Render có một deploy hook riêng,
-  # lưu ở GitHub secret (Settings → Secrets and variables → Actions):
-  #   RENDER_DEPLOY_HOOK_WEB · RENDER_DEPLOY_HOOK_WORKER_MEDIA · RENDER_DEPLOY_HOOK_WORKER_VIDEO · RENDER_DEPLOY_HOOK_WORKER_VISION
-  # Thiếu một secret → job đỏ (không lặng lẽ bỏ qua dịch vụ đó).
-  deploy:
-    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-    needs: [web, worker, e2e-ux, security, industry-terms]
-    runs-on: ubuntu-latest
-    concurrency:
-      group: deploy-production
-      cancel-in-progress: false
-    steps:
-      - name: Gọi deploy hook của từng dịch vụ Render
-        env:
-          HOOK_WEB: ${{ secrets.RENDER_DEPLOY_HOOK_WEB }}
-          HOOK_WORKER_MEDIA: ${{ secrets.RENDER_DEPLOY_HOOK_WORKER_MEDIA }}
-          HOOK_WORKER_VIDEO: ${{ secrets.RENDER_DEPLOY_HOOK_WORKER_VIDEO }}
-          HOOK_WORKER_VISION: ${{ secrets.RENDER_DEPLOY_HOOK_WORKER_VISION }}
-          COMMIT: ${{ github.sha }}
-        run: |
-          set -euo pipefail
-          for name in HOOK_WEB HOOK_WORKER_MEDIA HOOK_WORKER_VIDEO HOOK_WORKER_VISION; do
-            url="${!name}"
-            if [ -z "$url" ]; then
-              echo "::error::Thiếu secret cho ${name} — chưa deploy dịch vụ này."
-              exit 1
-            fi
-            # Render deploy hook nhận ?ref=<commit> để deploy đúng commit vừa qua CI.
-            curl -fsS -X POST "${url}&ref=${COMMIT}" --max-time 30 > /dev/null
-            echo "Đã gọi deploy cho ${name} @ ${COMMIT}"
-          done
+  # KHÔNG có job deploy ở đây (PO 05/11/2026). `render.yaml` đặt `autoDeploy: true` cho cả 5
+  # dịch vụ, nên Render tự deploy mỗi khi `main` đổi — chạy blueprint một lần là xong, không
+  # cần deploy hook hay secret `RENDER_DEPLOY_HOOK_*` nào (thay cơ chế của P0-02).
+  #
+  # Hệ quả: Render deploy SONG SONG với CI trên `main`, không chờ CI xanh. Cổng "chỉ phát hành
+  # bản đã qua kiểm" vì vậy chuyển sang ruleset của GitHub (P0-03):
+  #   Settings → Rules → Rulesets → `main`: bắt buộc pull request + 5 check bắt buộc
+  #   (`web`, `worker`, `e2e-ux`, `security`, `industry-terms`), chặn push trực tiếp và force push.
+  # Có ruleset thì mọi commit vào `main` đều đã xanh trước khi merge. THIẾU ruleset thì một
+  # push trực tiếp vào `main` sẽ lên production mà không qua cổng nào.
+  #
+  # Quay lui: Render → dịch vụ → Deploys → Rollback (xem docs/handover/OPERATIONS_RUNBOOK.md §3–4).

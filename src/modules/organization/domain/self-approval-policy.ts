@@ -19,8 +19,11 @@ export const SELF_APPROVAL_SETTINGS_KEY = "cho_phep_tu_duyet" as const
 
 export type OrganizationSettings = Record<string, unknown> | null | undefined
 
-/** Chưa ai đụng vào công tắc thì Điều hành tự duyệt được — trạng thái mặc định. */
-const DEFAULT_ALLOW_SELF_APPROVAL = true
+/**
+ * Mặc định KHÔNG cho tự duyệt (PO 04/11/2026, checklist ALG 9.12): phiếu đề xuất do ai tạo thì người
+ * khác duyệt. Tổ chức nhỏ một người điều hành có thể bật lại công tắc.
+ */
+const DEFAULT_ALLOW_SELF_APPROVAL = false
 
 export function isSelfApprovalAllowed(settings: OrganizationSettings): boolean {
   const value = settings?.[SELF_APPROVAL_SETTINGS_KEY]
@@ -40,4 +43,19 @@ export function isVisibleInApprovalQueue(input: {
 }): boolean {
   if (input.actorId !== input.createdBy) return true
   return isSelfApprovalAllowed(input.settings)
+}
+
+/**
+ * Người thao tác có đang tự duyệt phiếu do chính mình tạo hay không. Trả thông điệp tiếng Việt khi bị
+ * chặn, `null` khi được phép. Dùng cho mọi luồng duyệt phiếu (giảm giá, huỷ đơn, đề xuất sửa mẫu,
+ * giao trước thu sau) — kiểm SAU `requireCapability`.
+ */
+export function selfApprovalBlocked(input: {
+  readonly actorId: string
+  readonly requesterId: string | null | undefined
+  readonly settings: OrganizationSettings
+}): string | null {
+  if (!input.requesterId || input.actorId !== input.requesterId) return null
+  if (isSelfApprovalAllowed(input.settings)) return null
+  return "Không tự duyệt phiếu do chính bạn tạo — cần người khác có quyền duyệt"
 }

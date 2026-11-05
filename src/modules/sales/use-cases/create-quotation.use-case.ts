@@ -1,4 +1,5 @@
 import { notFound, validationFailed } from "@/core/http/errors"
+import { assertNotBelowFloor } from "@/modules/costing/use-cases/price-floor-guard"
 import type { TenantContext } from "@/core/tenancy/tenant-context"
 import {
   calculateQuotationTotals,
@@ -52,6 +53,8 @@ export async function createQuotationUseCase(
     input.items,
     input.discountAmount ?? 0,
   )
+  // Giá dưới sàn: Sale bị chặn, Điều hành (C10) lưu được (checklist ALG 3.4)
+  await assertNotBelowFloor(ctx, input.items.map((it) => ({ productId: it.productId, quantity: Math.max(1, Math.floor(it.qty)) })), totalAmount)
 
   const code = await repo.generateNextCode(ctx)
 

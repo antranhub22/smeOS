@@ -4,6 +4,7 @@ import { EMPTY_PRICING, pricingAttributes } from "./pricing/pricing-form"
 import { useState, useRef, useEffect, useMemo } from "react"
 import { useRouter } from "next/navigation"
 import type { IndustryPluginContract } from "@/modules/organization/domain/industry-plugin-contract"
+import { useProductOccasionSize } from "./use-product-occasion-size"
 import {
   getDesignFieldsConfig,
   getIndustryBomFieldsConfig,
@@ -48,7 +49,7 @@ export function useCreateProductForm({ ti, activeIndustry }: UseCreateProductFor
     return getDesignFieldsConfig(activeIndustry.identity.key)
   }, [activeIndustry.identity.key])
 
-  // Form states
+  const occasionSize = useProductOccasionSize()
   const [name, setName] = useState("")
   const [code, setCode] = useState("")
   const [category, setCategory] = useState(categories[0] || "")
@@ -83,14 +84,6 @@ export function useCreateProductForm({ ti, activeIndustry }: UseCreateProductFor
       setContainer("")
     }
   }, [activeIndustry.identity.key, categories, designConfig])
-
-  // Auto-generate code if empty
-  useEffect(() => {
-    if (!code) {
-      const randomSuffix = Math.floor(1000 + Math.random() * 9000)
-      setCode(`${industryPrefix}-${randomSuffix}`)
-    }
-  }, [code, industryPrefix])
 
   // Initial BOM items based on industry — multi-item template per industry
   useEffect(() => {
@@ -247,10 +240,6 @@ export function useCreateProductForm({ ti, activeIndustry }: UseCreateProductFor
       setErrorMsg(`Vui lòng nhập tên ${ti("sampleProduct").toLowerCase()}.`)
       return
     }
-    if (!code.trim()) {
-      setErrorMsg(`Vui lòng nhập mã ${ti("sampleProduct").toLowerCase()}.`)
-      return
-    }
 
     setSubmitting(true)
     setErrorMsg(null)
@@ -313,6 +302,7 @@ export function useCreateProductForm({ ti, activeIndustry }: UseCreateProductFor
 
       const attributesPayload = {
         ...pricingAttributes(priceVnd, pricing),
+        ...occasionSize.attributes,
         description: description.trim() || null,
         color: primaryColor.trim() || null,
         bom: {
@@ -326,7 +316,7 @@ export function useCreateProductForm({ ti, activeIndustry }: UseCreateProductFor
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           name: name.trim(),
-          code: code.trim(),
+          ...(code.trim() ? { code: code.trim() } : {}), // để trống → máy chủ tự sinh mã
           category,
           shape,
           facing,
@@ -392,5 +382,6 @@ export function useCreateProductForm({ ti, activeIndustry }: UseCreateProductFor
     handleUpdateBomItem,
     handleRemoveBomItem,
     handleSubmit,
+    occasionSize,
   }
 }

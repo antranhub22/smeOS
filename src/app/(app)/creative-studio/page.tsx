@@ -25,7 +25,7 @@ import type { ProductIntelligenceReport, ConcreteTopic } from "@/modules/market-
 // CreativeStudioContext — carry-forward từ Chặng 01–05 (Khu vực A)
 // ============================================================
 
-interface CreativeStudioContextType {
+export interface CreativeStudioContextType {
   topicId: string
   mode: "CREATIVE" | "AUTHENTIC"
   sourceImageUrl: string

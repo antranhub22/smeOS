@@ -1,5 +1,5 @@
 import { prisma } from "@/core/tenancy/infra/prisma"
-import { scopedWhere, type TenantContext } from "@/core/tenancy"
+import { branchScopedWhere, scopedWhere, type TenantContext } from "@/core/tenancy"
 import type { SaleFunnelCounts } from "../domain/sales-funnel"
 
 /** Đếm phễu Thẻ chào theo sale — gom ở DB (groupBy), không kéo từng phiên về. */
@@ -20,7 +20,7 @@ export class GreetingStatsRepository {
     // Đơn đã thu tiền: nối đơn → phiên nguồn → sale
     const paidOrders = await this.db.orders.findMany({
       where: scopedWhere(ctx, {
-        source: "BROCHURE",
+        source: "BROCHURE", ...branchScopedWhere(ctx),
         NOT: { status: "CANCELLED" as const },
         paid_vnd: { gt: 0 },
         created_at: { gte: since },

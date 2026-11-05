@@ -19,6 +19,8 @@ import { Save } from "@/components/ui/icon-set/save"
 
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Textarea } from "@/components/ui/textarea"
 import { Disclosure } from "@/components/ui/disclosure"
 import { PLATFORM_SPECS } from "@/modules/creative-production/domain/publishing-rules"
 import { VOICE_CATALOG } from "@/modules/audio-studio/domain/voice-catalog"
@@ -166,16 +168,17 @@ export function ProductionPlanPreview({
                   </span>
                   <span className="flex items-center gap-1 text-text-muted">
                     {canEdit ? (
-                      <input
+                      <Input
                         type="number"
                         min={1.5}
                         max={15}
                         step={0.5}
+                        inputSize="sm"
                         value={d.duration}
                         onChange={(e) =>
                           setDrafts((prev) => ({ ...prev, [s.sceneIndex]: { ...d, duration: Math.min(15, Math.max(1.5, parseFloat(e.target.value) || 1.5)) } }))
                         }
-                        className="w-16 rounded border border-border px-1 py-0.5 text-right"
+                        className="w-16 text-right"
                       />
                     ) : (
                       <b>{s.durationSeconds}</b>
@@ -186,13 +189,13 @@ export function ProductionPlanPreview({
                 <p className="text-text-muted">Bối cảnh: {s.setting}</p>
                 {canEdit ? (
                   <>
-                    <textarea
+                    <Textarea
                       rows={2}
                       value={d.voice}
                       maxLength={300}
                       onChange={(e) => setDrafts((prev) => ({ ...prev, [s.sceneIndex]: { ...d, voice: e.target.value } }))}
                       placeholder="Lời thoại (cũng là phụ đề trên video)"
-                      className="mt-1 w-full rounded border border-border px-2 py-1"
+                      className="mt-1 text-caption"
                     />
                     {need > d.duration && (
                       <p className="text-caption text-warning">Lời thoại cần ~{need}s — dài hơn cảnh, âm thanh sẽ kéo dài cảnh này.</p>

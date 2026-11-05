@@ -28,6 +28,8 @@ export interface PricedVariant {
   priceVnd: number
   /** Giá ngày cao điểm (kiểu giá theo phiên bản); `null` = như giá thường */
   peakPriceVnd?: number | null | undefined
+  /** Số cành của phiên bản — ghi vào đơn để phiếu thợ in đúng (checklist ALG 2.4) */
+  stemCount?: number | null | undefined
 }
 
 /**

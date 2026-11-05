@@ -146,6 +146,9 @@ export const coordinatorApi = {
     orderCall(`${BASE}/orders/${id}/custom-fields`, { method: "PATCH", body: JSON.stringify({ customFields }) }),
   /** ĐP-4a.3 (26/09/2026) — ghi một dòng sổ thu (cọc/thu nốt/hoàn tiền); trả đơn đã cập nhật (paidVnd/balanceVnd/paymentStatus). */
   recordPayment: (id: string, body: RecordPaymentBody) => orderCall(`${BASE}/orders/${id}/payments`, post(body)),
+  /** Điều hành xác nhận / từ chối khoản Sale-Điều phối đã ghi (checklist ALG 1.16); trả đơn đã cập nhật. */
+  decidePayment: (id: string, paymentId: string, approve: boolean, note?: string) =>
+    orderCall(`${BASE}/orders/${id}/payments/${paymentId}/decision`, post({ approve, ...(note ? { note } : {}) })),
   /** Liệt kê sổ thu của một đơn. */
   listPayments: async (id: string) =>
     (await request<{ payments: OrderPaymentView[] }>(`${BASE}/orders/${id}/payments`, { method: "GET" })).payments,

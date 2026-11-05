@@ -57,10 +57,15 @@ describe("giao hàng (F11/F12)", () => {
     recipientSignedName: null,
     failureReason: null,
   }
-  it("giao thành công đòi POD hoặc tên người ký nhận", () => {
+  it("mặc định giao thành công bắt buộc ảnh giao hàng; tên người ký không thay được ảnh (checklist ALG 4.18)", () => {
     expect(checkDeliveryUpdate({ ...base, event: "DELIVERED_SUCCESS" }).ok).toBe(false)
-    expect(checkDeliveryUpdate({ ...base, event: "DELIVERED_SUCCESS", recipientSignedName: "Lan" }).ok).toBe(true)
+    expect(checkDeliveryUpdate({ ...base, event: "DELIVERED_SUCCESS", recipientSignedName: "Lan" }).ok).toBe(false)
     expect(checkDeliveryUpdate({ ...base, event: "DELIVERED_SUCCESS", podAssetId: "a1" }).ok).toBe(true)
+  })
+  it("Điều hành tắt yêu cầu ảnh: tên người ký nhận thay được ảnh, thiếu cả hai vẫn chặn", () => {
+    const off = { ...base, requirePodPhoto: false }
+    expect(checkDeliveryUpdate({ ...off, event: "DELIVERED_SUCCESS" }).ok).toBe(false)
+    expect(checkDeliveryUpdate({ ...off, event: "DELIVERED_SUCCESS", recipientSignedName: "Lan" }).ok).toBe(true)
   })
   it("giao thất bại đòi lý do; không lùi trạng thái", () => {
     expect(checkDeliveryUpdate({ ...base, event: "DELIVERY_FAILED" }).ok).toBe(false)
@@ -103,6 +108,9 @@ describe("đóng đơn / huỷ (F14)", () => {
     expect(checkClosure({ stage: "DISPATCHING", openExceptionCount: 0, partnerRating: 5, partnerPayoutVnd: 0 }).ok).toBe(false)
     expect(checkClosure({ stage: "DELIVERED", openExceptionCount: 1, partnerRating: 5, partnerPayoutVnd: 0 }).ok).toBe(false)
     expect(checkClosure({ stage: "DELIVERED", openExceptionCount: 0, partnerRating: 7, partnerPayoutVnd: 0 }).ok).toBe(false)
+    // Còn nợ thì chưa hoàn tất (checklist ALG 4.26)
+    expect(checkClosure({ stage: "DELIVERED", openExceptionCount: 0, partnerRating: 5, partnerPayoutVnd: 0, balanceVnd: 200000 }).ok).toBe(false)
+    expect(checkClosure({ stage: "DELIVERED", openExceptionCount: 0, partnerRating: 5, partnerPayoutVnd: 0, balanceVnd: 0 }).ok).toBe(true)
   })
   it("huỷ đòi lý do, không huỷ đơn đã giao", () => {
     expect(checkCancellation({ stage: "PLANNING", reason: "" }).ok).toBe(false)

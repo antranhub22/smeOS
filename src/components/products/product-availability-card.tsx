@@ -11,6 +11,7 @@ import { ShieldCheck } from "@/components/ui/icon-set/shield-check"
 import { AlertCircle } from "@/components/ui/icon-set/alert-circle"
 import { Loader2 } from "@/components/ui/icon-set/loader2"
 import { Card } from "@/components/ui/card"
+import { BlockedDatesEditor } from "./blocked-dates-editor"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import {
@@ -70,7 +71,6 @@ export function ProductAvailabilityCard({
   const [saving, setSaving] = useState(false)
   const [saveSuccess, setSaveSuccess] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [newBlockedDate, setNewBlockedDate] = useState("")
 
   const handleSave = async () => {
     setSaving(true)
@@ -93,26 +93,6 @@ export function ProductAvailabilityCard({
     } finally {
       setSaving(false)
     }
-  }
-
-  const handleAddBlockedDate = () => {
-    if (!newBlockedDate || !/^\d{4}-\d{2}-\d{2}$/.test(newBlockedDate)) return
-    if (config.mode !== "BOOKING_CALENDAR") return
-    const current = config.manualBlockedDates ?? []
-    if (current.includes(newBlockedDate)) return
-    setConfig({
-      ...config,
-      manualBlockedDates: [...current, newBlockedDate].sort(),
-    })
-    setNewBlockedDate("")
-  }
-
-  const handleRemoveBlockedDate = (date: string) => {
-    if (config.mode !== "BOOKING_CALENDAR") return
-    setConfig({
-      ...config,
-      manualBlockedDates: (config.manualBlockedDates ?? []).filter((d) => d !== date),
-    })
   }
 
   return (
@@ -211,54 +191,6 @@ export function ProductAvailabilityCard({
             </div>
           </div>
 
-          {/* Ngày chặn thủ công (bảo trì / đóng cửa) */}
-          <div className="pt-2 border-t border-primary/20 flex flex-col gap-2">
-            <span className="text-caption font-bold text-text">Ngày đóng cửa / bảo trì thủ công</span>
-            <div className="flex gap-2">
-              <Input
-                type="date"
-                disabled={!canEdit || saving}
-                value={newBlockedDate}
-                onChange={(e) => setNewBlockedDate(e.target.value)}
-                className="h-9 px-3 text-caption flex-1"
-              />
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                disabled={!canEdit || !newBlockedDate}
-                onClick={handleAddBlockedDate}
-                className="h-9 text-caption flex items-center gap-1"
-              >
-                <Plus size={14} /> Chặn ngày
-              </Button>
-            </div>
-
-            {((config as BookingCalendarConfig).manualBlockedDates ?? []).length > 0 && (
-              <div className="flex flex-wrap gap-1.5 mt-1">
-                {(config as BookingCalendarConfig).manualBlockedDates!.map((d) => (
-                  <span
-                    key={d}
-                    className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-caption font-bold bg-danger/10 text-danger border border-danger/20"
-                  >
-                    <span>{d}</span>
-                    {canEdit && (
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        size="xs"
-                        onClick={() => handleRemoveBlockedDate(d)}
-                        className="h-5 w-5 p-0 hover:opacity-75"
-                        aria-label={`Xoá ngày ${d}`}
-                      >
-                        <Trash2 size={12} />
-                      </Button>
-                    )}
-                  </span>
-                ))}
-              </div>
-            )}
-          </div>
         </div>
       )}
 
@@ -317,6 +249,13 @@ export function ProductAvailabilityCard({
           </Button>
         </div>
       )}
+      <BlockedDatesEditor
+        dates={config.manualBlockedDates ?? []}
+        onChange={(dates) => setConfig({ ...config, manualBlockedDates: dates })}
+        canEdit={canEdit}
+        saving={saving}
+        label={config.mode === "BOOKING_CALENDAR" ? "Ngày đóng cửa / bảo trì" : "Ngày không nhận đơn (hết nguyên liệu, nghỉ)"}
+      />
     </Card>
   )
 }

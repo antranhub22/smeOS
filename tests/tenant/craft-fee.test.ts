@@ -32,8 +32,11 @@ async function seedOrder(t: Tenant, dispatch: Record<string, unknown> | null = n
   return order.id
 }
 
+/** Tiệm đã tắt yêu cầu ảnh giao (PO 04/11/2026, ALG 4.18) — để Điều phối xác nhận giao không ảnh. */
+const NO_DELIVERY_PHOTO = { brochure_workflow_policy: { preset: "CUSTOM", require_delivery_proof_photo: false } }
+
 async function setPolicy(t: Tenant, policy: Record<string, string | number>) {
-  await prisma.organizations.update({ where: { id: t.organizationId }, data: { settings: { industry: "FLORAL", craft_fee_policy: policy } } })
+  await prisma.organizations.update({ where: { id: t.organizationId }, data: { settings: { industry: "FLORAL", craft_fee_policy: policy, ...NO_DELIVERY_PHOTO } } })
 }
 
 async function dispatchState(orderId: string) {
@@ -82,6 +85,7 @@ describe("phí gia công của đơn điều phối chuỗi", () => {
   })
 
   it("mặc định 0%: giao trễ và khiếu nại chỉ ghi nhận, không trừ phí", async () => {
+    await prisma.organizations.update({ where: { id: a.organizationId }, data: { settings: { industry: "FLORAL", ...NO_DELIVERY_PHOTO } } })
     const orderId = await seedOrder(a, committed)
     const res = await confirmDelivery(
       withSession(`http://localhost/api/v1/coordinator/orders/${orderId}/confirm-delivery`, a.token, {

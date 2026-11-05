@@ -3,10 +3,14 @@ import type { TenantContext } from "@/core/tenancy"
 import * as XLSX from "xlsx"
 
 const findMany = vi.fn()
+const findOrganization = vi.fn()
 vi.mock("@/core/tenancy/infra/prisma", () => ({
   prisma: {
     orders: {
       findMany: (...a: unknown[]) => findMany(...a),
+    },
+    organizations: {
+      findUnique: (...a: unknown[]) => findOrganization(...a),
     },
   },
 }))
@@ -24,6 +28,31 @@ const ctx: TenantContext = {
 describe("exportOrdersToExcel", () => {
   beforeEach(() => {
     findMany.mockReset()
+    findOrganization.mockReset()
+    findOrganization.mockResolvedValue({ id: "org-test-1", name: "Tiệm", slug: "tiem", type: "STORE", credit_balance: 0, settings: null })
+  })
+
+  it("sale chế độ 'chỉ khách của mình' chỉ xuất đơn mình phụ trách (checklist ALG 4.10)", async () => {
+    findOrganization.mockResolvedValue({
+      id: "org-test-1", name: "Tiệm", slug: "tiem", type: "STORE", credit_balance: 0,
+      settings: { brochure_visibility: { mode: "OWN", members: {} } },
+    })
+    findMany.mockResolvedValue([])
+    await exportOrdersToExcel({ ...ctx, userId: "sale-1", capabilities: new Set(["R1", "R13"]) }, {})
+    const where = (findMany.mock.calls[0]![0] as { where: Record<string, unknown> }).where
+    expect(where.organization_id).toBe("org-test-1")
+    expect(where.OR).toEqual([
+      { greeting_sessions: { some: { sale_id: "sale-1" } } },
+      { owner_sale_id: "sale-1" },
+      { owner_sale_id: null, created_by: "sale-1", source: { not: "BROCHURE" } },
+    ])
+  })
+
+  it("người thấy tất cả (Điều hành) xuất toàn bộ đơn của tổ chức", async () => {
+    findMany.mockResolvedValue([])
+    await exportOrdersToExcel({ ...ctx, capabilities: new Set(["R1", "R13", "F2"]) }, {})
+    const where = (findMany.mock.calls[0]![0] as { where: Record<string, unknown> }).where
+    expect(where.OR).toBeUndefined()
   })
 
   it("xuất file Excel thành công với cấu trúc các sheet đúng quy chuẩn", async () => {

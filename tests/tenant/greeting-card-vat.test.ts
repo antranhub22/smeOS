@@ -1,6 +1,6 @@
 import { afterAll, beforeEach, describe, expect, it } from "vitest"
 import { disconnectDatabase, resetDatabase } from "../helpers/database"
-import { createTenant, type Tenant } from "../helpers/fixtures"
+import { addStaffWithSession, createTenant, type Tenant } from "../helpers/fixtures"
 import { prisma } from "@/core/tenancy/infra/prisma"
 import { GreetingCardRepository } from "@/modules/greeting-card/infra/greeting-card-repository"
 import { ProductRepository } from "@/modules/products/infra/product-repository"
@@ -91,7 +91,10 @@ describe("greeting-card order VAT", () => {
     const orderId = await quotedOrder(a, 3_300_000)
     await setOrderVat(a.ctx, orderId, { enabled: true, rate: 10 })
     const req = await requestDiscount(a.ctx, { orderId, ask: { amountVnd: 300_000 }, reason: "Khách quen" })
-    await decideDiscount(a.ctx, { requestId: req.id, approve: true, note: "" })
+    // Người xin giảm không tự duyệt (checklist ALG 9.12) — Điều hành thứ hai duyệt
+    await expect(decideDiscount(a.ctx, { requestId: req.id, approve: true, note: "" })).rejects.toMatchObject({ status: 422 })
+    const second = await addStaffWithSession(a, "dieu_hanh", "dieu-hanh-2")
+    await decideDiscount({ ...a.ctx, userId: second.userId }, { requestId: req.id, approve: true, note: "" })
     expect(await getOrderVat(a.ctx, orderId)).toMatchObject({ subtotalVnd: 3_000_000, vatAmountVnd: 300_000, totalVnd: 3_300_000 })
   })
 })

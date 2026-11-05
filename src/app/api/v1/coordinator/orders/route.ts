@@ -5,6 +5,7 @@ import { requireTenantContext } from "@/modules/organization/use-cases/resolve-s
 import { createOrderSchema, listQuerySchema, parseBody } from "@/modules/coordinator/adapters/http-schemas"
 import type { CoordinatorStage } from "@/modules/coordinator/domain/coordinator-types"
 import { createCoordinatorOrder } from "@/modules/coordinator/use-cases/create-coordinator-order"
+import { syncOrderInfoRequests } from "@/modules/orders/use-cases/order-info-requests"
 import { listCoordinatorOrders } from "@/modules/coordinator/use-cases/list-coordinator-orders"
 
 /** `GET /api/v1/coordinator/orders` (R1) — danh sách Control Tower, rủi ro tính lại lúc đọc (F03/F12). */
@@ -33,5 +34,7 @@ export const POST = handle(async (request) => {
 
   const body = await parseBody(request, createOrderSchema)
   const order = await createCoordinatorOrder(ctx, body)
+  // Đơn thiếu lời chúc (đơn có thiệp) hoặc thông tin người nhận → tự sinh yêu cầu bổ sung (checklist ALG 4.14)
+  await syncOrderInfoRequests(ctx, order.id)
   return jsonResponse({ order }, { status: 201 })
 })

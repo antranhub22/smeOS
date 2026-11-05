@@ -1,7 +1,7 @@
 import { afterAll, beforeEach, describe, expect, it } from "vitest"
 
 import { disconnectDatabase, prisma, resetDatabase } from "../helpers/database"
-import { createTenant, readJson, withSession, type Tenant } from "../helpers/fixtures"
+import { addStaffWithSession, createTenant, readJson, withSession, type Tenant } from "../helpers/fixtures"
 import { POST as postDeliverBeforePay } from "@/app/api/v1/orders/[id]/deliver-before-pay/route"
 import { POST as postQuote } from "@/app/api/v1/orders/[id]/quote/route"
 import { GET as listRequests } from "@/app/api/v1/orders/approval-requests/route"
@@ -58,10 +58,14 @@ describe("cách ly tenant — yêu cầu duyệt giao trước thu sau, báo gi�
   it("Điều hành A duyệt → đơn sang Điều phối của A, workflow STANDARD; duyệt lần hai → 409", async () => {
     await postDeliverBeforePay(withSession(`${BASE}/orders/${orderId}/deliver-before-pay`, a.token, { method: "POST", body: JSON.stringify({ reason: "Khách công ty" }) }), params(orderId))
     const row = await prisma.order_approval_requests.findFirstOrThrow()
-    const decide = () => postDecision(
-      withSession(`${BASE}/orders/approval-requests/${row.id}/decision`, a.token, { method: "POST", body: JSON.stringify({ approve: true, note: "Đã gọi xác nhận" }) }),
+    const decideAs = (token: string) => postDecision(
+      withSession(`${BASE}/orders/approval-requests/${row.id}/decision`, token, { method: "POST", body: JSON.stringify({ approve: true, note: "Đã gọi xác nhận" }) }),
       { params: Promise.resolve({ requestId: row.id }) },
     )
+    // Người tạo phiếu không tự duyệt (checklist ALG 9.12)
+    expect((await decideAs(a.token)).status).toBe(422)
+    const secondManager = await addStaffWithSession(a, "dieu_hanh", "dieu-hanh-2")
+    const decide = () => decideAs(secondManager.token)
     expect((await decide()).status).toBe(200)
     const coord = await prisma.order_coordinations.findUniqueOrThrow({ where: { order_id: orderId } })
     expect(coord).toMatchObject({ organization_id: a.organizationId, stage: "INTAKE", source: "MANUAL" })

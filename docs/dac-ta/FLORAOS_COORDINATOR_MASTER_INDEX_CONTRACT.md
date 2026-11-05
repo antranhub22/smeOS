@@ -53,7 +53,7 @@ Hai trục **độc lập** với nhau. Một trường phải mang đủ cả h
 
 | Nhóm | Trường |
 |---|---|
-| Định danh | `id` · `code` · `name` · `status` (DRAFT · ACTIVE · ARCHIVED) |
+| Định danh | `id` · `code` · `name` · `status` (DRAFT · ACTIVE · PAUSED · ARCHIVED) |
 | Dáng & phong cách | `category` · `shape` · `facing` · `container?` · `style` · `occasions[]` |
 | Hình ảnh | `masterImageUrl?` · `galleryImages[]` (vai trò: GALLERY · CATALOG · SOCIAL) · `colorPalette.primaryColor` · `colorPalette.secondaryColor?` |
 | BOM nguyên tử | `bom.flowers[]` (`FlowerBomItem`) · `bom.foliage[]` (`FoliageBomItem`) · `bom.wrapping[]` (`WrappingLayer`) · `bom.wrapStyle` · `bom.ribbon` · `bom.accessories[]` (`AccessoryBomItem`) · `bom.tierCount?` |

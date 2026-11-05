@@ -10,6 +10,7 @@ import type { OrderPolicySnapshot } from "../domain/order-policies"
 import type { ProductSnapshot } from "../domain/greeting-card-types"
 import { countBySlot, slotFullMessage } from "../domain/slot-capacity"
 import { recordAuditLog } from "@/modules/audit/use-cases/record-audit-log"
+import { saleBranchOfSession } from "./sale-branch"
 
 export interface CreateBrochureOrderData {
   organizationId: string
@@ -31,7 +32,7 @@ export interface CreateBrochureOrderData {
   delivery?: { notes?: string; mapUrl?: string } | undefined
   note?: string | null | undefined
   snapshot: ProductSnapshot
-  variant: { id: string; name: string } | null
+  variant: { id: string; name: string; stemCount?: number | null } | null
   quote: BrochureQuote
   voucherId: string | null
   /** Bản chụp ưu đãi/thỏa thuận khách đã đồng ý (Spec #2, #5). */
@@ -216,6 +217,8 @@ export class BrochureCheckoutRepository {
       const order = await tx.orders.create({
         data: {
           organization_id: data.organizationId,
+          // Đơn thuộc chi nhánh của Sale phụ trách link (checklist ALG 9.13)
+          branch_id: await saleBranchOfSession(tx, data.organizationId, data.sessionId),
           customer_id: customerId,
           code: data.code,
           source: "BROCHURE",

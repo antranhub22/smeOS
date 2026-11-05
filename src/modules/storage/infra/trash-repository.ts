@@ -291,6 +291,12 @@ export class TrashRepository implements ITrashRepository {
         where: scopedWhere(ctx, { id: input.id }),
       })
       if (!product) return "not_found"
+      // Mẫu đã có đơn chỉ được lưu trữ, không xoá vĩnh viễn — đơn cũ vẫn trỏ tới mẫu (checklist ALG 2.3)
+      const [orderLines, bookings] = await Promise.all([
+        prisma.order_items.count({ where: scopedWhere(ctx, { product_id: product.id }) }),
+        prisma.product_bookings.count({ where: scopedWhere(ctx, { product_id: product.id }) }),
+      ])
+      if (orderLines + bookings > 0) return "in_use"
 
       await prisma.$transaction(async (tx) => {
         await tx.product_images.deleteMany({ where: { product_id: product.id } })

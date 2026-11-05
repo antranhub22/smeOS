@@ -13,6 +13,7 @@ import { FloristTicketCard } from "@/components/templates/orders/florist-ticket-
 import { DeliveryReceiptCard } from "@/components/templates/orders/delivery-receipt-card"
 import { OrderCancelDialog } from "./order-cancel-dialog"
 import { OrderActionButtons } from "./order-action-buttons"
+import { OrderInfoRequests } from "./order-info-requests"
 import { useI18n } from "@/lib/i18n"
 import type { OrderItemRecord, OrderRecord, OrderSlaCalculation } from "@/modules/orders/domain/order-types"
 
@@ -103,7 +104,7 @@ export function OrderDetailModal({ orderId, onClose, onUpdated }: OrderDetailMod
   }
 
   function handlePrint() {
-    window.open(`/api/v1/orders/${orderId}/print`, "_blank")
+    window.open(`/in-phieu/${orderId}`, "_blank")
   }
 
   // Chuẩn bị dữ liệu cho Florist Ticket Projection (Giấu giá, hiển thị BOM + Ảnh).
@@ -245,6 +246,7 @@ export function OrderDetailModal({ orderId, onClose, onUpdated }: OrderDetailMod
                     <span className="font-bold">💌 Lời nhắn thiệp: </span>{order.cardMessage}
                   </div>
                 )}
+                <OrderInfoRequests orderId={order.id} />
 
                 <div>
                   <div className="mb-2 flex items-center gap-1.5 font-bold text-text">

@@ -88,6 +88,8 @@ describe("tài khoản nhân viên do Điều hành quản lý", () => {
 
   it("tạm khoá: nhân viên mất quyền ngay, dữ liệu giữ nguyên; mở lại thì vào lại được", async () => {
     const created = await createSale()
+    // Nhân viên đã đổi mật khẩu tạm (checklist ALG 1.4 — có test riêng temporary-password-gate.test.ts)
+    await prisma.users.update({ where: { id: created.userId }, data: { must_change_password: false } })
     const session = await logIn({ email: "sale1@tiem-a.vn", password: created.temporaryPassword })
     const lock = await statusPatch(json(a.token, `/members/${created.membershipId}/status`, "PATCH", { active: false }), params(created.membershipId))
     expect(lock.status).toBe(200)

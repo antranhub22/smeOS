@@ -1,6 +1,6 @@
 import { validationFailed } from "@/core/http/errors"
 import { handle, jsonResponse } from "@/core/http/response"
-import { requireCapability } from "@/core/rbac/capabilities"
+import { hasCapability, requireCapability } from "@/core/rbac/capabilities"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import { listPaymentEvents } from "@/modules/greeting-card/use-cases/payment-webhook"
 import { parseListQuery, toPage } from "@/modules/greeting-card/contracts/list-query"
@@ -8,10 +8,13 @@ import { GREETING_CARD_CAPABILITY } from "@/modules/greeting-card/domain/greetin
 
 const STATUSES = ["RECEIVED", "MATCHED", "UNMATCHED", "IGNORED"] as const
 
-/** GET /api/v1/greeting-card/payment-events?status=UNMATCHED — giao dịch ngân hàng nhận qua webhook. */
+/**
+ * GET /api/v1/greeting-card/payment-events?status=UNMATCHED — giao dịch ngân hàng nhận qua webhook.
+ * Đọc: R19 (Kế toán đối soát, chỉ xem) hoặc R11 (người xác nhận tiền).
+ */
 export const GET = handle(async (request) => {
   const { ctx } = await requireTenantContext(request)
-  requireCapability(ctx, GREETING_CARD_CAPABILITY.paymentRecord)
+  if (!hasCapability(ctx, "R19")) requireCapability(ctx, GREETING_CARD_CAPABILITY.paymentRecord)
   const url = new URL(request.url)
   const raw = url.searchParams.get("status") || undefined
   const status = STATUSES.find((s) => s === raw)

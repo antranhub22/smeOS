@@ -12,6 +12,7 @@ import { ORDER_FILTERS, type ActionResult, type AdminOrder, type AdminOrderDialo
 import { CopyCustomerMessage } from "./copy-customer-message"
 import { PendingCancellationPanel } from "./pending-cancellation-panel"
 import { AdminConfirmOrderModal } from "@/components/greeting-card/coordinator/admin-confirm-order-modal"
+import { EMPTY_ORDER_FILTER, OrderAdvancedFilters, orderFilterQuery } from "@/components/orders/order-advanced-filters"
 import Link from "next/link"
 import type { Route } from "next"
 
@@ -21,13 +22,15 @@ export function AdminBrochurePaymentTab({ focusOrderId = null, onClearFocus }: {
   const [action, setAction] = useState<OrderAction | null>(null)
   const [notice, setNotice] = useState<ActionResult | null>(null)
   const [search, setSearch] = useState("")
+  const [advanced, setAdvanced] = useState(EMPTY_ORDER_FILTER)
   // Tìm theo tên khách / mã đơn / mã link / SĐT khách bỏ qua bộ lọc — để đối chiếu nhanh
   const term = search.trim()
   // Mở từ Hộp việc: chỉ hiện đúng đơn đó, bất kể bộ lọc đang chọn (trước đây lọc "Còn phải thu" che mất đơn)
   const query = focusOrderId
     ? `orderId=${encodeURIComponent(focusOrderId)}`
     : term.length >= 1 ? `q=${encodeURIComponent(term)}` : ORDER_FILTERS.find((f) => f.id === filter)?.query ?? ""
-  const orders = usePagedList<AdminOrder>(`/api/v1/greeting-card/orders${query ? `?${query}` : ""}`)
+  const fullQuery = [query, focusOrderId ? "" : orderFilterQuery(advanced)].filter(Boolean).join("&")
+  const orders = usePagedList<AdminOrder>(`/api/v1/greeting-card/orders${fullQuery ? `?${fullQuery}` : ""}`)
   const org = useApi<{ settings?: Record<string, unknown> | null }>("/api/v1/organizations/current")
   const policy = parsePaymentPolicy(org.data?.settings)
 
@@ -74,6 +77,11 @@ export function AdminBrochurePaymentTab({ focusOrderId = null, onClearFocus }: {
           <div role="status" className="flex flex-wrap items-center justify-between gap-2 border-b border-border bg-primary/5 px-4 py-2.5 text-body-sm">
             <span className="font-semibold text-foreground">Đang mở đơn từ Hộp việc</span>
             <button type="button" onClick={onClearFocus} className="min-h-9 font-semibold text-primary hover:underline">Xem tất cả đơn</button>
+          </div>
+        )}
+        {!focusOrderId && (
+          <div className="px-4 pt-4">
+            <OrderAdvancedFilters value={advanced} onChange={setAdvanced} />
           </div>
         )}
         <div className="p-4 border-b border-border flex flex-wrap items-center gap-2" role="group" aria-label="Lọc đơn">

@@ -16,6 +16,12 @@ export const BROCHURE_POLICY_SETTINGS_KEY = "brochure_policy"
  */
 export type TrackingTriggerPolicy = "PAYMENT_ONLY" | "PAYMENT_OR_COORDINATOR"
 export const DEFAULT_TRACKING_TRIGGER_POLICY: TrackingTriggerPolicy = "PAYMENT_OR_COORDINATOR"
+/**
+ * Xác nhận tiền thu nốt mặc định CHỈ Điều hành (PO 04/11/2026, Q3 phương án b — checklist ALG 1.16);
+ * Điều hành bật lại "Điều phối xác nhận qua ảnh bill" trong Cài đặt nếu muốn. Không kế thừa
+ * `trackingTriggerPolicy` khi chưa cài riêng.
+ */
+export const DEFAULT_BALANCE_PAYMENT_TRIGGER_POLICY: TrackingTriggerPolicy = "PAYMENT_ONLY"
 
 export interface BrochurePaymentPolicy {
   /** 0 = khách trả đủ ngay; 1–99 = lần đầu chỉ cần cọc chừng ấy %. */
@@ -102,6 +108,7 @@ export const DEFAULT_PAYMENT_POLICY: BrochurePaymentPolicy = {
   requireFullBeforeDispatch: false,
   requirePaymentProof: true,
   trackingTriggerPolicy: DEFAULT_TRACKING_TRIGGER_POLICY,
+  balancePaymentTriggerPolicy: DEFAULT_BALANCE_PAYMENT_TRIGGER_POLICY,
   requireProductPhotoQC: true,
   requireRecipientPhoto: true,
   cancellationApprovalTimeoutMinutes: DEFAULT_CANCELLATION_APPROVAL_TIMEOUT_MINUTES,
@@ -178,7 +185,7 @@ export function parsePaymentPolicy(settings: unknown): BrochurePaymentPolicy {
   const balanceTriggerPolicy: TrackingTriggerPolicy =
     r.balance_payment_trigger_policy === "PAYMENT_ONLY" ? "PAYMENT_ONLY"
     : r.balance_payment_trigger_policy === "PAYMENT_OR_COORDINATOR" ? "PAYMENT_OR_COORDINATOR"
-    : triggerPolicy // kế thừa từ trackingTriggerPolicy nếu chưa cài riêng
+    : DEFAULT_BALANCE_PAYMENT_TRIGGER_POLICY
 
   return {
     depositPercent: pct >= 1 && pct <= 99 ? pct : 0,
@@ -220,7 +227,7 @@ export function serializePaymentPolicy(policy: BrochurePaymentPolicy): Record<st
     require_recipient_photo: policy.requireRecipientPhoto !== false,
     cancellation_approval_timeout_minutes: policy.cancellationApprovalTimeoutMinutes ?? DEFAULT_CANCELLATION_APPROVAL_TIMEOUT_MINUTES,
     tracking_trigger_policy: policy.trackingTriggerPolicy ?? DEFAULT_TRACKING_TRIGGER_POLICY,
-    balance_payment_trigger_policy: policy.balancePaymentTriggerPolicy ?? policy.trackingTriggerPolicy ?? DEFAULT_TRACKING_TRIGGER_POLICY,
+    balance_payment_trigger_policy: policy.balancePaymentTriggerPolicy ?? DEFAULT_BALANCE_PAYMENT_TRIGGER_POLICY,
     holiday_auto_mode: policy.holidayAutoMode === true,
     auto_approve_payment_with_proof: policy.autoApprovePaymentWithProof === true,
     auto_approve_payment_with_proof_minutes: policy.autoApprovePaymentWithProofMinutes ?? 15,

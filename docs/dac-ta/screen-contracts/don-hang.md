@@ -52,6 +52,8 @@ SSOT: `docs/kien-truc/KIEN_TRUC_SSOT_DON_HANG_DA_NGUON.md` §6. Archetype: bản
   - Header chuẩn: 1 nút chính "Tạo đơn mới", 2 nút phụ "Làm mới", "Trang chủ".
   - Feature guidance card: `OrderGuidanceCard`.
   - Bộ lọc & tìm kiếm nhanh: ô input tìm kiếm theo mã đơn, tên người nhận, SĐT.
+  - Lọc nâng cao (`OrderAdvancedFilters`, checklist ALG 4.3) ở tab Tất cả đơn và bảng Thẻ Chào của Điều hành: khoảng ngày giao, nhân viên bán (hiện khi có `F1`), chi nhánh (hiện khi tổ chức có từ 2 chi nhánh và có `F6`).
+  - Chi tiết đơn có khối "Thông tin cần bổ sung" (checklist ALG 4.14) và nút In mở `/in-phieu/[id]` (phiếu xưởng A6, băng rôn).
   - Vùng hiển thị đơn hàng: 4 cột Kanban trên Desktop (`lg:`), Danh sách phân tab trạng thái trên Mobile (< `lg:`).
 - **Trạng thái:** Tải (`loading`), Rỗng (`EmptyState` kèm nút hành động "Tạo đơn mới"), Modals (`CreateOrderModal`, `OrderDetailModal`).
 

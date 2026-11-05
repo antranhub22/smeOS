@@ -15,6 +15,7 @@ import { SalesBrochureTab } from "@/components/greeting-card/sales/sales-brochur
 import { AdminBrochurePaymentTab } from "@/components/greeting-card/admin/admin-brochure-payment-tab"
 import { CoordinatorBrochureTab } from "@/components/greeting-card/coordinator/coordinator-brochure-tab"
 import { ExportOrdersButton } from "@/components/orders/export-orders-button"
+import { EMPTY_ORDER_FILTER, OrderAdvancedFilters, orderFilterQuery } from "@/components/orders/order-advanced-filters"
 import { AllOrdersTab } from "@/components/orders/workspace/all-orders-tab"
 import { LeadQueueTab } from "@/components/orders/workspace/lead-queue-tab"
 import { WorkbenchList } from "@/components/orders/workspace/workbench-list"
@@ -64,9 +65,11 @@ export default function DonHangPage() {
   const [chatModalOpen, setChatModalOpen] = useState(false)
   const [selectedOrderId, setSelectedOrderId] = useState<string | null>(null)
 
-  function loadOrders() {
+  const [advanced, setAdvanced] = useState(EMPTY_ORDER_FILTER)
+  function loadOrders(filter = advanced) {
     setLoading(true)
-    fetch("/api/v1/orders")
+    const q = orderFilterQuery(filter)
+    fetch(`/api/v1/orders${q ? `?${q}` : ""}`)
       .then((r) => r.json())
       .then((res) => {
         if (res.orders) setOrders(res.orders)
@@ -106,7 +109,7 @@ export default function DonHangPage() {
           <Button
             variant="outline"
             size="sm"
-            onClick={loadOrders}
+            onClick={() => loadOrders()}
             disabled={loading}
             className="hidden sm:inline-flex items-center gap-1.5"
           >
@@ -168,11 +171,16 @@ export default function DonHangPage() {
             <Section title="Đơn nguồn khác"><CoordinationQueueList /></Section>
           </>
         )}
-        {activeTab === "all" && <AllOrdersTab orders={orders} onSelect={setSelectedOrderId} onCreate={() => setCreateOpen(true)} />}
+        {activeTab === "all" && (
+          <div className="flex flex-col gap-3">
+            <OrderAdvancedFilters value={advanced} onChange={(v) => { setAdvanced(v); loadOrders(v) }} />
+            <AllOrdersTab orders={orders} onSelect={setSelectedOrderId} onCreate={() => setCreateOpen(true)} />
+          </div>
+        )}
       </main>
 
-      <CreateOrderModal isOpen={createOpen} onClose={() => setCreateOpen(false)} onSuccess={loadOrders} />
-      <OrderDetailModal orderId={selectedOrderId} onClose={() => setSelectedOrderId(null)} onUpdated={loadOrders} />
+      <CreateOrderModal isOpen={createOpen} onClose={() => setCreateOpen(false)} onSuccess={() => loadOrders()} />
+      <OrderDetailModal orderId={selectedOrderId} onClose={() => setSelectedOrderId(null)} onUpdated={() => loadOrders()} />
       <ChatOrderCheckoutModal
         isOpen={chatModalOpen}
         onClose={() => setChatModalOpen(false)}

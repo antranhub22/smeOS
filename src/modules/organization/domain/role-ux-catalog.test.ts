@@ -8,18 +8,20 @@ import {
   resolveRoleUx,
 } from "./role-ux-catalog"
 
-describe("danh mục 17 vai trải nghiệm (Role & Capability Architecture)", () => {
-  it("đủ 17 vai, khoá không trùng", () => {
-    expect(ROLE_UX_CATALOG).toHaveLength(17)
-    expect(new Set(ROLE_UX_CATALOG.map((r) => r.key)).size).toBe(17)
+describe("danh mục 18 vai trải nghiệm (Role & Capability Architecture)", () => {
+  it("đủ 18 vai, khoá không trùng", () => {
+    expect(ROLE_UX_CATALOG).toHaveLength(18)
+    expect(new Set(ROLE_UX_CATALOG.map((r) => r.key)).size).toBe(18)
   })
 
-  it("đúng 11 vai đang dùng được (gồm 4 Top-Level Roles)", () => {
+  it("đúng 14 vai đang dùng được (gồm 4 Top-Level Roles và 3 vai vận hành PO Q7)", () => {
     const available = ROLE_UX_CATALOG.filter((r) => r.status === "AVAILABLE").map((r) => r.key)
     expect(available.sort()).toEqual([
       "coordinator",
       "crm",
       "customer_service",
+      "finance_accounting",
+      "florist",
       "flower_network_admin",
       "industry_admin",
       "lead_marketing",
@@ -27,6 +29,7 @@ describe("danh mục 17 vai trải nghiệm (Role & Capability Architecture)", (
       "platform_admin",
       "product_manager",
       "sales",
+      "shipper",
       "store_admin",
     ])
   })
@@ -78,6 +81,12 @@ describe("resolveRoleUx", () => {
     expect(resolveRoleUx("marketing")?.key).toBe("lead_marketing")
     expect(resolveRoleUx("crm")?.key).toBe("crm")
     expect(resolveRoleUx("customer_service")?.key).toBe("customer_service")
+  })
+
+  it("ba vai vận hành PO Q7 có trang chủ riêng", () => {
+    expect(resolveRoleUx("tho_cam")?.homepage).toBe("FLORIST_QUEUE")
+    expect(resolveRoleUx("shipper")?.homepage).toBe("SHIPPER_DELIVERIES")
+    expect(resolveRoleUx("ke_toan")?.homepage).toBe("ACCOUNTING_WORKSPACE")
   })
 
   it("tổ chức FLOWER_NETWORK hoặc CHAIN giải dieu_hanh sang flower_network_admin", () => {

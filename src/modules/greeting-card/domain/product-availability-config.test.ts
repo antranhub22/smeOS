@@ -161,4 +161,11 @@ describe("product-availability-config domain", () => {
       expect(isManuallyBlocked("2026-12-30", cfg)).toBe(false)
     })
   })
+
+  it("ngày chặn thủ công đọc được ở mọi chế độ, không chỉ lịch phòng (checklist ALG 2.8)", () => {
+    const parsed = parseAvailabilityConfig({ mode: "STOCK_QUANTITY", maxQuantity: null, manualBlockedDates: ["2027-02-14", "sai"] })
+    expect(parsed.manualBlockedDates).toEqual(["2027-02-14"])
+    expect(isManuallyBlocked("2027-02-14", parsed)).toBe(true)
+    expect(isManuallyBlocked("2027-02-15", parsed)).toBe(false)
+  })
 })

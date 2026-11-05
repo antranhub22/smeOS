@@ -1,4 +1,5 @@
 import type { Prisma } from "@/generated/prisma/client"
+import { completeIfSettled } from "./order-settlement"
 import { prisma } from "@/core/tenancy/infra/prisma"
 import { scopedWhere, type TenantContext } from "@/core/tenancy"
 import { conflict, notFound, unprocessable } from "@/core/http/errors"
@@ -82,6 +83,8 @@ export class BrochurePaymentRepository {
         },
       })
       if (moved.count === 0) throw conflict("Đơn hàng vừa được cập nhật thanh toán, vui lòng tải lại")
+      // Đơn vừa giao song song với lần thu này → hoàn tất khi đã đủ tiền (checklist ALG 4.26)
+      await completeIfSettled(ctx.organizationId, order.id, tx)
 
       const payment = await tx.order_payments.create({
         data: {

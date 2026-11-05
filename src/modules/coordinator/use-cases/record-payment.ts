@@ -12,10 +12,14 @@
  */
 
 import { AppError } from "@/core/http/errors"
+import { hasCapability } from "@/core/rbac/capabilities"
 import type { TenantContext } from "@/core/tenancy/tenant-context"
 import { getCoordinatorRepository } from "../infra/coordinator-repository"
 import type { CoordinatorOrderView } from "./present-coordinator-order"
 import { audit, getOrderView, loadOrderOrThrow, runCoordinatorTx } from "./shared"
+
+/** Xác nhận tiền về — trần cứng Điều hành (`capability-catalog.ts`). Người có mã này ghi thu là có hiệu lực ngay. */
+export const PAYMENT_CONFIRM_CAPABILITY = "R11"
 
 export interface RecordPaymentInput {
   kind: "DEPOSIT" | "BALANCE" | "REFUND"
@@ -28,6 +32,8 @@ export interface RecordPaymentInput {
 
 export interface OrderPaymentView {
   id: string
+  /** PENDING = chờ Điều hành xác nhận (chưa cộng vào số đã thu) · CONFIRMED · REJECTED */
+  status: string
   kind: "DEPOSIT" | "BALANCE" | "REFUND"
   amountVnd: number
   paymentMethod: string | null
@@ -55,6 +61,8 @@ export async function recordCoordinatorPayment(
       throw new AppError("UNPROCESSABLE_ENTITY", "Không thể hoàn quá số tiền đã thu.")
     }
     const balanceAfter = totalVnd - paidAfter
+    // Sale/Điều phối ghi thu → chờ Điều hành xác nhận, chưa vào sổ (PO 04/11/2026, Q3 phương án b — ALG 1.16)
+    const pending = input.kind !== "REFUND" && !hasCapability(ctx, PAYMENT_CONFIRM_CAPABILITY)
 
     const payment = await repo.recordPayment(
       ctx,
@@ -67,16 +75,17 @@ export async function recordCoordinatorPayment(
         evidenceAssetId: input.evidenceAssetId ?? null,
         note: input.note?.trim() || null,
       },
-      paidAfter,
-      balanceAfter
+      pending ? paidBefore : paidAfter,
+      pending ? totalVnd - paidBefore : balanceAfter,
+      pending ? "PENDING" : "CONFIRMED"
     )
     await audit(
       ctx,
       tx,
-      input.kind === "REFUND" ? "coordinator.order.payment.refund" : "coordinator.order.payment.record",
+      input.kind === "REFUND" ? "coordinator.order.payment.refund" : pending ? "coordinator.order.payment.pending" : "coordinator.order.payment.record",
       row.id,
       { paidVnd: paidBefore, balanceVnd: totalVnd - paidBefore },
-      { paidVnd: paidAfter, balanceVnd: balanceAfter, paymentId: payment.id, kind: input.kind, amountVnd: input.amountVnd }
+      { paidVnd: pending ? paidBefore : paidAfter, balanceVnd: pending ? totalVnd - paidBefore : balanceAfter, paymentId: payment.id, kind: input.kind, amountVnd: input.amountVnd }
     )
     return row.id
   })
@@ -89,6 +98,7 @@ export async function listCoordinatorPayments(ctx: TenantContext, orderIdOrCode:
   const rows = await repo.listPayments(ctx, row.id)
   return rows.map((p) => ({
     id: p.id,
+    status: p.status,
     kind: p.kind,
     amountVnd: Number(p.amount_vnd),
     paymentMethod: p.payment_method,

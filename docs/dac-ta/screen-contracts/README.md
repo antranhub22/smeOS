@@ -47,3 +47,7 @@ Thư mục này chứa các bản hợp đồng giao diện (Screen Contracts) c
 | `cong-cu-poster-banner.md` | `/cong-cu/poster-banner` | chủ tiệm / marketing | PD đợt A-1 | axe đạt |
 | `cong-cu.md` | `/cong-cu` | điều hành / marketing / sale | PR-0 | **PASS** |
 | `landing-page.md` | `/landing-page` | chủ tiệm / marketing | công cụ #08 Hoàn thiện | axe đạt |
+| `trang-chu-tho-cam.md` | `/` | `tho_cam` | Checklist ALG 1.12, 4.13 | Chờ đo |
+| `trang-chu-shipper.md` | `/` | `shipper` | Checklist ALG 1.12, 4.5 | Chờ đo |
+| `trang-chu-ke-toan.md` | `/` | `ke_toan` | Checklist ALG 1.12 | Chờ đo |
+| `in-phieu.md` | `/in-phieu/[id]` | điều hành / điều phối | Checklist ALG 4.9 | Chờ đo |

@@ -7,6 +7,7 @@ import { prisma } from "@/core/tenancy/infra/prisma"
 import { GreetingCardRepository } from "@/modules/greeting-card/infra/greeting-card-repository"
 import { BrochureOrderRepository } from "@/modules/greeting-card/infra/brochure-order-repository"
 import { PhotoApprovalRepository } from "@/modules/greeting-card/infra/photo-approval-repository"
+import { BrochurePaymentRepository } from "@/modules/greeting-card/infra/brochure-payment-repository"
 import { ProductRepository } from "@/modules/products/infra/product-repository"
 import { createSendLink } from "@/modules/greeting-card/use-cases/create-send-link"
 import { submitBrochureOrder } from "@/modules/greeting-card/use-cases/submit-brochure-order"
@@ -94,6 +95,38 @@ describe("greeting-card: luật Điều phối (PO 15/10/2026)", () => {
     await new PhotoApprovalRepository().recordApproval(await prisma.orders.findUniqueOrThrow({ where: { id: strict.orderId } }))
     await dispatchBrochureShipping(a.ctx, strict.orderId, { trackingNote: "Ship" })
     expect(await codeOf(uploadBrochureRecipientPhoto(a.ctx, strict.orderId, { skipPhoto: true }))).toBe("CONFLICT")
+  })
+
+  it("ảnh giao bắt buộc ở mọi gói; Điều hành tắt công tắc ảnh người nhận thì bỏ qua được (PO 04/11/2026, ALG 4.18)", async () => {
+    await usePolicy(LEAN_WORKFLOW_POLICY)
+    const order = await placeOrder()
+    await assignBrochureFlorist(a.ctx, order.orderId, { floristNote: "Thợ A" })
+    await uploadBrochureProductPhoto(a.ctx, order.orderId, { skipPhoto: true })
+    await dispatchBrochureShipping(a.ctx, order.orderId, { trackingNote: "Ship" })
+    expect(await codeOf(uploadBrochureRecipientPhoto(a.ctx, order.orderId, { skipPhoto: true }))).toBe("CONFLICT")
+    expect((await prisma.orders.findUniqueOrThrow({ where: { id: order.orderId } })).delivery_status).toBe("DELIVERING")
+
+    await usePolicy({ ...LEAN_WORKFLOW_POLICY, preset: "CUSTOM", requireDeliveryProofPhoto: false })
+    await uploadBrochureRecipientPhoto(a.ctx, order.orderId, { skipPhoto: true, skipReason: "Khách nhận trực tiếp" })
+    expect((await prisma.orders.findUniqueOrThrow({ where: { id: order.orderId } })).delivery_status).toBe("DELIVERED")
+  })
+
+  it("giao xong còn nợ → Đã giao chờ thu đủ; thu đủ → Hoàn tất (PO 04/11/2026, ALG 4.26)", async () => {
+    await usePolicy({ ...LEAN_WORKFLOW_POLICY, preset: "CUSTOM", requireDeliveryProofPhoto: false })
+    const order = await placeOrder()
+    await assignBrochureFlorist(a.ctx, order.orderId, { floristNote: "Thợ A" })
+    await uploadBrochureProductPhoto(a.ctx, order.orderId, { skipPhoto: true })
+    await dispatchBrochureShipping(a.ctx, order.orderId, { trackingNote: "Ship" })
+    await uploadBrochureRecipientPhoto(a.ctx, order.orderId, { skipPhoto: true, skipReason: "Khách nhận trực tiếp" })
+
+    const delivered = await prisma.orders.findUniqueOrThrow({ where: { id: order.orderId } })
+    expect(delivered).toMatchObject({ delivery_status: "DELIVERED", status: "DELIVERED" })
+    expect(Number(delivered.balance_vnd)).toBeGreaterThan(0)
+
+    await new BrochurePaymentRepository().recordIncomingPayment(a.ctx, order.orderId, {
+      amountVnd: Number(delivered.balance_vnd), method: "CASH", reference: "thu-sau-giao", note: "Thu nốt",
+    })
+    expect((await prisma.orders.findUniqueOrThrow({ where: { id: order.orderId } })).status).toBe("COMPLETED")
   })
 
   it("chờ khách duyệt ảnh thì chưa giao ship được, Điều phối thấy đếm ngược; gói Tinh gọn không chờ", async () => {

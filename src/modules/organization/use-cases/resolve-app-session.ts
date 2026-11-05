@@ -61,6 +61,7 @@ export const resolveAppSession = cache(async function resolveAppSession(
   const session: MockSession = {
     userName: described.user.name ?? described.user.email,
     userEmail: described.user.email,
+    mustChangePassword: described.user.mustChangePassword,
     userInitials: viettatTen(described.user.name, described.user.email),
     orgName: cleanOrgName,
     workspaceKind: (described.workspace?.kind as MockSession["workspaceKind"]) ?? "PRODUCTION",

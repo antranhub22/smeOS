@@ -12,12 +12,22 @@ import { FileCode } from "@/components/ui/icon-set/file-code"
 import { useSession } from "@/lib/session"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
 import { Dialog } from "@/components/ui/dialog"
 import { SkeletonBlock } from "@/components/ui/skeleton"
 import { FeatureGuidanceCard } from "@/components/templates/shared/feature-guidance-card"
 import { PageHeader } from "@/components/ui/page-header"
 import { EmptyState } from "@/components/ui/empty-state"
+
+/** Bộ lọc loại thao tác gửi lên máy chủ (khớp đầu mã hành động — checklist ALG 1.17). */
+const ACTION_FILTERS = [
+  { value: "ALL", label: "Tất cả" },
+  { value: "api.mutation", label: "Thao tác ghi dữ liệu" },
+  { value: "security.access_denied", label: "Cố thao tác ngoài quyền" },
+  { value: "member.", label: "Thành viên và vai trò" },
+  { value: "product.", label: "Sản phẩm" },
+] as const
 
 interface AuditLogRow {
   id: string
@@ -42,12 +52,20 @@ export default function AuditLogsPage() {
   const [error, setError] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedLog, setSelectedLog] = useState<AuditLogRow | null>(null)
+  // Lọc phía máy chủ: loại thao tác và khoảng ngày (checklist ALG 1.17)
+  const [actionFilter, setActionFilter] = useState("")
+  const [fromDate, setFromDate] = useState("")
+  const [toDate, setToDate] = useState("")
 
   const fetchLogs = useCallback(async () => {
     try {
       setLoading(true)
       setError(null)
-      const res = await fetch("/api/v1/audit-logs?limit=40")
+      const params = new URLSearchParams({ limit: "100" })
+      if (actionFilter) params.set("action", actionFilter)
+      if (fromDate) params.set("from", fromDate)
+      if (toDate) params.set("to", toDate)
+      const res = await fetch(`/api/v1/audit-logs?${params.toString()}`)
       if (!res.ok) {
         throw new Error("Không thể tải nhật ký kiểm toán.")
       }
@@ -58,7 +76,7 @@ export default function AuditLogsPage() {
     } finally {
       setLoading(false)
     }
-  }, [])
+  }, [actionFilter, fromDate, toDate])
 
   useEffect(() => {
     if (canView) {
@@ -138,6 +156,26 @@ export default function AuditLogsPage() {
             Làm mới
           </Button>
         </div>
+      </div>
+
+      <div className="flex flex-wrap items-end gap-3" aria-label="Bộ lọc nhật ký">
+        <div className="flex flex-col gap-1 text-caption text-text-muted">
+          Loại thao tác
+          <Select value={actionFilter || "ALL"} onValueChange={(v: string) => setActionFilter(v === "ALL" ? "" : v)}>
+            <SelectTrigger className="w-56"><SelectValue /></SelectTrigger>
+            <SelectContent>
+              {ACTION_FILTERS.map((f) => <SelectItem key={f.value} value={f.value}>{f.label}</SelectItem>)}
+            </SelectContent>
+          </Select>
+        </div>
+        <label className="flex flex-col gap-1 text-caption text-text-muted">
+          Từ ngày
+          <Input type="date" value={fromDate} onChange={(e) => setFromDate(e.target.value)} className="w-40" />
+        </label>
+        <label className="flex flex-col gap-1 text-caption text-text-muted">
+          Đến ngày
+          <Input type="date" value={toDate} onChange={(e) => setToDate(e.target.value)} className="w-40" />
+        </label>
       </div>
 
       {/* 2. Danh sách nhật ký kiểm toán */}

@@ -10,11 +10,15 @@
  */
 
 import { prepareLateDeliveryDeduction } from "@/modules/greeting-card/use-cases/craft-fee-deductions"
+import { statusAfterDelivery } from "@/modules/greeting-card/domain/order-settlement"
+import { completeIfSettled } from "@/modules/greeting-card/infra/order-settlement"
+import { canBypassDeliveryPhoto, parseBrochureWorkflowPolicy } from "@/modules/greeting-card/domain/brochure-workflow-policy"
 import { CraftFeeFactsRepository } from "@/modules/greeting-card/infra/craft-fee-facts-repository"
 import { randomUUID } from "crypto"
 import { z } from "zod"
 import { handle, jsonResponse } from "@/core/http/response"
 import { conflict, notFound, unprocessable, validationFailed } from "@/core/http/errors"
+import { GreetingCardRepository } from "@/modules/greeting-card/infra/greeting-card-repository"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import { requireCapability } from "@/core/rbac/capabilities"
 import { getStorageProvider } from "@/modules/assets/adapters/storage-provider-factory"
@@ -143,7 +147,9 @@ export const POST = handle<[{ params: Promise<{ id: string }> }]>(async (request
     publicPhotoUrl = await storage.signedUrl(podPhotoStorageKey, 604800, "GET")
     confirmMode = "with_photo"
   } else {
-    // Mode 2: Xác nhận không ảnh (coordinator có quyền waive ảnh với lý do)
+    // Mode 2: Xác nhận không ảnh — chỉ khi tiệm đã tắt yêu cầu ảnh giao (checklist ALG 4.18)
+    const workflow = parseBrochureWorkflowPolicy((await new GreetingCardRepository().getShopProfile(order.organization_id)).settings)
+    if (!canBypassDeliveryPhoto(workflow)) throw conflict("Tiệm bắt buộc ảnh giao hàng — tải ảnh để xác nhận")
     const body = await request.json().catch(() => ({}))
     const parsed = confirmJsonSchema.safeParse(body)
     if (!parsed.success) {
@@ -161,10 +167,12 @@ export const POST = handle<[{ params: Promise<{ id: string }> }]>(async (request
   // Điều phối được xác nhận giao cả khi chưa nhập shipper (tiệm tự giao), nhưng hoa phải đã xong
   // và đơn chưa huỷ/hoàn tất — trước 22/10/2026 đơn đã huỷ vẫn bị đưa sang COMPLETED (rà soát cụm G)
   const applyLateFee = await prepareLateDeliveryDeduction(order.organization_id, order.id, new CraftFeeFactsRepository(), new Date(deliveredAt))
+  // Giao xong còn nợ → "Đã giao — chờ thu đủ" (checklist ALG 4.26)
+  const settledStatus = statusAfterDelivery({ totalVnd: Number(order.total_vnd), paidVnd: Number(order.paid_vnd) })
   const saved = await store.applyStep({
     organizationId: order.organization_id,
     orderId: order.id,
-    order: { delivery_status: "DELIVERED", status: "COMPLETED" },
+    order: { delivery_status: "DELIVERED", status: settledStatus },
     require: { productionStatus: ["READY"], deliveryStatus: ["PENDING", "DISPATCHED", "DELIVERING"] },
     metadata: (current) => {
       const podPhotos = Array.isArray(current.pod_photos) ? (current.pod_photos as string[]) : []
@@ -180,11 +188,12 @@ export const POST = handle<[{ params: Promise<{ id: string }> }]>(async (request
     },
     events: [
       { axis: "delivery", fromValue: order.delivery_status || "DELIVERING", toValue: "DELIVERED", actorId, reason: `[Coordinator Confirm Delivery][${confirmMode}] ${confirmNote}` },
-      { axis: "status", fromValue: order.status, toValue: "COMPLETED", actorId, reason: "[Hoàn Tất] Điều phối xác nhận giao hàng thành công." },
+      { axis: "status", fromValue: order.status, toValue: settledStatus, actorId, reason: settledStatus === "COMPLETED" ? "[Hoàn Tất] Điều phối xác nhận giao hàng thành công." : "[Đã giao] Chờ thu đủ tiền trước khi hoàn tất." },
     ],
   })
 
   if (!saved) throw conflict("Đơn hàng chưa có ảnh thành phẩm được duyệt, hoặc đã huỷ/hoàn tất.")
+  await completeIfSettled(order.organization_id, order.id)
 
   // ✅ First-Wins Mutex: Hủy toàn bộ M4 reminders đang pending
   const cancelResult = await cancelSubcontractReminderSteps({
@@ -209,7 +218,7 @@ export const POST = handle<[{ params: Promise<{ id: string }> }]>(async (request
     data: {
       success: true,
       message: `✅ Điều phối đã xác nhận giao hàng thành công (${confirmMode === "with_photo" ? "có ảnh POD" : "xác nhận không ảnh"}). Mọi nhắc nhở M4 đã bị hủy.`,
-      orderStatus: "COMPLETED",
+      orderStatus: settledStatus,
       deliveryStatus: "DELIVERED",
       deliveredAt,
       photoUrl: publicPhotoUrl,

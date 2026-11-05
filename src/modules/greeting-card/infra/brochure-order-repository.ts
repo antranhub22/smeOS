@@ -1,15 +1,15 @@
 import { prisma } from "@/core/tenancy/infra/prisma"
-import { scopedWhere, type TenantContext } from "@/core/tenancy"
+import { branchScopedWhere, scopedWhere, type TenantContext } from "@/core/tenancy"
 import { recordAuditLog } from "@/modules/audit/use-cases/record-audit-log"
 import { conflict } from "@/core/http/errors"
 import { resolveCoordinatorId } from "../domain/coordinator-owner"
 import { sortByDelivery } from "../domain/coordinator-board"
 import type { delivery_status, order_status, production_status } from "@/generated/prisma/client"
+import { orderListExtraWhere, type OrderListExtraFilter } from "@/modules/orders/domain/order-list-filter"
 
 export const ORDER_STATUSES: readonly order_status[] = [
   "DRAFT", "CONFIRMED", "PROCESSING", "DELIVERED", "COMPLETED", "CANCELLED",
 ]
-
 /** Đơn hàng nguồn Thẻ chào: tạo đơn, thu tiền, tra cứu, cập nhật xưởng. */
 /** Mã đơn, mã link, tên khách hàng (không phân biệt hoa thường) hoặc số điện thoại khách (so phần số). */
 function searchConditions(q: string) {
@@ -47,7 +47,7 @@ export class BrochureOrderRepository {
    */
   async listCoordinatorBoard(ctx: TenantContext, options: { date?: string | undefined; saleId?: string | undefined; doneSince: Date; max: number }) {
     const where = scopedWhere(ctx, {
-      source: "BROCHURE",
+      source: "BROCHURE", ...branchScopedWhere(ctx),
       NOT: { status: "CANCELLED" as const },
       OR: [{ delivery_status: { not: "DELIVERED" as const } }, { updated_at: { gte: options.doneSince } }],
       ...(options.date ? { delivery_window: { path: ["date"], equals: options.date } } : {}),
@@ -124,11 +124,11 @@ export class BrochureOrderRepository {
       orderId?: string | undefined
       limit: number
       cursor?: string | undefined
-    }
+    } & Omit<OrderListExtraFilter, "saleId">
   ) {
     const rows = await this.db.orders.findMany({
-      where: scopedWhere(ctx, {
-        source: "BROCHURE",
+      where: { AND: [orderListExtraWhere(options), scopedWhere(ctx, {
+        source: "BROCHURE", ...branchScopedWhere(ctx),
         ...(options.orderId ? { id: options.orderId } : {}),
         ...(options.status ? { status: options.status } : {}),
         ...(options.saleId ? { greeting_sessions: { some: { sale_id: options.saleId } } } : {}),
@@ -141,7 +141,7 @@ export class BrochureOrderRepository {
         ...(options.q || options.delivered
           ? { AND: [...(options.q ? [{ OR: searchConditions(options.q) }] : []), ...(options.delivered ? [{ OR: [{ delivery_status: "DELIVERED" as const }, { status: "COMPLETED" as const }] }] : [])] }
           : {}),
-      }),
+      })] },
       include: {
         customer: { select: { id: true, code: true, name: true, phone: true } },
         items: true,
@@ -167,7 +167,7 @@ export class BrochureOrderRepository {
   async listDeliveredWithDebt(ctx: TenantContext, saleId: string | null, take = 200) {
     const rows = await this.db.orders.findMany({
       where: scopedWhere(ctx, {
-        source: "BROCHURE",
+        source: "BROCHURE", ...branchScopedWhere(ctx),
         NOT: { status: "CANCELLED" as const },
         OR: [{ delivery_status: "DELIVERED" as const }, { status: "COMPLETED" as const }],
         balance_vnd: { gt: 0 },
@@ -186,7 +186,7 @@ export class BrochureOrderRepository {
 
   async findBrochureOrder(ctx: TenantContext, orderId: string) {
     return this.db.orders.findFirst({
-      where: scopedWhere(ctx, { id: orderId, source: "BROCHURE" }),
+      where: scopedWhere(ctx, { id: orderId, source: "BROCHURE", ...branchScopedWhere(ctx) }),
       include: {
         qc_records: { select: { notes: true, created_at: true } },
         greeting_sessions: { select: { id: true, send_code: true, status: true, sale_id: true, payment_proof_asset_id: true, catalog: { select: { filters: true } } } },
@@ -245,7 +245,7 @@ export class BrochureOrderRepository {
   /** Sale phụ trách đơn (người gửi link) — `null` khi đơn không thuộc tổ chức / không phải đơn Thẻ chào. */
   async saleOfOrder(ctx: TenantContext, orderId: string): Promise<string | null> {
     const order = await this.db.orders.findFirst({
-      where: scopedWhere(ctx, { id: orderId, source: "BROCHURE" }),
+      where: scopedWhere(ctx, { id: orderId, source: "BROCHURE", ...branchScopedWhere(ctx) }),
       select: { greeting_sessions: { select: { sale_id: true }, take: 1 } },
     })
     return order?.greeting_sessions[0]?.sale_id ?? null

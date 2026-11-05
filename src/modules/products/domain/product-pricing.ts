@@ -37,6 +37,8 @@ export interface PriceOptionRow {
   active: boolean
   /** Mã ảnh riêng của phiên bản trong kho ảnh (`assets.id`); `null` = dùng ảnh mẫu */
   imageAssetId: string | null
+  /** Số cành/số hoa của phiên bản — phiếu thợ in theo phiên bản khách chọn (checklist ALG 2.4); `null` = theo công thức mẫu */
+  stemCount: number | null
 }
 
 export interface ProductPricing {
@@ -68,6 +70,10 @@ function money(v: unknown): number | null {
 
 function assetId(v: unknown): string | null {
   return typeof v === "string" && /^[A-Za-z0-9_-]{1,64}$/.test(v) ? v : null
+}
+
+function count(v: unknown): number | null {
+  return typeof v === "number" && Number.isInteger(v) && v > 0 && v <= 9999 ? v : null
 }
 
 function label(v: unknown): string {
@@ -143,7 +149,7 @@ export function parsePricing(attributes: unknown): ProductPricing {
     .filter((c) => c.length > 0)
     .map((values) => {
       const r = saved.get(optionId(values)) ?? {}
-      return { values, priceVnd: money(r.price_vnd), peakPriceVnd: money(r.peak_price_vnd), active: r.active !== false, imageAssetId: assetId(r.image_asset_id) }
+      return { values, priceVnd: money(r.price_vnd), peakPriceVnd: money(r.peak_price_vnd), active: r.active !== false, imageAssetId: assetId(r.image_asset_id), stemCount: count(r.stem_count) }
     })
   return {
     mode,
@@ -169,7 +175,7 @@ export function serializePricing(pricing: ProductPricing): { price: number | nul
       dimensions: pricing.mode === "RANGE" ? pricing.dimensions : [],
       rows:
         pricing.mode === "RANGE"
-          ? pricing.rows.map((r) => ({ values: r.values, price_vnd: r.priceVnd, peak_price_vnd: r.peakPriceVnd, active: r.active, image_asset_id: r.imageAssetId }))
+          ? pricing.rows.map((r) => ({ values: r.values, price_vnd: r.priceVnd, peak_price_vnd: r.peakPriceVnd, active: r.active, image_asset_id: r.imageAssetId, stem_count: r.stemCount }))
           : [],
       weekend_is_peak: pricing.weekendIsPeak,
     },
@@ -221,6 +227,7 @@ export interface SellableOption {
   priceVnd: number
   peakPriceVnd: number | null
   imageAssetId: string | null
+  stemCount: number | null
   /** Đường dẫn ảnh đã ký (máy chủ điền khi hiển thị cho khách) */
   imageUrl?: string | null | undefined
 }
@@ -229,7 +236,7 @@ export function sellableOptions(pricing: ProductPricing): SellableOption[] {
   if (pricing.mode !== "RANGE") return []
   return pricing.rows
     .filter((r): r is PriceOptionRow & { priceVnd: number } => r.active && r.priceVnd !== null)
-    .map((r) => ({ id: optionId(r.values), name: optionName(r.values), values: r.values, priceVnd: r.priceVnd, peakPriceVnd: r.peakPriceVnd, imageAssetId: r.imageAssetId }))
+    .map((r) => ({ id: optionId(r.values), name: optionName(r.values), values: r.values, priceVnd: r.priceVnd, peakPriceVnd: r.peakPriceVnd, imageAssetId: r.imageAssetId, stemCount: r.stemCount }))
 }
 
 /** Thứ 7 / Chủ nhật của ngày `YYYY-MM-DD` (theo lịch, không phụ thuộc múi giờ máy chủ). */
@@ -286,6 +293,6 @@ export function withDimensions(pricing: ProductPricing, dimensions: PriceDimensi
   const old = new Map(pricing.rows.map((r) => [optionId(r.values), r]))
   const rows = combinations(dimensions.slice(0, MAX_DIMENSIONS))
     .filter((c) => c.length > 0)
-    .map((values) => ({ priceVnd: null, peakPriceVnd: null, active: true, imageAssetId: null, ...old.get(optionId(values)), values }))
+    .map((values) => ({ priceVnd: null, peakPriceVnd: null, active: true, imageAssetId: null, stemCount: null, ...old.get(optionId(values)), values }))
   return { ...pricing, dimensions: dimensions.slice(0, MAX_DIMENSIONS), rows }
 }

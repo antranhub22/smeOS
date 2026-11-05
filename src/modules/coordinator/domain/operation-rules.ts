@@ -5,6 +5,7 @@
  */
 
 import type { CoordinatorStage, CoordinationRiskLevel } from "./coordinator-types"
+import { formatCurrency } from "@/lib/i18n/formatters"
 
 export type RuleResult = { ok: true } | { ok: false; reason: string }
 
@@ -124,6 +125,11 @@ export function checkDeliveryUpdate(params: {
   podAssetId: string | null | undefined
   recipientSignedName: string | null | undefined
   failureReason: string | null | undefined
+  /**
+   * Bắt buộc ảnh giao hàng (PO 04/11/2026, checklist ALG 4.18). Mặc định bật; chỉ khi Điều hành tắt
+   * yêu cầu ảnh trong Cài đặt thì tên người ký nhận mới thay được ảnh.
+   */
+  requirePodPhoto?: boolean | undefined
 }): RuleResult {
   if (params.stage !== "DISPATCHING") {
     return { ok: false, reason: `Chỉ cập nhật giao hàng khi đơn đang giao (hiện: ${params.stage}).` }
@@ -137,8 +143,9 @@ export function checkDeliveryUpdate(params: {
   if (current && current in DELIVERY_ORDER && DELIVERY_ORDER[params.event] < DELIVERY_ORDER[current]) {
     return { ok: false, reason: `Không lùi trạng thái giao từ ${current} về ${params.event}.` }
   }
-  if (params.event === "DELIVERED_SUCCESS" && !params.podAssetId && !params.recipientSignedName?.trim()) {
-    return { ok: false, reason: "Giao thành công phải có ảnh POD hoặc tên người ký nhận." }
+  if (params.event === "DELIVERED_SUCCESS" && !params.podAssetId) {
+    if (params.requirePodPhoto !== false) return { ok: false, reason: "Giao thành công phải có ảnh giao hàng." }
+    if (!params.recipientSignedName?.trim()) return { ok: false, reason: "Giao thành công phải có ảnh giao hàng hoặc tên người ký nhận." }
   }
   return { ok: true }
 }
@@ -233,9 +240,14 @@ export function checkClosure(params: {
   openExceptionCount: number
   partnerRating: number | null | undefined
   partnerPayoutVnd: number | null | undefined
+  /** Số còn phải thu của đơn; > 0 thì chưa hoàn tất được (PO 04/11/2026, checklist ALG 4.26). */
+  balanceVnd?: number | undefined
 }): RuleResult {
   if (params.stage !== "DELIVERED") {
     return { ok: false, reason: `Chỉ đóng đơn sau khi đã giao (hiện: ${params.stage}).` }
+  }
+  if ((params.balanceVnd ?? 0) > 0) {
+    return { ok: false, reason: `Đơn còn phải thu ${formatCurrency(params.balanceVnd!)} — chỉ hoàn tất khi đã thu đủ.` }
   }
   if (params.openExceptionCount > 0) {
     return { ok: false, reason: `Còn ${params.openExceptionCount} sự cố chưa xử lý.` }

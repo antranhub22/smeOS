@@ -11,6 +11,7 @@
  */
 
 import React from "react"
+import { Button } from "@/components/ui/button"
 import {
   ALL,
   DEFAULT_PLATFORMS,
@@ -80,33 +81,39 @@ export function ProductionScopePicker({
         <div className="mb-1.5 flex items-center justify-between">
           <span className="text-caption font-bold uppercase tracking-wider text-text">Nền tảng sẽ đăng</span>
           <div className="flex gap-1.5">
-            <button
+            <Button
               type="button"
+              variant="ghost"
+              size="xs"
               onClick={() => onChange({ ...value, platforms: [...DEFAULT_PLATFORMS] })}
               className="text-caption font-semibold text-text-muted hover:text-primary"
             >
               Mặc định
-            </button>
-            <button
+            </Button>
+            <Button
               type="button"
+              size="xs"
+              variant={value.platforms === ALL ? "primary" : "outline"}
               onClick={() => onChange({ ...value, platforms: ALL })}
-              className={chip(value.platforms === ALL)}
+              className="rounded-full"
             >
               Tất cả
-            </button>
+            </Button>
           </div>
         </div>
         <div className="flex flex-wrap gap-1.5">
           {PUBLISH_PLATFORMS.map((p) => (
-            <button
+            <Button
               key={p}
               type="button"
+              size="xs"
+              variant={pub.platforms.includes(p) ? "primary" : "outline"}
               aria-pressed={pub.platforms.includes(p)}
               onClick={() => onChange({ ...value, platforms: toggle(value.platforms, PUBLISH_PLATFORMS, p) })}
-              className={chip(pub.platforms.includes(p))}
+              className="rounded-full"
             >
               {PLATFORM_SPECS[p].label} · {PLATFORM_SPECS[p].ratio}
-            </button>
+            </Button>
           ))}
         </div>
       </div>
@@ -114,26 +121,34 @@ export function ProductionScopePicker({
       <div>
         <div className="mb-1.5 flex items-center justify-between">
           <span className="text-caption font-bold uppercase tracking-wider text-text">Loại kết quả</span>
-          <button type="button" onClick={() => onChange({ ...value, outputs: ALL })} className={chip(value.outputs === ALL)}>
+          <Button
+            type="button"
+            size="xs"
+            variant={value.outputs === ALL ? "primary" : "outline"}
+            onClick={() => onChange({ ...value, outputs: ALL })}
+            className="rounded-full"
+          >
             Tất cả
-          </button>
+          </Button>
         </div>
         <div className="flex flex-wrap gap-1.5">
           {PRODUCTION_OUTPUTS.map((o) => {
             const chosen = pub.outputs.includes(o)
             const derived = !chosen && pub.derivedOutputs.includes(o)
             return (
-              <button
+              <Button
                 key={o}
                 type="button"
+                size="xs"
+                variant={chosen ? "primary" : derived ? "warning" : "outline"}
                 aria-pressed={chosen}
                 title={derived ? "Tự thêm vì video cần" : undefined}
                 onClick={() => onChange({ ...value, outputs: toggle(value.outputs, PRODUCTION_OUTPUTS, o) })}
-                className={chip(chosen, derived)}
+                className="rounded-full"
               >
                 {OUTPUT_LABELS[o]}
                 {derived ? " · cần cho video" : ""}
-              </button>
+              </Button>
             )
           })}
         </div>

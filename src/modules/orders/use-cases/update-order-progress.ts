@@ -3,6 +3,7 @@
  */
 
 import { AppError } from "@/core/http/errors"
+import { inBranchScope } from "@/core/tenancy"
 import type { TenantContext } from "@/core/tenancy/tenant-context"
 import {
   validateOrderStatusTransition,
@@ -23,7 +24,8 @@ export async function updateOrderProgress(
   notify: typeof notifyOrganization = notifyOrganization
 ): Promise<OrderRecord> {
   const existing = await repo.findById(ctx.organizationId, orderId)
-  if (!existing) {
+  // Ngoài chi nhánh được giao → như không tồn tại (checklist ALG 9.13)
+  if (!existing || !inBranchScope(ctx, existing.branchId)) {
     throw new AppError("NOT_FOUND", `Không tìm thấy đơn hàng với mã ID: ${orderId}`)
   }
 

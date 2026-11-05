@@ -35,7 +35,7 @@ type ProductDetail = {
   shape: string | null
   facing: string | null
   container: string | null
-  status: "DRAFT" | "ACTIVE" | "ARCHIVED"
+  status: "DRAFT" | "ACTIVE" | "PAUSED" | "ARCHIVED"
   attributes: Record<string, unknown> | null
   availability_config?: unknown
   masterImageUrl?: string

@@ -8,6 +8,9 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { Dialog } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import type { CustomerMasterIndex } from "@/modules/crm/domain/customer-master-index"
+import { useSession } from "@/lib/session"
+import { CustomerDetailTabs, type CustomerDetailTab } from "./customer-detail-tabs"
+import { CustomerOrdersTab } from "./customer-orders-tab"
 
 interface CustomerDetailModalProps {
   customerId: string | null
@@ -18,7 +21,8 @@ interface CustomerDetailModalProps {
 export function CustomerDetailModal({ customerId, onClose, onUpdated }: CustomerDetailModalProps) {
   const [loading, setLoading] = useState(false)
   const [data, setData] = useState<CustomerMasterIndex | null>(null)
-  const [activeTab, setActiveTab] = useState<"profile" | "occasions" | "privacy">("profile")
+  const [activeTab, setActiveTab] = useState<CustomerDetailTab>("profile")
+  const { can } = useSession()
 
   // Form thêm dịp kỷ niệm
   const [showAddOccasion, setShowAddOccasion] = useState(false)
@@ -115,44 +119,7 @@ export function CustomerDetailModal({ customerId, onClose, onUpdated }: Customer
       }
     >
       <div className="-mx-5 -mt-5 sm:-mx-6 sm:-mt-6">
-        {/* Tab Navigation */}
-        <div className="flex border-b border-border bg-surface-alt/30 px-5 sm:px-6 gap-3 pt-2 text-caption font-semibold">
-          <button
-            type="button"
-            onClick={() => setActiveTab("profile")}
-            className={`pb-2.5 px-2 border-b-2 transition-colors cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
-              activeTab === "profile"
-                ? "border-primary text-primary font-bold"
-                : "border-transparent text-text-muted hover:text-text"
-            }`}
-          >
-            Hồ sơ Master & RFM
-          </button>
-          <button
-            type="button"
-            onClick={() => setActiveTab("occasions")}
-            className={`pb-2.5 px-2 border-b-2 flex items-center gap-1.5 transition-colors cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
-              activeTab === "occasions"
-                ? "border-primary text-primary font-bold"
-                : "border-transparent text-text-muted hover:text-text"
-            }`}
-          >
-            <Calendar className="h-3.5 w-3.5" />
-            Dịp kỷ niệm ({data?.occasions?.length ?? 0})
-          </button>
-          <button
-            type="button"
-            onClick={() => setActiveTab("privacy")}
-            className={`pb-2.5 px-2 border-b-2 flex items-center gap-1.5 transition-colors cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
-              activeTab === "privacy"
-                ? "border-primary text-primary font-bold"
-                : "border-transparent text-text-muted hover:text-text"
-            }`}
-          >
-            <Shield className="h-3.5 w-3.5" />
-            Quyền riêng tư (Consent)
-          </button>
-        </div>
+        <CustomerDetailTabs active={activeTab} onChange={setActiveTab} occasionCount={data?.occasions?.length ?? 0} showOrders={Boolean(can("R1"))} />
 
         {loading ? (
           <div className="flex h-64 items-center justify-center">
@@ -300,6 +267,8 @@ export function CustomerDetailModal({ customerId, onClose, onUpdated }: Customer
                 </div>
               </div>
             )}
+
+            {activeTab === "orders" && customerId && <CustomerOrdersTab customerId={customerId} />}
 
             {activeTab === "privacy" && (
               <div className="space-y-4">

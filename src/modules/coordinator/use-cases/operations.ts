@@ -17,15 +17,12 @@ import type { CoordinatorStage } from "../domain/coordinator-types"
 import {
   checkCancellation,
   checkClosure,
-  checkDeliveryUpdate,
   checkPartnerAssignment,
   checkProductionUpdate,
   checkQcDecision,
   defaultNextAction,
-  deliveryStatusFor,
   exceptionCode,
   stageAfterQc,
-  type DeliveryEvent,
   type QcDecision,
 } from "../domain/operation-rules"
 import { axesAfterTransition } from "../domain/stage-transitions"
@@ -47,7 +44,7 @@ function currentAxes(row: CoordinatorOrderRow) {
   return { status: row.status, productionStatus: row.production_status, deliveryStatus: row.delivery_status }
 }
 
-async function transition(
+export async function transition(
   ctx: TenantContext,
   repo: CoordinatorRepository,
   row: CoordinatorOrderRow,
@@ -68,7 +65,7 @@ async function transition(
 }
 
 /** Mở sự cố trong giao dịch đang chạy và đưa đơn về EXCEPTION (nhớ bước cũ). */
-async function openExceptionInTx(
+export async function openExceptionInTx(
   ctx: TenantContext,
   tx: DbClient,
   repo: CoordinatorRepository,
@@ -248,82 +245,6 @@ export async function recordQcInspection(
   return getOrderView(ctx, orderId)
 }
 
-// ── F11/F12 · Giao hàng ────────────────────────────────────────────────────
-
-export async function recordDeliveryUpdate(
-  ctx: TenantContext,
-  orderIdOrCode: string,
-  input: {
-    event: DeliveryEvent
-    carrier?: string | undefined
-    shipperName: string
-    shipperPhone?: string | undefined
-    podAssetId?: string | undefined
-    recipientSignedName?: string | undefined
-    failureReason?: string | undefined
-  },
-  now = new Date()
-): Promise<CoordinatorOrderView> {
-  const orderId = await runCoordinatorTx(async (tx) => {
-    const repo = getCoordinatorRepository(tx)
-    const row = await loadOrderOrThrow(ctx, repo, orderIdOrCode)
-    const c = row.coordination!
-    ensureRule(
-      checkDeliveryUpdate({
-        stage: c.stage,
-        currentState: c.delivery_state,
-        event: input.event,
-        shipperName: input.shipperName,
-        podAssetId: input.podAssetId,
-        recipientSignedName: input.recipientSignedName,
-        failureReason: input.failureReason,
-      })
-    )
-    if (input.podAssetId) await ensureAssetsOwned(ctx, tx, [input.podAssetId])
-
-    const shipper = {
-      shipper_name: input.shipperName.trim(),
-      shipper_phone: input.shipperPhone?.trim() || c.shipper_phone,
-      carrier: input.carrier?.trim() || c.carrier,
-      delivery_state: input.event,
-    }
-    const deliveryStatus = deliveryStatusFor(input.event)
-    if (deliveryStatus !== row.delivery_status) {
-      await repo.updateOrderAxis(ctx, row.id, { delivery_status: deliveryStatus })
-      await repo.recordEvent(ctx, row.id, "delivery", row.delivery_status, deliveryStatus, `Giao hàng: ${input.event}`)
-    }
-    // `applyTransition` đọc trục delivery từ `row`; sự kiện vừa đổi nó.
-    const current = { ...row, delivery_status: deliveryStatus }
-
-    if (input.event === "DELIVERED_SUCCESS") {
-      const pod = {
-        ...shipper,
-        pod_asset_id: input.podAssetId ?? null,
-        pod_recipient_name: input.recipientSignedName?.trim() || null,
-        pod_captured_at: now,
-        actual_delivery_at: now,
-      }
-      ensureTransition(c.stage, "DELIVERED", { ...(await repo.facts(ctx, row)), podCaptured: true })
-      await transition(ctx, repo, current, "DELIVERED", "Giao thành công, có POD", pod)
-    } else if (input.event === "DELIVERY_FAILED") {
-      await repo.updateCoordination(ctx, row.id, shipper)
-      await openExceptionInTx(ctx, tx, repo, current, {
-        type: "DELIVERY_FAILURE",
-        severity: "CRITICAL",
-        description: input.failureReason!.trim(),
-      })
-    } else {
-      await repo.updateCoordination(ctx, row.id, {
-        ...shipper,
-        next_action: input.event === "PICKED_UP" ? "Shipper đã lấy hàng" : "Shipper đang trên đường tới người nhận",
-      })
-    }
-    await audit(ctx, tx, "coordinator.delivery.update", row.id, { state: c.delivery_state }, { state: input.event })
-    return row.id
-  })
-  return getOrderView(ctx, orderId)
-}
-
 // ── F14 · Đóng đơn / Huỷ ──────────────────────────────────────────────────
 
 export async function closeCoordinatorOrder(
@@ -342,6 +263,7 @@ export async function closeCoordinatorOrder(
         openExceptionCount: facts.openExceptionCount,
         partnerRating: input.partnerRating,
         partnerPayoutVnd: input.partnerPayoutVnd,
+        balanceVnd: Number(row.balance_vnd),
       })
     )
     ensureTransition(row.coordination!.stage, "COMPLETED", facts)

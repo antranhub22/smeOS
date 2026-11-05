@@ -12,6 +12,7 @@
 
 import type { TenantContext } from "@/core/tenancy"
 import { queryOrdersForExport } from "../infra/order-export-query"
+import { resolveSaleScope } from "@/modules/greeting-card/use-cases/order-scope"
 import * as XLSX from "xlsx"
 
 const VN_OFFSET_MS = 7 * 60 * 60 * 1000
@@ -78,7 +79,9 @@ export async function exportOrdersToExcel(
 ): Promise<Uint8Array> {
   const parsedFrom = input.fromDate ? new Date(new Date(input.fromDate + "T00:00:00+07:00").getTime()) : undefined
   const parsedTo = input.toDate ? new Date(new Date(input.toDate + "T23:59:59+07:00").getTime()) : undefined
-  const orders = await queryOrdersForExport(ctx, { source: input.source, fromDate: parsedFrom, toDate: parsedTo })
+  // Chỉ xuất đơn trong phạm vi xem của người xuất (checklist ALG 4.10)
+  const saleId = (await resolveSaleScope(ctx)) ?? undefined
+  const orders = await queryOrdersForExport(ctx, { source: input.source, fromDate: parsedFrom, toDate: parsedTo, saleId })
 
   // ── Sheet 1: Danh sách đơn hàng ─────────────────────────────────────────
   const orderRows = orders.map((o, idx) => {

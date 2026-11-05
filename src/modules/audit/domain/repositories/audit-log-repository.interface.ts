@@ -17,10 +17,21 @@ export interface RecordAuditLogInput {
   userAgent?: string | null
 }
 
+/** Bộ lọc phía máy chủ cho tra cứu nhật ký (checklist ALG 1.17). */
+export interface AuditLogFilter {
+  /** Khớp đầu mã hành động, vd. `member.` hay `security.access_denied`. */
+  actionPrefix?: string | undefined
+  entityType?: string | undefined
+  entityId?: string | undefined
+  userId?: string | undefined
+  from?: Date | undefined
+  to?: Date | undefined
+}
+
 export interface IAuditLogRepository {
   record(ctx: TenantContext, input: RecordAuditLogInput): Promise<audit_logs>
   list(
     ctx: TenantContext,
-    options: { limit: number; cursor?: string | null }
+    options: { limit: number; cursor?: string | null; filter?: AuditLogFilter | undefined }
   ): Promise<audit_logs[]>
 }

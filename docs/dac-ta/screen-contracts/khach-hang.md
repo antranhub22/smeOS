@@ -31,6 +31,7 @@ acceptance:
   - `GET /api/v1/crm/reminders/upcoming?days=14` → `Q1` (`crm.read`)
   - `POST /api/v1/crm/customers` → `Q2` (`crm.create`)
   - `PATCH /api/v1/crm/customers/:id` → `Q3` (`crm.update`)
+  - `GET /api/v1/crm/customers/:id/orders` → `Q1` + `R1` — tab "Đơn đã đặt" (checklist ALG 4.11), chỉ hiện khi có `R1`; bấm một đơn mở `OrderDetailModal`
 - **Khối chính:**
   - Header: Nút chính "Thêm khách hàng", Nút phụ "Quét dịp sắp tới (14 ngày)".
   - FeatureGuidanceCard chuẩn hóa (tối đa 1 khối, 3 tips, không spam).
@@ -47,7 +48,7 @@ acceptance:
 | L1 Hành động | Quét ngày kỷ niệm sắp tới (trong 14 ngày tới) | Nút phụ trên header & Drawer nhắc hẹn |
 | L1 Chi tiết khách | Dịp kỷ niệm sắp tới của từng khách | Cột bảng & Nâng lên đầu tab Hồ sơ modal |
 | L2 Phân tầng RFM | Phân hạng VIP, Vàng, Bạc, Đồng, Khách mới (bằng cả chữ + màu) | Cột Phân hạng |
-| L3 Chi tiết hồ sơ | Modal `CustomerDetailModal` (Hồ sơ Master, Dịp kỷ niệm, Consent riêng tư) | Modal popup |
+| L3 Chi tiết hồ sơ | Modal `CustomerDetailModal` (Hồ sơ Master, Đơn đã đặt, Dịp kỷ niệm, Consent riêng tư) | Modal popup |
 
 ## 4. Hành động
 - **Chính:** "Thêm khách hàng" (`variant="primary"`).

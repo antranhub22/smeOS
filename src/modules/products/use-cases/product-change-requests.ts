@@ -1,4 +1,5 @@
 import { conflict, notFound, unprocessable } from "@/core/http/errors"
+import { assertNotSelfApproval } from "@/modules/organization/use-cases/assert-not-self-approval"
 import { hasCapability } from "@/core/rbac/capabilities"
 import { runInBackground } from "@/core/runtime/background"
 import type { TenantContext } from "@/core/tenancy"
@@ -102,6 +103,7 @@ async function loadPendingRequest(ctx: TenantContext, id: string) {
  */
 export async function approveChangeRequest(ctx: TenantContext, id: string, fields?: string[] | null) {
   const { request, product } = await loadPendingRequest(ctx, id)
+  await assertNotSelfApproval(ctx, request.proposed_by)
   if (hasConflict(request.base_updated_at, product.updated_at)) {
     throw conflict("Mẫu đã được sửa sau khi nhân viên gửi đề xuất. Hãy từ chối và nhờ gửi lại trên bản mới nhất")
   }
