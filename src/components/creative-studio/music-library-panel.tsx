@@ -7,8 +7,18 @@ import { Trash2 } from "@/components/ui/icon-set/trash2"
 import { Upload } from "@/components/ui/icon-set/upload"
 
 import { Badge } from "@/components/ui/badge"
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
+import { Input } from "@/components/ui/input"
+import { Checkbox } from "@/components/ui/checkbox"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import { useConfirmDialog } from "@/components/ui/confirm-dialog"
 import {
   fetchMusicTracks,
@@ -83,21 +93,21 @@ export function MusicLibraryPanel({
   return (
     <Card className="p-5">
       <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
-        <h3 className="flex items-center gap-2 text-sm font-bold text-text">
+        <h3 className="flex items-center gap-2 text-body-sm font-bold text-text">
           <Music size={14} /> Nhạc nền {required ? "" : "(tuỳ chọn)"}
         </h3>
         <div className="flex flex-wrap items-center gap-1.5">
           {["all", ...Object.keys(MOOD_LABEL)].map((m) => (
-            <button
+            <Button
               key={m}
               type="button"
+              size="xs"
+              variant={mood === m ? "primary" : "outline"}
               onClick={() => setMood(m)}
-              className={`rounded-full border px-2.5 py-1 text-caption font-semibold cursor-pointer ${
-                mood === m ? "border-primary bg-primary/10 text-primary" : "border-border text-text-muted"
-              }`}
+              className="rounded-full"
             >
               {m === "all" ? "Tất cả" : MOOD_LABEL[m]}
-            </button>
+            </Button>
           ))}
         </div>
       </div>
@@ -109,68 +119,82 @@ export function MusicLibraryPanel({
         </p>
       )}
 
-      <div className="flex flex-col gap-2">
+      <RadioGroup
+        aria-label="Nhạc nền"
+        value={value ?? "NO_MUSIC"}
+        onValueChange={(v) => {
+          const track = tracks?.find((t) => t.track_id === v)
+          if (track) onChange(track.track_id, track, true)
+          else onChange(null, null, true)
+        }}
+        className="flex flex-col gap-2"
+      >
         {!required && (
           <label className="flex cursor-pointer items-center gap-2 rounded-lg border border-border px-3 py-2 text-meta">
-            <input type="radio" checked={value === null} onChange={() => onChange(null, null, true)} />
+            <RadioGroupItem value="NO_MUSIC" />
             Không dùng nhạc nền
           </label>
         )}
-        {visible.map((t) => (
-          <div
-            key={t.track_id}
-            className={`rounded-lg border px-3 py-2 ${value === t.track_id ? "border-primary bg-primary/5" : "border-border"}`}
-          >
-            <div className="flex flex-wrap items-center justify-between gap-2">
-              <label className="flex cursor-pointer items-center gap-2 text-meta font-semibold text-text">
-                <input type="radio" checked={value === t.track_id} onChange={() => onChange(t.track_id, t, true)} />
-                {t.title}
-                <span className="font-normal text-text-muted">
-                  · {MOOD_LABEL[t.mood] ?? t.mood}
-                  {t.duration_seconds ? ` · ${Math.round(t.duration_seconds)}s` : ""}
-                  {t.source === "org" ? " · nhạc của tiệm" : ""}
-                </span>
-              </label>
-              <div className="flex items-center gap-2">
-                <Badge tone={t.license_verified ? "success" : "warning"}>
-                  {t.license_verified ? LICENSE_LABEL[t.license_type] ?? t.license_type : "Chưa xác minh bản quyền"}
-                </Badge>
-                {t.source === "org" && (
-                  <button
-                    type="button"
-                    title="Gỡ bài này"
-                    onClick={async () => {
-                      if (
-                        !(await confirm({
-                          title: `Gỡ "${t.title}"?`,
-                          consequence: "Bài nhạc này sẽ bị xoá khỏi thư viện của tiệm.",
-                          confirmLabel: "Gỡ bài",
-                          tone: "danger",
-                        }))
-                      ) {
-                        return
-                      }
-                      await removeMusicTrack(t.track_id).catch((e: unknown) =>
-                        setError(e instanceof Error ? e.message : "Không gỡ được")
-                      )
-                      if (value === t.track_id) onChange(null, null)
-                      setReloadKey((k) => k + 1)
-                    }}
-                    className="text-danger cursor-pointer"
-                  >
-                    <Trash2 size={13} />
-                  </button>
-                )}
+        {visible.map((t) => {
+          const isSelected = value === t.track_id
+          return (
+            <div
+              key={t.track_id}
+              className={`rounded-lg border px-3 py-2 ${isSelected ? "border-primary bg-primary/5" : "border-border"}`}
+            >
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <label className="flex cursor-pointer items-center gap-2 text-meta font-semibold text-text">
+                  <RadioGroupItem value={t.track_id} />
+                  {t.title}
+                  <span className="font-normal text-text-muted">
+                    · {MOOD_LABEL[t.mood] ?? t.mood}
+                    {t.duration_seconds ? ` · ${Math.round(t.duration_seconds)}s` : ""}
+                    {t.source === "org" ? " · nhạc của tiệm" : ""}
+                  </span>
+                </label>
+                <div className="flex items-center gap-2">
+                  <Badge tone={t.license_verified ? "success" : "warning"}>
+                    {t.license_verified ? LICENSE_LABEL[t.license_type] ?? t.license_type : "Chưa xác minh bản quyền"}
+                  </Badge>
+                  {t.source === "org" && (
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="xs"
+                      title="Gỡ bài này"
+                      onClick={async () => {
+                        if (
+                          !(await confirm({
+                            title: `Gỡ "${t.title}"?`,
+                            consequence: "Bài nhạc này sẽ bị xoá khỏi thư viện của tiệm.",
+                            confirmLabel: "Gỡ bài",
+                            tone: "danger",
+                          }))
+                        ) {
+                          return
+                        }
+                        await removeMusicTrack(t.track_id).catch((e: unknown) =>
+                          setError(e instanceof Error ? e.message : "Không gỡ được")
+                        )
+                        if (value === t.track_id) onChange(null, null)
+                        setReloadKey((k) => k + 1)
+                      }}
+                      className="text-danger p-1 h-7 w-7"
+                    >
+                      <Trash2 size={13} />
+                    </Button>
+                  )}
+                </div>
               </div>
+              <audio controls preload="none" src={t.preview_url} className="mt-1.5 h-8 w-full" />
+              <p className="mt-1 text-caption text-text-muted">Nguồn: {t.license_source}</p>
             </div>
-            <audio controls preload="none" src={t.preview_url} className="mt-1.5 h-8 w-full" />
-            <p className="mt-1 text-caption text-text-muted">Nguồn: {t.license_source}</p>
-          </div>
-        ))}
+          )
+        })}
         {tracks && visible.length === 0 && (
           <p className="text-meta text-text-muted">Chưa có bài nào cho mood này — tải nhạc của tiệm lên bên dưới.</p>
         )}
-      </div>
+      </RadioGroup>
 
       {selected && !selected.license_verified && (
         <p className="mt-3 rounded-lg border border-warning/30 bg-warning/10 px-3 py-2 text-meta text-warning">
@@ -221,26 +245,31 @@ function MusicUploadForm({ onDone }: { onDone: (t: MusicTrackItem) => void }) {
     }
   }
 
-  const input = "w-full rounded border border-border px-2 py-1.5 text-xs focus:border-primary focus:outline-none"
   return (
     <div className="mt-3 grid grid-cols-1 gap-2 rounded-lg border border-border bg-surface p-3 sm:grid-cols-2">
-      <input type="file" accept="audio/mpeg,audio/mp3,audio/wav,audio/x-wav,audio/mp4,audio/x-m4a" onChange={(e) => setFile(e.target.files?.[0] ?? null)} className="text-xs sm:col-span-2" />
-      <input className={input} placeholder="Tên bài" value={title} onChange={(e) => setTitle(e.target.value)} />
-      <select className={input} value={mood} onChange={(e) => setMood(e.target.value)}>
-        {Object.entries(MOOD_LABEL).map(([k, v]) => (
-          <option key={k} value={k}>{v}</option>
-        ))}
-      </select>
-      <select className={input} value={licenseType} onChange={(e) => setLicenseType(e.target.value)}>
-        <option value="licensed">Đã mua giấy phép</option>
-        <option value="royalty_free">Royalty-free (có điều khoản thương mại)</option>
-        <option value="owned">Tiệm sở hữu / tự sáng tác</option>
-        <option value="creative_commons">Creative Commons cho phép thương mại</option>
-      </select>
-      <input className={input} placeholder="Nguồn: nơi mua, mã giấy phép hoặc đường dẫn" value={licenseSource} onChange={(e) => setLicenseSource(e.target.value)} />
-      <label className="flex items-start gap-2 text-caption text-text-muted sm:col-span-2">
-        <input type="checkbox" checked={attest} onChange={(e) => setAttest(e.target.checked)} className="mt-0.5" />
-        Tôi xác nhận tiệm có quyền dùng bài này trong video/bài quảng cáo trên mạng xã hội, và thông tin nguồn ở trên là đúng.
+      <input type="file" accept="audio/mpeg,audio/mp3,audio/wav,audio/x-wav,audio/mp4,audio/x-m4a" onChange={(e) => setFile(e.target.files?.[0] ?? null)} className="text-caption sm:col-span-2" />
+      <Input inputSize="sm" placeholder="Tên bài" value={title} onChange={(e) => setTitle(e.target.value)} />
+      <Select value={mood} onValueChange={setMood}>
+        <SelectTrigger className="h-9 text-caption"><SelectValue /></SelectTrigger>
+        <SelectContent>
+          {Object.entries(MOOD_LABEL).map(([k, v]) => (
+            <SelectItem key={k} value={k}>{v}</SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+      <Select value={licenseType} onValueChange={setLicenseType}>
+        <SelectTrigger className="h-9 text-caption"><SelectValue /></SelectTrigger>
+        <SelectContent>
+          <SelectItem value="licensed">Đã mua giấy phép</SelectItem>
+          <SelectItem value="royalty_free">Royalty-free (có điều khoản thương mại)</SelectItem>
+          <SelectItem value="owned">Tiệm sở hữu / tự sáng tác</SelectItem>
+          <SelectItem value="creative_commons">Creative Commons cho phép thương mại</SelectItem>
+        </SelectContent>
+      </Select>
+      <Input inputSize="sm" placeholder="Nguồn: nơi mua, mã giấy phép hoặc đường dẫn" value={licenseSource} onChange={(e) => setLicenseSource(e.target.value)} />
+      <label className="flex items-start gap-2 text-caption text-text-muted sm:col-span-2 cursor-pointer">
+        <Checkbox checked={attest} onCheckedChange={(checked) => setAttest(checked === true)} className="mt-0.5" />
+        <span>Tôi xác nhận tiệm có quyền dùng bài này trong video/bài quảng cáo trên mạng xã hội, và thông tin nguồn ở trên là đúng.</span>
       </label>
       {error && <p className="text-meta text-danger sm:col-span-2">{error}</p>}
       <Button size="sm" onClick={submit} disabled={busy || !attest} className="gap-1.5 sm:col-span-2">

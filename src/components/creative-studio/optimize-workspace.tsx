@@ -119,7 +119,7 @@ export function OptimizeWorkspace({ data }: OptimizeWorkspaceProps) {
           {masterApproved && phase === "select" && (
             <div className="w-full rounded-xl bg-surface-alt p-5 text-center border border-border shadow-xs">
               <div className="text-body font-bold text-secondary">Đã có Master Image được duyệt chính thức</div>
-              <div className="text-xs text-text-muted mt-1">Bạn có thể tạo thêm biến thể ở Tab 2 hoặc tối ưu lại ảnh mới.</div>
+              <div className="text-caption text-text-muted mt-1">Bạn có thể tạo thêm biến thể ở Tab 2 hoặc tối ưu lại ảnh mới.</div>
               <div className="flex justify-center gap-3 mt-4">
                 <Button variant="outline" onClick={() => { setPhase("confirm-a"); loadAssets() }}>
                   Tối ưu lại ảnh khác
@@ -177,10 +177,10 @@ export function OptimizeWorkspace({ data }: OptimizeWorkspaceProps) {
                   )}
                 </div>
                 <div>
-                  <div className="text-sm font-bold text-text">
+                  <div className="text-body-sm font-bold text-text">
                     {uploadingDirect ? "Đang tải ảnh lên kho..." : "Bấm để tải ảnh mới từ máy tính của bạn"}
                   </div>
-                  <div className="text-xs text-text-muted mt-0.5">
+                  <div className="text-caption text-text-muted mt-0.5">
                     Hỗ trợ JPG, PNG, WebP — Tự động phân tích và sẵn sàng tối ưu
                   </div>
                 </div>
@@ -212,37 +212,33 @@ export function OptimizeWorkspace({ data }: OptimizeWorkspaceProps) {
 
                   {/* ENGINE SWITCHER */}
                   <div className="mt-3 pt-3 border-t border-border">
-                    <div className="text-xs font-bold text-text mb-2">Cơ chế xử lý ảnh:</div>
+                    <div className="text-caption font-bold text-text mb-2">Cơ chế xử lý ảnh:</div>
                     {/* PO 25/09/2026: nhà cung cấp TRƯỚC (chất lượng cao nhất); cục bộ là phương án dự phòng. */}
                     <div className="grid grid-cols-2 gap-2 p-1 bg-surface-alt rounded-xl border border-border">
-                      <button
+                      <Button
                         type="button"
+                        size="xs"
+                        variant={optimizationEngine === "cloud_provider" ? "primary" : "ghost"}
                         onClick={() => {
                           setOptimizationEngine("cloud_provider")
                           if (selectedEnhancerProvider === "studio" || selectedEnhancerProvider === "local") setSelectedEnhancerProvider("auto")
                         }}
-                        className={`py-2 px-3 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1.5 ${
-                          optimizationEngine === "cloud_provider"
-                            ? "bg-primary text-white shadow-xs"
-                            : "text-text-muted hover:text-text"
-                        }`}
+                        className="gap-1.5"
                       >
                         <Cloud size={14} /> Nhà cung cấp AI (khuyên dùng)
-                      </button>
-                      <button
+                      </Button>
+                      <Button
                         type="button"
+                        size="xs"
+                        variant={optimizationEngine === "local_studio" ? "primary" : "ghost"}
                         onClick={() => {
                           setOptimizationEngine("local_studio")
                           setSelectedEnhancerProvider("studio")
                         }}
-                        className={`py-2 px-3 rounded-lg text-xs font-bold transition flex items-center justify-center gap-1.5 ${
-                          optimizationEngine === "local_studio"
-                            ? "bg-primary text-white shadow-xs"
-                            : "text-text-muted hover:text-text"
-                        }`}
+                        className="gap-1.5"
                       >
                         <Layers size={14} /> Cục bộ (dự phòng)
-                      </button>
+                      </Button>
                     </div>
                   </div>
 
@@ -287,7 +283,7 @@ export function OptimizeWorkspace({ data }: OptimizeWorkspaceProps) {
 
                   {/* Submit button */}
                   <Button
-                    className="h-[48px] w-full px-8 text-sm font-bold shadow-md shadow-primary/20 mt-3"
+                    className="h-[48px] w-full px-8 text-body-sm font-bold shadow-md shadow-primary/20 mt-3"
                     onClick={goRunningA}
                     disabled={
                       !selectedAssetId ||
@@ -313,7 +309,7 @@ export function OptimizeWorkspace({ data }: OptimizeWorkspaceProps) {
               )}
 
               {loadingAssets && (
-                <div className="text-center py-6 text-sm text-text-muted flex items-center justify-center gap-2">
+                <div className="text-center py-6 text-body-sm text-text-muted flex items-center justify-center gap-2">
                   <Loader2 size={16} className="animate-spin motion-reduce:animate-none" />
                   Đang tải danh sách ảnh từ kho...
                 </div>
@@ -334,7 +330,7 @@ export function OptimizeWorkspace({ data }: OptimizeWorkspaceProps) {
         <div className="flex flex-1 flex-col items-center gap-5 w-full max-w-xl mx-auto">
           <div className="text-center">
             <div className="text-title font-extrabold">Đang tối ưu ảnh & Kiểm duyệt Identity Guard</div>
-            <div className="mt-1 text-body-sm text-text-muted">{jobPhase ?? "Đang khởi tạo job..."}</div>
+            <div className="mt-1 text-body-sm text-text-muted">{jobPhase ?? "Đang khởi tạo tác vụ..."}</div>
           </div>
           <div className="w-full">
             <FlowSteps
@@ -354,8 +350,8 @@ export function OptimizeWorkspace({ data }: OptimizeWorkspaceProps) {
           </div>
           <div className="flex items-start gap-2.5 rounded-xl bg-surface-alt p-4 border border-border w-full">
             <AlertTriangle size={16} strokeWidth={1.8} className="mt-0.5 flex-shrink-0 text-primary" />
-            <div className="text-xs leading-relaxed text-text-muted">
-              Job Tối ưu ảnh chạy độc lập tại máy chủ — bạn có thể an tâm chuyển trang mà không làm mất tiến trình xử lý.
+            <div className="text-caption leading-relaxed text-text-muted">
+              Tác vụ Tối ưu ảnh chạy độc lập tại máy chủ — bạn có thể an tâm chuyển trang mà không làm mất tiến trình xử lý.
             </div>
           </div>
         </div>
@@ -366,7 +362,7 @@ export function OptimizeWorkspace({ data }: OptimizeWorkspaceProps) {
         <div className="flex flex-col items-center gap-6 w-full max-w-3xl mx-auto">
           <div className="flex items-center justify-between w-full">
             <div>
-              <div className="text-xs text-text-muted">④ Thẻ kết quả — Tối ưu ảnh</div>
+              <div className="text-caption text-text-muted">④ Thẻ kết quả — Tối ưu ảnh</div>
               <div className="text-title font-extrabold">Kết quả tối ưu ảnh & Kiểm duyệt Identity Guard</div>
             </div>
             <Badge tone={savedA ? "success" : judgmentA === "blocked" ? "danger" : judgmentA === "warning" ? "warning" : "neutral"}>
@@ -401,7 +397,7 @@ export function OptimizeWorkspace({ data }: OptimizeWorkspaceProps) {
 
               {Array.isArray((optimizationData?.identity_guard as { ly_do?: string[] } | undefined)?.ly_do) &&
                 ((optimizationData?.identity_guard as { ly_do?: string[] }).ly_do?.length ?? 0) > 0 && (
-                  <div className="rounded-lg bg-surface/70 p-3 border border-danger/20 text-xs">
+                  <div className="rounded-lg bg-surface/70 p-3 border border-danger/20 text-caption">
                     <div className="font-bold text-danger mb-1.5 flex items-center gap-1.5">
                       <AlertTriangle size={14} /> Chi tiết các sai lệch được phát hiện:
                     </div>

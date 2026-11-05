@@ -50,14 +50,8 @@
     "components/coordinator": {
       "R18": 2
     },
-    "components/creative-studio": {
-      "R17": 5,
-      "R18": 108,
-      "R21": 138,
-      "R16": 44
-    },
     "components/crm": {
-      "R18": 6
+      "R18": 5
     },
     "components/dashboard": {
       "R18": 35
@@ -141,6 +135,6 @@
       "R18": 2
     }
   },
-  "total": 3948,
-  "updatedAt": "2026-11-04T03:35:42.159Z"
+  "total": 3652,
+  "updatedAt": "2026-11-05T03:35:31.399Z"
 }

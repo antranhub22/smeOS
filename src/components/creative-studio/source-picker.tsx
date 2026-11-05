@@ -16,6 +16,14 @@ import { Image as ImageIcon } from "@/components/ui/icon-set/image"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import type { AssetItem, MasterItem } from "./types"
 
 type SourceMode = "master" | "skip"
@@ -63,7 +71,6 @@ export function SourcePicker({
     setPromoting(true)
     try {
       await onPromoteToMaster(selectedOriginalId)
-      // After promoting, switch back to master mode
       setMode("master")
     } finally {
       setPromoting(false)
@@ -93,11 +100,16 @@ export function SourcePicker({
     <div className="w-full flex flex-col gap-4">
       {/* Radio Group: Master vs Skip */}
       <Card className="w-full p-4 border border-border bg-surface shadow-xs">
-        <div className="text-xs font-bold text-text mb-3 uppercase tracking-wider">
+        <div className="text-caption font-bold text-text mb-3 uppercase tracking-wider">
           Chọn nguồn ảnh đầu vào
         </div>
 
-        <div className="flex flex-col gap-2.5">
+        <RadioGroup
+          aria-label="Nguồn ảnh đầu vào"
+          value={mode}
+          onValueChange={(v) => setMode(v as typeof mode)}
+          className="flex flex-col gap-2.5"
+        >
           {/* Option 1: Master đã duyệt */}
           <label
             className={`flex items-start gap-3 p-3 rounded-xl border-2 transition cursor-pointer ${
@@ -106,15 +118,7 @@ export function SourcePicker({
                 : "border-border bg-surface hover:border-text-muted/40"
             } ${masters.length === 0 ? "opacity-50 cursor-not-allowed" : ""}`}
           >
-            <input
-              type="radio"
-              name="source-mode"
-              value="master"
-              checked={mode === "master"}
-              onChange={() => setMode("master")}
-              disabled={masters.length === 0}
-              className="accent-primary h-4 w-4 mt-0.5 flex-shrink-0"
-            />
+            <RadioGroupItem value="master" disabled={masters.length === 0} className="mt-0.5" />
             <div className="flex-1 min-w-0">
               <div className="text-body-sm font-bold text-text flex items-center gap-2">
                 <ShieldCheck size={15} className="text-secondary flex-shrink-0" />
@@ -144,15 +148,7 @@ export function SourcePicker({
                 : "border-border bg-surface hover:border-text-muted/40"
             } ${assets.length === 0 ? "opacity-50 cursor-not-allowed" : ""}`}
           >
-            <input
-              type="radio"
-              name="source-mode"
-              value="skip"
-              checked={mode === "skip"}
-              onChange={() => setMode("skip")}
-              disabled={assets.length === 0}
-              className="accent-primary h-4 w-4 mt-0.5 flex-shrink-0"
-            />
+            <RadioGroupItem value="skip" disabled={assets.length === 0} className="mt-0.5" />
             <div className="flex-1 min-w-0">
               <div className="text-body-sm font-bold text-text flex items-center gap-2">
                 <Sparkles size={15} className="text-primary flex-shrink-0" />
@@ -163,7 +159,7 @@ export function SourcePicker({
               </div>
             </div>
           </label>
-        </div>
+        </RadioGroup>
       </Card>
 
       {/* === Master Dropdown (khi chọn Option 1) === */}
@@ -190,7 +186,7 @@ export function SourcePicker({
                   </div>
                   <div className="min-w-0">
                     <div className="flex items-center gap-2">
-                      <span className="text-xs font-bold uppercase tracking-wider text-secondary">
+                      <span className="text-caption font-bold uppercase tracking-wider text-secondary">
                         Master Image nguồn
                       </span>
                       <Badge tone="success" className="text-caption">Đã duyệt</Badge>
@@ -205,18 +201,21 @@ export function SourcePicker({
           </div>
 
           {masters.length > 1 && (
-            <select
+            <Select
               value={selectedMasterId || masters[0]!.id}
-              onChange={(e) => onSelectMaster(e.target.value)}
-              aria-label="Chọn Master Image nguồn"
-              className="h-9 rounded-lg border border-border bg-background px-2.5 text-xs font-medium text-text outline-none focus:border-primary"
+              onValueChange={onSelectMaster}
             >
-              {masters.map((m) => (
-                <option key={m.id} value={m.id}>
-                  {m.name}
-                </option>
-              ))}
-            </select>
+              <SelectTrigger aria-label="Chọn Master Image nguồn" className="h-9 min-w-44 text-caption">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {masters.map((m) => (
+                  <SelectItem key={m.id} value={m.id}>
+                    {m.name}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           )}
         </Card>
       )}
@@ -224,47 +223,49 @@ export function SourcePicker({
       {/* === Skip: Chọn ảnh gốc + Nút duyệt nhanh (khi chọn Option 2) === */}
       {mode === "skip" && assets.length > 0 && (
         <Card className="w-full p-4 border border-border bg-surface shadow-xs flex flex-col gap-3">
-          <div className="text-xs font-bold text-text uppercase tracking-wider">
+          <div className="text-caption font-bold text-text uppercase tracking-wider">
             Chọn ảnh gốc để duyệt nhanh thành Master
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-[280px] overflow-y-auto">
-            {assets.map((a) => (
-              <label
-                key={a.id}
-                className={`flex items-center gap-2.5 p-2.5 rounded-lg border-2 transition cursor-pointer text-sm ${
-                  selectedOriginalId === a.id
-                    ? "border-primary bg-primary/5"
-                    : "border-border bg-surface hover:border-text-muted/40"
-                }`}
-              >
-                <input
-                  type="radio"
-                  name="skip-asset"
-                  checked={selectedOriginalId === a.id}
-                  onChange={() => setSelectedOriginalId(a.id)}
-                  className="accent-primary h-3.5 w-3.5 flex-shrink-0"
-                />
-                <div className="h-11 w-11 flex-shrink-0 overflow-hidden rounded-lg bg-surface-alt flex items-center justify-center border border-border">
-                  {a.url ? (
-                    <img
-                      src={a.url}
-                      alt={a.name}
-                      className="h-full w-full object-cover rounded"
-                      loading="lazy"
-                      onError={(e) => { e.currentTarget.style.display = "none" }}
-                    />
-                  ) : (
-                    <ImageIcon size={16} className="text-text-muted" />
-                  )}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="text-meta font-bold truncate text-text">{a.name}</div>
-                  <div className="text-caption text-text-muted">{a.id.slice(0, 8).toUpperCase()}</div>
-                </div>
-              </label>
-            ))}
-          </div>
+          <RadioGroup
+            aria-label="Ảnh gốc để duyệt thành Master"
+            value={selectedOriginalId}
+            onValueChange={(v) => setSelectedOriginalId(v as string)}
+            className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-[280px] overflow-y-auto"
+          >
+            {assets.map((a) => {
+              const isSelected = selectedOriginalId === a.id
+              return (
+                <label
+                  key={a.id}
+                  className={`flex items-center gap-2.5 p-2.5 rounded-lg border-2 transition cursor-pointer text-body-sm ${
+                    isSelected
+                      ? "border-primary bg-primary/5"
+                      : "border-border bg-surface hover:border-text-muted/40"
+                  }`}
+                >
+                  <RadioGroupItem value={a.id} />
+                  <div className="h-11 w-11 flex-shrink-0 overflow-hidden rounded-lg bg-surface-alt flex items-center justify-center border border-border">
+                    {a.url ? (
+                      <img
+                        src={a.url}
+                        alt={a.name}
+                        className="h-full w-full object-cover rounded"
+                        loading="lazy"
+                        onError={(e) => { e.currentTarget.style.display = "none" }}
+                      />
+                    ) : (
+                      <ImageIcon size={16} className="text-text-muted" />
+                    )}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="text-meta font-bold truncate text-text">{a.name}</div>
+                    <div className="text-caption text-text-muted">{a.id.slice(0, 8).toUpperCase()}</div>
+                  </div>
+                </label>
+              )
+            })}
+          </RadioGroup>
 
           {/* Nút duyệt nhanh 1-chạm */}
           <Button
@@ -295,7 +296,7 @@ export function SourcePicker({
 
       {/* Loading states */}
       {(loadingMasters || loadingAssets) && (
-        <div className="text-center py-3 text-sm text-text-muted flex items-center justify-center gap-2">
+        <div className="text-center py-3 text-body-sm text-text-muted flex items-center justify-center gap-2">
           <Loader2 size={16} className="animate-spin motion-reduce:animate-none" />
           {loadingMasters ? "Đang tải Master Images..." : "Đang tải ảnh gốc..."}
         </div>
