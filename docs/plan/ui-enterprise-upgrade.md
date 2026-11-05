@@ -18,7 +18,7 @@
 | K8 | Trang có axe (critical/serious = 0) trong CI | 13 | 40 | 100% |
 | K9 | Kiểm thủ công WCAG 2.2 AA (bàn phím, đọc màn hình, zoom 200%) | 0 | 5 hành trình chính | 12 hành trình chính, có biên bản |
 | K10 | Biến token “bơm mà không ai đọc”, mã chết theme | ≥ 8 nhóm | 0 | 0 |
-| K11 | Tệp `.tsx` > 350 dòng | 54 | 0 trong `ui/`, `layout/` | ≤ 20 (đều có kế hoạch tách) |
+| K11 | Tệp nguồn > 350 dòng | 74 (05/11) | 0 trong `ui/`, `layout/`; không tệp nào dài thêm | Ratchet chỉ giảm; tệp dữ liệu thuần miễn trừ có lý do (`docs/plan/k11-file-size-policy.md`, PO 05/11/2026) |
 | K12 | Xung đột trong hướng dẫn agent | 8 (UI-H-01…08) | 0 | 0 + test `check:docs` chặn tái phát |
 | K13 | Design System có phiên bản + CHANGELOG | Không | `1.0.0` | `1.x`, quy trình deprecation chạy thật ≥ 1 lần |
 

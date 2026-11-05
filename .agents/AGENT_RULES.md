@@ -22,7 +22,7 @@ When rules conflict, resolve strictly in this order (lower numbers ALWAYS take p
 
 ## 3. CODE HYGIENE & SRP (Single Responsibility Principle)
 - **1 Unit of Code = 1 Reason to Change**.
-- **File Limit: Maximum 350 lines per file**. Exceeding files MUST be split into modules, sub-components, or dedicated hooks.
+- **File Limit: Maximum 350 lines per file**. New files must not exceed it; files already over it must not grow (split first). Pure data/catalog `.ts` files may be exempted with a reason — `docs/plan/k11-file-size-policy.md`, gate `tests/unit/architecture/file-size-ratchet.test.ts`.
 - **Naming Conventions**:
   - Folders / Files: `kebab-case` (e.g., `mapping-engine.ts`)
   - React Components / Types / Interfaces: `PascalCase` (e.g., `UserProfile.tsx`, `TenantContext`)
