@@ -63,6 +63,14 @@ export async function consumeMonthlyCredit(db: DbClient, orgId: string, cost: nu
   return { near, creditLimit: credit.monthly_limit }
 }
 
+/** Tin nhắn thấu chi (PO 05/11/2026): vẫn cộng vào mức dùng của kỳ, không chặn theo hạn mức. */
+export async function countMonthlyCreditUnchecked(db: DbClient, orgId: string, cost: number): Promise<void> {
+  const period = creditPeriod()
+  await ensureRow(db, orgId, "CREDIT", period, (await readCreditPricing(db)).defaultMonthlyLimit)
+  await db.$executeRaw`UPDATE usage_limits SET used = used + ${cost}, updated_at = now()
+    WHERE organization_id = ${orgId} AND service = 'CREDIT' AND period = ${period}`
+}
+
 /** Hoàn credit → trừ lại phần đã tính vào hạn mức kỳ hiện tại (không xuống dưới 0). */
 export async function releaseMonthlyCredit(
   db: DbClient, orgId: string, amount: number, service: string | null | undefined,

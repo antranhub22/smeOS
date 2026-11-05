@@ -24,6 +24,8 @@ import { CAPABILITIES } from "@/core/rbac/capability-catalog"
  * - PO 04/11/2026: nút trang khách /c/[slug] (thẻ sản phẩm, thanh đáy, header, chi tiết mẫu, bản xem trước
  *   landing) theo cài đặt Đặt hàng / Liên hệ của Điều hành (Đơn hàng đa nguồn §3.2); gỡ cam kết in cứng
  *   trong chi tiết mẫu.
+ * - PO 05/11/2026: đặt hàng trên catalog/landing công khai dừng khi gói dịch vụ của cửa hàng quá hạn thanh toán
+ *   (`place-public-catalog-order.ts` gọi `assertAcceptingPublicOrders`).
  */
 const ROOT = path.resolve(__dirname, "../../..")
 const MANIFEST = path.join(__dirname, "catalog-freeze.manifest.txt")

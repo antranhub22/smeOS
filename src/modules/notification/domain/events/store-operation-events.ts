@@ -260,6 +260,20 @@ export const STORE_OPERATION_EVENTS: NotificationEventDefinition[] = [
       { roleKey: "store_admin", channels: ["APP_INBOX", "TELEGRAM"], priority: "URGENT", dispatchMode: "BROADCAST" },
     ],
   },
+  {
+    key: "CREDIT_OVERDRAFT",
+    label: "Credit âm do tin nhắn khách",
+    description: "Hết credit nhưng tin nhắn gửi khách vẫn đi trong mức thấu chi — báo khi số dư chuyển sang âm và khi dùng hết mức thấu chi",
+    group: "AI",
+    tier: "STORE",
+    version: 1,
+    defaultVisibleToTiers: [],
+    iconName: "AlertTriangle",
+    deepLinkTemplate: "/muc-dung",
+    roleDefaults: [
+      { roleKey: "store_admin", channels: ["APP_INBOX", "TELEGRAM"], priority: "URGENT", dispatchMode: "BROADCAST" },
+    ],
+  },
   // ── Gói thuê bao (checklist ALG 10.7) ─────────────────────────────────
   {
     key: "SUBSCRIPTION_RENEWAL_DUE",

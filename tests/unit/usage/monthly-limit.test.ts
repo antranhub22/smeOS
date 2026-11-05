@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest"
 
 import { creditPeriod, lowBalanceThreshold, parseMonthlyLimit, reachesNearLimit } from "@/modules/usage/domain/monthly-limit"
 import { creditPricingProblem, DEFAULT_CREDIT_PRICING, parseCreditPricing } from "@/modules/usage/domain/credit-pricing"
+import { overdraftFloor, overdraftSignals } from "@/modules/usage/domain/message-overdraft"
 
 /** Checklist ALG 10.3, 9.7, 10.5 — kỳ tháng giờ Việt Nam, ngưỡng 80%/20%, quy đổi credit (PO Q10). */
 describe("hạn mức credit tháng", () => {
@@ -40,5 +41,21 @@ describe("quy đổi credit", () => {
     expect(creditPricingProblem({ smsCredit: 1, defaultMonthlyLimit: null })).toBeNull()
     expect(creditPricingProblem({ smsCredit: 1.5 })).not.toBeNull()
     expect(creditPricingProblem({ usdToVnd: 5 })).not.toBeNull()
+  })
+})
+
+describe("thấu chi tin nhắn gửi khách (PO 05/11/2026)", () => {
+  it("mức thấu chi mặc định 50, Console đặt 0–100.000", () => {
+    expect(parseCreditPricing({}).messageOverdraftCredit).toBe(50)
+    expect(parseCreditPricing({ messageOverdraftCredit: 0 }).messageOverdraftCredit).toBe(0)
+    expect(parseCreditPricing({ messageOverdraftCredit: -5 }).messageOverdraftCredit).toBe(50)
+    expect(creditPricingProblem({ messageOverdraftCredit: 1.5 })).toBeTruthy()
+    expect(creditPricingProblem({ messageOverdraftCredit: 200 })).toBeNull()
+  })
+  it("báo khi số dư chuyển sang âm và khi không còn chỗ cho tin kế tiếp", () => {
+    expect(overdraftFloor(3)).toBe(-3)
+    expect(overdraftSignals(-1, 2, 3)).toEqual({ crossedNegative: true, exhausted: false })
+    expect(overdraftSignals(-3, 2, 3)).toEqual({ crossedNegative: false, exhausted: true })
+    expect(overdraftSignals(4, 2, 3)).toEqual({ crossedNegative: false, exhausted: false })
   })
 })
