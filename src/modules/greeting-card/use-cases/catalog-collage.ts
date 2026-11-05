@@ -6,8 +6,11 @@ import { getGreetingCatalogForCustomer } from "./get-greeting-catalog"
 import { webpToJpegDataUrl } from "../adapters/collage-image-transcoder"
 import { fetchThumbnail, isValidDriveId, resolveFirstFileId } from "../adapters/google-drive-thumbnail"
 import { driveThumbProxySrc } from "../domain/drive-thumb"
+import { generateQRCodeDataUrl } from "@/core/media/qr-engine"
+import { publicAppUrl } from "@/lib/public-url"
 
-export const COLLAGE_MAX_IMAGES = 3
+/** Ảnh ghép 3–4 mẫu tuỳ số mẫu có ảnh (ALG 5.4) */
+export const COLLAGE_MAX_IMAGES = 4
 
 export interface CatalogCollageData {
   catalogName: string
@@ -15,10 +18,28 @@ export interface CatalogCollageData {
   priceLabel: string | null
   /** Logo tiệm dạng data URL; null → dùng chữ cái đầu tên tiệm */
   logo: string | null
-  /** Tổng số mẫu trong bộ sưu tập — ảnh hiện tối đa 3, phần còn lại thành nhãn "+N" */
+  /** Tổng số mẫu trong bộ sưu tập — ảnh hiện tối đa 4, phần còn lại thành nhãn "+N" */
   productCount: number
   /** Ảnh dạng data URL JPG/PNG — ảnh WEBP đã được đổi sang JPG vì bộ dựng ảnh không đọc được WEBP. */
   images: string[]
+  /** Mã QR (data URL PNG) mở đúng link Thẻ chào đang chia sẻ; null khi chưa biết địa chỉ công khai */
+  qr?: string | null | undefined
+}
+
+/** Link tuyệt đối của trang khách theo đường dẫn (vd. `/g/<id>`); null khi chưa cấu hình địa chỉ công khai. */
+export function collageLinkUrl(path: string, base: string = publicAppUrl()): string | null {
+  if (!base || !path.startsWith("/")) return null
+  return `${base}${path}`
+}
+
+/** QR đen trên nền kem cho ảnh ghép; lỗi sinh mã thì bỏ QR, ảnh vẫn dựng. */
+export async function collageQr(linkUrl: string | null): Promise<string | null> {
+  if (!linkUrl) return null
+  try {
+    return await generateQRCodeDataUrl(linkUrl, { width: 240, margin: 1, darkColor: "#120A0D", lightColor: "#FBF5EE" })
+  } catch {
+    return null
+  }
 }
 
 type PublicData = Awaited<ReturnType<typeof getPublicGreetingCatalog>>
@@ -109,24 +130,26 @@ async function loadOne(url: string): Promise<string | null> {
   return (await loadFromStorage(url)) ?? (await loadFromDriveProxy(url)) ?? (await loadFromPublicUrl(url))
 }
 
-async function loadImages(urls: string[]): Promise<string[]> {
+type Loader = (url: string) => Promise<string | null>
+
+async function loadImages(urls: string[], load: Loader = loadOne): Promise<string[]> {
   const out: string[] = []
   for (const url of urls.slice(0, COLLAGE_MAX_ATTEMPTS)) {
     if (out.length >= COLLAGE_MAX_IMAGES) break
-    const image = await loadOne(url)
+    const image = await load(url)
     if (image) out.push(image)
   }
   return out
 }
 
 /** Ảnh hoa của một mẫu: ảnh trong kho/URL trước, rồi đến link Drive — giống ảnh trên trang khách. */
-async function loadProductImages(products: CollageSource["products"]): Promise<string[]> {
+async function loadProductImages(products: CollageSource["products"], load: Loader): Promise<string[]> {
   const out: string[] = []
   for (const p of products.slice(0, COLLAGE_MAX_ATTEMPTS)) {
     if (out.length >= COLLAGE_MAX_IMAGES) break
     const sources = [p.imageUrl, driveThumbProxySrc(p.driveLink)].filter((u): u is string => !!u)
     for (const src of sources) {
-      const image = await loadOne(src)
+      const image = await load(src)
       if (image) { out.push(image); break }
     }
   }
@@ -140,33 +163,39 @@ type CollageSource = {
 }
 
 /** Dùng chung cho ảnh chia sẻ catalog `/c/[slug]` (Công cụ 09) — cùng cách nạp ảnh an toàn. */
-export async function buildCollage(data: CollageSource): Promise<CatalogCollageData> {
+export async function buildCollage(
+  data: CollageSource,
+  opts: { linkPath?: string | undefined; baseUrl?: string | undefined; load?: Loader | undefined } = {},
+): Promise<CatalogCollageData> {
   const logoUrl = data.shop?.logoUrl
+  const load = opts.load ?? loadOne
   return {
     catalogName: data.catalog.name,
     shopName: data.shop?.name ?? null,
     priceLabel: priceLabelOf(data.products.map((p) => p.price)),
-    logo: logoUrl ? ((await loadImages([logoUrl]))[0] ?? null) : null,
+    logo: logoUrl ? ((await loadImages([logoUrl], load))[0] ?? null) : null,
     productCount: data.products.length,
-    images: await loadProductImages(data.products),
+    images: await loadProductImages(data.products, load),
+    qr: opts.linkPath ? await collageQr(collageLinkUrl(opts.linkPath, opts.baseUrl)) : null,
   }
 }
 
-async function toCollage(data: PublicData): Promise<CatalogCollageData | null> {
+async function toCollage(data: PublicData, linkPath: string): Promise<CatalogCollageData | null> {
   if (data.status !== "ACTIVE") return null
-  return buildCollage(data)
+  return buildCollage(data, { linkPath })
 }
 
-export async function catalogCollageById(catalogId: string): Promise<CatalogCollageData | null> {
-  return toCollage(await getPublicGreetingCatalog(catalogId))
+/** `linkPath` = đường dẫn đang chia sẻ (`/g/<id>`, `/s/<mã>`) để QR mở đúng link đó. */
+export async function catalogCollageById(catalogId: string, linkPath = `/g/${catalogId}`): Promise<CatalogCollageData | null> {
+  return toCollage(await getPublicGreetingCatalog(catalogId), linkPath)
 }
 
 export async function catalogCollageBySlug(orgSlug: string, catalogCode: string): Promise<CatalogCollageData | null> {
-  return toCollage(await getPublicGreetingCatalogBySlug(orgSlug, catalogCode))
+  return toCollage(await getPublicGreetingCatalogBySlug(orgSlug, catalogCode), `/bst/${orgSlug}/${catalogCode}`)
 }
 
 export async function catalogCollageBySendCode(sendCode: string): Promise<CatalogCollageData | null> {
   const data = await getGreetingCatalogForCustomer(sendCode)
   if (data.status !== "ACTIVE") return null
-  return buildCollage(data)
+  return buildCollage(data, { linkPath: `/b/${sendCode}` })
 }

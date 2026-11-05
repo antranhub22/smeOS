@@ -11,8 +11,8 @@ import { OrderChangePanel, type OrderChangeData } from "./order-change-panel"
 import { TrackingPaymentCard, type TrackingPayment } from "./tracking-payment-card"
 import { PaymentFailedNotice } from "./payment-failed-notice"
 import { OrderCancelledNotice, type CancellationNoticeData } from "./order-cancelled-notice"
-import { SubstitutePanel, type SubstituteData } from "./substitute-panel"
-import { CustomerThankYouCard, THANK_YOU_TARGET } from "./customer-thank-you-card"
+import { OrderProposalsPanel, type FlowerSubstituteData, type SubstituteData } from "./order-proposals-panel"
+import { CustomerThankYouCard, THANK_YOU_TARGET, type ThankYouVoucherData } from "./customer-thank-you-card"
 import { isTrackingCompleted } from "@/modules/greeting-card/domain/greeting-card-rules"
 import { Button } from "@/components/ui/button"
 import { OrderParallelStagesCard } from "./order-parallel-stages-card"
@@ -46,12 +46,13 @@ type TrackingData = {
     verified?: boolean
     /** Chỉ khi đã xác minh: đổi thông tin đơn + lịch sử */
     change?: OrderChangeData | null
-    /** Chỉ khi đã xác minh: tiệm đề xuất mẫu thay thế */
-    substitute?: SubstituteData | null
+    /** Chỉ khi đã xác minh: tiệm đề xuất mẫu thay thế / đổi một loại hoa phụ */
+    substitute?: SubstituteData | null; flowerSubstitute?: FlowerSubstituteData | null
     /** Lần giao gần nhất không thành công (ghi chú chỉ khi đã xác minh) */
     deliveryFailure?: { at: string; reasonLabel: string; note: string | null; feeVnd: number; attempts: number } | null
     /** Tiệm không thực hiện được đơn (Điều phối huỷ, đã duyệt): hạn liên hệ + tiền hoàn */
     cancellationNotice?: CancellationNoticeData | null
+    thankYouVoucher?: ThankYouVoucherData | null
     recipientName: string
     deliveryAddress: string
     deliveryDate?: string | null
@@ -161,7 +162,7 @@ export function BrochureTrackingView({ orderCode, sendCode, failedCta, onPayment
       {order.cancellationNotice && <OrderCancelledNotice orderCode={order.code} notice={order.cancellationNotice} />}
 
       {/* Đơn đã hoàn tất: lời cảm ơn + xem lại đơn, tiến độ, đặt đơn mới */}
-      {!isHomestayStay && isTrackingCompleted(order.status, order.deliveryStatus) && <CustomerThankYouCard orderCode={order.code} sendCode={sendCode} />}
+      {!isHomestayStay && isTrackingCompleted(order.status, order.deliveryStatus) && <CustomerThankYouCard orderCode={order.code} sendCode={sendCode} voucher={order.thankYouVoucher} />}
 
       {/* HOMESTAY/LƯU TRÚ: Khi khách đã báo chuyển khoản hoặc thanh toán → Hiện Thẻ xác nhận đặt phòng & Khóa lịch hẹn */}
       {isHomestayStay && hasPaymentCommitment && !order.cancellationNotice && (
@@ -307,8 +308,8 @@ export function BrochureTrackingView({ orderCode, sendCode, failedCta, onPayment
           </p>
         </div>
       )}
-      {order.substitute && (
-        <SubstitutePanel orderCode={orderCode} proof={{ sendCode, last4 }} substitute={order.substitute} onChanged={loadTracking} />
+      {(order.substitute || order.flowerSubstitute) && (
+        <OrderProposalsPanel orderCode={orderCode} proof={{ sendCode, last4 }} substitute={order.substitute ?? null} flower={order.flowerSubstitute ?? null} onChanged={loadTracking} />
       )}
       {order.change && (
         <OrderChangePanel orderCode={orderCode} proof={{ sendCode, last4 }} change={order.change} onChanged={loadTracking} />

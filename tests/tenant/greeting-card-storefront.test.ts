@@ -97,6 +97,22 @@ describe("greeting-card: trang khách thương mại", () => {
     expect(await prisma.orders.count({ where: { organization_id: a.organizationId } })).toBe(2)
   })
 
+  it("tắt giá + tắt giảm giá (ALG 5.5): phản hồi công khai không có giá, không ưu đãi; đơn vẫn nhận, chờ báo giá", async () => {
+    const { product, catalog } = await catalogWith(750_000)
+    await prisma.organizations.update({ where: { id: a.organizationId }, data: { settings: { greetingCardPricing: { hidePrice: true, showDiscounts: false } } } })
+    const pub = await getPublicGreetingCatalog(catalog.id)
+    if (pub.status !== "ACTIVE") throw new Error("catalog phải hoạt động")
+    expect(pub.products[0]).toMatchObject({ price: null, priceMaxVnd: null, priceHidden: true, variants: [] })
+    expect(JSON.stringify(pub)).not.toContain("750000")
+    expect(pub.catalog.filters?.appliedPolicies).toMatchObject({ promotions: [], intakePromotionCta: { enabled: false } })
+    const order = await submitPublicCatalogOrder(catalog.id, { ...ORDER, selectedPromotionId: undefined, productId: product.id })
+    expect(order).toMatchObject({ totalVnd: 0, vietQr: null, quote: { awaitingQuote: true } })
+
+    const link = await createSendLink(owner, { catalogId: catalog.id })
+    const view = await getGreetingCatalogForCustomer(link.sendCode)
+    expect(view.status === "ACTIVE" && view.products[0]?.price).toBeNull()
+  })
+
   it("trần đơn theo SĐT mỗi giờ; ô bẫy có giá trị bị từ chối", async () => {
     const { product, catalog } = await catalogWith(500_000)
     for (let i = 0; i < MAX_ORDERS_PER_PHONE_PER_HOUR; i++) {

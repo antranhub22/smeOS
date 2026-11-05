@@ -10,6 +10,8 @@ import { CATALOG_ITEMS_INCLUDE } from "./greeting-catalog-repository"
 
 export const SUBSTITUTE_PROPOSAL_KIND = "SUBSTITUTE_PROPOSAL"
 export const SUBSTITUTE_RESPONSE_KIND = "SUBSTITUTE_RESPONSE"
+/** Đề xuất đổi một loại hoa phụ (ALG 5.14) — dùng chung khoá "một đề xuất chờ khách mỗi đơn" */
+export const FLOWER_PROPOSAL_KIND = "FLOWER_SUBSTITUTE_PROPOSAL"
 
 /** Đơn đã rời tiệm hoặc đã đóng — không đổi mẫu được nữa (khớp `substituteLockReason`). */
 const CLOSED_STATUS = ["CANCELLED", "COMPLETED", "DELIVERED"] as const
@@ -66,9 +68,9 @@ export class SubstituteRepository {
       const open = await tx.orders.count({ where: scopedWhere(ctx, { id: order.id, ...OPEN_ORDER }) })
       if (open === 0) throw conflict("Đơn đã giao cho shipper hoặc đã đóng — không đổi mẫu được nữa")
       const pending = await tx.greeting_messages.count({
-        where: scopedWhere(ctx, { order_id: order.id, kind: SUBSTITUTE_PROPOSAL_KIND, payload: { path: ["status"], equals: "PENDING" } }),
+        where: scopedWhere(ctx, { order_id: order.id, kind: { in: [SUBSTITUTE_PROPOSAL_KIND, FLOWER_PROPOSAL_KIND] }, payload: { path: ["status"], equals: "PENDING" } }),
       })
-      if (pending > 0) throw conflict("Đơn đang có một đề xuất đổi mẫu chờ khách trả lời")
+      if (pending > 0) throw conflict("Đơn đang có một đề xuất chờ khách trả lời")
       const created = await tx.greeting_messages.create({
         data: scopedData(ctx, {
           id: randomUUID(), order_id: order.id, step_key: "GENERAL", sender_id: ctx.userId, sender_role: "COORDINATOR",

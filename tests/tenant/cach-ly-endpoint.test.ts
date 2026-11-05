@@ -143,6 +143,20 @@ describe("cách ly tenant ở tầng endpoint", () => {
     expect(otherRead).toEqual(null)
   })
 
+  it("thông điệp thương hiệu và khách mục tiêu (checklist ALG 9.3): lưu, giữ khi PUT không gửi, chỉ chính tổ chức đọc được, có trong ngữ cảnh AI", async () => {
+    const put = (token: string, body: object) =>
+      putBusinessProfile(withSession(`${BASE}/business-profile`, token, { method: "PUT", body: JSON.stringify(body) }))
+    expect((await put(a.token, { display_name: "Tiệm A", brand_message: "Hoa tươi giao đúng hẹn", target_customers: ["Văn phòng", "Cặp đôi"] })).status).toBe(200)
+    expect((await put(a.token, { display_name: "Tiệm A đổi tên" })).status).toBe(200)
+    const ownRead = await readJson(await getBusinessProfile(withSession(`${BASE}/business-profile`, a.token)))
+    expect(ownRead).toMatchObject({ display_name: "Tiệm A đổi tên", brand_message: "Hoa tươi giao đúng hẹn", target_customers: ["Văn phòng", "Cặp đôi"] })
+    expect((await put(a.token, { display_name: "Tiệm A", target_customers: Array.from({ length: 11 }, (_, i) => `Nhóm ${i}`) })).status).toBe(400)
+
+    const { readShopContext } = await import("@/modules/content-engine/infra/read-shop-context")
+    expect(await readShopContext(a.ctx)).toMatchObject({ brandMessage: "Hoa tươi giao đúng hẹn", targetCustomers: ["Văn phòng", "Cặp đôi"] })
+    expect(await readShopContext(b.ctx)).toMatchObject({ brandMessage: null, targetCustomers: [] })
+  })
+
   it("PUT /business-profile thiếu display_name trả 400 VALIDATION_FAILED", async () => {
     const response = await putBusinessProfile(
       withSession(`${BASE}/business-profile`, a.token, {

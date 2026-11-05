@@ -4,8 +4,11 @@
  * Hàm thuần — không Prisma.
  */
 
-/** Luôn hiển thị, không tắt được (chốt với PO 05/10/2026). */
-export const REQUIRED_DISPLAY_FIELDS = ["code", "name", "price"] as const
+/**
+ * Luôn hiển thị, không tắt được (chốt với PO 05/10/2026). Giá tắt được cho cả cửa hàng
+ * bằng công tắc riêng (`price-visibility.ts`, ALG 5.5), không theo từng mẫu.
+ */
+export const REQUIRED_DISPLAY_FIELDS = ["code", "name"] as const
 
 /** Các trường cửa hàng được bật/tắt — thứ tự ở đây là thứ tự hiển thị. */
 export const OPTIONAL_DISPLAY_FIELDS = [

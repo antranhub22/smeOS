@@ -5,6 +5,7 @@ import { handle, jsonResponse } from "@/core/http/response"
 import { requireCapability } from "@/core/rbac/capabilities"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import { BULK_MAX_IDS, bulkUpdateStatus } from "@/modules/products/use-cases/bulk-update-status"
+import { activationWarningsFor } from "@/modules/products/use-cases/get-product-master-index"
 
 const bodySchema = z.object({
   ids: z.array(z.string().min(1)).min(1).max(BULK_MAX_IDS),
@@ -18,5 +19,8 @@ export const POST = handle(async (request) => {
   const parsed = bodySchema.safeParse(await request.json().catch(() => null))
   if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
   if (parsed.data.status === "ARCHIVED") requireCapability(ctx, "L4")
-  return jsonResponse(await bulkUpdateStatus(ctx, parsed.data.ids, parsed.data.status))
+  const result = await bulkUpdateStatus(ctx, parsed.data.ids, parsed.data.status)
+  // Mở bán hàng loạt: mẫu chưa đủ điều kiện vẫn mở, kèm danh sách còn thiếu (checklist ALG 7.3)
+  const warnings = parsed.data.status === "ACTIVE" ? await activationWarningsFor(ctx, result.updated) : []
+  return jsonResponse({ ...result, warnings })
 })

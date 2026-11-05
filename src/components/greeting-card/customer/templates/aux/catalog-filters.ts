@@ -63,7 +63,7 @@ export const COLOR_MOODS: ColorMood[] = [
 ]
 
 function colorText(p: GreetingCatalogProduct): string {
-  return [p.name, p.style, p.description, p.flowersSummary].filter(Boolean).join(" ").toLowerCase()
+  return [p.color, p.name, p.style, p.description, p.flowersSummary].filter(Boolean).join(" ").toLowerCase()
 }
 
 export function matchesMood(p: GreetingCatalogProduct, mood: ColorMood): boolean {
@@ -74,6 +74,20 @@ export function matchesMood(p: GreetingCatalogProduct, mood: ColorMood): boolean
 /** Chỉ các tông màu thực sự có sản phẩm (dựa trên tên, phong cách, mô tả, thành phần). */
 export function moodsOf(products: GreetingCatalogProduct[]): ColorMood[] {
   return COLOR_MOODS.filter((m) => products.some((p) => matchesMood(p, m)))
+}
+
+export function findMood(id: string | null): ColorMood | null {
+  return COLOR_MOODS.find((m) => m.id === id) ?? null
+}
+
+/** Mẫu vuốt (ALG 5.9): lọc theo tông màu và khoảng giá cùng lúc; điều kiện trống thì bỏ qua. */
+export function filterSwipeDeck(
+  products: GreetingCatalogProduct[],
+  filters: { mood: ColorMood | null; inRange: ((p: GreetingCatalogProduct) => boolean) | null },
+): GreetingCatalogProduct[] {
+  const { mood, inRange } = filters
+  if (!mood && !inRange) return products
+  return products.filter((p) => (!mood || matchesMood(p, mood)) && (!inRange || inRange(p)))
 }
 
 /** Vòng màu cho ô "Tất cả" */

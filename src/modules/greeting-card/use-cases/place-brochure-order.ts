@@ -15,6 +15,7 @@ import type { BrochureQuote } from "../domain/brochure-pricing"
 import { BrochureCheckoutRepository, getBrochureCheckoutRepository } from "../infra/brochure-checkout-repository"
 import { quoteForProduct } from "./brochure-quote"
 import { resolveAppliedPolicies } from "../domain/store-policy"
+import { applyDiscountVisibility, readPriceVisibility } from "../domain/price-visibility"
 import type { PolicyGovernanceUpper } from "@/modules/organization/domain/governance-decisions"
 import { promotionNote, resolveOrderPolicies } from "../domain/order-policies"
 import { snapshotOf } from "./brochure-product-mapper"
@@ -73,7 +74,9 @@ export async function placeBrochureOrder(
   if (input.checkOutDate && input.deliveryDate) {
     await assertBookingDatesAvailable({ organizationId, productId: product.id, checkInDate: input.deliveryDate, checkOutDate: input.checkOutDate })
   }
-  const policies = resolveOrderPolicies(resolveAppliedPolicies(params.catalogFilters, params.shopSettings, undefined, params.governanceUpper), input)
+  // Tiệm tắt thông tin giảm giá (ALG 5.5): khách không thấy ưu đãi nên đơn không áp, không bắt chọn
+  const applied = applyDiscountVisibility(resolveAppliedPolicies(params.catalogFilters, params.shopSettings, undefined, params.governanceUpper), readPriceVisibility(params.shopSettings))
+  const policies = resolveOrderPolicies(applied, input)
   if (!policies.ok) throw validationFailed({ [policies.field]: policies.message })
   const promotion = policies.snapshot.promotion
   const priced = await quoteForProduct(

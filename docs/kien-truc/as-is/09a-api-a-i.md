@@ -200,7 +200,7 @@ Phần tiếp: [09b-api-j-w.md](09b-api-j-w.md).
 | GET | `/greeting-card/catalogs/[id]/hearts` | getCatalogHearts | Phiên | L1 | — | 1 tệp: `catalog/catalog-hearts-panel.tsx` |
 | DELETE · POST | `/greeting-card/catalogs/[id]/products` | — | Phiên | R2 | — | 1 tệp: `catalog/use-catalog-items.ts` |
 | POST | `/greeting-card/discount-requests/[id]/decision` | decideDiscount | Phiên | F2 | approve, percent, amountVnd, note | 1 tệp: `inbox/discount-decision.tsx` |
-| GET · PUT | `/greeting-card/display-settings` | getDisplaySettings, updateDisplaySettings | Phiên | L1 R2 | templateId, fields | 1 tệp: `journey/display-settings-dialog.tsx` |
+| GET · PUT | `/greeting-card/display-settings` | getDisplaySettings, updateDisplaySettings | Phiên | L1 R2 | templateId, fields; pricing (hidePrice, showDiscounts); thankYou (enabled, percent) | 1 tệp: `journey/display-settings-dialog.tsx` |
 | GET | `/greeting-card/inbox` | getInbox | Phiên | R1 | — | 1 tệp: `inbox/use-inbox.ts` |
 | GET | `/greeting-card/integrations` | getIntegrationStatus | Phiên | R1 | — | 2 tệp: `admin/brochure-bank-sync-settings.tsx`, `admin/brochure-notify-settings.tsx` |
 | PUT | `/greeting-card/integrations/notifications` | updateNotifySettings | Phiên | F2 | enabled, channel, credentials, templates | 1 tệp: `admin/brochure-notify-settings.tsx` |

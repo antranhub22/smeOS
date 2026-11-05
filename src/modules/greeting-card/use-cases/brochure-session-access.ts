@@ -5,6 +5,7 @@ import { linkAvailability, validateSendCode } from "../domain/greeting-card-rule
 import { resolveEffectiveStepTimeoutPolicy, isSessionBrowsingExpired } from "../domain/step-timeout-policy"
 import type { GreetingCatalogProduct } from "../domain/greeting-card-types"
 import { collectImageAssetIds, toCatalogProduct } from "./brochure-product-mapper"
+import { applyPriceVisibility, readPriceVisibility } from "../domain/price-visibility"
 
 export type PublicSession = NonNullable<Awaited<ReturnType<GreetingCardRepository["getPublicSessionBySendCode"]>>>
 
@@ -49,7 +50,8 @@ export async function resolveOrderableProduct(
   const item = session.catalog.items.find((i) => i.product.id === productId)
   if (!item) throw notFound()
   const urls = await repo.getAssetsStorageMap(session.organization_id, collectImageAssetIds([item]))
-  const product = toCatalogProduct(item, urls)
+  // Tiệm tắt giá (ALG 5.5): đơn đi luồng chờ báo giá, không lấy giá niêm yết
+  const product = applyPriceVisibility(toCatalogProduct(item, urls), readPriceVisibility(session.organization?.settings))
   if (product.available === false) throw conflict(SOLD_OUT_MESSAGE)
   return product
 }

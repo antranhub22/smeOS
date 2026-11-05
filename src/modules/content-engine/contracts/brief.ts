@@ -128,6 +128,8 @@ export const briefShopSchema = z.object({
   address: z.string().nullish(),
   website: z.string().nullish(),
   operatingHours: z.string().nullish(),
+  brandMessage: z.string().nullish(),
+  targetCustomers: z.array(z.string()).optional(),
 })
 
 export const briefChannelRuleSchema = z.object({

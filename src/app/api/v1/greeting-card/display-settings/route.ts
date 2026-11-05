@@ -15,11 +15,15 @@ export const GET = handle(async (request: Request) => {
 })
 
 const putSchema = z.object({
-  templateId: z.string().min(1).max(64),
-  fields: z.array(z.string().max(40)).max(20),
-})
+  templateId: z.string().min(1).max(64).optional(),
+  fields: z.array(z.string().max(40)).max(20).optional(),
+  /** Công tắc giá và thông tin giảm giá cho cả cửa hàng (ALG 5.5) */
+  pricing: z.object({ hidePrice: z.boolean().optional(), showDiscounts: z.boolean().optional() }).strict().optional(),
+  /** Mã cảm ơn dùng một lần sau đơn hoàn tất (ALG 5.15) */
+  thankYou: z.object({ enabled: z.boolean().optional(), percent: z.number().int().min(1).max(100).optional() }).strict().optional(),
+}).refine((b) => b.templateId !== undefined || b.pricing !== undefined || b.thankYou !== undefined, { message: "Không có cài đặt nào để lưu" })
 
-/** PUT — đổi trường hiển thị (R2 + L4: cài đặt dùng chung cả tiệm, Sale và Điều phối không đổi — PO 16/10/2026). Trả nợ #170. */
+/** PUT — đổi trường hiển thị hoặc công tắc giá/giảm giá (R2 + L4: cài đặt dùng chung cả tiệm, Sale và Điều phối không đổi — PO 16/10/2026). Trả nợ #170. */
 export const PUT = handle(async (request: Request) => {
   const { ctx } = await requireTenantContext(request)
   requireCapability(ctx, GREETING_CARD_CAPABILITY.manage)
