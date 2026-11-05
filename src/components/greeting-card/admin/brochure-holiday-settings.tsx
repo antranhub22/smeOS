@@ -115,7 +115,7 @@ export function BrochureHolidaySettings() {
                   <label className="flex items-center gap-1.5 text-body-sm text-text">
                     <Checkbox checked={r.yearly} onCheckedChange={(checked) => patch(i, { yearly: (checked === true) })} /> Lặp lại hằng năm
                   </label>
-                  <Button variant="ghost" type="button" aria-label={`Xoá ${r.name || "ngày lễ"}`} onClick={() => edit(rows.filter((_, j) => j !== i))} className="font-[inherit] gap-0 ml-auto p-2 rounded-lg text-text-muted hover:text-danger hover:bg-danger-bg">
+                  <Button variant="ghost" type="button" aria-label={`Xoá ${r.name || "ngày lễ"}`} onClick={() => edit(rows.filter((_, j) => j !== i))} className="text-[length:inherit] h-auto font-[inherit] gap-0 ml-auto p-2 rounded-lg text-text-muted hover:text-danger hover:bg-danger-bg">
                     <Trash2 size={16} />
                   </Button>
                 </div>

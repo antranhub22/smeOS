@@ -38,7 +38,7 @@ export function UiStudioDrawer() {
         <Button variant="outline"
           type="button"
           onClick={() => setIsOpen((prev) => !prev)}
-          className="font-[inherit] group relative flex items-center gap-2 px-3 py-2.5 rounded-full bg-surface border border-border shadow-md hover:shadow-lg transition-all duration-200 hover:scale-105 text-text cursor-pointer hover:bg-surface"
+          className="text-[length:inherit] h-auto font-[inherit] group relative flex items-center gap-2 px-3 py-2.5 rounded-full bg-surface border border-border shadow-md hover:shadow-lg transition-all duration-200 hover:scale-105 text-text cursor-pointer hover:bg-surface"
           title="Tùy biến Giao diện & UI Presets"
           aria-label="Mở bảng điều khiển giao diện"
         >
@@ -110,7 +110,7 @@ export function UiStudioDrawer() {
                           type="button"
                           key={item.id}
                           onClick={() => setDensity(item.id)}
-                          className={`p-2.5 rounded-xl border text-center transition-all flex flex-col items-center gap-1 cursor-pointer ${
+                          className={`text-[length:inherit] h-auto p-2.5 rounded-xl border text-center transition-all flex flex-col items-center gap-1 cursor-pointer ${
                             isSelected
                               ? "border-primary bg-primary-subtle text-primary font-bold shadow-xs hover:bg-primary-subtle"
                               : "border-border bg-surface text-text-muted hover:border-border-strong hover:text-text hover:bg-surface"

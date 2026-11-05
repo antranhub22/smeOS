@@ -39,7 +39,7 @@ export function CalendarView({ qs, from: fixedFrom, to: fixedTo, onOpen }: { qs:
                     {s.items.map((i) => (
                       <li key={i.id}>
                         <Button variant="outline" type="button" onClick={() => onOpen(i)} data-focus-key={i.orderId ?? i.sessionId}
-                          className="font-[inherit] flex w-full flex-wrap items-center justify-between gap-2 rounded-xl border border-border px-3 py-2 text-left text-body-sm hover:border-primary">
+                          className="h-auto font-[inherit] flex w-full flex-wrap items-center justify-between gap-2 rounded-xl border border-border px-3 py-2 text-left text-body-sm hover:border-primary">
                           <div className="flex flex-wrap items-center gap-2">
                             <span><strong>{i.customerName}</strong> · <span className="font-mono text-caption text-text-muted">{codeOf(i)}</span> · {i.currentStepTitle}</span>
                             <StaffNametagGroup item={i} compact />

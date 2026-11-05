@@ -166,7 +166,7 @@ export function BrochureShippingSettings() {
                   type="button"
                   aria-label={`Xoá khu vực ${z.name || i + 1}`}
                   onClick={() => edit({ ...current, zones: current.zones.filter((_, j) => j !== i) })}
-                  className="font-[inherit] gap-0 h-10 w-10 rounded-lg border border-border text-danger flex items-center justify-center"
+                  className="px-0 py-0 text-[length:inherit] font-[inherit] gap-0 h-10 w-10 rounded-lg border border-border text-danger flex items-center justify-center"
                 >
                   <Trash2 size={14} />
                 </Button>

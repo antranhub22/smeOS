@@ -226,7 +226,7 @@ export function ProductUploadCard({
         <Button variant="outline"
           type="button"
           onClick={handleOpenCatalog}
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-primary-border bg-primary-muted/50 hover:bg-primary-muted/70 text-primary text-caption font-bold transition"
+          className="h-auto inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-primary-border bg-primary-muted/50 hover:bg-primary-muted/70 text-primary text-caption font-bold transition"
         >
           <Library size={14} />
           Chọn từ Catalog tiệm
@@ -289,7 +289,7 @@ export function ProductUploadCard({
                     key={flower.name}
                     type="button"
                     onClick={() => handleSelectDemo(flower)}
-                    className={`justify-start flex items-center gap-2 p-2 rounded-xl border text-left text-caption transition ${
+                    className={`h-auto justify-start flex items-center gap-2 p-2 rounded-xl border text-left text-caption transition ${
                       isSelected
                         ? "border-primary bg-primary-muted/60 text-primary font-semibold hover:bg-primary-muted/60"
                         : "border-border hover:bg-bg text-text"
@@ -345,7 +345,7 @@ export function ProductUploadCard({
             type="button"
             onClick={onAnalyze}
             disabled={isAnalyzing || !selectedImage || !selectedAssetId || isUploading}
-            className="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-primary py-2.5 px-4 text-caption font-bold text-white hover:bg-primary-dark shadow-sm transition disabled:opacity-50"
+            className="h-auto w-full inline-flex items-center justify-center gap-2 rounded-xl bg-primary py-2.5 px-4 text-caption font-bold text-white hover:bg-primary-dark shadow-sm transition disabled:opacity-50"
           >
             {isAnalyzing ? (
               <>

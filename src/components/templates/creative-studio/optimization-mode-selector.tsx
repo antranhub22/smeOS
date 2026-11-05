@@ -82,7 +82,7 @@ export const OptimizationModeSelector: React.FC<OptimizationModeSelectorProps> =
         <Button variant="outline"
           type="button"
           onClick={() => onModeChange("auto")}
-          className={`justify-start font-[inherit] flex items-start gap-3 rounded-xl border p-3.5 text-left transition-all cursor-pointer ${
+          className={`text-[length:inherit] h-auto justify-start font-[inherit] flex items-start gap-3 rounded-xl border p-3.5 text-left transition-all cursor-pointer ${
             mode === "auto"
               ? "border-primary bg-primary/5 shadow-xs ring-1 ring-primary/20 hover:bg-primary/5"
               : "border-border bg-surface hover:bg-surface-alt/60"
@@ -109,7 +109,7 @@ export const OptimizationModeSelector: React.FC<OptimizationModeSelectorProps> =
         <Button variant="outline"
           type="button"
           onClick={() => onModeChange("custom")}
-          className={`justify-start font-[inherit] flex items-start gap-3 rounded-xl border p-3.5 text-left transition-all cursor-pointer ${
+          className={`text-[length:inherit] h-auto justify-start font-[inherit] flex items-start gap-3 rounded-xl border p-3.5 text-left transition-all cursor-pointer ${
             mode === "custom"
               ? "border-primary bg-primary/5 shadow-xs ring-1 ring-primary/20 hover:bg-primary/5"
               : "border-border bg-surface hover:bg-surface-alt/60"
@@ -160,7 +160,7 @@ export const OptimizationModeSelector: React.FC<OptimizationModeSelectorProps> =
               <Button variant="ghost"
                 type="button"
                 onClick={selectAllSupported}
-                className="h-auto p-0 gap-0 text-primary hover:underline font-medium cursor-pointer"
+                className="text-[length:inherit] h-auto p-0 gap-0 text-primary hover:underline font-medium cursor-pointer"
               >
                 Chọn tất cả khả dụng
               </Button>
@@ -168,7 +168,7 @@ export const OptimizationModeSelector: React.FC<OptimizationModeSelectorProps> =
               <Button variant="ghost"
                 type="button"
                 onClick={clearAll}
-                className="h-auto p-0 font-[inherit] gap-0 text-text-muted hover:text-text cursor-pointer"
+                className="text-[length:inherit] h-auto p-0 font-[inherit] gap-0 text-text-muted hover:text-text cursor-pointer"
               >
                 Bỏ chọn
               </Button>

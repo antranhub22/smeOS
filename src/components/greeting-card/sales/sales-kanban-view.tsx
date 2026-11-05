@@ -227,7 +227,7 @@ function SaleKanbanCard({
       <Button variant="ghost"
         type="button"
         onClick={onOpenDetail}
-        className="h-auto p-0 justify-start font-[inherit] flex flex-col gap-2 text-left w-full cursor-pointer group"
+        className="text-[length:inherit] h-auto p-0 justify-start font-[inherit] flex flex-col gap-2 text-left w-full cursor-pointer group"
       >
         <div className="flex items-start justify-between gap-2 border-b border-border/60 pb-1.5 w-full">
           <div className="flex items-center gap-1.5 min-w-0">
@@ -329,7 +329,7 @@ function SaleKanbanCard({
                 : `Dạ chào anh/chị, ${terms.sampleProduct.toLowerCase()} cho đơn #${item.orderCode || item.sendCode} đã ${terms.makerAction.toLowerCase()} hoàn tất ạ! Anh/chị mở link kiểm tra ${terms.completedProductPhoto.toLowerCase()} và thanh toán phần còn lại ${item.balanceVnd.toLocaleString("vi-VN")} đ để cửa hàng giao nhé:${url ? ` ${url}` : ""}`
               if (typeof navigator !== "undefined") void navigator.clipboard.writeText(msg)
             }}
-            className="inline-flex h-8 items-center gap-1 rounded-lg border border-warning/40 bg-warning-bg/40 px-2 text-caption font-bold text-warning-text hover:bg-warning-bg transition-colors"
+            className="py-0 inline-flex h-8 items-center gap-1 rounded-lg border border-warning/40 bg-warning-bg/40 px-2 text-caption font-bold text-warning-text hover:bg-warning-bg transition-colors"
           >
             📋 Nhắc TT lần 2
           </Button>

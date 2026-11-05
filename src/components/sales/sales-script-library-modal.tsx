@@ -121,7 +121,7 @@ export function SalesScriptLibraryModal({
                 type="button"
                 key={tab.id}
                 onClick={() => setSelectedCategory(tab.id)}
-                className={`gap-0 whitespace-nowrap rounded-lg px-2.5 py-1 text-caption font-semibold transition-colors cursor-pointer ${
+                className={`h-auto gap-0 whitespace-nowrap rounded-lg px-2.5 py-1 text-caption font-semibold transition-colors cursor-pointer ${
                   selectedCategory === tab.id
                     ? "bg-primary text-white hover:bg-primary"
                     : "bg-surface-alt text-text-muted hover:text-text hover:bg-surface-alt"
@@ -155,7 +155,7 @@ export function SalesScriptLibraryModal({
                   type="button"
                   key={script.id}
                   onClick={() => setSelectedScriptId(script.id)}
-                  className={`justify-start font-[inherit] gap-0 flex flex-col text-left p-3 rounded-xl border transition-all cursor-pointer ${
+                  className={`text-[length:inherit] h-auto justify-start font-[inherit] gap-0 flex flex-col text-left p-3 rounded-xl border transition-all cursor-pointer ${
                     isSelected
                       ? "border-primary bg-selected/40 shadow-xs hover:bg-selected/40"
                       : "border-border bg-surface hover:bg-surface-alt"

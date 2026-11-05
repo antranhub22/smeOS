@@ -166,7 +166,7 @@ export function CatalogPoliciesSettings({ catalogId, currentFilters, onSaved }: 
                 key={p.id}
                 type="button"
                 onClick={() => togglePromo(p.id)}
-                className={`justify-start font-[inherit] p-3 rounded-xl border text-left transition-all flex flex-col gap-1 ${
+                className={`text-[length:inherit] h-auto justify-start font-[inherit] p-3 rounded-xl border text-left transition-all flex flex-col gap-1 ${
                   active ? "border-primary bg-primary/5 text-text hover:bg-primary/5" : "border-border text-text-muted opacity-60 hover:opacity-100"
                 }`}
               >
@@ -197,7 +197,7 @@ export function CatalogPoliciesSettings({ catalogId, currentFilters, onSaved }: 
                 key={c.id}
                 type="button"
                 onClick={() => toggleCommit(c.id)}
-                className={`justify-start font-[inherit] p-3 rounded-xl border text-left transition-all flex flex-col gap-1 ${
+                className={`text-[length:inherit] h-auto justify-start font-[inherit] p-3 rounded-xl border text-left transition-all flex flex-col gap-1 ${
                   active ? "border-success bg-success/5 text-text hover:bg-success/5" : "border-border text-text-muted opacity-60 hover:opacity-100"
                 }`}
               >
@@ -228,7 +228,7 @@ export function CatalogPoliciesSettings({ catalogId, currentFilters, onSaved }: 
                 key={a.id}
                 type="button"
                 onClick={() => toggleAgree(a.id)}
-                className={`justify-start font-[inherit] p-3 rounded-xl border text-left transition-all flex flex-col gap-1 ${
+                className={`text-[length:inherit] h-auto justify-start font-[inherit] p-3 rounded-xl border text-left transition-all flex flex-col gap-1 ${
                   active ? "border-warning bg-warning/5 text-text hover:bg-warning/5" : "border-border text-text-muted opacity-60 hover:opacity-100"
                 }`}
               >

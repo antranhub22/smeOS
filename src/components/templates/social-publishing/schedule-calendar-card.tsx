@@ -110,7 +110,7 @@ export function ScheduleCalendarCard({
             type="button"
             key={c.key}
             onClick={() => setSelectedChannel(c.key)}
-            className={`gap-0 px-2.5 py-1 rounded-lg text-caption font-semibold transition-all cursor-pointer ${
+            className={`h-auto gap-0 px-2.5 py-1 rounded-lg text-caption font-semibold transition-all cursor-pointer ${
               selectedChannel === c.key
                 ? "bg-primary text-white shadow-2xs hover:bg-primary"
                 : "bg-surface-alt hover:bg-surface text-text-muted hover:text-text border border-border"

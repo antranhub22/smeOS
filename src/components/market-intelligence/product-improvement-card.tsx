@@ -38,7 +38,7 @@ export function ProductImprovementCard({
           <Button variant="ghost"
             type="button"
             onClick={onCreateVariation}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 text-caption font-bold rounded-lg bg-surface-alt hover:bg-border text-text transition"
+            className="h-auto inline-flex items-center gap-1.5 px-3 py-1.5 text-caption font-bold rounded-lg bg-surface-alt hover:bg-border text-text transition"
           >
             <Sparkles size={13} className="text-primary" />
             Tạo biến thể marketing

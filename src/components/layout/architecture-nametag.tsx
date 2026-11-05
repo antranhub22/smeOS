@@ -170,7 +170,7 @@ export function ArchitectureNametag({ isDev = false }: Props) {
         aria-expanded={open}
         aria-haspopup="listbox"
         aria-label={`Tầng kiến trúc: ${nametag.label}. Click để switch vai dev`}
-        className="h-auto p-0 font-[inherit] gap-0 flex items-center cursor-pointer"
+        className="text-[length:inherit] h-auto p-0 font-[inherit] gap-0 flex items-center cursor-pointer"
       >
         {badge}
       </Button>
@@ -215,7 +215,7 @@ export function ArchitectureNametag({ isDev = false }: Props) {
                         if (!isLoading) applyOverride(preset)
                       }}
                       aria-disabled={isLoading}
-                      className={cn("justify-start", 
+                      className={cn("h-auto", "justify-start", 
                         "flex w-full items-center gap-2 px-3 py-2 text-left text-meta transition-colors cursor-pointer",
                         isActive
                           ? "bg-surface-alt font-bold text-text hover:bg-surface-alt"

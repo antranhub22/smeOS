@@ -126,7 +126,7 @@ export function MultichannelPostCard({
               type="button"
               key={post.channel}
               onClick={() => setSelectedChannel(post.channel)}
-              className={`rounded-full px-3.5 py-1.5 text-caption font-bold transition flex items-center gap-1.5 whitespace-nowrap cursor-pointer ${
+              className={`h-auto rounded-full px-3.5 py-1.5 text-caption font-bold transition flex items-center gap-1.5 whitespace-nowrap cursor-pointer ${
                 selectedChannel === post.channel
                   ? "bg-primary text-white shadow-sm hover:bg-primary"
                   : "bg-surface text-text-muted hover:text-text hover:bg-surface-alt border border-border/50"
@@ -143,7 +143,7 @@ export function MultichannelPostCard({
           <Button variant="ghost"
             type="button"
             onClick={() => setViewMode("preview")}
-            className={`px-3 py-1.5 text-caption font-bold rounded-lg transition flex items-center gap-1.5 cursor-pointer ${
+            className={`h-auto px-3 py-1.5 text-caption font-bold rounded-lg transition flex items-center gap-1.5 cursor-pointer ${
               viewMode === "preview"
                 ? "bg-primary text-white shadow-xs hover:bg-primary"
                 : "text-text-muted hover:text-text"
@@ -155,7 +155,7 @@ export function MultichannelPostCard({
           <Button variant="ghost"
             type="button"
             onClick={() => setViewMode("edit")}
-            className={`px-3 py-1.5 text-caption font-bold rounded-lg transition flex items-center gap-1.5 cursor-pointer ${
+            className={`h-auto px-3 py-1.5 text-caption font-bold rounded-lg transition flex items-center gap-1.5 cursor-pointer ${
               viewMode === "edit"
                 ? "bg-primary text-white shadow-xs hover:bg-primary"
                 : "text-text-muted hover:text-text"

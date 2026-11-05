@@ -92,7 +92,7 @@ export function ResearchStatusBanner({
             <Button variant="ghost"
               type="button"
               onClick={onViewResults}
-              className="inline-flex items-center gap-1.5 rounded-xl bg-success px-3.5 py-1.5 text-caption font-bold text-white shadow-xs hover:bg-success-text transition"
+              className="h-auto inline-flex items-center gap-1.5 rounded-xl bg-success px-3.5 py-1.5 text-caption font-bold text-white shadow-xs hover:bg-success-text transition"
             >
               <ArrowDown className="h-3.5 w-3.5" />
               Xem kết quả ngay
@@ -110,7 +110,7 @@ export function ResearchStatusBanner({
             <Button variant="ghost"
               type="button"
               onClick={onDismiss}
-              className="font-[inherit] gap-0 rounded-lg p-1 text-text-muted hover:text-text hover:bg-black/5 transition text-caption"
+              className="h-auto font-[inherit] gap-0 rounded-lg p-1 text-text-muted hover:text-text hover:bg-black/5 transition text-caption"
             >
               ✕
             </Button>

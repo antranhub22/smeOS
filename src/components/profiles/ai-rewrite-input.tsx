@@ -154,7 +154,7 @@ export function AiRewriteInput({
                     setSelectedStyle(s.id)
                     handleRewrite(s.id)
                   }}
-                  className={`gap-0 px-2 py-0.5 rounded-md text-caption transition-colors cursor-pointer ${
+                  className={`h-auto gap-0 px-2 py-0.5 rounded-md text-caption transition-colors cursor-pointer ${
                     selectedStyle === s.id
                       ? "bg-primary text-white font-semibold hover:bg-primary"
                       : "bg-surface-alt text-text-muted hover:text-text hover:bg-surface-alt"
@@ -178,7 +178,7 @@ export function AiRewriteInput({
                   type="button"
                   key={i}
                   onClick={() => applySuggestion(sug)}
-                  className="font-[inherit] w-full text-left rounded-lg p-2.5 border border-border bg-surface-alt/40 hover:border-primary hover:bg-primary/5 transition-all group flex items-start justify-between gap-2 cursor-pointer"
+                  className="text-[length:inherit] h-auto font-[inherit] w-full text-left rounded-lg p-2.5 border border-border bg-surface-alt/40 hover:border-primary hover:bg-primary/5 transition-all group flex items-start justify-between gap-2 cursor-pointer"
                 >
                   <span className="text-body-sm text-text leading-snug">{sug}</span>
                   <span className="shrink-0 text-caption font-semibold text-primary opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1 pt-0.5">

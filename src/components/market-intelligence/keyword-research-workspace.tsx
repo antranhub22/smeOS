@@ -117,7 +117,7 @@ export function KeywordResearchWorkspace({
           <Button variant="ghost"
             type="button"
             onClick={() => setActiveSubTab("results")}
-            className={`h-auto p-0 pb-2 flex items-center gap-1.5 border-b-2 transition ${
+            className={`text-[length:inherit] h-auto p-0 pb-2 flex items-center gap-1.5 border-b-2 transition ${
               activeSubTab === "results"
                 ? "border-primary text-primary font-extrabold"
                 : "border-transparent text-text-muted hover:text-text"
@@ -129,7 +129,7 @@ export function KeywordResearchWorkspace({
           <Button variant="ghost"
             type="button"
             onClick={() => setActiveSubTab("runs")}
-            className={`h-auto p-0 pb-2 flex items-center gap-1.5 border-b-2 transition ${
+            className={`text-[length:inherit] h-auto p-0 pb-2 flex items-center gap-1.5 border-b-2 transition ${
               activeSubTab === "runs"
                 ? "border-primary text-primary font-extrabold"
                 : "border-transparent text-text-muted hover:text-text"
@@ -146,7 +146,7 @@ export function KeywordResearchWorkspace({
             <Button variant="ghost"
               type="button"
               onClick={() => setActiveFilter("ALL")}
-              className={`font-[inherit] gap-0 px-2.5 py-0.5 rounded-full transition ${
+              className={`text-[length:inherit] h-auto font-[inherit] gap-0 px-2.5 py-0.5 rounded-full transition ${
                 activeFilter === "ALL"
                   ? "bg-primary text-white hover:bg-primary"
                   : "bg-surface-alt text-text-muted hover:bg-border"
@@ -157,7 +157,7 @@ export function KeywordResearchWorkspace({
             <Button variant="ghost"
               type="button"
               onClick={() => setActiveFilter("IMPORTANT")}
-              className={`font-[inherit] gap-0 px-2.5 py-0.5 rounded-full transition ${
+              className={`text-[length:inherit] h-auto font-[inherit] gap-0 px-2.5 py-0.5 rounded-full transition ${
                 activeFilter === "IMPORTANT"
                   ? "bg-primary text-white hover:bg-primary"
                   : "bg-surface-alt text-text-muted hover:bg-border"
@@ -168,7 +168,7 @@ export function KeywordResearchWorkspace({
             <Button variant="ghost"
               type="button"
               onClick={() => setActiveFilter("RISING")}
-              className={`font-[inherit] gap-0 px-2.5 py-0.5 rounded-full transition ${
+              className={`text-[length:inherit] h-auto font-[inherit] gap-0 px-2.5 py-0.5 rounded-full transition ${
                 activeFilter === "RISING"
                   ? "bg-primary text-white hover:bg-primary"
                   : "bg-surface-alt text-text-muted hover:bg-border"
@@ -204,7 +204,7 @@ export function KeywordResearchWorkspace({
                   setSelectedTimeframe("ALL");
                   setSelectedBucket(null);
                 }}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-caption font-bold bg-primary text-white hover:bg-primary-dark shadow-xs transition"
+                className="h-auto inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-caption font-bold bg-primary text-white hover:bg-primary-dark shadow-xs transition"
               >
                 <RefreshCw size={13} />
                 Xem tất cả ({opportunities.length})

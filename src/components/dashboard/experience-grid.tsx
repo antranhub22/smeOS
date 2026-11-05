@@ -141,7 +141,7 @@ export function ExperienceGrid() {
                     openFeature(mod)
                   }}
                   aria-disabled={mod.disabled}
-                  className={cn("justify-start", 
+                  className={cn("h-auto", "justify-start", 
                     "flex cursor-pointer items-center gap-3 rounded-lg px-3 py-2 text-left text-body font-medium transition-colors",
                     mod.disabled && "opacity-40 cursor-not-allowed",
                     !mod.disabled && route && "hover:bg-surface-alt",

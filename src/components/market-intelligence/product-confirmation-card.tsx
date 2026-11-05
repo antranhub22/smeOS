@@ -129,14 +129,14 @@ export function ProductConfirmationCard({
               <Button variant="outline"
                 type="button"
                 onClick={handleAddComponent}
-                className="inline-flex items-center gap-0.5 text-caption font-bold text-primary hover:text-primary-dark bg-primary-muted px-1.5 py-0.5 rounded border border-primary-border hover:bg-primary-muted"
+                className="h-auto inline-flex items-center gap-0.5 text-caption font-bold text-primary hover:text-primary-dark bg-primary-muted px-1.5 py-0.5 rounded border border-primary-border hover:bg-primary-muted"
               >
                 <Plus size={11} /> Hoa
               </Button>
               <Button variant="outline"
                 type="button"
                 onClick={handleAddFoliage}
-                className="inline-flex items-center gap-0.5 text-caption font-bold text-success-text hover:text-success bg-success-bg px-1.5 py-0.5 rounded border border-success-border hover:bg-success-bg"
+                className="h-auto inline-flex items-center gap-0.5 text-caption font-bold text-success-text hover:text-success bg-success-bg px-1.5 py-0.5 rounded border border-success-border hover:bg-success-bg"
               >
                 <Plus size={11} /> Lá đệm
               </Button>
@@ -174,7 +174,7 @@ export function ProductConfirmationCard({
               aria-label="Xóa"
                   type="button"
                   onClick={() => handleRemoveComponent(idx)}
-                  className="font-[inherit] gap-0 text-text-muted hover:text-danger p-0.5 shrink-0"
+                  className="text-[length:inherit] h-auto font-[inherit] gap-0 text-text-muted hover:text-danger p-0.5 shrink-0"
                 >
                   <Trash2 size={12} />
                 </Button>
@@ -312,7 +312,7 @@ export function ProductConfirmationCard({
                     setSelectedQueries([...selectedQueries, keyword]);
                   }
                 }}
-                className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-caption font-bold transition ${
+                className={`h-auto inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border text-caption font-bold transition ${
                   isChecked
                     ? "bg-primary-muted text-primary border-primary-border shadow-xs hover:bg-primary-muted"
                     : "bg-surface-alt text-text-muted border-border hover:bg-surface"
@@ -337,7 +337,7 @@ export function ProductConfirmationCard({
           type="button"
           onClick={() => onConfirm({ components, attributes, packaging, context, commercialPassport, selectedQueries })}
           disabled={isSubmitting || selectedQueries.length === 0}
-          className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-6 py-2.5 text-caption font-bold text-white hover:bg-primary-dark shadow-sm transition disabled:opacity-50"
+          className="h-auto inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-6 py-2.5 text-caption font-bold text-white hover:bg-primary-dark shadow-sm transition disabled:opacity-50"
         >
           <Sparkles size={15} />
           {isSubmitting ? "Đang đối soát xu hướng thị trường..." : "Tiến hành Khám phá Trend Fit (Bước 3) →"}

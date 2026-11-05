@@ -96,7 +96,7 @@ export function ProductReadinessCard({
           <Button variant="outline"
             type="button"
             onClick={onGoToMedia}
-            className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white text-caption font-bold border border-white/15 transition"
+            className="h-auto flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white text-caption font-bold border border-white/15 transition"
           >
             <ImageIcon size={14} />
             Tạo ảnh biến thể marketing
@@ -105,7 +105,7 @@ export function ProductReadinessCard({
           <Button variant="primary"
             type="button"
             onClick={onGoToVideo}
-            className="flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-primary hover:bg-primary-dark text-white text-caption font-bold shadow-md transition"
+            className="h-auto flex-1 sm:flex-none inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-primary hover:bg-primary-dark text-white text-caption font-bold shadow-md transition"
           >
             <Video size={14} />
             Dựng video marketing tự động

@@ -37,7 +37,7 @@ export function PresetStyleSelector({
               type="button"
               key={preset.id}
               onClick={() => onSelectPreset(preset.id)}
-              className={`justify-start font-[inherit] gap-0 relative flex flex-col items-start p-2.5 rounded-lg border text-left transition-all cursor-pointer ${
+              className={`text-[length:inherit] h-auto justify-start font-[inherit] gap-0 relative flex flex-col items-start p-2.5 rounded-lg border text-left transition-all cursor-pointer ${
                 isSelected
                   ? "border-primary bg-primary/5 ring-1 ring-primary shadow-sm hover:bg-primary/5"
                   : "border-border bg-surface hover:border-border-strong hover:bg-surface-alt"

@@ -111,7 +111,7 @@ export function StepCatalog(props: StepCatalogProps) {
                 role="radio"
                 aria-checked={selected}
                 onClick={() => props.onSelect(cat)}
-                className={cn("font-[inherit]", 
+                className={cn("h-auto", "font-[inherit]", 
                   "flex items-start justify-between gap-3 rounded-xl border p-4 text-left transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
                   selected ? "border-primary bg-selected ring-1 ring-primary" : "border-border bg-surface hover:border-primary/40",
                 )}

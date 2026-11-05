@@ -120,7 +120,7 @@ export function FeatureSettingsModal({
           <Button variant="ghost"
             type="button"
             onClick={() => setActiveTab("schedule")}
-            className={`h-auto p-0 pb-3 flex items-center gap-2 border-b-2 transition ${
+            className={`text-[length:inherit] h-auto p-0 pb-3 flex items-center gap-2 border-b-2 transition ${
               activeTab === "schedule"
                 ? "border-primary text-primary font-extrabold"
                 : "border-transparent text-text-muted hover:text-text"
@@ -132,7 +132,7 @@ export function FeatureSettingsModal({
           <Button variant="ghost"
             type="button"
             onClick={() => setActiveTab("input")}
-            className={`h-auto p-0 pb-3 flex items-center gap-2 border-b-2 transition ${
+            className={`text-[length:inherit] h-auto p-0 pb-3 flex items-center gap-2 border-b-2 transition ${
               activeTab === "input"
                 ? "border-primary text-primary font-extrabold"
                 : "border-transparent text-text-muted hover:text-text"
@@ -144,7 +144,7 @@ export function FeatureSettingsModal({
           <Button variant="ghost"
             type="button"
             onClick={() => setActiveTab("output")}
-            className={`h-auto p-0 pb-3 flex items-center gap-2 border-b-2 transition ${
+            className={`text-[length:inherit] h-auto p-0 pb-3 flex items-center gap-2 border-b-2 transition ${
               activeTab === "output"
                 ? "border-primary text-primary font-extrabold"
                 : "border-transparent text-text-muted hover:text-text"
@@ -206,14 +206,14 @@ export function FeatureSettingsModal({
             <Button variant="outline"
               type="button"
               onClick={onClose}
-              className="gap-0 px-3.5 py-1.5 rounded-lg border border-border text-text-muted font-bold hover:bg-white transition text-caption"
+              className="h-auto gap-0 px-3.5 py-1.5 rounded-lg border border-border text-text-muted font-bold hover:bg-white transition text-caption"
             >
               Đóng
             </Button>
             <Button variant="primary"
               type="button"
               onClick={handleSave}
-              className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-lg bg-primary text-white font-bold hover:bg-primary-dark transition text-caption shadow-sm"
+              className="h-auto inline-flex items-center gap-1.5 px-4 py-1.5 rounded-lg bg-primary text-white font-bold hover:bg-primary-dark transition text-caption shadow-sm"
             >
               {isSaved ? (
                 <>

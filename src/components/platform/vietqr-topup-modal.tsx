@@ -142,7 +142,7 @@ export function VietQrTopupModal({
           <Button variant="ghost"
             type="button"
             onClick={() => setActiveTab("CREDITS")}
-            className={`gap-0 cursor-pointer text-center flex-1 py-1.5 rounded-md text-caption font-semibold transition ${
+            className={`px-0 h-auto gap-0 cursor-pointer text-center flex-1 py-1.5 rounded-md text-caption font-semibold transition ${
               activeTab === "CREDITS"
                 ? "bg-primary text-primary-foreground shadow-sm hover:bg-primary"
                 : "text-text-muted hover:text-text"
@@ -153,7 +153,7 @@ export function VietQrTopupModal({
           <Button variant="ghost"
             type="button"
             onClick={() => setActiveTab("PLANS")}
-            className={`gap-0 cursor-pointer text-center flex-1 py-1.5 rounded-md text-caption font-semibold transition ${
+            className={`px-0 h-auto gap-0 cursor-pointer text-center flex-1 py-1.5 rounded-md text-caption font-semibold transition ${
               activeTab === "PLANS"
                 ? "bg-primary text-primary-foreground shadow-sm hover:bg-primary"
                 : "text-text-muted hover:text-text"
@@ -174,7 +174,7 @@ export function VietQrTopupModal({
                     type="button"
                     key={opt.id}
                     onClick={() => setSelectedTopup(opt)}
-                    className={`justify-start font-[inherit] gap-0 cursor-pointer w-full text-left p-3 rounded-lg border transition ${
+                    className={`text-[length:inherit] h-auto justify-start font-[inherit] gap-0 cursor-pointer w-full text-left p-3 rounded-lg border transition ${
                       selectedTopup.id === opt.id
                         ? "border-primary bg-primary/10 hover:bg-primary/10"
                         : "border-border bg-surface hover:border-primary/40 hover:bg-surface"
@@ -202,7 +202,7 @@ export function VietQrTopupModal({
                     type="button"
                     key={plan.id}
                     onClick={() => setSelectedPlan(plan)}
-                    className={`justify-start font-[inherit] gap-0 cursor-pointer w-full text-left p-3 rounded-lg border transition ${
+                    className={`text-[length:inherit] h-auto justify-start font-[inherit] gap-0 cursor-pointer w-full text-left p-3 rounded-lg border transition ${
                       selectedPlan.id === plan.id
                         ? "border-primary bg-primary/10 hover:bg-primary/10"
                         : "border-border bg-surface hover:border-primary/40 hover:bg-surface"

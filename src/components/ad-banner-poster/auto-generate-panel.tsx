@@ -84,7 +84,7 @@ export function AutoGeneratePanel({
         <Button variant="ghost"
           type="button"
           onClick={() => fileInputRef.current?.click()}
-          className={`font-[inherit] gap-0 block w-full relative border-2 border-dashed rounded-xl p-4 text-center cursor-pointer transition-all focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
+          className={`text-[length:inherit] h-auto font-[inherit] gap-0 block w-full relative border-2 border-dashed rounded-xl p-4 text-center cursor-pointer transition-all focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
             productImageUrl
               ? "border-primary/50 bg-primary/5 hover:bg-primary/5"
               : "border-border hover:border-primary hover:bg-surface-alt"
@@ -150,7 +150,7 @@ export function AutoGeneratePanel({
                 type="button"
                 key={tag.key}
                 onClick={() => onOccasionChange(tag.key, tag.label.replace(/^[^\s]+\s/, ""))}
-                className={`justify-start gap-0 py-1.5 px-2.5 rounded-lg text-caption font-medium text-left border transition-all truncate cursor-pointer ${
+                className={`h-auto justify-start gap-0 py-1.5 px-2.5 rounded-lg text-caption font-medium text-left border transition-all truncate cursor-pointer ${
                   isSelected
                     ? "border-primary bg-primary/10 text-primary font-bold shadow-sm hover:bg-primary/10"
                     : "border-border bg-surface hover:bg-surface-alt text-text"
@@ -195,7 +195,7 @@ export function AutoGeneratePanel({
             type="button"
             onClick={() => onEngineChange("TEMPLATE_ENGINE")}
             aria-pressed={generationEngine === "TEMPLATE_ENGINE"}
-            className={`font-[inherit] gap-0 p-2.5 rounded-xl border text-left flex flex-col justify-between transition-all cursor-pointer ${
+            className={`text-[length:inherit] h-auto font-[inherit] gap-0 p-2.5 rounded-xl border text-left flex flex-col justify-between transition-all cursor-pointer ${
               generationEngine === "TEMPLATE_ENGINE"
                 ? "border-primary bg-primary/5 ring-1 ring-primary shadow-sm hover:bg-primary/5"
                 : "border-border bg-surface hover:bg-surface-alt"
@@ -221,7 +221,7 @@ export function AutoGeneratePanel({
             type="button"
             onClick={() => onEngineChange("AI_PROVIDER")}
             aria-pressed={generationEngine === "AI_PROVIDER"}
-            className={`font-[inherit] gap-0 p-2.5 rounded-xl border text-left flex flex-col justify-between transition-all cursor-pointer ${
+            className={`text-[length:inherit] h-auto font-[inherit] gap-0 p-2.5 rounded-xl border text-left flex flex-col justify-between transition-all cursor-pointer ${
               generationEngine === "AI_PROVIDER"
                 ? "border-primary bg-primary/5 ring-1 ring-primary shadow-sm hover:bg-primary/5"
                 : "border-border bg-surface hover:bg-surface-alt"

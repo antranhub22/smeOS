@@ -149,7 +149,7 @@ export function ToolkitHome() {
                   type="button"
                   key={opt.id}
                   onClick={() => setSelectedStatus(opt.id)}
-                  className={`gap-0 px-3 py-1.5 rounded-lg text-caption font-semibold whitespace-nowrap transition-colors cursor-pointer ${
+                  className={`h-auto gap-0 px-3 py-1.5 rounded-lg text-caption font-semibold whitespace-nowrap transition-colors cursor-pointer ${
                     selectedStatus === opt.id
                       ? "bg-primary text-primary-fg shadow-xs hover:bg-primary"
                       : "bg-surface-alt text-text-muted hover:text-text hover:bg-surface border border-border"

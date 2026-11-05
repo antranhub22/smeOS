@@ -77,7 +77,7 @@ export function AdminBrochurePaymentTab({ focusOrderId = null, onClearFocus }: {
         {focusOrderId && (
           <div role="status" className="flex flex-wrap items-center justify-between gap-2 border-b border-border bg-primary/5 px-4 py-2.5 text-body-sm">
             <span className="font-semibold text-text">Đang mở đơn từ Hộp việc</span>
-            <Button variant="ghost" type="button" onClick={onClearFocus} className="gap-0 min-h-9 font-semibold text-primary hover:underline">Xem tất cả đơn</Button>
+            <Button variant="ghost" type="button" onClick={onClearFocus} className="px-0 py-0 text-[length:inherit] gap-0 min-h-9 font-semibold text-primary hover:underline">Xem tất cả đơn</Button>
           </div>
         )}
         {!focusOrderId && (
@@ -92,7 +92,7 @@ export function AdminBrochurePaymentTab({ focusOrderId = null, onClearFocus }: {
               type="button"
               aria-pressed={filter === f.id}
               onClick={() => { setFilter(f.id); onClearFocus?.() }}
-              className={`gap-0 px-3 h-8 rounded-lg text-caption font-bold border ${
+              className={`py-0 gap-0 px-3 h-8 rounded-lg text-caption font-bold border ${
                 filter === f.id ? "bg-primary text-white border-primary hover:bg-primary" : "border-border text-text-muted hover:bg-surface-muted"
               }`}
             >
@@ -114,7 +114,7 @@ export function AdminBrochurePaymentTab({ focusOrderId = null, onClearFocus }: {
                 type="button"
                 aria-label="Xoá tìm kiếm"
                 onClick={() => setSearch("")}
-                className="h-auto p-0 font-[inherit] gap-0 absolute right-2 top-1/2 -translate-y-1/2 text-text-muted hover:text-text"
+                className="text-[length:inherit] h-auto p-0 font-[inherit] gap-0 absolute right-2 top-1/2 -translate-y-1/2 text-text-muted hover:text-text"
               >
                 <X size={12} aria-hidden="true" />
               </Button>

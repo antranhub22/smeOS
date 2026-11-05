@@ -368,7 +368,7 @@ export function PlatformRecordsViewer({
                       type="button"
                       key={p}
                       onClick={() => void loadPage(p)}
-                      className={`gap-0 cursor-pointer inline-flex items-center justify-center h-8 w-8 rounded-lg text-caption font-bold transition-colors ${
+                      className={`px-0 py-0 gap-0 cursor-pointer inline-flex items-center justify-center h-8 w-8 rounded-lg text-caption font-bold transition-colors ${
                         p === page
                           ? "bg-primary text-white hover:bg-primary"
                           : "hover:bg-surface-alt text-text-muted"

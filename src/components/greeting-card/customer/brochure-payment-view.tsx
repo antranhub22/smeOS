@@ -200,7 +200,7 @@ export function BrochurePaymentView({
                 type="button"
                 onClick={() => copyToClipboard(vietQr.accountNo, "acc")}
                 aria-label="Sao chép số tài khoản"
-                className="font-[inherit] gap-0 text-primary hover:text-primary-dark p-1 cursor-pointer"
+                className="text-[length:inherit] h-auto font-[inherit] gap-0 text-primary hover:text-primary-dark p-1 cursor-pointer"
               >
                 {copiedField === "acc" ? <Check size={14} className="text-success" /> : <Copy size={14} />}
               </Button>
@@ -217,7 +217,7 @@ export function BrochurePaymentView({
                 type="button"
                 onClick={() => copyToClipboard(String(vietQr.amount), "amount")}
                 aria-label="Sao chép số tiền"
-                className="font-[inherit] gap-0 text-primary hover:text-primary-dark p-1 cursor-pointer"
+                className="text-[length:inherit] h-auto font-[inherit] gap-0 text-primary hover:text-primary-dark p-1 cursor-pointer"
               >
                 {copiedField === "amount" ? <Check size={14} className="text-success" /> : <Copy size={14} />}
               </Button>
@@ -232,7 +232,7 @@ export function BrochurePaymentView({
                 type="button"
                 onClick={() => copyToClipboard(vietQr.transferMemo, "memo")}
                 aria-label="Sao chép nội dung chuyển khoản"
-                className="font-[inherit] gap-0 text-primary hover:text-primary-dark p-1 cursor-pointer"
+                className="text-[length:inherit] h-auto font-[inherit] gap-0 text-primary hover:text-primary-dark p-1 cursor-pointer"
               >
                 {copiedField === "memo" ? <Check size={14} className="text-success" /> : <Copy size={14} />}
               </Button>
@@ -326,7 +326,7 @@ export function BrochurePaymentView({
             type="button"
             disabled={loading || !canSubmit}
             onClick={handleReportPaid}
-            className="w-full h-12 bg-success hover:bg-success/90 text-white font-extrabold text-body flex items-center justify-center gap-2 rounded-xl shadow-md cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-0 py-0 w-full h-12 bg-success hover:bg-success/90 text-white font-extrabold text-body flex items-center justify-center gap-2 rounded-xl shadow-md cursor-pointer transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <Check size={18} />
             <span>{loading ? "Đang xử lý..." : "TÔI ĐÃ CHUYỂN KHOẢN THANH TOÁN"}</span>

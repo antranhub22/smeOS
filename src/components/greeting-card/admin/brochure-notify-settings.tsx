@@ -101,7 +101,7 @@ export function BrochureNotifySettings() {
             role="radio"
             aria-checked={ch === c}
             onClick={() => setChannel(c)}
-            className={`gap-0 px-3 h-8 rounded-lg text-caption font-bold border ${ch === c ? "bg-primary text-white border-primary hover:bg-primary" : "border-border text-text-muted"}`}
+            className={`py-0 gap-0 px-3 h-8 rounded-lg text-caption font-bold border ${ch === c ? "bg-primary text-white border-primary hover:bg-primary" : "border-border text-text-muted"}`}
           >
             {c === "ZNS" ? "Zalo ZNS" : "SMS (eSMS.vn)"}
           </Button>

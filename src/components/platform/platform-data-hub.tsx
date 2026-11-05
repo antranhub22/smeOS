@@ -136,7 +136,7 @@ function OrgCard({
     <Button variant="outline"
       type="button"
       onClick={() => onOpen(org)}
-      className="justify-start font-[inherit] gap-0 group text-left w-full rounded-2xl border border-border bg-surface hover:border-primary/50 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 p-4 space-y-3 focus:outline-primary hover:bg-surface"
+      className="text-[length:inherit] h-auto justify-start font-[inherit] gap-0 group text-left w-full rounded-2xl border border-border bg-surface hover:border-primary/50 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 p-4 space-y-3 focus:outline-primary hover:bg-surface"
     >
       <div className="flex items-start justify-between gap-2">
         <div className="flex items-center gap-2.5 min-w-0">
@@ -288,7 +288,7 @@ function DomainPicker({
               key={d.key}
               type="button"
               onClick={() => onSelect(d.key)}
-              className="justify-start font-[inherit] gap-0 group text-left w-full rounded-2xl border border-border bg-surface hover:border-primary/40 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 p-4 space-y-2.5 focus:outline-primary hover:bg-surface"
+              className="text-[length:inherit] h-auto justify-start font-[inherit] gap-0 group text-left w-full rounded-2xl border border-border bg-surface hover:border-primary/40 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 p-4 space-y-2.5 focus:outline-primary hover:bg-surface"
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
@@ -389,7 +389,7 @@ export function PlatformDataHub() {
           <Button variant="ghost"
             type="button"
             onClick={handleBackToOrgs}
-            className="h-auto p-0 flex items-center gap-1.5 hover:text-primary transition-colors text-text font-bold"
+            className="text-[length:inherit] h-auto p-0 flex items-center gap-1.5 hover:text-primary transition-colors text-text font-bold"
           >
             <Globe size={15} className="text-primary" />
             <span>Dữ Liệu Nền Tảng</span>
@@ -400,7 +400,7 @@ export function PlatformDataHub() {
               <Button variant="ghost"
                 type="button"
                 onClick={handleBackToDomains}
-                className={`h-auto p-0 flex items-center gap-1.5 transition-colors ${selectedDomain ? "hover:text-primary text-text-muted" : "text-primary font-extrabold"}`}
+                className={`text-[length:inherit] h-auto p-0 flex items-center gap-1.5 transition-colors ${selectedDomain ? "hover:text-primary text-text-muted" : "text-primary font-extrabold"}`}
               >
                 <Building2 size={14} />
                 <span>{selectedOrg.name}</span>
@@ -519,7 +519,7 @@ export function PlatformDataHub() {
                   key={t}
                   type="button"
                   onClick={() => setFilterType(t)}
-                  className={`gap-0 px-3 py-1 rounded-lg text-caption font-bold transition-colors ${
+                  className={`h-auto gap-0 px-3 py-1 rounded-lg text-caption font-bold transition-colors ${
                     filterType === t
                       ? "bg-primary text-white hover:bg-primary"
                       : "bg-surface border border-border text-text-muted hover:text-text hover:bg-surface"

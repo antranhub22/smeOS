@@ -80,7 +80,7 @@ export function ToolCard({ tool, isDev, tone = "plum" }: ToolCardProps) {
           <Button variant="ghost"
             type="button"
             onClick={handleClick}
-            className="h-auto p-0 font-[inherit] gap-0 after:absolute after:inset-0 after:rounded-2xl after:content-[''] focus-visible:outline-none focus-visible:after:ring-2 focus-visible:after:ring-ring cursor-pointer transition-colors"
+            className="text-[length:inherit] h-auto p-0 font-[inherit] gap-0 after:absolute after:inset-0 after:rounded-2xl after:content-[''] focus-visible:outline-none focus-visible:after:ring-2 focus-visible:after:ring-ring cursor-pointer transition-colors"
           >
             {shortName}
           </Button>

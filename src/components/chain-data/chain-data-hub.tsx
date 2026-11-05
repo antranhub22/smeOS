@@ -283,7 +283,7 @@ export function ChainDataHub() {
               <Button variant="ghost"
                 type="button"
                 onClick={() => setFilterType("ALL")}
-                className={`gap-0 cursor-pointer px-3 py-1 rounded-lg text-caption font-bold transition-colors ${
+                className={`h-auto gap-0 cursor-pointer px-3 py-1 rounded-lg text-caption font-bold transition-colors ${
                   filterType === "ALL"
                     ? "bg-primary text-white hover:bg-primary"
                     : "bg-surface border border-border text-text-muted hover:text-text hover:bg-surface"
@@ -294,7 +294,7 @@ export function ChainDataHub() {
               <Button variant="ghost"
                 type="button"
                 onClick={() => setFilterType("DIRECT")}
-                className={`gap-0 cursor-pointer px-3 py-1 rounded-lg text-caption font-bold transition-colors ${
+                className={`h-auto gap-0 cursor-pointer px-3 py-1 rounded-lg text-caption font-bold transition-colors ${
                   filterType === "DIRECT"
                     ? "bg-primary text-white hover:bg-primary"
                     : "bg-surface border border-border text-text-muted hover:text-text hover:bg-surface"
@@ -305,7 +305,7 @@ export function ChainDataHub() {
               <Button variant="ghost"
                 type="button"
                 onClick={() => setFilterType("PARTNER")}
-                className={`gap-0 cursor-pointer px-3 py-1 rounded-lg text-caption font-bold transition-colors ${
+                className={`h-auto gap-0 cursor-pointer px-3 py-1 rounded-lg text-caption font-bold transition-colors ${
                   filterType === "PARTNER"
                     ? "bg-primary text-white hover:bg-primary"
                     : "bg-surface border border-border text-text-muted hover:text-text hover:bg-surface"

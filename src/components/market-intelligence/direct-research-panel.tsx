@@ -73,7 +73,7 @@ export function DirectResearchPanel({
         <Button variant="outline"
           type="button"
           onClick={() => setShowAdvanced(!showAdvanced)}
-          className="inline-flex items-center gap-1.5 text-caption font-semibold text-text-muted hover:text-primary bg-bg hover:bg-primary-muted/60 px-2.5 py-1 rounded-lg border border-border/70 transition"
+          className="h-auto inline-flex items-center gap-1.5 text-caption font-semibold text-text-muted hover:text-primary bg-bg hover:bg-primary-muted/60 px-2.5 py-1 rounded-lg border border-border/70 transition"
         >
           <SlidersHorizontal size={12} className={showAdvanced ? "text-primary" : "text-text-muted"} />
           <span>{showAdvanced ? "Ẩn tùy chỉnh" : "Tùy chỉnh"}</span>
@@ -98,7 +98,7 @@ export function DirectResearchPanel({
           <Button variant="primary"
             type="submit"
             disabled={isSubmitting}
-            className="w-full sm:w-auto flex-shrink-0 inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-5 h-10 text-caption font-bold text-white hover:bg-primary-dark shadow-xs hover:shadow-sm transition disabled:opacity-50"
+            className="py-0 w-full sm:w-auto flex-shrink-0 inline-flex items-center justify-center gap-2 rounded-xl bg-primary px-5 h-10 text-caption font-bold text-white hover:bg-primary-dark shadow-xs hover:shadow-sm transition disabled:opacity-50"
           >
             {isSubmitting ? (
               <>
@@ -123,7 +123,7 @@ export function DirectResearchPanel({
             <Button variant="ghost"
               type="button"
               onClick={() => setActiveCategoryTab("seasonal")}
-              className={`gap-0 flex-shrink-0 text-caption px-2 py-0.5 rounded-md font-semibold transition ${
+              className={`h-auto gap-0 flex-shrink-0 text-caption px-2 py-0.5 rounded-md font-semibold transition ${
                 activeCategoryTab === "seasonal"
                   ? "bg-primary text-white shadow-2xs hover:bg-primary"
                   : "bg-surface-alt text-text-muted hover:bg-border"
@@ -136,7 +136,7 @@ export function DirectResearchPanel({
                 key={cat.id}
                 type="button"
                 onClick={() => setActiveCategoryTab(cat.id)}
-                className={`gap-0 flex-shrink-0 text-caption px-2 py-0.5 rounded-md font-medium transition ${
+                className={`h-auto gap-0 flex-shrink-0 text-caption px-2 py-0.5 rounded-md font-medium transition ${
                   activeCategoryTab === cat.id
                     ? "bg-primary text-white shadow-2xs hover:bg-primary"
                     : "bg-surface-alt text-text-muted hover:bg-border"
@@ -154,7 +154,7 @@ export function DirectResearchPanel({
                 key={sug}
                 type="button"
                 onClick={() => setKeyword(sug)}
-                className={`gap-0 rounded-full px-2.5 py-0.5 text-caption font-medium border transition ${
+                className={`h-auto gap-0 rounded-full px-2.5 py-0.5 text-caption font-medium border transition ${
                   keyword === sug
                     ? "bg-primary-muted text-primary border-primary-border font-semibold hover:bg-primary-muted"
                     : "bg-bg text-text-muted hover:bg-primary-muted hover:text-primary hover:border-primary-border border-border/80"

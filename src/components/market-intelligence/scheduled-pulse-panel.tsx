@@ -185,7 +185,7 @@ export function ScheduledPulsePanel({
                   <Button variant="ghost"
                     type="button"
                     onClick={() => handleRemoveKeyword(kw)}
-                    className="h-auto p-0 font-[inherit] gap-0 text-text-muted hover:text-primary transition"
+                    className="text-[length:inherit] h-auto p-0 font-[inherit] gap-0 text-text-muted hover:text-primary transition"
                   >
                     ×
                   </Button>
@@ -210,7 +210,7 @@ export function ScheduledPulsePanel({
               <Button variant="outline"
                 type="button"
                 onClick={handleAddKeyword}
-                className="gap-0 px-4 py-1.5 rounded-xl border border-border bg-surface-alt text-caption font-bold text-text hover:bg-primary-muted hover:text-primary transition"
+                className="h-auto gap-0 px-4 py-1.5 rounded-xl border border-border bg-surface-alt text-caption font-bold text-text hover:bg-primary-muted hover:text-primary transition"
               >
                 + Thêm
               </Button>
@@ -227,7 +227,7 @@ export function ScheduledPulsePanel({
 
             <Button variant="ghost"
               type="submit"
-              className="inline-flex items-center gap-1.5 rounded-xl bg-text px-4 py-2 text-caption font-bold text-white hover:bg-text shadow-sm transition"
+              className="h-auto inline-flex items-center gap-1.5 rounded-xl bg-text px-4 py-2 text-caption font-bold text-white hover:bg-text shadow-sm transition"
             >
               <Settings size={14} />
               Lưu thiết lập lịch quét

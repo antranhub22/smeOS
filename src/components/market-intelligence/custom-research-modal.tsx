@@ -88,7 +88,7 @@ export function CustomResearchModal({
                   key={sug}
                   type="button"
                   onClick={() => setKeyword(sug)}
-                  className="gap-0 rounded-full bg-surface-alt px-2.5 py-0.5 text-caption font-medium text-text-muted hover:bg-primary-muted hover:text-primary transition"
+                  className="h-auto gap-0 rounded-full bg-surface-alt px-2.5 py-0.5 text-caption font-medium text-text-muted hover:bg-primary-muted hover:text-primary transition"
                 >
                   + {sug}
                 </Button>
@@ -132,14 +132,14 @@ export function CustomResearchModal({
               type="button"
               onClick={onClose}
               disabled={isSubmitting}
-              className="gap-0 rounded-xl border border-border px-4 py-2 text-caption font-semibold text-text hover:bg-surface-alt transition"
+              className="h-auto gap-0 rounded-xl border border-border px-4 py-2 text-caption font-semibold text-text hover:bg-surface-alt transition"
             >
               Hủy
             </Button>
             <Button variant="primary"
               type="submit"
               disabled={isSubmitting}
-              className="inline-flex items-center gap-1.5 rounded-xl bg-primary px-4 py-2 text-caption font-bold text-white hover:bg-primary/90 shadow-sm transition disabled:opacity-50"
+              className="h-auto inline-flex items-center gap-1.5 rounded-xl bg-primary px-4 py-2 text-caption font-bold text-white hover:bg-primary/90 shadow-sm transition disabled:opacity-50"
             >
               <Sparkles size={14} />
               {isSubmitting ? "Đang nạp vào hàng đợi AI..." : "Bắt đầu nghiên cứu"}

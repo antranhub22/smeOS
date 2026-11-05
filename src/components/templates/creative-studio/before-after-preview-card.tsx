@@ -150,7 +150,7 @@ export function BeforeAfterPreviewCard({
             setActiveMode("studio")
             onSelectVariant?.("studio")
           }}
-          className={`flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-caption font-bold transition-all cursor-pointer ${
+          className={`h-auto flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-caption font-bold transition-all cursor-pointer ${
             activeMode === "studio"
               ? "bg-surface text-primary border border-primary/25 shadow-sm hover:bg-surface"
               : "text-text-muted hover:text-text hover:bg-surface/60"
@@ -165,7 +165,7 @@ export function BeforeAfterPreviewCard({
             setActiveMode("lifestyle")
             onSelectVariant?.("lifestyle")
           }}
-          className={`flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-caption font-bold transition-all cursor-pointer ${
+          className={`h-auto flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-caption font-bold transition-all cursor-pointer ${
             activeMode === "lifestyle"
               ? "bg-surface text-secondary-text border border-secondary/30 shadow-sm hover:bg-surface"
               : "text-text-muted hover:text-text hover:bg-surface/60"
@@ -180,7 +180,7 @@ export function BeforeAfterPreviewCard({
             setActiveMode("bokeh")
             onSelectVariant?.("bokeh")
           }}
-          className={`flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-caption font-bold transition-all cursor-pointer ${
+          className={`h-auto flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-caption font-bold transition-all cursor-pointer ${
             activeMode === "bokeh"
               ? "bg-surface text-warning border border-warning/30 shadow-sm hover:bg-surface"
               : "text-text-muted hover:text-text hover:bg-surface/60"
@@ -192,7 +192,7 @@ export function BeforeAfterPreviewCard({
         <Button variant="ghost"
           type="button"
           onClick={() => setActiveMode("original")}
-          className={`flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-caption font-bold transition-all cursor-pointer ${
+          className={`h-auto flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg text-caption font-bold transition-all cursor-pointer ${
             activeMode === "original"
               ? "bg-surface text-text border border-border shadow-sm hover:bg-surface"
               : "text-text-muted hover:text-text hover:bg-surface/60"
@@ -250,7 +250,7 @@ export function BeforeAfterPreviewCard({
                 type="button"
                 key={r}
                 onClick={() => onRatioChange(r)}
-                className={`gap-0 px-2.5 py-1 text-caption font-bold rounded-lg border transition cursor-pointer ${
+                className={`h-auto gap-0 px-2.5 py-1 text-caption font-bold rounded-lg border transition cursor-pointer ${
                   aspectRatio === r
                     ? "border-primary bg-primary/10 text-primary hover:bg-primary/10"
                     : "border-border text-text-muted hover:border-text-muted"

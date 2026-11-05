@@ -401,7 +401,7 @@ export function SalesOrderIntakeModal({
             </div>
           </div>
           <Button variant="ghost" type="submit"
-              aria-label="Đóng" onClick={onClose} className="font-[inherit] gap-0 p-1.5 rounded-lg hover:bg-surface-alt text-text-muted">
+              aria-label="Đóng" onClick={onClose} className="text-[length:inherit] h-auto font-[inherit] gap-0 p-1.5 rounded-lg hover:bg-surface-alt text-text-muted">
             <X size={18} />
           </Button>
         </div>
@@ -421,7 +421,7 @@ export function SalesOrderIntakeModal({
                     key={p.id}
                     type="button"
                     onClick={() => handleSelectMasterProduct(p)}
-                    className="justify-start font-[inherit] gap-0 px-2.5 py-1.5 rounded-lg border border-alert-200 bg-surface hover:border-alert-500 text-left shrink-0 transition-colors hover:bg-surface"
+                    className="text-[length:inherit] h-auto justify-start font-[inherit] gap-0 px-2.5 py-1.5 rounded-lg border border-alert-200 bg-surface hover:border-alert-500 text-left shrink-0 transition-colors hover:bg-surface"
                   >
                     <div className="font-bold text-text truncate max-w-[140px]">{p.name}</div>
                     <div className="text-caption text-text-muted">{p.code}</div>
@@ -475,7 +475,7 @@ export function SalesOrderIntakeModal({
                         key={c.id}
                         type="button"
                         onClick={() => handleSelectCustomer(c)}
-                        className="justify-start font-[inherit] gap-0 w-full text-left px-3 py-2 hover:bg-surface-alt border-b border-border/60 last:border-0"
+                        className="text-[length:inherit] h-auto justify-start font-[inherit] gap-0 w-full text-left px-3 py-2 hover:bg-surface-alt border-b border-border/60 last:border-0"
                       >
                         <div className="font-bold text-text">{c.name}</div>
                         <div className="text-caption text-text-muted">
@@ -572,14 +572,14 @@ export function SalesOrderIntakeModal({
                   <Button variant="outline"
                     type="button"
                     onClick={handlePrefillSampleAddressHN}
-                    className="gap-0 text-caption text-cool-700 bg-white border border-border hover:bg-cool-50 px-2 py-0.5 rounded-md font-bold transition-colors"
+                    className="h-auto gap-0 text-caption text-cool-700 bg-white border border-border hover:bg-cool-50 px-2 py-0.5 rounded-md font-bold transition-colors"
                   >
                     ⚡ Mẫu HN
                   </Button>
                   <Button variant="outline"
                     type="button"
                     onClick={handlePrefillSampleAddressHCM}
-                    className="gap-0 text-caption text-cool-700 bg-white border border-border hover:bg-cool-50 px-2 py-0.5 rounded-md font-bold transition-colors"
+                    className="h-auto gap-0 text-caption text-cool-700 bg-white border border-border hover:bg-cool-50 px-2 py-0.5 rounded-md font-bold transition-colors"
                   >
                     ⚡ Mẫu HCM
                   </Button>
@@ -587,7 +587,7 @@ export function SalesOrderIntakeModal({
                     <Button variant="ghost"
                       type="button"
                       onClick={handleClearAddress}
-                      className="gap-0 text-caption text-alert-700 hover:text-alert-800 font-bold px-1"
+                      className="py-0 h-auto gap-0 text-caption text-alert-700 hover:text-alert-800 font-bold px-1"
                     >
                       Xóa
                     </Button>
@@ -724,7 +724,7 @@ export function SalesOrderIntakeModal({
                           type="button"
                           onClick={() => window.open(sampleImageUrl, "_blank")}
                           title="Xem ảnh gốc toàn màn hình"
-                          className="gap-0 p-1.5 rounded-lg bg-surface/90 text-text hover:bg-white text-caption font-bold shadow cursor-pointer"
+                          className="h-auto gap-0 p-1.5 rounded-lg bg-surface/90 text-text hover:bg-white text-caption font-bold shadow cursor-pointer"
                         >
                           <Eye size={14} />
                         </Button>
@@ -732,7 +732,7 @@ export function SalesOrderIntakeModal({
                           type="button"
                           onClick={() => setSampleImageUrl("")}
                           title="Xóa ảnh mẫu"
-                          className="gap-0 p-1.5 rounded-lg bg-alert-600 text-white hover:bg-alert-700 text-caption font-bold shadow cursor-pointer"
+                          className="h-auto gap-0 p-1.5 rounded-lg bg-alert-600 text-white hover:bg-alert-700 text-caption font-bold shadow cursor-pointer"
                         >
                           <Trash2 size={14} />
                         </Button>
@@ -814,7 +814,7 @@ export function SalesOrderIntakeModal({
                         key={prod.id}
                         type="button"
                         onClick={() => handleSelectMasterProduct(prod)}
-                        className={`px-2 py-1 rounded-lg border text-caption font-semibold transition-all flex items-center gap-1.5 cursor-pointer ${
+                        className={`h-auto px-2 py-1 rounded-lg border text-caption font-semibold transition-all flex items-center gap-1.5 cursor-pointer ${
                           sampleImageUrl === prod.masterImageUrl
                             ? "border-alert-500 bg-alert-100/80 text-alert-900 font-bold hover:bg-alert-100/80"
                             : "border-border bg-surface hover:border-alert-300 text-text hover:bg-surface"
@@ -974,7 +974,7 @@ export function SalesOrderIntakeModal({
               aria-label="Xóa"
                               type="button"
                               onClick={() => handleRemoveFlower(idx)}
-                              className="font-[inherit] gap-0 text-text-muted hover:text-alert-600 p-1"
+                              className="text-[length:inherit] h-auto font-[inherit] gap-0 text-text-muted hover:text-alert-600 p-1"
                             >
                               <Trash2 size={13} />
                             </Button>

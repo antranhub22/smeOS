@@ -85,7 +85,7 @@ export function DirectProductUpload({
               fileInputRef.current?.click()
             }
           }}
-          className={`font-[inherit] w-full border-2 border-dashed rounded-2xl p-6 transition-all text-center flex flex-col items-center justify-center gap-3 cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary ${
+          className={`text-[length:inherit] h-auto font-[inherit] w-full border-2 border-dashed rounded-2xl p-6 transition-all text-center flex flex-col items-center justify-center gap-3 cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary ${
             isDragOver
               ? "border-primary bg-primary/10 scale-[0.99] hover:bg-primary/10"
               : "border-border hover:border-primary/50 hover:bg-surface-alt/60 bg-surface/40"

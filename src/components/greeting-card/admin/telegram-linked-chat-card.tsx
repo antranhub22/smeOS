@@ -47,7 +47,7 @@ export function TelegramLinkedChatCard({
       }`}
     >
       {confirmDialog}
-      <Button variant="ghost" type="button" onClick={() => onSelect(chat.id)} className="h-auto p-0 justify-start font-[inherit] gap-0 min-w-0 flex-1 text-left cursor-pointer">
+      <Button variant="ghost" type="button" onClick={() => onSelect(chat.id)} className="text-[length:inherit] h-auto p-0 justify-start font-[inherit] gap-0 min-w-0 flex-1 text-left cursor-pointer">
         <div className="text-body-sm font-bold text-text truncate">{chat.title}</div>
         <div className="flex items-center gap-2 mt-0.5">
           <span className="text-caption-sm text-text-muted capitalize">[{chat.type}]</span>
@@ -55,7 +55,7 @@ export function TelegramLinkedChatCard({
         </div>
       </Button>
       <div className="shrink-0 flex items-center gap-2 text-caption font-medium">
-        <Button variant="ghost" type="button" onClick={() => onSelect(chat.id)} className="h-auto p-0 font-[inherit] inline-flex items-center gap-1 text-primary">
+        <Button variant="ghost" type="button" onClick={() => onSelect(chat.id)} className="text-[length:inherit] h-auto p-0 font-[inherit] inline-flex items-center gap-1 text-primary">
           {copied ? (
             <span className="text-success inline-flex items-center gap-1 font-bold">
               <CheckCircle2 size={14} /> Đã chọn
@@ -70,7 +70,7 @@ export function TelegramLinkedChatCard({
           type="button"
           onClick={handleRemove}
           disabled={removing}
-          className="h-auto p-0 font-[inherit] inline-flex items-center gap-1 text-danger hover:underline disabled:opacity-50"
+          className="text-[length:inherit] h-auto p-0 font-[inherit] inline-flex items-center gap-1 text-danger hover:underline disabled:opacity-50"
         >
           <Trash2 size={13} /> {removing ? "Đang gỡ…" : "Gỡ"}
         </Button>

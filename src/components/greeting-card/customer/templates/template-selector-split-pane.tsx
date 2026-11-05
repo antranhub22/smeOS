@@ -166,7 +166,7 @@ function TemplateListItem({
       ref={ref}
       type="button"
       onClick={onClick}
-      className={`justify-start font-[inherit] w-full text-left flex items-center gap-2.5 px-2.5 py-2 rounded-xl transition-all duration-150 cursor-pointer ${
+      className={`text-[length:inherit] h-auto justify-start font-[inherit] w-full text-left flex items-center gap-2.5 px-2.5 py-2 rounded-xl transition-all duration-150 cursor-pointer ${
         isActive
           ? "bg-primary/10 border border-primary/25 hover:bg-primary/10"
           : "hover:bg-surface-muted border border-transparent"
@@ -292,7 +292,7 @@ function LivePreviewPane({
               <Button variant="outline"
                 type="button"
                 onClick={prev}
-                className="font-[inherit] gap-0 size-8 sm:size-6 rounded-full border border-border flex items-center justify-center text-text-muted hover:text-text transition-colors cursor-pointer"
+                className="px-0 py-0 text-[length:inherit] font-[inherit] gap-0 size-8 sm:size-6 rounded-full border border-border flex items-center justify-center text-text-muted hover:text-text transition-colors cursor-pointer"
                 aria-label="Sản phẩm trước"
               >
                 <ChevronLeft size={12} />
@@ -303,7 +303,7 @@ function LivePreviewPane({
                     key={i}
                     type="button"
                     onClick={() => setProductIdx(i)}
-                    className="font-[inherit] gap-0 group flex h-6 min-w-6 items-center justify-center cursor-pointer"
+                    className="px-0 py-0 text-[length:inherit] font-[inherit] gap-0 group flex h-6 min-w-6 items-center justify-center cursor-pointer"
                     aria-label={`Sản phẩm ${i + 1}`}
                     aria-current={i === safeIdx ? "true" : undefined}
                   ><span className={`rounded-full transition-all ${i === safeIdx ? "bg-primary w-3.5 h-1.5" : "bg-border w-1.5 h-1.5 group-hover:bg-border-focus"}`} /></Button>
@@ -312,7 +312,7 @@ function LivePreviewPane({
               <Button variant="outline"
                 type="button"
                 onClick={next}
-                className="font-[inherit] gap-0 size-8 sm:size-6 rounded-full border border-border flex items-center justify-center text-text-muted hover:text-text transition-colors cursor-pointer"
+                className="px-0 py-0 text-[length:inherit] font-[inherit] gap-0 size-8 sm:size-6 rounded-full border border-border flex items-center justify-center text-text-muted hover:text-text transition-colors cursor-pointer"
                 aria-label="Sản phẩm tiếp"
               >
                 <ChevronRight size={12} />
@@ -346,7 +346,7 @@ function LivePreviewPane({
           <Button variant="primary"
             type="button"
             onClick={onSelect}
-            className="w-full py-2 px-3 rounded-xl text-body-sm font-bold flex items-center justify-center gap-1.5 bg-primary text-white hover:bg-primary-hover shadow-sm transition-colors cursor-pointer"
+            className="h-auto w-full py-2 px-3 rounded-xl text-body-sm font-bold flex items-center justify-center gap-1.5 bg-primary text-white hover:bg-primary-hover shadow-sm transition-colors cursor-pointer"
           >
             <Sparkles size={13} />
             <span>Chọn mẫu</span>
@@ -432,7 +432,7 @@ export function TemplateSelectorSplitPane({
                 key={val}
                 type="button"
                 onClick={() => setActiveFilter(val)}
-                className={`gap-0 px-2.5 py-1 rounded-lg text-caption font-semibold transition-colors cursor-pointer whitespace-nowrap ${
+                className={`h-auto gap-0 px-2.5 py-1 rounded-lg text-caption font-semibold transition-colors cursor-pointer whitespace-nowrap ${
                   activeFilter === val
                     ? "bg-surface text-text shadow-2xs hover:bg-surface"
                     : "text-text-muted hover:text-text"

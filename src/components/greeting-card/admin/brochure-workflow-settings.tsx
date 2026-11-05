@@ -131,7 +131,7 @@ export function BrochureWorkflowSettings() {
               key={p.id}
               type="button"
               onClick={() => handleApplyPreset(p.id as "LEAN" | "STANDARD" | "STRICT")}
-              className={`justify-start font-[inherit] gap-0 flex flex-col text-left p-3.5 rounded-xl border-2 transition-all relative ${
+              className={`text-[length:inherit] h-auto justify-start font-[inherit] gap-0 flex flex-col text-left p-3.5 rounded-xl border-2 transition-all relative ${
                 isSelected
                   ? "border-primary bg-primary/5 shadow-xs hover:bg-primary/5"
                   : "border-border hover:border-border/80 bg-surface hover:bg-surface-muted/40"
@@ -158,7 +158,7 @@ export function BrochureWorkflowSettings() {
         <Button variant="ghost"
           type="button"
           onClick={() => setShowAdvanced(!showAdvanced)}
-          className="gap-0 w-full flex items-center justify-between p-3.5 bg-surface text-body-sm font-bold text-text hover:bg-surface-muted transition-colors"
+          className="h-auto gap-0 w-full flex items-center justify-between p-3.5 bg-surface text-body-sm font-bold text-text hover:bg-surface-muted transition-colors"
         >
           <span className="flex items-center gap-2">
             <span>Tùy biến nâng cao từng chốt chặn</span>

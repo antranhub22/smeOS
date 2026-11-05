@@ -74,7 +74,7 @@ export function TrackingStepperView({
                   type="button"
                   onClick={() => onSelectStepNote?.(step.id)}
                   title={`${step.title} (${step.roleResponsible}) — Nhấp để xem/thêm ghi chú nội bộ`}
-                  className={`font-[inherit] gap-0 relative z-10 w-9 h-9 rounded-full flex items-center justify-center transition-all ${
+                  className={`px-0 py-0 text-[length:inherit] font-[inherit] gap-0 relative z-10 w-9 h-9 rounded-full flex items-center justify-center transition-all ${
                     isCompleted
                       ? "bg-success text-white shadow-xs hover:scale-105 hover:bg-success"
                       : isCurrent && stuck

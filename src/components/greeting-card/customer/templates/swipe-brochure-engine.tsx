@@ -50,7 +50,7 @@ function RoundButton(props: {
       disabled={props.disabled}
       aria-pressed={props.pressed}
       onClick={props.onClick}
-      className={`h-auto p-0 font-[inherit] gap-0 ${dim} flex items-center justify-center rounded-full border shadow-[0_6px_20px_rgba(0,0,0,0.18)] transition-transform hover:scale-105 active:scale-90 disabled:pointer-events-none disabled:opacity-35`}
+      className={`text-[length:inherit] h-auto p-0 font-[inherit] gap-0 ${dim} flex items-center justify-center rounded-full border shadow-[0_6px_20px_rgba(0,0,0,0.18)] transition-transform hover:scale-105 active:scale-90 disabled:pointer-events-none disabled:opacity-35`}
       style={{ color: props.color, background: props.bg, borderColor: props.border }}
     >
       {props.children}
@@ -148,7 +148,7 @@ export function SwipeBrochureEngine({
         {range && (
           <p className="flex items-center justify-between px-1 pb-2 text-caption" style={{ color: theme.stageMuted }}>
             <span>Đang xem mẫu {range.label.toLowerCase()}</span>
-            <Button variant="ghost" type="button" className="h-auto p-0 gap-0 font-semibold underline" onClick={() => setPriceKey(null)}>
+            <Button variant="ghost" type="button" className="text-[length:inherit] h-auto p-0 gap-0 font-semibold underline" onClick={() => setPriceKey(null)}>
               Xem tất cả
             </Button>
           </p>
@@ -213,7 +213,7 @@ export function SwipeBrochureEngine({
                 <Button variant="ghost"
                   type="button"
                   onClick={() => onSelectProduct(current)}
-                  className="flex h-12 min-w-0 flex-1 items-center justify-between gap-3 rounded-2xl px-5 text-body font-bold shadow-lg transition-transform active:scale-[0.98]"
+                  className="py-0 flex h-12 min-w-0 flex-1 items-center justify-between gap-3 rounded-2xl px-5 text-body font-bold shadow-lg transition-transform active:scale-[0.98]"
                   style={{ background: theme.ctaBg, color: theme.ctaText }}
                 >
                   <span>{selectedProductId === current.id ? "Đã chọn mẫu này" : "Đặt mẫu này"}</span>

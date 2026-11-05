@@ -146,7 +146,7 @@ function ExportCustomersButtonInner({
             type="button"
             disabled={isLoading}
             role="menuitem"
-            className={`justify-start font-[inherit] w-full flex items-start gap-3 p-2.5 rounded-lg text-left transition-colors text-text ${
+            className={`text-[length:inherit] h-auto justify-start font-[inherit] w-full flex items-start gap-3 p-2.5 rounded-lg text-left transition-colors text-text ${
               isLoading ? "opacity-50 cursor-not-allowed" : "hover:bg-surface-elevated cursor-pointer"
             }`}
             onClick={() => !isLoading && handleDownload("xlsx")}
@@ -166,7 +166,7 @@ function ExportCustomersButtonInner({
             type="button"
             disabled={isLoading}
             role="menuitem"
-            className={`justify-start font-[inherit] w-full flex items-start gap-3 p-2.5 rounded-lg text-left transition-colors text-text ${
+            className={`text-[length:inherit] h-auto justify-start font-[inherit] w-full flex items-start gap-3 p-2.5 rounded-lg text-left transition-colors text-text ${
               isLoading ? "opacity-50 cursor-not-allowed" : "hover:bg-surface-elevated cursor-pointer"
             }`}
             onClick={() => !isLoading && handleDownload("json")}

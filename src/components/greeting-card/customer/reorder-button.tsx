@@ -39,7 +39,7 @@ export function ReorderButton({ sendCode, label = "Đặt thêm một đơn khá
         type="button"
         onClick={() => void start()}
         disabled={busy}
-        className={`inline-flex h-11 items-center gap-1.5 rounded-xl px-4 text-body-sm font-semibold disabled:opacity-60 ${
+        className={`py-0 inline-flex h-11 items-center gap-1.5 rounded-xl px-4 text-body-sm font-semibold disabled:opacity-60 ${
           primary ? "bg-primary text-primary-foreground hover:bg-primary/90" : "border border-border text-primary hover:bg-surface-muted"
         }`}
       >

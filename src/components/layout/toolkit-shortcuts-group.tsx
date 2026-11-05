@@ -305,7 +305,7 @@ export function ToolkitShortcutsGroup({
             <Button variant="ghost"
               type="button"
               onClick={handleReset}
-              className="font-[inherit] flex h-8 w-full items-center gap-2.5 rounded-lg px-2.5 text-meta text-text-muted transition-colors hover:bg-surface-alt hover:text-text"
+              className="py-0 font-[inherit] flex h-8 w-full items-center gap-2.5 rounded-lg px-2.5 text-meta text-text-muted transition-colors hover:bg-surface-alt hover:text-text"
             >
               <RotateCcw size={11} aria-hidden />
               <span>Đặt lại mặc định</span>

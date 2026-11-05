@@ -211,7 +211,7 @@ export function OrderDetailFooter({
                   : cancellationCheck.reason
               }
               onClick={() => setShowCancelModal(true)}
-              className="inline-flex w-full items-center justify-center gap-1.5 rounded-xl border border-danger/30 px-3 py-1.5 text-caption font-bold text-danger transition-colors hover:bg-danger-bg disabled:cursor-not-allowed disabled:opacity-40"
+              className="h-auto inline-flex w-full items-center justify-center gap-1.5 rounded-xl border border-danger/30 px-3 py-1.5 text-caption font-bold text-danger transition-colors hover:bg-danger-bg disabled:cursor-not-allowed disabled:opacity-40"
             >
               <AlertTriangle size={13} />
               {cancellationCheck.allowed

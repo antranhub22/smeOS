@@ -293,7 +293,7 @@ export function CustomerDetailModal({ customerId, onClose, onUpdated }: Customer
                         <Button variant="ghost"
                           type="button"
                           onClick={() => !actionLoading && handleToggleConsent(c.channel, isGranted)}
-                          className={`gap-0 px-3 py-1.5 rounded-full font-bold transition-colors cursor-pointer ${
+                          className={`text-[length:inherit] h-auto gap-0 px-3 py-1.5 rounded-full font-bold transition-colors cursor-pointer ${
                             actionLoading ? "opacity-50 cursor-not-allowed" : ""
                           } ${
                             isGranted ? "bg-success-bg text-success hover:opacity-85 hover:bg-success-bg" : "bg-surface-alt text-text-muted hover:bg-surface-alt/80"

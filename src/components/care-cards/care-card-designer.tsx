@@ -97,7 +97,7 @@ export function CareCardDesigner({
                   type="button"
                   key={code}
                   onClick={() => handleSwitchTemplate(code)}
-                  className={`justify-start font-[inherit] gap-0 cursor-pointer p-3 rounded-xl border text-left transition-all focus:outline-none focus:ring-2 focus:ring-primary ${
+                  className={`text-[length:inherit] h-auto justify-start font-[inherit] gap-0 cursor-pointer p-3 rounded-xl border text-left transition-all focus:outline-none focus:ring-2 focus:ring-primary ${
                     isSelected
                       ? "border-primary bg-primary/5 text-primary ring-2 ring-primary/20 shadow-xs hover:bg-primary/5"
                       : "border-border hover:border-border-hover bg-surface-alt/40 text-text hover:bg-surface-alt/40"

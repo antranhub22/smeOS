@@ -184,7 +184,7 @@ export function SuperadminHomepageBadge({ isDev = false }: Props) {
         aria-expanded={open}
         aria-haspopup="listbox"
         aria-label={`Homepage: ${config.label}. Click để đổi vai`}
-        className="h-auto p-0 font-[inherit] gap-0 flex items-center cursor-pointer"
+        className="text-[length:inherit] h-auto p-0 font-[inherit] gap-0 flex items-center cursor-pointer"
       >
         {badgeContent}
       </Button>
@@ -217,7 +217,7 @@ export function SuperadminHomepageBadge({ isDev = false }: Props) {
                       if (!isLoading) applyOverride(preset)
                     }}
                     aria-disabled={isLoading}
-                    className={cn("justify-start", 
+                    className={cn("h-auto", "justify-start", 
                       "flex w-full items-center gap-2 px-3 py-2 text-left text-caption transition-colors cursor-pointer",
                       isActive
                         ? "bg-primary/10 font-bold text-primary hover:bg-primary/10"

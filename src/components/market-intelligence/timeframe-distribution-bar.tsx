@@ -191,7 +191,7 @@ export function TimeframeDistributionBar({
                 key={btn.key}
                 type="button"
                 onClick={() => handleScopeChange(btn.key)}
-                className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-caption font-bold transition duration-150 flex-shrink-0 cursor-pointer ${
+                className={`h-auto flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-caption font-bold transition duration-150 flex-shrink-0 cursor-pointer ${
                   isSelected
                     ? `${btn.activeBg} ${btn.activeText} shadow-xs border ring-2 ${btn.ringColor}`
                     : "text-text-muted hover:text-text hover:bg-white/80"
@@ -235,7 +235,7 @@ export function TimeframeDistributionBar({
             <Button variant="outline"
               type="button"
               onClick={() => onSelectBucket(null)}
-              className={`gap-0 flex-shrink-0 px-2.5 py-1.5 rounded-lg text-caption font-bold transition cursor-pointer border ${
+              className={`h-auto gap-0 flex-shrink-0 px-2.5 py-1.5 rounded-lg text-caption font-bold transition cursor-pointer border ${
                 selectedBucket === null
                   ? "bg-primary text-white border-primary shadow-xs hover:bg-primary"
                   : "bg-bg text-text-muted border-border hover:bg-surface-alt hover:text-text"
@@ -254,7 +254,7 @@ export function TimeframeDistributionBar({
                   key={bucket.id}
                   type="button"
                   onClick={() => onSelectBucket(bucket)}
-                  className={`flex-shrink-0 flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-caption transition cursor-pointer border ${
+                  className={`h-auto flex-shrink-0 flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-caption transition cursor-pointer border ${
                     isSelected
                       ? "bg-warning text-white border-warning font-bold shadow-xs ring-2 ring-warning-border/60 hover:bg-warning"
                       : hasItems

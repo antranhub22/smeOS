@@ -148,7 +148,7 @@ export function AdPerformanceModal({ isOpen, onClose }: AdPerformanceModalProps)
                 type="button"
                 key={ch.channel}
                 onClick={() => setSelectedChannel(ch.channel)}
-                className={`justify-start font-[inherit] gap-0 text-left p-3 rounded-xl border transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary ${
+                className={`text-[length:inherit] h-auto justify-start font-[inherit] gap-0 text-left p-3 rounded-xl border transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary ${
                   selectedChannel === ch.channel
                     ? "border-primary bg-primary/10 shadow-xs hover:bg-primary/10"
                     : "border-border bg-surface hover:border-primary/40 hover:bg-surface"

@@ -95,7 +95,7 @@ export function OrderClosureLearningCard({
                 aria-label="Đánh dấu yêu thích"
                 key={star}
                 onClick={() => setRating(star)}
-                className="font-[inherit] gap-0 cursor-pointer p-1 hover:scale-110 transition-transform"
+                className="text-[length:inherit] h-auto font-[inherit] gap-0 cursor-pointer p-1 hover:scale-110 transition-transform"
               >
                 <Star
                   size={16}

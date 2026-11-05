@@ -119,7 +119,7 @@ export function UseAssetSheet({
         <Button variant="ghost"
           type="button"
           onClick={() => setActiveTab("NEW")}
-          className={`gap-0 px-4 py-2 text-body-sm font-semibold border-b-2 cursor-pointer transition-colors ${
+          className={`h-auto gap-0 px-4 py-2 text-body-sm font-semibold border-b-2 cursor-pointer transition-colors ${
             activeTab === "NEW"
               ? "border-primary text-primary"
               : "border-transparent text-text-muted hover:text-text"
@@ -130,7 +130,7 @@ export function UseAssetSheet({
         <Button variant="ghost"
           type="button"
           onClick={() => setActiveTab("LIST")}
-          className={`gap-0 px-4 py-2 text-body-sm font-semibold border-b-2 cursor-pointer transition-colors ${
+          className={`h-auto gap-0 px-4 py-2 text-body-sm font-semibold border-b-2 cursor-pointer transition-colors ${
             activeTab === "LIST"
               ? "border-primary text-primary"
               : "border-transparent text-text-muted hover:text-text"

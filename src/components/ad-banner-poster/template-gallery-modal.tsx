@@ -80,7 +80,7 @@ export function TemplateGalleryModal({
                 type="button"
                 key={cat.id}
                 onClick={() => setActiveCategory(cat.id)}
-                className={`gap-0 px-3 py-1.5 rounded-lg text-caption font-semibold whitespace-nowrap transition-colors cursor-pointer ${
+                className={`h-auto gap-0 px-3 py-1.5 rounded-lg text-caption font-semibold whitespace-nowrap transition-colors cursor-pointer ${
                   isActive
                     ? "bg-primary text-primary-foreground shadow-sm hover:bg-primary"
                     : "bg-surface-alt text-text-muted hover:text-text hover:bg-border/60"

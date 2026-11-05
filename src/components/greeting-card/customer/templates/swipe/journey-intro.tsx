@@ -115,7 +115,7 @@ export function JourneyIntro({
           type="button"
           onClick={onStart}
           autoFocus
-          className="gap-0 h-12 rounded-2xl text-body font-bold shadow-lg transition-transform active:scale-[0.98]"
+          className="px-0 py-0 gap-0 h-12 rounded-2xl text-body font-bold shadow-lg transition-transform active:scale-[0.98]"
           style={{ background: theme.ctaBg, color: theme.ctaText }}
         >
           {mode === "onboarding" ? t("greetingCard.customer.journey.start") : t("greetingCard.customer.journey.resume")}
@@ -124,7 +124,7 @@ export function JourneyIntro({
           <Button variant="outline"
             type="button"
             onClick={onStartOver}
-            className="gap-0 h-12 rounded-2xl border text-body-sm font-semibold transition-transform active:scale-[0.98]"
+            className="px-0 py-0 gap-0 h-12 rounded-2xl border text-body-sm font-semibold transition-transform active:scale-[0.98]"
             style={{ borderColor: theme.controlBorder }}
           >
             {t("greetingCard.customer.journey.startOver")}

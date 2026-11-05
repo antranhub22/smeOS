@@ -48,7 +48,7 @@ export function NextActions({
             type="button"
             key={act.id}
             onClick={act.onClick}
-            className={`justify-start gap-0 flex flex-col text-left p-3.5 rounded-lg border transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary ${
+            className={`text-[length:inherit] h-auto justify-start gap-0 flex flex-col text-left p-3.5 rounded-lg border transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary ${
               act.isPrimary
                 ? "bg-selected text-primary border-primary hover:bg-surface-alt font-semibold"
                 : "bg-surface border-border text-text hover:bg-surface-alt hover:border-primary/40"

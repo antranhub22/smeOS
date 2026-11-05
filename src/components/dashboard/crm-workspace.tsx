@@ -239,7 +239,7 @@ export function CrmWorkspace() {
                     <Button variant="ghost"
                       type="button"
                       onClick={() => router.push("/khach-hang" as Route)}
-                      className="font-[inherit] flex cursor-pointer min-h-12 w-full items-center justify-between gap-3 rounded-lg px-2 py-2 text-left hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-primary"
+                      className="text-[length:inherit] font-[inherit] flex cursor-pointer min-h-12 w-full items-center justify-between gap-3 rounded-lg px-2 py-2 text-left hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-primary"
                     >
                       <div className="min-w-0 flex-1">
                         <div className="truncate text-body font-semibold text-text">
@@ -305,7 +305,7 @@ export function CrmWorkspace() {
                       <Button variant="ghost"
                         type="button"
                         onClick={() => router.push("/khach-hang" as Route)}
-                        className="font-[inherit] flex cursor-pointer min-h-12 w-full items-center justify-between gap-3 rounded-lg px-2 py-2 text-left hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-primary"
+                        className="text-[length:inherit] font-[inherit] flex cursor-pointer min-h-12 w-full items-center justify-between gap-3 rounded-lg px-2 py-2 text-left hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-primary"
                       >
                         <div className="min-w-0 flex-1">
                           <div className="flex items-center gap-2">

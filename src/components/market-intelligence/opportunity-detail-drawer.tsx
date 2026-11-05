@@ -196,7 +196,7 @@ export function OpportunityDetailDrawer({ item, onClose }: OpportunityDetailDraw
                     <Button variant="ghost"
                       type="button"
                       onClick={() => handleCopyHook(hk, idx)}
-                      className="inline-flex items-center gap-1 text-caption font-bold text-primary hover:text-primary bg-primary-muted hover:bg-primary-muted px-2.5 py-1 rounded-lg transition flex-shrink-0"
+                      className="h-auto inline-flex items-center gap-1 text-caption font-bold text-primary hover:text-primary bg-primary-muted hover:bg-primary-muted px-2.5 py-1 rounded-lg transition flex-shrink-0"
                     >
                       {copiedHookIndex === idx ? (
                         <>
@@ -225,7 +225,7 @@ export function OpportunityDetailDrawer({ item, onClose }: OpportunityDetailDraw
             <Button variant="ghost"
               type="button"
               onClick={() => setIsEvidenceOpen(!isEvidenceOpen)}
-              className="font-[inherit] gap-0 w-full flex items-center justify-between p-4 bg-bg/60 hover:bg-surface-alt/60 transition text-left"
+              className="text-[length:inherit] h-auto font-[inherit] gap-0 w-full flex items-center justify-between p-4 bg-bg/60 hover:bg-surface-alt/60 transition text-left"
             >
               <div className="flex items-center gap-2">
                 <ShieldCheck className="h-4 w-4 text-success-text" />
@@ -321,7 +321,7 @@ export function OpportunityDetailDrawer({ item, onClose }: OpportunityDetailDraw
             <Button variant="outline"
               type="button"
               onClick={handleGoToMedia}
-              className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl border border-border bg-white hover:bg-bg text-text text-caption font-bold transition"
+              className="h-auto flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 px-3.5 py-2 rounded-xl border border-border bg-white hover:bg-bg text-text text-caption font-bold transition"
             >
               <ImageIcon className="h-3.5 w-3.5 text-text-muted" />
               Tạo ảnh
@@ -330,7 +330,7 @@ export function OpportunityDetailDrawer({ item, onClose }: OpportunityDetailDraw
             <Button variant="primary"
               type="button"
               onClick={handleGoToVideo}
-              className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-primary hover:bg-primary-dark text-white text-caption font-bold shadow-sm transition"
+              className="h-auto flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-xl bg-primary hover:bg-primary-dark text-white text-caption font-bold shadow-sm transition"
             >
               <Video className="h-3.5 w-3.5" />
               Tạo video kịch bản

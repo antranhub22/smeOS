@@ -143,7 +143,7 @@ export function SettingsScheduleTab({
               <Button variant="primary"
                 type="button"
                 onClick={handleAddKeyword}
-                className="px-3 h-8 rounded-lg bg-primary text-white font-bold inline-flex items-center gap-1 hover:bg-primary-dark"
+                className="py-0 text-[length:inherit] px-3 h-8 rounded-lg bg-primary text-white font-bold inline-flex items-center gap-1 hover:bg-primary-dark"
               >
                 <Plus size={13} /> Thêm
               </Button>
@@ -156,7 +156,7 @@ export function SettingsScheduleTab({
                 >
                   {kw}
                   <Button variant="ghost"
-              aria-label="Xóa" type="button" onClick={() => handleRemoveKeyword(kw)} className="h-auto p-0 font-[inherit] gap-0 text-text-muted hover:text-primary">
+              aria-label="Xóa" type="button" onClick={() => handleRemoveKeyword(kw)} className="text-[length:inherit] h-auto p-0 font-[inherit] gap-0 text-text-muted hover:text-primary">
                     <Trash2 size={11} />
                   </Button>
                 </span>

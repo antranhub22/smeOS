@@ -174,28 +174,28 @@ export function ProductionUpdateModal({
             <Button variant="ghost"
               type="button"
               onClick={() => setProgress(25)}
-              className="h-auto p-0 font-[inherit] gap-0 hover:text-text cursor-pointer"
+              className="text-[length:inherit] h-auto p-0 font-[inherit] gap-0 hover:text-text cursor-pointer"
             >
               25% Lên cốt
             </Button>
             <Button variant="ghost"
               type="button"
               onClick={() => setProgress(50)}
-              className="h-auto p-0 font-[inherit] gap-0 hover:text-text cursor-pointer"
+              className="text-[length:inherit] h-auto p-0 font-[inherit] gap-0 hover:text-text cursor-pointer"
             >
               50% Cắm hoa chính
             </Button>
             <Button variant="ghost"
               type="button"
               onClick={() => setProgress(75)}
-              className="h-auto p-0 font-[inherit] gap-0 hover:text-text cursor-pointer"
+              className="text-[length:inherit] h-auto p-0 font-[inherit] gap-0 hover:text-text cursor-pointer"
             >
               75% Điểm lá & nơ
             </Button>
             <Button variant="ghost"
               type="button"
               onClick={() => setProgress(100)}
-              className="h-auto p-0 gap-0 text-alert-700 font-bold hover:underline cursor-pointer"
+              className="text-[length:inherit] h-auto p-0 gap-0 text-alert-700 font-bold hover:underline cursor-pointer"
             >
               100% Cắm xong ➔
             </Button>
@@ -230,7 +230,7 @@ export function ProductionUpdateModal({
                         type="button"
                         aria-label="Hiển thị thông tin"
                         onClick={() => window.open(finishedImageUrl, "_blank")}
-                        className="font-[inherit] gap-0 p-1 rounded bg-surface text-text hover:bg-white text-caption shadow cursor-pointer"
+                        className="h-auto font-[inherit] gap-0 p-1 rounded bg-surface text-text hover:bg-white text-caption shadow cursor-pointer"
                       >
                         <Eye size={12} />
                       </Button>
@@ -241,7 +241,7 @@ export function ProductionUpdateModal({
                           setFinishedImageUrl("")
                           setFinishedAssetId(null)
                         }}
-                        className="font-[inherit] gap-0 p-1 rounded bg-alert-600 text-white hover:bg-alert-700 text-caption shadow cursor-pointer"
+                        className="h-auto font-[inherit] gap-0 p-1 rounded bg-alert-600 text-white hover:bg-alert-700 text-caption shadow cursor-pointer"
                       >
                         <Trash2 size={12} />
                       </Button>

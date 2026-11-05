@@ -37,7 +37,7 @@ export function AgreementsSection({
               type="button"
               onClick={() => onRemove(a.id)}
               aria-label="Xóa thỏa thuận"
-              className="font-[inherit] gap-0 absolute top-3 right-3 text-text-muted hover:text-danger p-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity"
+              className="text-[length:inherit] h-auto font-[inherit] gap-0 absolute top-3 right-3 text-text-muted hover:text-danger p-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity"
             >
               <Trash2 size={14} />
             </Button>

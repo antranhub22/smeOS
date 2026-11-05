@@ -32,7 +32,7 @@ export function JourneyStepper({ step, onStepClick }: JourneyStepperProps) {
                 disabled={!done}
                 aria-current={current ? "step" : undefined}
                 onClick={() => onStepClick(s.id)}
-                className={cn("font-[inherit]", 
+                className={cn("h-auto", "font-[inherit]", 
                   "group flex w-full flex-col items-center gap-1.5 text-center sm:flex-row sm:gap-3 sm:text-left rounded-xl border-b-2 px-2 py-3 transition-colors sm:px-3",
                   current && "border-primary",
                   done && "border-success hover:bg-surface-alt",

@@ -94,7 +94,7 @@ export function StudioSceneSelector({
               key={preset.id}
               aria-disabled={disabled}
               onClick={() => !disabled && onChange(preset.id)}
-              className={`justify-start font-[inherit] gap-0 group relative flex flex-col items-start p-3 rounded-xl border text-left transition-all duration-200 ${
+              className={`text-[length:inherit] h-auto justify-start font-[inherit] gap-0 group relative flex flex-col items-start p-3 rounded-xl border text-left transition-all duration-200 ${
                 isSelected
                   ? "border-primary bg-primary/5 shadow-sm ring-1 ring-primary/20 hover:bg-primary/5"
                   : "border-border bg-surface hover:border-text-muted/40 hover:bg-surface-alt/50"

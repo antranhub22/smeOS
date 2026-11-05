@@ -31,7 +31,7 @@ export function CustomerDetailTabs({ active, onChange, occasionCount, showOrders
           role="tab"
           aria-selected={active === id}
           onClick={() => onChange(id)}
-          className={`h-auto p-0 gap-0 ${BASE} ${active === id ? "border-primary text-primary font-bold" : "border-transparent text-text-muted hover:text-text"}`}
+          className={`text-[length:inherit] h-auto p-0 gap-0 ${BASE} ${active === id ? "border-primary text-primary font-bold" : "border-transparent text-text-muted hover:text-text"}`}
         >
           {Icon && <Icon className="h-3.5 w-3.5" />}
           {label}

@@ -205,7 +205,7 @@ export function ResultCard({
           <Button variant="ghost"
             type="button"
             onClick={() => setExpandedQuality(!expandedQuality)}
-            className="font-[inherit] gap-0 flex w-full cursor-pointer items-center justify-between rounded-lg bg-surface-alt px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary hover:bg-surface-alt"
+            className="text-[length:inherit] h-auto font-[inherit] gap-0 flex w-full cursor-pointer items-center justify-between rounded-lg bg-surface-alt px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary hover:bg-surface-alt"
           >
             <span className="flex items-center gap-2 text-body-sm font-bold text-text">
               <span className={cn("h-2 w-2 flex-shrink-0 rounded-full", meta.dot)} />

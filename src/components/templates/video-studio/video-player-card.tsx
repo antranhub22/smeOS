@@ -145,7 +145,7 @@ export function VideoPlayerCard({
               <Button variant="ghost"
                 type="button"
                 onClick={handleToggleMute}
-                className="font-[inherit] gap-0 pointer-events-auto flex h-7 w-7 items-center justify-center rounded-full bg-black/40 text-white backdrop-blur-md hover:bg-black/60 transition cursor-pointer"
+                className="px-0 py-0 text-[length:inherit] font-[inherit] gap-0 pointer-events-auto flex h-7 w-7 items-center justify-center rounded-full bg-black/40 text-white backdrop-blur-md hover:bg-black/60 transition cursor-pointer"
                 aria-label={isMuted ? "Bật âm thanh" : "Tắt âm thanh"}
               >
                 {isMuted ? <VolumeX size={14} /> : <Volume2 size={14} />}
@@ -160,7 +160,7 @@ export function VideoPlayerCard({
               <Button variant="ghost"
                 type="button"
                 onClick={handleTogglePlay}
-                className="font-[inherit] gap-0 pointer-events-auto flex h-12 w-12 items-center justify-center rounded-full bg-white/25 text-white backdrop-blur-md hover:bg-white/40 transition hover:scale-105 active:scale-95 shadow-md cursor-pointer"
+                className="px-0 py-0 text-[length:inherit] font-[inherit] gap-0 pointer-events-auto flex h-12 w-12 items-center justify-center rounded-full bg-white/25 text-white backdrop-blur-md hover:bg-white/40 transition hover:scale-105 active:scale-95 shadow-md cursor-pointer"
                 aria-label={isPlaying ? "Tạm dừng video" : "Phát video"}
               >
                 {isPlaying ? <Pause size={20} /> : <Play size={20} className="ml-0.5" />}

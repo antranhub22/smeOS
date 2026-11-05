@@ -148,7 +148,7 @@ export function StorageSidebar({
         <Button variant="ghost"
           type="button"
           onClick={() => setIsCollapsed(false)}
-          className="font-[inherit] gap-0 p-2 rounded-xl bg-surface-alt hover:bg-primary/10 hover:text-primary transition-colors text-text-muted mb-4"
+          className="text-[length:inherit] h-auto font-[inherit] gap-0 p-2 rounded-xl bg-surface-alt hover:bg-primary/10 hover:text-primary transition-colors text-text-muted mb-4"
           title="Mở rộng Kho Dữ Liệu"
         >
           <ChevronRight size={18} />
@@ -187,7 +187,7 @@ export function StorageSidebar({
               <Button variant="ghost"
                 type="button"
                 onClick={onRefresh}
-                className="font-[inherit] gap-0 p-1.5 rounded-lg text-text-muted hover:bg-surface-alt hover:text-text transition-colors"
+                className="text-[length:inherit] h-auto font-[inherit] gap-0 p-1.5 rounded-lg text-text-muted hover:bg-surface-alt hover:text-text transition-colors"
                 title="Làm mới kho dữ liệu"
               >
                 <RefreshCw size={13} className={loading ? "animate-spin motion-reduce:animate-none" : ""} />
@@ -196,7 +196,7 @@ export function StorageSidebar({
             <Button variant="ghost"
               type="button"
               onClick={() => setIsCollapsed(true)}
-              className="font-[inherit] gap-0 p-1.5 rounded-lg text-text-muted hover:bg-surface-alt hover:text-text transition-colors"
+              className="text-[length:inherit] h-auto font-[inherit] gap-0 p-1.5 rounded-lg text-text-muted hover:bg-surface-alt hover:text-text transition-colors"
               title="Thu gọn sidebar"
             >
               <ChevronLeft size={16} />
@@ -221,7 +221,7 @@ export function StorageSidebar({
           <Button variant="ghost"
             type="button"
             onClick={() => setFilter("all")}
-            className={`gap-0 px-2 py-0.5 rounded-lg font-medium whitespace-nowrap transition-colors ${
+            className={`text-[length:inherit] h-auto gap-0 px-2 py-0.5 rounded-lg font-medium whitespace-nowrap transition-colors ${
               filter === "all" ? "bg-primary text-white font-bold hover:bg-primary" : "bg-surface-alt text-text-muted hover:text-text hover:bg-surface-alt"
             }`}
           >
@@ -230,7 +230,7 @@ export function StorageSidebar({
           <Button variant="ghost"
             type="button"
             onClick={() => setFilter("raw")}
-            className={`gap-0 px-2 py-0.5 rounded-lg font-medium whitespace-nowrap transition-colors ${
+            className={`text-[length:inherit] h-auto gap-0 px-2 py-0.5 rounded-lg font-medium whitespace-nowrap transition-colors ${
               filter === "raw" ? "bg-warning text-white font-bold hover:bg-warning" : "bg-surface-alt text-text-muted hover:text-text hover:bg-surface-alt"
             }`}
           >
@@ -239,7 +239,7 @@ export function StorageSidebar({
           <Button variant="ghost"
             type="button"
             onClick={() => setFilter("approved")}
-            className={`gap-0 px-2 py-0.5 rounded-lg font-medium whitespace-nowrap transition-colors ${
+            className={`text-[length:inherit] h-auto gap-0 px-2 py-0.5 rounded-lg font-medium whitespace-nowrap transition-colors ${
               filter === "approved" ? "bg-info text-white font-bold hover:bg-info" : "bg-surface-alt text-text-muted hover:text-text hover:bg-surface-alt"
             }`}
           >
@@ -248,7 +248,7 @@ export function StorageSidebar({
           <Button variant="ghost"
             type="button"
             onClick={() => setFilter("finalized")}
-            className={`gap-0 px-2 py-0.5 rounded-lg font-medium whitespace-nowrap transition-colors ${
+            className={`text-[length:inherit] h-auto gap-0 px-2 py-0.5 rounded-lg font-medium whitespace-nowrap transition-colors ${
               filter === "finalized" ? "bg-success text-white font-bold hover:bg-success" : "bg-surface-alt text-text-muted hover:text-text hover:bg-surface-alt"
             }`}
           >

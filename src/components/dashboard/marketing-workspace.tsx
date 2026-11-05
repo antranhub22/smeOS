@@ -218,7 +218,7 @@ export function MarketingWorkspace() {
                     <Button variant="ghost"
                       type="button"
                       onClick={() => router.push("/lich-dang" as Route)}
-                      className="font-[inherit] flex cursor-pointer min-h-12 w-full items-center justify-between gap-3 rounded-lg px-2 py-2 text-left hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-primary"
+                      className="text-[length:inherit] font-[inherit] flex cursor-pointer min-h-12 w-full items-center justify-between gap-3 rounded-lg px-2 py-2 text-left hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-primary"
                     >
                       <div className="min-w-0 flex-1">
                         <div className="truncate text-body font-semibold text-text">
@@ -276,7 +276,7 @@ export function MarketingWorkspace() {
                     <Button variant="ghost"
                       type="button"
                       onClick={() => router.push("/creative-studio" as Route)}
-                      className="font-[inherit] flex cursor-pointer min-h-12 w-full items-center justify-between gap-3 rounded-lg px-2 py-2 text-left hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-primary"
+                      className="text-[length:inherit] font-[inherit] flex cursor-pointer min-h-12 w-full items-center justify-between gap-3 rounded-lg px-2 py-2 text-left hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-primary"
                     >
                       <div className="min-w-0 flex-1">
                         <div className="truncate text-body font-semibold text-text">
@@ -306,7 +306,7 @@ export function MarketingWorkspace() {
             <Button variant="outline"
               type="button"
               onClick={() => router.push("/creative-studio" as Route)}
-              className="justify-start font-[inherit] flex cursor-pointer items-center gap-3 rounded-lg border border-border bg-surface p-3 text-left hover:border-primary/50 focus-visible:outline-2 focus-visible:outline-primary hover:bg-surface"
+              className="text-[length:inherit] h-auto justify-start font-[inherit] flex cursor-pointer items-center gap-3 rounded-lg border border-border bg-surface p-3 text-left hover:border-primary/50 focus-visible:outline-2 focus-visible:outline-primary hover:bg-surface"
             >
               <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
                 <Sparkles size={20} aria-hidden="true" />
@@ -320,7 +320,7 @@ export function MarketingWorkspace() {
             <Button variant="outline"
               type="button"
               onClick={() => router.push("/noi-dung" as Route)}
-              className="justify-start font-[inherit] flex cursor-pointer items-center gap-3 rounded-lg border border-border bg-surface p-3 text-left hover:border-primary/50 focus-visible:outline-2 focus-visible:outline-primary hover:bg-surface"
+              className="text-[length:inherit] h-auto justify-start font-[inherit] flex cursor-pointer items-center gap-3 rounded-lg border border-border bg-surface p-3 text-left hover:border-primary/50 focus-visible:outline-2 focus-visible:outline-primary hover:bg-surface"
             >
               <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent/10 text-accent">
                 <PenTool size={20} aria-hidden="true" />
@@ -334,7 +334,7 @@ export function MarketingWorkspace() {
             <Button variant="outline"
               type="button"
               onClick={() => router.push("/video" as Route)}
-              className="justify-start font-[inherit] flex cursor-pointer items-center gap-3 rounded-lg border border-border bg-surface p-3 text-left hover:border-primary/50 focus-visible:outline-2 focus-visible:outline-primary hover:bg-surface"
+              className="text-[length:inherit] h-auto justify-start font-[inherit] flex cursor-pointer items-center gap-3 rounded-lg border border-border bg-surface p-3 text-left hover:border-primary/50 focus-visible:outline-2 focus-visible:outline-primary hover:bg-surface"
             >
               <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-warning-bg text-warning">
                 <Video size={20} aria-hidden="true" />
@@ -348,7 +348,7 @@ export function MarketingWorkspace() {
             <Button variant="outline"
               type="button"
               onClick={() => router.push("/lich-dang" as Route)}
-              className="justify-start font-[inherit] flex cursor-pointer items-center gap-3 rounded-lg border border-border bg-surface p-3 text-left hover:border-primary/50 focus-visible:outline-2 focus-visible:outline-primary hover:bg-surface"
+              className="text-[length:inherit] h-auto justify-start font-[inherit] flex cursor-pointer items-center gap-3 rounded-lg border border-border bg-surface p-3 text-left hover:border-primary/50 focus-visible:outline-2 focus-visible:outline-primary hover:bg-surface"
             >
               <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-success-bg text-success">
                 <Share2 size={20} aria-hidden="true" />

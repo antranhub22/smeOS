@@ -19,7 +19,7 @@ export function CrmToolkitGrid() {
         <Button variant="outline"
           type="button"
           onClick={() => router.push("/khach-hang" as Route)}
-          className="justify-start font-[inherit] flex cursor-pointer items-center gap-3 rounded-lg border border-border bg-surface p-3 text-left hover:border-primary/50 focus-visible:outline-2 focus-visible:outline-primary hover:bg-surface"
+          className="text-[length:inherit] h-auto justify-start font-[inherit] flex cursor-pointer items-center gap-3 rounded-lg border border-border bg-surface p-3 text-left hover:border-primary/50 focus-visible:outline-2 focus-visible:outline-primary hover:bg-surface"
         >
           <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
             <Users size={20} aria-hidden="true" />
@@ -33,7 +33,7 @@ export function CrmToolkitGrid() {
         <Button variant="outline"
           type="button"
           onClick={() => router.push("/hoi-thoai" as Route)}
-          className="justify-start font-[inherit] flex cursor-pointer items-center gap-3 rounded-lg border border-border bg-surface p-3 text-left hover:border-primary/50 focus-visible:outline-2 focus-visible:outline-primary hover:bg-surface"
+          className="text-[length:inherit] h-auto justify-start font-[inherit] flex cursor-pointer items-center gap-3 rounded-lg border border-border bg-surface p-3 text-left hover:border-primary/50 focus-visible:outline-2 focus-visible:outline-primary hover:bg-surface"
         >
           <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent/10 text-accent">
             <MessageSquare size={20} aria-hidden="true" />
@@ -47,7 +47,7 @@ export function CrmToolkitGrid() {
         <Button variant="outline"
           type="button"
           onClick={() => router.push("/don-hang" as Route)}
-          className="justify-start font-[inherit] flex cursor-pointer items-center gap-3 rounded-lg border border-border bg-surface p-3 text-left hover:border-primary/50 focus-visible:outline-2 focus-visible:outline-primary hover:bg-surface"
+          className="text-[length:inherit] h-auto justify-start font-[inherit] flex cursor-pointer items-center gap-3 rounded-lg border border-border bg-surface p-3 text-left hover:border-primary/50 focus-visible:outline-2 focus-visible:outline-primary hover:bg-surface"
         >
           <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-warning-bg text-warning">
             <ShoppingBag size={20} aria-hidden="true" />
@@ -61,7 +61,7 @@ export function CrmToolkitGrid() {
         <Button variant="outline"
           type="button"
           onClick={() => router.push("/khach-hang" as Route)}
-          className="justify-start font-[inherit] flex cursor-pointer items-center gap-3 rounded-lg border border-border bg-surface p-3 text-left hover:border-primary/50 focus-visible:outline-2 focus-visible:outline-primary hover:bg-surface"
+          className="text-[length:inherit] h-auto justify-start font-[inherit] flex cursor-pointer items-center gap-3 rounded-lg border border-border bg-surface p-3 text-left hover:border-primary/50 focus-visible:outline-2 focus-visible:outline-primary hover:bg-surface"
         >
           <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-success-bg text-success">
             <Gift size={20} aria-hidden="true" />

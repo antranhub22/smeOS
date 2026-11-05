@@ -61,7 +61,7 @@ export default function DangNhapPage() {
           <Button variant="ghost"
             type="button"
             onClick={() => setCheDo("dang-nhap")}
-            className={`gap-0 cursor-pointer py-2 text-center text-body-sm font-bold rounded-xl transition-all ${
+            className={`px-0 h-auto gap-0 cursor-pointer py-2 text-center text-body-sm font-bold rounded-xl transition-all ${
               cheDo === "dang-nhap"
                 ? "bg-surface text-primary shadow-xs border border-border/60 hover:bg-surface"
                 : "text-text hover:text-primary"
@@ -73,7 +73,7 @@ export default function DangNhapPage() {
           <Button variant="ghost"
             type="button"
             onClick={() => setCheDo("dang-ky")}
-            className={`gap-0 cursor-pointer py-2 text-center text-body-sm font-bold rounded-xl transition-all ${
+            className={`px-0 h-auto gap-0 cursor-pointer py-2 text-center text-body-sm font-bold rounded-xl transition-all ${
               cheDo === "dang-ky"
                 ? "bg-surface text-primary shadow-xs border border-border/60 hover:bg-surface"
                 : "text-text hover:text-primary"
@@ -85,7 +85,7 @@ export default function DangNhapPage() {
           <Button variant="ghost"
             type="button"
             onClick={() => setCheDo("dung-thu")}
-            className={`cursor-pointer py-2 text-center text-body-sm font-bold rounded-xl transition-all flex items-center justify-center gap-1.5 ${
+            className={`px-0 h-auto cursor-pointer py-2 text-center text-body-sm font-bold rounded-xl transition-all flex items-center justify-center gap-1.5 ${
               cheDo === "dung-thu"
                 ? "bg-primary text-text-inverse shadow-xs font-extrabold hover:bg-primary"
                 : "text-primary hover:text-primary-hover font-semibold"

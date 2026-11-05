@@ -347,7 +347,7 @@ function CreditEstimateBadge({
     <Button variant="ghost"
       type="button"
       onClick={onClick}
-      className={cn("font-[inherit]", 
+      className={cn("h-auto", "font-[inherit]", 
         "flex cursor-pointer items-center gap-1.5 rounded-xl px-3 py-1.5 transition-colors hover:opacity-80",
         bgClass,
         textClass

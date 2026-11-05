@@ -94,7 +94,7 @@ export function BriefOccasionsView({
               key={sec.id}
               type="button"
               onClick={() => setActiveOccasionId(sec.id)}
-              className={`font-[inherit] gap-0 p-3.5 rounded-2xl border text-left transition-all duration-200 cursor-pointer flex flex-col justify-between space-y-2 ${
+              className={`text-[length:inherit] h-auto font-[inherit] gap-0 p-3.5 rounded-2xl border text-left transition-all duration-200 cursor-pointer flex flex-col justify-between space-y-2 ${
                 isActive
                   ? "border-accent bg-accent-bg/80 ring-2 ring-accent/50 shadow-xs hover:bg-accent-bg/80"
                   : "border-border bg-white hover:border-accent-border hover:shadow-xs hover:bg-white"

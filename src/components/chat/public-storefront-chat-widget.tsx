@@ -126,7 +126,7 @@ export function PublicStorefrontChatWidget({
           <Button variant="ghost"
             type="button"
             onClick={() => setIsOpen(true)}
-            className="font-[inherit] group flex items-center gap-2 rounded-full bg-gradient-to-r from-primary via-primary/95 to-primary-dark p-3.5 text-white shadow-xl hover:shadow-2xl transition-all hover:scale-105 cursor-pointer hover:bg-gradient-to-r"
+            className="text-[length:inherit] h-auto font-[inherit] group flex items-center gap-2 rounded-full bg-gradient-to-r from-primary via-primary/95 to-primary-dark p-3.5 text-white shadow-xl hover:shadow-2xl transition-all hover:scale-105 cursor-pointer hover:bg-gradient-to-r"
             aria-label="Tư vấn đặt hoa"
           >
             <MessageCircle className="h-6 w-6 animate-pulse motion-reduce:animate-none" />
@@ -158,7 +158,7 @@ export function PublicStorefrontChatWidget({
               type="button"
               aria-label="Đóng"
               onClick={() => setIsOpen(false)}
-              className="font-[inherit] gap-0 rounded-lg p-1.5 text-text-muted hover:bg-black/5 cursor-pointer"
+              className="text-[length:inherit] h-auto font-[inherit] gap-0 rounded-lg p-1.5 text-text-muted hover:bg-black/5 cursor-pointer"
             >
               <X className="h-4 w-4" />
             </Button>
@@ -188,7 +188,7 @@ export function PublicStorefrontChatWidget({
                       type="button"
                       key={idx}
                       onClick={() => handleSendMessage(q)}
-                      className="gap-0 w-full text-left rounded-xl border border-primary/20 bg-primary/5 p-2 text-caption font-medium text-text hover:bg-primary/10 flex items-center justify-between cursor-pointer"
+                      className="h-auto gap-0 w-full text-left rounded-xl border border-primary/20 bg-primary/5 p-2 text-caption font-medium text-text hover:bg-primary/10 flex items-center justify-between cursor-pointer"
                     >
                       <span className="truncate">{q}</span>
                       <ArrowRight className="h-3 w-3 text-primary shrink-0 ml-1" />

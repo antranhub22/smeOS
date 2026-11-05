@@ -159,7 +159,7 @@ export function MarketIntelligenceView({
               setSelectedTimeframe("ALL");
               setSelectedBucket(null);
             }}
-            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-caption font-bold bg-primary text-white hover:bg-primary-dark shadow-xs transition"
+            className="h-auto inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-caption font-bold bg-primary text-white hover:bg-primary-dark shadow-xs transition"
           >
             <RefreshCw size={13} />
             Xem tất cả ({opportunities.length})
@@ -203,7 +203,7 @@ export function MarketIntelligenceView({
             <Button variant="ghost"
               type="button"
               onClick={() => setActiveTab("opportunities")}
-              className={`h-auto p-0 pb-3 flex items-center gap-2 border-b-2 transition ${
+              className={`text-[length:inherit] h-auto p-0 pb-3 flex items-center gap-2 border-b-2 transition ${
                 activeTab === "opportunities"
                   ? "border-primary text-primary font-semibold"
                   : "border-transparent text-text-muted hover:text-text"
@@ -215,7 +215,7 @@ export function MarketIntelligenceView({
             <Button variant="ghost"
               type="button"
               onClick={() => setActiveTab("monitoring")}
-              className={`h-auto p-0 pb-3 flex items-center gap-2 border-b-2 transition ${
+              className={`text-[length:inherit] h-auto p-0 pb-3 flex items-center gap-2 border-b-2 transition ${
                 activeTab === "monitoring"
                   ? "border-primary text-primary font-semibold"
                   : "border-transparent text-text-muted hover:text-text"

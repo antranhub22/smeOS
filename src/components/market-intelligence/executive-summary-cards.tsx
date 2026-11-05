@@ -70,7 +70,7 @@ export function ExecutiveSummaryCards({
           <Button variant="outline"
             type="button"
             onClick={() => onSelectCategory?.("ALL")}
-            className={`inline-flex items-center gap-1.5 text-caption font-bold px-3 py-1 rounded-full border transition ${
+            className={`h-auto inline-flex items-center gap-1.5 text-caption font-bold px-3 py-1 rounded-full border transition ${
               activeFilter === "ALL"
                 ? "bg-primary text-white border-primary shadow-xs hover:bg-primary"
                 : "bg-white text-text-muted hover:text-primary hover:bg-primary-muted/60 border-border"
@@ -93,7 +93,7 @@ export function ExecutiveSummaryCards({
         <Button variant="outline"
           type="button"
           onClick={() => onSelectCategory?.(activeFilter === "IMPORTANT" ? "ALL" : "IMPORTANT")}
-          className={`justify-start font-[inherit] gap-0 rounded-xl border p-3.5 text-left transition-all duration-200 cursor-pointer group relative ${
+          className={`text-[length:inherit] h-auto justify-start font-[inherit] gap-0 rounded-xl border p-3.5 text-left transition-all duration-200 cursor-pointer group relative ${
             activeFilter === "IMPORTANT"
               ? "border-primary bg-primary-muted/80 ring-2 ring-primary/50 shadow-xs hover:bg-primary-muted/80"
               : "border-primary-border/80 bg-white hover:border-primary-border hover:shadow-xs hover:bg-white"
@@ -123,7 +123,7 @@ export function ExecutiveSummaryCards({
         <Button variant="outline"
           type="button"
           onClick={() => onSelectCategory?.(activeFilter === "RISING" ? "ALL" : "RISING")}
-          className={`justify-start font-[inherit] gap-0 rounded-xl border p-3.5 text-left transition-all duration-200 cursor-pointer group relative ${
+          className={`text-[length:inherit] h-auto justify-start font-[inherit] gap-0 rounded-xl border p-3.5 text-left transition-all duration-200 cursor-pointer group relative ${
             activeFilter === "RISING"
               ? "border-success bg-success-bg/80 ring-2 ring-success/50 shadow-xs hover:bg-success-bg/80"
               : "border-success-border/80 bg-white hover:border-success-border hover:shadow-xs hover:bg-white"
@@ -153,7 +153,7 @@ export function ExecutiveSummaryCards({
         <Button variant="outline"
           type="button"
           onClick={() => onSelectCategory?.(activeFilter === "TOPICS" ? "ALL" : "TOPICS")}
-          className={`justify-start font-[inherit] gap-0 rounded-xl border p-3.5 text-left transition-all duration-200 cursor-pointer group relative ${
+          className={`text-[length:inherit] h-auto justify-start font-[inherit] gap-0 rounded-xl border p-3.5 text-left transition-all duration-200 cursor-pointer group relative ${
             activeFilter === "TOPICS"
               ? "border-warning bg-warning-bg/80 ring-2 ring-warning/50 shadow-xs hover:bg-warning-bg/80"
               : "border-warning-border/80 bg-white hover:border-warning-border hover:shadow-xs hover:bg-white"
@@ -183,7 +183,7 @@ export function ExecutiveSummaryCards({
         <Button variant="outline"
           type="button"
           onClick={() => onSelectCategory?.(activeFilter === "OCCASIONS" ? "ALL" : "OCCASIONS")}
-          className={`justify-start font-[inherit] gap-0 rounded-xl border p-3.5 text-left transition-all duration-200 cursor-pointer group relative ${
+          className={`text-[length:inherit] h-auto justify-start font-[inherit] gap-0 rounded-xl border p-3.5 text-left transition-all duration-200 cursor-pointer group relative ${
             activeFilter === "OCCASIONS"
               ? "border-accent bg-accent-bg/80 ring-2 ring-accent/50 shadow-xs hover:bg-accent-bg/80"
               : "border-accent-border/80 bg-white hover:border-accent-border hover:shadow-xs hover:bg-white"

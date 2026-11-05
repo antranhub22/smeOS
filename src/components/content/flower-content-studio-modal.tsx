@@ -152,7 +152,7 @@ export function FlowerContentStudioModal({
                   type="button"
                   key={t}
                   onClick={() => setTone(t)}
-                  className={`justify-start font-[inherit] gap-0 cursor-pointer text-left px-3 py-2 rounded-lg border transition focus:outline-none focus:ring-2 focus:ring-primary ${
+                  className={`text-[length:inherit] h-auto justify-start font-[inherit] gap-0 cursor-pointer text-left px-3 py-2 rounded-lg border transition focus:outline-none focus:ring-2 focus:ring-primary ${
                     tone === t
                       ? "border-primary bg-primary/10 hover:bg-primary/10"
                       : "border-border bg-surface hover:border-primary/40 hover:bg-surface"

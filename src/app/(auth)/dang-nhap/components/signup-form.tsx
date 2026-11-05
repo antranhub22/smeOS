@@ -126,7 +126,7 @@ export function SignupForm({ onSwitchToLogin }: SignupFormProps) {
                   type="button"
                   key={ind.key}
                   onClick={() => setIndustryKey(ind.key)}
-                  className={`justify-start font-[inherit] gap-0 cursor-pointer flex flex-col items-start p-3 rounded-xl border text-left transition-all ${
+                  className={`text-[length:inherit] h-auto justify-start font-[inherit] gap-0 cursor-pointer flex flex-col items-start p-3 rounded-xl border text-left transition-all ${
                     isSelected
                       ? "border-primary bg-primary/10 ring-2 ring-primary/30 shadow-xs hover:bg-primary/10"
                       : "border-border bg-surface-alt/60 hover:border-primary/50 hover:bg-surface-alt/60"
@@ -162,7 +162,7 @@ export function SignupForm({ onSwitchToLogin }: SignupFormProps) {
             <Button variant="outline"
               type="button"
               onClick={() => setOrganizationType("SINGLE")}
-              className={`justify-start font-[inherit] gap-0 cursor-pointer flex flex-col items-start p-3 rounded-xl border text-left transition-all ${
+              className={`text-[length:inherit] h-auto justify-start font-[inherit] gap-0 cursor-pointer flex flex-col items-start p-3 rounded-xl border text-left transition-all ${
                 organizationType === "SINGLE"
                   ? "border-primary bg-primary/10 ring-2 ring-primary/30 shadow-xs hover:bg-primary/10"
                   : "border-border bg-surface-alt/60 hover:border-primary/50 hover:bg-surface-alt/60"
@@ -183,7 +183,7 @@ export function SignupForm({ onSwitchToLogin }: SignupFormProps) {
             <Button variant="outline"
               type="button"
               onClick={() => setOrganizationType("CHAIN")}
-              className={`justify-start font-[inherit] gap-0 cursor-pointer flex flex-col items-start p-3 rounded-xl border text-left transition-all ${
+              className={`text-[length:inherit] h-auto justify-start font-[inherit] gap-0 cursor-pointer flex flex-col items-start p-3 rounded-xl border text-left transition-all ${
                 organizationType === "CHAIN"
                   ? "border-primary bg-primary/10 ring-2 ring-primary/30 shadow-xs hover:bg-primary/10"
                   : "border-border bg-surface-alt/60 hover:border-primary/50 hover:bg-surface-alt/60"

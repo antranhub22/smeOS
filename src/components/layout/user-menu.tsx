@@ -83,7 +83,7 @@ export function UserMenu({ initials, direction = "down", size = "md" }: UserMenu
             aria-label="Đóng menu"
             tabIndex={-1}
             onClick={() => setMo(false)}
-            className="h-auto p-0 font-[inherit] gap-0 fixed inset-0 z-40 bg-transparent cursor-default border-0"
+            className="text-[length:inherit] h-auto p-0 font-[inherit] gap-0 fixed inset-0 z-40 bg-transparent cursor-default border-0"
           />
 
           {/* Menu popover */}
@@ -111,7 +111,7 @@ export function UserMenu({ initials, direction = "down", size = "md" }: UserMenu
                   setMo(false)
                   router.push("/van-hanh" as never)
                 }}
-                className="justify-start flex w-full items-center gap-2 border-b border-border bg-primary/5 px-3.5 py-2.5 text-left text-body-sm font-semibold text-primary hover:bg-primary/10 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary cursor-pointer"
+                className="h-auto justify-start flex w-full items-center gap-2 border-b border-border bg-primary/5 px-3.5 py-2.5 text-left text-body-sm font-semibold text-primary hover:bg-primary/10 transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary cursor-pointer"
               >
                 <ShieldCheck size={16} strokeWidth={2} className="text-primary shrink-0" aria-hidden="true" />
                 <span className="min-w-0">
@@ -130,7 +130,7 @@ export function UserMenu({ initials, direction = "down", size = "md" }: UserMenu
                 setMo(false)
                 router.push("/vai-tro" as never)
               }}
-              className="justify-start flex w-full items-center gap-2 border-b border-border px-3.5 py-2.5 text-left text-body-sm font-semibold text-text hover:bg-surface-alt transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary cursor-pointer"
+              className="h-auto justify-start flex w-full items-center gap-2 border-b border-border px-3.5 py-2.5 text-left text-body-sm font-semibold text-text hover:bg-surface-alt transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary cursor-pointer"
             >
               <UserRound size={16} strokeWidth={1.8} aria-hidden="true" />
               <span className="min-w-0">
@@ -151,7 +151,7 @@ export function UserMenu({ initials, direction = "down", size = "md" }: UserMenu
                   setMo(false)
                   window.dispatchEvent(new CustomEvent("open-ui-studio"))
                 }}
-                className="justify-start flex w-full items-center gap-2 border-b border-border px-3.5 py-2.5 text-left text-body-sm font-semibold text-text hover:bg-surface-alt transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary cursor-pointer"
+                className="h-auto justify-start flex w-full items-center gap-2 border-b border-border px-3.5 py-2.5 text-left text-body-sm font-semibold text-text hover:bg-surface-alt transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary cursor-pointer"
               >
                 <span className="flex h-4 w-4 items-center justify-center rounded-full bg-primary text-primary-fg text-caption font-bold">
                   🎨
@@ -172,7 +172,7 @@ export function UserMenu({ initials, direction = "down", size = "md" }: UserMenu
                   setMo(false)
                   setDoiMatKhau(true)
                 }}
-                className="justify-start flex w-full items-center gap-2 border-b border-border px-3.5 py-2.5 text-left text-body-sm font-semibold text-text hover:bg-surface-alt transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary cursor-pointer"
+                className="h-auto justify-start flex w-full items-center gap-2 border-b border-border px-3.5 py-2.5 text-left text-body-sm font-semibold text-text hover:bg-surface-alt transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary cursor-pointer"
               >
                 <KeyRound size={16} strokeWidth={1.8} aria-hidden="true" />
                 <span>Đổi mật khẩu</span>
@@ -184,7 +184,7 @@ export function UserMenu({ initials, direction = "down", size = "md" }: UserMenu
               type="button"
               onClick={handleLogout}
               disabled={dangXuat}
-              className="justify-start flex w-full items-center gap-2 px-3.5 py-2.5 text-left text-body-sm font-semibold text-danger hover:bg-danger-bg transition-colors disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary cursor-pointer"
+              className="h-auto justify-start flex w-full items-center gap-2 px-3.5 py-2.5 text-left text-body-sm font-semibold text-danger hover:bg-danger-bg transition-colors disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary cursor-pointer"
             >
               <LogOut size={16} strokeWidth={1.8} aria-hidden="true" />
               <span>{dangXuat ? "Đang đăng xuất…" : t("layout.userMenu.logout")}</span>

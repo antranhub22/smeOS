@@ -107,7 +107,7 @@ export function CancelFloristOrderModal({
                 type="button"
                 key={tag}
                 onClick={() => handleSelectQuickReason(tag)}
-                className="gap-0 cursor-pointer px-2.5 py-1 rounded-lg border border-border bg-surface-alt hover:bg-surface text-text font-medium text-caption transition-colors"
+                className="h-auto gap-0 cursor-pointer px-2.5 py-1 rounded-lg border border-border bg-surface-alt hover:bg-surface text-text font-medium text-caption transition-colors"
               >
                 + {tag}
               </Button>

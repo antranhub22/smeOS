@@ -42,7 +42,7 @@ export function BrochureUserGuideModal() {
               <Button variant="ghost"
                 type="button"
                 onClick={() => setActiveTab("admin")}
-                className={`flex items-center gap-1.5 border-b-2 px-3 py-2.5 text-body-sm font-bold transition-colors ${
+                className={`h-auto flex items-center gap-1.5 border-b-2 px-3 py-2.5 text-body-sm font-bold transition-colors ${
                   activeTab === "admin"
                     ? "border-primary text-primary"
                     : "border-transparent text-text-muted hover:text-text"
@@ -54,7 +54,7 @@ export function BrochureUserGuideModal() {
               <Button variant="ghost"
                 type="button"
                 onClick={() => setActiveTab("sales")}
-                className={`flex items-center gap-1.5 border-b-2 px-3 py-2.5 text-body-sm font-bold transition-colors ${
+                className={`h-auto flex items-center gap-1.5 border-b-2 px-3 py-2.5 text-body-sm font-bold transition-colors ${
                   activeTab === "sales"
                     ? "border-primary text-primary"
                     : "border-transparent text-text-muted hover:text-text"
@@ -66,7 +66,7 @@ export function BrochureUserGuideModal() {
               <Button variant="ghost"
                 type="button"
                 onClick={() => setActiveTab("coordinator")}
-                className={`flex items-center gap-1.5 border-b-2 px-3 py-2.5 text-body-sm font-bold transition-colors ${
+                className={`h-auto flex items-center gap-1.5 border-b-2 px-3 py-2.5 text-body-sm font-bold transition-colors ${
                   activeTab === "coordinator"
                     ? "border-primary text-primary"
                     : "border-transparent text-text-muted hover:text-text"

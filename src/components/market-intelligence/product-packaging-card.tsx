@@ -266,7 +266,7 @@ export function ProductPackagingCard({ packaging, onChange }: ProductPackagingCa
               aria-label="Xóa"
                   type="button"
                   onClick={() => handleRemoveDecor(decor.id)}
-                  className="font-[inherit] gap-0 text-text-muted hover:text-danger-text p-0.5"
+                  className="text-[length:inherit] h-auto font-[inherit] gap-0 text-text-muted hover:text-danger-text p-0.5"
                 >
                   <Trash2 size={12} />
                 </Button>

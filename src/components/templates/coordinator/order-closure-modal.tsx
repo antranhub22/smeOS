@@ -164,7 +164,7 @@ export function OrderClosureModal({ isOpen, order, onClose, onSubmit }: OrderClo
                   key={star}
                   aria-label={`${star} sao`}
                   onClick={() => setPartnerRating(star)}
-                  className="font-[inherit] gap-0 p-0.5 cursor-pointer"
+                  className="text-[length:inherit] h-auto font-[inherit] gap-0 p-0.5 cursor-pointer"
                 >
                   <Star size={20} className={star <= partnerRating ? "fill-sand-400 text-sand-500" : "text-cool-300"} />
                 </Button>

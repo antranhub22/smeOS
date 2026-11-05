@@ -508,7 +508,7 @@ export function AccountStorageHub({
                     <Button variant="secondary"
                       type="button"
                       onClick={() => handleSelectRaw(asset)}
-                      className="flex flex-1 items-center justify-center rounded-lg text-caption h-7 gap-1 font-semibold"
+                      className="px-0 py-0 flex flex-1 items-center justify-center rounded-lg text-caption h-7 gap-1 font-semibold"
                     >
                       <Sparkles size={12} />
                       Phân tích
@@ -525,7 +525,7 @@ export function AccountStorageHub({
                           })
                         }
                         aria-label="Chuyển ảnh vào thùng rác"
-                        className="font-[inherit] gap-0 flex items-center justify-center h-7 w-7 border border-border text-text-muted hover:text-danger hover:bg-danger-bg shrink-0 rounded-lg"
+                        className="px-0 py-0 text-[length:inherit] font-[inherit] gap-0 flex items-center justify-center h-7 w-7 border border-border text-text-muted hover:text-danger hover:bg-danger-bg shrink-0 rounded-lg"
                         title="Chuyển vào thùng rác 30 ngày (Chỉ Điều hành)"
                       >
                         <Trash2 size={13} />

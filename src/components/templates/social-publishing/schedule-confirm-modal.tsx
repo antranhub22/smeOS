@@ -153,7 +153,7 @@ export function ScheduleConfirmModal({
               type="button"
               aria-pressed={mode === "now"}
               onClick={() => setMode("now")}
-              className={`font-[inherit] gap-0 flex items-center justify-between p-3 rounded-xl border text-left transition-all cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
+              className={`text-[length:inherit] h-auto font-[inherit] gap-0 flex items-center justify-between p-3 rounded-xl border text-left transition-all cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
                 mode === "now"
                   ? "border-primary bg-primary/5 shadow-xs ring-1 ring-primary hover:bg-primary/5"
                   : "border-border bg-surface hover:border-border-hover hover:bg-surface"
@@ -176,7 +176,7 @@ export function ScheduleConfirmModal({
               type="button"
               aria-pressed={mode === "lunch"}
               onClick={() => setMode("lunch")}
-              className={`font-[inherit] gap-0 flex items-center justify-between p-3 rounded-xl border text-left transition-all cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
+              className={`text-[length:inherit] h-auto font-[inherit] gap-0 flex items-center justify-between p-3 rounded-xl border text-left transition-all cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
                 mode === "lunch"
                   ? "border-primary bg-primary/5 shadow-xs ring-1 ring-primary hover:bg-primary/5"
                   : "border-border bg-surface hover:border-border-hover hover:bg-surface"
@@ -199,7 +199,7 @@ export function ScheduleConfirmModal({
               type="button"
               aria-pressed={mode === "evening"}
               onClick={() => setMode("evening")}
-              className={`font-[inherit] gap-0 flex items-center justify-between p-3 rounded-xl border text-left transition-all cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
+              className={`text-[length:inherit] h-auto font-[inherit] gap-0 flex items-center justify-between p-3 rounded-xl border text-left transition-all cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
                 mode === "evening"
                   ? "border-primary bg-primary/5 shadow-xs ring-1 ring-primary hover:bg-primary/5"
                   : "border-border bg-surface hover:border-border-hover hover:bg-surface"
@@ -222,7 +222,7 @@ export function ScheduleConfirmModal({
               type="button"
               aria-pressed={mode === "custom"}
               onClick={() => setMode("custom")}
-              className={`font-[inherit] gap-0 flex items-center justify-between p-3 rounded-xl border text-left transition-all cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
+              className={`text-[length:inherit] h-auto font-[inherit] gap-0 flex items-center justify-between p-3 rounded-xl border text-left transition-all cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
                 mode === "custom"
                   ? "border-primary bg-primary/5 shadow-xs ring-1 ring-primary hover:bg-primary/5"
                   : "border-border bg-surface hover:border-border-hover hover:bg-surface"

@@ -175,7 +175,7 @@ export function PlatformFeedPreview({
                   platform: item.key as PlatformKey,
                 })
               }
-              className={`gap-0 p-2.5 rounded-xl border text-center transition-all cursor-pointer ${
+              className={`text-[length:inherit] h-auto gap-0 p-2.5 rounded-xl border text-center transition-all cursor-pointer ${
                 isSelected
                   ? "border-primary bg-primary/5 shadow-xs text-primary font-bold hover:bg-primary/5"
                   : "border-border bg-surface hover:border-primary/40 text-text hover:bg-surface"

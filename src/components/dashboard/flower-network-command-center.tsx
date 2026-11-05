@@ -242,7 +242,7 @@ export function FlowerNetworkCommandCenter() {
               <Button variant="outline"
                 type="button"
                 onClick={() => router.push("/dieu-phoi" as never)}
-                className="justify-start font-[inherit] flex items-start gap-3 rounded-2xl border border-border/80 bg-surface p-4 text-left shadow-xs transition hover:border-primary/50 hover:shadow-sm cursor-pointer hover:bg-surface"
+                className="text-[length:inherit] h-auto justify-start font-[inherit] flex items-start gap-3 rounded-2xl border border-border/80 bg-surface p-4 text-left shadow-xs transition hover:border-primary/50 hover:shadow-sm cursor-pointer hover:bg-surface"
               >
                 <div className="rounded-xl bg-primary/10 p-2 text-primary">
                   <ShieldAlert className="h-5 w-5" />
@@ -258,7 +258,7 @@ export function FlowerNetworkCommandCenter() {
               <Button variant="outline"
                 type="button"
                 onClick={() => router.push("/don-hang")}
-                className="justify-start font-[inherit] flex items-start gap-3 rounded-2xl border border-border/80 bg-surface p-4 text-left shadow-xs transition hover:border-primary/50 hover:shadow-sm cursor-pointer hover:bg-surface"
+                className="text-[length:inherit] h-auto justify-start font-[inherit] flex items-start gap-3 rounded-2xl border border-border/80 bg-surface p-4 text-left shadow-xs transition hover:border-primary/50 hover:shadow-sm cursor-pointer hover:bg-surface"
               >
                 <div className="rounded-xl bg-primary/10 p-2 text-primary">
                   <Truck className="h-5 w-5" />

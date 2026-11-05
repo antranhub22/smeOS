@@ -443,7 +443,7 @@ export function CreativeHandoffModal({
                     key={opt.value}
                     type="button"
                     onClick={() => setMode(opt.value)}
-                    className={`relative flex h-auto flex-col items-stretch justify-start gap-0 font-[inherit] p-3 rounded-xl border text-left transition-all ${
+                    className={`text-[length:inherit] relative flex h-auto flex-col items-stretch justify-start gap-0 font-[inherit] p-3 rounded-xl border text-left transition-all ${
                       isSelected
                         ? `${opt.activeBorder} ${opt.activeBg} shadow-xs`
                         : "border-border bg-white hover:border-border hover:bg-bg/50"
@@ -506,7 +506,7 @@ export function CreativeHandoffModal({
                     key={area.id}
                     type="button"
                     onClick={() => setSelectedArea(area.id)}
-                    className={`gap-0 flex flex-col items-center justify-center p-2.5 rounded-xl border text-center transition-all ${
+                    className={`text-[length:inherit] h-auto gap-0 flex flex-col items-center justify-center p-2.5 rounded-xl border text-center transition-all ${
                       isSelected
                         ? "border-primary bg-primary-muted/70 text-primary font-bold ring-1 ring-primary/20 shadow-xs hover:bg-primary-muted/70"
                         : "border-border bg-white text-text hover:border-border hover:bg-bg"
@@ -540,7 +540,7 @@ export function CreativeHandoffModal({
                       key={opt.value}
                       type="button"
                       onClick={() => setSourceType(opt.value)}
-                      className={`flex flex-1 items-center justify-center gap-1.5 py-2 px-3 rounded-lg border text-caption font-semibold transition ${
+                      className={`h-auto flex flex-1 items-center justify-center gap-1.5 py-2 px-3 rounded-lg border text-caption font-semibold transition ${
                         isSelected
                           ? "border-primary bg-primary text-white shadow-xs hover:bg-primary"
                           : "border-border bg-white text-text hover:bg-bg"
@@ -582,7 +582,7 @@ export function CreativeHandoffModal({
             <Button variant="outline"
               type="button"
               onClick={onClose}
-              className="gap-0 px-3 py-1.5 rounded-lg border border-border text-caption font-semibold text-text-muted hover:bg-white transition"
+              className="h-auto gap-0 px-3 py-1.5 rounded-lg border border-border text-caption font-semibold text-text-muted hover:bg-white transition"
             >
               Hủy
             </Button>
@@ -591,7 +591,7 @@ export function CreativeHandoffModal({
                 <Button variant="outline"
                   type="button"
                   onClick={() => setPreview(null)}
-                  className="gap-0 px-3 py-1.5 rounded-lg border border-border text-caption font-semibold text-text hover:bg-white transition"
+                  className="h-auto gap-0 px-3 py-1.5 rounded-lg border border-border text-caption font-semibold text-text hover:bg-white transition"
                 >
                   ← Chỉnh lựa chọn
                 </Button>
@@ -599,7 +599,7 @@ export function CreativeHandoffModal({
                   type="button"
                   onClick={() => void handleStart(true)}
                   disabled={writingPlan}
-                  className="gap-0 px-3 py-1.5 rounded-lg border border-border text-caption font-semibold text-text hover:bg-white transition disabled:opacity-50"
+                  className="h-auto gap-0 px-3 py-1.5 rounded-lg border border-border text-caption font-semibold text-text hover:bg-white transition disabled:opacity-50"
                 >
                   {writingPlan ? "Đang viết lại..." : "↻ AI viết lại (1 credit)"}
                 </Button>
@@ -621,7 +621,7 @@ export function CreativeHandoffModal({
                 type="button"
                 onClick={handleStartWithRulePlan}
                 disabled={!canStart || writingPlan}
-                className="gap-0 px-3 py-1.5 rounded-lg border border-border text-caption font-semibold text-text hover:bg-white transition disabled:opacity-50"
+                className="h-auto gap-0 px-3 py-1.5 rounded-lg border border-border text-caption font-semibold text-text hover:bg-white transition disabled:opacity-50"
               >
                 Dùng kịch bản cơ bản
               </Button>

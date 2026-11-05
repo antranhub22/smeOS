@@ -84,7 +84,7 @@ export function ToolkitPicker({
                   onPin(entry.navKey)
                   onClose()
                 }}
-                className={cn("justify-start font-[inherit]", 
+                className={cn("h-auto", "justify-start font-[inherit]", 
                   "flex w-full cursor-pointer items-center gap-2.5 px-3 py-2 text-meta text-left",
                   "hover:bg-surface-alt transition-colors duration-100"
                 )}

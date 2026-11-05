@@ -243,7 +243,7 @@ export function FloraOSGlobalCopilot() {
                 type="button"
                 aria-label="Đóng trợ lý"
                 onClick={() => setIsOpen(false)}
-                className="font-[inherit] gap-0 rounded-lg p-1.5 text-text-muted hover:bg-surface hover:text-text transition-colors cursor-pointer"
+                className="text-[length:inherit] h-auto font-[inherit] gap-0 rounded-lg p-1.5 text-text-muted hover:bg-surface hover:text-text transition-colors cursor-pointer"
               >
                 <X className="h-4 w-4" />
               </Button>
@@ -270,7 +270,7 @@ export function FloraOSGlobalCopilot() {
                         type="button"
                         key={idx}
                         onClick={() => handleSendMessage(q)}
-                        className="gap-0 w-full text-left rounded-xl border border-border bg-surface-alt p-2 text-caption font-medium text-text hover:bg-border/30 transition-colors flex items-center justify-between cursor-pointer"
+                        className="h-auto gap-0 w-full text-left rounded-xl border border-border bg-surface-alt p-2 text-caption font-medium text-text hover:bg-border/30 transition-colors flex items-center justify-between cursor-pointer"
                       >
                         <span className="truncate">{q}</span>
                         <ArrowRight className="h-3 w-3 text-primary shrink-0 ml-1" />

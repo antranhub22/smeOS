@@ -210,7 +210,7 @@ export function CustomerServiceWorkspace() {
                   key={conv.id}
                   aria-label={`Mở hội thoại với ${conv.customer_name ?? "khách"}`}
                   onClick={() => router.push(`/hoi-thoai?id=${conv.id}` as Route)}
-                  className="h-auto p-0 justify-start font-[inherit] gap-0 w-full text-left"
+                  className="text-[length:inherit] h-auto p-0 justify-start font-[inherit] gap-0 w-full text-left"
                 >
                   <Card className="flex items-center gap-3 p-3 hover:border-primary/40 transition-colors cursor-pointer">
                     <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-primary/10">

@@ -115,7 +115,7 @@ export function DailyCapacityBoard({
                   type="button"
                   key={day}
                   onClick={() => setSelectedDay(day)}
-                  className={`gap-0 flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-caption transition-all cursor-pointer ${
+                  className={`h-auto gap-0 flex w-full items-center justify-between rounded-xl px-3 py-2.5 text-caption transition-all cursor-pointer ${
                     isSelected
                       ? "bg-primary text-white font-bold shadow-xs hover:bg-primary"
                       : "bg-surface-alt hover:bg-surface-alt/80 text-text"

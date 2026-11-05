@@ -42,7 +42,7 @@ export function DesktopNavSearch({ inputRef, value, onChange, onKeyDown }: Deskt
           <Button variant="ghost"
             type="button"
             onClick={() => onChange("")}
-            className="font-[inherit] gap-0 absolute right-2 flex h-6 w-6 items-center justify-center rounded-md text-text-muted transition-colors hover:bg-surface-alt hover:text-text"
+            className="px-0 py-0 text-[length:inherit] font-[inherit] gap-0 absolute right-2 flex h-6 w-6 items-center justify-center rounded-md text-text-muted transition-colors hover:bg-surface-alt hover:text-text"
             aria-label="Xóa tìm kiếm"
           >
             <X size={13} />

@@ -52,7 +52,7 @@ export function LinkedInPreview({
           <Button variant="ghost"
             type="button"
             aria-label="Thêm tùy chọn"
-            className="font-[inherit] gap-0 text-cool-400 hover:text-cool-600 p-1 transition-colors cursor-pointer"
+            className="text-[length:inherit] h-auto font-[inherit] gap-0 text-cool-400 hover:text-cool-600 p-1 transition-colors cursor-pointer"
             onClick={() => undefined}
           >
             <MoreHorizontal size={18} />
@@ -143,7 +143,7 @@ export function LinkedInPreview({
       <div className="px-2 py-1.5 grid grid-cols-4 gap-1 text-caption font-semibold text-cool-600">
         <Button variant="ghost"
           type="button"
-          className="font-[inherit] flex items-center justify-center gap-1.5 py-2 rounded-lg hover:bg-cool-100 transition-colors cursor-pointer"
+          className="px-0 text-[length:inherit] h-auto font-[inherit] flex items-center justify-center gap-1.5 py-2 rounded-lg hover:bg-cool-100 transition-colors cursor-pointer"
           onClick={() => undefined}
         >
           <ThumbsUp size={15} />
@@ -151,7 +151,7 @@ export function LinkedInPreview({
         </Button>
         <Button variant="ghost"
           type="button"
-          className="font-[inherit] flex items-center justify-center gap-1.5 py-2 rounded-lg hover:bg-cool-100 transition-colors cursor-pointer"
+          className="px-0 text-[length:inherit] h-auto font-[inherit] flex items-center justify-center gap-1.5 py-2 rounded-lg hover:bg-cool-100 transition-colors cursor-pointer"
           onClick={() => undefined}
         >
           <MessageSquare size={15} />
@@ -159,7 +159,7 @@ export function LinkedInPreview({
         </Button>
         <Button variant="ghost"
           type="button"
-          className="font-[inherit] flex items-center justify-center gap-1.5 py-2 rounded-lg hover:bg-cool-100 transition-colors cursor-pointer"
+          className="px-0 text-[length:inherit] h-auto font-[inherit] flex items-center justify-center gap-1.5 py-2 rounded-lg hover:bg-cool-100 transition-colors cursor-pointer"
           onClick={() => undefined}
         >
           <Repeat size={15} />
@@ -167,7 +167,7 @@ export function LinkedInPreview({
         </Button>
         <Button variant="ghost"
           type="button"
-          className="font-[inherit] flex items-center justify-center gap-1.5 py-2 rounded-lg hover:bg-cool-100 transition-colors cursor-pointer"
+          className="px-0 text-[length:inherit] h-auto font-[inherit] flex items-center justify-center gap-1.5 py-2 rounded-lg hover:bg-cool-100 transition-colors cursor-pointer"
           onClick={() => undefined}
         >
           <Send size={15} />

@@ -142,7 +142,7 @@ export function PartnerAssignmentModal({
               </p>
             </div>
           </div>
-          <Button variant="ghost" type="submit" onClick={onClose} aria-label="Đóng" className="font-[inherit] gap-0 p-1.5 rounded-lg hover:bg-surface-alt text-text-muted">
+          <Button variant="ghost" type="submit" onClick={onClose} aria-label="Đóng" className="text-[length:inherit] h-auto font-[inherit] gap-0 p-1.5 rounded-lg hover:bg-surface-alt text-text-muted">
             <X size={18} />
           </Button>
         </div>

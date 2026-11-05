@@ -75,7 +75,7 @@ export function ProductTopicsList({
         <Button variant="ghost"
           type="button"
           onClick={() => setActiveAngleFilter("ALL")}
-          className={`gap-0 px-3 py-1 rounded-xl font-bold transition whitespace-nowrap ${
+          className={`text-[length:inherit] h-auto gap-0 px-3 py-1 rounded-xl font-bold transition whitespace-nowrap ${
             activeAngleFilter === "ALL"
               ? "bg-primary text-white shadow-xs hover:bg-primary"
               : "bg-surface-alt text-text-muted hover:bg-border"
@@ -92,7 +92,7 @@ export function ProductTopicsList({
               key={key}
               type="button"
               onClick={() => setActiveAngleFilter(key)}
-              className={`gap-0 px-2.5 py-1 rounded-xl font-bold transition whitespace-nowrap border ${
+              className={`text-[length:inherit] h-auto gap-0 px-2.5 py-1 rounded-xl font-bold transition whitespace-nowrap border ${
                 isActive
                   ? "bg-text text-white border-text shadow-xs hover:bg-text"
                   : "bg-bg text-text-muted border-border hover:bg-surface-alt"
@@ -121,7 +121,7 @@ export function ProductTopicsList({
               <Button variant="primary"
                 type="button"
                 onClick={() => onOpenCreativeStudio(selectedTopic)}
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-primary hover:bg-primary-dark text-white text-caption font-bold shadow-xs transition"
+                className="h-auto inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-primary hover:bg-primary-dark text-white text-caption font-bold shadow-xs transition"
               >
                 <Wand2 size={13} />
                 Sáng tạo nội dung
@@ -174,7 +174,7 @@ export function ProductTopicsList({
                       e.stopPropagation();
                       handleSelect(topic);
                     }}
-                    className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-caption font-bold transition ${
+                    className={`h-auto inline-flex items-center gap-1 px-2 py-0.5 rounded-lg text-caption font-bold transition ${
                       isSelected
                         ? "bg-primary text-white hover:bg-primary"
                         : "bg-surface-alt text-text-muted hover:bg-border"
@@ -316,7 +316,7 @@ export function ProductTopicsList({
                     e.stopPropagation();
                     handleCopyHook(topic);
                   }}
-                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg border border-border bg-white hover:bg-bg text-caption font-semibold text-text transition"
+                  className="h-auto inline-flex items-center gap-1 px-2.5 py-1 rounded-lg border border-border bg-white hover:bg-bg text-caption font-semibold text-text transition"
                 >
                   {isCopied ? (
                     <>
@@ -339,7 +339,7 @@ export function ProductTopicsList({
                         e.stopPropagation();
                         onOpenCreativeStudio(topic);
                       }}
-                      className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-caption font-bold shadow-xs transition"
+                      className="h-auto inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-caption font-bold shadow-xs transition"
                     >
                       <Wand2 size={12} />
                       Sáng tạo nội dung

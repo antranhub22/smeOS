@@ -146,7 +146,7 @@ interface ProductTileProps {
 export function ProductTile({ product, liked, onLike, onOpen, selected, aspect = "aspect-[4/5]" }: ProductTileProps) {
   return (
     <div className="group relative">
-      <Button variant="ghost" type="button" onClick={onOpen} className="h-auto p-0 justify-start font-[inherit] gap-0 block w-full text-left" aria-label={`Xem ${toProductDisplay(product).ariaLabel}`}>
+      <Button variant="ghost" type="button" onClick={onOpen} className="text-[length:inherit] h-auto p-0 justify-start font-[inherit] gap-0 block w-full text-left" aria-label={`Xem ${toProductDisplay(product).ariaLabel}`}>
         <div className={cn("relative w-full overflow-hidden rounded-2xl bg-surface-alt", aspect, selected && "ring-2 ring-primary ring-offset-2 ring-offset-bg")}>
           <ProductImage product={product} className="transition-transform duration-500 group-hover:scale-[1.04]" />
         </div>
@@ -168,7 +168,7 @@ export function OrderBar({ product, onOrder, hint }: { product: GreetingCatalogP
       <Button variant="primary"
         type="button"
         onClick={() => onOrder(product)}
-        className="gap-0 h-12 shrink-0 rounded-2xl bg-primary px-6 text-body font-bold text-white shadow-md transition-transform active:scale-[0.98] hover:bg-primary"
+        className="py-0 gap-0 h-12 shrink-0 rounded-2xl bg-primary px-6 text-body font-bold text-white shadow-md transition-transform active:scale-[0.98] hover:bg-primary"
       >
         Đặt mẫu này
       </Button>

@@ -51,7 +51,7 @@ export function ShopContactBar({ shop, inquiry }: ShopContactBarProps) {
             onClick={() => setInfoSection("info")}
             aria-haspopup="dialog"
             aria-label={`Thông tin cửa hàng ${shop.name}`}
-            className="justify-start font-[inherit] flex min-h-11 min-w-0 flex-1 items-center gap-2.5 rounded-full text-left"
+            className="px-0 py-0 text-[length:inherit] justify-start font-[inherit] flex min-h-11 min-w-0 flex-1 items-center gap-2.5 rounded-full text-left"
           >
             <ShopLogo shop={shop} />
             <span className="min-w-0 truncate text-body font-bold text-text">{shop.name}</span>
@@ -69,7 +69,7 @@ export function ShopContactBar({ shop, inquiry }: ShopContactBarProps) {
               type="button"
               onClick={() => setShowQrModal(true)}
               aria-label="Mã QR Zalo"
-              className="inline-flex h-10 items-center gap-1.5 rounded-full border border-border px-3 text-body-sm font-semibold text-text hover:bg-surface-muted transition-colors"
+              className="py-0 inline-flex h-10 items-center gap-1.5 rounded-full border border-border px-3 text-body-sm font-semibold text-text hover:bg-surface-muted transition-colors"
             >
               <QrCode size={16} aria-hidden="true" />
               <span>Mã QR</span>

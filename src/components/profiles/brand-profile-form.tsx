@@ -319,7 +319,7 @@ export function BrandProfileForm({ initialData, onSave, saving }: BrandProfileFo
                     key={grp.id}
                     type="button"
                     onClick={() => handleToggleForbiddenGroup(grp.words)}
-                    className={`justify-start font-[inherit] gap-0 rounded-xl border p-3 text-left transition-all ${
+                    className={`text-[length:inherit] h-auto justify-start font-[inherit] gap-0 rounded-xl border p-3 text-left transition-all ${
                       isSelected
                         ? "border-warning bg-warning/10 hover:bg-warning/10"
                         : "border-border bg-surface-alt/40 hover:border-warning/50 hover:bg-surface-alt/40"
@@ -362,7 +362,7 @@ export function BrandProfileForm({ initialData, onSave, saving }: BrandProfileFo
         <Button variant="primary"
           type="submit"
           disabled={saving}
-          className="inline-flex items-center gap-2 rounded-xl bg-primary px-6 py-2.5 text-body-sm font-bold text-white shadow-xs transition-opacity hover:opacity-95 disabled:opacity-50 hover:bg-primary"
+          className="h-auto inline-flex items-center gap-2 rounded-xl bg-primary px-6 py-2.5 text-body-sm font-bold text-white shadow-xs transition-opacity hover:opacity-95 disabled:opacity-50 hover:bg-primary"
         >
           {saving ? (
             <span>Đang lưu...</span>

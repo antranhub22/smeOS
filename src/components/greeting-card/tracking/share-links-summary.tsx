@@ -18,7 +18,7 @@ export function ShareLinksSummary() {
   return (
     <div className="rounded-2xl border border-border bg-surface">
       <Button variant="ghost" type="button" aria-expanded={open} onClick={() => setOpen((v) => !v)}
-        className="flex min-h-11 w-full items-center justify-between gap-2 px-3 text-left text-body-sm font-bold text-text hover:bg-surface-muted">
+        className="py-0 flex min-h-11 w-full items-center justify-between gap-2 px-3 text-left text-body-sm font-bold text-text hover:bg-surface-muted">
         <span className="flex items-center gap-2"><Link2 size={16} className="text-primary" aria-hidden="true" /> Link bộ sưu tập đã sao chép</span>
         <ChevronDown size={16} aria-hidden="true" className={open ? "rotate-180" : ""} />
       </Button>

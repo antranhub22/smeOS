@@ -143,7 +143,7 @@ export function OrderDetailModal({ orderId, onClose, onUpdated }: OrderDetailMod
           type="button"
           key={key}
           onClick={() => setActiveTab(key)}
-          className={`cursor-pointer pb-2.5 px-3 border-b-2 flex items-center gap-1.5 transition-colors ${
+          className={`text-[length:inherit] h-auto cursor-pointer pb-2.5 px-3 border-b-2 flex items-center gap-1.5 transition-colors ${
             activeTab === key
               ? "border-primary text-primary font-bold"
               : "border-transparent text-text-muted hover:text-text"

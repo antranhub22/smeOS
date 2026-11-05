@@ -44,7 +44,7 @@ function ModuleCard({ module, isDev, onOpen }: ModuleCardProps) {
         <Button variant="ghost"
           type="button"
           onClick={() => onOpen(module.key)}
-          className="h-auto p-0 font-[inherit] gap-0 after:absolute after:inset-0 after:rounded-2xl after:content-[''] focus-visible:outline-none focus-visible:after:ring-2 focus-visible:after:ring-ring group-hover:text-primary transition-colors cursor-pointer"
+          className="text-[length:inherit] h-auto p-0 font-[inherit] gap-0 after:absolute after:inset-0 after:rounded-2xl after:content-[''] focus-visible:outline-none focus-visible:after:ring-2 focus-visible:after:ring-ring group-hover:text-primary transition-colors cursor-pointer"
         >
           {module.name}
         </Button>
@@ -82,7 +82,7 @@ function StoreOperationsCard({
         <Button variant="ghost"
           type="button"
           onClick={() => onOpen(section.key)}
-          className="h-auto p-0 font-[inherit] gap-0 after:absolute after:inset-0 after:rounded-2xl after:content-[''] focus-visible:outline-none focus-visible:after:ring-2 focus-visible:after:ring-ring group-hover:text-primary transition-colors cursor-pointer"
+          className="text-[length:inherit] h-auto p-0 font-[inherit] gap-0 after:absolute after:inset-0 after:rounded-2xl after:content-[''] focus-visible:outline-none focus-visible:after:ring-2 focus-visible:after:ring-ring group-hover:text-primary transition-colors cursor-pointer"
         >
           {section.name}
         </Button>

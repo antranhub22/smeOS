@@ -100,7 +100,7 @@ export function HomestayGuestFields({
               type="button"
               disabled={adultsCount <= 1}
               onClick={() => onAdultsChange(Math.max(1, adultsCount - 1))}
-              className="gap-0 h-7 w-7 rounded-md border border-border flex items-center justify-center font-bold text-body-sm disabled:opacity-30"
+              className="px-0 py-0 gap-0 h-7 w-7 rounded-md border border-border flex items-center justify-center font-bold text-body-sm disabled:opacity-30"
             >
               −
             </Button>
@@ -109,7 +109,7 @@ export function HomestayGuestFields({
               type="button"
               disabled={adultsCount >= 30}
               onClick={() => onAdultsChange(adultsCount + 1)}
-              className="gap-0 h-7 w-7 rounded-md border border-border flex items-center justify-center font-bold text-body-sm disabled:opacity-30"
+              className="px-0 py-0 gap-0 h-7 w-7 rounded-md border border-border flex items-center justify-center font-bold text-body-sm disabled:opacity-30"
             >
               +
             </Button>
@@ -123,7 +123,7 @@ export function HomestayGuestFields({
               type="button"
               disabled={childrenCount <= 0}
               onClick={() => onChildrenChange(Math.max(0, childrenCount - 1))}
-              className="gap-0 h-7 w-7 rounded-md border border-border flex items-center justify-center font-bold text-body-sm disabled:opacity-30"
+              className="px-0 py-0 gap-0 h-7 w-7 rounded-md border border-border flex items-center justify-center font-bold text-body-sm disabled:opacity-30"
             >
               −
             </Button>
@@ -132,7 +132,7 @@ export function HomestayGuestFields({
               type="button"
               disabled={childrenCount >= 20}
               onClick={() => onChildrenChange(childrenCount + 1)}
-              className="gap-0 h-7 w-7 rounded-md border border-border flex items-center justify-center font-bold text-body-sm disabled:opacity-30"
+              className="px-0 py-0 gap-0 h-7 w-7 rounded-md border border-border flex items-center justify-center font-bold text-body-sm disabled:opacity-30"
             >
               +
             </Button>

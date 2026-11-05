@@ -108,7 +108,7 @@ export function DevRoleOverrideBanner({ activeRoleKey, isDev }: Props) {
                       if (!isLoading) applyOverride(preset)
                     }}
                     aria-disabled={isLoading}
-                    className={cn("justify-start", 
+                    className={cn("h-auto", "justify-start", 
                       "flex w-full items-center gap-2 px-3 py-2 text-left text-meta transition-colors cursor-pointer",
                       isActive
                         ? "bg-surface-alt font-bold text-text hover:bg-surface-alt"
@@ -157,7 +157,7 @@ export function DevRoleOverrideBanner({ activeRoleKey, isDev }: Props) {
       <Button variant="outline"
         type="button"
         onClick={() => setOpen((v) => !v)}
-        className={cn(
+        className={cn("h-auto", 
           "flex items-center gap-1.5 rounded-full border border-border bg-surface-alt px-3 py-1.5 text-caption font-bold text-text shadow-md transition-all hover:bg-surface cursor-pointer",
           open && "bg-surface hover:bg-surface"
         )}

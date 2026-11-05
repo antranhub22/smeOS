@@ -113,7 +113,7 @@ export function KanbanCard({
             title={collapsed ? "Mở rộng chi tiết đơn" : "Thu gọn đơn"}
             aria-expanded={!collapsed}
             aria-label={collapsed ? "Mở rộng đơn" : "Thu gọn đơn"}
-            className="font-[inherit] gap-0 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded text-text-muted hover:bg-surface-muted hover:text-text transition-colors cursor-pointer"
+            className="px-0 py-0 text-[length:inherit] font-[inherit] gap-0 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded text-text-muted hover:bg-surface-muted hover:text-text transition-colors cursor-pointer"
           >
             {collapsed ? <ChevronRight size={13} aria-hidden="true" /> : <ChevronDown size={13} aria-hidden="true" />}
           </Button>
@@ -123,7 +123,7 @@ export function KanbanCard({
           <Button variant="ghost"
             type="button"
             onClick={() => onOpen(item)}
-            className="h-auto p-0 justify-start gap-0 font-bold text-text truncate text-left hover:text-primary transition-colors cursor-pointer"
+            className="text-[length:inherit] h-auto p-0 justify-start gap-0 font-bold text-text truncate text-left hover:text-primary transition-colors cursor-pointer"
           >
             {displayCustomerName}
           </Button>
@@ -150,14 +150,14 @@ export function KanbanCard({
               <Button variant="ghost"
                 type="button"
                 onClick={(e) => { e.stopPropagation(); onDecide(item, true) }}
-                className="gap-0 rounded bg-danger px-1.5 py-0.5 text-caption font-bold text-white hover:bg-danger-text transition-colors cursor-pointer"
+                className="h-auto gap-0 rounded bg-danger px-1.5 py-0.5 text-caption font-bold text-white hover:bg-danger-text transition-colors cursor-pointer"
               >
                 Duyệt
               </Button>
               <Button variant="outline"
                 type="button"
                 onClick={(e) => { e.stopPropagation(); onDecide(item, false) }}
-                className="gap-0 rounded border border-border bg-surface px-1.5 py-0.5 text-caption font-medium text-text-muted hover:bg-surface-muted transition-colors cursor-pointer"
+                className="h-auto gap-0 rounded border border-border bg-surface px-1.5 py-0.5 text-caption font-medium text-text-muted hover:bg-surface-muted transition-colors cursor-pointer"
               >
                 Từ chối
               </Button>
@@ -177,7 +177,7 @@ export function KanbanCard({
               type="button"
               onClick={(e) => { e.stopPropagation(); onRestore(item) }}
               title="Khôi phục đơn vào tiến độ"
-              className="inline-flex items-center gap-0.5 rounded border border-primary-border bg-primary-muted px-1.5 py-0.5 text-caption font-bold text-primary hover:bg-primary hover:text-white transition-colors cursor-pointer shrink-0"
+              className="h-auto inline-flex items-center gap-0.5 rounded border border-primary-border bg-primary-muted px-1.5 py-0.5 text-caption font-bold text-primary hover:bg-primary hover:text-white transition-colors cursor-pointer shrink-0"
             >
               <RotateCcw size={10} aria-hidden="true" />
               Khôi phục
@@ -191,7 +191,7 @@ export function KanbanCard({
         <Button variant="ghost"
           type="button"
           onClick={() => onOpen(item)}
-          className="h-auto p-0 font-[inherit] flex items-center justify-between gap-1.5 pt-0.5 text-left w-full cursor-pointer"
+          className="text-[length:inherit] h-auto p-0 font-[inherit] flex items-center justify-between gap-1.5 pt-0.5 text-left w-full cursor-pointer"
         >
           <span className="truncate text-caption text-text-muted">
             {item.productName === "Chưa chốt mẫu" ? "Chưa chốt" : item.productName} ·{" "}
@@ -207,7 +207,7 @@ export function KanbanCard({
           <Button variant="ghost"
             type="button"
             onClick={() => onOpen(item)}
-            className="h-auto p-0 justify-start font-[inherit] flex w-full flex-col gap-1.5 text-left cursor-pointer"
+            className="text-[length:inherit] h-auto p-0 justify-start font-[inherit] flex w-full flex-col gap-1.5 text-left cursor-pointer"
           >
             {/* Ảnh sản phẩm / hạng phòng & Giá tiền */}
             <div className="flex items-center gap-2 rounded-lg bg-surface-muted/40 p-1.5 w-full">
@@ -259,7 +259,7 @@ export function KanbanCard({
                     onClick={handleCopyLink}
                     title={copied ? "Đã sao chép link khách!" : "Sao chép link khách"}
                     aria-label="Sao chép link khách"
-                    className="font-[inherit] gap-0 inline-flex h-6 w-6 items-center justify-center rounded border border-border bg-surface text-text-muted hover:border-primary hover:text-primary transition-colors cursor-pointer hover:bg-surface"
+                    className="px-0 py-0 text-[length:inherit] font-[inherit] gap-0 inline-flex h-6 w-6 items-center justify-center rounded border border-border bg-surface text-text-muted hover:border-primary hover:text-primary transition-colors cursor-pointer hover:bg-surface"
                   >
                     {copied ? <Check size={12} className="text-success" aria-hidden="true" /> : <Copy size={12} aria-hidden="true" />}
                   </Button>
@@ -272,7 +272,7 @@ export function KanbanCard({
                     onClick={(e) => { e.stopPropagation(); onDismiss(item) }}
                     title="Bỏ hiển thị đơn này"
                     aria-label="Bỏ hiển thị đơn"
-                    className="font-[inherit] gap-0 inline-flex h-6 w-6 items-center justify-center rounded border border-border bg-surface text-text-muted hover:border-danger hover:text-danger transition-colors cursor-pointer hover:bg-surface"
+                    className="px-0 py-0 text-[length:inherit] font-[inherit] gap-0 inline-flex h-6 w-6 items-center justify-center rounded border border-border bg-surface text-text-muted hover:border-danger hover:text-danger transition-colors cursor-pointer hover:bg-surface"
                   >
                     <EyeOff size={12} aria-hidden="true" />
                   </Button>

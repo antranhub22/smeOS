@@ -146,7 +146,7 @@ export function VisualStorytellingControls({
                     disabled={disabled}
                     key={angle.id}
                     onClick={() => !disabled && onCameraAngleChange(angle.id)}
-                    className={`justify-start font-[inherit] gap-0 flex flex-col items-start p-2.5 rounded-xl border text-left transition select-none cursor-pointer ${
+                    className={`text-[length:inherit] h-auto justify-start font-[inherit] gap-0 flex flex-col items-start p-2.5 rounded-xl border text-left transition select-none cursor-pointer ${
                       disabled ? "opacity-50 cursor-not-allowed" : ""
                     } ${
                       isSelected
@@ -182,7 +182,7 @@ export function VisualStorytellingControls({
                     disabled={disabled}
                     key={item.id}
                     onClick={() => !disabled && onHumanInteractionChange(item.id)}
-                    className={`justify-start font-[inherit] gap-0 flex flex-col items-start p-2.5 rounded-xl border text-left transition select-none cursor-pointer ${
+                    className={`text-[length:inherit] h-auto justify-start font-[inherit] gap-0 flex flex-col items-start p-2.5 rounded-xl border text-left transition select-none cursor-pointer ${
                       disabled ? "opacity-50 cursor-not-allowed" : ""
                     } ${
                       isSelected

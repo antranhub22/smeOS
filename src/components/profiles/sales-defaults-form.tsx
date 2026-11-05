@@ -153,7 +153,7 @@ export function SalesDefaultsForm({
               key={preset.id}
               type="button"
               onClick={() => applyPreset(preset.id)}
-              className="justify-start font-[inherit] gap-0 rounded-xl border border-border bg-surface-alt/60 p-4 text-left transition-all hover:border-primary hover:bg-surface focus:outline-none"
+              className="text-[length:inherit] h-auto justify-start font-[inherit] gap-0 rounded-xl border border-border bg-surface-alt/60 p-4 text-left transition-all hover:border-primary hover:bg-surface focus:outline-none"
             >
               <div className="flex items-center gap-2 mb-1.5">
                 {preset.id === "preset-artisan-boutique" && <Palette size={16} className="text-primary" />}
@@ -194,7 +194,7 @@ export function SalesDefaultsForm({
                 key={item.id}
                 type="button"
                 onClick={() => toggleGift(item.label)}
-                className={`justify-start font-[inherit] flex items-start gap-3 rounded-xl border p-3.5 text-left transition-all ${
+                className={`text-[length:inherit] h-auto justify-start font-[inherit] flex items-start gap-3 rounded-xl border p-3.5 text-left transition-all ${
                   isChecked
                     ? "border-primary bg-primary/5 shadow-xs hover:bg-primary/5"
                     : "border-border bg-surface-alt/40 hover:border-primary/50 hover:bg-surface-alt/40"
@@ -246,7 +246,7 @@ export function SalesDefaultsForm({
                   aria-label={`Xóa quà tặng ${gift}`}
                   title="Xóa mục này"
                   onClick={() => handleRemoveGift(idx)}
-                  className="h-auto p-0 font-[inherit] gap-0 hover:text-danger transition-colors ml-0.5"
+                  className="text-[length:inherit] h-auto p-0 font-[inherit] gap-0 hover:text-danger transition-colors ml-0.5"
                 >
                   <Trash2 size={13} />
                 </Button>
@@ -283,7 +283,7 @@ export function SalesDefaultsForm({
                 key={item.id}
                 type="button"
                 onClick={() => toggleGuarantee(item.label)}
-                className={`justify-start font-[inherit] flex items-start gap-3 rounded-xl border p-3.5 text-left transition-all ${
+                className={`text-[length:inherit] h-auto justify-start font-[inherit] flex items-start gap-3 rounded-xl border p-3.5 text-left transition-all ${
                   isChecked
                     ? "border-primary bg-primary/5 shadow-xs hover:bg-primary/5"
                     : "border-border bg-surface-alt/40 hover:border-primary/50 hover:bg-surface-alt/40"
@@ -335,7 +335,7 @@ export function SalesDefaultsForm({
                   aria-label={`Xóa cam kết ${guar}`}
                   title="Xóa mục này"
                   onClick={() => handleRemoveGuarantee(idx)}
-                  className="h-auto p-0 font-[inherit] gap-0 hover:text-danger transition-colors ml-0.5"
+                  className="text-[length:inherit] h-auto p-0 font-[inherit] gap-0 hover:text-danger transition-colors ml-0.5"
                 >
                   <Trash2 size={13} />
                 </Button>
@@ -350,7 +350,7 @@ export function SalesDefaultsForm({
         <Button variant="primary"
           type="submit"
           disabled={saving}
-          className="inline-flex items-center gap-2 rounded-xl bg-primary px-6 py-2.5 text-body-sm font-bold text-white shadow-xs transition-opacity hover:opacity-95 disabled:opacity-50 hover:bg-primary"
+          className="h-auto inline-flex items-center gap-2 rounded-xl bg-primary px-6 py-2.5 text-body-sm font-bold text-white shadow-xs transition-opacity hover:opacity-95 disabled:opacity-50 hover:bg-primary"
         >
           {saving ? (
             <span>Đang lưu...</span>

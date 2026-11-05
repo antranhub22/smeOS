@@ -148,14 +148,14 @@ export function SaaSAdminCriteriaModal({
                 <Button variant="outline"
                   type="button"
                   onClick={handleSelectAll210}
-                  className="gap-0 px-2 py-0.5 rounded-md bg-accent-bg text-accent-text font-semibold hover:bg-accent-bg border border-accent-border/70 transition"
+                  className="text-[length:inherit] h-auto gap-0 px-2 py-0.5 rounded-md bg-accent-bg text-accent-text font-semibold hover:bg-accent-bg border border-accent-border/70 transition"
                 >
                   Chọn cả 210
                 </Button>
                 <Button variant="ghost"
                   type="button"
                   onClick={handleResetToSeasonal}
-                  className="gap-0 px-2 py-0.5 rounded-md bg-surface-alt text-text font-medium hover:bg-border transition"
+                  className="text-[length:inherit] h-auto gap-0 px-2 py-0.5 rounded-md bg-surface-alt text-text font-medium hover:bg-border transition"
                   title="Gợi ý mùa thu: 20/10, tốt nghiệp, quà tặng cưới"
                 >
                   Đề xuất mùa này
@@ -163,7 +163,7 @@ export function SaaSAdminCriteriaModal({
                 <Button variant="ghost"
                   type="button"
                   onClick={() => setSelectedTopics([])}
-                  className="font-[inherit] gap-0 px-2 py-0.5 rounded-md text-text-muted hover:text-danger-text transition"
+                  className="text-[length:inherit] h-auto font-[inherit] gap-0 px-2 py-0.5 rounded-md text-text-muted hover:text-danger-text transition"
                 >
                   Xóa hết
                 </Button>
@@ -175,7 +175,7 @@ export function SaaSAdminCriteriaModal({
               <Button variant="ghost"
                 type="button"
                 onClick={() => setActiveCategory("recommended")}
-                className={`gap-0 flex-shrink-0 px-2.5 py-1 rounded-lg font-bold transition ${
+                className={`text-[length:inherit] h-auto gap-0 flex-shrink-0 px-2.5 py-1 rounded-lg font-bold transition ${
                   activeCategory === "recommended"
                     ? "bg-accent text-white shadow-xs hover:bg-accent"
                     : "bg-surface-alt text-text-muted hover:bg-border"
@@ -186,7 +186,7 @@ export function SaaSAdminCriteriaModal({
               <Button variant="ghost"
                 type="button"
                 onClick={() => setActiveCategory("all")}
-                className={`gap-0 flex-shrink-0 px-2.5 py-1 rounded-lg font-bold transition ${
+                className={`text-[length:inherit] h-auto gap-0 flex-shrink-0 px-2.5 py-1 rounded-lg font-bold transition ${
                   activeCategory === "all"
                     ? "bg-accent text-white shadow-xs hover:bg-accent"
                     : "bg-surface-alt text-text-muted hover:bg-border"
@@ -199,7 +199,7 @@ export function SaaSAdminCriteriaModal({
                   key={cat.id}
                   type="button"
                   onClick={() => setActiveCategory(cat.id)}
-                  className={`gap-0 flex-shrink-0 px-2.5 py-1 rounded-lg font-medium transition ${
+                  className={`text-[length:inherit] h-auto gap-0 flex-shrink-0 px-2.5 py-1 rounded-lg font-medium transition ${
                     activeCategory === cat.id
                       ? "bg-accent text-white shadow-xs hover:bg-accent"
                       : "bg-surface-alt text-text-muted hover:bg-border"
@@ -225,7 +225,7 @@ export function SaaSAdminCriteriaModal({
               <Button variant="outline"
                 type="button"
                 onClick={handleSelectAllInView}
-                className="inline-flex items-center gap-1 text-caption font-semibold text-accent-text bg-accent-bg hover:bg-accent-bg px-2.5 h-8 rounded-lg border border-accent-border transition"
+                className="py-0 inline-flex items-center gap-1 text-caption font-semibold text-accent-text bg-accent-bg hover:bg-accent-bg px-2.5 h-8 rounded-lg border border-accent-border transition"
               >
                 <CheckSquare size={13} />
                 Chọn nhóm này
@@ -233,7 +233,7 @@ export function SaaSAdminCriteriaModal({
               <Button variant="ghost"
                 type="button"
                 onClick={handleDeselectAllInView}
-                className="gap-0 text-caption font-medium text-text-muted hover:text-text px-2 h-8 rounded-lg hover:bg-surface-alt transition"
+                className="py-0 gap-0 text-caption font-medium text-text-muted hover:text-text px-2 h-8 rounded-lg hover:bg-surface-alt transition"
               >
                 Bỏ chọn
               </Button>
@@ -248,7 +248,7 @@ export function SaaSAdminCriteriaModal({
                     key={`${k}-${idx}`}
                     type="button"
                     onClick={() => toggleTopic(k)}
-                    className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-caption font-medium transition ${
+                    className={`h-auto inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-caption font-medium transition ${
                       isSelected
                         ? "bg-accent text-white shadow-2xs hover:bg-accent"
                         : "bg-white border border-border text-text hover:border-accent-border hover:bg-accent-bg/50"
@@ -284,7 +284,7 @@ export function SaaSAdminCriteriaModal({
               <Button variant="outline"
                 type="button"
                 onClick={handleAddCustom}
-                className="gap-0 px-3 h-8 rounded-lg border border-border bg-surface-alt text-caption font-semibold text-text hover:bg-accent-bg hover:text-accent-text transition"
+                className="py-0 gap-0 px-3 h-8 rounded-lg border border-border bg-surface-alt text-caption font-semibold text-text hover:bg-accent-bg hover:text-accent-text transition"
               >
                 + Thêm
               </Button>
@@ -383,14 +383,14 @@ export function SaaSAdminCriteriaModal({
               type="button"
               onClick={onClose}
               disabled={isSaving}
-              className="gap-0 rounded-xl border border-border px-4 py-2 text-caption font-semibold text-text hover:bg-surface-alt transition"
+              className="h-auto gap-0 rounded-xl border border-border px-4 py-2 text-caption font-semibold text-text hover:bg-surface-alt transition"
             >
               Đóng
             </Button>
             <Button variant="ghost"
               type="submit"
               disabled={isSaving}
-              className="inline-flex items-center gap-1.5 rounded-xl bg-accent px-4 py-2 text-caption font-bold text-white hover:bg-accent-text shadow-sm transition disabled:opacity-50"
+              className="h-auto inline-flex items-center gap-1.5 rounded-xl bg-accent px-4 py-2 text-caption font-bold text-white hover:bg-accent-text shadow-sm transition disabled:opacity-50"
             >
               <Sparkles size={14} />
               {isSaving

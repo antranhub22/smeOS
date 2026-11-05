@@ -46,7 +46,7 @@ export function CustomerOrdersTab({ customerId }: { customerId: string }) {
     <ul className="divide-y divide-border rounded-xl border border-border">
       {orders.map((o) => (
         <li key={o.id}>
-          <Button variant="ghost" type="button" onClick={() => setOpenId(o.id)} className="font-[inherit] flex w-full items-start justify-between gap-3 p-3 text-left text-caption hover:bg-surface-alt">
+          <Button variant="ghost" type="button" onClick={() => setOpenId(o.id)} className="h-auto font-[inherit] flex w-full items-start justify-between gap-3 p-3 text-left text-caption hover:bg-surface-alt">
             <span>
               <span className="block font-semibold text-text">Đơn {o.code} · {STATUS_TEXT[o.status] ?? o.status}</span>
               <span className="block text-text-muted">{o.summary || "—"}</span>

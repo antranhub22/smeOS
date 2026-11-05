@@ -158,21 +158,21 @@ export function ConfirmCraftAcceptanceModal({
               <Button variant="outline"
                 type="button"
                 onClick={() => setAgreedFee(suggestedCraftFeeVnd)}
-                className="gap-0 px-2 py-0.5 rounded bg-surface-alt border border-border text-text hover:bg-surface text-caption font-semibold cursor-pointer"
+                className="h-auto gap-0 px-2 py-0.5 rounded bg-surface-alt border border-border text-text hover:bg-surface text-caption font-semibold cursor-pointer"
               >
                 Mức gợi ý ({suggestedCraftFeeVnd.toLocaleString("vi-VN")}đ)
               </Button>
               <Button variant="outline"
                 type="button"
                 onClick={() => setAgreedFee((prev) => Math.max(0, prev - 20000))}
-                className="font-[inherit] gap-0 px-1.5 py-0.5 rounded bg-surface-alt border border-border text-text hover:bg-surface text-caption cursor-pointer"
+                className="h-auto font-[inherit] gap-0 px-1.5 py-0.5 rounded bg-surface-alt border border-border text-text hover:bg-surface text-caption cursor-pointer"
               >
                 -20k
               </Button>
               <Button variant="outline"
                 type="button"
                 onClick={() => setAgreedFee((prev) => prev + 20000)}
-                className="font-[inherit] gap-0 px-1.5 py-0.5 rounded bg-surface-alt border border-border text-text hover:bg-surface text-caption cursor-pointer"
+                className="h-auto font-[inherit] gap-0 px-1.5 py-0.5 rounded bg-surface-alt border border-border text-text hover:bg-surface text-caption cursor-pointer"
               >
                 +20k
               </Button>

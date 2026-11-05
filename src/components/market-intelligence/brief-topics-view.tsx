@@ -109,7 +109,7 @@ export function BriefTopicsView({
           <Button variant="ghost"
             type="button"
             onClick={() => setActiveCategory("ALL")}
-            className={`font-[inherit] gap-0 px-2.5 py-1 rounded-lg transition ${
+            className={`text-[length:inherit] h-auto font-[inherit] gap-0 px-2.5 py-1 rounded-lg transition ${
               activeCategory === "ALL" ? "bg-warning text-white hover:bg-warning" : "text-text-muted hover:text-text"
             }`}
           >
@@ -118,7 +118,7 @@ export function BriefTopicsView({
           <Button variant="ghost"
             type="button"
             onClick={() => setActiveCategory("VIRAL")}
-            className={`font-[inherit] gap-0 px-2.5 py-1 rounded-lg transition ${
+            className={`text-[length:inherit] h-auto font-[inherit] gap-0 px-2.5 py-1 rounded-lg transition ${
               activeCategory === "VIRAL" ? "bg-warning text-white hover:bg-warning" : "text-text-muted hover:text-text"
             }`}
           >
@@ -127,7 +127,7 @@ export function BriefTopicsView({
           <Button variant="ghost"
             type="button"
             onClick={() => setActiveCategory("TUTORIAL")}
-            className={`font-[inherit] gap-0 px-2.5 py-1 rounded-lg transition ${
+            className={`text-[length:inherit] h-auto font-[inherit] gap-0 px-2.5 py-1 rounded-lg transition ${
               activeCategory === "TUTORIAL" ? "bg-warning text-white hover:bg-warning" : "text-text-muted hover:text-text"
             }`}
           >
@@ -136,7 +136,7 @@ export function BriefTopicsView({
           <Button variant="ghost"
             type="button"
             onClick={() => setActiveCategory("GIFTING")}
-            className={`font-[inherit] gap-0 px-2.5 py-1 rounded-lg transition ${
+            className={`text-[length:inherit] h-auto font-[inherit] gap-0 px-2.5 py-1 rounded-lg transition ${
               activeCategory === "GIFTING" ? "bg-warning text-white hover:bg-warning" : "text-text-muted hover:text-text"
             }`}
           >
@@ -279,7 +279,7 @@ export function BriefTopicsView({
                   <Button variant="outline"
                     type="button"
                     onClick={() => handleCopy(cleanHook)}
-                    className="inline-flex items-center gap-1 text-caption font-bold text-warning-text bg-warning-bg hover:bg-warning-bg px-2.5 py-1.5 rounded-lg border border-warning-border transition"
+                    className="h-auto inline-flex items-center gap-1 text-caption font-bold text-warning-text bg-warning-bg hover:bg-warning-bg px-2.5 py-1.5 rounded-lg border border-warning-border transition"
                     title="Sao chép kịch bản"
                   >
                     {copiedHook === cleanHook ? (
@@ -298,7 +298,7 @@ export function BriefTopicsView({
                   <Button variant="primary"
                     type="button"
                     onClick={() => handleCreateVideo(entry.topic, cleanHook)}
-                    className="inline-flex items-center gap-1 text-caption font-bold text-white bg-primary hover:bg-primary-dark px-3 py-1.5 rounded-lg shadow-2xs transition"
+                    className="h-auto inline-flex items-center gap-1 text-caption font-bold text-white bg-primary hover:bg-primary-dark px-3 py-1.5 rounded-lg shadow-2xs transition"
                     title="Tạo video kịch bản này ngay"
                   >
                     <Video size={12} />

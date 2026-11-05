@@ -123,7 +123,7 @@ export function VideoCreateModal({
                   key={fmtKey}
                   aria-pressed={isSelected}
                   onClick={() => setFormat(fmtKey)}
-                  className={`font-[inherit] text-left rounded-xl border p-3 transition-all flex flex-col justify-between gap-1.5 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
+                  className={`text-[length:inherit] h-auto font-[inherit] text-left rounded-xl border p-3 transition-all flex flex-col justify-between gap-1.5 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
                     isSelected
                       ? "border-primary bg-primary/5 shadow-xs ring-1 ring-primary hover:bg-primary/5"
                       : "border-border bg-surface hover:border-border-hover hover:bg-surface"
@@ -214,7 +214,7 @@ export function VideoCreateModal({
                   key={stKey}
                   aria-pressed={isSel}
                   onClick={() => setCaptionStyle(stKey)}
-                  className={`font-[inherit] text-left rounded-xl p-2.5 border transition-all text-caption flex flex-col justify-between gap-1 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
+                  className={`h-auto font-[inherit] text-left rounded-xl p-2.5 border transition-all text-caption flex flex-col justify-between gap-1 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
                     isSel
                       ? "border-primary bg-primary/10 shadow-xs ring-1 ring-primary hover:bg-primary/10"
                       : "border-border bg-surface hover:border-border-hover hover:bg-surface"

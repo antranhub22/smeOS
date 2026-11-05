@@ -230,7 +230,7 @@ export function HomestayCalendarMatrix({
                                   ? `Đã khóa: ${booking.note || "Bảo trì"} (Bấm để xem chi tiết)`
                                   : `Đơn: ${booking.orderCode || "Online"} - Khách: ${booking.customerName || "Khách lẻ"} (Bấm để xem chi tiết)`
                               }
-                              className={`gap-0 group relative flex w-full flex-col items-center justify-center rounded-lg p-1 text-caption font-bold hover:opacity-85 transition-opacity cursor-pointer ${
+                              className={`h-auto gap-0 group relative flex w-full flex-col items-center justify-center rounded-lg p-1 text-caption font-bold hover:opacity-85 transition-opacity cursor-pointer ${
                                 isBlocked ? "text-warning hover:bg-warning/20" : "text-primary hover:bg-primary/20"
                               }`}
                             >
@@ -259,7 +259,7 @@ export function HomestayCalendarMatrix({
                             type="button"
                             onClick={() => openBlockModal(prod.id, day)}
                             title={`Bấm để khóa ngày ${day}`}
-                            className="font-[inherit] gap-0 flex h-7 w-full items-center justify-center opacity-0 group-hover:opacity-100 text-text-muted hover:text-primary transition-opacity cursor-pointer"
+                            className="px-0 py-0 text-[length:inherit] font-[inherit] gap-0 flex h-7 w-full items-center justify-center opacity-0 group-hover:opacity-100 text-text-muted hover:text-primary transition-opacity cursor-pointer"
                           >
                             <Plus size={12} />
                           </Button>

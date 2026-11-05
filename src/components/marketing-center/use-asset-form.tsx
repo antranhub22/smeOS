@@ -116,7 +116,7 @@ export function UseAssetForm({
                 type="button"
                 key={dest}
                 onClick={() => handleDestinationChange(dest)}
-                className={`justify-start font-[inherit] gap-0 rounded-2xl p-3 text-left cursor-pointer transition-all border bg-surface hover:bg-surface ${
+                className={`text-[length:inherit] h-auto justify-start font-[inherit] gap-0 rounded-2xl p-3 text-left cursor-pointer transition-all border bg-surface hover:bg-surface ${
                   isSelected
                     ? "border-primary bg-selected ring-1 ring-primary hover:bg-selected"
                     : "border-border hover:border-text-muted/40"
@@ -144,7 +144,7 @@ export function UseAssetForm({
                 type="button"
                 key={cta}
                 onClick={() => setCtaCode(cta)}
-                className={`justify-start gap-0 p-2 rounded-xl text-left border text-caption cursor-pointer transition-all ${
+                className={`h-auto justify-start gap-0 p-2 rounded-xl text-left border text-caption cursor-pointer transition-all ${
                   isSelected
                     ? "border-primary bg-selected font-bold text-primary hover:bg-selected"
                     : "border-border text-text hover:bg-surface-alt"
