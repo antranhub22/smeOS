@@ -85,8 +85,9 @@ def record_job_event(cur: psycopg.Cursor, job_id: str, event: str, payload: Dict
     """Ghi nhận sự kiện tiến trình vào job_events để client đọc qua SSE."""
     cur.execute(
         """
-        INSERT INTO job_events (id, job_id, seq, event, payload, created_at)
+        INSERT INTO job_events (id, job_id, organization_id, seq, event, payload, created_at)
         VALUES (gen_random_uuid(), %(job_id)s,
+                (SELECT organization_id FROM generation_jobs WHERE id = %(job_id)s),
                 COALESCE((SELECT MAX(seq) FROM job_events WHERE job_id = %(job_id)s), 0) + 1,
                 %(event)s, %(payload)s, NOW())
         """,

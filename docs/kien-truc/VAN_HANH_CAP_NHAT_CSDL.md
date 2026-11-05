@@ -104,3 +104,28 @@ bọc `BEGIN; … COMMIT;`, rồi thử trên một CSDL có dữ liệu mẫu t
 - Viết migration mới đảo thay đổi (ưu tiên).
 - Khôi phục bản sao lưu ở mục 4 bước 1 hoặc PITR (`VAN_HANH_SU_CO_VA_SAO_LUU.md`), chấp nhận mất
   dữ liệu ghi sau thời điểm đó.
+
+## 7. Khoá `NOT VALID` sau đợt hoàn thiện CSDL (05/11/2026)
+
+Các migration `20261105150000` → `20261105210000` thêm khoá ngoại, khoá ghép tenant
+`(cha_id, organization_id)` và `CHECK` cho cột `status`. Dữ liệu cũ không làm hỏng deploy:
+
+- Cột cho phép `NULL` trỏ tới dòng không còn → đặt `NULL`, rồi thêm khoá.
+- Cột bắt buộc, dòng con lệch tổ chức với cha, hay `status` lạ → khoá thêm `NOT VALID` (chặn dữ
+  liệu mới) và log deploy có `NOTICE: Còn dòng …`.
+
+Sau deploy, liệt kê khoá còn `NOT VALID`:
+
+```sql
+SELECT conrelid::regclass, conname FROM pg_constraint WHERE NOT convalidated;
+```
+
+Với từng khoá: tìm dòng sai bằng câu `IF EXISTS (…)` cùng tên trong migration, sửa hoặc xoá
+(sao lưu trước), rồi `ALTER TABLE "<bảng>" VALIDATE CONSTRAINT "<khoá>";`.
+
+`20261105170000_timestamptz` viết lại 277 cột thời gian (đọc giá trị cũ là UTC). Chạy ngoài giờ
+cao điểm; có `lock_timeout = 30s` nên bảng đang bận làm migration dừng, không treo.
+
+Worker Python cũ (chưa deploy) ghi `job_events` không kèm `organization_id`: trigger
+`smeos_fill_org_from_parent` điền từ bảng cha, nên thứ tự deploy web/worker không quan trọng.
+

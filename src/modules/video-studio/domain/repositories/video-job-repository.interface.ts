@@ -4,6 +4,7 @@ import type { VideoFormat, VideoStage, ApprovalState, VideoSceneItem } from "../
 export interface VideoSceneRecord {
   id: string
   video_job_id: string
+  organization_id: string
   scene_index: number
   duration_seconds: number
   image_asset_id: string | null
@@ -12,6 +13,7 @@ export interface VideoSceneRecord {
   transition_effect: string | null
   motion_effect: string | null
   created_at: Date
+  updated_at: Date
 }
 
 export interface VideoJobRecord {
