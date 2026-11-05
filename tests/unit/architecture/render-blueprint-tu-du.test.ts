@@ -49,13 +49,16 @@ describe("render.yaml — blueprint tự đủ", () => {
     expect(BLUEPRINT).toMatch(/\ndatabases:\n/)
   })
 
-  // Đây là điều kiện chính của "chỉ cần chạy blueprint": thiếu nó thì phải tạo deploy hook tay.
+  // Hai điều kiện của yêu cầu PO gộp vào một dòng YAML:
+  //   `autoDeployTrigger: checksPass` → blueprint là đủ (không cần deploy hook) VÀ chỉ deploy
+  //   commit đã có check CI xanh (giữ P0-02/D-14). `commit` hay `off` đều phá một trong hai.
   it.each(DEPLOYABLE.map((service) => [service.name, service] as const))(
-    "%s tự deploy từ main (autoDeploy: true + branch: main)",
+    "%s tự deploy từ main nhưng chỉ khi CI xanh (autoDeployTrigger: checksPass)",
     (_name, service) => {
-      expect(service.body).toMatch(/\n\s+autoDeploy: true\b/)
-      expect(service.body).not.toMatch(/\n\s+autoDeploy: false\b/)
+      expect(service.body).toMatch(/\n\s+autoDeployTrigger: checksPass\b/)
       expect(service.body).toMatch(/\n\s+branch: main\b/)
+      // `autoDeploy` là trường cũ đã bị thay; để lẫn cả hai là nhập nhằng.
+      expect(service.body).not.toMatch(/\n\s+autoDeploy:/)
     }
   )
 
@@ -70,6 +73,11 @@ describe("render.yaml — blueprint tự đủ", () => {
         /- key: PYTHON_VERSION\n\s+value: "3\.11/
       )
     }
+    // Ghim hai đường: biến `PYTHON_VERSION` và tệp `.python-version` trong `rootDir: workers`.
+    // Render đọc đường nào cũng ra 3.11, không phụ thuộc vào việc nó ưu tiên cái nào.
+    expect(readFileSync(path.join(ROOT, "workers/.python-version"), "utf8").trim()).toMatch(
+      /^3\.11/
+    )
   })
 })
 
