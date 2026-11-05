@@ -160,7 +160,7 @@ export function SubcontractStepClaim({
               <Clock size={12} /> Kiểm tra kho: {formatGraceCountdown(graceSeconds)}
             </span>
           ) : (
-            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary/10 text-primary text-caption font-bold">
+            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary/10 text-primary-dark text-caption font-bold">
               <Sparkles size={12} /> Chờ nhận đơn
             </span>
           )}

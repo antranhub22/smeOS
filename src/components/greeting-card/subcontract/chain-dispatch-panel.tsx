@@ -156,7 +156,7 @@ export function ChainDispatchPanel({
           <div>
             <h4 className="text-body-sm font-extrabold text-foreground flex items-center gap-1.5">
               <span>Điều phối chuỗi tự động</span>
-              <span className="text-caption font-bold px-1.5 py-0.5 rounded-md bg-primary/20 text-primary uppercase">
+              <span className="text-caption font-bold px-1.5 py-0.5 rounded-md bg-primary/20 text-primary-dark uppercase">
                 Gate 2
               </span>
             </h4>
@@ -316,7 +316,7 @@ export function ChainDispatchPanel({
               >
                 <div className="flex items-center gap-1.5">
                   <span className="font-semibold text-foreground">{res.branchName}</span>
-                  <span className="text-caption px-1.5 py-0.5 rounded bg-primary/10 text-primary font-bold">
+                  <span className="text-caption px-1.5 py-0.5 rounded bg-primary/10 text-primary-dark font-bold">
                     {dispatchChannelLabel(res.channel)}
                   </span>
                 </div>
