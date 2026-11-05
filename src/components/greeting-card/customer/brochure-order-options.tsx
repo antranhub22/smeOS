@@ -159,6 +159,12 @@ export function BrochureOrderOptions({ variants, priceDimensions, basePrice, shi
           {quote?.promotionDiscountVnd ? (
             <div className="flex justify-between text-success"><dt>Ưu đãi</dt><dd>−{vnd(quote.promotionDiscountVnd)}</dd></div>
           ) : null}
+          {quote?.tierDiscountVnd ? (
+            <div className="flex justify-between"><dt className="text-text-muted">{quote.tierLabel}</dt><dd>-{vnd(quote.tierDiscountVnd)}</dd></div>
+          ) : null}
+          {quote?.peakHourSurchargeVnd ? (
+            <div className="flex justify-between"><dt className="text-text-muted">{quote.peakHourLabel}</dt><dd>+{vnd(quote.peakHourSurchargeVnd)}</dd></div>
+          ) : null}
           {quote?.holidaySurchargeVnd ? (
             <div className="flex justify-between"><dt className="text-text-muted">Phụ phí ngày lễ ({quote.holidayName})</dt><dd>+{vnd(quote.holidaySurchargeVnd)}</dd></div>
           ) : null}

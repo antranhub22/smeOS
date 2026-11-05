@@ -69,6 +69,7 @@ export function toCatalogProduct(item: CatalogItemRow, imageUrls: Map<string, st
     flowersSummary: flowers.length > 0 ? flowers.join(", ") : null,
     occasion: occasions.length > 0 ? occasions.join(", ") : null,
     style: readStyle(src),
+    craftStyle: typeof attrs.craftStyle === "string" && attrs.craftStyle ? attrs.craftStyle : null,
     category: p.category,
     color: readPrimaryColor(src),
     dimensions: dims ? `Cao ${dims.heightCm} cm · Rộng ${dims.widthCm} cm` : null,

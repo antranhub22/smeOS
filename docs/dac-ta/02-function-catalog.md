@@ -118,6 +118,7 @@ Thứ tự này là thứ tự thi hành, không phải thứ tự trình bày. 
 | `D15` | Soát kỹ hệ thống | Điều hành · Điều phối | — |
 | `D16` | Sửa định mức tiền công theo độ khó | Điều hành | Điều hành |
 | `D17` | Đặt tham số giá của chiều tính từ giá sản xuất | Điều hành | Điều hành |
+| `D18` | Tạo trường dữ liệu riêng và ẩn trường tuỳ chọn của cửa hàng | Điều hành | Điều hành |
 
 ### Hệ thống
 

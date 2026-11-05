@@ -48,6 +48,7 @@ function createInMemoryQuotationRepo(): IQuotationRepository {
         validUntil: dto.validUntil ?? null,
         subtotal: dto.subtotal,
         discountAmount: dto.discountAmount,
+        shippingFee: dto.shippingFee,
         totalAmount: dto.totalAmount,
         terms: dto.terms ?? null,
         notes: dto.notes ?? null,

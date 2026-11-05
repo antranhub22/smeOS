@@ -60,5 +60,6 @@ export const settingsEn = {
     brochureFlow: "8. Brochure Flow",
     aiChannels: "9. AI & Channels",
     collectionProfile: "10. Chain Collection",
+    fields: "11. Data Fields",
   },
 } as const

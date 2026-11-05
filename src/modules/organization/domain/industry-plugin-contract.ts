@@ -114,6 +114,12 @@ export interface IndustryCraftFeeSpec {
   readonly laborByComplexityVnd: Readonly<Record<CraftComplexity, number>>
   /** Ngày cao điểm cố định hằng năm (MM-DD) — tiệm thêm ngày âm lịch (Tết, Trung thu) trong cài đặt. */
   readonly peakDays: readonly { readonly monthDay: string; readonly label: string }[]
+  /**
+   * Phí chế tác theo kiểu dáng sản phẩm, đã gồm trong giá niêm yết (PO Q8, checklist ALG 3.6). Cửa hàng sửa
+   * đơn giá trong Cài đặt. Ngày lễ cộng phần chênh phí × (`holidayMultiplier` − 1). Ngành không khai → không áp.
+   */
+  readonly styles?: readonly { readonly key: string; readonly label: string; readonly defaultVnd: number }[]
+  readonly holidayMultiplier?: number
 }
 
 import type { IndustryCostingSpec } from "./industry-costing-spec"

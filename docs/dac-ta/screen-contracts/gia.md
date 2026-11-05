@@ -1,6 +1,6 @@
 # Screen Contract — Tính giá sản phẩm (`/gia`)
 
-**Tuyến:** `/gia` · **Tệp chính:** `src/app/(app)/gia/page.tsx`, `pricing-calculator-card.tsx`, `pricing-rules-config-card.tsx` · **Cập nhật:** 27/09/2026 · **Thẻ:** T5.B6
+**Tuyến:** `/gia` · **Tệp chính:** `src/app/(app)/gia/page.tsx`, `pricing-calculator-card.tsx`, `pricing-rules-config-card.tsx`, `customer-tier-pricing-card.tsx` · **Cập nhật:** 05/11/2026 · **Thẻ:** T5.B6
 
 ## 1. Vai và mục đích
 - **Vai chính (03b):** `store_manager`, `florist`, `sales`.
@@ -8,16 +8,18 @@
 - **Việc chính:**
   - Nhập giá vốn hoa và chi phí phụ liệu để máy tính đối soát tỷ lệ lợi nhuận, mức thưởng đối tác và khoảng giá tối ưu.
   - Điều chỉnh và lưu trữ quy tắc giá tổ chức (thưởng theo hạng, tỷ lệ giá tối ưu, hệ số sàn/trần).
+  - Đặt ưu đãi % theo hạng khách (Khách mới/Đồng/Bạc/Vàng/VIP, tối đa 50%) và phụ phí giờ cao điểm theo khung giờ giao; áp ở báo giá Thẻ Chào, mỗi khoản một dòng.
 - **Câu hỏi chính:** "Mẫu hoa này tính ra giá bán bao nhiêu là tối ưu, và shop nhận về bao nhiêu sau khi trừ tiền công thợ?"
-- **Mật độ:** MEDIUM (2 khối card tính toán và cấu hình rõ ràng).
+- **Mật độ:** MEDIUM (3 khối card: tính toán, cấu hình quy tắc, ưu đãi hạng khách & giờ cao điểm).
 
 ## 2. Hiện trạng (audit)
 - **API:**
   - `GET /api/v1/pricing-rules` → `L5` (`pricing.read`)
   - `PUT /api/v1/pricing-rules` → `L6` (`pricing.write`)
-- **Khối:** 2 khối card riêng biệt:
+- **Khối:** 3 khối card riêng biệt:
   1. `PricingCalculatorCard`: Máy tính giá tức thời phía client (chạy các hàm thuần `quotePrice`, `checkPriceInvariants`, `checkPriceGuard`).
   2. `PricingRulesConfigCard`: Quản lý quy tắc giá của tổ chức (gating theo năng lực L6).
+  3. `CustomerTierPricingCard`: Ưu đãi hạng khách và giờ cao điểm (khoá `customer_tier_discount`, `peak_hour_surcharge`; sửa khi có L6, không có thì chỉ xem).
 - **Nút primary:** Tối đa 1 nút chính trên mỗi khối card.
 - **Trạng thái có sẵn:** Tải (`SkeletonBlock lines={5}`), Lỗi kết nối (thông báo kèm nút "Thử lại"), Thành công (thông báo lưu quy tắc).
 
@@ -28,6 +30,7 @@
 | L1 Máy tính giá | Form nhập giá vốn, hạng đối tác, phụ phí, giá niêm yết + Nút "Tính toán đối soát giá" | Khối trên |
 | L2 Kết quả tính | Tổng tiệm nhận, thưởng đối tác, giá tối ưu đề xuất, tiền cọc/còn lại, cảnh báo sàn trần | Dưới nút tính giá |
 | L3 Cấu hình quy tắc | Bảng thưởng theo hạng đối tác, tỷ lệ giá tối ưu, hệ số sàn/trần + Nút "Lưu quy tắc giá" | Khối dưới |
+| L3 Ưu đãi hạng khách | % giảm cho 5 hạng khách, danh sách giờ cao điểm (từ giờ, đến giờ, phụ phí) + "Thêm giờ cao điểm", "Lưu" | Khối cuối |
 
 ## 4. Hành động
 - **Chính:**
@@ -36,10 +39,11 @@
 - **Phụ:**
   - "Thử lại" (`variant="outline"`) khi lỗi tải.
   - "+ Thêm hạng đối tác" / "Xoá" hạng đối tác.
+  - "Thêm giờ cao điểm" / "Bỏ" khung giờ; "Lưu" ưu đãi hạng khách & giờ cao điểm (L6).
 
 ## 5. Content budget
 - Nút nổi: 1 nút chính trên mỗi khối card.
-- Khối chính: 2 khối card logic độc lập.
+- Khối chính: 3 khối card logic độc lập.
 
 ## 6. Trạng thái
 - Tải: `<SkeletonBlock lines={5} label="Đang tải cấu hình giá" />`.

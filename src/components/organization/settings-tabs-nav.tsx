@@ -10,7 +10,9 @@ import { ShieldCheck } from "@/components/ui/icon-set/shield-check"
 import { FileText } from "@/components/ui/icon-set/file-text"
 import { Send } from "@/components/ui/icon-set/send"
 import { Cpu } from "@/components/ui/icon-set/cpu"
+import { ListChecks } from "@/components/ui/icon-set/list-checks"
 import { useI18n } from "@/lib/i18n"
+import { useSession } from "@/lib/session"
 
 export type SettingsTab =
   | "INFO"          // 1. Thông tin cơ sở & Pháp lý (L1 Master)
@@ -23,6 +25,7 @@ export type SettingsTab =
   | "BROCHURE_FLOW" // 8. Cơ chế Thẻ Chào & Quy trình
   | "AI_CHANNELS"   // 9. Trợ lý AI & Mạng xã hội
   | "COLLECTION_PROFILE" // 10. Danh mục thu thập chuỗi (§9.5.8)
+  | "FIELDS"        // 11. Trường dữ liệu của cửa hàng (checklist ALG 1.9, D18)
 
 interface SettingsTabsNavProps {
   activeTab: SettingsTab
@@ -40,6 +43,7 @@ export function SettingsTabsNav({
   policyCounts,
 }: SettingsTabsNavProps) {
   const { dict } = useI18n()
+  const { can } = useSession()
 
   const tabs = [
     { key: "INFO" as const, label: dict.settings.tabs.info, icon: Store },
@@ -52,6 +56,7 @@ export function SettingsTabsNav({
     { key: "BROCHURE_FLOW" as const, label: dict.settings.tabs.brochureFlow, icon: Send },
     { key: "AI_CHANNELS" as const, label: dict.settings.tabs.aiChannels, icon: Cpu },
     { key: "COLLECTION_PROFILE" as const, label: dict.settings.tabs.collectionProfile, icon: ShieldCheck },
+    ...(can("D18") ? [{ key: "FIELDS" as const, label: dict.settings.tabs.fields, icon: ListChecks }] : []),
   ]
 
   return (

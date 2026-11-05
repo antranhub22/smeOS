@@ -14,6 +14,7 @@ import { BrochureBankSyncSettings } from "./brochure-bank-sync-settings"
 import { BrochurePolicySettings } from "./brochure-policy-settings"
 import { BrochureShippingSettings } from "./brochure-shipping-settings"
 import { BrochureHolidaySettings } from "./brochure-holiday-settings"
+import { CraftStyleFeeSettings } from "./craft-style-fee-settings"
 import { BrochureNotifySettings } from "./brochure-notify-settings"
 import { StaffNotifySettings } from "./staff-notify-settings"
 import { ChainDispatchSettings } from "./chain-dispatch-settings"
@@ -42,6 +43,7 @@ export function AdminSettingsDrawer({ onClose }: { onClose: () => void }) {
           <BrochurePolicySettings />
           <BrochureShippingSettings />
           <BrochureHolidaySettings />
+          <CraftStyleFeeSettings />
           <BrochureNotifySettings />
           <StaffNotifySettings />
           {isChain && <ChainDispatchSettings />}

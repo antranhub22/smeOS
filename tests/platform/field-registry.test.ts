@@ -3,7 +3,7 @@ import { afterAll, beforeEach, describe, expect, it } from "vitest"
 import { GET as getFields, PATCH as patchFields, POST as postFields } from "@/app/api/v1/platform/fields/route"
 import { POST as deactivateField } from "@/app/api/v1/platform/fields/[key]/deactivate/route"
 import { PUT as putOrgOverride } from "@/app/api/v1/platform/organizations/[id]/field-overrides/route"
-import { GET as getFieldConfig } from "@/app/api/v1/field-config/route"
+import { GET as getFieldConfig, POST as postShopField, PUT as putShopField } from "@/app/api/v1/field-config/route"
 
 import { PlatformOperatorRepository } from "@/modules/platform/infra/platform-operator-repository"
 import { PlatformAuditRepository } from "@/modules/platform/infra/platform-audit-repository"
@@ -162,12 +162,33 @@ describe("Nền quản trị trường (ĐP-3) — N12", () => {
     expect(configOfB.data.find((f) => f.key === "cardMessage")?.label).toBe("Lời thiệp")
   })
 
-  it("route tenant /field-config không cho phương thức ghi", async () => {
-    // Không có PATCH/POST export trên route tenant — chỉ khai GET, nên
-    // không cách nào gọi ghi qua route này bằng mã hiện có (kiểm tra tĩnh
-    // qua import — nếu ai thêm PATCH sau này, ca này cần viết lại).
-    const mod = await import("@/app/api/v1/field-config/route")
-    expect((mod as Record<string, unknown>).PATCH).toBeUndefined()
-    expect((mod as Record<string, unknown>).POST).toBeUndefined()
+  it("route tenant /field-config ghi trong phạm vi tổ chức (D18, checklist ALG 1.9): không hạ được sàn nền tảng, không ghi sổ trường chung", async () => {
+    await prisma.field_definitions.create({
+      data: { key: "customerPhone", entity: "ORDER", origin: "CORE", data_type: "PHONE", label: "SĐT người mua", requirement: "REQUIRED", sensitivity: "PII", status: "ACTIVE" },
+    })
+    const lower = await putShopField(
+      withSession(`${BASE}/field-config`, a.token, { method: "PUT", body: JSON.stringify({ key: "customerPhone", requirement: "OPTIONAL" }) })
+    )
+    expect(lower.status).toBe(400)
+    const hide = await putShopField(
+      withSession(`${BASE}/field-config`, a.token, { method: "PUT", body: JSON.stringify({ key: "customerPhone", isEnabled: false }) })
+    )
+    expect(hide.status).toBe(400)
+
+    const created = await postShopField(
+      withSession(`${BASE}/field-config`, a.token, { method: "POST", body: JSON.stringify({ entity: "ORDER", label: "Mã thẻ thành viên", dataType: "TEXT" }) })
+    )
+    expect(created.status).toBe(201)
+    const row = await prisma.field_definitions.findFirstOrThrow({ where: { label: "Mã thẻ thành viên" } })
+    expect(row.owner_organization_id).toBe(a.organizationId)
+
+    // Sổ trường của nền tảng không đổi; Console nền tảng không liệt kê trường riêng của cửa hàng
+    const core = await prisma.field_definitions.findUniqueOrThrow({ where: { key: "customerPhone" } })
+    expect(core.requirement).toBe("REQUIRED")
+    const platformList = (await readJson(await getFields(withSession(`${BASE}/platform/fields`, nguoiVanHanh.token)))) as { data: Array<{ key: string }> }
+    expect(platformList.data.some((f) => f.key === row.key)).toBe(false)
+
+    const configOfB = (await readJson(await getFieldConfig(withSession(`${BASE}/field-config?entity=ORDER`, b.token)))) as { data: Array<{ key: string }> }
+    expect(configOfB.data.some((f) => f.key === row.key)).toBe(false)
   })
 })

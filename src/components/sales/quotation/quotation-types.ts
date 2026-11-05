@@ -6,11 +6,14 @@ export interface ProductItem {
   image_url?: string
   description?: string
   composition?: string[]
+  /** Phiên bản kích cỡ đang bán (giá theo phiên bản) — chọn cho từng dòng báo giá (checklist ALG 3.8) */
+  options?: { id: string; name: string; priceVnd: number }[]
 }
 
 export interface QuotationDraftItem {
   productId?: string | null
   name: string
+  variantLabel?: string | null
   qty: number
   unitPrice: number
   note?: string | null
@@ -38,6 +41,7 @@ export interface QuotationRecord {
   validUntil?: string | null
   subtotal: number
   discountAmount: number
+  shippingFee?: number
   totalAmount: number
   terms?: string | null
   notes?: string | null

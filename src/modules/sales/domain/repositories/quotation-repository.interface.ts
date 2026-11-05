@@ -10,6 +10,7 @@ export interface CreateQuotationDTO {
   validUntil?: Date | null | undefined
   subtotal: number
   discountAmount: number
+  shippingFee: number
   totalAmount: number
   terms?: string | null | undefined
   notes?: string | null | undefined
@@ -17,6 +18,7 @@ export interface CreateQuotationDTO {
   items: Array<{
     productId?: string | null | undefined
     name: string
+    variantLabel?: string | null | undefined
     qty: number
     unitPrice: number
     totalPrice: number
@@ -29,6 +31,7 @@ export interface UpdateQuotationDTO {
   validUntil?: Date | null | undefined
   subtotal?: number | undefined
   discountAmount?: number | undefined
+  shippingFee?: number | undefined
   totalAmount?: number | undefined
   terms?: string | null | undefined
   notes?: string | null | undefined
@@ -36,6 +39,7 @@ export interface UpdateQuotationDTO {
   items?: Array<{
     productId?: string | null | undefined
     name: string
+    variantLabel?: string | null | undefined
     qty: number
     unitPrice: number
     totalPrice: number

@@ -98,6 +98,8 @@ export function OrderReview(props: {
         )}
         {quote?.promotionDiscountVnd ? <Row label={`${isEn ? "Promotion" : "Ưu đãi"}${selectedPromo ? ` (${selectedPromo.title})` : ""}`} value={`− ${vnd(quote.promotionDiscountVnd)}`} /> : null}
         {quote?.holidaySurchargeVnd ? <Row label={`${isEn ? "Holiday surcharge" : "Phụ phí ngày lễ"} (${quote.holidayName ?? ""})`} value={`+ ${vnd(quote.holidaySurchargeVnd)}`} /> : null}
+        {quote?.tierDiscountVnd ? <Row label={quote.tierLabel ?? (isEn ? "Member discount" : "Ưu đãi hạng khách")} value={`- ${vnd(quote.tierDiscountVnd)}`} /> : null}
+        {quote?.peakHourSurchargeVnd ? <Row label={quote.peakHourLabel ?? (isEn ? "Peak-hour surcharge" : "Phụ phí giờ cao điểm")} value={`+ ${vnd(quote.peakHourSurchargeVnd)}`} /> : null}
         <Row label={isHomestay ? (isEn ? "Total Booking Fee" : "Tổng tiền đặt phòng") : (isEn ? "Total" : "Tổng đơn hàng")} value={awaitingQuote ? (isEn ? "Calculated later" : "Cửa hàng báo giá sau") : vnd(quote?.totalVnd ?? product.price)} strong />
         {!awaitingQuote && quote?.paymentPlan && quote.paymentPlan.dueLaterVnd > 0 && (
           <>

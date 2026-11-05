@@ -19,7 +19,7 @@ export async function previewEffectiveConfig(
 ): Promise<EffectiveFieldConfig[]> {
   requirePlatformCapability(pctx, "N12")
 
-  const definitions = await getFieldDefinitionRepository().list(entity)
+  const definitions = await getFieldDefinitionRepository().listVisibleTo(organizationId, entity)
   const overrideRows = await getFieldConfigOverrideRepository().listForOrganizationId(organizationId)
   const overridesByKey = new Map(
     overrideRows.filter((r) => r.target === "FIELD").map((r) => [r.override_key, mapOverrideRowToFieldOverride(r)])

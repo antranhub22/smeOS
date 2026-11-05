@@ -7,9 +7,9 @@ import { computeEffectiveFieldConfig, type EffectiveFieldConfig } from "../domai
 import type { FieldEntity } from "../domain/core-field-registry"
 
 /**
- * `GET /api/v1/field-config?entity=…` (`R1`, tenant, CHỈ ĐỌC — 3.8/3.14).
- * Route tenant KHÔNG được ghi vào `field_definitions`/`field_config_overrides`
- * — không có use-case ghi nào ở tệp này hay module này nhận `TenantContext`.
+ * `GET /api/v1/field-config?entity=…` (`R1`, tenant — 3.8/3.14). Gồm trường nền tảng và trường riêng
+ * của chính tổ chức (`listVisibleTo`). Ghi phía cửa hàng chỉ qua `manage-shop-fields.ts` (`D18`, trong
+ * phạm vi sàn — checklist ALG 1.9).
  *
  * Bộ nhớ đệm theo `version` (3.8) CHƯA làm ở đợt ĐP-3 này — mỗi lần gọi
  * đọc thẳng DB. Ghi nợ, ít rủi ro vì đây là bảng nhỏ, đọc theo tổ chức.
@@ -25,7 +25,7 @@ export async function loadEffectiveFieldConfigs(
   ctx: TenantContext,
   entity?: FieldEntity
 ): Promise<EffectiveFieldConfig[]> {
-  const definitions = await getFieldDefinitionRepository().list(entity)
+  const definitions = await getFieldDefinitionRepository().listVisibleTo(ctx.organizationId, entity)
   const overrideRows = await getFieldConfigOverrideRepository().listForOrganization(ctx)
   const overridesByKey = new Map(
     overrideRows.filter((r) => r.target === "FIELD").map((r) => [r.override_key, mapOverrideRowToFieldOverride(r)])

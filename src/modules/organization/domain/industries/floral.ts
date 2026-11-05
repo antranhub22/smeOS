@@ -124,6 +124,16 @@ export const FLORAL_INDUSTRY: IndustryPluginContract = {
       { monthDay: "10-20", label: "Phụ nữ Việt Nam" },
       { monthDay: "11-20", label: "Nhà giáo Việt Nam" },
     ],
+    // PO Q8 (05/11/2026): 6 kiểu dáng, đơn giá mặc định; ngày lễ phần phí cắm × 1,5
+    styles: [
+      { key: "BO_CAM_TAY", label: "Bó hoa cầm tay", defaultVnd: 80_000 },
+      { key: "HOP_HOA", label: "Hộp hoa", defaultVnd: 120_000 },
+      { key: "GIO_HOA", label: "Giỏ hoa", defaultVnd: 150_000 },
+      { key: "BINH_HOA", label: "Bình hoa", defaultVnd: 180_000 },
+      { key: "LANG_KE", label: "Lẵng / kệ khai trương", defaultVnd: 300_000 },
+      { key: "SU_KIEN", label: "Hoa sự kiện / cưới", defaultVnd: 500_000 },
+    ],
+    holidayMultiplier: 1.5,
   },
   costing: {
     materialCategories: [

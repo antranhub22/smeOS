@@ -89,6 +89,7 @@ export function BrochureOrderForm({
     ...quoteExtraBody,
     ...(selectedPromotionId ? { selectedPromotionId } : {}),
     ...(deliveryDate ? { deliveryDate } : {}),
+    ...(deliveryTimeSlot ? { deliveryTimeSlot } : {}),
   }
   const pricing = useBrochureQuote(quoteUrl, quoteBody, customerPhone, { id: productSnapshot.id, variantIds: variants.map((v) => v.id) })
   const availabilityUrl = quoteUrl ? quoteUrl.replace(/\/quote$/, "/check-availability") : null

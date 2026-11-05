@@ -8,6 +8,7 @@ export interface CreateQuotationPayload {
   terms?: string | null
   notes?: string | null
   items: QuotationDraftItem[]
+  shippingFee?: number
 }
 
 export const quotationApi = {

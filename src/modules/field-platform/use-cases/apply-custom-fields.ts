@@ -23,7 +23,7 @@ export async function applyCustomFields(
   entity: FieldEntity,
   input: Record<string, unknown> | null | undefined
 ): Promise<Record<string, unknown>> {
-  const definitions = await getFieldDefinitionRepository().list(entity)
+  const definitions = await getFieldDefinitionRepository().listVisibleTo(ctx.organizationId, entity)
   const activeCustom = definitions.filter((d) => d.origin === "CUSTOM" && d.status === "ACTIVE")
 
   const activeDefs: CustomFieldDefinitionInput[] = activeCustom.map((d) => ({

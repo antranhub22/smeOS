@@ -1,5 +1,6 @@
 "use client"
 
+import { parsePricing, sellableOptions } from "@/modules/products/domain/product-pricing"
 import { useCallback, useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { ArrowLeft } from "@/components/ui/icon-set/arrow-left"
@@ -42,6 +43,7 @@ export default function BaoGiaPage() {
             category: typeof item.category === "string" ? item.category : ti.catalogTitle,
             image_url: typeof item.masterImageUrl === "string" ? item.masterImageUrl : "",
             composition: extractComponentNames((item.attributes as Record<string, unknown> | null)?.bom),
+            options: sellableOptions(parsePricing(item.attributes)).map((o) => ({ id: o.id, name: o.name, priceVnd: o.priceVnd })),
           })),
       )
     } catch {

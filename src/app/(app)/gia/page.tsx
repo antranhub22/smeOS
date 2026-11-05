@@ -12,6 +12,7 @@ import { useSession } from "@/lib/session"
 import type { SurchargeGroup } from "@/modules/products/domain/pricing"
 import { PricingCalculatorCard } from "./pricing-calculator-card"
 import { PricingRulesConfigCard } from "./pricing-rules-config-card"
+import { CustomerTierPricingCard } from "./customer-tier-pricing-card"
 import { PageHeader } from "@/components/ui/page-header"
 
 type FloorCeilingRatio = { floorRatio: number; ceilingRatio: number }
@@ -149,6 +150,8 @@ export default function GiaPage() {
             )
           }}
         />
+
+        <CustomerTierPricingCard canEdit={coQuyenSua} />
       </main>
     </div>
   )

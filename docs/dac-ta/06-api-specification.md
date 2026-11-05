@@ -134,7 +134,7 @@ Endpoint duyệt luôn tách khỏi endpoint sinh kết quả: `POST /x/:id/appr
 | POST | `/products/drive-thumbnails` | `L2` | Body `{ folder_ids: string[] }` (1–50 Drive id) → `{ thumbnails: { [folder_id]: url \| null } }`; màn nhập hàng loạt gom lô thay cho gọi `/public/drive-thumbnail` từng folder (trần 120/phút/IP làm file >120 dòng mất ảnh). 60 lần/phút/người dùng; server phân giải tối đa 6 luồng song song; client thử lại 429/5xx tối đa 4 lần (09/10/2026) |
 | GET | `/products/:id/images` | **CHƯA XÂY** `G1` | |
 | PUT | `/products/:id/images` | **CHƯA XÂY** `G2` | Đặt lại thứ tự và vai trò ảnh |
-| GET · PUT | `/pricing-rules` | `L5` · `L6` | Theo tổ chức, có thể theo chi nhánh |
+| GET · PUT | `/pricing-rules` | `L5` · `L6` | Theo tổ chức, có thể theo chi nhánh. Khoá phạm vi tổ chức `customer_tier_discount` (`{ NEW|BRONZE|SILVER|GOLD|VIP: tỷ lệ [0, 0,5] }`) và `peak_hour_surcharge` (`[{ startHour, endHour, vnd, label? }]`, 0 ≤ startHour < endHour ≤ 24) áp ở báo giá Thẻ Chào khi nhận diện khách qua SĐT và khung giờ giao; mỗi khoản là một dòng riêng |
 | GET · POST | `/price-lists` | `L1` · `L3` | Bảng giá sản phẩm (30/10/2026). Lưu ở `pricing_rules` khoá `price_list:<id>` (chèn-chỉ, mỗi lần sửa là một phiên bản). GET trả `{ data, categories }` |
 | GET · PUT · PATCH · DELETE | `/price-lists/:id` | `L1` · `L3` | GET: bảng giá dựng từ giá đang bán của sản phẩm + ưu đãi đang bật; PATCH `{ active }`: công tắc Đang dùng; DELETE: bỏ khỏi danh sách, giữ lịch sử. Tổ chức khác → 404 |
 | GET · POST | `/vouchers/batches` | `Q8` | Phát hành mã giảm giá (30/10/2026). GET trả `{ batches, promotions, maxDiscountPercent }` (ưu đãi đang bật, cùng nguồn ma trận ưu đãi). POST: `mode` `SHARED` (một mã chung) · `UNIQUE` (tối đa 1000 mã riêng); trần % theo khoá nền tảng; `promotion_id` phải là ưu đãi đang bật |
@@ -600,7 +600,10 @@ Mọi route nhận `:id` là id HOẶC mã đơn (`FLR-YYMMDD-NNNN`); tổ chứ
 | POST | `/coordinator/partners` | `R4` · `F2` | Đối tác gia công (`R4`): trùng mã trong tổ chức → 409. Cấp tài khoản đối tác chuỗi (thân có `partnerStoreName`/`contactEmail`, `F2`): không gửi `password` → sinh mật khẩu ngẫu nhiên, trả `temporaryPassword` đúng một lần (email đã có tài khoản thì giữ mật khẩu cũ, không trả); `password` gửi lên tối thiểu 10 ký tự |
 | POST | `/coordinator/partners/link-existing` | `F2` | Liên kết cửa hàng đã có tài khoản (email hoặc slug) làm đối tác chuỗi; mở phòng chat nội bộ 1-1 |
 | PATCH | `/coordinator/partners/:id` | `R4` | Sửa hồ sơ, tạm ngưng/mở lại |
-| GET | `/field-config` | `R1` | ĐP-3 — cấu hình trường hiệu lực cho tổ chức của người gọi (lớp mã + cấu hình nền tảng + ghi đè theo tổ chức đã cộng sẵn), `?entity=ORDER\|PARTNER`. CHỈ ĐỌC — route tenant không ghi được vào `field_definitions`/`field_config_overrides`, xem mục 21b |
+| GET | `/field-config` | `R1` | ĐP-3 — cấu hình trường hiệu lực cho tổ chức của người gọi (lớp mã + cấu hình nền tảng + ghi đè theo tổ chức + trường riêng của tổ chức), `?entity=ORDER\|PARTNER` |
+| POST | `/field-config` | `D18` | Checklist ALG 1.9 — cửa hàng tạo trường riêng `{ entity, label, dataType, requirement?, visibility?, placeholder? }` (không gồm kiểu chọn từ danh mục); khoá máy sinh `cf_…`; tối đa 50 trường/thực thể/tổ chức. 201 |
+| PUT | `/field-config` | `D18` | `{ key, label?, isEnabled?, requirement?, visibility? }` — trường riêng: sửa trực tiếp; trường nền tảng: ghi đè của chính tổ chức, không hạ mức yêu cầu, không ẩn trường bắt buộc, không mở trường chỉ nội bộ (400). Trường riêng của tổ chức khác → 404 |
+| GET | `/field-config/settings` | `D18` | Danh sách cho màn Cài đặt → Trường dữ liệu: trường nền tảng kèm mức sàn (`floorRequirement`, `canHide`) và trường riêng (gồm trường đang ẩn), `?entity=ORDER\|PARTNER` |
 | GET | `/field-config/catalogs` | `R1` | ĐP-4a.1 — danh mục (§2.15) cho form nhập liệu tenant (T01…), `?keys=priority,serviceLevel,...` (bỏ trống trả hết). CHỈ giá trị đang `is_active`. Khác `/platform/catalogs` (đòi `N12`): route này chỉ đòi đăng nhập tổ chức, không có thao tác ghi |
 
 ## 16. Số liệu và hồ sơ phong cách — M11
@@ -1157,8 +1160,9 @@ Kế hoạch: `docs/kien-truc/Nâng cấp tasks/SMEOS_Marketing_Sales_Center/03_
 | GET | `/quotations` | `R15` hoặc `Q1` | Lọc `status`, `leadId`, `customerId`, `search`; cursor + `limit` ≤ 100; kèm `counts` |
 | POST | `/quotations` | `R15` | Tạo báo giá nháp, mã nội bộ `BG-xxxx`, token công khai ngẫu nhiên 256 bit |
 | GET | `/quotations/:id` | `R15` hoặc `Q1` | |
-| PATCH | `/quotations/:id` | `R15` | Báo giá đã chuyển thành đơn không sửa được |
+| PATCH | `/quotations/:id` | `R15` | Báo giá đã chuyển thành đơn không sửa được · nhận `shippingFee` và `items[].variantLabel`; tổng = tạm tính − ưu đãi + phí vận chuyển |
 | POST | `/quotations/:id/send` | `R15` | Sang `SENT`; lead gắn kèm sang `QUOTATION_SENT` |
+| GET | `/quotations/:id/revisions` | `R15` | Các phiên bản trước của báo giá, mới nhất trước: `{ version, snapshot, createdBy, createdAt }`; mỗi lần sửa nội dung (dòng, ưu đãi, phí vận chuyển, hạn, điều khoản, ghi chú) lưu ảnh chụp bản trước đó, đổi trạng thái không lưu · báo giá tổ chức khác → 404 |
 | POST | `/quotations/:id/convert` | `R15` | Tạo đơn nguồn `QUOTATION` qua cổng nhận đơn chung; hai lệnh đồng thời chỉ một lệnh tạo đơn |
 | GET | `/public/quotation/:token` | — *(token ngẫu nhiên trong URL)* | Không đăng nhập; giới hạn 60 lượt/phút; báo giá nháp → 404; không trả số điện thoại, ghi chú nội bộ, mã tổ chức |
 
