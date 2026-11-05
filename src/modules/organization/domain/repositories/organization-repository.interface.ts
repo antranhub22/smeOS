@@ -77,6 +77,9 @@ export interface IOrganizationRepository {
   /** Hoàn credit khi job thất bại hoặc bị huỷ. */
   refundCredit(ctx: TenantContext, amount: number, meta?: CreditEntryMeta): Promise<void>
 
+  /** Hoàn credit cho đường không có phiên. */
+  refundCreditFor(organizationId: string, amount: number, meta?: CreditEntryMeta): Promise<void>
+
   /** Danh sách tổ chức mà user là thành viên. */
   listForUser(userId: string): Promise<OrganizationEntity[]>
 

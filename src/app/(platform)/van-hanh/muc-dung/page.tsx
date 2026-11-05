@@ -18,6 +18,7 @@ import { NativeSelect } from "@/components/ui/select"
 import { SkeletonBlock } from "@/components/ui/skeleton"
 import { formatNumber } from "@/lib/i18n/formatters"
 import { PageHeader } from "@/components/ui/page-header"
+import { CreditPricingCard } from "@/components/platform/credit-pricing-card"
 
 type PlatformUsageRow = {
   organizationId: string
@@ -128,6 +129,8 @@ export default function MucDungPage() {
           icon={<Building2 className="w-4 h-4 text-primary" aria-hidden />}
         />
       </div>
+
+      <CreditPricingCard />
 
       {/* 3. Cảnh báo trần hạn mức Quota (AI-05) */}
       {metrics.topConsumers.length > 0 && (

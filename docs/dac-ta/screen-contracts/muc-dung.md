@@ -1,6 +1,6 @@
 # Screen Contract — Mức Dùng & Hạn Mức Credit Của Tiệm
 
-**Tuyến:** `/muc-dung` · **Tệp chính:** `src/app/(app)/muc-dung/page.tsx` · **Cập nhật:** 27/09/2026 · **Thẻ:** T5.D7
+**Tuyến:** `/muc-dung` · **Tệp chính:** `src/app/(app)/muc-dung/page.tsx`, `src/components/usage/monthly-limit-card.tsx` · **Cập nhật:** 05/11/2026 · **Thẻ:** T5.D7
 
 ## 1. Vai và mục đích
 - Vai chính (03b): `store_manager`, `operations_manager` · Vai phụ: `financial_auditor`
@@ -13,7 +13,8 @@
 - API:
   - `GET /api/v1/usage/summary` → Tổng hợp mức dùng theo tính năng và số dư credit (cần quyền `G8`)
   - `GET /api/v1/usage` → Danh sách lịch sử giao dịch trừ/hoàn credit (cần quyền `G8`)
-- Khối: 4 khối (Hướng dẫn K1 `FeatureGuidanceCard`, Thẻ tổng quan số dư & credit đã dùng, Bảng phân bổ theo phân hệ, Nhật ký giao dịch gần nhất)
+  - `GET /api/v1/usage/limits` → Hạn mức tháng: tổng credit và phần AI đã dùng/hạn mức (cần quyền `G8`); `PUT` đặt trần credit AI (cần quyền `U2`)
+- Khối: 5 khối (Hướng dẫn K1 `FeatureGuidanceCard`, Thẻ tổng quan số dư & credit đã dùng, Hạn mức tháng `MonthlyLimitCard` — thanh tiến độ đổi màu ở 80%/100%, ô "Trần credit AI mỗi tháng" + nút "Lưu trần AI" chỉ hiện khi có `U2`, Bảng phân bổ theo phân hệ, Nhật ký giao dịch gần nhất)
 - Nút primary: Không cần nút primary (màn hình tra cứu tài nguyên), có nút "Làm mới" `variant: "outline"`
 - Phân quyền: Gác quyền `G8`
 - Trạng thái có sẵn: tải ☑ rỗng ☑ lỗi ☑ không quyền ☑ thành công ☑
@@ -56,8 +57,8 @@
 - Là màn hình tra cứu mức tiêu thụ tài nguyên AI của tenant: phản ánh chính xác chi phí credit của các mô hình và cơ chế hoàn credit tự động khi Guard từ chối.
 
 ## 10. Dữ liệu và quyền
-- Nguồn sự thật: Bảng `usage` và `organizations.credit_balance`.
-- Quyền: `G8` (xem mức dùng tổ chức).
+- Nguồn sự thật: Bảng `usage`, `organizations.credit_balance`, `usage_limits` (hạn mức tháng).
+- Quyền: `G8` (xem mức dùng tổ chức), `U2` (đặt trần credit AI).
 
 ## 11. Component
 - Dùng lại: `Button`, `Badge`, `SkeletonBlock`, `FeatureGuidanceCard`.

@@ -32,6 +32,8 @@ acceptance:
   1. L0 (Thiết yếu): Tên tổ chức, slug, loại hình (Đơn lẻ / Chuỗi), số thành viên, số dư credit.
   2. L1 (Hành động): Nút xem chi tiết tổ chức `/van-hanh/to-chuc/[id]`.
   3. L2 (Bổ trợ): Ô tìm kiếm tổ chức theo tên/slug, phân trang.
+- **Trang chi tiết `/van-hanh/to-chuc/[id]` — khối Credit** (`src/components/platform/credit-ledger-panel.tsx`): số dư; nút "Mã VietQR nạp" (xác nhận chuyển khoản ghi khoản nạp thật); chọn Nạp/Tặng/Hoàn + ô "Số credit" + ô "Lý do" + nút "Ghi" (`POST .../credits`, `N3`); dòng "Tháng MM: đã dùng … credit · hạn mức" + ô hạn mức + nút "Lưu hạn mức" (`PUT .../usage-limit`, `N3`); 20 dòng sổ cái gần nhất (loại, lý do, thời điểm, số credit, số dư sau).
+- **Trang `/van-hanh/muc-dung` — khối Quy đổi credit** (`src/components/platform/credit-pricing-card.tsx`): credit mỗi tin SMS/ZNS, tỷ giá USD→VND, giá trị 1 credit, hạn mức credit/tháng mặc định + nút "Lưu" (`GET` cần `N4`, `PUT` cần `N3`).
 
 ## 3. Hành động cấp trang (Actions)
 - **Hành động chính (Primary CTA):** Tìm kiếm và lọc danh sách tổ chức.

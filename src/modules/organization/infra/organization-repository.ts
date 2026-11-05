@@ -11,6 +11,9 @@ import type {
 } from "../domain/repositories/organization-repository.interface"
 
 import type { DbClient } from "./db-client"
+import { claimLowBalanceAlert, consumeMonthlyCredit, lastTopupAmount, releaseMonthlyCredit } from "@/modules/usage/infra/usage-limit-repository"
+import { lowBalanceThreshold } from "@/modules/usage/domain/monthly-limit"
+import type { PrismaClient } from "@/generated/prisma/client"
 import { appendCreditEntry, type CreditEntryKind, type CreditEntryMeta } from "./credit-ledger"
 
 function mapOrganization(org: organizations): OrganizationEntity {
@@ -115,14 +118,27 @@ export class OrganizationRepository implements IOrganizationRepository {
   /** Như `tryDeductCredit` cho đường không có phiên người dùng (khách chat qua kênh). */
   async tryDeductCreditFor(organizationId: string, cost: number, meta: CreditEntryMeta = {}): Promise<boolean> {
     if (cost <= 0) return true
-    const result = await this.db.organizations.updateMany({
-      where: { id: organizationId, credit_balance: { gte: cost } },
-      data: { credit_balance: { decrement: cost } },
-    })
-    if (result.count === 0) return false
-    await appendCreditEntry(this.db, organizationId, "USAGE", -cost, meta)
+    // Trừ số dư, ghi sổ cái, tính hạn mức tháng (10.3/9.7) và cờ cảnh báo (10.5) trong MỘT giao dịch:
+    // chạm hạn mức → QUOTA_EXCEEDED, số dư không bị trừ.
+    const run = async (db: DbClient) => {
+      const result = await db.organizations.updateMany({
+        where: { id: organizationId, credit_balance: { gte: cost } },
+        data: { credit_balance: { decrement: cost } },
+      })
+      if (result.count === 0) return null
+      const balance = await appendCreditEntry(db, organizationId, "USAGE", -cost, meta)
+      const consumed = await consumeMonthlyCredit(db, organizationId, cost, meta.service)
+      const threshold = lowBalanceThreshold(await lastTopupAmount(db, organizationId), consumed.creditLimit)
+      const low = threshold !== null && balance < threshold && (await claimLowBalanceAlert(db, organizationId)) ? balance : null
+      return { near: consumed.near, lowBalance: low }
+    }
+    const alerts = "$transaction" in this.db ? await (this.db as PrismaClient).$transaction(run) : await run(this.db)
+    if (!alerts) return false
+    const { queueCreditAlerts } = await import("@/modules/usage/use-cases/credit-alerts")
+    queueCreditAlerts(organizationId, alerts)
     return true
   }
+
 
 
   /**
@@ -158,13 +174,23 @@ export class OrganizationRepository implements IOrganizationRepository {
 
   /** Hoàn credit — job bị Identity Guard từ chối, quyết định D3. */
   async refundCredit(ctx: TenantContext, amount: number, meta: CreditEntryMeta = {}): Promise<void> {
+    return this.refundCreditFor(ctx.organizationId, amount, meta)
+  }
+
+  /** Hoàn credit cho đường không có phiên (tin nhắn gửi lỗi sau khi đã trừ). */
+  async refundCreditFor(organizationId: string, amount: number, meta: CreditEntryMeta = {}): Promise<void> {
     if (amount <= 0) return
     const result = await this.db.organizations.updateMany({
-      where: { id: ctx.organizationId },
+      where: { id: organizationId },
       data: { credit_balance: { increment: amount } },
     })
-    if (result.count > 0) await appendCreditEntry(this.db, ctx.organizationId, "REFUND", amount, meta)
+    if (result.count === 0) return
+    await appendCreditEntry(this.db, organizationId, "REFUND", amount, meta)
+    // Hoàn lượt dùng → trả lại phần đã tính vào hạn mức tháng
+    await releaseMonthlyCredit(this.db, organizationId, amount, meta.service)
   }
+
+
 
 
   /**

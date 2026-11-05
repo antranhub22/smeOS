@@ -5,6 +5,8 @@ import { runInTransaction } from "@/modules/organization/infra/transaction"
 import { OrganizationRepository } from "@/modules/organization/infra/organization-repository"
 import { listCreditEntries, type CreditEntryView } from "@/modules/organization/infra/credit-ledger"
 import { formatNumber } from "@/lib/i18n/formatters"
+import { monthlySnapshot, setMonthlyLimit, type MonthlySnapshot } from "@/modules/usage/infra/usage-limit-repository"
+import { parseMonthlyLimit } from "@/modules/usage/domain/monthly-limit"
 import { recordPlatformAuditLog } from "@/modules/platform/infra/platform-audit-repository"
 
 /**
@@ -14,11 +16,30 @@ import { recordPlatformAuditLog } from "@/modules/platform/infra/platform-audit-
 
 export const MAX_CREDIT_ADJUSTMENT = 1_000_000
 
-export async function listOrganizationCredits(pctx: PlatformContext, organizationId: string): Promise<{ balance: number; entries: CreditEntryView[] }> {
+export async function listOrganizationCredits(
+  pctx: PlatformContext,
+  organizationId: string,
+): Promise<{ balance: number; entries: CreditEntryView[]; monthly: MonthlySnapshot }> {
   requirePlatformCapability(pctx, "N1")
   const org = await new OrganizationRepository().findById(organizationId)
   if (!org) throw notFound()
-  return { balance: org.credit_balance, entries: await listCreditEntries(organizationId) }
+  const [entries, monthly] = await Promise.all([listCreditEntries(organizationId), monthlySnapshot(organizationId)])
+  return { balance: org.credit_balance, entries, monthly }
+}
+
+/** Hạn mức credit tháng của một tổ chức (checklist ALG 10.3, `N3`); null = không giới hạn. */
+export async function setOrganizationMonthlyLimit(pctx: PlatformContext, organizationId: string, raw: unknown): Promise<MonthlySnapshot> {
+  requirePlatformCapability(pctx, "N3")
+  const limit = parseMonthlyLimit(raw)
+  if (limit === undefined) throw validationFailed({ monthlyLimit: "Hạn mức là số nguyên từ 0 hoặc bỏ trống để không giới hạn" })
+  if (!(await new OrganizationRepository().findById(organizationId))) throw notFound()
+  const before = await monthlySnapshot(organizationId)
+  await setMonthlyLimit(organizationId, "CREDIT", limit)
+  await recordPlatformAuditLog(pctx, {
+    action: "platform.usage_limit.set", entityType: "usage_limits", entityId: `${organizationId}:CREDIT`,
+    before: { limit: before.credit.limit }, after: { limit },
+  })
+  return monthlySnapshot(organizationId)
 }
 
 export interface AdjustCreditsInput {

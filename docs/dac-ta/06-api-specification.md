@@ -311,9 +311,13 @@ Trả về chỉ những mục người gọi có năng lực duyệt. Nếu cô
 |---|---|---|
 | GET | `/usage` | `G8` |
 | GET | `/usage/summary` | `G8` |
+| GET | `/usage/limits` | `G8` |
+| PUT | `/usage/limits` | `U2` |
 | GET | `/audit-logs` | `G9` |
 
 `/usage/summary` trả số lượt theo `feature`, credit đã dùng, credit còn lại, chia theo chi nhánh nếu tổ chức là Chuỗi.
+
+`/usage/limits` (checklist ALG 10.3, 9.7): kỳ hiện tại (YYYY-MM giờ Việt Nam), `credit { used, limit }` theo hạn mức nền tảng đặt và `ai { used, limit }` theo trần cửa hàng tự đặt (`PUT { aiMonthlyLimit: number | null }`, Điều hành). Hai hạn mức chặn ngay khi trừ credit: vượt → 422 `QUOTA_EXCEEDED`, số dư không bị trừ. Dùng tới 80% phát `USAGE_LIMIT_NEAR`, số dư dưới 20% lần nạp gần nhất phát `CREDIT_LOW` (mỗi loại một lần mỗi kỳ). Tin SMS/ZNS gửi khách trừ credit theo quy đổi của nền tảng (mặc định 0); gửi lỗi hoàn lại, hết credit thì bỏ qua tin.
 
 ## 11. Integration API — máy gọi máy
 
@@ -776,6 +780,9 @@ Chín route dưới đây cũng là console vận hành nền tảng (`PlatformC
 | GET | `/platform/organizations/:id/field-preview` | `N12` | ĐP-3 3.15 — "tổ chức này sẽ thấy gì" sau khi cộng ghi đè, `?entity=ORDER\|PARTNER`. Dùng chung phép tính với `/field-config` (tenant), chỉ khác ngữ cảnh gọi. CHỈ ĐỌC |
 | GET | `/platform/organizations/:id/credits` | `N1` | Checklist ALG 10.6 — số dư và 50 dòng gần nhất của sổ cái `credit_transactions` |
 | POST | `/platform/organizations/:id/credits` | `N3` | `{ kind: TOPUP\|GIFT\|REFUND, amount, reason }` — nạp/tặng/hoàn có lý do (1–1.000.000 credit), ghi sổ cái và `platform_audit_logs`; tổ chức không có → 404 |
+| PUT | `/platform/organizations/:id/usage-limit` | `N3` | Checklist ALG 10.3 — `{ monthlyLimit: number \| null }` hạn mức credit/tháng của tổ chức (áp kỳ hiện tại và các tháng sau), ghi `platform_audit_logs` |
+| GET | `/platform/credit-pricing` | `N4` | PO Q10 — quy đổi credit: `smsCredit`, `znsCredit` (credit/tin, mặc định 0), `usdToVnd`, `creditValueVnd`, `defaultMonthlyLimit` |
+| PUT | `/platform/credit-pricing` | `N3` | Sửa từng trường của quy đổi credit (lưu `platform_settings.credit_pricing`), ghi `platform_audit_logs` |
 | GET | `/platform/behaviors` | `N12` | ĐP-3 3.15 — liệt kê mã hành vi có thật trong `field-platform/domain/behaviors.ts` cho một `behavior_kind` (`?kind=…`), để Console gợi ý khi thêm giá trị danh mục CÓ HÀNH VI. CHỈ ĐỌC, không thay luật kiểm ở `upsert-catalog-value.ts` |
 
 ## 22. Phân hệ Nghiên cứu Thị trường & Xu hướng (Market Intelligence Engine, Đợt A mở rộng)

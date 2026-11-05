@@ -220,6 +220,7 @@ model organizations {
   order_exceptions              order_exceptions[]
   field_config_overrides        field_config_overrides[]
   credit_transactions           credit_transactions[]
+  usage_limits                  usage_limits[]
   owned_field_definitions       field_definitions[]      @relation("field_definition_owner")
   order_info_requests           order_info_requests[]
   order_change_requests         order_change_requests[]
@@ -720,6 +721,27 @@ model credit_transactions {
 
   @@index([organization_id])
   @@index([organization_id, created_at])
+}
+
+/// Hạn mức credit theo tháng (checklist ALG 10.3, 9.7, 10.5). `service`: CREDIT = mọi dịch vụ (Console đặt),
+/// AI = trần AI do cửa hàng tự đặt. `period`: YYYY-MM giờ Việt Nam; dòng `DEFAULT` giữ mức cấu hình áp cho
+/// các tháng sau. `monthly_limit` null = không giới hạn. Cờ cảnh báo bật một lần mỗi kỳ.
+model usage_limits {
+  id              String   @id @default(uuid())
+  organization_id String
+  service         String
+  period          String
+  monthly_limit   Int?
+  used            Int      @default(0)
+  alerted_near    Boolean  @default(false)
+  alerted_low     Boolean  @default(false)
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
+
+  organization organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+
+  @@unique([organization_id, service, period])
+  @@index([organization_id])
 }
 
 model usage {

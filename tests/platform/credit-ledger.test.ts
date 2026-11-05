@@ -1,6 +1,8 @@
 import { afterAll, beforeEach, describe, expect, it } from "vitest"
 
 import { GET as getCredits, POST as postCredits } from "@/app/api/v1/platform/organizations/[id]/credits/route"
+import { PUT as putUsageLimit } from "@/app/api/v1/platform/organizations/[id]/usage-limit/route"
+import { GET as getPricing, PUT as putPricing } from "@/app/api/v1/platform/credit-pricing/route"
 import { OrganizationRepository } from "@/modules/organization/infra/organization-repository"
 import { PlatformOperatorRepository } from "@/modules/platform/infra/platform-operator-repository"
 
@@ -54,7 +56,7 @@ describe("sổ cái credit", () => {
     expect(usage).toMatchObject({ amount: -30, service: "AI", actor_id: a.userId })
     expect(await balanceOf(b.organizationId)).toBe(bBefore)
 
-    const audit = await prisma.platform_audit_logs.count({ where: { entity_id: a.organizationId, action: { startsWith: "platform.credit." } } })
+    const audit = await prisma.platform_audit_logs.count({ where: { entity_id: a.organizationId, user_id: op.userId, action: { startsWith: "platform.credit." } } })
     expect(audit).toBe(3)
 
     const list = (await readJson(await getCredits(withSession(`${BASE}/${a.organizationId}/credits`, reader.token), params(a.organizationId)))) as {
@@ -71,5 +73,32 @@ describe("sổ cái credit", () => {
     expect((await postCredits(withSession(`${BASE}/${a.organizationId}/credits`, op.token, body({ reason: "x" })), params(a.organizationId))).status).toBe(400)
     expect((await postCredits(withSession(`${BASE}/${a.organizationId}/credits`, op.token, body({ amount: -5 })), params(a.organizationId))).status).toBe(400)
     expect((await postCredits(withSession(`${BASE}/khong-co/credits`, op.token, body({})), params("khong-co"))).status).toBe(404)
+  })
+
+  it("hạn mức tháng và quy đổi credit (10.3): N3 mới sửa được, có nhật ký; giá trị sai → 400", async () => {
+    const startedAt = new Date()
+    const put = (token: string, body: unknown) =>
+      putUsageLimit(withSession(`${BASE}/${a.organizationId}/usage-limit`, token, { method: "PUT", body: JSON.stringify(body) }), params(a.organizationId))
+    expect((await put(reader.token, { monthlyLimit: 500 })).status).toBe(403)
+    expect((await put(op.token, { monthlyLimit: -1 })).status).toBe(400)
+    expect((await put(op.token, { monthlyLimit: 500 })).status).toBe(200)
+    const list = (await readJson(await getCredits(withSession(`${BASE}/${a.organizationId}/credits`, reader.token), params(a.organizationId)))) as {
+      data: { monthly: { credit: { limit: number | null } } }
+    }
+    expect(list.data.monthly.credit.limit).toBe(500)
+
+    const PRICING = "http://localhost/api/v1/platform/credit-pricing"
+    try {
+      expect((await getPricing(withSession(PRICING, reader.token))).status).toBe(403)
+      expect((await putPricing(withSession(PRICING, op.token, { method: "PUT", body: JSON.stringify({ smsCredit: 1.5 }) }))).status).toBe(400)
+      const ok = await putPricing(withSession(PRICING, op.token, { method: "PUT", body: JSON.stringify({ smsCredit: 2, defaultMonthlyLimit: 1000 }) }))
+      expect(ok.status).toBe(200)
+      expect(((await readJson(ok)) as { data: { smsCredit: number; znsCredit: number } }).data).toMatchObject({ smsCredit: 2, znsCredit: 0 })
+      expect(await prisma.platform_audit_logs.count({
+        where: { user_id: op.userId, created_at: { gte: startedAt }, action: { in: ["platform.usage_limit.set", "platform.credit_pricing.update"] } },
+      })).toBe(2)
+    } finally {
+      await prisma.platform_settings.deleteMany({ where: { key: "credit_pricing" } })
+    }
   })
 })

@@ -550,6 +550,26 @@ model credit_transactions {
 }
 ```
 
+Hạn mức credit theo tháng (checklist ALG 10.3, 9.7, 10.5). `service = CREDIT`: tổng credit mọi dịch vụ trong tháng, Console đặt (`N3`, mặc định lấy `platform_settings.credit_pricing.defaultMonthlyLimit`); `service = AI`: trần phần AI do Điều hành cửa hàng đặt (`U2`). Dòng `period = DEFAULT` giữ mức cấu hình cho các tháng sau; dòng kỳ (YYYY-MM giờ Việt Nam) sinh khi trừ credit lần đầu trong tháng. `OrganizationRepository.tryDeductCreditFor` cộng `used` bằng một câu UPDATE có điều kiện (`used + cost <= monthly_limit`) cùng giao dịch với trừ số dư; hoàn credit trừ lại `used`. `alerted_near`/`alerted_low` bật một lần mỗi kỳ cho thông báo `USAGE_LIMIT_NEAR`/`CREDIT_LOW`.
+
+```prisma
+model usage_limits {
+  id              String   @id @default(uuid())
+  organization_id String
+  service         String   // CREDIT · AI
+  period          String   // YYYY-MM · DEFAULT
+  monthly_limit   Int?     // null = không giới hạn
+  used            Int      @default(0)
+  alerted_near    Boolean  @default(false)
+  alerted_low     Boolean  @default(false)
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
+
+  @@unique([organization_id, service, period])
+  @@index([organization_id])
+}
+```
+
 **Một bảng usage duy nhất cho toàn hệ thống.** Mọi module ở cả ba repo ghi vào bảng này, phân biệt bằng `feature`. Không repo nào dựng bảng usage hay credit riêng — tách ra thì không tính được hạn mức trải nghiệm và không xuất được hoá đơn hợp nhất.
 
 **Ghi tại điểm tạo job phía core, không ghi ở worker.** Trình tự trong một giao dịch:

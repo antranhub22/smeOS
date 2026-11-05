@@ -231,4 +231,33 @@ export const STORE_OPERATION_EVENTS: NotificationEventDefinition[] = [
       },
     ],
   },
+  // ── Credit & hạn mức (checklist ALG 10.5) ─────────────────────────────
+  {
+    key: "USAGE_LIMIT_NEAR",
+    label: "Sắp chạm hạn mức credit",
+    description: "Khi credit dùng trong tháng (hoặc phần AI) đạt 80% hạn mức — báo một lần mỗi tháng",
+    group: "AI",
+    tier: "STORE",
+    version: 1,
+    defaultVisibleToTiers: [],
+    iconName: "AlertTriangle",
+    deepLinkTemplate: "/muc-dung",
+    roleDefaults: [
+      { roleKey: "store_admin", channels: ["APP_INBOX", "TELEGRAM"], priority: "URGENT", dispatchMode: "BROADCAST" },
+    ],
+  },
+  {
+    key: "CREDIT_LOW",
+    label: "Credit sắp hết",
+    description: "Khi số dư credit dưới 20% lần nạp gần nhất (hoặc hạn mức tháng) — báo một lần mỗi tháng",
+    group: "AI",
+    tier: "STORE",
+    version: 1,
+    defaultVisibleToTiers: [],
+    iconName: "CreditCard",
+    deepLinkTemplate: "/muc-dung",
+    roleDefaults: [
+      { roleKey: "store_admin", channels: ["APP_INBOX", "TELEGRAM"], priority: "URGENT", dispatchMode: "BROADCAST" },
+    ],
+  },
 ]

@@ -12,13 +12,14 @@ import { formatDateTime, formatNumber } from "@/lib/i18n/formatters"
 import { VietQrTopupModal } from "./vietqr-topup-modal"
 
 type Kind = "TOPUP" | "GIFT" | "REFUND"
+interface Monthly { period: string; credit: { used: number; limit: number | null } }
 interface Entry { id: string; kind: Kind | "OPENING" | "USAGE"; amount: number; balanceAfter: number; reason: string | null; createdAt: string }
 
 const KIND_LABEL: Record<Entry["kind"], string> = { OPENING: "Số dư đầu", TOPUP: "Nạp", GIFT: "Tặng", REFUND: "Hoàn", USAGE: "Dùng" }
 
 /** Console → tổ chức → Credit: số dư, nạp/tặng/hoàn có lý do, sổ cái gần nhất (checklist ALG 10.6). */
 export function CreditLedgerPanel({ organizationId, orgCode, onChanged }: { organizationId: string; orgCode: string; onChanged?: () => void }) {
-  const [data, setData] = useState<{ balance: number; entries: Entry[] } | null>(null)
+  const [data, setData] = useState<{ balance: number; entries: Entry[]; monthly: Monthly } | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [kind, setKind] = useState<Kind>("TOPUP")
   const [amount, setAmount] = useState("")
@@ -26,11 +27,23 @@ export function CreditLedgerPanel({ organizationId, orgCode, onChanged }: { orga
   const [message, setMessage] = useState<string | null>(null)
   const [busy, setBusy] = useState(false)
   const [qrOpen, setQrOpen] = useState(false)
+  const [limitDraft, setLimitDraft] = useState("")
+
+  const saveLimit = async () => {
+    setBusy(true); setMessage(null)
+    const res = await fetch(`/api/v1/platform/organizations/${organizationId}/usage-limit`, {
+      method: "PUT", headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ monthlyLimit: limitDraft.trim() === "" ? null : Number(limitDraft) }),
+    }).catch(() => null)
+    setBusy(false)
+    setMessage(res?.ok ? "Đã lưu hạn mức tháng" : "Không lưu được hạn mức")
+    if (res?.ok) load()
+  }
 
   const load = useCallback(() => {
     fetch(`/api/v1/platform/organizations/${organizationId}/credits`)
       .then((r) => (r.ok ? r.json() : Promise.reject(new Error(String(r.status)))))
-      .then((j: { data: { balance: number; entries: Entry[] } }) => { setData(j.data); setError(null) })
+      .then((j: { data: { balance: number; entries: Entry[]; monthly: Monthly } }) => { setData(j.data); setLimitDraft(j.data.monthly.credit.limit === null ? "" : String(j.data.monthly.credit.limit)); setError(null) })
       .catch(() => setError("Chưa tải được sổ credit."))
   }, [organizationId])
 
@@ -79,6 +92,11 @@ export function CreditLedgerPanel({ organizationId, orgCode, onChanged }: { orga
             <Input inputMode="numeric" value={amount} onChange={(e) => setAmount(e.target.value.replace(/\D/g, ""))} placeholder="Số credit" className="h-9 w-32" aria-label="Số credit" />
             <Input value={reason} onChange={(e) => setReason(e.target.value)} placeholder="Lý do" className="h-9 min-w-[12rem] flex-1" aria-label="Lý do" />
             <Button type="button" size="sm" variant="secondary" disabled={busy || !amount || reason.trim().length < 3} onClick={() => void submit()}>Ghi</Button>
+          </div>
+          <div className="flex flex-wrap items-center gap-2 text-caption text-text">
+            <span>Tháng {data.monthly.period.slice(5)}: đã dùng {formatNumber(data.monthly.credit.used)} credit · hạn mức</span>
+            <Input inputMode="numeric" value={limitDraft} onChange={(e) => setLimitDraft(e.target.value.replace(/\D/g, ""))} placeholder="Không giới hạn" className="h-9 w-36" aria-label="Hạn mức credit mỗi tháng" />
+            <Button type="button" size="sm" variant="outline" disabled={busy} onClick={() => void saveLimit()}>Lưu hạn mức</Button>
           </div>
           {message && <p role="status" className="text-caption text-text-muted">{message}</p>}
           <ul className="divide-y divide-border text-caption">

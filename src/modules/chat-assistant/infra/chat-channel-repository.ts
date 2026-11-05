@@ -139,9 +139,10 @@ export class ChatChannelRepository {
     senderId: string
   ): Promise<boolean> {
     // Trừ có điều kiện (chống đua) và ghi sổ cái credit (checklist ALG 10.6)
-    const deducted = await new OrganizationRepository().tryDeductCreditFor(organizationId, costCredit, {
-      service: "CHAT", reason: `Trả lời AI qua ${channel}`,
-    })
+    // Chạm hạn mức tháng cũng coi như hết credit: bot dừng, mời nhân viên trả lời tay
+    const deducted = await new OrganizationRepository()
+      .tryDeductCreditFor(organizationId, costCredit, { service: "CHAT", reason: `Trả lời AI qua ${channel}` })
+      .catch(() => false)
     if (!deducted) return false
 
     await prisma.usage.create({

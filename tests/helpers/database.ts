@@ -142,6 +142,7 @@ const TENANT_TABLES = [
   "usage",
   // Checklist ALG 10.6 — sổ cái credit
   "credit_transactions",
+  "usage_limits",
   "job_events",
   "generation_jobs",
   "idempotency_keys",

@@ -104,6 +104,29 @@ describe("greeting-card notifications", () => {
     expect(await notifyOrderEvent(b.organizationId, order.orderId, "DISPATCHED", repo, fakeFetch([], []))).toBe("DISABLED")
   })
 
+  it("SMS trừ credit theo quy đổi của nền tảng (PO Q10); gửi lỗi hoàn lại; hết credit thì không gửi", async () => {
+    await prisma.platform_settings.upsert({ where: { key: "credit_pricing" }, create: { key: "credit_pricing", value: { smsCredit: 2 } }, update: { value: { smsCredit: 2 } } })
+    try {
+      const order = await orderFor(a)
+      await updateNotifySettings(a.ctx, { enabled: true, channel: "ESMS", credentials: { apiKey: "k", secretKey: "s", brandname: "TIEM" } })
+      const repo = new GreetingNotificationRepository()
+      const balance = async () => (await prisma.organizations.findUniqueOrThrow({ where: { id: a.organizationId } })).credit_balance
+      const start = await balance()
+      expect(await notifyOrderEvent(a.organizationId, order.orderId, "DISPATCHED", repo, fakeFetch([{ CodeResult: "99", ErrorMessage: "Lỗi" }], []))).toBe("FAILED")
+      expect(await balance()).toBe(start)
+      expect(await notifyOrderEvent(a.organizationId, order.orderId, "DISPATCHED", repo, fakeFetch([{ CodeResult: "100", SMSID: "s1" }], []))).toBe("SENT")
+      expect(await balance()).toBe(start - 2)
+      expect(await prisma.credit_transactions.findFirst({ where: { organization_id: a.organizationId, service: "SMS", kind: "USAGE" } })).toMatchObject({ amount: -2 })
+
+      await prisma.organizations.update({ where: { id: a.organizationId }, data: { credit_balance: 1 } })
+      const calls: Call[] = []
+      expect(await notifyOrderEvent(a.organizationId, order.orderId, "DELIVERED", repo, fakeFetch([{ CodeResult: "100", SMSID: "s2" }], calls))).toBe("SKIPPED")
+      expect(calls).toHaveLength(0)
+    } finally {
+      await prisma.platform_settings.deleteMany({ where: { key: "credit_pricing" } })
+    }
+  })
+
   it("thông tin kết nối không đọc ngược ra được; bật mà thiếu thông tin thì báo lỗi; tắt kênh thì thao tác chính không gửi tin", async () => {
     await expect(updateNotifySettings(a.ctx, { enabled: true, channel: "ESMS" })).rejects.toMatchObject({ code: "VALIDATION_FAILED" })
     await updateNotifySettings(a.ctx, { enabled: true, channel: "ESMS", credentials: { apiKey: "k-bi-mat", secretKey: "s-bi-mat", brandname: "TIEM" } })
