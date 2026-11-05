@@ -118,7 +118,7 @@ export function ShipperRunsHome() {
           id="shipper_runs_guidance"
           badgeLabel="ĐƠN CẦN GIAO"
           title="Giao đúng người, đúng giờ, có ảnh giao"
-          description="Đơn Điều phối giao cho bạn hiện ở đây. Báo lấy hàng, bắt đầu giao, rồi chụp ảnh khi trao hoa cho người nhận."
+          description="Đơn Điều phối giao cho bạn hiện ở đây. Báo lấy hàng, bắt đầu giao, rồi chụp ảnh khi trao hàng cho người nhận."
           tips={["Gọi người nhận trước khi tới", "Ảnh giao hàng là bằng chứng bắt buộc", "Giao không được thì ghi rõ lý do"]}
         />
         <input ref={fileRef} type="file" accept="image/*" capture="environment" className="hidden" onChange={(e) => void onPhoto(e.target.files?.[0])} />

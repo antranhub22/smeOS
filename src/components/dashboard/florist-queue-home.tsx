@@ -14,6 +14,7 @@ import { PageHeader } from "@/components/ui/page-header"
 import { SkeletonBlock } from "@/components/ui/skeleton"
 import { UserMenu } from "@/components/layout/user-menu"
 import { useSession } from "@/lib/session"
+import { getIndustryTerminology } from "@/modules/organization/domain/industry-profile"
 
 import { NotSignedIn, getJson, postJson } from "./role-work-api"
 
@@ -36,10 +37,11 @@ async function fetchWorks(): Promise<Work[]> {
   return (await getJson<{ data: Work[] }>("/api/v1/orders/my-work"))?.data ?? []
 }
 
-/** Trang chủ Thợ cắm hoa — "Việc của tôi" (checklist ALG 4.13): đơn giao cho mình, sắp theo giờ giao. */
+/** Trang chủ Thợ chế tác — "Việc của tôi" (checklist ALG 4.13): đơn giao cho mình, sắp theo giờ giao. */
 export function FloristQueueHome() {
   const router = useRouter()
-  const { orgName, userInitials, roleUx } = useSession()
+  const { orgName, userInitials, roleUx, organization } = useSession()
+  const terms = getIndustryTerminology(organization?.industry)
   const [works, setWorks] = useState<Work[] | null>(null)
   const [error, setError] = useState<string | null>(null)
   const [busyId, setBusyId] = useState<string | null>(null)
@@ -79,7 +81,7 @@ export function FloristQueueHome() {
     <div className="flex h-full flex-col overflow-hidden">
       <PageHeader
         className="flex-shrink-0 border-b border-border bg-surface px-4 py-4"
-        breadcrumbs={roleUx?.label ?? "Thợ cắm hoa"}
+        breadcrumbs={roleUx?.label ?? terms.makerTitle}
         title={orgName}
         actions=<UserMenu initials={userInitials} />
       />
@@ -87,9 +89,9 @@ export function FloristQueueHome() {
         <FeatureGuidanceCard
           id="florist_queue_guidance"
           badgeLabel="VIỆC CỦA TÔI"
-          title="Cắm đúng công thức, đúng giờ giao"
-          description="Đơn được giao cho bạn hiện ở đây theo thứ tự giờ giao. Nhận việc khi bắt đầu cắm, báo xong khi hoa sẵn sàng giao."
-          tips={["Xem công thức và ảnh mẫu trước khi cắm", "Đơn giao sớm nhất nằm trên cùng", "Báo xong để Điều phối gọi shipper"]}
+          title="Làm đúng công thức, đúng giờ giao"
+          description={`Đơn được giao cho bạn hiện ở đây theo thứ tự giờ giao. Nhận việc khi bắt đầu ${terms.makerAction.toLowerCase()}, báo xong khi ${terms.sampleProduct.toLowerCase()} sẵn sàng giao.`}
+          tips={["Xem công thức và ảnh mẫu trước khi bắt đầu", "Đơn giao sớm nhất nằm trên cùng", "Báo xong để Điều phối gọi shipper"]}
         />
         {error && <InlineError message={error} onRetry={() => void load()} />}
         {works === null && !error && <SkeletonBlock lines={4} label="Đang tải việc của bạn" />}
