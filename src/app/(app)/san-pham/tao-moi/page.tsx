@@ -13,6 +13,7 @@ import { CreateGeneralCard } from "@/components/products/create-general-card"
 import { CreateDesignCard } from "@/components/products/create-design-card"
 import { CreateBomCard } from "@/components/products/create-bom-card"
 import { CreateStoryCard } from "@/components/products/create-story-card"
+import { CreateOccasionSizeCard } from "@/components/products/create-occasion-size-card"
 import { useCreateProductForm } from "@/components/products/use-create-product-form"
 
 export default function CreateProductPage() {
@@ -106,6 +107,8 @@ export default function CreateProductPage() {
             primaryColor={form.primaryColor}
             setPrimaryColor={form.setPrimaryColor}
           />
+
+          <CreateOccasionSizeCard value={form.occasionSize} />
 
           <CreateBomCard
             ti={ti}

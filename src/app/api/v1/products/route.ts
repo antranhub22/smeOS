@@ -11,7 +11,7 @@ import { listProducts } from "@/modules/products/use-cases/list-products"
 import { needsScan, parseScanParams, scanProducts } from "@/modules/products/use-cases/scan-products"
 import { notifyProductProposed } from "@/modules/products/use-cases/product-proposal-notifications"
 
-const PRODUCT_STATUS = ["DRAFT", "ACTIVE", "ARCHIVED"] as const
+const PRODUCT_STATUS = ["DRAFT", "ACTIVE", "PAUSED", "ARCHIVED"] as const
 const PROPOSAL_FILTERS = ["pending", "rejected", "expired"] as const
 
 /** `GET /products` (`L1`, đặc tả 06 mục 6) — M03. Lọc `branch_id`/`status`/`category`. */
@@ -67,7 +67,8 @@ export const GET = handle(async (request) => {
 })
 
 const postSchema = z.object({
-  code: z.string().min(1),
+  /** Để trống → máy chủ tự sinh mã `AUTO-…` (checklist ALG 2.1). */
+  code: z.string().trim().max(64).optional(),
   name: z.string().min(1),
   branch_id: z.string().min(1).nullable().optional(),
   category: z.string().min(1).nullable().optional(),
@@ -90,7 +91,7 @@ export const POST = handle(async (request) => {
   if (parsed.data.cost_price_vnd !== undefined) requireCapability(ctx, "L5")
 
   const product = await createProduct(ctx, {
-    code: parsed.data.code,
+    code: parsed.data.code ?? "",
     name: parsed.data.name,
     branchId: parsed.data.branch_id ?? null,
     category: parsed.data.category ?? null,

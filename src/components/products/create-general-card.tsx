@@ -177,14 +177,13 @@ export function CreateGeneralCard({
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-caption font-semibold text-text mb-1">
-                Mã {ti("sampleProduct").toLowerCase()} (SKU) <span className="text-danger">*</span>
+                Mã {ti("sampleProduct").toLowerCase()} (SKU)
               </label>
               <Input
                 type="text"
                 value={code}
                 onChange={(e) => setCode(e.target.value)}
-                placeholder={`Để trống tự tạo (hoặc nhập ${industryPrefix}-001)`}
-                required
+                placeholder={`Để trống để hệ thống tự tạo (hoặc nhập ${industryPrefix}-001)`}
                 className="h-10 text-body-sm uppercase"
               />
             </div>

@@ -33,12 +33,13 @@ type Product = {
   name: string
   code: string
   category: string | null
-  status: "DRAFT" | "ACTIVE" | "ARCHIVED"
+  status: "DRAFT" | "ACTIVE" | "PAUSED" | "ARCHIVED"
 }
 
 const NHAN_TRANG_THAI_SAN_PHAM: Record<Product["status"], string> = {
   DRAFT: "Nháp",
   ACTIVE: "Đang bán",
+  PAUSED: "Tạm ngưng",
   ARCHIVED: "Lưu trữ",
 }
 

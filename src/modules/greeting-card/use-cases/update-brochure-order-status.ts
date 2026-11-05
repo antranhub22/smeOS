@@ -1,20 +1,21 @@
 import type { TenantContext } from "@/core/tenancy"
+import { assertSkipAllowed, loadForAction, ownedMediaIds, type PhotoInput } from "./brochure-order-action-guards"
+import { statusAfterDelivery } from "../domain/order-settlement"
+import { completeIfSettled } from "../infra/order-settlement"
 import { qcAiOutcome } from "../domain/qc-ai-outcome"
 import { conflict, notFound, validationFailed } from "@/core/http/errors"
-import { mediaSelectionError } from "../domain/media-limits"
 import { BrochureOrderRepository } from "../infra/brochure-order-repository"
-import { coordinatorAcceptanceBlocker, coordinatorActionBlocker, coordinatorRejectionBlocker, type CoordinatorAction } from "../domain/brochure-commerce-rules"
+import { coordinatorAcceptanceBlocker, coordinatorRejectionBlocker } from "../domain/brochure-commerce-rules"
 import { paymentGateBlocker, parsePaymentPolicy } from "../domain/brochure-payment-policy"
 import { GreetingCardRepository } from "../infra/greeting-card-repository"
 import { queueOrderNotification } from "./notify-customer"
 import { queueStaffNotification } from "./notify-staff"
 import { DELIVERY_FAILURE_LABEL, deliveryFailureError, parseRedeliveryFee, redeliveryFeeFor, type DeliveryFailureReason } from "../domain/delivery-failure"
 import { DeliveryFailureRepository } from "../infra/delivery-failure-repository"
-import { orderPhotoApproval, photoApprovalDispatchBlocker } from "../domain/photo-approval"
 import { BrochurePaymentRepository } from "../infra/brochure-payment-repository"
 import { CancellationRepository } from "../infra/cancellation-repository"
 import { coordinatorConfirmDepositPayment } from "./confirm-brochure-payment"
-import { canBypassDeliveryPhoto, canBypassFinishedPhoto, canRoleApproveDeposit, depositApproverRole, isUrgentOrder, parseBrochureWorkflowPolicy } from "../domain/brochure-workflow-policy"
+import { canRoleApproveDeposit, depositApproverRole, isUrgentOrder, parseBrochureWorkflowPolicy } from "../domain/brochure-workflow-policy"
 import { hasCapability } from "@/core/rbac/capabilities"
 import { GREETING_CARD_CAPABILITY } from "../domain/greeting-card-capabilities"
 import { verifyQcPhotoWithAi } from "./verify-qc-photo-ai"
@@ -23,69 +24,7 @@ import { OrderPhotoRepository } from "@/modules/greeting-card/infra/order-photo-
 import { log } from "@/core/observability/log"
 import { confirmChainPaymentAndDispatch } from "./coordinator-confirm-chain-payment"
 
-/** Đơn của tổ chức + kiểm đúng thứ tự tác vụ xưởng (409 nếu sai bước). */
-async function loadForAction(
-  ctx: TenantContext,
-  orderId: string,
-  action: CoordinatorAction,
-  repo: BrochureOrderRepository
-) {
-  const order = await repo.findBrochureOrder(ctx, orderId)
-  if (!order) throw notFound()
-  // Chính sách thu tiền và kiểm định ảnh của tiệm
-  const shop = await new GreetingCardRepository().getShopProfile(ctx.organizationId)
-  const policy = parsePaymentPolicy(shop.settings)
-  const blocker = coordinatorActionBlocker(
-    action,
-    {
-      status: order.status,
-      productionStatus: order.production_status,
-      deliveryStatus: order.delivery_status,
-    },
-    { skipPhoto: policy.requireProductPhotoQC === false }
-  )
-  if (blocker) throw conflict(blocker)
-  const moneyBlocker = paymentGateBlocker(action, policy, {
-    totalVnd: Number(order.total_vnd),
-    paidVnd: Number(order.paid_vnd),
-  })
-  if (moneyBlocker) throw conflict(moneyBlocker)
-  if (action === "dispatch-shipping") {
-    const approval = orderPhotoApproval(order, shop.settings, policy.productPhotoReviewMinutes, new Date())
-    const waiting = photoApprovalDispatchBlocker(approval)
-    if (waiting) throw conflict(waiting)
-  }
-  return order
-}
-
-/** Gói Nghiêm ngặt bắt buộc ảnh — gọi thẳng API bỏ qua ảnh cũng bị chặn (PO 15/10/2026). */
-async function assertSkipAllowed(ctx: TenantContext, kind: "product" | "recipient") {
-  const workflow = parseBrochureWorkflowPolicy((await new GreetingCardRepository().getShopProfile(ctx.organizationId)).settings)
-  const allowed = kind === "product" ? canBypassFinishedPhoto(workflow) : canBypassDeliveryPhoto(workflow)
-  if (!allowed) throw conflict(kind === "product" ? "Tiệm bắt buộc ảnh thành phẩm — không bỏ qua được" : "Tiệm bắt buộc ảnh bàn giao — không bỏ qua được")
-}
-
-/** Đầu vào ảnh: `assetIds` (1–5 ảnh + 0–2 video) hoặc `assetId` (client cũ, một ảnh), hoặc bỏ qua nếu giao gấp. */
-export type PhotoInput = {
-  assetId?: string | undefined
-  assetIds?: string[] | undefined
-  skipPhoto?: boolean | undefined
-  skipReason?: string | undefined
-}
-
-/**
- * Mọi asset phải thuộc đúng tổ chức (khác → 404) và bộ tệp đúng giới hạn ảnh/video.
- * Thời lượng video do trình duyệt kiểm; máy chủ kiểm loại, số lượng, dung lượng.
- */
-async function ownedMediaIds(ctx: TenantContext, input: PhotoInput, repo: BrochureOrderRepository): Promise<string[]> {
-  const ids = [...new Set(input.assetIds ?? (input.assetId ? [input.assetId] : []))]
-  if (ids.length === 0) throw validationFailed({ assetIds: "Cần ít nhất 1 ảnh" })
-  const meta = await repo.ownedAssetsMeta(ctx, ids)
-  if (meta.length !== ids.length) throw notFound()
-  const error = mediaSelectionError(meta.map((m) => ({ mimeType: m.mime_type, sizeBytes: m.file_size })))
-  if (error) throw validationFailed({ assetIds: error })
-  return ids
-}
+export type { PhotoInput } from "./brochure-order-action-guards"
 
 export async function assignBrochureFlorist(
   ctx: TenantContext,
@@ -227,14 +166,17 @@ export async function uploadBrochureRecipientPhoto(
   repo = new BrochureOrderRepository()
 ) {
   const order = await loadForAction(ctx, orderId, "recipient-photo", repo)
+  // Giao xong còn nợ → "Đã giao — chờ thu đủ", chỉ hoàn tất khi thu đủ (checklist ALG 4.26)
+  const orderStatus = statusAfterDelivery({ totalVnd: Number(order.total_vnd), paidVnd: Number(order.paid_vnd) })
   if (input.skipPhoto) {
     await assertSkipAllowed(ctx, "recipient")
     const result = await repo.applyProgress(ctx, order, {
       eventType: "RECIPIENT_PHOTO_SKIPPED",
       deliveryStatus: "DELIVERED",
-      orderStatus: "COMPLETED",
+      orderStatus,
       noteAppend: `[Bỏ qua ảnh bàn giao] ${input.skipReason?.trim() || "Khách nhận trực tiếp / Giao gấp"}`,
     })
+    await completeIfSettled(ctx.organizationId, order.id)
     queueOrderNotification(ctx.organizationId, order.id, "DELIVERED")
     return result
   }
@@ -242,9 +184,10 @@ export async function uploadBrochureRecipientPhoto(
   const result = await repo.applyProgress(ctx, order, {
     eventType: "RECIPIENT_PHOTO_UPLOADED",
     deliveryStatus: "DELIVERED",
-    orderStatus: "COMPLETED",
+    orderStatus,
     qcAssetIds: assetIds,
   })
+  await completeIfSettled(ctx.organizationId, order.id)
   queueOrderNotification(ctx.organizationId, order.id, "DELIVERED")
   return result
 }

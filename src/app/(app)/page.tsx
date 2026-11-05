@@ -7,6 +7,7 @@
 //    - `sales` (vai `sale`)             → Pipeline Workspace
 //    - `coordinator` (vai `dieu_phoi`)  → trang chủ chuỗi (`/dieu-phoi` mở từ menu)
 //    - `cua_hang` (cửa hàng nhận gia công) → trang chủ cửa hàng (`/cua-hang` mở từ menu)
+//    - `tho_cam` → Việc của tôi · `shipper` → Đơn cần giao · `ke_toan` → bàn làm việc Kế toán (PO Q7)
 //    PO 23/10/2026: mọi tài khoản luôn thấy trang chủ sau đăng nhập — không chuyển tiếp.
 //    - vai chưa gắn khuôn (vai riêng của tổ chức…) → Command Center, giữ đúng
 //      hành vi trước 26/09.
@@ -32,6 +33,9 @@ import { NetworkJourneyHome } from "@/components/dashboard/network-journey-home"
 import { PlatformJourneyHome } from "@/components/dashboard/platform-journey-home"
 import { IndustryJourneyHome } from "@/components/dashboard/industry-journey-home"
 import { ToolkitHome } from "@/components/dashboard/toolkit-home"
+import { FloristQueueHome } from "@/components/dashboard/florist-queue-home"
+import { ShipperRunsHome } from "@/components/dashboard/shipper-runs-home"
+import { AccountingWorkspace } from "@/components/dashboard/accounting-workspace"
 import { resolveRoleUx } from "@/modules/organization/domain/role-ux-catalog"
 import { resolveAppSession } from "@/modules/organization/use-cases/resolve-app-session"
 
@@ -75,6 +79,12 @@ export default async function DashboardPage() {
       return <CrmWorkspace />
     case "CUSTOMER_SERVICE_WORKSPACE":
       return <CustomerServiceWorkspace />
+    case "FLORIST_QUEUE":
+      return <FloristQueueHome />
+    case "SHIPPER_DELIVERIES":
+      return <ShipperRunsHome />
+    case "ACCOUNTING_WORKSPACE":
+      return <AccountingWorkspace />
     case "CONTROL_CENTER":
     case "STORE_GROWTH_CENTER":
     case "STORE_COMMAND_CENTER":

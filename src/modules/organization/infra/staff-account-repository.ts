@@ -12,10 +12,11 @@ export class StaffAccountRepository {
   /** Người dùng + thành viên ĐANG HOẠT ĐỘNG trong MỘT giao dịch — hỏng giữa chừng không để tài khoản mồ côi. */
   async createActive(
     ctx: TenantContext,
-    input: { email: string; name: string; passwordHash: string; roleId: string; branchId: string | null }
+    input: { email: string; name: string; passwordHash: string; roleId: string; branchId: string | null; phone?: string | null }
   ): Promise<{ membershipId: string; userId: string }> {
     return this.db.$transaction(async (tx) => {
-      const user = await tx.users.create({ data: { email: input.email, name: input.name, password_hash: input.passwordHash } })
+      // Mật khẩu tạm → bắt buộc tự đổi ở lần đăng nhập đầu (checklist ALG 1.4)
+      const user = await tx.users.create({ data: { email: input.email, name: input.name, password_hash: input.passwordHash, must_change_password: true, phone: input.phone ?? null } })
       const membership = await tx.memberships.create({
         data: scopedData(ctx, {
           user_id: user.id,
@@ -29,6 +30,10 @@ export class StaffAccountRepository {
     })
   }
 
+  async setPhone(userId: string, phone: string | null): Promise<void> {
+    await this.db.users.update({ where: { id: userId }, data: { phone } })
+  }
+
   /** Người này còn là thành viên (bất kỳ trạng thái) của tổ chức khác không. */
   async belongsToOtherOrganization(userId: string, organizationId: string): Promise<boolean> {
     return (await this.db.memberships.count({ where: { user_id: userId, organization_id: { not: organizationId } } })) > 0
@@ -40,7 +45,9 @@ export class StaffAccountRepository {
    */
   async setPassword(userId: string, passwordHash: string, opts: { revokeAllSessions?: true; keepSessionId?: string }): Promise<string> {
     return this.db.$transaction(async (tx) => {
-      const user = await tx.users.update({ where: { id: userId }, data: { password_hash: passwordHash }, select: { email: true } })
+      // Điều hành đặt lại → mật khẩu tạm, phải tự đổi; người dùng tự đổi → xoá cờ (checklist ALG 1.4)
+      const mustChange = opts.revokeAllSessions === true
+      const user = await tx.users.update({ where: { id: userId }, data: { password_hash: passwordHash, must_change_password: mustChange }, select: { email: true } })
       await tx.sessions.updateMany({
         where: { user_id: userId, revoked_at: null, ...(opts.keepSessionId ? { id: { not: opts.keepSessionId } } : {}) },
         data: { revoked_at: new Date() },

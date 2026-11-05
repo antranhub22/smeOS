@@ -8,7 +8,7 @@ import { requireTenantContext } from "@/modules/organization/use-cases/resolve-s
 import { getProduct } from "@/modules/products/use-cases/get-product"
 import { updateProduct } from "@/modules/products/use-cases/update-product"
 
-const PRODUCT_STATUS = ["DRAFT", "ACTIVE", "ARCHIVED"] as const
+const PRODUCT_STATUS = ["DRAFT", "ACTIVE", "PAUSED", "ARCHIVED"] as const
 
 /** `GET /products/:id` (`L1`, đặc tả 06 mục 6) — M03, redaction theo `L5`. */
 export const GET = handle(async (request, context: { params: Promise<{ id: string }> }) => {

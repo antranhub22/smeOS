@@ -3,6 +3,7 @@
  */
 
 import { AppError } from "@/core/http/errors"
+import { branchScopeOf } from "@/core/tenancy"
 import type { TenantContext } from "@/core/tenancy/tenant-context"
 import { calculateOrderTotal, generateOrderCode } from "../domain/order-rules"
 import type { CreateOrderInput, OrderRecord } from "../domain/order-types"
@@ -28,7 +29,9 @@ export async function createOrder(
   const countToday = await repo.countTodayOrders(ctx.organizationId)
   const code = generateOrderCode(countToday + 1)
 
-  const order = await repo.create(ctx.organizationId, code, input, totalVnd, ctx.userId)
+  // Nhân viên chi nhánh tạo đơn → đơn thuộc chi nhánh đó, không chọn chi nhánh khác (checklist ALG 9.13)
+  const scope = branchScopeOf(ctx)
+  const order = await repo.create(ctx.organizationId, code, scope ? { ...input, branchId: scope } : input, totalVnd, ctx.userId)
   // Không chờ: thông báo chậm/lỗi không được làm chậm hay hỏng việc tạo đơn
   void notify({
     organizationId: ctx.organizationId,

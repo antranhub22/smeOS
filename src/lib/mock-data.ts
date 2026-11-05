@@ -182,6 +182,8 @@ export const FEATURES: FeatureItem[] = [
 export type MockSession = {
   userName: string
   userEmail?: string | undefined
+  /** Đang dùng mật khẩu tạm — bắt buộc đổi trước khi dùng (checklist ALG 1.4). */
+  mustChangePassword?: boolean | undefined
   userInitials: string
   orgName: string
   workspaceKind: WorkspaceKind

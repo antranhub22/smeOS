@@ -18,6 +18,7 @@ const createSchema = z.object({
   email: z.string().max(200),
   role_id: z.string().min(1).max(64),
   branch_id: z.string().min(1).max(64).nullish(),
+  phone: z.string().max(20).nullish(),
 })
 
 /**
@@ -34,6 +35,7 @@ export const POST = handle(async (request) => {
     email: parsed.data.email,
     roleId: parsed.data.role_id,
     branchId: parsed.data.branch_id ?? null,
+    phone: parsed.data.phone ?? null,
   })
   return jsonResponse({ data: account }, { status: 201, headers: { "cache-control": "no-store" } })
 })

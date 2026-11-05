@@ -1,6 +1,6 @@
 import type { InputJsonValue, product_status, products } from "./entities"
 import { prisma } from "@/core/tenancy/infra/prisma"
-import { scopedData, scopedWhere, type TenantContext } from "@/core/tenancy"
+import { branchScopedProductWhere, scopedData, scopedWhere, type TenantContext } from "@/core/tenancy"
 import { signStorageUrl } from "@/modules/assets/infra/storage-signing"
 import { categoryAndSearchWhere } from "./product-list-where"
 
@@ -122,7 +122,7 @@ export class ProductRepository implements IProductRepository {
     page: ListProductsPage
   ): Promise<products[]> {
     const where = scopedWhere(ctx, {
-      ...(filters.branchId !== undefined ? { branch_id: filters.branchId } : {}),
+      ...branchScopedProductWhere(ctx, filters.branchId), // chi nhánh được giao (ALG 9.13)
       ...(filters.status !== undefined ? { status: filters.status } : {}),
       ...(filters.category !== undefined ? { category: filters.category } : {}),
       ...(filters.occasionCode !== undefined
@@ -160,7 +160,7 @@ export class ProductRepository implements IProductRepository {
     page: ListProductsPage
   ): Promise<ProductPreviewRow[]> {
     const where = scopedWhere(ctx, {
-      ...(filters.branchId !== undefined ? { branch_id: filters.branchId } : {}),
+      ...branchScopedProductWhere(ctx, filters.branchId), // chi nhánh được giao (ALG 9.13)
       // Không lọc status → ẩn sản phẩm đã vào thùng rác (ARCHIVED); xem lại ở Kho dữ liệu → Thùng rác.
       status: filters.status ?? { not: "ARCHIVED" as product_status },
       ...categoryAndSearchWhere(filters),

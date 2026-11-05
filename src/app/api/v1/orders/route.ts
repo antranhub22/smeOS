@@ -3,7 +3,9 @@ import { handle, jsonResponse } from "@/core/http/response"
 import { requireCapability } from "@/core/rbac/capabilities"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import { ingestOrder } from "@/modules/orders/use-cases/ingest-order"
+import { syncOrderInfoRequests } from "@/modules/orders/use-cases/order-info-requests"
 import { listOrders } from "@/modules/orders/use-cases/list-orders"
+import { parseDeliveryDate } from "@/modules/orders/domain/order-list-filter"
 import type { OrderStatus, ProductionStatus, DeliveryStatus } from "@/modules/orders/domain/order-types"
 
 const createOrderSchema = z.object({
@@ -54,6 +56,10 @@ export const GET = handle(async (request) => {
   const branchId = url.searchParams.get("branch_id") ?? undefined
   const customerId = url.searchParams.get("customer_id") ?? undefined
   const search = url.searchParams.get("search") ?? undefined
+  // Lọc nâng cao (checklist ALG 4.3): khoảng ngày giao YYYY-MM-DD, nhân viên bán
+  const deliveryFrom = parseDeliveryDate(url.searchParams.get("delivery_from"))
+  const deliveryTo = parseDeliveryDate(url.searchParams.get("delivery_to"))
+  const saleId = url.searchParams.get("sale_id")?.trim().slice(0, 64) || undefined
   const limitParam = url.searchParams.get("limit")
   const limit = limitParam ? parseInt(limitParam, 10) : 50
 
@@ -64,6 +70,9 @@ export const GET = handle(async (request) => {
     branchId,
     customerId,
     search,
+    deliveryFrom,
+    deliveryTo,
+    saleId,
     limit,
   })
 
@@ -79,5 +88,7 @@ export const POST = handle(async (request) => {
   const parsed = createOrderSchema.parse(body)
 
   const order = await ingestOrder(ctx, { ...parsed, source: "MANUAL" })
+  // Đơn thiếu địa chỉ/SĐT người nhận → tự sinh yêu cầu bổ sung (checklist ALG 4.14)
+  await syncOrderInfoRequests(ctx, order.id)
   return jsonResponse({ order }, { status: 201 })
 })

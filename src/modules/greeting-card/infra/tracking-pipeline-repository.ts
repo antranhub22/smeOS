@@ -1,5 +1,5 @@
 import { prisma } from "@/core/tenancy/infra/prisma"
-import { scopedWhere, type TenantContext } from "@/core/tenancy"
+import { branchScopedWhere, scopedWhere, type TenantContext } from "@/core/tenancy"
 import { log } from "@/core/observability/log"
 import { BROWSING_EVENT_TYPES } from "../domain/customer-journey-events"
 import { signStorageUrl } from "@/modules/assets/infra/storage-signing"
@@ -47,7 +47,7 @@ export class TrackingPipelineRepository {
     const rows = await this.db.orders.findMany({
       // Đơn đang xử lý; đơn hoàn tất hoặc đã huỷ giữ 7 ngày gần nhất để đối soát/xem lại
       where: scopedWhere(ctx, {
-        source: "BROCHURE",
+        source: "BROCHURE", ...branchScopedWhere(ctx),
         OR: [
           { status: { notIn: ["COMPLETED" as const, "CANCELLED" as const] }, delivery_status: { not: "DELIVERED" as const } },
           { updated_at: { gte: doneSince } },
@@ -103,7 +103,7 @@ export class TrackingPipelineRepository {
     }
     if (ref.orderId) {
       const order = await this.db.orders.findFirst({
-        where: scopedWhere(ctx, { id: ref.orderId, source: "BROCHURE" }),
+        where: scopedWhere(ctx, { id: ref.orderId, source: "BROCHURE", ...branchScopedWhere(ctx) }),
         select: {
           id: true, code: true, created_at: true,
           events: { select: { axis: true, from_value: true, to_value: true, reason: true, actor_id: true, created_at: true }, orderBy: { created_at: "asc" } },

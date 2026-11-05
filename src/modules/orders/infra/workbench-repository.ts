@@ -4,6 +4,7 @@
  */
 
 import { prisma } from "@/core/tenancy/infra/prisma"
+import { branchScopedWhere } from "@/core/tenancy"
 import { scopedWhere, type TenantContext } from "@/core/tenancy/tenant-context"
 
 export const WORKBENCH_MAX = 100
@@ -16,6 +17,7 @@ export class WorkbenchRepository {
         status: { in: ["DRAFT" as const, "CONFIRMED" as const, "PROCESSING" as const, "DELIVERED" as const] },
         OR: [{ coordination: { is: null } }, { balance_vnd: { gt: 0 } }],
         ...(saleId ? { AND: [{ OR: [{ owner_sale_id: saleId }, { owner_sale_id: null }] }] } : {}),
+        ...branchScopedWhere(ctx),
       }),
       orderBy: { created_at: "desc" },
       take: WORKBENCH_MAX,

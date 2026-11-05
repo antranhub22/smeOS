@@ -102,6 +102,9 @@ model users {
   approval_status     user_approval_status @default(APPROVED)
   approval_decided_at DateTime?
   approval_decided_by String? // user_id của superadmin
+  /// Tài khoản đang dùng mật khẩu tạm (Điều hành tạo hoặc đặt lại) — phải tự đổi trước khi dùng hệ
+  /// thống (PO 04/11/2026, checklist ALG 1.4). Tự đổi mật khẩu thì về false.
+  must_change_password Boolean @default(false)
   created_at          DateTime             @default(now())
   updated_at          DateTime             @updatedAt
 
@@ -803,9 +806,11 @@ model brand_profiles {
 // (`TECHNICAL_DEBT.md` #8: bốn bảng thuộc tenant của P3 thiếu khoá ngoại vì
 // đặc tả 07 mục 3 khai `organization_id` là cột thường lúc đó).
 
+// PAUSED: tạm ngưng nhận đơn (PO 04/11/2026, checklist ALG 2.3) — ẩn khỏi link khách, mở bán lại bất cứ lúc nào.
 enum product_status {
   DRAFT
   ACTIVE
+  PAUSED
   ARCHIVED
 }
 
@@ -2925,12 +2930,16 @@ model order_payments {
   note              String?
   /// ĐP-3 — trường tự tạo (entity = ORDER, đặt trên dòng sổ thu — dự phòng cho tương lai).
   custom_fields     Json?
+  /// PENDING (Sale/Điều phối ghi, chờ Điều hành xác nhận — chưa cộng vào paid_vnd) · CONFIRMED · REJECTED.
+  /// PO 04/11/2026, checklist ALG 1.16 (Q3 phương án b). Dòng cũ: CONFIRMED.
+  status            String             @default("CONFIRMED")
   created_at        DateTime           @default(now())
 
   organization organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
   order        orders        @relation(fields: [order_id], references: [id], onDelete: Cascade)
 
   @@index([organization_id, order_id])
+  @@index([organization_id, status])
 }
 
 /// Yêu cầu bổ sung thông tin còn thiếu (T03, ĐP-4a.6, 27/09/2026, Đặc tả

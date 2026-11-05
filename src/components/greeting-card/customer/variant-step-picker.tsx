@@ -19,7 +19,7 @@ export function VariantStepPicker({ dimensions, variants, value, onChange, error
     () =>
       variants
         .filter((v) => Array.isArray(v.values))
-        .map((v) => ({ id: v.id, name: v.name, values: v.values!, priceVnd: v.priceVnd, peakPriceVnd: v.peakPriceVnd ?? null, imageAssetId: null, imageUrl: v.imageUrl ?? null })),
+        .map((v) => ({ id: v.id, name: v.name, values: v.values!, priceVnd: v.priceVnd, peakPriceVnd: v.peakPriceVnd ?? null, imageAssetId: null, stemCount: null, imageUrl: v.imageUrl ?? null })),
     [variants]
   )
   const current = options.find((o) => o.id === value) ?? null

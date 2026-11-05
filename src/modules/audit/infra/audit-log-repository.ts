@@ -1,8 +1,10 @@
 import type { InputJsonValue, audit_logs } from "./entities"
 import { prisma } from "@/core/tenancy/infra/prisma"
+import { currentRequestMeta } from "@/core/observability/request-context"
 import { scopedData, scopedWhere, type TenantContext } from "@/core/tenancy"
 import type { DbClient } from "./db-client"
 import type {
+  AuditLogFilter,
   IAuditLogRepository,
   RecordAuditLogInput,
 } from "../domain/repositories/audit-log-repository.interface"
@@ -28,18 +30,26 @@ export class AuditLogRepository implements IAuditLogRepository {
         entity_id: input.entityId,
         before: (input.before ?? null) as InputJsonValue,
         after: (input.after ?? null) as InputJsonValue,
-        ip: input.ip ?? null,
-        user_agent: input.userAgent ?? null,
+        // Không truyền thì lấy từ ngữ cảnh yêu cầu (checklist ALG 1.17)
+        ip: input.ip ?? currentRequestMeta()?.ip ?? null,
+        user_agent: input.userAgent ?? currentRequestMeta()?.userAgent ?? null,
       }),
     })
   }
 
   list(
     ctx: TenantContext,
-    options: { limit: number; cursor?: string | null }
+    options: { limit: number; cursor?: string | null; filter?: AuditLogFilter | undefined }
   ): Promise<audit_logs[]> {
+    const f = options.filter ?? {}
     return this.db.audit_logs.findMany({
-      where: scopedWhere(ctx),
+      where: scopedWhere(ctx, {
+        ...(f.actionPrefix ? { action: { startsWith: f.actionPrefix } } : {}),
+        ...(f.entityType ? { entity_type: f.entityType } : {}),
+        ...(f.entityId ? { entity_id: f.entityId } : {}),
+        ...(f.userId ? { user_id: f.userId } : {}),
+        ...(f.from || f.to ? { created_at: { ...(f.from ? { gte: f.from } : {}), ...(f.to ? { lte: f.to } : {}) } } : {}),
+      }),
       orderBy: [{ created_at: "desc" }, { id: "desc" }],
       take: options.limit,
       ...(options.cursor ? { cursor: { id: options.cursor }, skip: 1 } : {}),

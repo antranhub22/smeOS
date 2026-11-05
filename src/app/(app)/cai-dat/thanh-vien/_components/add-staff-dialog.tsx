@@ -5,6 +5,7 @@ import { UserPlus } from "@/components/ui/icon-set/user-plus"
 import { Mail } from "@/components/ui/icon-set/mail"
 import { Shield } from "@/components/ui/icon-set/shield"
 import { User } from "@/components/ui/icon-set/user"
+import { Phone } from "@/components/ui/icon-set/phone"
 import { Dialog } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -32,6 +33,7 @@ export function AddStaffDialog({
   const defaultRole = roles.find((r) => r.key === "sale")?.id ?? ""
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
+  const [phone, setPhone] = useState("")
   const [roleId, setRoleId] = useState("")
   const [submitting, setSubmitting] = useState(false)
   const [error, setError] = useState<string | null>(null)
@@ -41,6 +43,7 @@ export function AddStaffDialog({
     if (!next) {
       setName("")
       setEmail("")
+      setPhone("")
       setRoleId("")
       setError(null)
       setCreated(null)
@@ -61,12 +64,12 @@ export function AddStaffDialog({
       const res = await fetch("/api/v1/members", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: name.trim(), email: email.trim(), role_id: role }),
+        body: JSON.stringify({ name: name.trim(), email: email.trim(), role_id: role, ...(phone.trim() ? { phone: phone.trim() } : {}) }),
       })
       const body = await res.json().catch(() => null)
       if (!res.ok) {
         const details = body?.error?.details as Record<string, string> | undefined
-        throw new Error(details?.email || details?.name || body?.error?.message || "Không tạo được tài khoản. Vui lòng thử lại.")
+        throw new Error(details?.email || details?.name || details?.phone || body?.error?.message || "Không tạo được tài khoản. Vui lòng thử lại.")
       }
       setCreated(body.data)
       onSuccess()
@@ -97,6 +100,11 @@ export function AddStaffDialog({
             <span className="flex items-center gap-1.5"><Mail size={15} className="text-text-muted" />Email đăng nhập</span>
             <Input type="email" value={email} placeholder="VD: lan.sale@tenquan.vn" onChange={(e) => setEmail(e.target.value)} disabled={submitting} />
             <span className="text-caption font-normal text-text-muted">Chỉ dùng để đăng nhập — không cần là email thật, nhưng mỗi người một email riêng.</span>
+          </label>
+          <label className="flex flex-col gap-1.5 text-body-sm font-semibold text-text">
+            <span className="flex items-center gap-1.5"><Phone size={15} className="text-text-muted" />Số điện thoại (không bắt buộc)</span>
+            <Input type="tel" value={phone} placeholder="VD: 0912345678" onChange={(e) => setPhone(e.target.value)} disabled={submitting} />
+            <span className="text-caption font-normal text-text-muted">Shipper nhận đơn giao theo số này — Điều phối ghi đúng số khi điều xe.</span>
           </label>
           <label className="flex flex-col gap-1.5 text-body-sm font-semibold text-text">
             <span className="flex items-center gap-1.5"><Shield size={15} className="text-text-muted" />Vai trò</span>

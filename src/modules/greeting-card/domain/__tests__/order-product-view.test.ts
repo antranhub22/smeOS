@@ -49,4 +49,12 @@ describe("SSOT thông tin mẫu hoa của đơn Thẻ chào", () => {
     expect(orderProductView({ items: [{ description: "Bó tay", unit_price_vnd: 300000 }], greeting_sessions: [] }, images)).toMatchObject({ name: "Bó tay", price: 300000 })
     expect(orderProductView({ items: [], greeting_sessions: [] }, images, "Chưa chốt mẫu")).toMatchObject({ name: "Chưa chốt mẫu", price: 0, imageUrl: null })
   })
+
+  it("phiếu thợ ghi số cành theo phiên bản khách chọn (checklist ALG 2.4)", () => {
+    const v = orderProductView(
+      { items: [{ product_id: "p1", metadata: { flowersSummary: "Hồng đỏ", variant: { id: "opt:1", name: "Lớn", stemCount: 50 } } }], greeting_sessions: [] },
+      new Map()
+    )
+    expect(v).toMatchObject({ variantName: "Lớn", stemCount: 50, flowersSummary: "Phiên bản Lớn: 50 cành · Hồng đỏ" })
+  })
 })

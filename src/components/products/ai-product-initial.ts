@@ -11,7 +11,7 @@ export interface InitialProductInput {
   shape: string | null
   facing?: string | null | undefined
   container?: string | null | undefined
-  status: "ACTIVE" | "DRAFT" | "ARCHIVED"
+  status: "ACTIVE" | "DRAFT" | "PAUSED" | "ARCHIVED"
   attributes?: Record<string, unknown> | null | undefined
   masterImageUrl?: string | undefined
   price_vnd?: number | null | undefined

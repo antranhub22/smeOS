@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest"
 
 import { khai, MOI_MA } from "@/lib/maChucNang"
+import { SYSTEM_ROLES } from "@/modules/organization/domain/system-roles"
 
 import {
   ALL_CAPABILITY_CODES,
@@ -18,12 +19,14 @@ const VAI_TO_KEY: Record<string, "dieu_hanh" | "dieu_phoi" | "sale"> = {
   SALES: "sale",
 }
 
+const STAFF_LOGIN_CODES = ["A1", "A2"]
+
 const HARVESTED_CODES = MOI_MA.filter((ma) => /^[A-E]\d+$/.test(ma))
 
 describe("danh mục năng lực — đặc tả 02", () => {
-  it("154 mã: 76 thu hoạch (A–E) cộng 78 mã mới (F–L, U1–U4, H5–H6, R1–R13, Q1–Q9, T1–T4, I4–I5, P3–P4, V1–V3) — ĐP-4a thêm R9/R10 (sổ thu), PO 08/10 thêm R11, PO 14/10 thêm R12 (cấu hình nhắc việc Điều phối), R13 (xuất dữ liệu), PO 30/10 thêm J7 (nội dung AI landing/catalog), PO 31/10 thêm R15 (báo giá) + R16 (duyệt giao trước thu sau), PO 01/11 thêm M1/M2/M3 (marketing usage + campaign), M4 (nhóm khách & chăm sóc), M5 (in ấn)", () => {
+  it("154 mã: 76 thu hoạch (A–E) cộng 78 mã mới (F–L, U1–U4, H5–H6, R1–R13, Q1–Q9, T1–T4, I4–I5, P3–P4, V1–V3) — ĐP-4a thêm R9/R10 (sổ thu), PO 08/10 thêm R11, PO 14/10 thêm R12 (cấu hình nhắc việc Điều phối), R13 (xuất dữ liệu), PO 30/10 thêm J7 (nội dung AI landing/catalog), PO 31/10 thêm R15 (báo giá) + R16 (duyệt giao trước thu sau), PO 01/11 thêm M1/M2/M3 (marketing usage + campaign), M4 (nhóm khách & chăm sóc), M5 (in ấn), PO Q7 04/11 thêm R17/R18/R19 (Thợ cắm, Shipper, Kế toán)", () => {
     expect(HARVESTED_CODES.length).toBe(76)
-    expect(ALL_CAPABILITY_CODES.length).toBe(168)
+    expect(ALL_CAPABILITY_CODES.length).toBe(171)
   })
 
   it("M1, M2 và M3 cho Marketing & Sales Center (PR-2, PR-3)", () => {
@@ -53,7 +56,11 @@ describe("danh mục năng lực — đặc tả 02", () => {
       const source = khai(ma)
       const cat = capability(ma)
       const expectedDefaults = source.macDinh.map((v: keyof typeof VAI_TO_KEY) => VAI_TO_KEY[v]).sort()
-      expect([...cat.defaultRoles].sort()).toEqual(expectedDefaults)
+      // Ngoại lệ duy nhất (PO Q7, 04/11/2026): A1/A2 mở cho mọi vai nhân sự — xem test riêng bên dưới.
+      const ownDefaults = STAFF_LOGIN_CODES.includes(ma)
+        ? cat.defaultRoles.filter((role) => (expectedDefaults as string[]).includes(role))
+        : cat.defaultRoles
+      expect([...ownDefaults].sort()).toEqual(expectedDefaults)
 
       if (source.tranCung) {
         const expectedHardCap = source.tranCung.map((v: keyof typeof VAI_TO_KEY) => VAI_TO_KEY[v]).sort()
@@ -62,6 +69,21 @@ describe("danh mục năng lực — đặc tả 02", () => {
         expect(cat.hardCap).toBeUndefined()
       }
     }
+  })
+
+  it("mọi vai nhân sự (trừ vai trải nghiệm) đăng nhập và tự đổi mật khẩu được — PO Q7, checklist ALG 1.4", () => {
+    const staff = SYSTEM_ROLES.map((role) => role.key).filter((key) => key !== "experience_user")
+    for (const code of STAFF_LOGIN_CODES) {
+      expect([...capability(code).defaultRoles].sort()).toEqual([...staff].sort())
+    }
+  })
+
+  it("ba vai PO Q7: Thợ cắm chỉ việc được giao, Shipper chỉ đơn được giao, Kế toán xem và đối soát nhưng không xác nhận tiền", () => {
+    expect(defaultCodesForSystemRole("tho_cam").sort()).toEqual(["A1", "A2", "G1", "G2", "R17"])
+    expect(defaultCodesForSystemRole("shipper").sort()).toEqual(["A1", "A2", "G2", "R18"])
+    const keToan = defaultCodesForSystemRole("ke_toan")
+    expect(keToan.sort()).toEqual(["A1", "A2", "F1", "G8", "Q1", "R1", "R13", "R19"])
+    for (const confirm of ["R9", "R10", "R11", "R16"]) expect(keToan).not.toContain(confirm)
   })
 
   it("mọi mã có tên đọc được duy nhất, không trùng nhau", () => {

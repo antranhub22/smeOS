@@ -4,6 +4,7 @@ import type { TenantContext } from "@/core/tenancy"
 import { recordAuditLog } from "@/modules/audit/use-cases/record-audit-log"
 import { isAcceptablePassword, isValidEmail, MIN_PASSWORD_LENGTH, normalizeEmail } from "@/modules/organization/domain/credentials"
 import { generateTemporaryPassword } from "@/modules/organization/domain/temporary-password"
+import { canonicalVnPhone } from "@/modules/organization/domain/staff-phone"
 import { MembershipRepository, getMembershipRepository } from "@/modules/organization/infra/membership-repository"
 import { hashPassword, verifyPassword } from "@/modules/organization/infra/password-hasher"
 import { RoleRepository, getRoleRepository } from "@/modules/organization/infra/role-repository"
@@ -28,13 +29,15 @@ export interface CreatedStaffAccount {
  */
 export async function createStaffAccount(
   ctx: TenantContext,
-  input: { name: string; email: string; roleId: string; branchId?: string | null | undefined }
+  input: { name: string; email: string; roleId: string; branchId?: string | null | undefined; phone?: string | null | undefined }
 ): Promise<CreatedStaffAccount> {
   const email = normalizeEmail(input.email)
   const name = input.name.trim()
   const errors: Record<string, string> = {}
   if (!isValidEmail(email)) errors.email = "Email đăng nhập không hợp lệ (vd: sale1@tenquan.vn)"
   if (!name || name.length > 100) errors.name = "Nhập họ tên nhân viên (tối đa 100 ký tự)"
+  const phone = input.phone?.trim() ? canonicalVnPhone(input.phone) : null
+  if (input.phone?.trim() && !phone) errors.phone = "Số điện thoại không hợp lệ (vd: 0912345678)"
   if (Object.keys(errors).length > 0) throw validationFailed(errors)
 
   const role = await getRoleRepository().findAssignableById(ctx, input.roleId)
@@ -47,7 +50,7 @@ export async function createStaffAccount(
   const temporaryPassword = newTemporaryPassword()
   const passwordHash = await hashPassword(temporaryPassword)
   const created = await getStaffAccountRepository().createActive(ctx, {
-    email, name, passwordHash, roleId: role.id, branchId: input.branchId ?? null,
+    email, name, passwordHash, roleId: role.id, branchId: input.branchId ?? null, phone,
   })
   await recordAuditLog(ctx, {
     action: "member.account.create",
@@ -81,6 +84,23 @@ export async function resetMemberPassword(ctx: TenantContext, membershipId: stri
   const email = await repo.setPassword(membership.user_id, await hashPassword(temporaryPassword), { revokeAllSessions: true })
   await recordAuditLog(ctx, { action: "member.password.reset", entityType: "memberships", entityId: membership.id, after: { userId: membership.user_id } })
   return { email, temporaryPassword }
+}
+
+/**
+ * `PUT /members/:id/phone` (`A3`, trần cứng Điều hành): sửa số điện thoại nhân viên — Shipper được gắn đơn
+ * qua số này (checklist ALG 4.5). Tài khoản còn thuộc tiệm khác → 409, như đặt lại mật khẩu.
+ */
+export async function setMemberPhone(ctx: TenantContext, membershipId: string, rawPhone: string | null): Promise<{ phone: string | null }> {
+  const membership = await targetMember(ctx, membershipId)
+  const phone = rawPhone?.trim() ? canonicalVnPhone(rawPhone) : null
+  if (rawPhone?.trim() && !phone) throw validationFailed({ phone: "Số điện thoại không hợp lệ (vd: 0912345678)" })
+  const repo = getStaffAccountRepository()
+  if (await repo.belongsToOtherOrganization(membership.user_id, ctx.organizationId)) {
+    throw conflict("Tài khoản này còn dùng ở tiệm khác — nhờ chính người đó tự cập nhật số điện thoại")
+  }
+  await repo.setPhone(membership.user_id, phone)
+  await recordAuditLog(ctx, { action: "member.phone.update", entityType: "memberships", entityId: membership.id, after: { userId: membership.user_id } })
+  return { phone }
 }
 
 /**

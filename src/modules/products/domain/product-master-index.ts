@@ -125,7 +125,7 @@ export interface ProductMasterIndex {
   organizationId: string
   code: string
   name: string
-  status: "DRAFT" | "ACTIVE" | "ARCHIVED"
+  status: "DRAFT" | "ACTIVE" | "PAUSED" | "ARCHIVED"
 
   // 2. Định danh dáng hoa & phong cách (Hợp đồng Vision Schema.json)
   category: string // Sản phẩm, Giỏ hoa, Kệ khai trương, Hộp hoa, Bình hoa

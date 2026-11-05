@@ -5,7 +5,8 @@ import { WorkspaceRepository, getWorkspaceRepository } from "@/modules/organizat
 import type { ResolvedSession } from "./resolve-session"
 
 export type SessionDescription = {
-  user: { id: string; name: string | null; email: string }
+  /** `mustChangePassword`: đang dùng mật khẩu tạm, giao diện bắt đổi trước khi dùng (checklist ALG 1.4). */
+  user: { id: string; name: string | null; email: string; mustChangePassword: boolean }
   organization: {
     id: string
     name: string
@@ -51,7 +52,7 @@ export async function describeSession(
 ): Promise<SessionDescription> {
   const ctx = resolved.ctx
   const base = {
-    user: { id: resolved.user.id, name: resolved.user.name, email: resolved.user.email },
+    user: { id: resolved.user.id, name: resolved.user.name, email: resolved.user.email, mustChangePassword: resolved.user.must_change_password },
     // Danh sách mã đã tính sẵn cho phiên hiện tại (đặc tả 06 mục 3). Giao
     // diện đọc để ẩn hiện nút; máy chủ vẫn kiểm lại ở mọi endpoint.
     capabilities: ctx ? Array.from(ctx.capabilities).sort() : ([] as string[]),

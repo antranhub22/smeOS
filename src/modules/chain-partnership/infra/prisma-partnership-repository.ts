@@ -72,6 +72,8 @@ export class PrismaChainPartnershipRepository implements IChainPartnershipReposi
           data: {
             email: input.contactEmail.toLowerCase().trim(),
             password_hash: passwordHash,
+            // Mật khẩu tạm do hệ thống sinh → đối tác phải tự đổi lần đầu (checklist ALG 1.4)
+            must_change_password: !input.password,
             name: input.contactName,
             phone: input.contactPhone,
           },

@@ -165,13 +165,16 @@ describe("Order Use-cases with Mocked IOrderRepository (Clean Architecture)", ()
     }
 
     const notifyAssign = vi.fn().mockResolvedValue(1)
+    const queue = { isActiveMember: vi.fn().mockResolvedValue(true), releaseActive: vi.fn() }
     const result = await assignFlorist(
       mockTenant,
       "ord-123",
       { assigneeId: "user-2", difficulty: "trung_binh" },
       mockRepo,
-      notifyAssign
+      notifyAssign,
+      queue
     )
+    expect(queue.releaseActive).toHaveBeenCalledWith(mockTenant, "ord-123")
 
     expect(notifyAssign).toHaveBeenCalledWith(expect.objectContaining({ eventKey: "FLORIST_TASK_ASSIGNED", ownerUserId: "user-2" }))
 
@@ -207,7 +210,8 @@ describe("Order Use-cases with Mocked IOrderRepository (Clean Architecture)", ()
 
     const res = await listOrders(mockTenant, { status: "CONFIRMED" }, mockRepo)
     expect(res.total).toBe(1)
-    expect(mockRepo.list).toHaveBeenCalledWith("org-1", { status: "CONFIRMED" })
+    // Nhân viên gắn chi nhánh (không có F7) chỉ thấy đơn của chi nhánh mình (checklist ALG 9.13)
+    expect(mockRepo.list).toHaveBeenCalledWith("org-1", { status: "CONFIRMED", branchId: "branch-1" })
   })
 })
 

@@ -123,7 +123,7 @@ export async function readJson(response: Response): Promise<Record<string, unkno
  */
 export async function addStaffWithSession(
   tenant: Tenant,
-  roleKey: "dieu_hanh" | "dieu_phoi" | "sale",
+  roleKey: import("@/modules/organization/domain/system-roles").SystemRoleKey,
   label: string
 ): Promise<{ userId: string; token: string; email: string }> {
   const { randomUUID } = await import("node:crypto")

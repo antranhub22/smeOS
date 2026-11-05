@@ -7,7 +7,7 @@
  * bảng là lỗi 500 thật, lộ ngay lần gọi đầu.
  */
 
-import { scopedData, scopedWhere, type TenantContext } from "@/core/tenancy"
+import { branchScopedWhere, scopedData, scopedWhere, type TenantContext } from "@/core/tenancy"
 import { prisma } from "@/core/tenancy/infra/prisma"
 import type { Prisma } from "@/generated/prisma/client"
 import type { CoordinatorStage, CoordinationRiskLevel } from "../domain/coordinator-types"
@@ -53,6 +53,7 @@ export class CoordinatorRepository implements ICoordinatorRepository<Coordinator
       where: scopedWhere(ctx, {
         OR: [{ id: idOrCode }, { code: idOrCode }],
         coordination: { isNot: null },
+        ...branchScopedWhere(ctx),
       }),
       include: ORDER_INCLUDE,
     })
@@ -65,6 +66,7 @@ export class CoordinatorRepository implements ICoordinatorRepository<Coordinator
     return this.db.orders.findMany({
       where: scopedWhere(ctx, {
         coordination: options.stage ? { is: { stage: options.stage } } : { isNot: null },
+        ...branchScopedWhere(ctx),
       }),
       include: ORDER_INCLUDE,
       orderBy: { created_at: "desc" },
@@ -195,7 +197,8 @@ export class CoordinatorRepository implements ICoordinatorRepository<Coordinator
       note: string | null
     },
     newPaidVnd: number,
-    newBalanceVnd: number
+    newBalanceVnd: number,
+    status: "PENDING" | "CONFIRMED" = "CONFIRMED"
   ): Promise<{ id: string }> {
     const row = await this.db.order_payments.create({
       data: scopedData(ctx, {
@@ -207,12 +210,13 @@ export class CoordinatorRepository implements ICoordinatorRepository<Coordinator
         evidence_asset_id: payment.evidenceAssetId,
         collected_by: ctx.userId,
         note: payment.note,
+        status,
       }),
     })
-    await this.db.orders.updateMany({
-      where: scopedWhere(ctx, { id: orderId }),
-      data: { paid_vnd: newPaidVnd, balance_vnd: newBalanceVnd },
-    })
+    // Dòng chờ Điều hành xác nhận chưa cộng vào số đã thu (checklist ALG 1.16)
+    if (status === "CONFIRMED") {
+      await this.db.orders.updateMany({ where: scopedWhere(ctx, { id: orderId }), data: { paid_vnd: newPaidVnd, balance_vnd: newBalanceVnd } })
+    }
     return { id: row.id }
   }
 

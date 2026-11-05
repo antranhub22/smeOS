@@ -10,7 +10,7 @@ export type BatchUpdateItemInput = {
   shape?: string | null | undefined
   facing?: string | null | undefined
   container?: string | null | undefined
-  status?: "DRAFT" | "ACTIVE" | "ARCHIVED" | undefined
+  status?: "DRAFT" | "ACTIVE" | "PAUSED" | "ARCHIVED" | undefined
   attributes?: Record<string, unknown> | null | undefined
   image_asset_id?: string | null | undefined
 }

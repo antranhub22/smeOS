@@ -20,6 +20,8 @@ describe("parsePaymentPolicy", () => {
       requireFullBeforeDispatch: false,
       requirePaymentProof: true,
       trackingTriggerPolicy: "PAYMENT_OR_COORDINATOR",
+      // Xác nhận tiền thu nốt mặc định chỉ Điều hành (PO 04/11/2026, Q3b — ALG 1.16)
+      balancePaymentTriggerPolicy: "PAYMENT_ONLY",
       requireProductPhotoQC: true,
       requireRecipientPhoto: true,
       cancellationApprovalTimeoutMinutes: 15,

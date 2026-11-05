@@ -4,7 +4,7 @@
  */
 
 import { prisma } from "@/core/tenancy/infra/prisma"
-import type { TenantContext } from "@/core/tenancy"
+import { branchScopedWhere, type TenantContext } from "@/core/tenancy"
 
 const MAX_ROWS = 5_000
 
@@ -12,11 +12,19 @@ export interface OrderExportFilter {
   source?: string | undefined
   fromDate?: Date | undefined
   toDate?: Date | undefined
+  /**
+   * Phạm vi của người xuất (checklist ALG 4.10): sale "chỉ khách của mình" chỉ nhận đơn do mình phụ
+   * trách — Thẻ chào theo `greeting_sessions.sale_id`, nguồn khác theo `owner_sale_id` (hoặc người
+   * tạo khi chưa gán sale).
+   */
+  saleId?: string | undefined
 }
 
 export async function queryOrdersForExport(ctx: TenantContext, filter: OrderExportFilter = {}) {
   const where = {
     organization_id: ctx.organizationId,
+    // Chi nhánh được giao (checklist ALG 9.13)
+    ...branchScopedWhere(ctx),
     ...(filter.source ? { source: filter.source } : {}),
     ...(filter.fromDate || filter.toDate
       ? {
@@ -24,6 +32,15 @@ export async function queryOrdersForExport(ctx: TenantContext, filter: OrderExpo
             ...(filter.fromDate ? { gte: filter.fromDate } : {}),
             ...(filter.toDate ? { lte: filter.toDate } : {}),
           },
+        }
+      : {}),
+    ...(filter.saleId
+      ? {
+          OR: [
+            { greeting_sessions: { some: { sale_id: filter.saleId } } },
+            { owner_sale_id: filter.saleId },
+            { owner_sale_id: null, created_by: filter.saleId, source: { not: "BROCHURE" } },
+          ],
         }
       : {}),
   }
@@ -38,6 +55,8 @@ export async function queryOrdersForExport(ctx: TenantContext, filter: OrderExpo
         select: { id: true, code: true, name: true, phone: true, tier: true },
       },
       payments: {
+        // Chỉ khoản đã xác nhận vào sổ thu — khoản chờ/bị từ chối không tính (checklist ALG 1.16)
+        where: { status: "CONFIRMED" },
         select: {
           id: true,
           kind: true,

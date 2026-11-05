@@ -11,6 +11,7 @@ import { redirect } from "next/navigation"
 
 import { SessionProvider } from "@/lib/session"
 import { AppShell } from "@/components/layout/app-shell"
+import { ForcedPasswordChange } from "@/components/layout/forced-password-change"
 import { resolveAppSession } from "@/modules/organization/use-cases/resolve-app-session"
 import { checkSession } from "@/modules/organization/use-cases/check-session"
 import { SESSION_SUPERSEDED } from "@/core/http/errors"
@@ -38,6 +39,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
 
   return (
     <SessionProvider session={session}>
+      <ForcedPasswordChange />
       <I18nProvider industryKey={session.organization?.industry}>
         <AppShell
           theme={uiTheme}

@@ -1,6 +1,9 @@
+import { randomUUID } from "node:crypto"
+
 import { conflict } from "@/core/http/errors"
 import { hasCapability } from "@/core/rbac/capabilities"
 import type { TenantContext } from "@/core/tenancy"
+import { draftProductCode } from "@/modules/products/domain/product-code"
 import { newProposal, PROPOSAL_KEY, stripProposal } from "@/modules/products/domain/product-proposal"
 import type { IProductRepository, CreateProductInput } from "@/modules/products/domain/repositories/product-repository.interface"
 import { getProductRepository } from "@/modules/products/infra/product-repository"
@@ -18,8 +21,17 @@ export async function createProduct(
   input: CreateProductInput,
   repo: IProductRepository = getProductRepository()
 ) {
-  const existing = await repo.findByCode(ctx, input.code)
-  if (existing) throw conflict(`Mã sản phẩm "${input.code}" đã tồn tại trong tổ chức`)
+  // Mã để trống → tự sinh theo quy ước `product-code.ts`, thử lại khi trùng (tối đa 5 lần, checklist ALG 2.1)
+  let code = input.code.trim()
+  if (!code) {
+    for (let attempt = 0; attempt < 5 && !code; attempt++) {
+      const candidate = draftProductCode(randomUUID())
+      if (!(await repo.findByCode(ctx, candidate))) code = candidate
+    }
+    if (!code) throw conflict("Không tạo được mã sản phẩm tự động — vui lòng nhập mã")
+  } else if (await repo.findByCode(ctx, code)) {
+    throw conflict(`Mã sản phẩm "${code}" đã tồn tại trong tổ chức`)
+  }
 
   // Người không có H3 (duyệt vào danh mục) tạo mẫu → dùng được ngay nhưng mang
   // nhãn đề xuất chờ Điều hành duyệt (`product-proposal.ts`).
@@ -27,6 +39,7 @@ export async function createProduct(
   const attributes = stripProposal(input.attributes) ?? null
   return repo.create(ctx, {
     ...input,
+    code,
     attributes: isProposal ? { ...(attributes ?? {}), [PROPOSAL_KEY]: newProposal(ctx.userId) } : attributes,
   })
 }

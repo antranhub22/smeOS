@@ -24,9 +24,15 @@ export interface BrochureWorkflowPolicy {
   customerApprovalMode: CustomerApprovalMode
   /** Gate 5: Chặn giao ship nếu chưa thu đủ Lần 2 (false = cho phép giao trước thu COD hoặc ghi nợ) */
   requireFullPaymentBeforeDispatch: boolean
-  /** Gate 6: Bắt buộc chụp Ảnh người nhận/bằng chứng giao hoa mới cho hoàn tất đơn */
+  /**
+   * Gate 6: Bắt buộc chụp Ảnh người nhận/bằng chứng giao hoa mới cho hoàn tất đơn. PO 04/11/2026
+   * (checklist ALG 4.18, Q5): BẬT ở mọi gói; Điều hành tắt được bằng công tắc trong Cài đặt.
+   */
   requireDeliveryProofPhoto: boolean
-  /** Gate 7: Cho phép Điều phối / Sale ủy quyền duyệt cọc thay Điều hành khi quá hạn SLA */
+  /**
+   * Gate 7: Cho phép Điều phối / Sale ủy quyền duyệt cọc thay Điều hành khi quá hạn SLA. PO 04/11/2026
+   * (Q3 phương án b — checklist ALG 1.16): TẮT ở mọi gói; Điều hành tự bật trong Cài đặt nếu muốn.
+   */
   allowSlaEscalation: boolean
   /** Số phút quá hạn SLA để kích hoạt nút ủy quyền duyệt cọc (mặc định 15) */
   slaEscalationMinutes: number
@@ -40,8 +46,8 @@ export const LEAN_WORKFLOW_POLICY: Readonly<BrochureWorkflowPolicy> = Object.fre
   requireFinishedPhoto: false,
   customerApprovalMode: "BYPASS",
   requireFullPaymentBeforeDispatch: false,
-  requireDeliveryProofPhoto: false,
-  allowSlaEscalation: true,
+  requireDeliveryProofPhoto: true,
+  allowSlaEscalation: false,
   slaEscalationMinutes: 5,
 })
 
@@ -54,8 +60,8 @@ export const STANDARD_WORKFLOW_POLICY: Readonly<BrochureWorkflowPolicy> = Object
   requireFinishedPhoto: false,
   customerApprovalMode: "AUTO_PASS_10M",
   requireFullPaymentBeforeDispatch: true,
-  requireDeliveryProofPhoto: false,
-  allowSlaEscalation: true,
+  requireDeliveryProofPhoto: true,
+  allowSlaEscalation: false,
   slaEscalationMinutes: 15,
 })
 
@@ -131,8 +137,8 @@ function parseStoredWorkflowPolicy(settings: unknown, orgType?: string | null): 
         requireFinishedPhoto: false,
         customerApprovalMode: requirePhotoQC ? "AUTO_PASS_10M" : "BYPASS",
         requireFullPaymentBeforeDispatch: requireFull,
-        requireDeliveryProofPhoto: false,
-        allowSlaEscalation: true,
+        requireDeliveryProofPhoto: legacy.require_recipient_photo !== false,
+        allowSlaEscalation: false,
         slaEscalationMinutes: 15,
       }
       return {
@@ -169,8 +175,8 @@ function parseStoredWorkflowPolicy(settings: unknown, orgType?: string | null): 
     requireFinishedPhoto: raw.require_finished_photo === true,
     customerApprovalMode: approvalMode,
     requireFullPaymentBeforeDispatch: raw.require_full_payment_before_dispatch !== false,
-    requireDeliveryProofPhoto: raw.require_delivery_proof_photo === true,
-    allowSlaEscalation: raw.allow_sla_escalation !== false,
+    requireDeliveryProofPhoto: raw.require_delivery_proof_photo !== false,
+    allowSlaEscalation: raw.allow_sla_escalation === true,
     slaEscalationMinutes: escalationMin,
   }
 

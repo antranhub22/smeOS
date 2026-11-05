@@ -82,6 +82,7 @@ export function PricingVariantTable({ pricing, setPricing }: Props) {
               <th className="px-3 py-2 text-left font-semibold">Phiên bản ({pricing.dimensions.map((d) => d.label).join(" / ")})</th>
               <th className="px-3 py-2 text-left font-semibold">Giá thường (₫)</th>
               <th className="px-3 py-2 text-left font-semibold">Giá cao điểm (₫)</th>
+              <th className="px-3 py-2 text-left font-semibold">Số cành</th>
               <th className="px-3 py-2 text-left font-semibold">Ảnh riêng</th>
               <th className="px-3 py-2 text-center font-semibold">Đang bán</th>
             </tr>
@@ -104,6 +105,18 @@ export function PricingVariantTable({ pricing, setPricing }: Props) {
                     value={formatVndInput(r.peakPriceVnd)}
                     onChange={(v) => setRow(i, { peakPriceVnd: parseVndInput(v) })}
                     placeholder="Như giá thường"
+                  />
+                </td>
+                <td className="px-3 py-1 w-24">
+                  <Input
+                    type="number"
+                    min={1}
+                    inputMode="numeric"
+                    aria-label={`Số cành ${optionName(r.values)}`}
+                    value={r.stemCount ?? ""}
+                    onChange={(e) => setRow(i, { stemCount: Number(e.target.value) > 0 ? Math.min(9999, Math.round(Number(e.target.value))) : null })}
+                    placeholder="Theo mẫu"
+                    className="h-9"
                   />
                 </td>
                 <td className="px-3 py-1">

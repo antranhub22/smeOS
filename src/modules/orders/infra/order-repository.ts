@@ -24,6 +24,7 @@ import type {
 } from "../domain/order-types"
 import type { IOrderRepository } from "../domain/repositories/order-repository.interface"
 import { linkLeadToOrder } from "./order-lead-link"
+import { buildOrderListWhere } from "./order-list-where"
 
 /** Hàng `orders` kèm các quan hệ mà truy vấn nào `include` thì có. */
 type OrderRow = orders & {
@@ -195,29 +196,7 @@ export class OrderRepository implements IOrderRepository {
   }
 
   async list(organizationId: string, filter: OrderFilter = {}): Promise<{ orders: OrderRecord[]; total: number }> {
-    const where: Prisma.ordersWhereInput = {
-      organization_id: organizationId,
-    }
-
-    if (filter.status) where.status = filter.status
-    if (filter.productionStatus) where.production_status = filter.productionStatus
-    if (filter.deliveryStatus) where.delivery_status = filter.deliveryStatus
-    if (filter.branchId) where.branch_id = filter.branchId
-    if (filter.customerId) where.customer_id = filter.customerId
-
-    if (filter.search) {
-      where.OR = [
-        { code: { contains: filter.search, mode: "insensitive" } },
-        { card_message: { contains: filter.search, mode: "insensitive" } },
-      ]
-    }
-
-    if (filter.fromDate || filter.toDate) {
-      const createdAtFilter: Record<string, Date> = {}
-      if (filter.fromDate) createdAtFilter.gte = filter.fromDate
-      if (filter.toDate) createdAtFilter.lte = filter.toDate
-      where.created_at = createdAtFilter
-    }
+    const where = buildOrderListWhere(organizationId, filter)
 
     const [total, rows] = await Promise.all([
       prisma.orders.count({ where }),

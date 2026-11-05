@@ -1,8 +1,8 @@
 version: "1.0"
 governance:
   constitution: "docs/00-DOCUMENTATION-CONSTITUTION.md"
-  updated_at: "2026-10-22T08:00:00+07:00"
-  total_documents: 87
+  updated_at: "2026-11-04T06:00:00+07:00"
+  total_documents: 91
 
 documents:
   # =========================================================================
@@ -831,6 +831,34 @@ documents:
     ssot: true
     owner: "Product Owner"
     dependencies: ["docs/kien-truc/VAN_HANH_CAP_NHAT_CSDL.md", "docs/kien-truc/VAN_HANH_SU_CO_VA_SAO_LUU.md"]
+    supersedes: []
+
+  - id: "DOC-05-BAO-CAO-ANH-XA-123"
+    path: "docs/handover/BAO_CAO_ANH_XA_123_CHUC_NANG.md"
+    title: "Báo cáo ánh xạ 123 chức năng bàn giao ALG với mã nguồn smeOS"
+    domain: "Operations"
+    layer: "Level 5"
+    purpose: "Trạng thái Hoàn thiện / Dang dở / Chưa hoàn thành của từng chức năng trong checklist bàn giao ALG, kèm bằng chứng file:dòng, test và phần còn thiếu"
+    status: "CANONICAL"
+    authority: "Level 5"
+    canonical: true
+    ssot: true
+    owner: "Product Owner"
+    dependencies: ["docs/kien-truc/HO_SO_BAN_GIAO.md", "prisma/schema.prisma"]
+    supersedes: []
+
+  - id: "DOC-05-KE-HOACH-HOAN-THIEN-54"
+    path: "docs/handover/KE_HOACH_HOAN_THIEN_54_CHUC_NANG.md"
+    title: "Kế hoạch hoàn thiện 54 chức năng bàn giao ALG"
+    domain: "Operations"
+    layer: "Level 5"
+    purpose: "Việc cần làm, khu vực mã, thay đổi lược đồ, test nghiệm thu, công và lộ trình 7 đợt cho 54 chức năng chưa đạt; điểm PO chốt trước khi thi công"
+    status: "CANONICAL"
+    authority: "Level 5"
+    canonical: true
+    ssot: true
+    owner: "Product Owner"
+    dependencies: ["docs/handover/BAO_CAO_ANH_XA_123_CHUC_NANG.md"]
     supersedes: []
 
   - id: "DOC-05-RA-SOAT-COMMIT-SMEOS"

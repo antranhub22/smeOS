@@ -5,7 +5,7 @@ import { requireTenantContext } from "@/modules/organization/use-cases/resolve-s
 import { exportProductsCsv } from "@/modules/products/use-cases/export-products"
 import { recordDataExport } from "@/modules/audit/use-cases/record-data-export"
 
-const PRODUCT_STATUS = ["DRAFT", "ACTIVE", "ARCHIVED"] as const
+const PRODUCT_STATUS = ["DRAFT", "ACTIVE", "PAUSED", "ARCHIVED"] as const
 
 /**
  * `GET /products/export` — CSV theo bộ lọc `status`/`category`/`search` của danh sách.

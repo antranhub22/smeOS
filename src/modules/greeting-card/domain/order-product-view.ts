@@ -12,6 +12,9 @@ export interface OrderProductView {
   imageUrl: string | null
   price: number
   flowersSummary: string | null
+  /** Phiên bản khách chọn và số cành của phiên bản (checklist ALG 2.4) — phiếu thợ in theo đây. */
+  variantName: string | null
+  stemCount: number | null
 }
 
 /** Hình dạng tối thiểu của đơn (hoặc một phiên link chưa có đơn: `items: []`). */
@@ -62,6 +65,17 @@ export function orderProductView(source: OrderProductSource, images: ReadonlyMap
       ?? (productId ? images.get(productId) ?? null : null)
       ?? driveThumbProxySrc(str(snap.driveLink)) ?? driveThumbProxySrc(str(meta.driveLink)),
     price: num(snap.price) ?? num(meta.price) ?? num(item?.unit_price_vnd) ?? 0,
-    flowersSummary: str(snap.flowersSummary) ?? str(meta.flowersSummary),
+    flowersSummary: withVariant(str(snap.flowersSummary) ?? str(meta.flowersSummary), obj(meta.variant)),
+    variantName: str(obj(meta.variant).name),
+    stemCount: num(obj(meta.variant).stemCount),
   }
+}
+
+/** Công thức của mẫu kèm số cành theo phiên bản khách chọn — để mọi phiếu thợ đọc chung một dòng. */
+function withVariant(summary: string | null, variant: Loose): string | null {
+  const name = str(variant.name)
+  const stems = num(variant.stemCount)
+  if (!name || !stems) return summary
+  const line = `Phiên bản ${name}: ${stems} cành`
+  return summary ? `${line} · ${summary}` : line
 }

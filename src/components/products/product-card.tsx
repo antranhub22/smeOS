@@ -15,7 +15,7 @@ export type ProductItem = {
   code: string
   category: string | null
   shape: string | null
-  status: "DRAFT" | "ACTIVE" | "ARCHIVED"
+  status: "DRAFT" | "ACTIVE" | "PAUSED" | "ARCHIVED"
   masterImageUrl?: string | undefined
   driveLink?: string | undefined
   price_vnd: number | null
@@ -28,6 +28,14 @@ export function StatusBadge({ status }: { status: ProductItem["status"] }) {
       <span className="inline-flex items-center gap-1 rounded-full bg-success-bg px-2 py-0.5 text-caption font-bold text-success">
         <span className="h-1.5 w-1.5 rounded-full bg-success" aria-hidden="true" />
         Đang bán
+      </span>
+    )
+  }
+  if (status === "PAUSED") {
+    return (
+      <span className="inline-flex items-center gap-1 rounded-full bg-surface-alt px-2 py-0.5 text-caption font-bold text-warning">
+        <span className="h-1.5 w-1.5 rounded-full bg-warning" aria-hidden="true" />
+        Tạm ngưng
       </span>
     )
   }

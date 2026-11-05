@@ -15,6 +15,7 @@ import { GREETING_CARD_CAPABILITY } from "../domain/greeting-card-capabilities"
 import { changeRequestActions } from "./order-change"
 import { BrochureOrderRepository } from "../infra/brochure-order-repository"
 import { countPendingProposals } from "@/modules/products/use-cases/count-pending-proposals"
+import { missingInfoActions } from "./missing-info-actions"
 
 export interface InboxThread {
   key: string
@@ -133,6 +134,9 @@ export async function getInbox(ctx: TenantContext, targetRole?: MessageRole | un
       })
     }
   }
+
+  // Đơn thiếu thông tin cần hỏi lại khách (checklist ALG 4.14)
+  if (ctx.capabilities.has("R1")) actions.push(...(await missingInfoActions(ctx, role, role === "SALE" ? ctx.userId : scope, now)))
 
   // Sale "chỉ khách của mình" không thấy trao đổi của đơn người khác, trừ tin gửi riêng cho mình
   const saleOf = scope ? await repo.saleOf(ctx, messages.flatMap((m) => (m.orderId ? [m.orderId] : [])), messages.flatMap((m) => (m.sessionId ? [m.sessionId] : []))) : null

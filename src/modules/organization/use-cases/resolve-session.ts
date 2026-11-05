@@ -1,5 +1,6 @@
 import { AppError, sessionSuperseded, unauthenticated } from "@/core/http/errors"
 import { readCookie, SESSION_COOKIE } from "@/core/http/cookies"
+import { bindRequestActor } from "@/core/observability/request-context"
 import type { TenantContext } from "@/core/tenancy"
 import { canSignIn } from "@/modules/organization/domain/account-approval"
 import { isUsable } from "@/modules/organization/domain/session-policy"
@@ -119,6 +120,9 @@ export async function tenantContextFor(
   }
 }
 
+/** Đường duy nhất mở cho tài khoản còn mật khẩu tạm (`/auth/me`, đăng xuất không qua `requireTenantContext`). */
+const PASSWORD_CHANGE_PATH = "/api/v1/session/password"
+
 /** Dùng cho endpoint bắt buộc phải có tổ chức đang hoạt động. */
 export async function requireTenantContext(
   request: Request
@@ -126,6 +130,12 @@ export async function requireTenantContext(
   const resolved = await resolveSession(request)
   if (!resolved.ctx) {
     throw new AppError("CONFLICT", "Phiên chưa chọn tổ chức đang hoạt động")
+  }
+  // Người thao tác đã xác thực → nhật ký tầng HTTP biết ai làm (checklist ALG 1.15, 1.17)
+  bindRequestActor({ organizationId: resolved.ctx.organizationId, userId: resolved.ctx.userId })
+  // Đang dùng mật khẩu tạm → chỉ được đổi mật khẩu (checklist ALG 1.4)
+  if (resolved.user.must_change_password && new URL(request.url).pathname !== PASSWORD_CHANGE_PATH) {
+    throw new AppError("PASSWORD_CHANGE_REQUIRED", "Tài khoản đang dùng mật khẩu tạm — đổi mật khẩu trước khi tiếp tục")
   }
   await assertToolUnlocked(request, resolved.ctx)
   return { resolved, ctx: resolved.ctx }

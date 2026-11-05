@@ -10,12 +10,20 @@ import { Button } from "@/components/ui/button"
 import { FlowerPlaceholder } from "@/components/ui/flower-placeholder"
 import { formatCurrency } from "@/lib/i18n/formatters"
 
-export function ProductStatusBadge({ status }: { status: "ACTIVE" | "ARCHIVED" | "DRAFT" }) {
+export function ProductStatusBadge({ status }: { status: "ACTIVE" | "PAUSED" | "ARCHIVED" | "DRAFT" }) {
   if (status === "ACTIVE") {
     return (
       <span className="inline-flex items-center gap-1.5 rounded-full bg-success-bg px-2.5 py-0.5 text-caption font-bold text-success">
         <span className="h-1.5 w-1.5 rounded-full bg-success" aria-hidden="true" />
         Đang bán
+      </span>
+    )
+  }
+  if (status === "PAUSED") {
+    return (
+      <span className="inline-flex items-center gap-1.5 rounded-full bg-surface-alt px-2.5 py-0.5 text-caption font-bold text-warning">
+        <span className="h-1.5 w-1.5 rounded-full bg-warning" aria-hidden="true" />
+        Tạm ngưng
       </span>
     )
   }
@@ -45,7 +53,7 @@ export function ProductOverviewCard({
 }: {
   name: string
   code: string
-  status: "ACTIVE" | "ARCHIVED" | "DRAFT"
+  status: "ACTIVE" | "PAUSED" | "ARCHIVED" | "DRAFT"
   priceVnd: number | null
   primaryColor: string | null
   displayImageUrl: string | null

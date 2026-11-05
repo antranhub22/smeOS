@@ -16,7 +16,7 @@
 
 import type { Prisma } from "@/generated/prisma/client"
 import { prisma } from "@/core/tenancy/infra/prisma"
-import type { TenantContext } from "@/core/tenancy/tenant-context"
+import { branchScopedProductWhere, type TenantContext } from "@/core/tenancy"
 import { signStorageUrl } from "@/modules/assets/infra/storage-signing"
 import type {
   ProductMasterIndex,
@@ -171,7 +171,7 @@ type MasterIndexRow = Prisma.productsGetPayload<{ include: typeof MASTER_INDEX_I
 export class ProductMasterIndexRepository {
   async getById(ctx: TenantContext, productId: string): Promise<ProductMasterIndex | null> {
     const row = await prisma.products.findFirst({
-      where: { id: productId, organization_id: ctx.organizationId },
+      where: { id: productId, organization_id: ctx.organizationId, ...branchScopedProductWhere(ctx, undefined) },
       include: MASTER_INDEX_INCLUDE,
     })
 
@@ -181,7 +181,7 @@ export class ProductMasterIndexRepository {
 
   async list(ctx: TenantContext, limit = 50): Promise<ProductMasterIndex[]> {
     const rows = await prisma.products.findMany({
-      where: { organization_id: ctx.organizationId },
+      where: { organization_id: ctx.organizationId, ...branchScopedProductWhere(ctx, undefined) },
       include: MASTER_INDEX_INCLUDE,
       orderBy: { updated_at: "desc" },
       take: limit,

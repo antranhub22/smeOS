@@ -1,4 +1,4 @@
-import { DEFAULT_TRACKING_TRIGGER_POLICY, type BrochurePaymentPolicy, type TrackingTriggerPolicy } from "./brochure-payment-policy"
+import { DEFAULT_BALANCE_PAYMENT_TRIGGER_POLICY, DEFAULT_TRACKING_TRIGGER_POLICY, type BrochurePaymentPolicy, type TrackingTriggerPolicy } from "./brochure-payment-policy"
 
 /**
  * Phân giải cơ chế bắt buộc ảnh chuyển khoản giữa Cài đặt Bộ sưu tập (catalog filters)
@@ -49,7 +49,7 @@ export function resolveBalancePaymentTriggerPolicy(
   if (filters.balancePaymentTriggerPolicy === "PAYMENT_ONLY" || filters.balancePaymentTriggerPolicy === "PAYMENT_OR_COORDINATOR") {
     return filters.balancePaymentTriggerPolicy
   }
-  return policy.balancePaymentTriggerPolicy ?? policy.trackingTriggerPolicy ?? DEFAULT_TRACKING_TRIGGER_POLICY
+  return policy.balancePaymentTriggerPolicy ?? DEFAULT_BALANCE_PAYMENT_TRIGGER_POLICY
 }
 
 export type PaymentPurpose = "FULL" | "DEPOSIT" | "BALANCE"
