@@ -1,5 +1,8 @@
 import React from "react"
-import { Truck, Home, Cpu, Users } from "@/components/ui/icons"
+import { Truck } from "@/components/ui/icon-set/truck"
+import { Home } from "@/components/ui/icon-set/home"
+import { Cpu } from "@/components/ui/icon-set/cpu"
+import { Users } from "@/components/ui/icon-set/users"
 import type { PartnerStoreFacilityAndDelivery } from "@/modules/platform/domain/partner-marketplace.types"
 
 interface MarketplaceFacilityTabProps {

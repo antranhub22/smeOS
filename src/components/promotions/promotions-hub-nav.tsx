@@ -1,5 +1,7 @@
 import Link from "next/link"
-import { BadgePercent, FileSpreadsheet, Ticket } from "@/components/ui/icons"
+import { BadgePercent } from "@/components/ui/icon-set/badge-percent"
+import { FileSpreadsheet } from "@/components/ui/icon-set/file-spreadsheet"
+import { Ticket } from "@/components/ui/icon-set/ticket"
 
 const LINKS = [
   { key: "uu-dai", href: "/uu-dai", label: "Chương trình ưu đãi", icon: BadgePercent },

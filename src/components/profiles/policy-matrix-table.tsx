@@ -1,14 +1,12 @@
 "use client"
 
 import React from "react"
-import {
-  Sparkles,
-  Truck,
-  Users,
-  Clock,
-  AlertTriangle,
-  Camera,
-} from "@/components/ui/icons"
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
+import { Truck } from "@/components/ui/icon-set/truck"
+import { Users } from "@/components/ui/icon-set/users"
+import { Clock } from "@/components/ui/icon-set/clock"
+import { AlertTriangle } from "@/components/ui/icon-set/alert-triangle"
+import { Camera } from "@/components/ui/icon-set/camera"
 import { Button } from "@/components/ui/button"
 import {
   Select,

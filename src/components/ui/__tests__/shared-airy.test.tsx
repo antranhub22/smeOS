@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
 import { renderToStaticMarkup } from "react-dom/server"
-import { Camera } from "@/components/ui/icons"
+import { Camera } from "@/components/ui/icon-set/camera"
 import { EmptyState } from "../empty-state"
 import { PageHeader } from "../page-header"
 

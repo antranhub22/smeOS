@@ -1,20 +1,19 @@
 "use client";
 
 import React, { useState } from "react";
-import {
-  Clock,
-  Settings,
-  Bell,
-  CheckCircle2,
-  Calendar,
-  Layers,
-  Sparkles,
-  TrendingUp,
-  AlertTriangle,
-  Flame,
-  Shield,
-  History,
-} from "@/components/ui/icons";
+import { Clock } from "@/components/ui/icon-set/clock"
+import { Settings } from "@/components/ui/icon-set/settings"
+import { Bell } from "@/components/ui/icon-set/bell"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
+import { Calendar } from "@/components/ui/icon-set/calendar"
+import { Layers } from "@/components/ui/icon-set/layers"
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
+import { TrendingUp } from "@/components/ui/icon-set/trending-up"
+import { AlertTriangle } from "@/components/ui/icon-set/alert-triangle"
+import { Flame } from "@/components/ui/icon-set/flame"
+import { Shield } from "@/components/ui/icon-set/shield"
+import { History } from "@/components/ui/icon-set/history"
+;
 import type { RunItem } from "./research-runs-table";
 
 /** Cấu hình lịch quét xu hướng định kỳ của tiệm, gửi lên khi bấm lưu. */

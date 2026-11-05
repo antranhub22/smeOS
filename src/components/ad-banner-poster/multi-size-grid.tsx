@@ -1,7 +1,11 @@
 "use client"
 
 import React from "react"
-import { Eye, Download, Printer, Loader2, Sparkles } from "@/components/ui/icons"
+import { Eye } from "@/components/ui/icon-set/eye"
+import { Download } from "@/components/ui/icon-set/download"
+import { Printer } from "@/components/ui/icon-set/printer"
+import { Loader2 } from "@/components/ui/icon-set/loader2"
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
 import { Button } from "@/components/ui/button"
 import {
   BANNER_FORMATS,

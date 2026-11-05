@@ -1,7 +1,13 @@
 "use client";
 
 import React from "react";
-import { Flame, ArrowRight, Tag, Play, Video, ExternalLink } from "@/components/ui/icons";
+import { Flame } from "@/components/ui/icon-set/flame"
+import { ArrowRight } from "@/components/ui/icon-set/arrow-right"
+import { Tag } from "@/components/ui/icon-set/tag"
+import { Play } from "@/components/ui/icon-set/play"
+import { Video } from "@/components/ui/icon-set/video"
+import { ExternalLink } from "@/components/ui/icon-set/external-link"
+;
 import type { OpportunityItem } from "./opportunity-card";
 import { determineTrendLifecycle, LIFECYCLE_SPECS } from "@/modules/market-intelligence/domain/trend-lifecycle";
 import { getDualOpportunityEvidencePreview, getOpportunityHeadline } from "./opportunity-illustration";

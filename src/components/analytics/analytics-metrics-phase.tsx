@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { BarChart3 } from "@/components/ui/icons"
+import { BarChart3 } from "@/components/ui/icon-set/bar-chart3"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { StatTile } from "@/components/ui/stat-tile"

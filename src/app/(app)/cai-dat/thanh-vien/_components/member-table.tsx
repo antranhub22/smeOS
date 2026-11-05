@@ -1,6 +1,9 @@
 "use client"
 
-import { Users, Building, Shield, UserCog } from "@/components/ui/icons"
+import { Users } from "@/components/ui/icon-set/users"
+import { Building } from "@/components/ui/icon-set/building"
+import { Shield } from "@/components/ui/icon-set/shield"
+import { UserCog } from "@/components/ui/icon-set/user-cog"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { SkeletonBlock } from "@/components/ui/skeleton"

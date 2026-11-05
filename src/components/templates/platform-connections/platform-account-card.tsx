@@ -1,15 +1,13 @@
 "use client"
 
 import React from "react"
-import {
-  CheckCircle2,
-  Clock,
-  KeyRound,
-  Lock,
-  LogIn,
-  RefreshCw,
-  Trash2,
-} from "@/components/ui/icons"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
+import { Clock } from "@/components/ui/icon-set/clock"
+import { KeyRound } from "@/components/ui/icon-set/key-round"
+import { Lock } from "@/components/ui/icon-set/lock"
+import { LogIn } from "@/components/ui/icon-set/log-in"
+import { RefreshCw } from "@/components/ui/icon-set/refresh-cw"
+import { Trash2 } from "@/components/ui/icon-set/trash2"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"

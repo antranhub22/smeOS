@@ -1,16 +1,14 @@
 "use client"
 
 import React, { useState } from "react"
-import {
-  Calendar,
-  Copy,
-  Check,
-  Phone,
-  X,
-  Gift,
-  ChevronDown,
-  ChevronUp,
-} from "@/components/ui/icons"
+import { Calendar } from "@/components/ui/icon-set/calendar"
+import { Copy } from "@/components/ui/icon-set/copy"
+import { Check } from "@/components/ui/icon-set/check"
+import { Phone } from "@/components/ui/icon-set/phone"
+import { X } from "@/components/ui/icon-set/x"
+import { Gift } from "@/components/ui/icon-set/gift"
+import { ChevronDown } from "@/components/ui/icon-set/chevron-down"
+import { ChevronUp } from "@/components/ui/icon-set/chevron-up"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import type { OccasionReminder } from "@/modules/crm/domain/customer-master-index"

@@ -1,14 +1,12 @@
 "use client"
 
 import React from "react"
-import {
-  Eye,
-  CheckCircle2,
-  AlertCircle,
-  Pencil,
-  ShoppingBag,
-  FileText,
-} from "@/components/ui/icons"
+import { Eye } from "@/components/ui/icon-set/eye"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
+import { AlertCircle } from "@/components/ui/icon-set/alert-circle"
+import { Pencil } from "@/components/ui/icon-set/pencil"
+import { ShoppingBag } from "@/components/ui/icon-set/shopping-bag"
+import { FileText } from "@/components/ui/icon-set/file-text"
 import { Button } from "@/components/ui/button"
 import { SalesPitchCardA6 } from "@/components/templates/product-analysis"
 import type { SalesPitchData } from "@/modules/products/domain/sales-pitch-template"

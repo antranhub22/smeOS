@@ -1,7 +1,7 @@
 "use client"
 
 import React from "react"
-import { ChevronRight } from "@/components/ui/icons"
+import { ChevronRight } from "@/components/ui/icon-set/chevron-right"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"

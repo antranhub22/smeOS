@@ -6,7 +6,7 @@
  */
 
 import type { ComponentType } from "react"
-import { ChevronDown } from "@/components/ui/icons"
+import { ChevronDown } from "@/components/ui/icon-set/chevron-down"
 import { cn } from "@/lib/utils"
 import type { NavEntry } from "./nav-model"
 import { DesktopNavItem } from "./desktop-nav-item"

@@ -1,7 +1,9 @@
 "use client"
 
 import React, { useRef } from "react"
-import { X, Download, Eye } from "@/components/ui/icons"
+import { X } from "@/components/ui/icon-set/x"
+import { Download } from "@/components/ui/icon-set/download"
+import { Eye } from "@/components/ui/icon-set/eye"
 import { Dialog } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import {

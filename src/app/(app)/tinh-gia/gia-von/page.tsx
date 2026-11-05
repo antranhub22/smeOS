@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { Calculator } from "@/components/ui/icons"
+import { Calculator } from "@/components/ui/icon-set/calculator"
 import { EmptyState } from "@/components/ui/empty-state"
 import { InlineError } from "@/components/ui/inline-error"
 import { SkeletonBlock } from "@/components/ui/skeleton"

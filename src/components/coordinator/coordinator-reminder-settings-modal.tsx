@@ -1,7 +1,11 @@
 "use client"
 
 import React, { useState, useEffect } from "react"
-import { Settings2, Clock, Check, RefreshCw, ShieldAlert } from "@/components/ui/icons"
+import { Settings2 } from "@/components/ui/icon-set/settings2"
+import { Clock } from "@/components/ui/icon-set/clock"
+import { Check } from "@/components/ui/icon-set/check"
+import { RefreshCw } from "@/components/ui/icon-set/refresh-cw"
+import { ShieldAlert } from "@/components/ui/icon-set/shield-alert"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Dialog } from "@/components/ui/dialog"

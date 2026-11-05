@@ -4,18 +4,16 @@ import * as React from "react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
-import {
-  Camera,
-  Eye,
-  RotateCcw,
-  LayoutGrid,
-  ZoomIn,
-  User,
-  Users,
-  Sparkles,
-  BookOpen,
-  Check,
-} from "@/components/ui/icons"
+import { Camera } from "@/components/ui/icon-set/camera"
+import { Eye } from "@/components/ui/icon-set/eye"
+import { RotateCcw } from "@/components/ui/icon-set/rotate-ccw"
+import { LayoutGrid } from "@/components/ui/icon-set/layout-grid"
+import { ZoomIn } from "@/components/ui/icon-set/zoom-in"
+import { User } from "@/components/ui/icon-set/user"
+import { Users } from "@/components/ui/icon-set/users"
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
+import { BookOpen } from "@/components/ui/icon-set/book-open"
+import { Check } from "@/components/ui/icon-set/check"
 import type { CameraAngleType, HumanInteractionType, StorylineMode } from "@/modules/media/domain/creative-studio-schemas"
 
 export interface VisualStorytellingControlsProps {

@@ -2,7 +2,12 @@
 
 import { useEffect, useState, useCallback } from "react"
 import { useRouter } from "next/navigation"
-import { AlertTriangle, Cpu, TrendingUp, Sparkles, ShoppingBag, ArrowRight } from "@/components/ui/icons"
+import { AlertTriangle } from "@/components/ui/icon-set/alert-triangle"
+import { Cpu } from "@/components/ui/icon-set/cpu"
+import { TrendingUp } from "@/components/ui/icon-set/trending-up"
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
+import { ShoppingBag } from "@/components/ui/icon-set/shopping-bag"
+import { ArrowRight } from "@/components/ui/icon-set/arrow-right"
 import { useSession } from "@/lib/session"
 import { getIndustryTerminology } from "@/modules/organization/domain/industry-profile"
 import { Card } from "@/components/ui/card"

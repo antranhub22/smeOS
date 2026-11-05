@@ -1,5 +1,6 @@
 import React from "react"
-import { Camera, Info } from "@/components/ui/icons"
+import { Camera } from "@/components/ui/icon-set/camera"
+import { Info } from "@/components/ui/icon-set/info"
 import { FeatureGuidanceCard } from "@/components/templates/shared/feature-guidance-card"
 import { useI18n } from "@/lib/i18n"
 

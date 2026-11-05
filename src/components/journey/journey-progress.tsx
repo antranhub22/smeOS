@@ -1,7 +1,10 @@
 "use client"
 
 import React from "react"
-import { Check, Lock, AlertCircle, Loader2 } from "@/components/ui/icons"
+import { Check } from "@/components/ui/icon-set/check"
+import { Lock } from "@/components/ui/icon-set/lock"
+import { AlertCircle } from "@/components/ui/icon-set/alert-circle"
+import { Loader2 } from "@/components/ui/icon-set/loader2"
 import type { JourneyStepStatus } from "@/modules/journey/domain/journey-model"
 
 interface StepItem {

@@ -1,7 +1,8 @@
 "use client"
 
 import { useState } from "react"
-import { Info, AlertCircle } from "@/components/ui/icons"
+import { Info } from "@/components/ui/icon-set/info"
+import { AlertCircle } from "@/components/ui/icon-set/alert-circle"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { NativeSelect } from "@/components/ui/select"

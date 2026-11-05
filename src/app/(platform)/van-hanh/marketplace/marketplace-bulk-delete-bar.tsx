@@ -3,7 +3,11 @@
 // Thanh xoá hàng loạt — chỉ hiện với superadmin (N18, máy chủ vẫn kiểm). Xoá theo lựa chọn
 // hoặc toàn bộ; toàn bộ phải gõ đúng số hồ sơ để xác nhận.
 import React, { useState } from "react"
-import { AlertCircle, CheckCircle, CheckSquare, Trash2, X } from "@/components/ui/icons"
+import { AlertCircle } from "@/components/ui/icon-set/alert-circle"
+import { CheckCircle } from "@/components/ui/icon-set/check-circle"
+import { CheckSquare } from "@/components/ui/icon-set/check-square"
+import { Trash2 } from "@/components/ui/icon-set/trash2"
+import { X } from "@/components/ui/icon-set/x"
 import { Button } from "@/components/ui/button"
 import { useConfirmDialog } from "@/components/ui/confirm-dialog"
 

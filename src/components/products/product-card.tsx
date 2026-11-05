@@ -3,7 +3,7 @@
 import { parsePricing, priceLabel, summarizePricing } from "@/modules/products/domain/product-pricing"
 import React from "react"
 import Link from "next/link"
-import { Trash2 } from "@/components/ui/icons"
+import { Trash2 } from "@/components/ui/icon-set/trash2"
 import { Button } from "@/components/ui/button"
 import { ProductThumb } from "@/components/products/product-thumb"
 import { readProposal, type ProposalStatus } from "@/modules/products/domain/product-proposal"

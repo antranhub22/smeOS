@@ -1,14 +1,12 @@
 "use client"
 
 import React, { useState } from "react"
-import {
-  Award,
-  CheckCircle2,
-  Clock,
-  Star,
-  TrendingUp,
-  FileCheck,
-} from "@/components/ui/icons"
+import { Award } from "@/components/ui/icon-set/award"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
+import { Clock } from "@/components/ui/icon-set/clock"
+import { Star } from "@/components/ui/icon-set/star"
+import { TrendingUp } from "@/components/ui/icon-set/trending-up"
+import { FileCheck } from "@/components/ui/icon-set/file-check"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"

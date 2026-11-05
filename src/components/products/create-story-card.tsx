@@ -2,7 +2,7 @@
 
 import { InfoTip } from "@/components/ui/info-tip"
 import React from "react"
-import { Sparkles } from "@/components/ui/icons"
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
 import { Card } from "@/components/ui/card"
 import { Textarea } from "@/components/ui/textarea"
 import type { IndustryPluginContract } from "@/modules/organization/domain/industry-plugin-contract"

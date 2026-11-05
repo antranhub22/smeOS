@@ -5,7 +5,7 @@
 
 import { useCallback, useEffect, useState } from "react"
 import Link from "next/link"
-import { CheckCircle2 } from "@/components/ui/icons"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { useConfirmDialog } from "@/components/ui/confirm-dialog"

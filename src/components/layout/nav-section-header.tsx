@@ -6,7 +6,7 @@
  * nhóm đóng hiển thị số mục bên trong để người dùng biết còn gì phía sau.
  */
 
-import { ChevronDown } from "@/components/ui/icons"
+import { ChevronDown } from "@/components/ui/icon-set/chevron-down"
 import { cn } from "@/lib/utils"
 import { formatNavGroupLabel } from "./nav-group-label"
 

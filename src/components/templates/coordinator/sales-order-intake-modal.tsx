@@ -3,23 +3,21 @@
 import { safeImageSrc } from "@/lib/safe-image-src"
 import React, { useState, useEffect } from "react"
 import { ViDateInput } from "@/components/greeting-card/customer/vi-date-input"
-import {
-  X,
-  Plus,
-  Trash2,
-  Sparkles,
-  Flower2,
-  Clock,
-  MapPin,
-  User,
-  MessageSquare,
-  ShieldAlert,
-  CheckCircle2,
-  Upload,
-  Image as ImageIcon,
-  Camera,
-  Eye,
-} from "@/components/ui/icons"
+import { X } from "@/components/ui/icon-set/x"
+import { Plus } from "@/components/ui/icon-set/plus"
+import { Trash2 } from "@/components/ui/icon-set/trash2"
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
+import { Flower2 } from "@/components/ui/icon-set/flower2"
+import { Clock } from "@/components/ui/icon-set/clock"
+import { MapPin } from "@/components/ui/icon-set/map-pin"
+import { User } from "@/components/ui/icon-set/user"
+import { MessageSquare } from "@/components/ui/icon-set/message-square"
+import { ShieldAlert } from "@/components/ui/icon-set/shield-alert"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
+import { Upload } from "@/components/ui/icon-set/upload"
+import { Image as ImageIcon } from "@/components/ui/icon-set/image"
+import { Camera } from "@/components/ui/icon-set/camera"
+import { Eye } from "@/components/ui/icon-set/eye"
 import { Button } from "@/components/ui/button"
 import type {
   AccessoryBomItem,

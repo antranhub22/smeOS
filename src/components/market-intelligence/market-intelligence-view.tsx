@@ -1,7 +1,11 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
-import { Sparkles, Activity, Clock, RefreshCw } from "@/components/ui/icons";
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
+import { Activity } from "@/components/ui/icon-set/activity"
+import { Clock } from "@/components/ui/icon-set/clock"
+import { RefreshCw } from "@/components/ui/icon-set/refresh-cw"
+;
 import {
   ExecutiveSummaryCards,
   type ExecutiveFilterType,

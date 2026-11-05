@@ -1,7 +1,8 @@
 "use client"
 
 import React, { useEffect } from "react"
-import { MoreHorizontal, Loader2 } from "@/components/ui/icons"
+import { MoreHorizontal } from "@/components/ui/icon-set/more-horizontal"
+import { Loader2 } from "@/components/ui/icon-set/loader2"
 import {
   DropdownMenu,
   DropdownMenuTrigger,

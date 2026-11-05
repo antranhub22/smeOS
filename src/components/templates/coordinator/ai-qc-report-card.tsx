@@ -1,7 +1,12 @@
 "use client"
 
 import React from "react"
-import { CheckCircle2, XCircle, RotateCcw, Sparkles, Check, AlertTriangle } from "@/components/ui/icons"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
+import { XCircle } from "@/components/ui/icon-set/x-circle"
+import { RotateCcw } from "@/components/ui/icon-set/rotate-ccw"
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
+import { Check } from "@/components/ui/icon-set/check"
+import { AlertTriangle } from "@/components/ui/icon-set/alert-triangle"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"

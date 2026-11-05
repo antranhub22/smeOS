@@ -1,7 +1,11 @@
 "use client"
 
 import React, { useState, useEffect } from "react"
-import { Sparkles, CheckCircle2, AlertCircle, X, Loader2 } from "@/components/ui/icons"
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
+import { AlertCircle } from "@/components/ui/icon-set/alert-circle"
+import { X } from "@/components/ui/icon-set/x"
+import { Loader2 } from "@/components/ui/icon-set/loader2"
 import { AiProductModalFooter, type SubmitMode } from "./ai-product-modal-footer"
 import { Button } from "@/components/ui/button"
 import { Dialog } from "@/components/ui/dialog"

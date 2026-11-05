@@ -9,7 +9,8 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { Bot, LogOut } from "@/components/ui/icons"
+import { Bot } from "@/components/ui/icon-set/bot"
+import { LogOut } from "@/components/ui/icon-set/log-out"
 import { useSession } from "@/lib/session"
 import { useI18n } from "@/lib/i18n"
 import { cn } from "@/lib/utils"

@@ -4,16 +4,14 @@ import React from "react"
 import Link from "next/link"
 import { StatTile } from "@/components/ui/stat-tile"
 import { InfoTip } from "@/components/ui/info-tip"
-import {
-  Layers,
-  Sparkles,
-  ExternalLink,
-  ShieldCheck,
-  Package,
-  Printer,
-  SlidersHorizontal,
-  PlusCircle,
-} from "@/components/ui/icons"
+import { Layers } from "@/components/ui/icon-set/layers"
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
+import { ExternalLink } from "@/components/ui/icon-set/external-link"
+import { ShieldCheck } from "@/components/ui/icon-set/shield-check"
+import { Package } from "@/components/ui/icon-set/package"
+import { Printer } from "@/components/ui/icon-set/printer"
+import { SlidersHorizontal } from "@/components/ui/icon-set/sliders-horizontal"
+import { PlusCircle } from "@/components/ui/icon-set/plus-circle"
 import { INDUSTRY_REGISTRY } from "@/modules/organization/domain/industries"
 import { Badge } from "@/components/ui/badge"
 

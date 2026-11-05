@@ -7,7 +7,11 @@
  */
 import { useEffect, useMemo, useRef, useState } from "react"
 import Link from "next/link"
-import { IdCard, FileDown, ImageDown, Contact, Loader2 } from "@/components/ui/icons"
+import { IdCard } from "@/components/ui/icon-set/id-card"
+import { FileDown } from "@/components/ui/icon-set/file-down"
+import { ImageDown } from "@/components/ui/icon-set/image-down"
+import { Contact } from "@/components/ui/icon-set/contact"
+import { Loader2 } from "@/components/ui/icon-set/loader2"
 import { Button } from "@/components/ui/button"
 import { toPng } from "html-to-image"
 import jsPDF from "jspdf"

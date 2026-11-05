@@ -1,7 +1,8 @@
 "use client"
 
 import React from "react"
-import { Check, TrendingUp } from "@/components/ui/icons"
+import { Check } from "@/components/ui/icon-set/check"
+import { TrendingUp } from "@/components/ui/icon-set/trending-up"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { SkeletonBlock } from "@/components/ui/skeleton"

@@ -1,6 +1,6 @@
 "use client"
 
-import { Loader2 } from "@/components/ui/icons"
+import { Loader2 } from "@/components/ui/icon-set/loader2"
 import { Button } from "@/components/ui/button"
 
 export type SubmitMode = "save" | "saveAs" | "propose"

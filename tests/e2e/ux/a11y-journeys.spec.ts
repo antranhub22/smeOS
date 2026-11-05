@@ -13,6 +13,7 @@ import {
   withDb,
   zoomIssues,
 } from "./a11y-journeys.helpers"
+import { seedSubcontractInvite } from "./subcontract-fixture"
 
 /**
  * Trợ năng 12 hành trình (WCAG 2.2 AA) — docs/design-system/accessibility-audit-12-journeys.md.
@@ -34,6 +35,8 @@ const KNOWN_FROZEN: { route: RegExp; issue: RegExp }[] = [
   { route: /^\/don-hang$/, issue: /^2\.4\.7 .*Tìm kiếm đơn hàng/ },
   // Huy hiệu "Ưu đãi" trên trang đặt hàng của khách (journey-contact-form.tsx): text-danger trên bg-danger-bg 4,23:1
   { route: /^\/(b|bst|g)\//, issue: /^color-contrast .*"Ưu đãi/ },
+  // Thẻ Gia Công của chi nhánh (subcontract-spotlight-shell.tsx): chữ phụ thiếu tương phản ở preset modern-slate, pure-swiss
+  { route: /^\/subcontract\/DH-/, issue: /^color-contrast .*(\.px-3 ""|"Thù lao gia công)/ },
 ]
 const isKnown = (path: string, issue: string) => KNOWN_FROZEN.some((k) => k.route.test(path) && k.issue.test(issue))
 const results: Result[] = []
@@ -57,6 +60,7 @@ test.describe("Trợ năng 12 hành trình (WCAG 2.2 AA)", () => {
     const user = await createTestUserAndLogin(page, { workspaceKind: "PRODUCTION" })
     await grantPlatformOperator(user.userId)
     const { productId, catalogSlug, greetingCatalogId, greetingCatalogCode, sendCode } = await seedJourneyData(page.request)
+    const subcontractPath = await seedSubcontractInvite(user.orgId, user.userId)
     const orgSlug = await withDb(async (db) => (await db.query<{ slug: string }>("SELECT slug FROM organizations WHERE id = $1", [user.orgId])).rows[0]?.slug ?? "khong-co")
     storage = join(test.info().outputDir, "state.json")
     await context.storageState({ path: storage })
@@ -79,6 +83,7 @@ test.describe("Trợ năng 12 hành trình (WCAG 2.2 AA)", () => {
       { journey: "J07", path: "/khach-hang", auth: true },
       { journey: "J08", path: "/dieu-phoi", auth: true },
       { journey: "J08", path: "/dieu-phoi/doi-tac", auth: true },
+      ...(subcontractPath ? [{ journey: "J09", path: subcontractPath, auth: false }] : []),
       { journey: "J09", path: "/subcontract/KHONGTONTAI", auth: false, state: "không tìm thấy" },
       { journey: "J10", path: "/so-lieu", auth: true },
       { journey: "J11", path: "/cai-dat", auth: true },

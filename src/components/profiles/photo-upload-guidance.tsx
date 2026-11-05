@@ -7,7 +7,9 @@
  */
 
 import React from "react"
-import { CheckCircle2, AlertCircle, Info } from "@/components/ui/icons"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
+import { AlertCircle } from "@/components/ui/icon-set/alert-circle"
+import { Info } from "@/components/ui/icon-set/info"
 
 type GuidanceStatus = "empty" | "partial" | "optimal" | "full"
 

@@ -1,7 +1,9 @@
 "use client"
 
 import React, { useEffect, useState } from "react"
-import { Wallet, PlusCircle, Undo2 } from "@/components/ui/icons"
+import { Wallet } from "@/components/ui/icon-set/wallet"
+import { PlusCircle } from "@/components/ui/icon-set/plus-circle"
+import { Undo2 } from "@/components/ui/icon-set/undo2"
 import { Button } from "@/components/ui/button"
 import { Dialog } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"

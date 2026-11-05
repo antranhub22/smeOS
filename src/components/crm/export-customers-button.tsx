@@ -9,7 +9,11 @@
  */
 
 import React, { useState, useRef, useEffect } from "react"
-import { Download, Loader2, FileSpreadsheet, Database, ChevronDown } from "@/components/ui/icons"
+import { Download } from "@/components/ui/icon-set/download"
+import { Loader2 } from "@/components/ui/icon-set/loader2"
+import { FileSpreadsheet } from "@/components/ui/icon-set/file-spreadsheet"
+import { Database } from "@/components/ui/icon-set/database"
+import { ChevronDown } from "@/components/ui/icon-set/chevron-down"
 import { useSession } from "@/lib/session"
 import { Button } from "@/components/ui/button"
 

@@ -1,7 +1,12 @@
 "use client"
 
 import { useState } from "react"
-import { Store, Building2, Clock, Send, ShieldAlert, CheckCircle2 } from "@/components/ui/icons"
+import { Store } from "@/components/ui/icon-set/store"
+import { Building2 } from "@/components/ui/icon-set/building2"
+import { Clock } from "@/components/ui/icon-set/clock"
+import { Send } from "@/components/ui/icon-set/send"
+import { ShieldAlert } from "@/components/ui/icon-set/shield-alert"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
 import { useSession } from "@/lib/session"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"

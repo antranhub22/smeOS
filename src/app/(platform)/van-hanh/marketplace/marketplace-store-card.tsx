@@ -1,17 +1,15 @@
 import React, { useState } from "react"
-import {
-  Store,
-  MapPin,
-  Phone,
-  User,
-  Award,
-  Sparkles,
-  ArrowRight,
-  TrendingUp,
-  Package,
-  Camera,
-  Check,
-} from "@/components/ui/icons"
+import { Store } from "@/components/ui/icon-set/store"
+import { MapPin } from "@/components/ui/icon-set/map-pin"
+import { Phone } from "@/components/ui/icon-set/phone"
+import { User } from "@/components/ui/icon-set/user"
+import { Award } from "@/components/ui/icon-set/award"
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
+import { ArrowRight } from "@/components/ui/icon-set/arrow-right"
+import { TrendingUp } from "@/components/ui/icon-set/trending-up"
+import { Package } from "@/components/ui/icon-set/package"
+import { Camera } from "@/components/ui/icon-set/camera"
+import { Check } from "@/components/ui/icon-set/check"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import type { PartnerStoreMarketplaceEntity } from "@/modules/platform/domain/partner-marketplace.types"

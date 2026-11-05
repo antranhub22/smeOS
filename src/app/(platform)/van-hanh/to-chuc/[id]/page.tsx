@@ -7,7 +7,10 @@ import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { SkeletonBlock } from "@/components/ui/skeleton"
-import { Building2, Store, Clock, CheckCircle2 } from "@/components/ui/icons"
+import { Building2 } from "@/components/ui/icon-set/building2"
+import { Store } from "@/components/ui/icon-set/store"
+import { Clock } from "@/components/ui/icon-set/clock"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
 import { formatDateTime } from "@/lib/i18n/formatters"
 
 type PlatformOrganizationDetail = {

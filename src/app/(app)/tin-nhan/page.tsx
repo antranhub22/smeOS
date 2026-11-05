@@ -2,15 +2,13 @@
 
 import { useI18n } from "@/lib/i18n"
 import React, { useEffect, useState, useRef } from "react"
-import {
-  MessageSquare,
-  Send,
-  Building,
-  Store,
-  ShieldCheck,
-  Search,
-  Package,
-} from "@/components/ui/icons"
+import { MessageSquare } from "@/components/ui/icon-set/message-square"
+import { Send } from "@/components/ui/icon-set/send"
+import { Building } from "@/components/ui/icon-set/building"
+import { Store } from "@/components/ui/icon-set/store"
+import { ShieldCheck } from "@/components/ui/icon-set/shield-check"
+import { Search } from "@/components/ui/icon-set/search"
+import { Package } from "@/components/ui/icon-set/package"
 import type {
   InternalChatConversation,
   InternalChatMessage,

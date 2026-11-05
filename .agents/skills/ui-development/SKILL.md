@@ -38,7 +38,8 @@ export default async function MyPage() {
 ```tsx
 // src/components/<feature>/my-component.tsx
 "use client"
-import { Sparkles, MoreHorizontal } from "@/components/ui/icons"
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
+import { MoreHorizontal } from "@/components/ui/icon-set/more-horizontal"
 import { Button } from "@/components/ui/button"
 import { FeatureGuidanceCard } from "@/components/templates/shared/feature-guidance-card"
 

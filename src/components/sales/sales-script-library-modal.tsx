@@ -1,16 +1,14 @@
 "use client"
 
 import React, { useState, useMemo } from "react"
-import {
-  MessageSquareText,
-  Copy,
-  Check,
-  Search,
-  Sparkles,
-  Lightbulb,
-  Tag,
-  Filter,
-} from "@/components/ui/icons"
+import { MessageSquareText } from "@/components/ui/icon-set/message-square-text"
+import { Copy } from "@/components/ui/icon-set/copy"
+import { Check } from "@/components/ui/icon-set/check"
+import { Search } from "@/components/ui/icon-set/search"
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
+import { Lightbulb } from "@/components/ui/icon-set/lightbulb"
+import { Tag } from "@/components/ui/icon-set/tag"
+import { Filter } from "@/components/ui/icon-set/filter"
 import { Dialog } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"

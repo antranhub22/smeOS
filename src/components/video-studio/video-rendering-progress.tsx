@@ -1,7 +1,10 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { Film, AlertCircle, RotateCcw } from "@/components/ui/icons";
+import { Film } from "@/components/ui/icon-set/film"
+import { AlertCircle } from "@/components/ui/icon-set/alert-circle"
+import { RotateCcw } from "@/components/ui/icon-set/rotate-ccw"
+;
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { TaskStatus } from "@/components/ui/task-status";

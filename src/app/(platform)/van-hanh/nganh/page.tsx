@@ -1,7 +1,8 @@
 "use client"
 
 import { useCallback, useEffect, useMemo, useState } from "react"
-import { ShieldAlert, CheckCircle2 } from "@/components/ui/icons"
+import { ShieldAlert } from "@/components/ui/icon-set/shield-alert"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
 import { Badge } from "@/components/ui/badge"
 import { MatrixToolbar } from "./_components/matrix-toolbar"
 import { MatrixGrid } from "./_components/matrix-grid"

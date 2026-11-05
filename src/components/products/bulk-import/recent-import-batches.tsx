@@ -1,7 +1,7 @@
 "use client"
 
 import { useCallback, useEffect, useState } from "react"
-import { Loader2 } from "@/components/ui/icons"
+import { Loader2 } from "@/components/ui/icon-set/loader2"
 import { Button } from "@/components/ui/button"
 
 type Batch = { id: string; createdAt: string; createdCount: number; updatedCount: number; undoneAt: string | null; canUndo: boolean }

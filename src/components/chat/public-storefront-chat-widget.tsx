@@ -1,17 +1,15 @@
 "use client"
 
 import React, { useState, useEffect, useRef } from "react"
-import {
-  MessageCircle,
-  X,
-  Send,
-  Sparkles,
-  Flower2,
-  ShoppingBag,
-  Loader2,
-  Bot,
-  ArrowRight,
-} from "@/components/ui/icons"
+import { MessageCircle } from "@/components/ui/icon-set/message-circle"
+import { X } from "@/components/ui/icon-set/x"
+import { Send } from "@/components/ui/icon-set/send"
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
+import { Flower2 } from "@/components/ui/icon-set/flower2"
+import { ShoppingBag } from "@/components/ui/icon-set/shopping-bag"
+import { Loader2 } from "@/components/ui/icon-set/loader2"
+import { Bot } from "@/components/ui/icon-set/bot"
+import { ArrowRight } from "@/components/ui/icon-set/arrow-right"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import type { SuggestedProductCard } from "@/modules/chat-assistant/domain/chat-types"

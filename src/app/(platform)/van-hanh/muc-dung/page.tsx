@@ -5,14 +5,12 @@
 
 import { useEffect, useState, useMemo } from "react"
 import Link from "next/link"
-import {
-  Sparkles,
-  Coins,
-  Building2,
-  AlertTriangle,
-  ArrowUpRight,
-  Filter,
-} from "@/components/ui/icons"
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
+import { Coins } from "@/components/ui/icon-set/coins"
+import { Building2 } from "@/components/ui/icon-set/building2"
+import { AlertTriangle } from "@/components/ui/icon-set/alert-triangle"
+import { ArrowUpRight } from "@/components/ui/icon-set/arrow-up-right"
+import { Filter } from "@/components/ui/icon-set/filter"
 import { StatTile } from "@/components/ui/stat-tile"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"

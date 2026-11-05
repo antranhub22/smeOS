@@ -1,17 +1,15 @@
 "use client"
 
 import React, { useState } from "react"
-import {
-  Users,
-  Plus,
-  Search,
-  Store,
-  Phone,
-  Mail,
-  MapPin,
-  MessageSquare,
-  ShieldCheck,
-} from "@/components/ui/icons"
+import { Users } from "@/components/ui/icon-set/users"
+import { Plus } from "@/components/ui/icon-set/plus"
+import { Search } from "@/components/ui/icon-set/search"
+import { Store } from "@/components/ui/icon-set/store"
+import { Phone } from "@/components/ui/icon-set/phone"
+import { Mail } from "@/components/ui/icon-set/mail"
+import { MapPin } from "@/components/ui/icon-set/map-pin"
+import { MessageSquare } from "@/components/ui/icon-set/message-square"
+import { ShieldCheck } from "@/components/ui/icon-set/shield-check"
 import type { ChainPartnershipEntity } from "@/modules/chain-partnership/domain/partnership-entities"
 import Link from "next/link"
 import { PartnerToolMatrixModal } from "@/components/organization/partner-tool-matrix-modal"

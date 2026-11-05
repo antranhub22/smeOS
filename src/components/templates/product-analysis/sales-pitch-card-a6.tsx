@@ -1,13 +1,11 @@
 "use client"
 
 import React, { forwardRef } from "react"
-import {
-  Sparkles,
-  Tag,
-  Gift,
-  ShieldCheck,
-  CheckCircle2,
-} from "@/components/ui/icons"
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
+import { Tag } from "@/components/ui/icon-set/tag"
+import { Gift } from "@/components/ui/icon-set/gift"
+import { ShieldCheck } from "@/components/ui/icon-set/shield-check"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import type { SalesPitchData } from "@/modules/products/domain/sales-pitch-template"

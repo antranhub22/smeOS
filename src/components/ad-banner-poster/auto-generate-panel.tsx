@@ -1,7 +1,12 @@
 "use client"
 
 import React, { useRef } from "react"
-import { UploadCloud, Sparkles, Loader2, LayoutGrid, CheckCircle2, Zap } from "@/components/ui/icons"
+import { UploadCloud } from "@/components/ui/icon-set/upload-cloud"
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
+import { Loader2 } from "@/components/ui/icon-set/loader2"
+import { LayoutGrid } from "@/components/ui/icon-set/layout-grid"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
+import { Zap } from "@/components/ui/icon-set/zap"
 import { Button } from "@/components/ui/button"
 import { NativeSelect } from "@/components/ui/select"
 import { getIndustryPlugin } from "@/modules/organization/domain/industry-profile"

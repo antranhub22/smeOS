@@ -1,14 +1,12 @@
 "use client"
 
 import React, { useState } from "react"
-import {
-  Palette,
-  X,
-  RotateCcw,
-  Sparkles,
-  Minimize2,
-  Eye,
-} from "@/components/ui/icons"
+import { Palette } from "@/components/ui/icon-set/palette"
+import { X } from "@/components/ui/icon-set/x"
+import { RotateCcw } from "@/components/ui/icon-set/rotate-ccw"
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
+import { Minimize2 } from "@/components/ui/icon-set/minimize2"
+import { Eye } from "@/components/ui/icon-set/eye"
 import { useUiSystem } from "@/lib/ui-system/ui-provider"
 import type { UiPresetId, UiDensity } from "@/lib/ui-system/types"
 import { Button } from "@/components/ui/button"

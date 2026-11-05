@@ -2,7 +2,11 @@
 
 import React, { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
-import { Sparkles, SlidersHorizontal, Layers, CheckCircle2, ArrowRight } from "@/components/ui/icons"
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
+import { SlidersHorizontal } from "@/components/ui/icon-set/sliders-horizontal"
+import { Layers } from "@/components/ui/icon-set/layers"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
+import { ArrowRight } from "@/components/ui/icon-set/arrow-right"
 import { Button } from "@/components/ui/button"
 import { INDUSTRY_JOURNEYS } from "@/modules/journey/domain/journey-catalog"
 import type { JourneyDefinition } from "@/modules/journey/domain/journey-model"

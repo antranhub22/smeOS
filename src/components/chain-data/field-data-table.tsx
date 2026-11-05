@@ -3,7 +3,10 @@
 import React, { useState } from "react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Copy, Check, Lock, ShieldCheck } from "@/components/ui/icons"
+import { Copy } from "@/components/ui/icon-set/copy"
+import { Check } from "@/components/ui/icon-set/check"
+import { Lock } from "@/components/ui/icon-set/lock"
+import { ShieldCheck } from "@/components/ui/icon-set/shield-check"
 import type { StoreFieldRecord } from "@/modules/field-platform/use-cases/get-store-folder-data"
 
 interface FieldDataTableProps {

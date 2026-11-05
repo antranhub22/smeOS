@@ -1,7 +1,11 @@
 "use client"
 
 import React, { useState, useRef, useCallback, useMemo } from "react"
-import { Download, FolderUp, RefreshCw, Share2, LayoutGrid } from "@/components/ui/icons"
+import { Download } from "@/components/ui/icon-set/download"
+import { FolderUp } from "@/components/ui/icon-set/folder-up"
+import { RefreshCw } from "@/components/ui/icon-set/refresh-cw"
+import { Share2 } from "@/components/ui/icon-set/share2"
+import { LayoutGrid } from "@/components/ui/icon-set/layout-grid"
 import { Button } from "@/components/ui/button"
 import { useSession } from "@/lib/session"
 import { useTenantProfile } from "@/lib/hooks/use-tenant-profile"

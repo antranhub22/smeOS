@@ -1,7 +1,11 @@
 "use client"
 
 import React from "react"
-import { Phone, Heart, ShoppingBag, Award, Calendar } from "@/components/ui/icons"
+import { Phone } from "@/components/ui/icon-set/phone"
+import { Heart } from "@/components/ui/icon-set/heart"
+import { ShoppingBag } from "@/components/ui/icon-set/shopping-bag"
+import { Award } from "@/components/ui/icon-set/award"
+import { Calendar } from "@/components/ui/icon-set/calendar"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"

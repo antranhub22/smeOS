@@ -2,7 +2,9 @@
 
 // Link chia sẻ chợ đối tác (N17): tạo link xem không cần đăng nhập, chọn thời hạn, huỷ bất kỳ lúc nào.
 import React, { useCallback, useState } from "react"
-import { CheckCircle, Copy, Share2 } from "@/components/ui/icons"
+import { CheckCircle } from "@/components/ui/icon-set/check-circle"
+import { Copy } from "@/components/ui/icon-set/copy"
+import { Share2 } from "@/components/ui/icon-set/share2"
 import { Button } from "@/components/ui/button"
 import { Dialog } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"

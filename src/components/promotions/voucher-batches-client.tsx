@@ -1,7 +1,9 @@
 "use client"
 
 import { useCallback, useEffect, useState } from "react"
-import { Download, Plus, Ticket } from "@/components/ui/icons"
+import { Download } from "@/components/ui/icon-set/download"
+import { Plus } from "@/components/ui/icon-set/plus"
+import { Ticket } from "@/components/ui/icon-set/ticket"
 
 import { ActiveSwitch } from "@/components/promotions/active-switch"
 import { VoucherBatchForm, type PromotionOption } from "@/components/promotions/voucher-batch-form"

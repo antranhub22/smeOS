@@ -1,7 +1,11 @@
 "use client"
 
 import React, { useState, useEffect } from "react"
-import { History, MessageSquare, Phone, Mail, Clock } from "@/components/ui/icons"
+import { History } from "@/components/ui/icon-set/history"
+import { MessageSquare } from "@/components/ui/icon-set/message-square"
+import { Phone } from "@/components/ui/icon-set/phone"
+import { Mail } from "@/components/ui/icon-set/mail"
+import { Clock } from "@/components/ui/icon-set/clock"
 import { Badge } from "@/components/ui/badge"
 import { formatDateTime } from "@/lib/i18n/formatters"
 

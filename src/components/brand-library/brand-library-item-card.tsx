@@ -1,6 +1,8 @@
 "use client"
 
-import { Download, History, Share2 } from "@/components/ui/icons"
+import { Download } from "@/components/ui/icon-set/download"
+import { History } from "@/components/ui/icon-set/history"
+import { Share2 } from "@/components/ui/icon-set/share2"
 import { Button } from "@/components/ui/button"
 import { CATEGORY_LABEL, isFileCategory, parseColorList, type BrandLibraryItemView } from "@/modules/profiles/domain/brand-library"
 

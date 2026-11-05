@@ -2,7 +2,9 @@
 
 import { useCallback, useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
-import { ArrowLeft, Receipt, SlidersHorizontal } from "@/components/ui/icons"
+import { ArrowLeft } from "@/components/ui/icon-set/arrow-left"
+import { Receipt } from "@/components/ui/icon-set/receipt"
+import { SlidersHorizontal } from "@/components/ui/icon-set/sliders-horizontal"
 import { Button } from "@/components/ui/button"
 import { SkeletonBlock } from "@/components/ui/skeleton"
 import { useSession } from "@/lib/session"

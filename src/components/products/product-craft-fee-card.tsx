@@ -1,7 +1,8 @@
 "use client"
 
 import React, { useState } from "react"
-import { Coins, Loader2 } from "@/components/ui/icons"
+import { Coins } from "@/components/ui/icon-set/coins"
+import { Loader2 } from "@/components/ui/icon-set/loader2"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"

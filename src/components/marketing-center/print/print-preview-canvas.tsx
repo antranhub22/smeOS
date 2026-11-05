@@ -2,7 +2,9 @@
 
 import React, { useState } from "react"
 import type { PrintPreset } from "@/modules/print/domain/print-preset"
-import { Eye, Scissors, QrCode } from "@/components/ui/icons"
+import { Eye } from "@/components/ui/icon-set/eye"
+import { Scissors } from "@/components/ui/icon-set/scissors"
+import { QrCode } from "@/components/ui/icon-set/qr-code"
 import { Button } from "@/components/ui/button"
 
 export interface PrintPreviewCanvasProps {

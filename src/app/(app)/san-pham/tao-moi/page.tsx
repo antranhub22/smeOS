@@ -1,7 +1,9 @@
 "use client"
 
 import { useRouter } from "next/navigation"
-import { CheckCircle2, Sparkles, AlertCircle } from "@/components/ui/icons"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
+import { AlertCircle } from "@/components/ui/icon-set/alert-circle"
 import { Button } from "@/components/ui/button"
 import { FormLayout } from "@/components/layout/page-layout"
 import { PageHeader } from "@/components/ui/page-header"

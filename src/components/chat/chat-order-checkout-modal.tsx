@@ -1,18 +1,16 @@
 "use client"
 
 import React, { useState } from "react"
-import {
-  CheckCircle2,
-  Copy,
-  Check,
-  ShoppingBag,
-  QrCode,
-  Sparkles,
-  Phone,
-  MapPin,
-  Calendar,
-  FileText,
-} from "@/components/ui/icons"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
+import { Copy } from "@/components/ui/icon-set/copy"
+import { Check } from "@/components/ui/icon-set/check"
+import { ShoppingBag } from "@/components/ui/icon-set/shopping-bag"
+import { QrCode } from "@/components/ui/icon-set/qr-code"
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
+import { Phone } from "@/components/ui/icon-set/phone"
+import { MapPin } from "@/components/ui/icon-set/map-pin"
+import { Calendar } from "@/components/ui/icon-set/calendar"
+import { FileText } from "@/components/ui/icon-set/file-text"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Dialog } from "@/components/ui/dialog"

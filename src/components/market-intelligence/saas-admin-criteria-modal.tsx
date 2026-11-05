@@ -1,18 +1,17 @@
 "use client";
 
 import React, { useState, useMemo } from "react";
-import {
-  X,
-  Shield,
-  Sparkles,
-  Sliders,
-  Globe,
-  Layers,
-  Search,
-  Check,
-  RotateCcw,
-  CheckSquare,
-} from "@/components/ui/icons";
+import { X } from "@/components/ui/icon-set/x"
+import { Shield } from "@/components/ui/icon-set/shield"
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
+import { Sliders } from "@/components/ui/icon-set/sliders"
+import { Globe } from "@/components/ui/icon-set/globe"
+import { Layers } from "@/components/ui/icon-set/layers"
+import { Search } from "@/components/ui/icon-set/search"
+import { Check } from "@/components/ui/icon-set/check"
+import { RotateCcw } from "@/components/ui/icon-set/rotate-ccw"
+import { CheckSquare } from "@/components/ui/icon-set/check-square"
+;
 import {
   MARKET_TAXONOMY_CATEGORIES,
   ALL_CORE_KEYWORDS,

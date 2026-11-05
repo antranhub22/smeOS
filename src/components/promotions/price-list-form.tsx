@@ -1,7 +1,7 @@
 "use client"
 
 import { useState } from "react"
-import { Loader2 } from "@/components/ui/icons"
+import { Loader2 } from "@/components/ui/icon-set/loader2"
 
 import { ActiveSwitch } from "@/components/promotions/active-switch"
 import { Button } from "@/components/ui/button"

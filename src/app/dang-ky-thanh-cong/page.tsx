@@ -2,7 +2,9 @@
 
 import { useI18n } from "@/lib/i18n"
 import Link from "next/link"
-import { CheckCircle2, Clock, Mail } from "@/components/ui/icons"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
+import { Clock } from "@/components/ui/icon-set/clock"
+import { Mail } from "@/components/ui/icon-set/mail"
 
 
 /**

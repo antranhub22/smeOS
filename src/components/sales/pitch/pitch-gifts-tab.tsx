@@ -1,7 +1,9 @@
 "use client"
 
 import React from "react"
-import { Gift, ShieldCheck, Trash2 } from "@/components/ui/icons"
+import { Gift } from "@/components/ui/icon-set/gift"
+import { ShieldCheck } from "@/components/ui/icon-set/shield-check"
+import { Trash2 } from "@/components/ui/icon-set/trash2"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 

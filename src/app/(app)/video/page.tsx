@@ -2,16 +2,15 @@
 
 import { useI18n } from "@/lib/i18n"
 import React, { useState, useEffect, useCallback } from "react";
-import {
-  Film,
-  Sparkles,
-  CheckCircle2,
-  Clock,
-  Play,
-  RotateCcw,
-  Check,
-  ChevronLeft,
-} from "@/components/ui/icons";
+import { Film } from "@/components/ui/icon-set/film"
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
+import { Clock } from "@/components/ui/icon-set/clock"
+import { Play } from "@/components/ui/icon-set/play"
+import { RotateCcw } from "@/components/ui/icon-set/rotate-ccw"
+import { Check } from "@/components/ui/icon-set/check"
+import { ChevronLeft } from "@/components/ui/icon-set/chevron-left"
+;
 import { FeatureGuidanceCard } from "@/components/ui/feature-guidance-card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";

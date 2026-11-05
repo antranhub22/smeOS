@@ -1,7 +1,9 @@
 "use client"
 
 import { useState } from "react"
-import { Pencil, Plus, X } from "@/components/ui/icons"
+import { Pencil } from "@/components/ui/icon-set/pencil"
+import { Plus } from "@/components/ui/icon-set/plus"
+import { X } from "@/components/ui/icon-set/x"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"

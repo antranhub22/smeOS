@@ -5,7 +5,9 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Badge } from "@/components/ui/badge"
-import { ArrowLeft, ArrowRight, Printer } from "@/components/ui/icons"
+import { ArrowLeft } from "@/components/ui/icon-set/arrow-left"
+import { ArrowRight } from "@/components/ui/icon-set/arrow-right"
+import { Printer } from "@/components/ui/icon-set/printer"
 import {
   getPrintPreset,
   type PrintPresetCode,

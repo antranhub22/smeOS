@@ -12,26 +12,24 @@ import React, { useState, useEffect } from "react"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { SkeletonBlock } from "@/components/ui/skeleton"
-import {
-  Globe,
-  Building2,
-  ChevronRight,
-  Search,
-  RefreshCw,
-  ArrowLeft,
-  Users,
-  Package,
-  ShoppingCart,
-  Cpu,
-  CheckCircle2,
-  AlertCircle,
-  BarChart3,
-  Layers,
-  UserCircle,
-  Database,
-  FileDown,
-  FileSpreadsheet,
-} from "@/components/ui/icons"
+import { Globe } from "@/components/ui/icon-set/globe"
+import { Building2 } from "@/components/ui/icon-set/building2"
+import { ChevronRight } from "@/components/ui/icon-set/chevron-right"
+import { Search } from "@/components/ui/icon-set/search"
+import { RefreshCw } from "@/components/ui/icon-set/refresh-cw"
+import { ArrowLeft } from "@/components/ui/icon-set/arrow-left"
+import { Users } from "@/components/ui/icon-set/users"
+import { Package } from "@/components/ui/icon-set/package"
+import { ShoppingCart } from "@/components/ui/icon-set/shopping-cart"
+import { Cpu } from "@/components/ui/icon-set/cpu"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
+import { AlertCircle } from "@/components/ui/icon-set/alert-circle"
+import { BarChart3 } from "@/components/ui/icon-set/bar-chart3"
+import { Layers } from "@/components/ui/icon-set/layers"
+import { UserCircle } from "@/components/ui/icon-set/user-circle"
+import { Database } from "@/components/ui/icon-set/database"
+import { FileDown } from "@/components/ui/icon-set/file-down"
+import { FileSpreadsheet } from "@/components/ui/icon-set/file-spreadsheet"
 import type { PlatformOrgDataSummary } from "@/modules/platform/use-cases/get-platform-orgs-data"
 import type { RecordDomain } from "@/modules/platform/use-cases/get-platform-org-records"
 import { useI18n } from "@/lib/i18n"

@@ -1,7 +1,11 @@
 "use client";
 
 import React, { useEffect } from "react";
-import { X, ExternalLink, Play, Film } from "@/components/ui/icons";
+import { X } from "@/components/ui/icon-set/x"
+import { ExternalLink } from "@/components/ui/icon-set/external-link"
+import { Play } from "@/components/ui/icon-set/play"
+import { Film } from "@/components/ui/icon-set/film"
+;
 
 export interface VideoPreviewModalData {
   title: string;

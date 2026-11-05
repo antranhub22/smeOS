@@ -45,7 +45,7 @@ Bản build production, commit `ee6e5aea`, database đã seed; người kiểm: 
 | J06 | `/don-hang` | Đạt | Đạt | Đạt | Đạt | Đạt | Đạt | Chưa kiểm |
 | J07 | `/khach-hang` | Đạt | Đạt | Đạt | Đạt | Đạt | Đạt | Chưa kiểm |
 | J08 | `/dieu-phoi`, `/dieu-phoi/doi-tac` | Đạt | Đạt | Đạt | Đạt | Đạt | Đạt | Chưa kiểm |
-| J09 | `/subcontract/[orderCode]` ở trạng thái không tìm thấy | Đạt | Đạt | Đạt | Đạt | Đạt | Đạt | Chưa kiểm |
+| J09 | `/subcontract/[orderCode]` (có lời mời gia công và không tìm thấy) | Đạt | Đạt | Đạt | Đạt | Đạt | Đạt | Chưa kiểm |
 | J10 | `/so-lieu` | Đạt | Đạt | Đạt | Đạt | Đạt | Đạt | Chưa kiểm |
 | J11 | `/cai-dat`, `/uu-dai`, `/tich-hop` | Đạt | Đạt | Đạt | Đạt | Đạt | Đạt | Chưa kiểm |
 | J12 | `/van-hanh` | Đạt | Đạt | Đạt | Đạt | Đạt | Đạt | Chưa kiểm |
@@ -55,9 +55,9 @@ Giới hạn của lần kiểm:
 - **Bàn phím:** kiểm 40 điểm dừng `Tab` đầu tiên mỗi tuyến (vòng tiêu điểm thấy được, không bị che hoàn toàn); chưa kiểm hết luồng thao tác như mở và đóng hộp thoại, chọn trong danh sách xổ.
 - **Phóng 200%:** khung 640×400 CSS px (tương đương 1280×800 ở 200%); kiểm không cuộn ngang toàn trang.
 - **Tương phản:** 3 preset ở giao diện sáng; hệ thống chưa có chế độ tối.
-- **Trang công khai:** `/b`, `/bst`, `/g` kiểm cả trạng thái có dữ liệu (bộ sưu tập và link gửi tạo qua API trong bộ kiểm) và trạng thái không tìm thấy; `/subcontract` mới kiểm trạng thái không tìm thấy (cần chuỗi chi nhánh và đơn gia công). Ba trang không tìm thấy `/b`, `/g`, `/subcontract` không có liên kết nào để quay lại.
+- **Trang công khai:** `/b`, `/bst`, `/g` kiểm cả trạng thái có dữ liệu (bộ sưu tập và link gửi tạo qua API trong bộ kiểm) và trạng thái không tìm thấy; `/subcontract` kiểm cả trạng thái có lời mời gia công (đơn và token chi nhánh tạo trong database test) và trạng thái không tìm thấy. Ba trang không tìm thấy `/b`, `/g`, `/subcontract` không có liên kết nào để quay lại.
 - **Trình đọc màn hình** (VoiceOver, NVDA) chưa kiểm theo quyết định PO 03/11/2026.
-- **Lỗi đã biết trong vùng PO khoá:** ô tìm kiếm đơn trên `/don-hang` (`src/components/greeting-card/coordinator/coordinator-brochure-tab.tsx`, vùng Thẻ chào) chỉ đổi màu viền khi nhận tiêu điểm, không có vòng tiêu điểm (2.4.7). Huy hiệu "Ưu đãi …" trên trang đặt hàng của khách `/b`, `/bst`, `/g` (`src/components/greeting-card/customer/templates/swipe/journey-contact-form.tsx`) dùng `text-danger` trên `bg-danger-bg`, tương phản 4,23:1 (cần 4,5:1; sửa bằng `text-danger-text`). Chưa sửa khi chưa có PO duyệt; bộ kiểm ghi ở `KNOWN_FROZEN`.
+- **Lỗi đã biết trong vùng PO khoá:** ô tìm kiếm đơn trên `/don-hang` (`src/components/greeting-card/coordinator/coordinator-brochure-tab.tsx`, vùng Thẻ chào) chỉ đổi màu viền khi nhận tiêu điểm, không có vòng tiêu điểm (2.4.7). Huy hiệu "Ưu đãi …" trên trang đặt hàng của khách `/b`, `/bst`, `/g` (`src/components/greeting-card/customer/templates/swipe/journey-contact-form.tsx`) dùng `text-danger` trên `bg-danger-bg`, tương phản 4,23:1 (cần 4,5:1; sửa bằng `text-danger-text`). Trang Thẻ Gia Công của chi nhánh `/subcontract/[orderCode]` (`src/components/greeting-card/subcontract/subcontract-spotlight-shell.tsx`): nhãn phụ ("Thù lao gia công", ô nhãn `px-3`) thiếu tương phản ở preset `modern-slate` và `pure-swiss`; preset mặc định đạt. Chưa sửa khi chưa có PO duyệt; bộ kiểm ghi ở `KNOWN_FROZEN`.
 
 Lỗi đã sửa trong lần kiểm này: nút hiện/ẩn mật khẩu thiếu tên; ô nhập đăng nhập thiếu vòng tiêu điểm; huy hiệu trạng thái dùng `text-danger`/`text-warning` trên nền nhạt (đổi sang `text-danger-text`/`text-warning-text`); ô chọn và ô số thiếu tên ở tạo sản phẩm, cài đặt, ưu đãi; thẻ ngành bị làm mờ dưới ngưỡng tương phản; `PageHeader` và thanh lọc ma trận quản trị gây cuộn ngang ở 640px.
 

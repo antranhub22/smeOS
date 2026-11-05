@@ -3,15 +3,13 @@
 import { useI18n } from "@/lib/i18n"
 import { useState, useEffect, Suspense } from "react"
 import { useSearchParams } from "next/navigation"
-import {
-  Palette,
-  AlertCircle,
-  CheckCircle2,
-  Sparkles,
-  ShieldCheck,
-  Gift,
-  FileText,
-} from "@/components/ui/icons"
+import { Palette } from "@/components/ui/icon-set/palette"
+import { AlertCircle } from "@/components/ui/icon-set/alert-circle"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
+import { ShieldCheck } from "@/components/ui/icon-set/shield-check"
+import { Gift } from "@/components/ui/icon-set/gift"
+import { FileText } from "@/components/ui/icon-set/file-text"
 import { useTenantProfile } from "@/lib/hooks/use-tenant-profile"
 import { SkeletonBlock } from "@/components/ui/skeleton"
 import { SettingsLayout } from "@/components/layout/page-layout"

@@ -1,17 +1,15 @@
 "use client"
 
 import React, { useState } from "react"
-import {
-  ClipboardList,
-  Clock,
-  AlertTriangle,
-  Flower2,
-  MapPin,
-  CheckCircle2,
-  Calendar,
-  Layers,
-  ArrowRight,
-} from "@/components/ui/icons"
+import { ClipboardList } from "@/components/ui/icon-set/clipboard-list"
+import { Clock } from "@/components/ui/icon-set/clock"
+import { AlertTriangle } from "@/components/ui/icon-set/alert-triangle"
+import { Flower2 } from "@/components/ui/icon-set/flower2"
+import { MapPin } from "@/components/ui/icon-set/map-pin"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
+import { Calendar } from "@/components/ui/icon-set/calendar"
+import { Layers } from "@/components/ui/icon-set/layers"
+import { ArrowRight } from "@/components/ui/icon-set/arrow-right"
 import { Button } from "@/components/ui/button"
 import { Dialog } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"

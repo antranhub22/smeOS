@@ -1,5 +1,5 @@
 import * as React from "react"
-import { Lock } from "@/components/ui/icons"
+import { Lock } from "@/components/ui/icon-set/lock"
 import { cn } from "@/lib/utils"
 
 export interface EntitlementGateProps {

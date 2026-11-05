@@ -1,7 +1,9 @@
 "use client"
 
 import { useCallback, useState } from "react"
-import { Plus, QrCode, UserPlus } from "@/components/ui/icons"
+import { Plus } from "@/components/ui/icon-set/plus"
+import { QrCode } from "@/components/ui/icon-set/qr-code"
+import { UserPlus } from "@/components/ui/icon-set/user-plus"
 import { FeatureGuidanceCard } from "@/components/ui/feature-guidance-card"
 import { TabActionHeader } from "@/components/ui/tab-header"
 import { LeadsTab } from "./leads-tab"

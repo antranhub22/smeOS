@@ -1,7 +1,9 @@
 "use client"
 
 import React from "react"
-import { CheckCircle2, ListChecks, Sparkles } from "@/components/ui/icons"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
+import { ListChecks } from "@/components/ui/icon-set/list-checks"
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
 import { Badge } from "@/components/ui/badge"
 
 export interface AppliedChangesBreakdownProps {

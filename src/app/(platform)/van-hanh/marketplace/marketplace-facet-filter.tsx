@@ -2,7 +2,10 @@
 
 // Bộ lọc nhiều tiêu chí dạng dropdown (PO 31/10/2026). Trong một nhóm: HOẶC; giữa các nhóm: VÀ.
 import React, { useEffect, useMemo, useRef, useState } from "react"
-import { ChevronDown, Filter, Search, X } from "@/components/ui/icons"
+import { ChevronDown } from "@/components/ui/icon-set/chevron-down"
+import { Filter } from "@/components/ui/icon-set/filter"
+import { Search } from "@/components/ui/icon-set/search"
+import { X } from "@/components/ui/icon-set/x"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Checkbox } from "@/components/ui/checkbox"

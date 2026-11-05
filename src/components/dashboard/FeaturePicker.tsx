@@ -13,19 +13,18 @@
  */
 
 import { useState, useCallback, useMemo } from "react";
-import {
-  ChevronDown,
-  CheckCircle2,
-  AlertCircle,
-  Info,
-  CreditCard,
-  Zap,
-  Lock,
-  Eye,
-  EyeOff,
-  HelpCircle,
-  ExternalLink,
-} from "@/components/ui/icons";
+import { ChevronDown } from "@/components/ui/icon-set/chevron-down"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
+import { AlertCircle } from "@/components/ui/icon-set/alert-circle"
+import { Info } from "@/components/ui/icon-set/info"
+import { CreditCard } from "@/components/ui/icon-set/credit-card"
+import { Zap } from "@/components/ui/icon-set/zap"
+import { Lock } from "@/components/ui/icon-set/lock"
+import { Eye } from "@/components/ui/icon-set/eye"
+import { EyeOff } from "@/components/ui/icon-set/eye-off"
+import { HelpCircle } from "@/components/ui/icon-set/help-circle"
+import { ExternalLink } from "@/components/ui/icon-set/external-link"
+;
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";

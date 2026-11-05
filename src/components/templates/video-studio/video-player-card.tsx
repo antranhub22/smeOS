@@ -1,7 +1,12 @@
 "use client"
 
 import React, { useState } from "react"
-import { Play, Pause, Download, Share2, Volume2, VolumeX } from "@/components/ui/icons"
+import { Play } from "@/components/ui/icon-set/play"
+import { Pause } from "@/components/ui/icon-set/pause"
+import { Download } from "@/components/ui/icon-set/download"
+import { Share2 } from "@/components/ui/icon-set/share2"
+import { Volume2 } from "@/components/ui/icon-set/volume2"
+import { VolumeX } from "@/components/ui/icon-set/volume-x"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"

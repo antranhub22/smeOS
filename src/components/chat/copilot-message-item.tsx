@@ -1,7 +1,12 @@
 "use client"
 
 import React, { useState, useEffect } from "react"
-import { Bot, BookOpen, ExternalLink, Flower2, ShoppingBag, Loader2 } from "@/components/ui/icons"
+import { Bot } from "@/components/ui/icon-set/bot"
+import { BookOpen } from "@/components/ui/icon-set/book-open"
+import { ExternalLink } from "@/components/ui/icon-set/external-link"
+import { Flower2 } from "@/components/ui/icon-set/flower2"
+import { ShoppingBag } from "@/components/ui/icon-set/shopping-bag"
+import { Loader2 } from "@/components/ui/icon-set/loader2"
 import { Button } from "@/components/ui/button"
 import type { ChatMessageMetadata } from "@/modules/chat-assistant/domain/chat-types"
 

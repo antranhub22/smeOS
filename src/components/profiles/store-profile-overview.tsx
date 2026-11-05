@@ -6,7 +6,14 @@
  * vẫn ở Cài đặt (một nơi lưu duy nhất) — trang này chỉ đọc và dẫn đường.
  */
 import Link from "next/link"
-import { BadgeCheck, CheckCircle2, Circle, ArrowRight, Store, Palette, IdCard, Library } from "@/components/ui/icons"
+import { BadgeCheck } from "@/components/ui/icon-set/badge-check"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
+import { Circle } from "@/components/ui/icon-set/circle"
+import { ArrowRight } from "@/components/ui/icon-set/arrow-right"
+import { Store } from "@/components/ui/icon-set/store"
+import { Palette } from "@/components/ui/icon-set/palette"
+import { IdCard } from "@/components/ui/icon-set/id-card"
+import { Library } from "@/components/ui/icon-set/library"
 import { useTenantProfile } from "@/lib/hooks/use-tenant-profile"
 import { evaluateStoreProfile, type ProfileChecklistItem } from "@/modules/profiles/domain/store-profile-completeness"
 import { FeatureGuidanceCard } from "@/components/templates/shared/feature-guidance-card"

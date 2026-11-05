@@ -2,7 +2,11 @@
 
 import React, { useEffect, useMemo, useState } from "react"
 import { useRouter } from "next/navigation"
-import { Plus, Sparkles, RefreshCw, FileSpreadsheet, Download } from "@/components/ui/icons"
+import { Plus } from "@/components/ui/icon-set/plus"
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
+import { RefreshCw } from "@/components/ui/icon-set/refresh-cw"
+import { FileSpreadsheet } from "@/components/ui/icon-set/file-spreadsheet"
+import { Download } from "@/components/ui/icon-set/download"
 import { Button } from "@/components/ui/button"
 import { SkeletonBlock } from "@/components/ui/skeleton"
 import { EmptyState } from "@/components/ui/empty-state"

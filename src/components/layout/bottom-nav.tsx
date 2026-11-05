@@ -2,16 +2,14 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import {
-  Camera,
-  Plus,
-  Tag,
-  Home,
-  CheckCircle2,
-  Clock,
-  Package,
-  type LucideIcon,
-} from "@/components/ui/icons"
+import type { LucideIcon } from "@/components/ui/icon-set/wrap"
+import { Camera } from "@/components/ui/icon-set/camera"
+import { Plus } from "@/components/ui/icon-set/plus"
+import { Tag } from "@/components/ui/icon-set/tag"
+import { Home } from "@/components/ui/icon-set/home"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
+import { Clock } from "@/components/ui/icon-set/clock"
+import { Package } from "@/components/ui/icon-set/package"
 import { useSession } from "@/lib/session"
 import { useI18n } from "@/lib/i18n"
 import { cn } from "@/lib/utils"

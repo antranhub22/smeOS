@@ -1,7 +1,11 @@
 import * as React from "react"
 import { PageHeader } from "@/components/ui/page-header"
 import { KpiTile } from "@/components/ui/kpi-tile"
-import { LayoutGrid, Layers, Building2, ShieldCheck, Monitor } from "@/components/ui/icons"
+import { LayoutGrid } from "@/components/ui/icon-set/layout-grid"
+import { Layers } from "@/components/ui/icon-set/layers"
+import { Building2 } from "@/components/ui/icon-set/building2"
+import { ShieldCheck } from "@/components/ui/icon-set/shield-check"
+import { Monitor } from "@/components/ui/icon-set/monitor"
 import { discoverScreens } from "@/modules/platform/infra/screen-scanner"
 import { ScreenLibraryExplorer } from "./screen-library-explorer"
 

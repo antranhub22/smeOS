@@ -5,18 +5,16 @@ import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { SkeletonBlock } from "@/components/ui/skeleton"
-import {
-  Database,
-  Store,
-  Folder,
-  ChevronRight,
-  Search,
-  RefreshCw,
-  Home,
-  FileSpreadsheet,
-  Layers,
-  ArrowLeft,
-} from "@/components/ui/icons"
+import { Database } from "@/components/ui/icon-set/database"
+import { Store } from "@/components/ui/icon-set/store"
+import { Folder } from "@/components/ui/icon-set/folder"
+import { ChevronRight } from "@/components/ui/icon-set/chevron-right"
+import { Search } from "@/components/ui/icon-set/search"
+import { RefreshCw } from "@/components/ui/icon-set/refresh-cw"
+import { Home } from "@/components/ui/icon-set/home"
+import { FileSpreadsheet } from "@/components/ui/icon-set/file-spreadsheet"
+import { Layers } from "@/components/ui/icon-set/layers"
+import { ArrowLeft } from "@/components/ui/icon-set/arrow-left"
 import type { ChainStoreSummary } from "@/modules/field-platform/use-cases/get-chain-stores-data"
 import type { StoreFolderDataResult, StoreDomainFolder } from "@/modules/field-platform/use-cases/get-store-folder-data"
 import { StoreCard } from "./store-card"
@@ -24,7 +22,9 @@ import { DomainFolderCard } from "./domain-folder-card"
 import { FieldDataTable } from "./field-data-table"
 import { AddBranchModal } from "./add-branch-modal"
 import { AddPartnerStoreModal } from "./add-partner-store-modal"
-import { Plus, Handshake, Building2 } from "@/components/ui/icons"
+import { Plus } from "@/components/ui/icon-set/plus"
+import { Handshake } from "@/components/ui/icon-set/handshake"
+import { Building2 } from "@/components/ui/icon-set/building2"
 import { PageHeader } from "@/components/ui/page-header"
 
 export function ChainDataHub() {

@@ -1,7 +1,10 @@
 "use client";
 
 import React from "react";
-import { Globe, Calendar, Layers } from "@/components/ui/icons";
+import { Globe } from "@/components/ui/icon-set/globe"
+import { Calendar } from "@/components/ui/icon-set/calendar"
+import { Layers } from "@/components/ui/icon-set/layers"
+;
 
 /**
  * Nguồn sự thật DUY NHẤT cho 3 lựa chọn geo/timeframe/channel — trước đây

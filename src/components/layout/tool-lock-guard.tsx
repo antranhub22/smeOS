@@ -1,7 +1,7 @@
 "use client"
 
 import { usePathname } from "next/navigation"
-import { Lock } from "@/components/ui/icons"
+import { Lock } from "@/components/ui/icon-set/lock"
 import { EmptyState } from "@/components/ui/empty-state"
 import { useSession } from "@/lib/session"
 import { lockedToolForPath } from "@/modules/organization/domain/tool-route-entitlement"

@@ -1,7 +1,12 @@
 "use client"
 
 import React, { useState, useMemo } from "react"
-import { Search, Sparkles, Copy, Check, TrendingUp, Filter } from "@/components/ui/icons"
+import { Search } from "@/components/ui/icon-set/search"
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
+import { Copy } from "@/components/ui/icon-set/copy"
+import { Check } from "@/components/ui/icon-set/check"
+import { TrendingUp } from "@/components/ui/icon-set/trending-up"
+import { Filter } from "@/components/ui/icon-set/filter"
 import { Dialog } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"

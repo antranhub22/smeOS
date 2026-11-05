@@ -1,7 +1,10 @@
 "use client"
 
 import { useState } from "react"
-import { Database, RefreshCw, CheckCircle2, AlertCircle } from "@/components/ui/icons"
+import { Database } from "@/components/ui/icon-set/database"
+import { RefreshCw } from "@/components/ui/icon-set/refresh-cw"
+import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
+import { AlertCircle } from "@/components/ui/icon-set/alert-circle"
 import { Button } from "@/components/ui/button"
 import { useConfirmDialog } from "@/components/ui/confirm-dialog"
 

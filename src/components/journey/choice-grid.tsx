@@ -1,7 +1,9 @@
 "use client"
 
 import React, { useState } from "react"
-import { Sparkles, SlidersHorizontal, Search } from "@/components/ui/icons"
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
+import { SlidersHorizontal } from "@/components/ui/icon-set/sliders-horizontal"
+import { Search } from "@/components/ui/icon-set/search"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import type { JourneyDefinition } from "@/modules/journey/domain/journey-model"

@@ -1,7 +1,10 @@
 "use client"
 
 import React from "react"
-import { Film, Clock, Music, Copy } from "@/components/ui/icons"
+import { Film } from "@/components/ui/icon-set/film"
+import { Clock } from "@/components/ui/icon-set/clock"
+import { Music } from "@/components/ui/icon-set/music"
+import { Copy } from "@/components/ui/icon-set/copy"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"

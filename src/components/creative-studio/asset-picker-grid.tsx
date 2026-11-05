@@ -7,7 +7,8 @@
 
 "use client"
 
-import { Image as ImageIcon, Loader2 } from "@/components/ui/icons"
+import { Image as ImageIcon } from "@/components/ui/icon-set/image"
+import { Loader2 } from "@/components/ui/icon-set/loader2"
 import { Badge } from "@/components/ui/badge"
 import type { AssetItem, MasterItem } from "./types"
 

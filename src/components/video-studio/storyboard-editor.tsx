@@ -1,7 +1,14 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { Clock, Plus, Trash2, AlertTriangle, Sparkles, Check, Image as ImageIcon } from "@/components/ui/icons";
+import { Clock } from "@/components/ui/icon-set/clock"
+import { Plus } from "@/components/ui/icon-set/plus"
+import { Trash2 } from "@/components/ui/icon-set/trash2"
+import { AlertTriangle } from "@/components/ui/icon-set/alert-triangle"
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
+import { Check } from "@/components/ui/icon-set/check"
+import { Image as ImageIcon } from "@/components/ui/icon-set/image"
+;
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";

@@ -5,7 +5,10 @@
 
 import { useEffect, useRef, useState } from "react"
 import { useRouter } from "next/navigation"
-import { KeyRound, LogOut, ShieldCheck, UserRound } from "@/components/ui/icons"
+import { KeyRound } from "@/components/ui/icon-set/key-round"
+import { LogOut } from "@/components/ui/icon-set/log-out"
+import { ShieldCheck } from "@/components/ui/icon-set/shield-check"
+import { UserRound } from "@/components/ui/icon-set/user-round"
 import { useSession } from "@/lib/session"
 import { useI18n } from "@/lib/i18n"
 import { cn } from "@/lib/utils"

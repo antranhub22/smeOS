@@ -5,7 +5,11 @@
  * Xuất bản và ngừng chia sẻ là hành động R3 → luôn qua hộp xác nhận.
  */
 import { useState } from "react"
-import { Share2, Copy, Check, ExternalLink, Eye } from "@/components/ui/icons"
+import { Share2 } from "@/components/ui/icon-set/share2"
+import { Copy } from "@/components/ui/icon-set/copy"
+import { Check } from "@/components/ui/icon-set/check"
+import { ExternalLink } from "@/components/ui/icon-set/external-link"
+import { Eye } from "@/components/ui/icon-set/eye"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useApi, apiSend } from "@/components/greeting-card/greeting-api"

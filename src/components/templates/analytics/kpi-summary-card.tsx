@@ -1,7 +1,11 @@
 "use client"
 
 import React from "react"
-import { TrendingUp, ArrowUpRight, DollarSign, ShoppingCart, Percent } from "@/components/ui/icons"
+import { TrendingUp } from "@/components/ui/icon-set/trending-up"
+import { ArrowUpRight } from "@/components/ui/icon-set/arrow-up-right"
+import { DollarSign } from "@/components/ui/icon-set/dollar-sign"
+import { ShoppingCart } from "@/components/ui/icon-set/shopping-cart"
+import { Percent } from "@/components/ui/icon-set/percent"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 

@@ -1,7 +1,11 @@
 "use client"
 
 import React, { useState } from "react"
-import { Bot, Loader2, MessageCircle, Phone, Store } from "@/components/ui/icons"
+import { Bot } from "@/components/ui/icon-set/bot"
+import { Loader2 } from "@/components/ui/icon-set/loader2"
+import { MessageCircle } from "@/components/ui/icon-set/message-circle"
+import { Phone } from "@/components/ui/icon-set/phone"
+import { Store } from "@/components/ui/icon-set/store"
 import { Button } from "@/components/ui/button"
 import { apiSend, useApi } from "@/components/greeting-card/greeting-api"
 

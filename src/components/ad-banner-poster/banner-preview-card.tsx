@@ -1,7 +1,11 @@
 "use client"
 
 import React, { forwardRef } from "react"
-import { Phone, MapPin, Sparkles, ArrowRight, ShieldCheck } from "@/components/ui/icons"
+import { Phone } from "@/components/ui/icon-set/phone"
+import { MapPin } from "@/components/ui/icon-set/map-pin"
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
+import { ArrowRight } from "@/components/ui/icon-set/arrow-right"
+import { ShieldCheck } from "@/components/ui/icon-set/shield-check"
 import type {
   BannerAspectRatio,
   BannerCopyPayload,

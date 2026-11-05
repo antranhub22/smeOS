@@ -1,7 +1,12 @@
 "use client"
 
 import React, { useState, useEffect, useCallback } from "react"
-import { Users, UserPlus, Sparkles, Search, Calendar, ArrowRight } from "@/components/ui/icons"
+import { Users } from "@/components/ui/icon-set/users"
+import { UserPlus } from "@/components/ui/icon-set/user-plus"
+import { Sparkles } from "@/components/ui/icon-set/sparkles"
+import { Search } from "@/components/ui/icon-set/search"
+import { Calendar } from "@/components/ui/icon-set/calendar"
+import { ArrowRight } from "@/components/ui/icon-set/arrow-right"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"

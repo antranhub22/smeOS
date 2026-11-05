@@ -2,7 +2,8 @@
 
 import { InfoTip } from "@/components/ui/info-tip"
 import React from "react"
-import { Layers, ShieldCheck } from "@/components/ui/icons"
+import { Layers } from "@/components/ui/icon-set/layers"
+import { ShieldCheck } from "@/components/ui/icon-set/shield-check"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { getDesignFieldsConfig } from "./create-product-types"

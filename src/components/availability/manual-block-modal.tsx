@@ -1,7 +1,9 @@
 "use client"
 
 import { useState } from "react"
-import { Calendar, AlertCircle, Loader2 } from "@/components/ui/icons"
+import { Calendar } from "@/components/ui/icon-set/calendar"
+import { AlertCircle } from "@/components/ui/icon-set/alert-circle"
+import { Loader2 } from "@/components/ui/icon-set/loader2"
 import { Dialog } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"

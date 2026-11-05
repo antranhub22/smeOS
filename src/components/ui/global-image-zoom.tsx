@@ -1,15 +1,13 @@
 "use client"
 
 import { useState, useEffect, useRef, useCallback } from "react"
-import {
-  X,
-  ZoomIn,
-  ZoomOut,
-  RotateCcw,
-  Download,
-  Maximize2,
-  Minimize2,
-} from "@/components/ui/icons"
+import { X } from "@/components/ui/icon-set/x"
+import { ZoomIn } from "@/components/ui/icon-set/zoom-in"
+import { ZoomOut } from "@/components/ui/icon-set/zoom-out"
+import { RotateCcw } from "@/components/ui/icon-set/rotate-ccw"
+import { Download } from "@/components/ui/icon-set/download"
+import { Maximize2 } from "@/components/ui/icon-set/maximize2"
+import { Minimize2 } from "@/components/ui/icon-set/minimize2"
 
 interface ZoomState {
   isOpen: boolean

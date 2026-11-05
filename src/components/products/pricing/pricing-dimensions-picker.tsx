@@ -1,7 +1,8 @@
 "use client"
 
 import React, { useState } from "react"
-import { Plus, X } from "@/components/ui/icons"
+import { Plus } from "@/components/ui/icon-set/plus"
+import { X } from "@/components/ui/icon-set/x"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import type { IndustryVariantDimensionPreset } from "@/modules/organization/domain/industry-plugin-contract"

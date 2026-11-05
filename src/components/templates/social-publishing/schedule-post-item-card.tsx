@@ -1,7 +1,8 @@
 "use client"
 
 import React from "react"
-import { Clock, RefreshCw } from "@/components/ui/icons"
+import { Clock } from "@/components/ui/icon-set/clock"
+import { RefreshCw } from "@/components/ui/icon-set/refresh-cw"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"

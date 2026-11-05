@@ -1,17 +1,15 @@
 "use client"
 
 import React from "react"
-import {
-  Store,
-  Palette,
-  QrCode,
-  DollarSign,
-  Gift,
-  ShieldCheck,
-  FileText,
-  Send,
-  Cpu,
-} from "@/components/ui/icons"
+import { Store } from "@/components/ui/icon-set/store"
+import { Palette } from "@/components/ui/icon-set/palette"
+import { QrCode } from "@/components/ui/icon-set/qr-code"
+import { DollarSign } from "@/components/ui/icon-set/dollar-sign"
+import { Gift } from "@/components/ui/icon-set/gift"
+import { ShieldCheck } from "@/components/ui/icon-set/shield-check"
+import { FileText } from "@/components/ui/icon-set/file-text"
+import { Send } from "@/components/ui/icon-set/send"
+import { Cpu } from "@/components/ui/icon-set/cpu"
 import { useI18n } from "@/lib/i18n"
 
 export type SettingsTab =

@@ -1,7 +1,11 @@
 "use client"
 
 import React, { useState } from "react"
-import { Loader2, Plus, Save, Trash2, Wallet } from "@/components/ui/icons"
+import { Loader2 } from "@/components/ui/icon-set/loader2"
+import { Plus } from "@/components/ui/icon-set/plus"
+import { Save } from "@/components/ui/icon-set/save"
+import { Trash2 } from "@/components/ui/icon-set/trash2"
+import { Wallet } from "@/components/ui/icon-set/wallet"
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Disclosure } from "@/components/ui/disclosure"

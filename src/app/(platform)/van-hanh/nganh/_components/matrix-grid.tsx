@@ -1,6 +1,10 @@
 "use client"
 
-import { Check, X, RotateCcw, CheckSquare, Square } from "@/components/ui/icons"
+import { Check } from "@/components/ui/icon-set/check"
+import { X } from "@/components/ui/icon-set/x"
+import { RotateCcw } from "@/components/ui/icon-set/rotate-ccw"
+import { CheckSquare } from "@/components/ui/icon-set/check-square"
+import { Square } from "@/components/ui/icon-set/square"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import type { MatrixIndustry, MatrixNavItem, MatrixGroup } from "../_lib/types"
