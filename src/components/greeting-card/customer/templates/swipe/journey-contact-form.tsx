@@ -88,7 +88,7 @@ export function JourneyContactForm({
           </span>
           <div className="min-w-0 flex-1 text-left">
             <div className="flex items-center gap-1.5">
-              <span className="inline-flex items-center rounded-full bg-danger-bg px-2 py-0.5 text-caption font-extrabold uppercase text-danger">
+              <span className="inline-flex items-center rounded-full bg-danger-bg px-2 py-0.5 text-caption font-extrabold uppercase text-danger-text">
                 {t("greetingCard.customer.journey.promoBanner", { percent: promotionCta?.percent ?? 10 })}
               </span>
               <span className="text-caption font-semibold" style={{ color: theme.stageMuted }}>

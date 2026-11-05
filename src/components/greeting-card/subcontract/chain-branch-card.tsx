@@ -101,7 +101,7 @@ export function ChainBranchCard({ branch, isSelected, onToggle }: ChainBranchCar
             </span>
           )}
           {branch.channels?.hasZalo && (
-            <span className="px-1 py-0.5 rounded bg-primary/10 text-primary font-bold">
+            <span className="px-1 py-0.5 rounded bg-primary/10 text-primary-dark font-bold">
               Zalo
             </span>
           )}

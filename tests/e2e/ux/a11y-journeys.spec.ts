@@ -27,17 +27,10 @@ type Result = Route & { finalPath: string; axe: string[]; contrast: Record<strin
 const reportOnly = process.env.A11Y_REPORT_ONLY === "1"
 
 /**
- * Lỗi đã biết trong vùng PO khoá (Thẻ chào — `tests/unit/architecture/the-chao-freeze.test.ts`):
+ * Lỗi đã biết trong vùng PO khoá (Catalog, Thẻ chào — `tests/unit/architecture/*-freeze.test.ts`):
  * chưa sửa khi chưa có duyệt; ghi tại `docs/design-system/accessibility-audit-12-journeys.md` §3. Gỡ dòng khi đã sửa.
  */
-const KNOWN_FROZEN: { route: RegExp; issue: RegExp }[] = [
-  // Ô tìm kiếm đơn (coordinator-brochure-tab.tsx): chỉ đổi màu viền khi nhận tiêu điểm
-  { route: /^\/don-hang$/, issue: /^2\.4\.7 .*Tìm kiếm đơn hàng/ },
-  // Huy hiệu "Ưu đãi" trên trang đặt hàng của khách (journey-contact-form.tsx): text-danger trên bg-danger-bg 4,23:1
-  { route: /^\/(b|bst|g)\//, issue: /^color-contrast .*"Ưu đãi/ },
-  // Thẻ Gia Công của chi nhánh (subcontract-spotlight-shell.tsx): chữ phụ thiếu tương phản ở preset modern-slate, pure-swiss
-  { route: /^\/subcontract\/DH-/, issue: /^color-contrast .*(\.px-3 ""|"Thù lao gia công)/ },
-]
+const KNOWN_FROZEN: { route: RegExp; issue: RegExp }[] = []
 const isKnown = (path: string, issue: string) => KNOWN_FROZEN.some((k) => k.route.test(path) && k.issue.test(issue))
 const results: Result[] = []
 

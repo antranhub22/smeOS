@@ -96,7 +96,7 @@ export function SubcontractSpotlightStepper({
                     className={cn(
                       "block truncate text-caption font-bold leading-tight",
                       isActive
-                        ? "text-primary font-black"
+                        ? "text-primary-dark font-black"
                         : isCompleted
                         ? "text-success font-bold"
                         : "text-text-muted"

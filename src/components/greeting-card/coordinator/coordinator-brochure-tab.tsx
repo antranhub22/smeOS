@@ -135,7 +135,7 @@ export function CoordinatorBrochureTab({ canDecideInTransitCancel = false }: { c
               placeholder="Tìm tên khách, mã đơn, SĐT…"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="h-9 w-full rounded-xl border border-border bg-surface pl-9 pr-8 text-caption text-text placeholder:text-text-muted focus:border-primary focus:outline-hidden"
+              className="h-9 w-full rounded-xl border border-border bg-surface pl-9 pr-8 text-caption text-text placeholder:text-text-muted focus:border-primary focus:outline-hidden focus-visible:ring-2 focus-visible:ring-primary"
             />
             {search && (
               <Button variant="ghost"

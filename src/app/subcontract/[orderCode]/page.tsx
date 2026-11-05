@@ -100,7 +100,7 @@ export default function SubcontractClaimPage({ params }: PageProps) {
   return (
     <div className="min-h-screen bg-bg py-8 px-4 flex flex-col items-center justify-center">
       <header className="mb-6 text-center">
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary text-caption font-bold mb-2">
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/10 text-primary-dark text-caption font-bold mb-2">
           <Shield size={14} /> Hệ Thống Điều Phối Chuỗi smeOS
         </div>
         <h1 className="text-title-lg font-black text-text">
