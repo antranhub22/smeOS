@@ -1,5 +1,7 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
+import { NativeSelect } from "@/components/ui/select"
 import React from "react"
 import { DollarSign, Sparkles, User } from "@/components/ui/icons"
 import { Input } from "@/components/ui/input"
@@ -83,30 +85,30 @@ export function QuickCollectionCriteriaPanel({
             {priceBudgets.map((qb) => {
               const isSelected = selectedBudgetIds.includes(qb.id)
               return (
-                <button
+                <Button variant="outline"
                   type="button"
                   key={qb.id}
                   onClick={() => handleToggleBudget(qb.id)}
-                  className={`px-2 py-0.5 rounded-full text-caption font-medium transition border ${
+                  className={`h-auto gap-0 px-2 py-0.5 rounded-full text-caption font-medium transition border ${
                     isSelected
-                      ? "border-primary bg-primary text-white font-bold"
-                      : "border-border bg-surface text-text-muted hover:border-primary/40"
+                      ? "border-primary bg-primary text-white font-bold hover:bg-primary"
+                      : "border-border bg-surface text-text-muted hover:border-primary/40 hover:bg-surface"
                   }`}
                 >
                   {qb.label}
-                </button>
+                </Button>
               )
             })}
             {(selectedBudgetIds.length > 0 || priceMin !== undefined || priceMax !== undefined) && (
-              <button
+              <Button variant="ghost"
                 type="button"
                 onClick={() => {
                   onChange({ selectedBudgetIds: [], priceMin: undefined, priceMax: undefined })
                 }}
-                className="px-1.5 py-0.5 text-caption text-text-muted hover:text-text underline"
+                className="h-auto font-[inherit] gap-0 px-1.5 py-0.5 text-caption text-text-muted hover:text-text underline"
               >
                 Bỏ chọn
-              </button>
+              </Button>
             )}
           </div>
         </div>
@@ -135,18 +137,18 @@ export function QuickCollectionCriteriaPanel({
         </label>
         <div className="flex flex-wrap gap-1.5">
           {options.occasions.map((occ) => (
-            <button
+            <Button variant="outline"
               type="button"
               key={occ}
               onClick={() => onChange({ occasion: occasion === occ ? "" : occ })}
-              className={`px-2.5 py-1 rounded-xl text-caption font-medium transition border ${
+              className={`h-auto gap-0 px-2.5 py-1 rounded-xl text-caption font-medium transition border ${
                 occasion === occ
-                  ? "border-primary bg-primary text-white font-bold shadow-xs"
-                  : "border-border bg-surface text-text hover:border-primary/40"
+                  ? "border-primary bg-primary text-white font-bold shadow-xs hover:bg-primary"
+                  : "border-border bg-surface text-text hover:border-primary/40 hover:bg-surface"
               }`}
             >
               {occ}
-            </button>
+            </Button>
           ))}
         </div>
       </div>
@@ -159,18 +161,18 @@ export function QuickCollectionCriteriaPanel({
           </label>
           <div className="flex flex-wrap gap-1.5">
             {options.categories.map((cat) => (
-              <button
+              <Button variant="outline"
                 type="button"
                 key={cat}
                 onClick={() => onChange({ category: category === cat ? "" : cat })}
-                className={`px-2 py-0.5 rounded-lg text-caption font-medium transition border ${
+                className={`h-auto gap-0 px-2 py-0.5 rounded-lg text-caption font-medium transition border ${
                   category === cat
-                    ? "border-primary bg-primary/10 text-primary font-bold"
-                    : "border-border bg-surface text-text hover:border-primary/40"
+                    ? "border-primary bg-primary/10 text-primary font-bold hover:bg-primary/10"
+                    : "border-border bg-surface text-text hover:border-primary/40 hover:bg-surface"
                 }`}
               >
                 {cat}
-              </button>
+              </Button>
             ))}
           </div>
         </div>
@@ -181,18 +183,18 @@ export function QuickCollectionCriteriaPanel({
           </label>
           <div className="flex flex-wrap gap-1.5">
             {options.materials.map((mat) => (
-              <button
+              <Button variant="outline"
                 type="button"
                 key={mat}
                 onClick={() => onChange({ flowerType: flowerType === mat ? "" : mat })}
-                className={`px-2 py-0.5 rounded-lg text-caption font-medium transition border ${
+                className={`h-auto gap-0 px-2 py-0.5 rounded-lg text-caption font-medium transition border ${
                   flowerType === mat
-                    ? "border-primary bg-primary/10 text-primary font-bold"
-                    : "border-border bg-surface text-text hover:border-primary/40"
+                    ? "border-primary bg-primary/10 text-primary font-bold hover:bg-primary/10"
+                    : "border-border bg-surface text-text hover:border-primary/40 hover:bg-surface"
                 }`}
               >
                 {mat}
-              </button>
+              </Button>
             ))}
           </div>
         </div>
@@ -206,18 +208,18 @@ export function QuickCollectionCriteriaPanel({
           </label>
           <div className="flex flex-wrap gap-1.5">
             {options.colors.map((col) => (
-              <button
+              <Button variant="outline"
                 type="button"
                 key={col}
                 onClick={() => onChange({ colorTone: colorTone === col ? "" : col })}
-                className={`px-2 py-0.5 rounded-lg text-caption font-medium transition border ${
+                className={`h-auto gap-0 px-2 py-0.5 rounded-lg text-caption font-medium transition border ${
                   colorTone === col
-                    ? "border-primary bg-primary/10 text-primary font-bold"
-                    : "border-border bg-surface text-text hover:border-primary/40"
+                    ? "border-primary bg-primary/10 text-primary font-bold hover:bg-primary/10"
+                    : "border-border bg-surface text-text hover:border-primary/40 hover:bg-surface"
                 }`}
               >
                 {col}
-              </button>
+              </Button>
             ))}
           </div>
         </div>
@@ -231,18 +233,18 @@ export function QuickCollectionCriteriaPanel({
           </div>
           <div className="flex items-center gap-1.5">
             {[4, 6, 8, 10, 12].map((num) => (
-              <button
+              <Button variant="outline"
                 type="button"
                 key={num}
                 onClick={() => onChange({ productLimit: num })}
-                className={`flex-1 py-1 rounded-lg text-caption font-medium transition border text-center ${
+                className={`h-auto px-0 gap-0 flex-1 py-1 rounded-lg text-caption font-medium transition border text-center ${
                   productLimit === num
-                    ? "border-primary bg-primary text-white font-bold"
-                    : "border-border bg-surface text-text hover:border-primary/40"
+                    ? "border-primary bg-primary text-white font-bold hover:bg-primary"
+                    : "border-border bg-surface text-text hover:border-primary/40 hover:bg-surface"
                 }`}
               >
                 {num}
-              </button>
+              </Button>
             ))}
           </div>
         </div>
@@ -261,7 +263,7 @@ export function QuickCollectionCriteriaPanel({
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
           <div className="sm:col-span-2">
-            <select
+            <NativeSelect
               aria-label="Mẫu giao diện bộ sưu tập"
               value={templateId}
               onChange={(e) => onChange({ templateId: e.target.value })}
@@ -272,7 +274,7 @@ export function QuickCollectionCriteriaPanel({
                   {tmpl.styleNumber ? `#${tmpl.styleNumber} · ` : ""}{tmpl.name} ({tmpl.subtitle || tmpl.tag})
                 </option>
               ))}
-            </select>
+            </NativeSelect>
           </div>
           <div className="flex items-center px-3 py-1.5 rounded-xl bg-surface-alt border border-border text-caption text-text-muted truncate">
             <span className="font-semibold text-text mr-1">Phong cách:</span>

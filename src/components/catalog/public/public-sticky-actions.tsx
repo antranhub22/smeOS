@@ -28,7 +28,7 @@ export function PublicStickyActions({ shopName, phone, topic, style }: PublicSti
           href={zalo}
           target="_blank"
           rel="noopener noreferrer"
-          className="inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-full text-sm font-semibold"
+          className="inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-full text-body-sm font-semibold"
           style={{ backgroundColor: style.tokens.ctaBg, color: style.tokens.ctaText }}
         >
           <MessageCircle size={16} aria-hidden="true" />
@@ -37,7 +37,7 @@ export function PublicStickyActions({ shopName, phone, topic, style }: PublicSti
         <a
           href={call}
           aria-label={`Gọi ${shopName}`}
-          className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full border px-5 text-sm font-semibold"
+          className="inline-flex min-h-11 items-center justify-center gap-2 rounded-full border px-5 text-body-sm font-semibold"
           style={{ borderColor: style.tokens.border, color: style.tokens.textPrimary }}
         >
           <Phone size={16} aria-hidden="true" />

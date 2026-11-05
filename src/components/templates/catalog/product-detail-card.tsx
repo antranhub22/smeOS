@@ -44,7 +44,7 @@ export function ProductDetailCard({
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Badge tone="neutral">{code}</Badge>
-          <span className="text-xs font-semibold text-text-muted">{category}</span>
+          <span className="text-caption font-semibold text-text-muted">{category}</span>
         </div>
         {occasions.length > 0 && (
           <Badge tone="success">{occasions[0]}</Badge>
@@ -59,13 +59,13 @@ export function ProductDetailCard({
         <div className="flex-1 flex flex-col gap-2">
           <div className="text-title font-extrabold text-text">{name}</div>
           <div className="flex items-baseline gap-2">
-            <span className="text-lg font-black text-primary">{price}</span>
+            <span className="text-title-sm font-black text-primary">{price}</span>
             {originalPrice && (
-              <span className="text-xs text-text-muted line-through">{originalPrice}</span>
+              <span className="text-caption text-text-muted line-through">{originalPrice}</span>
             )}
           </div>
 
-          <div className="flex flex-wrap gap-2 text-xs text-text-muted mt-1">
+          <div className="flex flex-wrap gap-2 text-caption text-text-muted mt-1">
             {stemCount && (
               <span className="flex items-center gap-1 rounded bg-surface-alt px-2 py-0.5 font-medium">
                 <Layers size={12} />

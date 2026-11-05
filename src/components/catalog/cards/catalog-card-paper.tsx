@@ -1,5 +1,6 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
 import React from "react"
 import { MessageCircle } from "@/components/ui/icons"
 import type { PublicCatalogProduct, PublicCatalogShop } from "@/modules/catalog-links/use-cases/get-public-catalog"
@@ -50,10 +51,10 @@ export function CatalogCardPaper({
         boxShadow: shadowCard,
       }}
     >
-      <button
+      <Button variant="ghost"
         type="button"
         onClick={() => onSelectProduct(product)}
-        className="block w-full text-left"
+        className="h-auto px-0 py-0 text-[length:inherit] justify-start font-[inherit] gap-0 block w-full text-left"
       >
         <div className={`relative ${aspectRatio === "4/5" ? "aspect-4/5" : "aspect-square"} w-full overflow-hidden`}>
           <SmartFlowerImage
@@ -101,21 +102,21 @@ export function CatalogCardPaper({
             </span>
           )}
           <h4
-            className={`text-sm md:text-base font-bold leading-snug line-clamp-1 ${fontDisplay}`}
+            className={`text-body-sm md:text-body font-bold leading-snug line-clamp-1 ${fontDisplay}`}
             style={{ color: textPrimary }}
           >
             {product.name}
           </h4>
           {product.description && (
             <p
-              className="text-xs mt-1 line-clamp-2 leading-relaxed opacity-85"
+              className="text-caption mt-1 line-clamp-2 leading-relaxed opacity-85"
               style={{ color: textSecondary }}
             >
               {product.description}
             </p>
           )}
         </div>
-      </button>
+      </Button>
 
       {/* Footer / Price & Action */}
       <div
@@ -123,7 +124,7 @@ export function CatalogCardPaper({
         style={{ borderColor: border }}
       >
         <div>
-          <div className="text-sm md:text-base font-extrabold tracking-tight whitespace-nowrap" style={{ color: priceColor }}>
+          <div className="text-body-sm md:text-body font-extrabold tracking-tight whitespace-nowrap" style={{ color: priceColor }}>
             {formatVnd(product.price)}
           </div>
         </div>
@@ -132,7 +133,7 @@ export function CatalogCardPaper({
           target="_blank"
           rel="noopener noreferrer"
           aria-label="Đặt ngay qua Zalo"
-          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all shadow-xs active:scale-95"
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-caption font-bold transition-all shadow-xs active:scale-95"
           style={{ backgroundColor: ctaBg, color: ctaText }}
         >
           <MessageCircle size={14} aria-hidden="true" />

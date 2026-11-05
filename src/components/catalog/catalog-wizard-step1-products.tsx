@@ -1,5 +1,6 @@
 "use client"
 
+import { NativeSelect } from "@/components/ui/select"
 import React, { useMemo } from "react"
 import { Sparkles, Check } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
@@ -103,7 +104,7 @@ export function CatalogWizardStep1Products({
             className="text-body-sm h-9"
           />
           {availableOccasions.length > 0 && (
-            <select
+            <NativeSelect
               value={filterOccasion}
               onChange={(e) => setFilterOccasion(e.target.value)}
               className="h-9 rounded-md border border-border bg-surface px-2.5 text-body-sm text-text"
@@ -114,7 +115,7 @@ export function CatalogWizardStep1Products({
                   {occ}
                 </option>
               ))}
-            </select>
+            </NativeSelect>
           )}
         </div>
 
@@ -150,14 +151,14 @@ export function CatalogWizardStep1Products({
         {filteredProducts.map((p) => {
           const isSelected = selectedIds.includes(p.id)
           return (
-            <button
+            <Button variant="outline"
               type="button"
               key={p.id}
               onClick={() => onToggleProduct(p.id)}
-              className={`rounded-xl border p-2.5 flex flex-col justify-between cursor-pointer transition-all text-left w-full ${
+              className={`h-auto text-[length:inherit] font-[inherit] gap-0 rounded-xl border p-2.5 flex flex-col justify-between cursor-pointer transition-all text-left w-full ${
                 isSelected
-                  ? "border-primary bg-primary-muted/20 ring-1 ring-primary shadow-xs"
-                  : "border-border bg-surface hover:border-border-hover"
+                  ? "border-primary bg-primary-muted/20 ring-1 ring-primary shadow-xs hover:bg-primary-muted/20"
+                  : "border-border bg-surface hover:border-border-hover hover:bg-surface"
               }`}
             >
               <div className="aspect-square w-full rounded-lg bg-surface-alt overflow-hidden mb-2 relative">
@@ -179,7 +180,7 @@ export function CatalogWizardStep1Products({
                   {p.price ? `${p.price.toLocaleString("vi-VN")} đ` : "Liên hệ"}
                 </div>
               </div>
-            </button>
+            </Button>
           )
         })}
       </div>

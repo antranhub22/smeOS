@@ -21,6 +21,8 @@ import { CAPABILITIES } from "@/core/rbac/capability-catalog"
  *   /c/[slug] giữ <h1>, màn quản trị và trang dựng ấn phẩm dùng <h2>.
  * - PO 03/11/2026 (REMEDIATION_ENTERPRISE_UI P3-10, phương án b): đầu trang /catalog dùng PageHeader chuẩn
  *   (tiêu đề <h1>).
+ * - PO 05/11/2026: nâng giao diện Catalog theo ADR-011 (chỉ giao diện) — điều khiển thô → thành phần
+ *   chuẩn, overlay → Dialog, cỡ chữ → thang hệ thống.
  */
 const ROOT = path.resolve(__dirname, "../../..")
 const MANIFEST = path.join(__dirname, "catalog-freeze.manifest.txt")

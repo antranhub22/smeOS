@@ -1,5 +1,6 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
 import React from "react"
 import { Sparkles, Palette, Check } from "@/components/ui/icons"
 import type { CatalogTemplateId, CatalogStyleId } from "@/modules/catalog-studio/domain/entities/catalog-studio.types"
@@ -93,7 +94,7 @@ export function SmartInputStyleSelector({
           const isSelected = currentId === item.id
 
           return (
-            <button
+            <Button variant="outline"
               key={item.id}
               type="button"
               onClick={() => {
@@ -106,9 +107,9 @@ export function SmartInputStyleSelector({
                   })
                 }
               }}
-              className={`relative rounded-xl p-2.5 text-left border transition-all cursor-pointer flex flex-col justify-between min-h-[96px] ${
+              className={`text-[length:inherit] font-[inherit] gap-0 relative rounded-xl p-2.5 text-left border transition-all cursor-pointer flex flex-col justify-between min-h-[96px] ${
                 isSelected
-                  ? "border-primary bg-primary-muted/30 shadow-xs ring-2 ring-primary/40"
+                  ? "border-primary bg-primary-muted/30 shadow-xs ring-2 ring-primary/40 hover:bg-primary-muted/30"
                   : "border-border bg-surface hover:border-primary/40 hover:bg-surface-alt/40"
               }`}
             >
@@ -157,7 +158,7 @@ export function SmartInputStyleSelector({
                   {item.subtitle}
                 </p>
               </div>
-            </button>
+            </Button>
           )
         })}
       </div>
