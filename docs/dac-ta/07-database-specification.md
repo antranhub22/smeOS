@@ -3911,3 +3911,35 @@ enum print_rendition_status {
   FAILED
 }
 ```
+
+## 39. Đối soát số dư — `reconciliation_findings` (05/11/2026)
+
+ADR-013 D-I6, bước I-3 của `docs/plan/db-enterprise-architecture.md`. Job `reconcileOrderPayments`
+(`src/modules/orders/use-cases/`, chạy mỗi 6 giờ từ `src/instrumentation.ts`) so `orders.paid_vnd` với
+Σ `order_payments` CONFIRMED (REFUND trừ). Một dòng cho mỗi đơn đang lệch; khớp lại thì đóng `resolved_at`,
+lệch lần nữa thì mở lại cùng dòng. Chỉ ghi nhận, không tự sửa số liệu. Đối soát `credit_balance` để sau
+P2-B5 (sổ nạp credit) — hiện credit tặng và chỉnh tay chưa có dòng sổ nên đối soát sẽ báo lệch sai.
+
+```prisma
+enum reconciliation_kind {
+  ORDER_PAID_MISMATCH
+}
+
+model reconciliation_findings {
+  id                String              @id @default(uuid())
+  organization_id   String
+  kind              reconciliation_kind
+  entity_id         String
+  expected_vnd      Decimal             @db.Decimal(14, 2)
+  actual_vnd        Decimal             @db.Decimal(14, 2)
+  first_detected_at DateTime            @default(now())
+  last_detected_at  DateTime            @default(now())
+  resolved_at       DateTime?
+  created_at        DateTime            @default(now())
+  updated_at        DateTime            @updatedAt
+
+  @@unique([kind, entity_id])
+  @@index([organization_id])
+  @@index([organization_id, resolved_at])
+}
+```

@@ -25,6 +25,9 @@ export async function register(): Promise<void> {
   // Chuyển khoản SePay còn "chưa khớp" sau bộ khớp Thẻ chào → khớp đơn ngoài Thẻ chào (P3b).
   const { startOrdersBankMatchSweep } = await import("@/modules/orders/use-cases/orders-sweep-scheduler")
   startOrdersBankMatchSweep()
+  // Đối soát số đã thu với sổ thu mỗi 6 giờ (ADR-013 D-I6) — chỉ ghi nhận lệch, không tự sửa.
+  const { startPaymentReconciliation } = await import("@/modules/orders/use-cases/reconciliation-scheduler")
+  startPaymentReconciliation()
 }
 
 /** Lỗi máy chủ không ai bắt → log có cấu trúc (rà soát 21/10/2026, giai đoạn 3 — quan trắc). */

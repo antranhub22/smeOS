@@ -283,6 +283,7 @@ model organizations {
   internal_chat_messages                           internal_chat_messages[]
   // Quan hệ ngược của khoá ngoại thêm 05/11/2026
   integration_connections_by_inherited_from_org_id integration_connections[]       @relation("fk_integration_connections_inherited_from_org_id")
+  reconciliation_findings                          reconciliation_findings[]
 }
 
 model workspaces {
@@ -4778,4 +4779,33 @@ model print_renditions {
   @@index([organization_id, preset_code])
   @@index([organization_id, created_at])
   @@index([asset_usage_id])
+}
+
+// ── Đối soát số dư (ADR-013 D-I6, bước I-3) ────────────────────────────────
+// Một dòng cho mỗi đơn (hay đối tượng) đang lệch. Job đối soát mở dòng khi phát hiện lệch, đóng
+// (`resolved_at`) khi số liệu khớp lại, mở lại cùng dòng nếu lệch lần nữa. Không tự sửa số liệu.
+
+// ORDER_PAID_MISMATCH: orders.paid_vnd khác tổng sổ thu đã xác nhận (khoản hoàn tiền trừ ra).
+enum reconciliation_kind {
+  ORDER_PAID_MISMATCH
+}
+
+model reconciliation_findings {
+  id                String              @id @default(uuid())
+  organization_id   String
+  kind              reconciliation_kind
+  entity_id         String
+  expected_vnd      Decimal             @db.Decimal(14, 2)
+  actual_vnd        Decimal             @db.Decimal(14, 2)
+  first_detected_at DateTime            @default(now()) @db.Timestamptz(3)
+  last_detected_at  DateTime            @default(now()) @db.Timestamptz(3)
+  resolved_at       DateTime?           @db.Timestamptz(3)
+  created_at        DateTime            @default(now()) @db.Timestamptz(3)
+  updated_at        DateTime            @default(now()) @updatedAt @db.Timestamptz(3)
+
+  organization organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+
+  @@unique([kind, entity_id])
+  @@index([organization_id])
+  @@index([organization_id, resolved_at])
 }
