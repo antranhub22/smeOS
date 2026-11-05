@@ -1,5 +1,6 @@
 "use client"
 
+import { Input } from "@/components/ui/input"
 import React, { useCallback, useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { formatDateTime } from "@/lib/i18n/formatters"
@@ -70,7 +71,7 @@ export function PublicChatLimitRequest() {
 
   return (
     <div className="space-y-2 border-t border-border pt-3">
-      <p className="text-xs font-semibold text-foreground">Giới hạn tin nhắn chống spam</p>
+      <p className="text-caption font-semibold text-text">Giới hạn tin nhắn chống spam</p>
       <p className="text-caption text-text-muted">
         Mỗi khách tối đa {current.perVisitor} tin, mỗi địa chỉ mạng tối đa {current.perIp} tin trong 10 phút.
       </p>
@@ -86,7 +87,7 @@ export function PublicChatLimitRequest() {
         <fieldset className="space-y-2">
           <legend className="text-caption text-text-muted">Cần nhiều hơn? Chọn mức và gửi yêu cầu để được duyệt:</legend>
           {options.map((t) => (
-            <label key={t.i} className="flex items-center gap-2 text-caption text-foreground">
+            <label key={t.i} className="flex items-center gap-2 text-caption text-text">
               <input
                 type="radio"
                 name="public-chat-limit-tier"
@@ -99,15 +100,15 @@ export function PublicChatLimitRequest() {
           ))}
           <label className="block text-caption text-text-muted">
             Lý do (không bắt buộc)
-            <input
+            <Input
               type="text"
               value={note}
               maxLength={500}
               onChange={(e) => setNote(e.target.value)}
-              className="mt-1 w-full rounded-lg border border-border bg-surface px-2 py-1.5 text-xs text-foreground"
+              className="mt-1 w-full rounded-lg border border-border bg-surface px-2 py-1.5 text-caption text-text"
             />
           </label>
-          <Button size="sm" className="h-8 text-xs" disabled={tierIndex === null || busy} onClick={submit}>
+          <Button size="sm" className="h-8 text-caption" disabled={tierIndex === null || busy} onClick={submit}>
             {busy ? "Đang gửi…" : "Gửi yêu cầu nâng hạn mức"}
           </Button>
         </fieldset>

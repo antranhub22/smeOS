@@ -118,15 +118,15 @@ export function VideoCreateModal({
               const spec = VIDEO_FORMAT_SPECS[fmtKey];
               const isSelected = format === fmtKey;
               return (
-                <button
+                <Button variant="outline"
                   type="button"
                   key={fmtKey}
                   aria-pressed={isSelected}
                   onClick={() => setFormat(fmtKey)}
-                  className={`text-left rounded-xl border p-3 transition-all flex flex-col justify-between gap-1.5 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
+                  className={`text-[length:inherit] h-auto font-[inherit] text-left rounded-xl border p-3 transition-all flex flex-col justify-between gap-1.5 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
                     isSelected
-                      ? "border-primary bg-primary/5 shadow-xs ring-1 ring-primary"
-                      : "border-border bg-surface hover:border-border-hover"
+                      ? "border-primary bg-primary/5 shadow-xs ring-1 ring-primary hover:bg-primary/5"
+                      : "border-border bg-surface hover:border-border-hover hover:bg-surface"
                   }`}
                 >
                   <div className="flex items-start justify-between gap-1 w-full">
@@ -143,7 +143,7 @@ export function VideoCreateModal({
                       <Coins size={11} /> {spec.defaultCreditCost} credits
                     </span>
                   </div>
-                </button>
+                </Button>
               );
             })}
           </div>
@@ -209,15 +209,15 @@ export function VideoCreateModal({
               const spec = CAPTION_STYLE_SPECS[stKey];
               const isSel = captionStyle === stKey;
               return (
-                <button
+                <Button variant="outline"
                   type="button"
                   key={stKey}
                   aria-pressed={isSel}
                   onClick={() => setCaptionStyle(stKey)}
-                  className={`text-left rounded-xl p-2.5 border transition-all text-caption flex flex-col justify-between gap-1 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
+                  className={`h-auto font-[inherit] text-left rounded-xl p-2.5 border transition-all text-caption flex flex-col justify-between gap-1 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
                     isSel
-                      ? "border-primary bg-primary/10 shadow-xs ring-1 ring-primary"
-                      : "border-border bg-surface hover:border-border-hover"
+                      ? "border-primary bg-primary/10 shadow-xs ring-1 ring-primary hover:bg-primary/10"
+                      : "border-border bg-surface hover:border-border-hover hover:bg-surface"
                   }`}
                 >
                   <div className="flex items-center justify-between w-full">
@@ -229,7 +229,7 @@ export function VideoCreateModal({
                   <span className="text-caption text-text-muted leading-tight line-clamp-2">
                     {spec.description}
                   </span>
-                </button>
+                </Button>
               );
             })}
           </div>

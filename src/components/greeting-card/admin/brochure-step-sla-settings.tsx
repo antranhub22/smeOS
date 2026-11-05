@@ -102,7 +102,7 @@ export function BrochureStepSlaSettings() {
           type="button"
           onClick={() => void save()}
           disabled={!draft || saving}
-          className="gap-0 h-9 rounded-lg bg-primary px-4 text-body-sm font-bold text-white hover:bg-primary-dark disabled:opacity-50"
+          className="py-0 gap-0 h-9 rounded-lg bg-primary px-4 text-body-sm font-bold text-white hover:bg-primary-dark disabled:opacity-50"
         >
           {saving ? "Đang lưu..." : "Lưu"}
         </Button>

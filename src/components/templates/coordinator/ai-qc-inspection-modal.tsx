@@ -64,7 +64,7 @@ export function AiQcInspectionModal({ isOpen, order, onClose, onSubmit }: AiQcIn
 
   const imageBox = (title: string, url: string | null, empty: string) => (
     <div className="flex flex-col gap-2 p-3 rounded-xl border border-border bg-surface-alt">
-      <span className="font-bold text-text text-xs">{title}</span>
+      <span className="font-bold text-text text-caption">{title}</span>
       <div className="relative aspect-square rounded-xl overflow-hidden border border-border bg-surface flex items-center justify-center">
         {url ? (
           // eslint-disable-next-line @next/next/no-img-element
@@ -94,7 +94,7 @@ export function AiQcInspectionModal({ isOpen, order, onClose, onSubmit }: AiQcIn
               <span className="px-2 py-0.5 rounded bg-cool-100 text-cool-700 text-caption font-black uppercase border border-cool-200">
                 BƯỚC 5 • KIỂM ĐỊNH QC
               </span>
-              <h3 className="text-base font-extrabold text-text">Kiểm Định Chất Lượng (T14)</h3>
+              <h3 className="text-body font-extrabold text-text">Kiểm Định Chất Lượng (T14)</h3>
             </div>
           </div>
         </div>
@@ -123,7 +123,7 @@ export function AiQcInspectionModal({ isOpen, order, onClose, onSubmit }: AiQcIn
         </div>
       }
     >
-      <div className="p-1 flex flex-col gap-4 text-xs">
+      <div className="p-1 flex flex-col gap-4 text-caption">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {imageBox("📸 Ảnh mẫu chuẩn đầu vào", order.sampleImageUrl, "Đơn chưa có ảnh mẫu")}
           {imageBox("🌸 Ảnh thành phẩm thợ gửi", finished, "Chưa có ảnh thành phẩm — không kiểm được")}

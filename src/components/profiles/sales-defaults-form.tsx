@@ -1,5 +1,6 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
 import React, { useState, useEffect } from "react"
 import { Gift } from "@/components/ui/icon-set/gift"
 import { ShieldCheck } from "@/components/ui/icon-set/shield-check"
@@ -11,11 +12,7 @@ import { Palette } from "@/components/ui/icon-set/palette"
 import { Building2 } from "@/components/ui/icon-set/building2"
 import type { BrandProfileDetail } from "@/modules/profiles/use-cases/get-brand-profile"
 import type { UpsertBrandProfileInput } from "@/modules/profiles/domain/repositories/brand-profile-repository.interface"
-import {
-  FLORIST_FREE_GIFTS_CATALOG,
-  FLORIST_GUARANTEES_CATALOG,
-  FLORIST_STRATEGY_PRESETS,
-} from "@/modules/profiles/domain/florist-advisor-catalog"
+import { FLORIST_FREE_GIFTS_CATALOG, FLORIST_GUARANTEES_CATALOG, FLORIST_STRATEGY_PRESETS } from "@/modules/profiles/domain/florist-advisor-catalog"
 import { AiRewriteInput } from "./ai-rewrite-input"
 
 export interface SalesDefaultsFormProps {
@@ -152,11 +149,11 @@ export function SalesDefaultsForm({
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           {FLORIST_STRATEGY_PRESETS.map((preset) => (
-            <button
+            <Button variant="outline"
               key={preset.id}
               type="button"
               onClick={() => applyPreset(preset.id)}
-              className="rounded-xl border border-border bg-surface-alt/60 p-4 text-left transition-all hover:border-primary hover:bg-surface focus:outline-none"
+              className="text-[length:inherit] h-auto justify-start font-[inherit] gap-0 rounded-xl border border-border bg-surface-alt/60 p-4 text-left transition-all hover:border-primary hover:bg-surface focus:outline-none"
             >
               <div className="flex items-center gap-2 mb-1.5">
                 {preset.id === "preset-artisan-boutique" && <Palette size={16} className="text-primary" />}
@@ -165,7 +162,7 @@ export function SalesDefaultsForm({
                 <span className="text-body-sm font-bold text-text">{preset.name}</span>
               </div>
               <p className="text-caption text-text-muted leading-relaxed">{preset.tagline}</p>
-            </button>
+            </Button>
           ))}
         </div>
       </div>
@@ -193,14 +190,14 @@ export function SalesDefaultsForm({
           {FLORIST_FREE_GIFTS_CATALOG.map((item) => {
             const isChecked = gifts.includes(item.label)
             return (
-              <button
+              <Button variant="outline"
                 key={item.id}
                 type="button"
                 onClick={() => toggleGift(item.label)}
-                className={`flex items-start gap-3 rounded-xl border p-3.5 text-left transition-all ${
+                className={`text-[length:inherit] h-auto justify-start font-[inherit] flex items-start gap-3 rounded-xl border p-3.5 text-left transition-all ${
                   isChecked
-                    ? "border-primary bg-primary/5 shadow-xs"
-                    : "border-border bg-surface-alt/40 hover:border-primary/50"
+                    ? "border-primary bg-primary/5 shadow-xs hover:bg-primary/5"
+                    : "border-border bg-surface-alt/40 hover:border-primary/50 hover:bg-surface-alt/40"
                 }`}
               >
                 <div
@@ -214,7 +211,7 @@ export function SalesDefaultsForm({
                   <div className="text-body-sm font-bold text-text">{item.label}</div>
                   <div className="text-caption text-text-muted mt-0.5 leading-snug">{item.description}</div>
                 </div>
-              </button>
+              </Button>
             )
           })}
         </div>
@@ -244,15 +241,15 @@ export function SalesDefaultsForm({
                 className="inline-flex items-center gap-1.5 rounded-lg border border-primary/30 bg-primary/10 px-3 py-1 text-caption font-semibold text-primary"
               >
                 <span>{gift}</span>
-                <button
+                <Button variant="ghost"
                   type="button"
                   aria-label={`Xóa quà tặng ${gift}`}
                   title="Xóa mục này"
                   onClick={() => handleRemoveGift(idx)}
-                  className="hover:text-danger transition-colors ml-0.5"
+                  className="text-[length:inherit] h-auto p-0 font-[inherit] gap-0 hover:text-danger transition-colors ml-0.5"
                 >
                   <Trash2 size={13} />
-                </button>
+                </Button>
               </span>
             ))}
           </div>
@@ -282,14 +279,14 @@ export function SalesDefaultsForm({
           {FLORIST_GUARANTEES_CATALOG.map((item) => {
             const isChecked = guarantees.includes(item.label)
             return (
-              <button
+              <Button variant="outline"
                 key={item.id}
                 type="button"
                 onClick={() => toggleGuarantee(item.label)}
-                className={`flex items-start gap-3 rounded-xl border p-3.5 text-left transition-all ${
+                className={`text-[length:inherit] h-auto justify-start font-[inherit] flex items-start gap-3 rounded-xl border p-3.5 text-left transition-all ${
                   isChecked
-                    ? "border-primary bg-primary/5 shadow-xs"
-                    : "border-border bg-surface-alt/40 hover:border-primary/50"
+                    ? "border-primary bg-primary/5 shadow-xs hover:bg-primary/5"
+                    : "border-border bg-surface-alt/40 hover:border-primary/50 hover:bg-surface-alt/40"
                 }`}
               >
                 <div
@@ -303,7 +300,7 @@ export function SalesDefaultsForm({
                   <div className="text-body-sm font-bold text-text">{item.label}</div>
                   <div className="text-caption text-text-muted mt-0.5 leading-snug">{item.description}</div>
                 </div>
-              </button>
+              </Button>
             )
           })}
         </div>
@@ -333,15 +330,15 @@ export function SalesDefaultsForm({
                 className="inline-flex items-center gap-1.5 rounded-lg border border-primary/30 bg-primary/10 px-3 py-1 text-caption font-semibold text-primary"
               >
                 <span>{guar}</span>
-                <button
+                <Button variant="ghost"
                   type="button"
                   aria-label={`Xóa cam kết ${guar}`}
                   title="Xóa mục này"
                   onClick={() => handleRemoveGuarantee(idx)}
-                  className="hover:text-danger transition-colors ml-0.5"
+                  className="text-[length:inherit] h-auto p-0 font-[inherit] gap-0 hover:text-danger transition-colors ml-0.5"
                 >
                   <Trash2 size={13} />
-                </button>
+                </Button>
               </span>
             ))}
           </div>
@@ -350,10 +347,10 @@ export function SalesDefaultsForm({
 
       {/* 4. NÚT LƯU */}
       <div className="flex justify-end pt-2">
-        <button
+        <Button variant="primary"
           type="submit"
           disabled={saving}
-          className="inline-flex items-center gap-2 rounded-xl bg-primary px-6 py-2.5 text-body-sm font-bold text-white shadow-xs transition-opacity hover:opacity-95 disabled:opacity-50"
+          className="h-auto inline-flex items-center gap-2 rounded-xl bg-primary px-6 py-2.5 text-body-sm font-bold text-white shadow-xs transition-opacity hover:opacity-95 disabled:opacity-50 hover:bg-primary"
         >
           {saving ? (
             <span>Đang lưu...</span>
@@ -368,7 +365,7 @@ export function SalesDefaultsForm({
               <span>Lưu chính sách & cam kết</span>
             </>
           )}
-        </button>
+        </Button>
       </div>
     </form>
   )

@@ -223,7 +223,7 @@ export function ProductReminderOverrideCard({
               >
                 {/* Toggle bật/tắt ghi đè */}
                 <div className="flex items-center gap-2.5 flex-1 min-w-0">
-                  <button
+                  <Button variant="ghost"
                     type="button"
                     role="switch"
                     aria-checked={isEnabled}
@@ -231,8 +231,8 @@ export function ProductReminderOverrideCard({
                     onClick={() => {
                       if (canEdit) toggleKey(m.key)
                     }}
-                    className={`relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
-                      isEnabled ? "bg-primary" : "bg-surface-alt"
+                    className={`px-0 py-0 text-[length:inherit] font-[inherit] gap-0 relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
+                      isEnabled ? "bg-primary hover:bg-primary" : "bg-surface-alt hover:bg-surface-alt"
                     } ${!canEdit ? "opacity-40 cursor-not-allowed" : ""}`}
                   >
                     <span
@@ -240,7 +240,7 @@ export function ProductReminderOverrideCard({
                         isEnabled ? "translate-x-4" : "translate-x-0"
                       }`}
                     />
-                  </button>
+                  </Button>
 
                   <div className="min-w-0">
                     <div className="flex items-center gap-1.5">

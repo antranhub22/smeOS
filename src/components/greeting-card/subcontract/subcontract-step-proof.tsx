@@ -160,7 +160,7 @@ export function SubcontractStepProof({
         type="button"
         onClick={onActivate}
         disabled={!isUnlocked}
-        className="font-[inherit] gap-0 w-full p-4 flex items-center justify-between text-left border-b border-border/60 bg-surface-muted/30 hover:bg-surface-muted/60 transition-colors cursor-pointer disabled:cursor-not-allowed"
+        className="text-[length:inherit] h-auto font-[inherit] gap-0 w-full p-4 flex items-center justify-between text-left border-b border-border/60 bg-surface-muted/30 hover:bg-surface-muted/60 transition-colors cursor-pointer disabled:cursor-not-allowed"
       >
         <div className="flex items-center gap-2.5">
           <div

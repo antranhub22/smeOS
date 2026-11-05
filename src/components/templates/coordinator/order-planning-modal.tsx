@@ -75,7 +75,7 @@ export function OrderPlanningModal({
               <span className="px-2 py-0.5 rounded bg-cool-100 text-cool-700 text-caption font-black uppercase border border-cool-200">
                 BƯỚC 2 • KẾ HOẠCH
               </span>
-              <h3 className="text-base font-extrabold text-text">
+              <h3 className="text-body font-extrabold text-text">
                 Lập Kế Hoạch Đơn Hàng (Order Planning — T02)
               </h3>
             </div>
@@ -101,7 +101,7 @@ export function OrderPlanningModal({
         </div>
       }
     >
-      <div className="p-1 flex flex-col gap-4 text-xs">
+      <div className="p-1 flex flex-col gap-4 text-caption">
         {/* 1. Tóm tắt thông tin tiếp nhận từ Sales */}
         <div className="p-3.5 rounded-xl border border-border bg-surface-alt flex flex-col gap-3">
           <div className="flex items-center justify-between border-b border-dashed border-border/80 pb-2">
@@ -166,7 +166,7 @@ export function OrderPlanningModal({
 
         {/* 2. Thiết lập Timeline sản xuất lùi từ giờ giao khách (P2 Timeline) */}
         <div className="p-3.5 rounded-xl border border-alert-200 bg-alert-50/40 flex flex-col gap-3">
-          <span className="font-extrabold text-alert-950 text-xs flex items-center gap-1.5">
+          <span className="font-extrabold text-alert-950 text-caption flex items-center gap-1.5">
             <Calendar size={13} className="text-alert-600" />
             Thiết Lập Timeline Sản Xuất & Lấy Hàng (Reverse Scheduling):
           </span>
@@ -230,7 +230,7 @@ export function OrderPlanningModal({
         </div>
 
         {error && (
-          <div role="alert" className="p-3 rounded-xl border border-alert-300 bg-alert-50 text-alert-800 text-xs font-semibold">
+          <div role="alert" className="p-3 rounded-xl border border-alert-300 bg-alert-50 text-alert-800 text-caption font-semibold">
             {error}
           </div>
         )}

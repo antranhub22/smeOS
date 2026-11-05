@@ -14,7 +14,7 @@ export function ReconciliationSection({ config, updateConfig }: ReconciliationSe
   return (
     <div className="p-5 sm:p-6 rounded-2xl border border-border bg-surface shadow-xs space-y-4">
       <div>
-        <h3 className="text-sm font-bold text-text flex items-center gap-2">
+        <h3 className="text-body-sm font-bold text-text flex items-center gap-2">
           <HelpCircle size={16} className="text-primary" /> Cơ chế xác nhận & đối soát giao dịch
         </h3>
         <p className="text-caption text-text-muted mt-0.5">

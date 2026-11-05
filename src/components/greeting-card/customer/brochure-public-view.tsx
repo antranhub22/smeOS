@@ -108,7 +108,7 @@ export function BrochurePublicView({ catalog, products, shipping, shop }: Props)
     <Button variant="ghost"
       type="button"
       onClick={() => setStep("SWIPING")}
-      className="gap-0 mt-2 inline-flex h-11 items-center rounded-xl bg-primary px-5 text-body-sm font-bold text-primary-foreground hover:bg-primary/90"
+      className="py-0 gap-0 mt-2 inline-flex h-11 items-center rounded-xl bg-primary px-5 text-body-sm font-bold text-primary-foreground hover:bg-primary/90"
     >
       Đặt lại đơn mới
     </Button>
@@ -220,7 +220,7 @@ export function BrochurePublicView({ catalog, products, shipping, shop }: Props)
                 track("FORM_OPEN")
                 setStep("ORDER_FORM")
               }}
-              className="flex items-center justify-center gap-2 w-full h-12 rounded-2xl bg-primary text-white font-bold text-body shadow-md hover:bg-primary-dark transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-0 py-0 flex items-center justify-center gap-2 w-full h-12 rounded-2xl bg-primary text-white font-bold text-body shadow-md hover:bg-primary-dark transition-colors cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
             >
               <ShoppingBag size={18} />
               <span>Đặt ngay</span>

@@ -75,7 +75,7 @@ export function DirectProductUpload({
       />
 
       {!selectedFile || !previewUrl ? (
-        <button
+        <Button variant="ghost"
           type="button"
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
@@ -85,9 +85,9 @@ export function DirectProductUpload({
               fileInputRef.current?.click()
             }
           }}
-          className={`w-full border-2 border-dashed rounded-2xl p-6 transition-all text-center flex flex-col items-center justify-center gap-3 cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary ${
+          className={`text-[length:inherit] h-auto font-[inherit] w-full border-2 border-dashed rounded-2xl p-6 transition-all text-center flex flex-col items-center justify-center gap-3 cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary ${
             isDragOver
-              ? "border-primary bg-primary/10 scale-[0.99]"
+              ? "border-primary bg-primary/10 scale-[0.99] hover:bg-primary/10"
               : "border-border hover:border-primary/50 hover:bg-surface-alt/60 bg-surface/40"
           }`}
           aria-label="Tải ảnh sản phẩm"
@@ -108,7 +108,7 @@ export function DirectProductUpload({
             <ImageIcon size={14} />
             Chọn ảnh từ thiết bị
           </span>
-        </button>
+        </Button>
       ) : (
         <div className="relative rounded-2xl border border-border bg-surface p-4 flex flex-col sm:flex-row items-center gap-4">
           <div className="relative w-28 h-28 rounded-xl overflow-hidden border border-border shrink-0 bg-surface-alt">

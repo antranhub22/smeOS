@@ -1,5 +1,6 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
 import React, { useState, useMemo } from "react"
 import { Search } from "@/components/ui/icon-set/search"
 import { Input } from "@/components/ui/input"
@@ -144,18 +145,18 @@ export function ToolkitHome() {
           {isDev && (
             <div className="flex items-center gap-1 overflow-x-auto pb-1 sm:pb-0">
               {FILTER_OPTIONS.map((opt) => (
-                <button
+                <Button variant="ghost"
                   type="button"
                   key={opt.id}
                   onClick={() => setSelectedStatus(opt.id)}
-                  className={`px-3 py-1.5 rounded-lg text-caption font-semibold whitespace-nowrap transition-colors cursor-pointer ${
+                  className={`h-auto gap-0 px-3 py-1.5 rounded-lg text-caption font-semibold whitespace-nowrap transition-colors cursor-pointer ${
                     selectedStatus === opt.id
-                      ? "bg-primary text-primary-fg shadow-xs"
+                      ? "bg-primary text-primary-fg shadow-xs hover:bg-primary"
                       : "bg-surface-alt text-text-muted hover:text-text hover:bg-surface border border-border"
                   }`}
                 >
                   {opt.label}
-                </button>
+                </Button>
               ))}
             </div>
           )}

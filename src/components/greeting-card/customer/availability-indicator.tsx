@@ -72,7 +72,7 @@ export function AvailabilityIndicator({
             <Button variant="ghost"
               type="button"
               onClick={() => onSelectDate(nextAvailableDate)}
-              className="h-auto p-0 inline-flex items-center gap-1 font-bold underline underline-offset-2 hover:opacity-80 transition"
+              className="text-[length:inherit] h-auto p-0 inline-flex items-center gap-1 font-bold underline underline-offset-2 hover:opacity-80 transition"
             >
               <Sparkles size={12} />
               {nextAvailableDate}

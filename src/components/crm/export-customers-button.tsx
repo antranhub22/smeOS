@@ -142,11 +142,11 @@ function ExportCustomersButtonInner({
             </div>
           )}
 
-          <button
+          <Button variant="ghost"
             type="button"
             disabled={isLoading}
             role="menuitem"
-            className={`w-full flex items-start gap-3 p-2.5 rounded-lg text-left transition-colors text-text ${
+            className={`text-[length:inherit] h-auto justify-start font-[inherit] w-full flex items-start gap-3 p-2.5 rounded-lg text-left transition-colors text-text ${
               isLoading ? "opacity-50 cursor-not-allowed" : "hover:bg-surface-elevated cursor-pointer"
             }`}
             onClick={() => !isLoading && handleDownload("xlsx")}
@@ -160,13 +160,13 @@ function ExportCustomersButtonInner({
                 Bảng tính 2 sheet gồm danh sách khách hàng và lịch kỷ niệm.
               </p>
             </div>
-          </button>
+          </Button>
 
-          <button
+          <Button variant="ghost"
             type="button"
             disabled={isLoading}
             role="menuitem"
-            className={`w-full flex items-start gap-3 p-2.5 rounded-lg text-left transition-colors text-text ${
+            className={`text-[length:inherit] h-auto justify-start font-[inherit] w-full flex items-start gap-3 p-2.5 rounded-lg text-left transition-colors text-text ${
               isLoading ? "opacity-50 cursor-not-allowed" : "hover:bg-surface-elevated cursor-pointer"
             }`}
             onClick={() => !isLoading && handleDownload("json")}
@@ -180,7 +180,7 @@ function ExportCustomersButtonInner({
                 File backup cấu trúc gốc kèm sở thích, tag, lịch kỷ niệm phục vụ lưu trữ an toàn.
               </p>
             </div>
-          </button>
+          </Button>
         </div>
       )}
     </div>

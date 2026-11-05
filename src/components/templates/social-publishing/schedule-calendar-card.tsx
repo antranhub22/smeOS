@@ -77,16 +77,16 @@ export function ScheduleCalendarCard({
         </div>
 
         <div className="flex items-center gap-2">
-          <Badge tone="neutral" className="text-xs px-2.5 py-1">
+          <Badge tone="neutral" className="text-caption px-2.5 py-1">
             <Clock size={12} className="text-primary" />
             <strong>{scheduledCount}</strong> chờ phát
           </Badge>
-          <Badge tone="success" className="text-xs px-2.5 py-1">
+          <Badge tone="success" className="text-caption px-2.5 py-1">
             <CheckCircle2 size={12} />
             <strong>{publishedCount}</strong> đã đăng
           </Badge>
           {onNewSchedule && (
-            <Button size="sm" onClick={onNewSchedule} className="text-xs font-bold gap-1 ml-1">
+            <Button size="sm" onClick={onNewSchedule} className="text-caption font-bold gap-1 ml-1">
               Lên lịch mới <ArrowRight size={13} />
             </Button>
           )}
@@ -106,18 +106,18 @@ export function ScheduleCalendarCard({
           { key: "zalo", label: "Zalo OA" },
           { key: "linkedin", label: "LinkedIn" },
         ].map((c) => (
-          <button
+          <Button variant="ghost"
             type="button"
             key={c.key}
             onClick={() => setSelectedChannel(c.key)}
-            className={`px-2.5 py-1 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
+            className={`h-auto gap-0 px-2.5 py-1 rounded-lg text-caption font-semibold transition-all cursor-pointer ${
               selectedChannel === c.key
-                ? "bg-primary text-white shadow-2xs"
+                ? "bg-primary text-white shadow-2xs hover:bg-primary"
                 : "bg-surface-alt hover:bg-surface text-text-muted hover:text-text border border-border"
             }`}
           >
             {c.label}
-          </button>
+          </Button>
         ))}
       </div>
 
@@ -130,7 +130,7 @@ export function ScheduleCalendarCard({
             Các bài viết sau khi được chọn thời điểm xuất bản sẽ hiển thị chi tiết theo từng khung giờ phát tại đây.
           </div>
           {onNewSchedule && (
-            <Button size="sm" variant="outline" onClick={onNewSchedule} className="mt-3 text-xs font-bold">
+            <Button size="sm" variant="outline" onClick={onNewSchedule} className="mt-3 text-caption font-bold">
               Đến Hàng Đợi Lên Lịch
             </Button>
           )}

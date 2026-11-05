@@ -164,16 +164,16 @@ export function ArchitectureNametag({ isDev = false }: Props) {
   return (
     <div ref={panelRef} className="relative">
       {/* Trigger */}
-      <button
+      <Button variant="ghost"
         type="button"
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
         aria-haspopup="listbox"
         aria-label={`Tầng kiến trúc: ${nametag.label}. Click để switch vai dev`}
-        className="flex items-center cursor-pointer"
+        className="text-[length:inherit] h-auto p-0 font-[inherit] gap-0 flex items-center cursor-pointer"
       >
         {badge}
-      </button>
+      </Button>
 
       {/* Dropdown panel */}
       {open && (
@@ -208,17 +208,17 @@ export function ArchitectureNametag({ isDev = false }: Props) {
                 const isLoading = loading === preset.roleKey
                 return (
                   <li key={preset.roleKey} role="option" aria-selected={isActive}>
-                    <button
+                    <Button variant="ghost"
                       type="button"
                       disabled={isLoading}
                       onClick={() => {
                         if (!isLoading) applyOverride(preset)
                       }}
                       aria-disabled={isLoading}
-                      className={cn(
+                      className={cn("h-auto", "justify-start", 
                         "flex w-full items-center gap-2 px-3 py-2 text-left text-meta transition-colors cursor-pointer",
                         isActive
-                          ? "bg-surface-alt font-bold text-text"
+                          ? "bg-surface-alt font-bold text-text hover:bg-surface-alt"
                           : "text-text hover:bg-surface-alt",
                         isLoading && "opacity-50 cursor-not-allowed"
                       )}
@@ -232,7 +232,7 @@ export function ArchitectureNametag({ isDev = false }: Props) {
                       {isLoading && (
                         <span className="text-caption text-text-muted">Đang lưu…</span>
                       )}
-                    </button>
+                    </Button>
                   </li>
                 )
               })

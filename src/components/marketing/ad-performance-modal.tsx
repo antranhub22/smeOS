@@ -144,14 +144,14 @@ export function AdPerformanceModal({ isOpen, onClose }: AdPerformanceModalProps)
           <h4 className="text-body-sm font-bold text-text">Hiệu Quả Theo Từng Kênh Quảng Cáo</h4>
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
             {summary.channelAggregates.map((ch) => (
-              <button
+              <Button variant="outline"
                 type="button"
                 key={ch.channel}
                 onClick={() => setSelectedChannel(ch.channel)}
-                className={`text-left p-3 rounded-xl border transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary ${
+                className={`text-[length:inherit] h-auto justify-start font-[inherit] gap-0 text-left p-3 rounded-xl border transition-all cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary ${
                   selectedChannel === ch.channel
-                    ? "border-primary bg-primary/10 shadow-xs"
-                    : "border-border bg-surface hover:border-primary/40"
+                    ? "border-primary bg-primary/10 shadow-xs hover:bg-primary/10"
+                    : "border-border bg-surface hover:border-primary/40 hover:bg-surface"
                 }`}
               >
                 <div className="font-bold text-body-sm text-text">{ch.channelName}</div>
@@ -165,7 +165,7 @@ export function AdPerformanceModal({ isOpen, onClose }: AdPerformanceModalProps)
                   <span className="text-text-muted">ROAS:</span>
                   <span className="font-extrabold text-primary">{ch.avgRoas}x</span>
                 </div>
-              </button>
+              </Button>
             ))}
           </div>
         </div>

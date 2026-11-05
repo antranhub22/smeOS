@@ -59,7 +59,7 @@ export function SubcontractSpotlightStepper({
                 aria-current={isActive ? "step" : undefined}
                 disabled={!isUnlocked && !isCompleted}
                 onClick={() => onSelectStep(step.id)}
-                className={cn("font-[inherit]", 
+                className={cn("h-auto", "font-[inherit]", 
                   "group flex w-full flex-col items-center gap-1 text-center rounded-xl p-2 transition-all duration-200 border cursor-pointer",
                   isActive
                     ? "bg-primary/10 border-primary shadow-xs ring-1 ring-primary/30"

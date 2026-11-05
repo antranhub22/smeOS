@@ -99,7 +99,7 @@ export function SalesBrochureTab({ initialOpenCreate = false, onNavigateToCatalo
             <div role="group" aria-label="Phạm vi khách" className="mr-2 inline-flex rounded-xl border border-border bg-surface-alt p-1">
               {(["MINE", "ALL"] as const).map((s) => (
                 <Button variant="ghost" key={s} type="button" aria-pressed={scope === s} onClick={() => setScope(s)}
-                  className={`gap-0 h-8 rounded-lg px-3 text-caption font-bold ${scope === s ? "bg-surface text-primary shadow-xs hover:bg-surface" : "text-text-muted"}`}>
+                  className={`py-0 gap-0 h-8 rounded-lg px-3 text-caption font-bold ${scope === s ? "bg-surface text-primary shadow-xs hover:bg-surface" : "text-text-muted"}`}>
                   {s === "MINE" ? "Khách của tôi" : "Tất cả khách"}
                 </Button>
               ))}
@@ -107,7 +107,7 @@ export function SalesBrochureTab({ initialOpenCreate = false, onNavigateToCatalo
           )}
           {BUCKETS.map((b) => (
             <Button variant="outline" key={b} type="button" aria-pressed={bucket === b} onClick={() => setBucket(bucket === b ? null : b)}
-              className={`gap-0 h-9 rounded-xl border px-3 text-caption font-bold ${
+              className={`py-0 gap-0 h-9 rounded-xl border px-3 text-caption font-bold ${
                 bucket === b ? "border-primary bg-primary text-white hover:bg-primary" : b === "ACTION" && counts.ACTION > 0 ? "border-danger/40 bg-danger-bg text-danger hover:bg-danger-bg" : "border-border text-text-muted hover:bg-surface-muted"
               }`}>
               {WORK_BUCKET_LABEL[b]} ({counts[b]})
@@ -128,7 +128,7 @@ export function SalesBrochureTab({ initialOpenCreate = false, onNavigateToCatalo
                 type="button"
                 aria-label="Xoá tìm kiếm"
                 onClick={() => setSearch("")}
-                className="h-auto p-0 font-[inherit] gap-0 absolute right-2.5 top-1/2 -translate-y-1/2 text-text-muted hover:text-text"
+                className="text-[length:inherit] h-auto p-0 font-[inherit] gap-0 absolute right-2.5 top-1/2 -translate-y-1/2 text-text-muted hover:text-text"
               >
                 <X size={13} aria-hidden="true" />
               </Button>
@@ -138,7 +138,7 @@ export function SalesBrochureTab({ initialOpenCreate = false, onNavigateToCatalo
         <div role="group" aria-label="Cách xem" className="flex items-center rounded-xl border border-border bg-surface p-1">
           {(["kanban", "list"] as const).map((v) => (
             <Button variant="ghost" key={v} type="button" aria-pressed={viewMode === v} onClick={() => setViewMode(v)}
-              className={`gap-0 rounded-lg px-3 py-1 text-caption font-bold transition-colors ${viewMode === v ? "bg-primary text-white hover:bg-primary" : "text-text-muted hover:text-text"}`}>
+              className={`h-auto gap-0 rounded-lg px-3 py-1 text-caption font-bold transition-colors ${viewMode === v ? "bg-primary text-white hover:bg-primary" : "text-text-muted hover:text-text"}`}>
               {v === "kanban" ? "Kanban" : "Danh sách thẻ"}
             </Button>
           ))}
@@ -231,7 +231,7 @@ export function SalesBrochureTab({ initialOpenCreate = false, onNavigateToCatalo
 
       <section className="overflow-hidden rounded-2xl border border-border bg-surface">
         <Button variant="ghost" type="button" aria-expanded={linksOpen} onClick={() => setLinksOpen((v) => !v)}
-          className="gap-0 flex w-full items-center justify-between p-4 text-left text-body font-extrabold text-text hover:bg-surface-muted">
+          className="h-auto gap-0 flex w-full items-center justify-between p-4 text-left text-body font-extrabold text-text hover:bg-surface-muted">
           Link đã gửi (thu hồi, mở lại)
           <ChevronDown size={18} aria-hidden="true" className={linksOpen ? "rotate-180" : ""} />
         </Button>

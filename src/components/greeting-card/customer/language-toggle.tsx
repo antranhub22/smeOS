@@ -40,7 +40,7 @@ export function LanguageToggle({ activeLocales = ["vi", "en"], className = "" }:
             onClick={() => setLocale(loc)}
             aria-label={`Xem bằng ${loc === "vi" ? "Tiếng Việt" : "English"}`}
             aria-pressed={isActive}
-            className={`inline-flex items-center gap-1 h-9 px-2.5 text-caption font-black uppercase tracking-wide transition-all ${
+            className={`py-0 inline-flex items-center gap-1 h-9 px-2.5 text-caption font-black uppercase tracking-wide transition-all ${
               isActive
                 ? "bg-primary text-white hover:bg-primary"
                 : "text-text-muted hover:bg-surface-muted hover:text-text"

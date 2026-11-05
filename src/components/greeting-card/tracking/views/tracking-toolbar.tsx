@@ -112,7 +112,7 @@ export function TrackingToolbar({ state, onChange, onApplyView, onRefresh }: Pro
                 type="button"
                 aria-label="Xoá tìm kiếm"
                 onClick={() => onChange({ q: "" })}
-                className="h-auto p-0 font-[inherit] gap-0 absolute right-2.5 top-1/2 -translate-y-1/2 text-text-muted hover:text-text"
+                className="text-[length:inherit] h-auto p-0 font-[inherit] gap-0 absolute right-2.5 top-1/2 -translate-y-1/2 text-text-muted hover:text-text"
               >
                 <X size={13} aria-hidden="true" />
               </Button>
@@ -153,7 +153,7 @@ export function TrackingToolbar({ state, onChange, onApplyView, onRefresh }: Pro
           <Button variant="outline"
             type="button"
             onClick={() => setShowAdvanced(!showAdvanced)}
-            className={`inline-flex h-9 items-center gap-1.5 rounded-xl border px-2.5 text-caption font-semibold transition-colors ${
+            className={`py-0 inline-flex h-9 items-center gap-1.5 rounded-xl border px-2.5 text-caption font-semibold transition-colors ${
               showAdvanced || advancedCount > 0
                 ? "border-primary bg-primary/10 text-primary hover:bg-primary/10"
                 : "border-border text-text-muted hover:bg-surface-muted hover:text-text"
@@ -187,7 +187,7 @@ export function TrackingToolbar({ state, onChange, onApplyView, onRefresh }: Pro
                   role="tab"
                   aria-selected={active}
                   onClick={() => onChange({ view: t.id })}
-                  className={`inline-flex h-8 items-center gap-1 rounded-lg px-2.5 text-caption font-bold transition-all ${
+                  className={`py-0 inline-flex h-8 items-center gap-1 rounded-lg px-2.5 text-caption font-bold transition-all ${
                     active ? "bg-surface text-primary shadow-xs hover:bg-surface" : "text-text-muted hover:text-text"
                   }`}
                   title={t.label}
@@ -204,7 +204,7 @@ export function TrackingToolbar({ state, onChange, onApplyView, onRefresh }: Pro
               type="button"
               onClick={onRefresh}
               title="Làm mới tiến độ"
-              className="font-[inherit] gap-0 inline-flex h-9 w-9 items-center justify-center rounded-xl border border-border text-text-muted hover:bg-surface-muted hover:text-text"
+              className="px-0 py-0 text-[length:inherit] font-[inherit] gap-0 inline-flex h-9 w-9 items-center justify-center rounded-xl border border-border text-text-muted hover:bg-surface-muted hover:text-text"
             >
               <RefreshCw size={14} />
             </Button>
@@ -220,7 +220,7 @@ export function TrackingToolbar({ state, onChange, onApplyView, onRefresh }: Pro
             <Button variant="ghost"
               type="button"
               onClick={() => onApplyView(v)}
-              className="gap-0 px-2 py-0.5 font-medium text-text hover:text-primary transition-colors text-caption"
+              className="h-auto gap-0 px-2 py-0.5 font-medium text-text hover:text-primary transition-colors text-caption"
             >
               {v.name}
             </Button>
@@ -229,7 +229,7 @@ export function TrackingToolbar({ state, onChange, onApplyView, onRefresh }: Pro
                 type="button"
                 aria-label={`Xoá view ${v.name}`}
                 onClick={() => remove(v.id)}
-                className="h-auto p-0 font-[inherit] gap-0 pr-1.5 text-text-muted hover:text-danger"
+                className="text-[length:inherit] h-auto p-0 font-[inherit] gap-0 pr-1.5 text-text-muted hover:text-danger"
               >
                 <Trash2 size={11} aria-hidden="true" />
               </Button>
@@ -239,7 +239,7 @@ export function TrackingToolbar({ state, onChange, onApplyView, onRefresh }: Pro
         <Button variant="outline"
           type="button"
           onClick={saveCurrent}
-          className="gap-0 rounded-lg border border-dashed border-primary/50 px-2 py-0.5 text-caption font-semibold text-primary hover:bg-primary/5"
+          className="h-auto gap-0 rounded-lg border border-dashed border-primary/50 px-2 py-0.5 text-caption font-semibold text-primary hover:bg-primary/5"
         >
           + Lưu view
         </Button>

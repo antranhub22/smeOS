@@ -233,8 +233,8 @@ export function PartnerProductCard(props: PartnerProductCardProps) {
           <span className="px-2.5 py-0.5 rounded-md bg-primary-muted text-primary text-caption font-black uppercase border border-primary-border tracking-wider">
             T02 • PRODUCT CARD
           </span>
-          <span className="text-xs font-bold text-text-muted">PHIẾU ĐẶT HÀNG GỬI ĐỐI TÁC</span>
-          <span className="text-sm font-extrabold text-text">#{orderCode}</span>
+          <span className="text-caption font-bold text-text-muted">PHIẾU ĐẶT HÀNG GỬI ĐỐI TÁC</span>
+          <span className="text-body-sm font-extrabold text-text">#{orderCode}</span>
         </div>
 
         {/* Primary Visible Buttons + Overflow Menu */}
@@ -285,7 +285,7 @@ export function PartnerProductCard(props: PartnerProductCardProps) {
               <div className="text-white/80 text-caption font-bold uppercase tracking-wider">
                 Phiếu Đặt Hoa Đối Tác
               </div>
-              <div className="text-white text-sm font-extrabold">
+              <div className="text-white text-body-sm font-extrabold">
                 ĐƠN #{orderCode}
               </div>
             </div>
@@ -295,7 +295,7 @@ export function PartnerProductCard(props: PartnerProductCardProps) {
               <Clock size={12} />
               <span>Hoàn thành trước:</span>
             </div>
-            <div className="text-white text-sm font-black">
+            <div className="text-white text-body-sm font-black">
               {deliveryTargetTime}
             </div>
           </div>
@@ -305,7 +305,7 @@ export function PartnerProductCard(props: PartnerProductCardProps) {
         <div className="p-5 flex flex-col gap-4">
           {/* Rủi ro cảnh báo */}
           {riskLevel && riskLevel !== "NORMAL" && riskReason && (
-            <div className="flex items-start gap-2 p-2.5 rounded-xl bg-warning-bg border border-warning-border text-warning-text text-xs font-medium">
+            <div className="flex items-start gap-2 p-2.5 rounded-xl bg-warning-bg border border-warning-border text-warning-text text-caption font-medium">
               <AlertTriangle size={14} className="shrink-0 text-warning mt-0.5" />
               <span>{riskReason}</span>
             </div>
@@ -340,7 +340,7 @@ export function PartnerProductCard(props: PartnerProductCardProps) {
                 <div className="text-caption font-bold text-primary uppercase tracking-wide mb-0.5">
                   Tên sản phẩm
                 </div>
-                <div className="text-base font-extrabold text-text leading-snug">
+                <div className="text-body font-extrabold text-text leading-snug">
                   {productTitle}
                 </div>
               </div>
@@ -352,7 +352,7 @@ export function PartnerProductCard(props: PartnerProductCardProps) {
                     <Banknote size={14} className="text-success" />
                     <div>
                       <div className="text-caption font-bold text-success uppercase">Giá công đối tác</div>
-                      <div className="text-sm font-black text-success-text">
+                      <div className="text-body-sm font-black text-success-text">
                         {partnerPayoutVnd.toLocaleString("vi-VN")}đ
                       </div>
                     </div>
@@ -362,7 +362,7 @@ export function PartnerProductCard(props: PartnerProductCardProps) {
 
               {/* Đối tác đã phân công */}
               {partnerName && (
-                <div className="px-2.5 py-1 rounded-lg bg-info-bg border border-info-border text-xs font-bold text-info-text inline-flex items-center gap-1.5 self-start">
+                <div className="px-2.5 py-1 rounded-lg bg-info-bg border border-info-border text-caption font-bold text-info-text inline-flex items-center gap-1.5 self-start">
                   🏪 Xưởng: {partnerName}
                 </div>
               )}
@@ -374,7 +374,7 @@ export function PartnerProductCard(props: PartnerProductCardProps) {
             <div className="p-3.5 rounded-xl bg-primary-muted/60 border border-primary-border">
               <div className="flex items-center gap-1.5 mb-2.5">
                 <Scissors size={13} className="text-primary" />
-                <span className="text-xs font-extrabold text-primary-dark uppercase tracking-wide">
+                <span className="text-caption font-extrabold text-primary-dark uppercase tracking-wide">
                   Công Thức Cành Hoa
                 </span>
                 <Badge tone="danger" className="text-caption font-black ml-1">
@@ -391,7 +391,7 @@ export function PartnerProductCard(props: PartnerProductCardProps) {
                       {i + 1}
                     </span>
                     <div className="min-w-0 flex-1">
-                      <div className="text-xs font-bold text-text truncate flex items-center gap-1.5 flex-wrap">
+                      <div className="text-caption font-bold text-text truncate flex items-center gap-1.5 flex-wrap">
                         <span>{fl.flowerName}</span>
                         {fl.shade && (
                           <span className="px-1 py-0 rounded bg-surface-alt text-text-muted text-caption font-bold">
@@ -464,7 +464,7 @@ export function PartnerProductCard(props: PartnerProductCardProps) {
                   </span>
                 )}
               </div>
-              <div className="text-xs font-bold text-text leading-relaxed">
+              <div className="text-caption font-bold text-text leading-relaxed">
                 {formattedAddress}
               </div>
               {typeof deliveryAddress === "object" && deliveryAddress !== null && (
@@ -487,7 +487,7 @@ export function PartnerProductCard(props: PartnerProductCardProps) {
               <div className="flex items-center gap-1.5">
                 <span className="text-caption font-bold text-text-muted uppercase">👤 Người nhận hàng</span>
               </div>
-              <div className="text-xs font-bold text-text">
+              <div className="text-caption font-bold text-text">
                 {recipientName}
               </div>
               <div className="text-caption text-text-muted font-medium">
@@ -504,7 +504,7 @@ export function PartnerProductCard(props: PartnerProductCardProps) {
                 <div className="text-caption font-bold text-warning uppercase mb-0.5">
                   Nội dung thiệp chúc mừng
                 </div>
-                <div className="text-xs text-warning-text font-semibold italic leading-relaxed">
+                <div className="text-caption text-warning-text font-semibold italic leading-relaxed">
                   &ldquo;{cardMessage}&rdquo;
                 </div>
               </div>
@@ -519,7 +519,7 @@ export function PartnerProductCard(props: PartnerProductCardProps) {
                 <div className="text-caption font-bold text-accent-text uppercase mb-0.5">
                   Ghi chú kỹ thuật từ Điều phối
                 </div>
-                <div className="text-xs text-accent-text font-medium leading-relaxed whitespace-pre-line">
+                <div className="text-caption text-accent-text font-medium leading-relaxed whitespace-pre-line">
                   {technicalNotes}
                 </div>
               </div>
@@ -530,7 +530,7 @@ export function PartnerProductCard(props: PartnerProductCardProps) {
           {customFields.length > 0 && (
             <div className="p-3 rounded-xl bg-surface-alt border border-border">
               <div className="text-caption font-bold text-text-muted uppercase mb-1">Thông tin bổ sung</div>
-              <div className="space-y-0.5 text-xs text-text">
+              <div className="space-y-0.5 text-caption text-text">
                 {customFields.map((f) => (
                   <div key={f.key}>
                     <span className="font-semibold">{f.label}:</span> {String(f.value)}
@@ -558,7 +558,7 @@ export function PartnerProductCard(props: PartnerProductCardProps) {
             <div className="text-caption font-bold text-text-muted uppercase flex items-center gap-1">
               Giá bán khách <span className="italic normal-case font-medium">(chỉ nội bộ, không gửi đối tác)</span>
             </div>
-            <div className="text-sm font-bold text-text-muted">
+            <div className="text-body-sm font-bold text-text-muted">
               {unitPriceVnd.toLocaleString("vi-VN")}đ
             </div>
           </div>

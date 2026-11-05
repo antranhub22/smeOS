@@ -45,7 +45,7 @@ export function ZaloScriptBox({
   return (
     <div className={`flex flex-col gap-4 max-w-2xl mx-auto w-full ${className ?? ""}`}>
       <div className="flex items-center justify-between px-1">
-        <span className="text-xs font-bold text-text uppercase tracking-wider flex items-center gap-1.5">
+        <span className="text-caption font-bold text-text uppercase tracking-wider flex items-center gap-1.5">
           <MessageSquareText size={14} className="text-primary" />
           Kịch bản tư vấn Zalo (Định dạng Emoji chuẩn Sales)
         </span>
@@ -55,7 +55,7 @@ export function ZaloScriptBox({
               variant="ghost"
               size="sm"
               onClick={onResetDefault}
-              className="text-xs text-text-muted hover:text-text h-7 px-2 gap-1"
+              className="text-caption text-text-muted hover:text-text h-7 px-2 gap-1"
             >
               <RefreshCw size={12} />
               Mặc định
@@ -64,7 +64,7 @@ export function ZaloScriptBox({
           <Button
             size="sm"
             onClick={handleCopy}
-            className={`text-xs font-bold transition-all h-8 gap-1.5 ${
+            className={`text-caption font-bold transition-all h-8 gap-1.5 ${
               copied
                 ? "bg-secondary-text hover:bg-secondary-text/90 text-white shadow-xs"
                 : "bg-primary hover:bg-primary/90 text-white shadow-xs"
@@ -86,7 +86,7 @@ export function ZaloScriptBox({
       </div>
 
       <Card className="overflow-hidden rounded-2xl border border-border bg-surface shadow-sm">
-        <div className="flex items-center justify-between border-b border-border bg-surface-alt/60 px-4 py-2.5 text-xs text-text-muted">
+        <div className="flex items-center justify-between border-b border-border bg-surface-alt/60 px-4 py-2.5 text-caption text-text-muted">
           <span className="flex items-center gap-1.5 font-medium">
             <Sparkles size={13} className="text-primary" />
             Tự động điền thông số sản phẩm, giá ưu đãi & quà tặng

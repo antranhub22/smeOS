@@ -1,5 +1,6 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
 import React from "react"
 import { Eye } from "@/components/ui/icon-set/eye"
 import { Flower2 } from "@/components/ui/icon-set/flower2"
@@ -30,10 +31,10 @@ export function OrderCard({
   const { dict, formatCurrency, formatTime } = useI18n()
 
   return (
-    <button
+    <Button variant="outline"
       type="button"
       onClick={onSelect}
-      className="w-full text-left cursor-pointer rounded-2xl border border-border bg-surface p-4 shadow-sm transition-all hover:border-primary hover:shadow-md space-y-2 text-body-sm focus-visible:outline-2 focus-visible:outline-primary min-h-11"
+      className="justify-start font-[inherit] gap-0 w-full text-left cursor-pointer rounded-2xl border border-border bg-surface p-4 shadow-sm transition-all hover:border-primary hover:shadow-md space-y-2 text-body-sm focus-visible:outline-2 focus-visible:outline-primary min-h-11 hover:bg-surface"
     >
       <div className="flex items-center justify-between">
         <span className="font-mono font-bold text-primary">{order.code}</span>
@@ -76,7 +77,7 @@ export function OrderCard({
           <Eye size={13} aria-hidden="true" /> {dict.orders.actions.viewDetails}
         </span>
       </div>
-    </button>
+    </Button>
   )
 }
 

@@ -51,7 +51,7 @@ export function MessageThread({ target, stepKey = "GENERAL", title, onClose, onB
       title={title ?? thread.data?.data.label ?? "Trao đổi nội bộ"}
       onClose={onClose}
       leading={onBack && (
-        <Button variant="ghost" type="button" onClick={onBack} className="gap-0 inline-flex h-11 items-center rounded-full px-3 text-body-sm font-bold text-primary hover:bg-surface-muted">
+        <Button variant="ghost" type="button" onClick={onBack} className="py-0 gap-0 inline-flex h-11 items-center rounded-full px-3 text-body-sm font-bold text-primary hover:bg-surface-muted">
           ‹ Hộp việc
         </Button>
       )}
@@ -143,7 +143,7 @@ export function MessageThread({ target, stepKey = "GENERAL", title, onClose, onB
                 {m.stepKey !== "GENERAL" && <span className="rounded-full bg-surface-muted px-2 text-caption text-text-muted">{m.stepTitle}</span>}
                 {!m.mine && m.kind === "MESSAGE" && (
                   <Button variant="ghost" type="button" onClick={() => setReplyTo({ id: m.id, senderName: m.senderName })}
-                    className="inline-flex h-9 items-center gap-1 rounded-lg px-2 text-caption font-bold text-primary hover:bg-primary/10">
+                    className="py-0 inline-flex h-9 items-center gap-1 rounded-lg px-2 text-caption font-bold text-primary hover:bg-primary/10">
                     <CornerUpLeft size={13} aria-hidden="true" /> Trả lời
                   </Button>
                 )}

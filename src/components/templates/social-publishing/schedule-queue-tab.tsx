@@ -57,11 +57,11 @@ export function ScheduleQueueTab({
             <Sparkles size={24} />
           </div>
           <div className="text-title-sm font-bold text-text">Chưa có bài viết nào chờ lên lịch</div>
-          <div className="text-xs text-text-muted max-w-sm mt-1">
+          <div className="text-caption text-text-muted max-w-sm mt-1">
             Hãy vào tab <strong>Sinh Nội Dung AI (Đăng mạng xã hội)</strong> để tạo và duyệt bài viết sản phẩm cho Facebook, Instagram, TikTok, Zalo và LinkedIn.
           </div>
           <Button
-            className="mt-4 text-xs font-bold"
+            className="mt-4 text-caption font-bold"
             onClick={onGoToContentEngine}
           >
             Đến Cỗ Máy Sinh Nội Dung
@@ -99,7 +99,7 @@ export function ScheduleQueueTab({
               variant="ghost"
               size="sm"
               onClick={onToggleSelectAll}
-              className="h-auto p-0 text-xs font-semibold text-primary hover:underline cursor-pointer"
+              className="h-auto p-0 text-caption font-semibold text-primary hover:underline cursor-pointer"
             >
               {selectedIds.length === calendarPosts.length ? "Bỏ chọn tất cả" : "Chọn tất cả"}
             </Button>
@@ -130,7 +130,7 @@ export function ScheduleQueueTab({
         <div className="text-body font-bold text-text mb-3 flex items-center justify-between">
           <span>Xem trước nền tảng</span>
           {selectedPost && (
-            <span className="text-xs font-normal text-text-muted">
+            <span className="text-caption font-normal text-text-muted">
               Đang xem: <strong className="text-primary">{selectedPost.title}</strong>
             </span>
           )}

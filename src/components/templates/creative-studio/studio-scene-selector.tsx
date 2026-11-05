@@ -1,5 +1,6 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
 import * as React from "react"
 import { Badge } from "@/components/ui/badge"
 import { Sparkles } from "@/components/ui/icon-set/sparkles"
@@ -74,7 +75,7 @@ export function StudioSceneSelector({
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
-        <label className="text-xs font-semibold uppercase tracking-wider text-text-muted flex items-center gap-1.5">
+        <label className="text-caption font-semibold uppercase tracking-wider text-text-muted flex items-center gap-1.5">
           <Palette className="h-3.5 w-3.5 text-primary" />
           Bối cảnh Studio & Phong cách (Scene Presets)
         </label>
@@ -87,15 +88,15 @@ export function StudioSceneSelector({
           const Icon = preset.icon
 
           return (
-            <button
+            <Button variant="outline"
               type="button"
               disabled={disabled}
               key={preset.id}
               aria-disabled={disabled}
               onClick={() => !disabled && onChange(preset.id)}
-              className={`group relative flex flex-col items-start p-3 rounded-xl border text-left transition-all duration-200 ${
+              className={`text-[length:inherit] h-auto justify-start font-[inherit] gap-0 group relative flex flex-col items-start p-3 rounded-xl border text-left transition-all duration-200 ${
                 isSelected
-                  ? "border-primary bg-primary/5 shadow-sm ring-1 ring-primary/20"
+                  ? "border-primary bg-primary/5 shadow-sm ring-1 ring-primary/20 hover:bg-primary/5"
                   : "border-border bg-surface hover:border-text-muted/40 hover:bg-surface-alt/50"
               } ${disabled ? "opacity-60 cursor-not-allowed" : "cursor-pointer"}`}
             >
@@ -124,7 +125,7 @@ export function StudioSceneSelector({
               <p className="text-caption leading-relaxed text-text-muted">
                 {preset.desc}
               </p>
-            </button>
+            </Button>
           )
         })}
       </div>

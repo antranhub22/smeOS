@@ -139,28 +139,28 @@ export function VietQrTopupModal({
       <div className="space-y-4 py-2">
         {/* Tab Switcher: Nạp Credit vs Nâng gói */}
         <div className="flex rounded-lg border border-border bg-surface p-1">
-          <button
+          <Button variant="ghost"
             type="button"
             onClick={() => setActiveTab("CREDITS")}
-            className={`cursor-pointer text-center flex-1 py-1.5 rounded-md text-caption font-semibold transition ${
+            className={`px-0 h-auto gap-0 cursor-pointer text-center flex-1 py-1.5 rounded-md text-caption font-semibold transition ${
               activeTab === "CREDITS"
-                ? "bg-primary text-primary-foreground shadow-sm"
+                ? "bg-primary text-primary-foreground shadow-sm hover:bg-primary"
                 : "text-text-muted hover:text-text"
             }`}
           >
             ⚡ Nạp thêm Credit AI (Sinh ảnh / Video)
-          </button>
-          <button
+          </Button>
+          <Button variant="ghost"
             type="button"
             onClick={() => setActiveTab("PLANS")}
-            className={`cursor-pointer text-center flex-1 py-1.5 rounded-md text-caption font-semibold transition ${
+            className={`px-0 h-auto gap-0 cursor-pointer text-center flex-1 py-1.5 rounded-md text-caption font-semibold transition ${
               activeTab === "PLANS"
-                ? "bg-primary text-primary-foreground shadow-sm"
+                ? "bg-primary text-primary-foreground shadow-sm hover:bg-primary"
                 : "text-text-muted hover:text-text"
             }`}
           >
             👑 Gói cước phần mềm cửa hàng hoa
-          </button>
+          </Button>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -170,14 +170,14 @@ export function VietQrTopupModal({
               <div className="space-y-2">
                 <div className="text-caption font-semibold text-text">Chọn mức nạp Credit AI:</div>
                 {CREDIT_TOPUP_OPTIONS.map((opt) => (
-                  <button
+                  <Button variant="outline"
                     type="button"
                     key={opt.id}
                     onClick={() => setSelectedTopup(opt)}
-                    className={`cursor-pointer w-full text-left p-3 rounded-lg border transition ${
+                    className={`text-[length:inherit] h-auto justify-start font-[inherit] gap-0 cursor-pointer w-full text-left p-3 rounded-lg border transition ${
                       selectedTopup.id === opt.id
-                        ? "border-primary bg-primary/10"
-                        : "border-border bg-surface hover:border-primary/40"
+                        ? "border-primary bg-primary/10 hover:bg-primary/10"
+                        : "border-border bg-surface hover:border-primary/40 hover:bg-surface"
                     }`}
                   >
                     <div className="flex items-center justify-between">
@@ -191,21 +191,21 @@ export function VietQrTopupModal({
                       {opt.totalCredits} Credit AI
                       <span className="text-success font-medium">(Tặng thêm {opt.bonusCredits} cr)</span>
                     </div>
-                  </button>
+                  </Button>
                 ))}
               </div>
             ) : (
               <div className="space-y-2">
                 <div className="text-caption font-semibold text-text">Chọn gói cước phần mềm:</div>
                 {SUBSCRIPTION_PLANS.map((plan) => (
-                  <button
+                  <Button variant="outline"
                     type="button"
                     key={plan.id}
                     onClick={() => setSelectedPlan(plan)}
-                    className={`cursor-pointer w-full text-left p-3 rounded-lg border transition ${
+                    className={`text-[length:inherit] h-auto justify-start font-[inherit] gap-0 cursor-pointer w-full text-left p-3 rounded-lg border transition ${
                       selectedPlan.id === plan.id
-                        ? "border-primary bg-primary/10"
-                        : "border-border bg-surface hover:border-primary/40"
+                        ? "border-primary bg-primary/10 hover:bg-primary/10"
+                        : "border-border bg-surface hover:border-primary/40 hover:bg-surface"
                     }`}
                   >
                     <div className="flex items-center justify-between">
@@ -216,7 +216,7 @@ export function VietQrTopupModal({
                       {plan.priceMonthlyVnd.toLocaleString("vi-VN")} đ / tháng
                     </div>
                     <div className="text-caption text-text-muted mt-1">{plan.description}</div>
-                  </button>
+                  </Button>
                 ))}
               </div>
             )}

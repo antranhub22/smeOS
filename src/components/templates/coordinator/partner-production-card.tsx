@@ -63,20 +63,20 @@ export function PartnerProductionCard({
           <div className="text-caption font-bold uppercase tracking-wider text-text-muted">
             Lệnh {ti.makerAction} & Phiếu Xưởng (T07)
           </div>
-          <h3 className="text-lg font-extrabold text-text">
+          <h3 className="text-title-sm font-extrabold text-text">
             Đơn #{orderCode}: {recipeTitle}
           </h3>
           {partnerName && (
-            <div className="text-xs text-text-muted mt-0.5">Đối tác / {ti.makerTitle}: <strong className="text-text">{partnerName}</strong></div>
+            <div className="text-caption text-text-muted mt-0.5">Đối tác / {ti.makerTitle}: <strong className="text-text">{partnerName}</strong></div>
           )}
         </div>
         <div className="flex flex-col items-end gap-1.5">
-          <Badge tone="danger" className="gap-1 font-bold px-3 py-1 text-xs">
+          <Badge tone="danger" className="gap-1 font-bold px-3 py-1 text-caption">
             <Clock size={13} />
             Hạn {ti.makerAction} xong: {targetReadyTime}
           </Badge>
           {onPrint && (
-            <Button variant="ghost" size="sm" onClick={onPrint} className="h-7 text-xs gap-1 text-text-muted">
+            <Button variant="ghost" size="sm" onClick={onPrint} className="h-7 text-caption gap-1 text-text-muted">
               <Printer size={12} />
               In phiếu xưởng
             </Button>
@@ -87,7 +87,7 @@ export function PartnerProductionCard({
       <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
         {sampleImageUrl && (
           <div className="flex flex-col gap-2">
-            <span className="text-xs font-bold text-text-muted">ẢNH MẪU THAM CHIẾU</span>
+            <span className="text-caption font-bold text-text-muted">ẢNH MẪU THAM CHIẾU</span>
             <div className="relative aspect-square w-full rounded-xl overflow-hidden border border-border bg-surface-alt">
               <img src={sampleImageUrl} alt={`Mẫu ${ti.sampleProduct}`} className="h-full w-full object-cover" />
             </div>
@@ -96,12 +96,12 @@ export function PartnerProductionCard({
 
         <div className={sampleImageUrl ? "md:col-span-2 flex flex-col gap-4" : "md:col-span-3 flex flex-col gap-4"}>
           <div>
-            <div className="text-xs font-bold text-text-muted uppercase tracking-wider mb-2 flex items-center gap-1.5">
+            <div className="text-caption font-bold text-text-muted uppercase tracking-wider mb-2 flex items-center gap-1.5">
               <Layers size={13} className="text-alert-600" />
               <span>CÔNG THỨC & ĐỊNH LƯỢNG CHI TIẾT</span>
             </div>
             <div className="rounded-xl border border-border overflow-hidden">
-              <table className="w-full text-left text-xs">
+              <table className="w-full text-left text-caption">
                 <thead className="bg-surface-alt border-b border-border text-text-muted font-bold">
                   <tr>
                     <th className="px-3 py-2">Tên vật tư / nguyên liệu</th>
@@ -156,7 +156,7 @@ export function PartnerProductionCard({
           </div>
 
           {(foliage.length > 0 || wrapping.length > 0 || accessories.length > 0) && (
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-caption">
               {foliage.length > 0 && (
                 <div className="p-3 rounded-xl bg-surface-alt border border-border/60">
                   <span className="font-bold text-text block mb-1">🌿 Lá & Cành đệm:</span>
@@ -202,7 +202,7 @@ export function PartnerProductionCard({
           )}
 
           {cardMessage && (
-            <div className="p-3.5 rounded-xl bg-blush-50/70 border border-blush-200 text-xs">
+            <div className="p-3.5 rounded-xl bg-blush-50/70 border border-blush-200 text-caption">
               <div className="font-bold text-blush-950 flex items-center gap-1.5 mb-1">
                 <MessageSquare size={13} className="text-blush-600" />
                 <span>Nội dung thiệp chúc mừng (In nguyên văn):</span>
@@ -212,7 +212,7 @@ export function PartnerProductionCard({
           )}
 
           {customFields.length > 0 && (
-            <div className="p-3 rounded-xl bg-surface-alt border border-border/60 text-xs">
+            <div className="p-3 rounded-xl bg-surface-alt border border-border/60 text-caption">
               <div className="font-bold text-text-muted uppercase text-caption mb-1">Thông tin bổ sung</div>
               <div className="space-y-0.5 text-text">
                 {customFields.map((f) => (
@@ -227,7 +227,7 @@ export function PartnerProductionCard({
       </div>
 
       <div className="flex items-center justify-between pt-3 border-t border-dashed border-border">
-        <div className="text-xs text-text-muted">
+        <div className="text-caption text-text-muted">
           {partnerInstruction && <span>Lưu ý thợ: <strong>{partnerInstruction}</strong></span>}
         </div>
         {onMarkReady && (

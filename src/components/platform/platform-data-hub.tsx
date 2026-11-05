@@ -8,9 +8,9 @@
  * Level 2: Bảng bản ghi thực tế (100/trang) + Tải CSV
  */
 
+import { Input } from "@/components/ui/input"; import { Button } from "@/components/ui/button"
 import React, { useState, useEffect } from "react"
 import { Card } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
 import { SkeletonBlock } from "@/components/ui/skeleton"
 import { Globe } from "@/components/ui/icon-set/globe"
 import { Building2 } from "@/components/ui/icon-set/building2"
@@ -133,10 +133,10 @@ function OrgCard({
     org.productCount + org.orderCount + org.memberCount + org.generationJobCount
 
   return (
-    <button
+    <Button variant="outline"
       type="button"
       onClick={() => onOpen(org)}
-      className="group text-left w-full rounded-2xl border border-border bg-surface hover:border-primary/50 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 p-4 space-y-3 focus:outline-primary"
+      className="text-[length:inherit] h-auto justify-start font-[inherit] gap-0 group text-left w-full rounded-2xl border border-border bg-surface hover:border-primary/50 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200 p-4 space-y-3 focus:outline-primary hover:bg-surface"
     >
       <div className="flex items-start justify-between gap-2">
         <div className="flex items-center gap-2.5 min-w-0">
@@ -216,7 +216,7 @@ function OrgCard({
         </span>
         <span className="ml-auto text-text-muted">{org.industryKey ?? "Chưa phân ngành"}</span>
       </div>
-    </button>
+    </Button>
   )
 }
 
@@ -284,11 +284,11 @@ function DomainPicker({
           const count = org[d.countKey]
           const Icon = d.icon
           return (
-            <button
+            <Button variant="outline"
               key={d.key}
               type="button"
               onClick={() => onSelect(d.key)}
-              className="group text-left w-full rounded-2xl border border-border bg-surface hover:border-primary/40 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 p-4 space-y-2.5 focus:outline-primary"
+              className="text-[length:inherit] h-auto justify-start font-[inherit] gap-0 group text-left w-full rounded-2xl border border-border bg-surface hover:border-primary/40 hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 p-4 space-y-2.5 focus:outline-primary hover:bg-surface"
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2.5">
@@ -311,7 +311,7 @@ function DomainPicker({
                 <FileDown size={11} />
                 Xem chi tiết + Tải CSV
               </div>
-            </button>
+            </Button>
           )
         })}
       </div>
@@ -386,25 +386,25 @@ export function PlatformDataHub() {
       {/* Breadcrumb */}
       <div className="space-y-1">
         <nav className="flex items-center gap-2 text-caption font-bold text-text-muted flex-wrap">
-          <button
+          <Button variant="ghost"
             type="button"
             onClick={handleBackToOrgs}
-            className="flex items-center gap-1.5 hover:text-primary transition-colors text-text font-bold"
+            className="text-[length:inherit] h-auto p-0 flex items-center gap-1.5 hover:text-primary transition-colors text-text font-bold"
           >
             <Globe size={15} className="text-primary" />
             <span>Dữ Liệu Nền Tảng</span>
-          </button>
+          </Button>
           {selectedOrg && (
             <>
               <ChevronRight size={13} className="text-text-muted/60" />
-              <button
+              <Button variant="ghost"
                 type="button"
                 onClick={handleBackToDomains}
-                className={`flex items-center gap-1.5 transition-colors ${selectedDomain ? "hover:text-primary text-text-muted" : "text-primary font-extrabold"}`}
+                className={`text-[length:inherit] h-auto p-0 flex items-center gap-1.5 transition-colors ${selectedDomain ? "hover:text-primary text-text-muted" : "text-primary font-extrabold"}`}
               >
                 <Building2 size={14} />
                 <span>{selectedOrg.name}</span>
-              </button>
+              </Button>
             </>
           )}
           {selectedDomain && selectedDomainMeta && (
@@ -465,7 +465,7 @@ export function PlatformDataHub() {
               <>
                 <div className="relative w-44 sm:w-52">
                   <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" />
-                  <input
+                  <Input
                     type="text"
                     placeholder="Tìm tổ chức…"
                     value={search}
@@ -515,18 +515,18 @@ export function PlatformDataHub() {
                 ENTERPRISE: `DN (${typeCounts.ENTERPRISE})`,
               }
               return (
-                <button
+                <Button variant="ghost"
                   key={t}
                   type="button"
                   onClick={() => setFilterType(t)}
-                  className={`px-3 py-1 rounded-lg text-caption font-bold transition-colors ${
+                  className={`h-auto gap-0 px-3 py-1 rounded-lg text-caption font-bold transition-colors ${
                     filterType === t
-                      ? "bg-primary text-white"
-                      : "bg-surface border border-border text-text-muted hover:text-text"
+                      ? "bg-primary text-white hover:bg-primary"
+                      : "bg-surface border border-border text-text-muted hover:text-text hover:bg-surface"
                   }`}
                 >
                   {labels[t]}
-                </button>
+                </Button>
               )
             })}
             <span className="ml-auto text-caption text-text-muted flex items-center gap-1">

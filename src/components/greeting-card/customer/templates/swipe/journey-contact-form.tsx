@@ -156,7 +156,7 @@ export function JourneyContactForm({
         <Button variant="ghost"
           type="submit"
           disabled={!canContinue}
-          className="gap-0 mt-1 h-12 w-full rounded-xl text-body font-bold shadow-md transition-all active:scale-[0.98] disabled:pointer-events-none disabled:opacity-40"
+          className="px-0 py-0 gap-0 mt-1 h-12 w-full rounded-xl text-body font-bold shadow-md transition-all active:scale-[0.98] disabled:pointer-events-none disabled:opacity-40"
           style={{ background: theme.ctaBg, color: theme.ctaText }}
         >
           {t("greetingCard.customer.journey.continue")}

@@ -72,7 +72,7 @@ export function OccasionBudgetDeck({ products, catalogName, onSelectProduct }: O
                 setOccasion(null)
                 setBudget(null)
               }}
-              className="gap-0 mt-3 h-10 rounded-full border border-border bg-surface px-4 text-body-sm font-semibold hover:bg-surface"
+              className="py-0 gap-0 mt-3 h-10 rounded-full border border-border bg-surface px-4 text-body-sm font-semibold hover:bg-surface"
             >
               Xem tất cả mẫu
             </Button>
@@ -81,16 +81,16 @@ export function OccasionBudgetDeck({ products, catalogName, onSelectProduct }: O
           <ul className="flex flex-col gap-3">
             {results.map((p) => (
               <li key={p.id} className="flex gap-3 rounded-2xl border border-border bg-surface p-3">
-                <Button variant="ghost" type="button" onClick={() => setOpen(p)} className="font-[inherit] gap-0 h-28 w-24 shrink-0 overflow-hidden rounded-xl bg-surface-alt hover:bg-surface-alt" aria-label={`Chi tiết ${p.name}`}>
+                <Button variant="ghost" type="button" onClick={() => setOpen(p)} className="px-0 py-0 text-[length:inherit] font-[inherit] gap-0 h-28 w-24 shrink-0 overflow-hidden rounded-xl bg-surface-alt hover:bg-surface-alt" aria-label={`Chi tiết ${p.name}`}>
                   <ProductImage product={p} />
                 </Button>
                 <div className="flex min-w-0 flex-1 flex-col">
                   <ProductInfo product={p} level="standard" size="sm" muted="var(--color-text-muted)" titleClassName="font-semibold" />
                   <div className="mt-auto flex gap-2 pt-2">
-                    <Button variant="primary" type="button" onClick={() => onSelectProduct(p)} className="gap-0 h-10 flex-1 rounded-xl bg-primary text-body-sm font-bold text-white hover:bg-primary">
+                    <Button variant="primary" type="button" onClick={() => onSelectProduct(p)} className="px-0 py-0 gap-0 h-10 flex-1 rounded-xl bg-primary text-body-sm font-bold text-white hover:bg-primary">
                       Đặt mẫu
                     </Button>
-                    <Button variant="outline" type="button" onClick={() => setOpen(p)} className="gap-0 h-10 rounded-xl border border-border px-3 text-body-sm font-semibold">
+                    <Button variant="outline" type="button" onClick={() => setOpen(p)} className="py-0 gap-0 h-10 rounded-xl border border-border px-3 text-body-sm font-semibold">
                       Chi tiết
                     </Button>
                   </div>

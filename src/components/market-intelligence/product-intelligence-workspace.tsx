@@ -206,45 +206,45 @@ export function ProductIntelligenceWorkspace() {
   return (
     <div className="space-y-6">
       {/* Visual Pipeline Header Indicator — 5 Chặng tuần tự */}
-      <div className="rounded-2xl border border-cool-200 bg-white p-3.5 shadow-xs">
-        <div className="flex items-center justify-between text-xs font-bold overflow-x-auto gap-2">
-          <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl transition-all ${currentStep >= 1 ? "bg-blush-50 text-blush-700 font-extrabold" : "text-text-muted"}`}>
-            <span className={`flex h-5 w-5 items-center justify-center rounded-full text-caption ${currentStep >= 2 ? "bg-mint-600 text-white" : "bg-blush-600 text-white"}`}>
+      <div className="rounded-2xl border border-border bg-white p-3.5 shadow-xs">
+        <div className="flex items-center justify-between text-caption font-bold overflow-x-auto gap-2">
+          <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl transition-all ${currentStep >= 1 ? "bg-primary-muted text-primary font-extrabold" : "text-text-muted"}`}>
+            <span className={`flex h-5 w-5 items-center justify-center rounded-full text-caption ${currentStep >= 2 ? "bg-success text-white" : "bg-primary text-white"}`}>
               {currentStep >= 2 ? "✓" : "1"}
             </span>
             <span>01. Tải ảnh (BRING)</span>
           </div>
-          <ArrowRight size={14} className="text-cool-300 shrink-0" />
-          <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl transition-all ${currentStep >= 2 ? "bg-blush-50 text-blush-700 font-extrabold" : "text-text-muted"}`}>
-            <span className={`flex h-5 w-5 items-center justify-center rounded-full text-caption ${currentStep >= 3 ? "bg-mint-600 text-white" : "bg-blush-600 text-white"}`}>
+          <ArrowRight size={14} className="text-text-muted shrink-0" />
+          <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl transition-all ${currentStep >= 2 ? "bg-primary-muted text-primary font-extrabold" : "text-text-muted"}`}>
+            <span className={`flex h-5 w-5 items-center justify-center rounded-full text-caption ${currentStep >= 3 ? "bg-success text-white" : "bg-primary text-white"}`}>
               {currentStep >= 3 ? "✓" : "2"}
             </span>
             <span>02. Vision AI bóc tách (UNDERSTAND)</span>
           </div>
-          <ArrowRight size={14} className="text-cool-300 shrink-0" />
-          <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl transition-all ${currentStep >= 3 ? "bg-blush-50 text-blush-700 font-extrabold" : "text-text-muted"}`}>
-            <span className={`flex h-5 w-5 items-center justify-center rounded-full text-caption ${currentStep >= 4 ? "bg-mint-600 text-white" : "bg-blush-600 text-white"}`}>
+          <ArrowRight size={14} className="text-text-muted shrink-0" />
+          <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl transition-all ${currentStep >= 3 ? "bg-primary-muted text-primary font-extrabold" : "text-text-muted"}`}>
+            <span className={`flex h-5 w-5 items-center justify-center rounded-full text-caption ${currentStep >= 4 ? "bg-success text-white" : "bg-primary text-white"}`}>
               {currentStep >= 4 ? "✓" : "3"}
             </span>
             <span>03. Trend Fit (DISCOVER)</span>
           </div>
-          <ArrowRight size={14} className="text-cool-300 shrink-0" />
-          <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl transition-all ${currentStep >= 4 ? "bg-blush-50 text-blush-700 font-extrabold" : "text-text-muted"}`}>
-            <span className={`flex h-5 w-5 items-center justify-center rounded-full text-caption ${currentStep >= 5 ? "bg-mint-600 text-white" : "bg-blush-600 text-white"}`}>
+          <ArrowRight size={14} className="text-text-muted shrink-0" />
+          <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl transition-all ${currentStep >= 4 ? "bg-primary-muted text-primary font-extrabold" : "text-text-muted"}`}>
+            <span className={`flex h-5 w-5 items-center justify-center rounded-full text-caption ${currentStep >= 5 ? "bg-success text-white" : "bg-primary text-white"}`}>
               {currentStep >= 5 ? "✓" : "4"}
             </span>
             <span>04. 10 Chủ đề & Video (IDEATE)</span>
           </div>
-          <ArrowRight size={14} className="text-cool-300 shrink-0" />
-          <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl transition-all ${currentStep >= 5 ? "bg-orchid-50 text-orchid-700 font-extrabold" : "text-text-muted"}`}>
-            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-orchid-600 text-white text-caption">5</span>
+          <ArrowRight size={14} className="text-text-muted shrink-0" />
+          <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl transition-all ${currentStep >= 5 ? "bg-accent-bg text-accent-text font-extrabold" : "text-text-muted"}`}>
+            <span className="flex h-5 w-5 items-center justify-center rounded-full bg-accent text-white text-caption">5</span>
             <span>05. Chọn định hướng (CHOOSE)</span>
           </div>
         </div>
       </div>
 
       {extractError && (
-        <div className="flex items-center gap-2 p-3 rounded-xl bg-sand-50 border border-sand-200 text-xs text-sand-800">
+        <div className="flex items-center gap-2 p-3 rounded-xl bg-warning-bg border border-warning-border text-caption text-warning-text">
           <AlertCircle size={16} className="text-warning shrink-0" />
           <span>{extractError} (Đã chuyển sang cấu hình chỉnh sửa thủ công nguyên tử).</span>
         </div>
@@ -272,8 +272,8 @@ export function ProductIntelligenceWorkspace() {
       {hasExtracted && (
         <div id="confirmation-step-section">
           {matchError && (
-            <div className="flex items-center gap-2 p-3 mb-3 rounded-xl bg-alert-50 border border-alert-200 text-xs text-alert-800">
-              <AlertCircle size={16} className="text-alert-600 shrink-0" />
+            <div className="flex items-center gap-2 p-3 mb-3 rounded-xl bg-danger-bg border border-danger-border text-caption text-danger-text">
+              <AlertCircle size={16} className="text-danger-text shrink-0" />
               <span>{matchError}</span>
             </div>
           )}
@@ -338,11 +338,11 @@ export function ProductIntelligenceWorkspace() {
 
           {/* Khối Chặng 04 (IDEATE): Chỉ mở ra khi Chặng 03 đã được duyệt */}
           {!approvedStage3 ? (
-            <div className="rounded-2xl border-2 border-dashed border-cool-200 bg-cool-50/70 p-6 text-center space-y-2">
-              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-cool-200/80 text-cool-700 text-xs font-bold uppercase tracking-wider">
+            <div className="rounded-2xl border-2 border-dashed border-border bg-bg/70 p-6 text-center space-y-2">
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-border/80 text-text text-caption font-bold uppercase tracking-wider">
                 🔒 Chặng 04 — IDEATE (10 Chủ đề Tiếp thị & Dẫn chứng Video Kép)
               </div>
-              <p className="text-xs text-cool-500 max-w-md mx-auto">
+              <p className="text-caption text-text-muted max-w-md mx-auto">
                 Chặng 04 đang tạm khóa. Vui lòng bấm <strong>“Phê duyệt Trend Fit & Mở khóa Chặng 04”</strong> ở thanh phía trên để AI hiển thị 10 chủ đề tiếp thị và video dẫn chứng.
               </p>
             </div>

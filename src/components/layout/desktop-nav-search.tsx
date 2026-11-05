@@ -4,6 +4,8 @@
  * DesktopNavSearch — Ô tìm chức năng trong sidebar (phím tắt `/`).
  */
 
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import type { KeyboardEvent, RefObject } from "react"
 import { Search } from "@/components/ui/icon-set/search"
 import { X } from "@/components/ui/icon-set/x"
@@ -21,7 +23,7 @@ export function DesktopNavSearch({ inputRef, value, onChange, onKeyDown }: Deskt
     <div className="px-3 pt-3 pb-1">
       <div className="relative flex items-center">
         <Search size={15} className="pointer-events-none absolute left-2.5 text-text-muted" aria-hidden />
-        <input
+        <Input
           ref={inputRef}
           type="search"
           value={value}
@@ -37,14 +39,14 @@ export function DesktopNavSearch({ inputRef, value, onChange, onKeyDown }: Deskt
           )}
         />
         {value ? (
-          <button
+          <Button variant="ghost"
             type="button"
             onClick={() => onChange("")}
-            className="absolute right-2 flex h-6 w-6 items-center justify-center rounded-md text-text-muted transition-colors hover:bg-surface-alt hover:text-text"
+            className="px-0 py-0 text-[length:inherit] font-[inherit] gap-0 absolute right-2 flex h-6 w-6 items-center justify-center rounded-md text-text-muted transition-colors hover:bg-surface-alt hover:text-text"
             aria-label="Xóa tìm kiếm"
           >
             <X size={13} />
-          </button>
+          </Button>
         ) : (
           <kbd className="pointer-events-none absolute right-2 rounded border border-border bg-surface px-1.5 py-px font-mono text-caption leading-tight text-text-muted">
             /

@@ -127,7 +127,7 @@ export function StaffNotifySettings() {
                     type="button"
                     disabled={!isAllowed || ch === "APP_INBOX"}
                     onClick={() => toggleChannel(ch)}
-                    className={`font-[inherit] gap-0 flex items-center justify-between rounded-xl border p-3 text-left transition-all ${
+                    className={`text-[length:inherit] h-auto font-[inherit] gap-0 flex items-center justify-between rounded-xl border p-3 text-left transition-all ${
                       isChecked
                         ? "border-primary bg-primary/5 text-text hover:bg-primary/5"
                         : "border-border bg-bg text-text-muted hover:bg-bg"

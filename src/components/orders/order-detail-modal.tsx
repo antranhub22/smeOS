@@ -1,5 +1,6 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
 import React, { useState } from "react"
 import { Clock } from "@/components/ui/icon-set/clock"
 import { Loader2 } from "@/components/ui/icon-set/loader2"
@@ -138,18 +139,18 @@ export function OrderDetailModal({ orderId, onClose, onUpdated }: OrderDetailMod
         { key: "florist", label: `${makerTitle} (Ẩn giá)`, icon: <Flower2 className="h-3.5 w-3.5" /> },
         { key: "delivery", label: "Giao vận & Ấn phẩm A6", icon: <Truck className="h-3.5 w-3.5" /> },
       ] as const).map(({ key, label, icon }) => (
-        <button
+        <Button variant="ghost"
           type="button"
           key={key}
           onClick={() => setActiveTab(key)}
-          className={`cursor-pointer pb-2.5 px-3 border-b-2 flex items-center gap-1.5 transition-colors ${
+          className={`text-[length:inherit] h-auto cursor-pointer pb-2.5 px-3 border-b-2 flex items-center gap-1.5 transition-colors ${
             activeTab === key
               ? "border-primary text-primary font-bold"
               : "border-transparent text-text-muted hover:text-text"
           }`}
         >
           {icon} {label}
-        </button>
+        </Button>
       ))}
     </div>
   )

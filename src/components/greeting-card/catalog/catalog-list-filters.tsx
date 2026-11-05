@@ -35,7 +35,7 @@ export function CatalogListFilters({
           <Button variant="ghost"
             type="button"
             onClick={() => setStatusFilter("active")}
-            className={`gap-0 px-3 py-1 text-caption font-bold rounded-md transition-colors ${
+            className={`h-auto gap-0 px-3 py-1 text-caption font-bold rounded-md transition-colors ${
               statusFilter === "active" ? "bg-primary text-white shadow-xs hover:bg-primary" : "text-text-muted hover:text-text"
             }`}
           >
@@ -44,7 +44,7 @@ export function CatalogListFilters({
           <Button variant="ghost"
             type="button"
             onClick={() => setStatusFilter("archived")}
-            className={`px-3 py-1 text-caption font-bold rounded-md transition-colors flex items-center gap-1 ${
+            className={`h-auto px-3 py-1 text-caption font-bold rounded-md transition-colors flex items-center gap-1 ${
               statusFilter === "archived" ? "bg-danger-bg text-danger shadow-xs hover:bg-danger-bg" : "text-text-muted hover:text-text"
             }`}
           >

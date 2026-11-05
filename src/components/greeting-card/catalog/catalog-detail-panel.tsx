@@ -91,7 +91,7 @@ export function CatalogDetailPanel({ catalogId, catalogName, onBack }: Props) {
             type="button"
             onClick={onBack}
             aria-label="Quay lại danh sách bộ sưu tập"
-            className="font-[inherit] gap-0 p-2 rounded-xl border border-border hover:bg-surface-muted transition-colors text-text-muted hover:text-text"
+            className="text-[length:inherit] h-auto font-[inherit] gap-0 p-2 rounded-xl border border-border hover:bg-surface-muted transition-colors text-text-muted hover:text-text"
           >
             <ArrowLeft size={16} />
           </Button>
@@ -190,7 +190,7 @@ export function CatalogDetailPanel({ catalogId, catalogName, onBack }: Props) {
                         type="button"
                         onClick={() => void handleAddProduct(product.id)}
                         disabled={addingId === product.id}
-                        className="font-[inherit] gap-0 p-2 rounded-lg bg-primary/10 hover:bg-primary/20 text-primary transition-colors shrink-0"
+                        className="text-[length:inherit] h-auto font-[inherit] gap-0 p-2 rounded-lg bg-primary/10 hover:bg-primary/20 text-primary transition-colors shrink-0"
                       >
                         {addingId === product.id
                           ? <Loader2 size={16} className="animate-spin motion-reduce:animate-none" />
@@ -256,7 +256,7 @@ export function CatalogDetailPanel({ catalogId, catalogName, onBack }: Props) {
                     onClick={() => void handleRemoveProduct(item.product.id)}
                     disabled={removingId === item.product.id}
                     aria-label={`Xóa ${item.product.name} khỏi bộ sưu tập`}
-                    className="font-[inherit] gap-0 absolute top-2 right-2 p-1.5 rounded-lg bg-black/50 hover:bg-danger/80 text-white"
+                    className="text-[length:inherit] h-auto font-[inherit] gap-0 absolute top-2 right-2 p-1.5 rounded-lg bg-black/50 hover:bg-danger/80 text-white"
                   >
                     {removingId === item.product.id
                       ? <Loader2 size={12} className="animate-spin motion-reduce:animate-none" />
@@ -281,7 +281,7 @@ export function CatalogDetailPanel({ catalogId, catalogName, onBack }: Props) {
           {canEdit && <Button variant="ghost"
             type="button"
             onClick={() => void openAddProduct()}
-            className="h-auto p-0 font-[inherit] aspect-square rounded-xl border-2 border-dashed border-border hover:border-primary/50 hover:bg-primary/5 transition-all duration-200 flex flex-col items-center justify-center gap-2 text-text-muted hover:text-primary"
+            className="text-[length:inherit] h-auto p-0 font-[inherit] aspect-square rounded-xl border-2 border-dashed border-border hover:border-primary/50 hover:bg-primary/5 transition-all duration-200 flex flex-col items-center justify-center gap-2 text-text-muted hover:text-primary"
           >
             <Plus size={24} />
             <span className="text-caption font-bold">Thêm mẫu</span>

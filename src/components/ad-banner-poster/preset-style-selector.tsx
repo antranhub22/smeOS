@@ -1,5 +1,6 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
 import React from "react"
 import { Check } from "@/components/ui/icon-set/check"
 import {
@@ -32,13 +33,13 @@ export function PresetStyleSelector({
         {presetsList.map((preset) => {
           const isSelected = preset.id === selectedPresetId
           return (
-            <button
+            <Button variant="outline"
               type="button"
               key={preset.id}
               onClick={() => onSelectPreset(preset.id)}
-              className={`relative flex flex-col items-start p-2.5 rounded-lg border text-left transition-all cursor-pointer ${
+              className={`text-[length:inherit] h-auto justify-start font-[inherit] gap-0 relative flex flex-col items-start p-2.5 rounded-lg border text-left transition-all cursor-pointer ${
                 isSelected
-                  ? "border-primary bg-primary/5 ring-1 ring-primary shadow-sm"
+                  ? "border-primary bg-primary/5 ring-1 ring-primary shadow-sm hover:bg-primary/5"
                   : "border-border bg-surface hover:border-border-strong hover:bg-surface-alt"
               }`}
             >
@@ -59,7 +60,7 @@ export function PresetStyleSelector({
               <div className="text-caption text-text-muted truncate w-full mt-0.5">
                 {preset.tag}
               </div>
-            </button>
+            </Button>
           )
         })}
       </div>

@@ -54,7 +54,7 @@ export function VariantStepPicker({ dimensions, variants, value, onChange, error
                     aria-pressed={on}
                     disabled={!ok && !on}
                     onClick={() => pick(i, v)}
-                    className={`gap-0 min-h-10 rounded-full border px-4 text-body-sm font-semibold transition-colors disabled:opacity-40 disabled:line-through ${
+                    className={`py-0 gap-0 min-h-10 rounded-full border px-4 text-body-sm font-semibold transition-colors disabled:opacity-40 disabled:line-through ${
                       on ? "border-primary bg-primary/10 text-primary hover:bg-primary/10" : "border-border bg-bg text-text hover:bg-bg"
                     }`}
                   >

@@ -215,10 +215,10 @@ export function MarketingWorkspace() {
               <ul className="flex flex-col divide-y divide-border">
                 {(failedPosts.length > 0 ? failedPosts : scheduledPosts).slice(0, 5).map((p) => (
                   <li key={p.id}>
-                    <button
+                    <Button variant="ghost"
                       type="button"
                       onClick={() => router.push("/lich-dang" as Route)}
-                      className="flex cursor-pointer min-h-12 w-full items-center justify-between gap-3 rounded-lg px-2 py-2 text-left hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-primary"
+                      className="text-[length:inherit] font-[inherit] flex cursor-pointer min-h-12 w-full items-center justify-between gap-3 rounded-lg px-2 py-2 text-left hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-primary"
                     >
                       <div className="min-w-0 flex-1">
                         <div className="truncate text-body font-semibold text-text">
@@ -237,7 +237,7 @@ export function MarketingWorkspace() {
                       >
                         {p.status === "FAILED" ? "Thất bại" : "Chờ đăng"}
                       </span>
-                    </button>
+                    </Button>
                   </li>
                 ))}
               </ul>
@@ -273,10 +273,10 @@ export function MarketingWorkspace() {
               <ul className="flex flex-col divide-y divide-border">
                 {opportunities.slice(0, 5).map((opp) => (
                   <li key={opp.id}>
-                    <button
+                    <Button variant="ghost"
                       type="button"
                       onClick={() => router.push("/creative-studio" as Route)}
-                      className="flex cursor-pointer min-h-12 w-full items-center justify-between gap-3 rounded-lg px-2 py-2 text-left hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-primary"
+                      className="text-[length:inherit] font-[inherit] flex cursor-pointer min-h-12 w-full items-center justify-between gap-3 rounded-lg px-2 py-2 text-left hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-primary"
                     >
                       <div className="min-w-0 flex-1">
                         <div className="truncate text-body font-semibold text-text">
@@ -291,7 +291,7 @@ export function MarketingWorkspace() {
                           {opp.trendScore} điểm
                         </span>
                       )}
-                    </button>
+                    </Button>
                   </li>
                 ))}
               </ul>
@@ -303,10 +303,10 @@ export function MarketingWorkspace() {
         <Card className="flex flex-col gap-3 p-4">
           <h2 className="text-title-sm font-bold">Bộ công cụ sáng tạo tiếp thị</h2>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
-            <button
+            <Button variant="outline"
               type="button"
               onClick={() => router.push("/creative-studio" as Route)}
-              className="flex cursor-pointer items-center gap-3 rounded-lg border border-border bg-surface p-3 text-left hover:border-primary/50 focus-visible:outline-2 focus-visible:outline-primary"
+              className="text-[length:inherit] h-auto justify-start font-[inherit] flex cursor-pointer items-center gap-3 rounded-lg border border-border bg-surface p-3 text-left hover:border-primary/50 focus-visible:outline-2 focus-visible:outline-primary hover:bg-surface"
             >
               <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10 text-primary">
                 <Sparkles size={20} aria-hidden="true" />
@@ -315,12 +315,12 @@ export function MarketingWorkspace() {
                 <div className="text-body font-bold text-text">Creative Studio</div>
                 <div className="text-caption text-text-muted">14 chặng sáng tạo khép kín</div>
               </div>
-            </button>
+            </Button>
 
-            <button
+            <Button variant="outline"
               type="button"
               onClick={() => router.push("/noi-dung" as Route)}
-              className="flex cursor-pointer items-center gap-3 rounded-lg border border-border bg-surface p-3 text-left hover:border-primary/50 focus-visible:outline-2 focus-visible:outline-primary"
+              className="text-[length:inherit] h-auto justify-start font-[inherit] flex cursor-pointer items-center gap-3 rounded-lg border border-border bg-surface p-3 text-left hover:border-primary/50 focus-visible:outline-2 focus-visible:outline-primary hover:bg-surface"
             >
               <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent/10 text-accent">
                 <PenTool size={20} aria-hidden="true" />
@@ -329,12 +329,12 @@ export function MarketingWorkspace() {
                 <div className="text-body font-bold text-text">Content Engine</div>
                 <div className="text-caption text-text-muted">Soạn bài viết đa kênh tự động</div>
               </div>
-            </button>
+            </Button>
 
-            <button
+            <Button variant="outline"
               type="button"
               onClick={() => router.push("/video" as Route)}
-              className="flex cursor-pointer items-center gap-3 rounded-lg border border-border bg-surface p-3 text-left hover:border-primary/50 focus-visible:outline-2 focus-visible:outline-primary"
+              className="text-[length:inherit] h-auto justify-start font-[inherit] flex cursor-pointer items-center gap-3 rounded-lg border border-border bg-surface p-3 text-left hover:border-primary/50 focus-visible:outline-2 focus-visible:outline-primary hover:bg-surface"
             >
               <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-warning-bg text-warning">
                 <Video size={20} aria-hidden="true" />
@@ -343,12 +343,12 @@ export function MarketingWorkspace() {
                 <div className="text-body font-bold text-text">Video Studio</div>
                 <div className="text-caption text-text-muted">Dựng video ngắn & kịch bản</div>
               </div>
-            </button>
+            </Button>
 
-            <button
+            <Button variant="outline"
               type="button"
               onClick={() => router.push("/lich-dang" as Route)}
-              className="flex cursor-pointer items-center gap-3 rounded-lg border border-border bg-surface p-3 text-left hover:border-primary/50 focus-visible:outline-2 focus-visible:outline-primary"
+              className="text-[length:inherit] h-auto justify-start font-[inherit] flex cursor-pointer items-center gap-3 rounded-lg border border-border bg-surface p-3 text-left hover:border-primary/50 focus-visible:outline-2 focus-visible:outline-primary hover:bg-surface"
             >
               <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-success-bg text-success">
                 <Share2 size={20} aria-hidden="true" />
@@ -357,7 +357,7 @@ export function MarketingWorkspace() {
                 <div className="text-body font-bold text-text">Lịch đăng & Tự động</div>
                 <div className="text-caption text-text-muted">Lên lịch mạng xã hội đa kênh</div>
               </div>
-            </button>
+            </Button>
           </div>
         </Card>
       </main>

@@ -70,7 +70,7 @@ export function VideoReelsDeck({ products, catalogName, onSelectProduct }: Video
                 <HeartToggle active={shortlist.has(p.id)} onToggle={() => shortlist.toggle(p.id)} name={p.name} className="h-12 w-12" />
                 <span className="text-caption font-semibold">Thích</span>
               </div>
-              <Button variant="ghost" type="button" onClick={() => setOpen(p)} className="h-auto p-0 font-[inherit] flex flex-col items-center gap-1" aria-label={`Chi tiết ${p.name}`}>
+              <Button variant="ghost" type="button" onClick={() => setOpen(p)} className="text-[length:inherit] h-auto p-0 font-[inherit] flex flex-col items-center gap-1" aria-label={`Chi tiết ${p.name}`}>
                 <span className="flex h-12 w-12 items-center justify-center rounded-full bg-black/35 backdrop-blur-md">
                   <Info size={22} aria-hidden="true" />
                 </span>
@@ -83,7 +83,7 @@ export function VideoReelsDeck({ products, catalogName, onSelectProduct }: Video
               <Button variant="ghost"
                 type="button"
                 onClick={() => onSelectProduct(p)}
-                className="gap-0 mt-4 h-12 w-full rounded-2xl bg-white text-body font-bold text-black shadow-lg active:scale-[0.99] hover:bg-white"
+                className="px-0 py-0 gap-0 mt-4 h-12 w-full rounded-2xl bg-white text-body font-bold text-black shadow-lg active:scale-[0.99] hover:bg-white"
               >
                 Đặt mẫu này
               </Button>

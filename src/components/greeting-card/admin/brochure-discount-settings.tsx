@@ -49,7 +49,7 @@ export function BrochureDiscountSettings() {
           className="h-11 w-24 rounded-xl border border-border bg-surface px-3 text-right text-body text-text" />
         <span className="text-body-sm text-text-muted">%</span>
         <Button variant="primary" type="button" onClick={() => void save()} disabled={saving || edited === null}
-          className="gap-0 ml-auto h-11 rounded-xl bg-primary px-4 text-body-sm font-bold text-white hover:bg-primary-dark disabled:opacity-50">
+          className="py-0 gap-0 ml-auto h-11 rounded-xl bg-primary px-4 text-body-sm font-bold text-white hover:bg-primary-dark disabled:opacity-50">
           {saving ? "Đang lưu..." : "Lưu"}
         </Button>
       </div>

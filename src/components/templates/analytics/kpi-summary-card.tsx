@@ -45,7 +45,7 @@ export function KpiSummaryCard({
     <Card className="rounded-2xl border border-border bg-surface p-5 shadow-sm flex flex-col gap-4">
       <div className="flex items-center justify-between">
         <div>
-          <div className="text-xs font-semibold text-text-muted">Tín dụng AI Business Performance</div>
+          <div className="text-caption font-semibold text-text-muted">Tín dụng AI Business Performance</div>
           <div className="text-title font-extrabold text-text">Chỉ số vận hành cốt lõi</div>
         </div>
         <Badge tone="neutral">{periodLabel}</Badge>
@@ -60,12 +60,12 @@ export function KpiSummaryCard({
               className="flex flex-col gap-1.5 rounded-xl border border-border bg-surface-alt/40 p-3.5"
             >
               <div className="flex items-center justify-between">
-                <span className="text-xs text-text-muted">{m.label}</span>
+                <span className="text-caption text-text-muted">{m.label}</span>
                 <div className="rounded-lg bg-primary/10 p-1.5 text-primary">
                   <Icon size={14} />
                 </div>
               </div>
-              <div className="text-lg font-black text-text">{m.value}</div>
+              <div className="text-title-sm font-black text-text">{m.value}</div>
               <div
                 className={`flex items-center gap-0.5 text-caption font-bold ${
                   m.isPositive ? "text-success" : "text-danger"
