@@ -970,6 +970,9 @@ model business_profiles {
   tax_code        String?
   description     String?
   operating_hours Json?
+  /// Thông điệp thương hiệu và khách mục tiêu (checklist ALG 9.3) — đưa vào ngữ cảnh AI viết nội dung
+  brand_message    String?
+  target_customers Json? // danh sách nhóm khách, vd ["Văn phòng tặng sếp", "Cặp đôi"]
   created_at      DateTime @default(now()) @db.Timestamptz(3)
   updated_at      DateTime @updatedAt @db.Timestamptz(3)
 

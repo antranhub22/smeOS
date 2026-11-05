@@ -30,13 +30,13 @@ Ký hiệu đường dẫn rút gọn: `org/` = `src/modules/organization/`, `gc
 | 4 | Tiếp nhận, quản lý & xử lý đơn hàng | 32 | 32 | 0 | 0 |
 | 5 | Thẻ Chào mẫu hoa & trang khách hàng | 15 | 10 | 5 | 0 |
 | 6 | Báo cáo hoạt động & tài chính | 9 | 9 | 0 | 0 |
-| 7 | AI phân tích, nội dung & marketing | 3 | 1 | 2 | 0 |
+| 7 | AI phân tích, nội dung & marketing | 3 | 2 | 1 | 0 |
 | 8 | Landing page bán hàng | 1 | 1 | 0 | 0 |
-| 9 | Chat nội bộ, đa chuỗi & phân quyền nâng cao | 14 | 13 | 1 | 0 |
+| 9 | Chat nội bộ, đa chuỗi & phân quyền nâng cao | 14 | 14 | 0 | 0 |
 | 10 | Quản lý credit AI, hạn mức & thuê bao SaaS | 8 | 7 | 0 | 1 |
-| | **Tổng cộng** | **123** | **113** | **9** | **1** |
+| | **Tổng cộng** | **123** | **115** | **7** | **1** |
 
-Tỷ lệ: Hoàn thiện 91,9% · Dang dở 7,3% · Chưa hoàn thành 0,8%.
+Tỷ lệ: Hoàn thiện 93,5% · Dang dở 5,7% · Chưa hoàn thành 0,8%.
 
 ### Một chức năng chưa hoàn thành
 
@@ -179,7 +179,7 @@ Tỷ lệ: Hoàn thiện 91,9% · Dang dở 7,3% · Chưa hoàn thành 0,8%.
 |---|---|---|---|---|
 | 7.1 | AI nhận diện ảnh mẫu (loại hoa, cành, màu) | Hoàn thiện | `api/vision/analyses` (sửa trước khi duyệt, duyệt tạo sản phẩm); `src/modules/usage/domain/pricing.ts:32` (1 credit); `tt/vision-analyses.test.ts:64-230` | — |
 | 7.2 | Bộ nội dung marketing tự động từ 1 ảnh | Dang dở | Phân tích ảnh → thẻ sản phẩm (`tt/vision-analyses.test.ts:170`); nội dung bán hàng `src/modules/product-copies/domain/product-copy-rules.ts:28-59`; thẻ A6 chỉ trong thư viện mẫu `src/app/(app)/kho-templates` | Luồng tự động một bước từ 1 ảnh; đề xuất giá vốn; bài viết Facebook/Zalo; đóng gói Thẻ Chào A6 |
-| 7.3 | Màn hình kiểm tra sẵn sàng sản phẩm ra thị trường | Dang dở | `src/modules/products/domain/product-readiness.ts:55-90` (ảnh, danh mục, giá/BOM); `product-readiness.test.ts` | Tiêu chí bài viết; chặn đưa ra bán khi chưa đủ (API sản phẩm không gọi kiểm tra này) |
+| 7.3 | Màn hình kiểm tra sẵn sàng sản phẩm ra thị trường | Hoàn thiện | `src/modules/products/domain/product-readiness.ts` (ảnh, danh mục, giá/BOM, bài viết bán hàng đã duyệt — 5 tiêu chí); màn kiểm tra `src/components/dashboard/product-manager-workspace.tsx` (danh sách sản phẩm kèm `hasApprovedCopy`); mở bán khi chưa đủ điều kiện vẫn lưu, phản hồi kèm danh sách còn thiếu (PO 05/11/2026: chỉ cảnh báo, không chặn) `api/products/[id]/route.ts`, `api/products/bulk-status/route.ts`, `src/components/products/product-bulk-status-bar.tsx`; `product-readiness.test.ts`, `tt/products-readiness.test.ts` | — |
 
 ### Nhóm 8 — Landing page bán hàng (1)
 
@@ -193,7 +193,7 @@ Tỷ lệ: Hoàn thiện 91,9% · Dang dở 7,3% · Chưa hoàn thành 0,8%.
 |---|---|---|---|---|
 | 9.1 | Trao đổi / chat nội bộ trên từng đơn | Hoàn thiện | `api/greeting-card/messages` (+ `/read`); `api/internal-chat`; `schema:3435` (`last_read_at`); không có API xoá tin; `tt/greeting-card-messages.test.ts:64,90,101`, `tt/internal-chat-isolation.test.ts:48-79` | Thợ cắm chưa có vai tài khoản (xem 1.12) |
 | 9.2 | Hồ sơ thương hiệu | Hoàn thiện | `schema:772-795`; AI đọc `src/modules/product-copies/adapters/product-copy-adapter.ts:23,99`, `src/modules/content-engine/infra/read-shop-context.ts:63`; `tt/cach-ly-endpoint.test.ts:157` | — |
-| 9.3 | Hồ sơ kinh doanh | Dang dở | `schema:744-763` (tên pháp lý, SĐT, địa chỉ, mô tả); `read-shop-context.ts:55-70` | Trường thông điệp, khách mục tiêu |
+| 9.3 | Hồ sơ kinh doanh | Hoàn thiện | `schema` `business_profiles` (tên pháp lý, SĐT, địa chỉ, mô tả, thông điệp thương hiệu, khách mục tiêu — migration `20261105230000_business_profile_brand_audience`); `api/business-profile/route.ts` (F1/F2); form `src/components/profiles/business-profile-form.tsx`, `brand-audience-fields.tsx`; ngữ cảnh AI `src/modules/content-engine/infra/read-shop-context.ts`, `domain/brief-builder.ts`; `tt/cach-ly-endpoint.test.ts`, `tu/content-engine/brief-brand-audience.test.ts` | — |
 | 9.4 | Thư viện tài nguyên & thùng rác 30 ngày | Hoàn thiện | `src/modules/storage/domain/trash-types.ts:29`; `api/storage/trash/[id]/restore`; `tt/storage-trash.test.ts:51-68`, `tt/storage-lifecycle.test.ts:45-63` | — |
 | 9.5 | Quản lý kết nối Webhook/API key | Hoàn thiện | `api/integration-tokens` (cấp, thu hồi, `[id]/rotate`), F9 trần cứng; `tt/integration.test.ts:78`, `src/modules/integration/use-cases/__tests__/integration-use-cases.test.ts:120` | — |
 | 9.6 | Quản lý tác vụ nền & chạy lại tác vụ lỗi | Hoàn thiện | `api/jobs/[id]/{cancel,retry,events}`; `src/modules/jobs/use-cases/scan-stuck-jobs.ts`; `tt/job-retry-backoff.test.ts:35,45`, `tp/dead-letter-jobs.test.ts:45,60` | — |

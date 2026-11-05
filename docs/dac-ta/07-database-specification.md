@@ -242,6 +242,8 @@ model business_profiles {
   tax_code        String?
   description     String?
   operating_hours Json?
+  brand_message    String?  // checklist ALG 9.3 — thông điệp thương hiệu, vào ngữ cảnh AI
+  target_customers Json?    // danh sách nhóm khách mục tiêu (tối đa 10)
   created_at      DateTime @default(now())
   updated_at      DateTime @updatedAt
 

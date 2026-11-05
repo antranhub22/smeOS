@@ -126,6 +126,8 @@ export interface ProductMasterIndex {
   code: string
   name: string
   status: "DRAFT" | "ACTIVE" | "PAUSED" | "ARCHIVED"
+  /** Đã có bài viết bán hàng được duyệt (tiêu chí sẵn sàng, checklist ALG 7.3) — use-case danh sách điền */
+  hasApprovedCopy?: boolean
 
   // 2. Định danh dáng hoa & phong cách (Hợp đồng Vision Schema.json)
   category: string // Sản phẩm, Giỏ hoa, Kệ khai trương, Hộp hoa, Bình hoa

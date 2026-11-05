@@ -21,6 +21,8 @@ export interface ProductReadinessInput {
   bom?: {
     flowers?: Array<unknown> | undefined
   } | null | undefined
+  /** Có bài viết bán hàng đã duyệt (checklist ALG 7.3) */
+  hasApprovedCopy?: boolean | undefined
 }
 
 export interface ProductReadinessResult {
@@ -35,16 +37,18 @@ export interface ProductReadinessResult {
     hasMasterImage: boolean
     hasCategory: boolean
     hasPricingOrBom: boolean
+    hasApprovedCopy: boolean
   }
 }
 
 /**
  * Đánh giá một sản phẩm hoa đã đủ điều kiện thương mại sẵn sàng bán hay chưa.
- * Mỗi tiêu chí đóng góp 25% trọng số (tổng 100 điểm):
- * 1. Trạng thái ACTIVE (25%)
- * 2. Đã có ảnh chính thức (25%)
- * 3. Đã có phân loại danh mục (25%)
- * 4. Đã có công thức chế tác (BOM) hoặc giá bán niêm yết (25%)
+ * Mỗi tiêu chí đóng góp 20% trọng số (tổng 100 điểm):
+ * 1. Trạng thái ACTIVE
+ * 2. Đã có ảnh chính thức
+ * 3. Đã có phân loại danh mục
+ * 4. Đã có công thức chế tác (BOM) hoặc giá bán niêm yết
+ * 5. Đã có bài viết bán hàng được duyệt (checklist ALG 7.3)
  */
 export function computeProductReadiness(product: ProductReadinessInput): ProductReadinessResult {
   const missingReasons: string[] = []
@@ -73,11 +77,12 @@ export function computeProductReadiness(product: ProductReadinessInput): Product
     missingReasons.push("Chưa có giá niêm yết hoặc công thức thành phần (BOM)")
   }
 
-  let score = 0
-  if (hasActiveStatus) score += 25
-  if (hasMasterImage) score += 25
-  if (hasCategory) score += 25
-  if (hasPricingOrBom) score += 25
+  const hasApprovedCopy = product.hasApprovedCopy === true
+  if (!hasApprovedCopy) {
+    missingReasons.push("Chưa có bài viết bán hàng được duyệt")
+  }
+
+  const score = [hasActiveStatus, hasMasterImage, hasCategory, hasPricingOrBom, hasApprovedCopy].filter(Boolean).length * 20
 
   return {
     productId: product.id,
@@ -91,6 +96,12 @@ export function computeProductReadiness(product: ProductReadinessInput): Product
       hasMasterImage,
       hasCategory,
       hasPricingOrBom,
+      hasApprovedCopy,
     },
   }
+}
+
+/** Danh sách còn thiếu khi mở bán (bỏ tiêu chí trạng thái) — chỉ cảnh báo, không chặn (PO 05/11/2026). */
+export function activationWarnings(product: ProductReadinessInput): string[] {
+  return computeProductReadiness({ ...product, status: "ACTIVE" }).missingReasons
 }

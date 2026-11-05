@@ -1,5 +1,6 @@
 import { z } from "zod"
 
+import { activationWarningsFor } from "@/modules/products/use-cases/get-product-master-index"
 import { validationFailed } from "@/core/http/errors"
 import { hasCapability, requireCapability } from "@/core/rbac/capabilities"
 import { commerceInputShape, pickCommerceInput, stripCostPrice } from "@/modules/products/domain/product-commerce"
@@ -68,5 +69,7 @@ export const PATCH = handle(async (request, context: { params: Promise<{ id: str
     commerce: pickCommerceInput(parsed.data),
   })
 
-  return jsonResponse(stripCostPrice(updated, hasCapability(ctx, "L5")))
+  // Mở bán khi chưa đủ điều kiện: vẫn lưu, trả kèm danh sách còn thiếu (checklist ALG 7.3, chỉ cảnh báo)
+  const warnings = parsed.data.status === "ACTIVE" ? (await activationWarningsFor(ctx, [id]))[0]?.missing ?? [] : []
+  return jsonResponse({ ...stripCostPrice(updated, hasCapability(ctx, "L5")), readiness_warnings: warnings })
 })
