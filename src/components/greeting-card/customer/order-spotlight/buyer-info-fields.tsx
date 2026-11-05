@@ -1,9 +1,11 @@
 "use client"
 
+import { Checkbox } from "@/components/ui/checkbox"
+import { Input } from "@/components/ui/input"
 import React from "react"
 import { ORDER_FIELD_MAX } from "@/modules/greeting-card/domain/greeting-card-rules"
 
-const LABEL = "block text-body-sm font-bold text-foreground mb-1"
+const LABEL = "block text-body-sm font-bold text-text mb-1"
 
 /** Khối Người mua: họ tên, SĐT, email + công tắc người mua cũng là người nhận (homestay: người nhận phòng). */
 export function BuyerInfoFields({
@@ -41,7 +43,7 @@ export function BuyerInfoFields({
           <label htmlFor={`${idPrefix}-customerName`} className={LABEL}>
             Họ tên của bạn <span className="text-danger">*</span>
           </label>
-          <input
+          <Input
             type="text"
             required
             placeholder="VD: Nguyễn Văn A"
@@ -57,7 +59,7 @@ export function BuyerInfoFields({
           <label htmlFor={`${idPrefix}-customerPhone`} className={LABEL}>
             Số điện thoại của bạn <span className="text-danger">*</span>
           </label>
-          <input
+          <Input
             type="tel"
             required
             placeholder="VD: 0901234567"
@@ -75,7 +77,7 @@ export function BuyerInfoFields({
         <label htmlFor={`${idPrefix}-customerEmail`} className={LABEL}>
           Email <span className="text-caption font-normal text-text-muted">(tùy chọn)</span>
         </label>
-        <input
+        <Input
           type="email"
           placeholder="VD: email@example.com"
           value={customerEmail}
@@ -91,18 +93,17 @@ export function BuyerInfoFields({
         <label
           htmlFor={`${idPrefix}-sameAsRecipient`}
           className={`flex cursor-pointer items-center gap-3 rounded-xl border p-3 transition-all duration-300 ${
-            sameAsRecipient ? "border-primary/50 bg-primary/5" : "border-border bg-background hover:border-primary/40"
+            sameAsRecipient ? "border-primary/50 bg-primary/5" : "border-border bg-bg hover:border-primary/40"
           }`}
         >
-          <input
+          <Checkbox
             id={`${idPrefix}-sameAsRecipient`}
-            type="checkbox"
             checked={sameAsRecipient}
-            onChange={(e) => onSameAsRecipientChange(e.target.checked)}
+            onCheckedChange={(checked) => onSameAsRecipientChange((checked === true))}
             className="h-5 w-5 shrink-0 accent-primary"
           />
           <span className="min-w-0">
-            <span className="block text-body-sm font-bold text-foreground">{sameAsRecipientLabel}</span>
+            <span className="block text-body-sm font-bold text-text">{sameAsRecipientLabel}</span>
             <span className="block text-caption text-text-muted">{sameAsRecipientHint}</span>
           </span>
         </label>

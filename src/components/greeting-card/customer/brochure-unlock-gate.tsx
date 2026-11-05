@@ -1,5 +1,7 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import { useState, type FormEvent } from "react"
 import { useRouter } from "next/navigation"
 import { Loader2, LockKeyhole } from "@/components/ui/icons"
@@ -37,7 +39,7 @@ export function BrochureUnlockGate({ sendCode, shop }: { sendCode: string; shop:
   }
 
   return (
-    <div className="min-h-dvh bg-background text-foreground">
+    <div className="min-h-dvh bg-bg text-text">
       <ShopContactBar shop={shop} />
       <main className="mx-auto flex max-w-md flex-col items-center gap-3 px-6 py-14 text-center">
         <LockKeyhole size={28} className="text-primary" aria-hidden="true" />
@@ -45,7 +47,7 @@ export function BrochureUnlockGate({ sendCode, shop }: { sendCode: string; shop:
         <p className="text-body text-text-muted">Link này đã được mở trên thiết bị khác. Để bảo vệ đơn hàng, vui lòng nhập 4 số cuối số điện thoại người đặt hoa.</p>
         <form onSubmit={submit} className="mt-2 flex w-full flex-col gap-2">
           <label htmlFor="phone-last4" className="sr-only">4 số cuối số điện thoại người đặt</label>
-          <input
+          <Input
             id="phone-last4"
             inputMode="numeric"
             autoComplete="off"
@@ -53,13 +55,13 @@ export function BrochureUnlockGate({ sendCode, shop }: { sendCode: string; shop:
             value={digits}
             onChange={(e) => setDigits(e.target.value.replace(/\D/g, "").slice(0, 4))}
             placeholder="VD: 5678"
-            className="h-12 w-full rounded-xl border border-border bg-surface px-4 text-center text-title tracking-widest text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20"
+            className="h-12 w-full rounded-xl border border-border bg-surface px-4 text-center text-title tracking-widest text-text focus:outline-none focus:ring-2 focus:ring-primary/20"
           />
           {error && <p role="alert" className="text-body-sm text-danger">{error}</p>}
-          <button type="submit" disabled={busy} className="inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-primary text-body font-bold text-surface disabled:opacity-60">
-            {busy && <Loader2 size={18} className="animate-spin" aria-hidden="true" />}
+          <Button variant="primary" type="submit" disabled={busy} className="inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-primary text-body font-bold text-surface disabled:opacity-60 hover:bg-primary">
+            {busy && <Loader2 size={18} className="animate-spin motion-reduce:animate-none" aria-hidden="true" />}
             Xem đơn hàng
-          </button>
+          </Button>
         </form>
       </main>
     </div>

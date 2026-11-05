@@ -51,7 +51,7 @@ export function SubcontractQcPreview({
         >
           {uploadingQc ? (
             <>
-              <Loader2 size={16} className="animate-spin mr-1.5" /> Đang tải lên...
+              <Loader2 size={16} className="animate-spin motion-reduce:animate-none mr-1.5" /> Đang tải lên...
             </>
           ) : (
             <>

@@ -25,7 +25,7 @@ export function CatalogHeartsPanel({ catalogId }: { catalogId: string }) {
   return (
     <section aria-labelledby="hearts-title" className="bg-surface p-5 rounded-2xl border border-border shadow-sm">
       <div className="flex items-center justify-between gap-3">
-        <h3 id="hearts-title" className="text-body font-extrabold text-foreground flex items-center gap-2">
+        <h3 id="hearts-title" className="text-body font-extrabold text-text flex items-center gap-2">
           <Heart size={18} className="text-danger" fill="currentColor" aria-hidden="true" />
           <span>Mẫu được thả tim nhiều nhất</span>
         </h3>
@@ -48,7 +48,7 @@ export function CatalogHeartsPanel({ catalogId }: { catalogId: string }) {
               <span className="w-5 text-right text-caption font-bold text-text-muted tabular-nums">{i + 1}</span>
               <div className="min-w-0 flex-1">
                 <div className="flex items-baseline justify-between gap-2">
-                  <span className="truncate text-body-sm font-semibold text-foreground">{r.name}</span>
+                  <span className="truncate text-body-sm font-semibold text-text">{r.name}</span>
                   <span className="shrink-0 text-body-sm font-bold text-danger tabular-nums">♥ {r.hearts}</span>
                 </div>
                 <div className="mt-1 h-1.5 w-full rounded-full bg-surface-muted overflow-hidden">

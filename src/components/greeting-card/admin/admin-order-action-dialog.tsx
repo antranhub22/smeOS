@@ -1,9 +1,11 @@
 "use client"
 
+import { Input } from "@/components/ui/input"
 import { IN_TRANSIT_CANCEL_WARNING, isInTransit } from "@/modules/greeting-card/domain/cancellation-request"
 import React, { useState } from "react"
 import { PaymentCheckPanel } from "./payment-check-panel"
 import { Button } from "@/components/ui/button"
+import { Dialog } from "@/components/ui/dialog"
 import { apiSend } from "@/components/greeting-card/greeting-api"
 import { type BrochurePaymentPolicy } from "@/modules/greeting-card/domain/brochure-payment-policy"
 import { readPaymentPlan } from "@/modules/greeting-card/domain/payment-plan"
@@ -17,7 +19,7 @@ import { balanceCollectionBlocker } from "@/modules/greeting-card/domain/balance
 import { useSession } from "@/lib/session"
 import { getIndustryTerminology } from "@/modules/organization/domain/industry-profile"
 
-const FIELD = "w-full h-10 px-3 rounded-lg border border-border bg-background text-body text-foreground"
+const FIELD = "w-full h-10 px-3 rounded-lg border border-border bg-bg text-body text-text"
 
 const TITLES = {
   quote: "Báo giá cho khách",
@@ -175,11 +177,8 @@ export function AdminOrderActionDialog({
   }
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/40 flex items-end sm:items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="order-action-title">
-      <form onSubmit={submit} className="bg-surface rounded-2xl border border-border shadow-xl w-full max-w-md p-5 flex flex-col gap-4">
-        <h3 id="order-action-title" className="text-body font-extrabold text-foreground">
-          {dialogTitle} — #{order.code}
-        </h3>
+    <Dialog open onOpenChange={(o) => { if (!o && !busy) onClose() }} size="sm" title={`${dialogTitle} — #${order.code}`}>
+      <form onSubmit={submit} className="flex flex-col gap-4">
         <p className="text-body-sm text-text-muted">
           Tổng đơn {vnd(order.total_vnd)} · Đã thu {vnd(order.paid_vnd)} · Còn {vnd(Math.max(0, order.total_vnd - order.paid_vnd))}
         </p>
@@ -189,7 +188,7 @@ export function AdminOrderActionDialog({
             <Info size={18} className="shrink-0 mt-0.5 text-success" aria-hidden="true" />
             <div className="flex flex-col gap-0.5">
               <span className="font-bold text-caption text-success">Khách đã bấm báo chuyển khoản</span>
-              <p className="text-body-sm text-foreground/80 leading-relaxed">
+              <p className="text-body-sm text-text/80 leading-relaxed">
                 Khách hàng đã xác nhận chuyển {isDepositPaid ? "phần còn lại" : isDepositOrder ? "tiền cọc" : "đủ tiền"} {vnd(suggested)}. Vui lòng đối soát tài khoản ngân hàng và bấm phê duyệt.
               </p>
             </div>
@@ -210,7 +209,7 @@ export function AdminOrderActionDialog({
             <AlertTriangle size={18} className="shrink-0 mt-0.5 text-warning" aria-hidden="true" />
             <div className="flex flex-col gap-0.5">
               <span className="font-bold text-caption text-warning">Chưa đủ điều kiện thu tiền đợt 2</span>
-              <p className="text-body-sm text-foreground/80 leading-relaxed">{blockReason}</p>
+              <p className="text-body-sm text-text/80 leading-relaxed">{blockReason}</p>
             </div>
           </div>
         )}
@@ -234,7 +233,7 @@ export function AdminOrderActionDialog({
             <span className="text-caption font-bold">
               {type === "quote" ? "Tổng tiền báo giá (đ)" : amountLabel}
             </span>
-            <input inputMode="numeric" required value={amount} onChange={(e) => setAmount(e.target.value)} disabled={isBlocked} className={FIELD} />
+            <Input inputMode="numeric" required value={amount} onChange={(e) => setAmount(e.target.value)} disabled={isBlocked} className={FIELD} />
           </label>
         )}
         {(type === "collect" || type === "quote") && <PaymentCheckPanel order={order} />}
@@ -243,7 +242,7 @@ export function AdminOrderActionDialog({
             <span className="text-caption font-bold">
               {type === "collect" ? "Mã giao dịch ngân hàng (không bắt buộc)" : type === "quote" ? "Lý do giá chốt (không bắt buộc)" : type === "cancel" ? "Lý do huỷ *" : "Lý do hoàn tiền *"}
             </span>
-            <input
+            <Input
               value={text}
               maxLength={type === "collect" ? 100 : type === "quote" ? 300 : 500}
               required={type === "cancel" || type === "refund"}
@@ -257,8 +256,8 @@ export function AdminOrderActionDialog({
         {canRejectReported && rejecting && (
           <div role="alert" className="p-3.5 rounded-xl bg-danger-bg border border-danger/30 flex flex-col gap-2">
             <span className="font-bold text-caption text-danger">Chưa nhận được tiền khách báo chuyển?</span>
-            <p className="text-body-sm text-foreground/80">Trang của khách sẽ quay lại chờ chuyển khoản và hiện lại mã QR. Sự việc được ghi vào lịch sử đơn.</p>
-            <input value={rejectReason} maxLength={500} onChange={(e) => setRejectReason(e.target.value)} placeholder="Lý do (vd: bill sai tài khoản, chuyển thiếu)" aria-label="Lý do chưa nhận được tiền" className={FIELD} />
+            <p className="text-body-sm text-text/80">Trang của khách sẽ quay lại chờ chuyển khoản và hiện lại mã QR. Sự việc được ghi vào lịch sử đơn.</p>
+            <Input value={rejectReason} maxLength={500} onChange={(e) => setRejectReason(e.target.value)} placeholder="Lý do (vd: bill sai tài khoản, chuyển thiếu)" aria-label="Lý do chưa nhận được tiền" className={FIELD} />
             <div className="flex justify-end gap-2">
               <Button type="button" variant="outline" onClick={() => setRejecting(false)} disabled={busy}>Quay lại</Button>
               <Button type="button" variant="secondary" onClick={() => void rejectReported()} disabled={busy} className="bg-danger hover:bg-danger/90 text-white">
@@ -289,7 +288,7 @@ export function AdminOrderActionDialog({
           </Button>
         </div>
       </form>
-    </div>
+    </Dialog>
   )
 }
 

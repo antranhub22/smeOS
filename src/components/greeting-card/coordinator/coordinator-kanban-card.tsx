@@ -88,7 +88,7 @@ export function CoordinatorKanbanCard({
   } else if (tier === "URGENT") {
     tierBorder = "border-warning/70 bg-warning-bg/15 shadow-sm"
     tierBadge = (
-      <span className="rounded-md bg-warning-bg px-1.5 py-0.5 text-caption font-extrabold text-warning shrink-0 animate-pulse">
+      <span className="rounded-md bg-warning-bg px-1.5 py-0.5 text-caption font-extrabold text-warning shrink-0 animate-pulse motion-reduce:animate-none">
         Sắp đến hạn
       </span>
     )
@@ -99,14 +99,14 @@ export function CoordinatorKanbanCard({
       className={`flex flex-col gap-2 rounded-xl border bg-surface p-3 text-left shadow-xs transition-shadow hover:shadow-md ${tierBorder}`}
     >
       {/* Clickable Card Body to open detail modal */}
-      <button
+      <Button variant="ghost"
         type="button"
         onClick={onOpenDetail}
-        className="flex flex-col gap-2 text-left w-full cursor-pointer group"
+        className="h-auto p-0 justify-start font-[inherit] flex flex-col gap-2 text-left w-full cursor-pointer group"
       >
         <div className="flex items-start justify-between gap-1 border-b border-border/60 pb-1.5 w-full">
           <div className="flex items-center gap-1.5 min-w-0">
-            <span className="text-caption font-bold text-foreground group-hover:text-primary transition-colors">
+            <span className="text-caption font-bold text-text group-hover:text-primary transition-colors">
               #{o.code}
             </span>
             {o.greeting_sessions[0]?.send_code && (
@@ -157,7 +157,7 @@ export function CoordinatorKanbanCard({
             className="w-10 h-10 rounded-lg border border-border shrink-0"
           />
           <div className="flex-1 min-w-0">
-            <p className="text-caption font-semibold text-foreground truncate">
+            <p className="text-caption font-semibold text-text truncate">
               {product.name}
             </p>
             <p className="text-caption text-text-muted truncate">
@@ -165,7 +165,7 @@ export function CoordinatorKanbanCard({
             </p>
           </div>
         </div>
-      </button>
+      </Button>
 
       {/* Yêu cầu Bỏ qua bằng chứng từ Chi nhánh đang chờ Điều phối duyệt */}
       {o.gate2?.bypassRequests && (

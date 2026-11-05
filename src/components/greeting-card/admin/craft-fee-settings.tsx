@@ -1,5 +1,9 @@
 "use client"
 
+import { useConfirmDialog } from "@/components/ui/confirm-dialog"
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
+import { Checkbox } from "@/components/ui/checkbox"
+import { Input } from "@/components/ui/input"
 import React, { useState } from "react"
 import { AlertTriangle, CheckCircle2, Coins, RotateCcw, Save } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
@@ -26,10 +30,10 @@ const METHOD_TEXT: Record<CraftFeeMethod, { title: string; hint: string }> = {
 
 function NumberField(props: { label: string; value: number; onChange: (v: number) => void; suffix: string; step?: number }) {
   return (
-    <label className="flex items-center justify-between gap-3 text-body-sm text-foreground">
+    <label className="flex items-center justify-between gap-3 text-body-sm text-text">
       <span>{props.label}</span>
       <span className="flex items-center gap-1.5">
-        <input
+        <Input
           type="number"
           min={0}
           step={props.step ?? 1}
@@ -46,7 +50,7 @@ function NumberField(props: { label: string; value: number; onChange: (v: number
 function Group({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <fieldset className="flex flex-col gap-2.5 p-4 rounded-xl border border-border">
-      <legend className="px-1 text-body-sm font-extrabold text-foreground">{title}</legend>
+      <legend className="px-1 text-body-sm font-extrabold text-text">{title}</legend>
       {children}
     </fieldset>
   )
@@ -54,6 +58,7 @@ function Group({ title, children }: { title: string; children: React.ReactNode }
 
 /** Cài đặt → Phí gia công: tiệm chọn 1 trong 6 cách tính, phụ cấp và khoản trừ (PO 22/10/2026). */
 export function CraftFeeSettings() {
+  const [confirm, confirmDialog] = useConfirmDialog()
   const org = useApi<{ settings?: Record<string, unknown> | null }>("/api/v1/organizations/current")
   const [draft, setDraft] = useState<CraftFeePolicy | null>(null)
   const [saving, setSaving] = useState(false)
@@ -64,7 +69,7 @@ export function CraftFeeSettings() {
   const policy = draft ?? (org.data ? craftFeePolicyOf(settings) : null)
 
   if (org.data && !industryHasCraftFee) return null
-  if (!policy) return <div className="h-44 rounded-2xl bg-surface-muted animate-pulse" aria-busy="true" />
+  if (!policy) return <div className="h-44 rounded-2xl bg-surface-muted animate-pulse motion-reduce:animate-none" aria-busy="true" />
 
   const set = <K extends keyof CraftFeePolicy>(key: K, value: CraftFeePolicy[K]) => {
     setDraft({ ...policy, [key]: value })
@@ -91,9 +96,10 @@ export function CraftFeeSettings() {
 
   return (
     <form onSubmit={handleSave} className="bg-surface rounded-2xl border border-border p-5 sm:p-6 shadow-sm flex flex-col gap-5">
+      {confirmDialog}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-4 border-b border-border">
         <div>
-          <h3 className="text-title font-extrabold text-foreground flex items-center gap-2">
+          <h3 className="text-title font-extrabold text-text flex items-center gap-2">
             <Coins size={22} className="text-primary" /> {spec.feeLabel}
           </h3>
           <p className="text-caption text-text-muted mt-0.5">
@@ -101,7 +107,7 @@ export function CraftFeeSettings() {
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <Button type="button" variant="outline" size="sm" className="h-9 text-caption" onClick={() => window.confirm("Khôi phục cách tính mặc định?") && setDraft(defaultCraftFeePolicy(spec))}>
+          <Button type="button" variant="outline" size="sm" className="h-9 text-caption" onClick={async () => { if (await confirm({ title: "Khôi phục cách tính mặc định?", consequence: "Cách tính đang chỉnh sẽ trở về mặc định. Thay đổi chỉ có hiệu lực khi bấm Lưu.", confirmLabel: "Khôi phục mặc định" })) setDraft(defaultCraftFeePolicy(spec)) }}>
             <RotateCcw size={14} className="mr-1" /> Mặc định
           </Button>
           <Button type="submit" variant="primary" size="sm" disabled={saving || !draft} className="h-9 font-bold">
@@ -118,17 +124,19 @@ export function CraftFeeSettings() {
       )}
 
       <Group title="Cách tính">
+        <RadioGroup aria-label="Cách tính" value={policy.method} onValueChange={(v) => set("method", v as CraftFeePolicy["method"])} className="flex flex-col gap-2">
         {CRAFT_FEE_METHODS.map((method) => (
           <label key={method} className="flex items-start gap-2.5 cursor-pointer">
-            <input type="radio" name="craft-fee-method" checked={policy.method === method} onChange={() => set("method", method)} className="mt-1 accent-primary" />
+            <RadioGroupItem value={method} className="mt-1" />
             <span>
-              <span className="block text-body-sm font-bold text-foreground">{METHOD_TEXT[method].title}</span>
+              <span className="block text-body-sm font-bold text-text">{METHOD_TEXT[method].title}</span>
               <span className="block text-caption text-text-muted">{METHOD_TEXT[method].hint}</span>
             </span>
           </label>
         ))}
-        <label className="flex items-center gap-2 pt-1 text-body-sm text-foreground">
-          <input type="checkbox" checked={policy.base === "AFTER_DISCOUNT"} onChange={(e) => set("base", e.target.checked ? "AFTER_DISCOUNT" : "LIST_PRICE")} className="accent-primary" />
+        </RadioGroup>
+        <label className="flex items-center gap-2 pt-1 text-body-sm text-text">
+          <Checkbox checked={policy.base === "AFTER_DISCOUNT"} onCheckedChange={(checked) => set("base", (checked === true) ? "AFTER_DISCOUNT" : "LIST_PRICE")} className="accent-primary" />
           Tính trên giá sau khi trừ mã giảm giá (mặc định: giá niêm yết)
         </label>
       </Group>
@@ -147,7 +155,7 @@ export function CraftFeeSettings() {
               {i < 2 ? (
                 <NumberField label={`Bậc ${i + 1}: đơn đến`} value={tierAt(i)?.upToVnd ?? 0} onChange={(v) => set("tiers", policy.tiers.map((t, j) => (j === i ? { ...t, upToVnd: v } : t)))} suffix="đ" step={100_000} />
               ) : (
-                <span className="text-body-sm text-foreground">Bậc 3: đơn lớn hơn</span>
+                <span className="text-body-sm text-text">Bậc 3: đơn lớn hơn</span>
               )}
               <NumberField label="Tỷ lệ" value={tierAt(i)?.percent ?? policy.percent} onChange={(v) => set("tiers", policy.tiers.map((t, j) => (j === i ? { ...t, percent: Math.min(100, v) } : t)))} suffix="%" />
             </div>
@@ -169,9 +177,9 @@ export function CraftFeeSettings() {
         <NumberField label="Tính là gấp khi phải giao trong vòng" value={policy.rushWithinMinutes} onChange={(v) => set("rushWithinMinutes", v)} suffix="phút" step={15} />
         <NumberField label="Ngày cao điểm: cộng thêm" value={policy.peakSurchargePercent} onChange={(v) => set("peakSurchargePercent", v)} suffix="%" />
         <p className="text-caption text-text-muted">Ngày cao điểm cố định: {spec.peakDays.length ? spec.peakDays.map((d) => d.label).join(", ") : "chưa có"}.</p>
-        <label className="flex flex-col gap-1 text-body-sm text-foreground">
+        <label className="flex flex-col gap-1 text-body-sm text-text">
           Thêm ngày cao điểm (năm-tháng-ngày, cách nhau bằng dấu phẩy — vd. Tết, Trung thu)
-          <input
+          <Input
             type="text"
             defaultValue={policy.extraPeakDates.join(", ")}
             onBlur={(e) => set("extraPeakDates", e.target.value.split(",").map((s) => s.trim()).filter((s) => /^\d{4}-\d{2}-\d{2}$/.test(s)))}

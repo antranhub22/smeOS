@@ -1,5 +1,6 @@
 "use client"
 
+import { useConfirmDialog } from "@/components/ui/confirm-dialog"
 import React, { useState } from "react"
 import {
   Sparkles,
@@ -69,6 +70,7 @@ export function ChainDispatchPanel({
   suggestedCraftFee,
   onDispatched,
 }: ChainDispatchPanelProps) {
+  const [confirm, confirmDialog] = useConfirmDialog()
   const { data, isLoading, mutate } = useApi<ChainDispatchQueryResponse>(
     orderId ? `/api/v1/greeting-card/orders/${orderId}/chain-dispatch` : null
   )
@@ -127,7 +129,7 @@ export function ChainDispatchPanel({
   if (isLoading) {
     return (
       <div className="p-5 rounded-2xl border border-border bg-surface flex items-center justify-center gap-2 text-text-muted text-caption">
-        <Loader2 size={16} className="animate-spin text-primary" />
+        <Loader2 size={16} className="animate-spin motion-reduce:animate-none text-primary" />
         <span>Hệ thống đang quét và chấm điểm chi nhánh tối ưu...</span>
       </div>
     )
@@ -147,6 +149,7 @@ export function ChainDispatchPanel({
 
   return (
     <div className="p-4 rounded-2xl border-2 border-primary/30 bg-primary/5 flex flex-col gap-3.5">
+      {confirmDialog}
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-primary/15 pb-2.5">
         <div className="flex items-center gap-2">
@@ -154,7 +157,7 @@ export function ChainDispatchPanel({
             <Sparkles size={16} />
           </span>
           <div>
-            <h4 className="text-body-sm font-extrabold text-foreground flex items-center gap-1.5">
+            <h4 className="text-body-sm font-extrabold text-text flex items-center gap-1.5">
               <span>Điều phối chuỗi tự động</span>
               <span className="text-caption font-bold px-1.5 py-0.5 rounded-md bg-primary/20 text-primary-dark uppercase">
                 Gate 2
@@ -181,7 +184,7 @@ export function ChainDispatchPanel({
             </span>
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-body font-black text-foreground">
+                <span className="text-body font-black text-text">
                   ĐÃ GIAO CHO: {data.data.dispatchState.claimedBranchName || data.data.dispatchState.claimedBranchId}
                 </span>
                 <span className={`text-caption font-extrabold px-2 py-0.5 rounded-full uppercase ${
@@ -203,8 +206,8 @@ export function ChainDispatchPanel({
               type="button"
               variant="outline"
               size="sm"
-              onClick={() => {
-                if (window.confirm("Bạn có chắc chắn muốn mở khóa để phát lệnh lại cho các chi nhánh khác?")) {
+              onClick={async () => {
+                if (await confirm({ title: "Mở khoá để phát lệnh lại?", consequence: "Lệnh sẽ được gửi lại cho các chi nhánh khác.", confirmLabel: "Mở khoá và phát lại" })) {
                   setDispatchResult(null)
                   mutate()
                 }
@@ -225,7 +228,7 @@ export function ChainDispatchPanel({
               <Clock size={16} />
             </span>
             <div>
-              <p className="text-caption font-bold text-foreground">
+              <p className="text-caption font-bold text-text">
                 Đã phát lệnh — đang chờ chi nhánh nhận
               </p>
               <p className="text-caption text-text-muted">
@@ -264,15 +267,15 @@ export function ChainDispatchPanel({
               disabled={isSubmitting}
               className="text-caption h-8 font-bold border-warning/50 text-warning hover:bg-warning/10"
             >
-              {isSubmitting ? <Loader2 size={12} className="animate-spin mr-1" /> : <Send size={12} className="mr-1" />}
+              {isSubmitting ? <Loader2 size={12} className="animate-spin motion-reduce:animate-none mr-1" /> : <Send size={12} className="mr-1" />}
               Gửi lại thông báo
             </Button>
             <Button
               type="button"
               variant="ghost"
               size="sm"
-              onClick={() => {
-                if (window.confirm("Hủy lệnh hiện tại và chọn lại chi nhánh?")) {
+              onClick={async () => {
+                if (await confirm({ title: "Huỷ lệnh hiện tại?", consequence: "Lệnh đang gửi sẽ bị huỷ để bạn chọn lại chi nhánh.", confirmLabel: "Huỷ lệnh", tone: "danger" })) {
                   setDispatchResult(null)
                   mutate()
                 }
@@ -301,7 +304,7 @@ export function ChainDispatchPanel({
                 setDispatchResult(null)
                 mutate()
               }}
-              className="text-caption h-7 gap-1 text-text-muted hover:text-foreground"
+              className="text-caption h-7 gap-1 text-text-muted hover:text-text"
             >
               <RotateCcw size={12} />
               <span>Phát lại</span>
@@ -315,7 +318,7 @@ export function ChainDispatchPanel({
                 className="flex items-center justify-between text-caption py-1 px-2 rounded-lg bg-surface/80 border border-border/50"
               >
                 <div className="flex items-center gap-1.5">
-                  <span className="font-semibold text-foreground">{res.branchName}</span>
+                  <span className="font-semibold text-text">{res.branchName}</span>
                   <span className="text-caption px-1.5 py-0.5 rounded bg-primary/10 text-primary-dark font-bold">
                     {dispatchChannelLabel(res.channel)}
                   </span>
@@ -337,25 +340,25 @@ export function ChainDispatchPanel({
       {!dispatchResult && !data?.data?.dispatchState?.status && (
         <>
           <div className="flex items-center justify-between text-caption">
-            <span className="font-bold text-foreground">
+            <span className="font-bold text-text">
               Chọn chi nhánh bạn muốn phát lệnh ({selectedBranchIds.length}/{topBranches.length}):
             </span>
             <div className="flex items-center gap-2">
-              <button
+              <Button variant="ghost"
                 type="button"
                 onClick={() => setSelectedBranchIds(topBranches.map((b) => b.branchId))}
-                className="text-caption text-primary hover:underline font-semibold"
+                className="h-auto p-0 gap-0 text-caption text-primary hover:underline font-semibold"
               >
                 Chọn tất cả
-              </button>
+              </Button>
               <span className="text-text-muted/40">·</span>
-              <button
+              <Button variant="ghost"
                 type="button"
                 onClick={() => setSelectedBranchIds([])}
-                className="text-caption text-text-muted hover:underline font-semibold"
+                className="h-auto p-0 gap-0 text-caption text-text-muted hover:underline font-semibold"
               >
                 Bỏ chọn
-              </button>
+              </Button>
             </div>
           </div>
 
@@ -390,7 +393,7 @@ export function ChainDispatchPanel({
             >
               {isSubmitting ? (
                 <>
-                  <Loader2 size={13} className="animate-spin" />
+                  <Loader2 size={13} className="animate-spin motion-reduce:animate-none" />
                   <span>Đang gửi tin nhắn...</span>
                 </>
               ) : (

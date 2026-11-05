@@ -1,5 +1,6 @@
 "use client"
 
+import { Input } from "@/components/ui/input"
 import React, { useState } from "react"
 import { ViDateInput } from "@/components/greeting-card/customer/vi-date-input"
 import { RefreshCw, Search, Sparkles, X } from "@/components/ui/icons"
@@ -102,13 +103,13 @@ export function CoordinatorBrochureTab({ canDecideInTransitCancel = false }: { c
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-surface p-5 rounded-2xl border border-border shadow-sm">
         <div>
-          <h2 className="text-title font-extrabold text-foreground">Việc của Điều phối</h2>
+          <h2 className="text-title font-extrabold text-text">Việc của Điều phối</h2>
           <p className="text-body-sm text-text-muted mt-1">
             Đơn xếp theo ngày và giờ giao gần nhất. Mỗi tác vụ cập nhật bước của đơn — khách tự thấy trên link theo dõi.
           </p>
         </div>
         <Button type="button" variant="outline" size="sm" onClick={() => { loadOrders(); void work.refresh() }} className="gap-1.5 text-caption h-9">
-          <RefreshCw size={14} className={loading ? "animate-spin" : ""} />
+          <RefreshCw size={14} className={loading ? "animate-spin motion-reduce:animate-none" : ""} />
           <span>Làm mới</span>
         </Button>
       </div>
@@ -117,34 +118,34 @@ export function CoordinatorBrochureTab({ canDecideInTransitCancel = false }: { c
         <div className="flex flex-1 flex-wrap items-center gap-2">
           <div className="flex flex-wrap gap-2" role="group" aria-label="Lọc việc">
             {BUCKETS.map((b) => (
-              <button key={b} type="button" aria-pressed={bucket === b} onClick={() => setBucket(bucket === b ? null : b)}
-                className={`h-9 rounded-xl border px-3 text-caption font-bold ${
-                  bucket === b ? "border-primary bg-primary text-white" : b === "ACTION" && counts.ACTION > 0 ? "border-danger/40 bg-danger-bg text-danger" : "border-border text-text-muted hover:bg-surface-muted"
+              <Button variant="outline" key={b} type="button" aria-pressed={bucket === b} onClick={() => setBucket(bucket === b ? null : b)}
+                className={`gap-0 h-9 rounded-xl border px-3 text-caption font-bold ${
+                  bucket === b ? "border-primary bg-primary text-white hover:bg-primary" : b === "ACTION" && counts.ACTION > 0 ? "border-danger/40 bg-danger-bg text-danger hover:bg-danger-bg" : "border-border text-text-muted hover:bg-surface-muted"
                 }`}>
                 {WORK_BUCKET_LABEL[b]} ({counts[b]})
-              </button>
+              </Button>
             ))}
           </div>
 
           <div className="relative min-w-[200px] flex-1 sm:max-w-xs">
             <Search size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" aria-hidden="true" />
-            <input
+            <Input
               type="search"
               aria-label="Tìm kiếm đơn hàng theo tên khách, mã đơn, số điện thoại"
               placeholder="Tìm tên khách, mã đơn, SĐT…"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="h-9 w-full rounded-xl border border-border bg-surface pl-9 pr-8 text-caption text-foreground placeholder:text-text-muted focus:border-primary focus:outline-hidden focus-visible:ring-2 focus-visible:ring-primary"
+              className="h-9 w-full rounded-xl border border-border bg-surface pl-9 pr-8 text-caption text-text placeholder:text-text-muted focus:border-primary focus:outline-hidden focus-visible:ring-2 focus-visible:ring-primary"
             />
             {search && (
-              <button
+              <Button variant="ghost"
                 type="button"
                 aria-label="Xoá tìm kiếm"
                 onClick={() => setSearch("")}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-text-muted hover:text-foreground"
+                className="h-auto p-0 font-[inherit] gap-0 absolute right-2.5 top-1/2 -translate-y-1/2 text-text-muted hover:text-text"
               >
                 <X size={13} aria-hidden="true" />
-              </button>
+              </Button>
             )}
           </div>
         </div>
@@ -158,37 +159,37 @@ export function CoordinatorBrochureTab({ canDecideInTransitCancel = false }: { c
             ) : (
               <>
                 {dayChips.map((c) => (
-                  <button key={c.label} type="button" aria-pressed={day === c.id} onClick={() => setDay(c.id)}
-                    className={`h-9 rounded-xl border px-3 text-caption font-bold ${day === c.id ? "border-primary bg-primary text-white" : "border-border text-text-muted hover:bg-surface-muted"}`}>
+                  <Button variant="outline" key={c.label} type="button" aria-pressed={day === c.id} onClick={() => setDay(c.id)}
+                    className={`gap-0 h-9 rounded-xl border px-3 text-caption font-bold ${day === c.id ? "border-primary bg-primary text-white hover:bg-primary" : "border-border text-text-muted hover:bg-surface-muted"}`}>
                     {c.label}
-                  </button>
+                  </Button>
                 ))}
                 <ViDateInput compact ariaLabel="Chọn ngày giao" value={day} onChange={setDay} wrapperClassName="w-36"
-                  className="h-9 rounded-xl border border-border bg-surface px-2 text-caption text-foreground" />
+                  className="h-9 rounded-xl border border-border bg-surface px-2 text-caption text-text" />
               </>
             )}
           </div>
 
           {/* View Mode Toggle (Spec #14) */}
           <div className="flex items-center rounded-xl border border-border bg-surface p-1">
-            <button
+            <Button variant="ghost"
               type="button"
               onClick={() => setViewMode("kanban")}
-              className={`px-3 py-1 text-caption font-bold rounded-lg transition-colors ${
-                viewMode === "kanban" ? "bg-primary text-white" : "text-text-muted hover:text-foreground"
+              className={`gap-0 px-3 py-1 text-caption font-bold rounded-lg transition-colors ${
+                viewMode === "kanban" ? "bg-primary text-white hover:bg-primary" : "text-text-muted hover:text-text"
               }`}
             >
               Kanban
-            </button>
-            <button
+            </Button>
+            <Button variant="ghost"
               type="button"
               onClick={() => setViewMode("grid")}
-              className={`px-3 py-1 text-caption font-bold rounded-lg transition-colors ${
-                viewMode === "grid" ? "bg-primary text-white" : "text-text-muted hover:text-foreground"
+              className={`gap-0 px-3 py-1 text-caption font-bold rounded-lg transition-colors ${
+                viewMode === "grid" ? "bg-primary text-white hover:bg-primary" : "text-text-muted hover:text-text"
               }`}
             >
               Lưới thẻ
-            </button>
+            </Button>
           </div>
         </div>
       </div>
@@ -197,7 +198,7 @@ export function CoordinatorBrochureTab({ canDecideInTransitCancel = false }: { c
       {shown.length === 0 ? (
         <div className="bg-surface rounded-2xl border border-border p-12 text-center text-text-muted flex flex-col items-center">
           <Sparkles size={36} className="text-primary/40 mb-2" />
-          <p className="text-body font-bold text-foreground">
+          <p className="text-body font-bold text-text">
             {term ? `Không tìm thấy đơn nào phù hợp với "${search.trim()}"` : bucket ? "Không có đơn nào trong mục này" : "Chưa có đơn nào cần làm"}
           </p>
           <p className="text-caption text-text-muted mt-1">

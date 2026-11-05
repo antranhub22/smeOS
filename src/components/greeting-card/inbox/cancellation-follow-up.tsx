@@ -1,5 +1,6 @@
 "use client"
 
+import { Input } from "@/components/ui/input"
 import React, { useState } from "react"
 import { CheckCircle2, Loader2 } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
@@ -40,7 +41,7 @@ export function CancellationFollowUp({ requestId, refundDueVnd, reason, onDone }
 
   return (
     <div className="flex flex-col gap-3 text-body-sm">
-      <div className="flex flex-col gap-1 rounded-lg border border-border bg-surface p-2.5 text-foreground">
+      <div className="flex flex-col gap-1 rounded-lg border border-border bg-surface p-2.5 text-text">
         <p><strong>Lý do Điều phối từ chối:</strong> {reason}</p>
         {refundDueVnd > 0 ? (
           <p>
@@ -52,17 +53,17 @@ export function CancellationFollowUp({ requestId, refundDueVnd, reason, onDone }
         )}
       </div>
       {error && <p role="alert" className="text-caption font-semibold text-danger">{error}</p>}
-      <input
+      <Input
         type="text"
         placeholder="Ghi chú (mã giao dịch hoàn tiền, đã gọi khách...)"
         value={note}
         onChange={(e) => setNote(e.target.value)}
         disabled={busy}
-        className="h-8 w-full rounded-lg border border-border bg-background px-2.5 text-caption text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+        className="h-8 w-full rounded-lg border border-border bg-bg px-2.5 text-caption text-text focus:outline-none focus:ring-1 focus:ring-primary"
       />
       <div className="flex justify-end">
         <Button type="button" size="sm" disabled={busy} onClick={() => void confirm()} className="h-8 gap-1 text-caption font-bold">
-          {busy ? <Loader2 size={14} className="animate-spin" /> : <CheckCircle2 size={14} />}
+          {busy ? <Loader2 size={14} className="animate-spin motion-reduce:animate-none" /> : <CheckCircle2 size={14} />}
           <span>{refundDueVnd > 0 ? "Đã hoàn tiền cho khách" : "Đã xử lý xong"}</span>
         </Button>
       </div>

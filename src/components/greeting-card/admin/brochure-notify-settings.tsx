@@ -1,5 +1,8 @@
 "use client"
 
+import { Disclosure } from "@/components/ui/disclosure"
+import { Checkbox } from "@/components/ui/checkbox"
+import { Input } from "@/components/ui/input"
 import React, { useState } from "react"
 import { BellRing, Loader2, Save, Send } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
@@ -11,7 +14,7 @@ interface StatusResponse {
   data: { notify: { enabled: boolean; channel: NotifyChannel | null; configured: boolean; templates: Record<string, string> } }
 }
 
-const FIELD = "h-9 px-3 rounded-lg border border-border bg-background text-body-sm text-foreground w-full"
+const FIELD = "h-9 px-3 rounded-lg border border-border bg-bg text-body-sm text-text w-full"
 const CRED_FIELDS: Record<NotifyChannel, Array<{ key: string; label: string }>> = {
   ZNS: [
     { key: "appId", label: "App ID" },
@@ -83,25 +86,25 @@ export function BrochureNotifySettings() {
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center gap-2">
           <BellRing size={18} className="text-primary" />
-          <h3 className="text-title-sm font-extrabold text-foreground">Thông báo khách (Zalo / SMS)</h3>
+          <h3 className="text-title-sm font-extrabold text-text">Thông báo khách (Zalo / SMS)</h3>
         </div>
         <label className="flex items-center gap-2 text-body-sm font-bold">
-          <input type="checkbox" checked={on} onChange={(e) => setEnabled(e.target.checked)} /> Bật
+          <Checkbox checked={on} onCheckedChange={(checked) => setEnabled((checked === true))} /> Bật
         </label>
       </div>
 
       <div className="flex gap-2" role="radiogroup" aria-label="Kênh gửi">
         {(["ZNS", "ESMS"] as const).map((c) => (
-          <button
+          <Button variant="outline"
             key={c}
             type="button"
             role="radio"
             aria-checked={ch === c}
             onClick={() => setChannel(c)}
-            className={`px-3 h-8 rounded-lg text-caption font-bold border ${ch === c ? "bg-primary text-white border-primary" : "border-border text-text-muted"}`}
+            className={`gap-0 px-3 h-8 rounded-lg text-caption font-bold border ${ch === c ? "bg-primary text-white border-primary hover:bg-primary" : "border-border text-text-muted"}`}
           >
             {c === "ZNS" ? "Zalo ZNS" : "SMS (eSMS.vn)"}
-          </button>
+          </Button>
         ))}
       </div>
 
@@ -124,8 +127,7 @@ export function BrochureNotifySettings() {
       {ch === "ZNS" && <ZnsTemplateGuide />}
 
       {ch === "ZNS" && (
-        <details className="text-body-sm">
-          <summary className="cursor-pointer font-bold">Mã mẫu tin ZNS theo mốc</summary>
+        <Disclosure label="Mã mẫu tin ZNS theo mốc" className="text-body-sm">
           <p className="text-caption text-text-muted my-2">
             Mẫu cần các tham số: order_code, customer_name, shop_name, status, amount, tracking_url. Bỏ trống = không gửi mốc đó.
           </p>
@@ -133,11 +135,11 @@ export function BrochureNotifySettings() {
             {NOTIFY_EVENTS.map((ev) => (
               <label key={ev} className="flex flex-col gap-1 text-caption">
                 <span>{NOTIFY_EVENT_LABELS[ev]}</span>
-                <input value={tpl[ev] ?? ""} maxLength={32} onChange={(e) => setTemplates({ ...tpl, [ev]: e.target.value })} className={FIELD} />
+                <Input value={tpl[ev] ?? ""} maxLength={32} onChange={(e) => setTemplates({ ...tpl, [ev]: e.target.value })} className={FIELD} />
               </label>
             ))}
           </div>
-        </details>
+        </Disclosure>
       )}
 
       {message && (
@@ -147,7 +149,7 @@ export function BrochureNotifySettings() {
       <div className="flex flex-wrap items-center justify-end gap-2">
         {saved?.configured && (
           <>
-            <input
+            <Input
               type="tel"
               aria-label="SĐT nhận tin thử"
               placeholder="SĐT nhận tin thử"
@@ -161,7 +163,7 @@ export function BrochureNotifySettings() {
           </>
         )}
         <Button type="button" size="sm" disabled={busy || !saved} onClick={() => void save()} className="gap-1.5">
-          {busy ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} />} Lưu
+          {busy ? <Loader2 size={14} className="animate-spin motion-reduce:animate-none" /> : <Save size={14} />} Lưu
         </Button>
       </div>
     </section>

@@ -1,8 +1,9 @@
 "use client"
 
 import React, { useState } from "react"
-import { HelpCircle, X, BookOpen, Shield, Users, Sparkles } from "@/components/ui/icons"
+import { HelpCircle, BookOpen, Shield, Users, Sparkles } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
+import { Dialog } from "@/components/ui/dialog"
 import { cn } from "@/lib/utils"
 import { useI18n } from "@/lib/i18n"
 
@@ -15,7 +16,7 @@ export function BrochureUserGuideModal() {
 
   return (
     <>
-      <button
+      <Button variant="outline"
         type="button"
         onClick={() => setOpen(true)}
         aria-expanded={open}
@@ -24,86 +25,60 @@ export function BrochureUserGuideModal() {
           "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
           open
             ? "border-border bg-surface text-primary shadow-xs"
-            : "border-border bg-surface-alt text-text-muted hover:bg-surface hover:text-foreground active:bg-surface active:text-primary",
+            : "border-border bg-surface-alt text-text-muted hover:bg-surface hover:text-text active:bg-surface active:text-primary",
         )}
         title="Hướng dẫn dùng thẻ chào"
       >
         <HelpCircle size={16} className={open ? "text-primary" : "text-text-muted"} aria-hidden="true" />
         <span className="hidden sm:inline">Hướng dẫn thẻ chào</span>
-      </button>
+      </Button>
 
       {open && (
-        <div
-          role="presentation"
-          className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4"
-          onKeyDown={(e) => e.key === "Escape" && setOpen(false)}
-        >
-          <div
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="guide-modal-title"
-            className="bg-surface rounded-3xl border border-border shadow-2xl w-full max-w-2xl max-h-[85vh] flex flex-col overflow-hidden"
-          >
-            {/* Header */}
-            <header className="flex items-center justify-between border-b border-border p-5">
-              <div className="flex items-center gap-2">
-                <BookOpen size={20} className="text-primary" />
-                <h2 id="guide-modal-title" className="text-title-sm font-extrabold text-foreground">
-                  Hướng dẫn Thẻ chào & {ti("sampleProduct")}
-                </h2>
-              </div>
-              <button
-                type="button"
-                onClick={() => setOpen(false)}
-                aria-label="Đóng hướng dẫn"
-                className="text-text-muted hover:text-foreground p-1.5 rounded-xl hover:bg-surface-alt"
-              >
-                <X size={20} />
-              </button>
-            </header>
-
+        <Dialog open onOpenChange={(o) => { if (!o) setOpen(false) }} size="lg"
+          title={<span className="flex items-center gap-2"><BookOpen size={20} className="text-primary" />Hướng dẫn Thẻ chào & {ti("sampleProduct")}</span>}>
+          <div className="-m-5 sm:-m-6 flex flex-col">
             {/* Role Tabs */}
             <div className="flex border-b border-border bg-surface-alt px-5 pt-2">
-              <button
+              <Button variant="ghost"
                 type="button"
                 onClick={() => setActiveTab("admin")}
                 className={`flex items-center gap-1.5 border-b-2 px-3 py-2.5 text-body-sm font-bold transition-colors ${
                   activeTab === "admin"
                     ? "border-primary text-primary"
-                    : "border-transparent text-text-muted hover:text-foreground"
+                    : "border-transparent text-text-muted hover:text-text"
                 }`}
               >
                 <Shield size={16} />
                 <span>Điều hành và kế toán</span>
-              </button>
-              <button
+              </Button>
+              <Button variant="ghost"
                 type="button"
                 onClick={() => setActiveTab("sales")}
                 className={`flex items-center gap-1.5 border-b-2 px-3 py-2.5 text-body-sm font-bold transition-colors ${
                   activeTab === "sales"
                     ? "border-primary text-primary"
-                    : "border-transparent text-text-muted hover:text-foreground"
+                    : "border-transparent text-text-muted hover:text-text"
                 }`}
               >
                 <Users size={16} />
                 <span>Nhân viên bán hàng</span>
-              </button>
-              <button
+              </Button>
+              <Button variant="ghost"
                 type="button"
                 onClick={() => setActiveTab("coordinator")}
                 className={`flex items-center gap-1.5 border-b-2 px-3 py-2.5 text-body-sm font-bold transition-colors ${
                   activeTab === "coordinator"
                     ? "border-primary text-primary"
-                    : "border-transparent text-text-muted hover:text-foreground"
+                    : "border-transparent text-text-muted hover:text-text"
                 }`}
               >
                 <Sparkles size={16} />
                 <span>Điều phối & {ti("makerTitle")}</span>
-              </button>
+              </Button>
             </div>
 
             {/* Nội dung chi tiết theo tab */}
-            <div className="flex-1 overflow-y-auto p-5 text-body-sm text-foreground space-y-4">
+            <div className="flex-1 overflow-y-auto p-5 text-body-sm text-text space-y-4">
               {activeTab === "admin" && (
                 <div className="flex flex-col gap-3">
                   <div className="rounded-2xl border border-primary/20 bg-primary/5 p-4 flex flex-col gap-1.5">
@@ -116,7 +91,7 @@ export function BrochureUserGuideModal() {
                   </div>
 
                   <div className="rounded-2xl border border-border bg-surface-alt p-4 flex flex-col gap-2">
-                    <h4 className="font-extrabold text-foreground">Quy trình Điều hành cần nắm:</h4>
+                    <h4 className="font-extrabold text-text">Quy trình Điều hành cần nắm:</h4>
                     <ul className="list-disc list-inside space-y-1.5 text-caption sm:text-body-sm text-text-muted">
                       <li><strong>Duyệt thanh toán tiền về:</strong> Vào tab Điều hành để đối soát các đơn khách báo chuyển khoản. Bấm xác nhận để đơn tự động chuyển vào hàng đợi {ti("makerAction").toLowerCase()} của xưởng.</li>
                       <li><strong>Xử lý đề xuất Hủy / Hoàn tiền:</strong> Sale hoặc Điều phối chỉ có quyền đề xuất; Điều hành là người quyết định cuối cùng (Approve/Reject). Hệ thống lưu vết đầy đủ lý do và người duyệt.</li>
@@ -138,7 +113,7 @@ export function BrochureUserGuideModal() {
                   </div>
 
                   <div className="rounded-2xl border border-border bg-surface-alt p-4 flex flex-col gap-2">
-                    <h4 className="font-extrabold text-foreground">Kỹ năng vận hành cho Sale:</h4>
+                    <h4 className="font-extrabold text-text">Kỹ năng vận hành cho Sale:</h4>
                     <ul className="list-disc list-inside space-y-1.5 text-caption sm:text-body-sm text-text-muted">
                       <li><strong>Xem nhanh mốc giờ giao hàng:</strong> Mỗi thẻ đơn trên Kanban hiển thị khung giờ giao to, đậm (ví dụ: <em>10:00 - 12:00</em>) và được sắp xếp ưu tiên đơn giao sớm nhất lên đầu để bạn dễ theo sát.</li>
                       <li><strong>Click vào thẻ đơn để xem toàn bộ thông tin:</strong> Xem người đặt, người nhận, số điện thoại, địa chỉ cụ thể, lời nhắn và {ti("sampleProduct").toLowerCase()} đã chọn mà không cần hỏi lại khách.</li>
@@ -160,7 +135,7 @@ export function BrochureUserGuideModal() {
                   </div>
 
                   <div className="rounded-2xl border border-border bg-surface-alt p-4 flex flex-col gap-2">
-                    <h4 className="font-extrabold text-foreground">Quy trình xưởng & Bàn giao:</h4>
+                    <h4 className="font-extrabold text-text">Quy trình xưởng & Bàn giao:</h4>
                     <ul className="list-disc list-inside space-y-1.5 text-caption sm:text-body-sm text-text-muted">
                       <li><strong>Xem chi tiết {ti("productRecipe").toLowerCase()}:</strong> Click vào thẻ đơn hàng trên Kanban để xem ảnh {ti("sampleProduct").toLowerCase()} to rõ, ghi chú đơn và lời nhắn để chuẩn bị đúng quy cách và phụ liệu.</li>
                       <li><strong>Nghiệm thu ảnh & Đồng hồ đếm ngược:</strong> Khi {ti("makerAction").toLowerCase()} xong, tải {ti("completedProductPhoto").toLowerCase()} lên hệ thống. Khách có 10 phút đếm ngược trực tiếp trên link để duyệt ảnh. Hết 10 phút hệ thống tự động xác nhận để bạn bàn giao cho shipper kịp giờ.</li>
@@ -182,7 +157,7 @@ export function BrochureUserGuideModal() {
               </Button>
             </footer>
           </div>
-        </div>
+        </Dialog>
       )}
     </>
   )

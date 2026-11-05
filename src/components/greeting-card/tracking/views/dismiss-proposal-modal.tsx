@@ -1,8 +1,12 @@
 "use client"
 
+import { NativeSelect } from "@/components/ui/select"
+import { Textarea } from "@/components/ui/textarea"
+import { Input } from "@/components/ui/input"
 import React, { useState } from "react"
-import { EyeOff, AlertTriangle, X } from "@/components/ui/icons"
+import { EyeOff, AlertTriangle } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
+import { Dialog } from "@/components/ui/dialog"
 import type { TrackingViewItem } from "@/modules/greeting-card/domain/tracking-views"
 import { DISMISSAL_REASONS, type DismissalReasonId } from "@/modules/greeting-card/domain/dismissal-policy"
 
@@ -68,38 +72,11 @@ export function DismissProposalModal({ item, onClose, onSuccess }: DismissPropos
   const orderTitle = item.orderCode || item.sendCode || "Đơn hàng"
 
   return (
-    <div
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="dismiss-modal-title"
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 backdrop-blur-xs"
-    >
-      <div className="w-full max-w-md rounded-2xl border border-border bg-surface p-5 shadow-xl animate-in fade-in zoom-in-95 duration-150">
-        <div className="flex items-center justify-between border-b border-border/60 pb-3">
-          <div className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-danger-bg text-danger">
-              <EyeOff size={18} aria-hidden="true" />
-            </div>
-            <div>
-              <h2 id="dismiss-modal-title" className="text-body font-bold text-foreground">
-                Bỏ hiển thị: {orderTitle}
-              </h2>
-              <p className="text-caption text-text-muted">
-                {item.customerName || "Khách hàng"} · {item.productName || "Sản phẩm"}
-              </p>
-            </div>
-          </div>
-          <button
-            type="button"
-            onClick={onClose}
-            className="rounded-lg p-1 text-text-muted hover:bg-surface-muted hover:text-foreground cursor-pointer"
-            aria-label="Đóng"
-          >
-            <X size={18} />
-          </button>
-        </div>
-
-        <form onSubmit={handleSubmit} className="mt-4 flex flex-col gap-3.5">
+    <Dialog open onOpenChange={(o) => { if (!o && !submitting) onClose() }} size="sm"
+      title={<span className="flex items-center gap-2"><EyeOff size={18} className="text-danger" aria-hidden="true" />Bỏ hiển thị: {orderTitle}</span>}
+      description={`${item.customerName || "Khách hàng"} · ${item.productName || "Sản phẩm"}`}>
+      <div className="flex flex-col">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-3.5">
           <div className="rounded-xl border border-warning-border bg-warning-bg/40 p-3 text-caption text-warning-text flex items-start gap-2">
             <AlertTriangle size={15} className="shrink-0 mt-0.5 text-warning" aria-hidden="true" />
             <span>
@@ -108,29 +85,29 @@ export function DismissProposalModal({ item, onClose, onSuccess }: DismissPropos
           </div>
 
           <div>
-            <label htmlFor="dismiss-reason-select" className="block text-caption font-semibold text-foreground mb-1">
+            <label htmlFor="dismiss-reason-select" className="block text-caption font-semibold text-text mb-1">
               Lý do bỏ hiển thị <span className="text-danger">*</span>
             </label>
-            <select
+            <NativeSelect
               id="dismiss-reason-select"
               value={reasonId}
               onChange={(e) => setReasonId(e.target.value as DismissalReasonId)}
-              className="w-full rounded-xl border border-border bg-surface px-3 py-2 text-body-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20"
+              className="w-full rounded-xl border border-border bg-surface px-3 py-2 text-body-sm text-text focus:outline-none focus:ring-2 focus:ring-primary/20"
             >
               {DISMISSAL_REASONS.map((r) => (
                 <option key={r.id} value={r.id}>
                   {r.label}
                 </option>
               ))}
-            </select>
+            </NativeSelect>
           </div>
 
           {reasonId === "OTHER" && (
             <div>
-              <label htmlFor="dismiss-custom-reason" className="block text-caption font-semibold text-foreground mb-1">
+              <label htmlFor="dismiss-custom-reason" className="block text-caption font-semibold text-text mb-1">
                 Chi tiết lý do khác <span className="text-danger">*</span>
               </label>
-              <input
+              <Input
                 id="dismiss-custom-reason"
                 type="text"
                 value={customReason}
@@ -138,23 +115,23 @@ export function DismissProposalModal({ item, onClose, onSuccess }: DismissPropos
                 placeholder="Nhập lý do cụ thể..."
                 maxLength={200}
                 required
-                className="w-full rounded-xl border border-border bg-surface px-3 py-2 text-body-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20"
+                className="w-full rounded-xl border border-border bg-surface px-3 py-2 text-body-sm text-text focus:outline-none focus:ring-2 focus:ring-primary/20"
               />
             </div>
           )}
 
           <div>
-            <label htmlFor="dismiss-note" className="block text-caption font-semibold text-foreground mb-1">
+            <label htmlFor="dismiss-note" className="block text-caption font-semibold text-text mb-1">
               Ghi chú thêm (tùy chọn)
             </label>
-            <textarea
+            <Textarea
               id="dismiss-note"
               value={note}
               onChange={(e) => setNote(e.target.value)}
               placeholder="Ghi chú nội bộ cho Điều hành..."
               rows={2}
               maxLength={500}
-              className="w-full rounded-xl border border-border bg-surface px-3 py-2 text-body-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20"
+              className="w-full rounded-xl border border-border bg-surface px-3 py-2 text-body-sm text-text focus:outline-none focus:ring-2 focus:ring-primary/20"
             />
           </div>
 
@@ -179,6 +156,6 @@ export function DismissProposalModal({ item, onClose, onSuccess }: DismissPropos
           </div>
         </form>
       </div>
-    </div>
+    </Dialog>
   )
 }

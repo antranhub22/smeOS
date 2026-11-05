@@ -1,5 +1,7 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import React, { useState } from "react"
 import { Hourglass } from "@/components/ui/icons"
 import { apiSend, useApi } from "@/components/greeting-card/greeting-api"
@@ -44,18 +46,18 @@ export function BrochureLinkLifetimeSettings() {
     <section className="bg-surface rounded-2xl border border-border p-5 shadow-sm flex flex-col gap-3">
       <div className="flex items-center gap-2">
         <Hourglass size={18} className="text-primary" aria-hidden="true" />
-        <h3 className="text-title-sm font-extrabold text-foreground">Thời hạn link gửi khách</h3>
+        <h3 className="text-title-sm font-extrabold text-text">Thời hạn link gửi khách</h3>
       </div>
       <p className="text-caption text-text-muted">
         Link riêng tính từ lúc tạo, link chia sẻ tính từ lúc khách mở. Hết hạn mà khách chưa đặt, khách thấy lời nhắn liên hệ cửa hàng để
         nhận link mới. Chỉ áp dụng cho link tạo sau khi lưu; link đã có đơn luôn mở được.
       </p>
       {saved === null ? (
-        <div className="h-10 rounded-lg bg-surface-muted animate-pulse" aria-busy="true" />
+        <div className="h-10 rounded-lg bg-surface-muted animate-pulse motion-reduce:animate-none" aria-busy="true" />
       ) : (
-        <label className="flex items-center gap-2 text-body-sm text-foreground">
+        <label className="flex items-center gap-2 text-body-sm text-text">
           <span>Link dùng được trong</span>
-          <input
+          <Input
             type="number"
             min={MIN_LINK_LIFETIME_HOURS}
             max={MAX_LINK_LIFETIME_HOURS}
@@ -65,7 +67,7 @@ export function BrochureLinkLifetimeSettings() {
               setEdited(e.target.value)
               setMessage(null)
             }}
-            className="h-9 w-24 rounded-lg border border-border bg-surface px-2 text-right text-body-sm text-foreground"
+            className="h-9 w-24 rounded-lg border border-border bg-surface px-2 text-right text-body-sm text-text"
           />
           <span>giờ</span>
           {isValidLinkLifetimeHours(hours) && <span className="text-caption text-text-muted">({formatLinkLifetime(hours)})</span>}
@@ -75,14 +77,14 @@ export function BrochureLinkLifetimeSettings() {
         {message ? (
           <p role="status" className={`text-caption font-medium ${message.ok ? "text-success" : "text-danger"}`}>{message.text}</p>
         ) : <span />}
-        <button
+        <Button variant="primary"
           type="button"
           onClick={() => void save()}
           disabled={saved === null || saving}
-          className="h-9 rounded-lg bg-primary px-4 text-body-sm font-bold text-white hover:bg-primary-dark disabled:opacity-50"
+          className="gap-0 h-9 rounded-lg bg-primary px-4 text-body-sm font-bold text-white hover:bg-primary-dark disabled:opacity-50"
         >
           {saving ? "Đang lưu..." : "Lưu"}
-        </button>
+        </Button>
       </div>
     </section>
   )

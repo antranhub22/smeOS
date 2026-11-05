@@ -65,7 +65,7 @@ export function SpotlightBlock({
           {step}
         </span>
         <div className="min-w-0">
-          <h3 id={headingId} className="text-body font-extrabold text-foreground leading-tight">
+          <h3 id={headingId} className="text-body font-extrabold text-text leading-tight">
             {title}
           </h3>
           {description && <p className="mt-0.5 text-caption text-text-muted">{description}</p>}

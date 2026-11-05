@@ -9,13 +9,13 @@ export function TelegramDirectChatGuide({ botUsername, linkCode }: { botUsername
   const code = "font-mono bg-surface px-1 py-0.5 rounded border border-border"
   return (
     <div className="p-4 rounded-xl bg-primary/5 border border-primary/20 flex flex-col gap-2.5">
-      <h4 className="text-body-sm font-bold text-foreground flex items-center gap-1.5">
+      <h4 className="text-body-sm font-bold text-text flex items-center gap-1.5">
         <UserRound size={16} className="text-primary" /> Nhắn riêng cho từng cửa hàng (khuyên dùng)
       </h4>
       <p className="text-caption text-text-muted leading-relaxed">
         Mỗi đơn, hệ thống chọn 3–5 cửa hàng phù hợp và gửi lời mời riêng vào Telegram của từng chủ cửa hàng. Mỗi cửa hàng chỉ cần thiết lập một lần:
       </p>
-      <ol className="text-caption text-foreground/90 space-y-1.5 list-decimal pl-4 leading-relaxed">
+      <ol className="text-caption text-text/90 space-y-1.5 list-decimal pl-4 leading-relaxed">
         <li>
           Chủ cửa hàng mở Telegram, tìm <strong className="text-primary font-mono">@{botUsername}</strong> và bấm <strong>Start</strong>.
         </li>

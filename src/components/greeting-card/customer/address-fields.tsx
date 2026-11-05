@@ -1,3 +1,5 @@
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import React, { useState } from "react"
 import { ADDRESS_PART_MAX, type AddressParts } from "@/modules/greeting-card/domain/delivery-address"
 import {
@@ -47,24 +49,24 @@ export function AddressFields(props: {
 
   return (
     <fieldset className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-      <legend className="mb-1 block text-body-sm font-bold text-foreground">
+      <legend className="mb-1 block text-body-sm font-bold text-text">
         {isEn ? "Delivery Address" : "Địa chỉ nhận hàng"} <span className="text-danger">*</span>
       </legend>
 
       <div role="radiogroup" aria-label={isEn ? "Address System" : "Kiểu địa chỉ"} className="flex flex-wrap gap-2 sm:col-span-2">
         {(["old", "new"] as const).map((s) => (
-          <button
+          <Button variant="outline"
             key={s}
             type="button"
             role="radio"
             aria-checked={system === s}
             onClick={() => switchSystem(s)}
-            className={`min-h-11 flex-1 rounded-xl border px-3 text-body-sm font-semibold transition ${
-              system === s ? "border-primary bg-primary/10 text-primary" : "border-border bg-surface text-text-muted hover:border-primary/40"
+            className={`gap-0 min-h-11 flex-1 rounded-xl border px-3 text-body-sm font-semibold transition ${
+              system === s ? "border-primary bg-primary/10 text-primary hover:bg-primary/10" : "border-border bg-surface text-text-muted hover:border-primary/40 hover:bg-surface"
             }`}
           >
             {systemLabels[s]}
-          </button>
+          </Button>
         ))}
       </div>
       {units.error && <p role="alert" className="text-caption text-danger sm:col-span-2">{units.error}</p>}
@@ -111,7 +113,7 @@ export function AddressFields(props: {
         <label htmlFor={`${idPrefix}-street`} className="mb-1 block text-caption font-semibold text-text-muted">
           {isEn ? "Street / Village" : "Đường / Thôn / Ấp"} <span className="text-danger">*</span>
         </label>
-        <input
+        <Input
           id={`${idPrefix}-street`}
           type="text"
           required
@@ -127,7 +129,7 @@ export function AddressFields(props: {
         <label htmlFor={`${idPrefix}-houseNumber`} className="mb-1 block text-caption font-semibold text-text-muted">
           {isEn ? "House / Building / Unit No." : "Số nhà / Tòa nhà / Phòng"} <span className="text-danger">*</span>
         </label>
-        <input
+        <Input
           id={`${idPrefix}-houseNumber`}
           type="text"
           required

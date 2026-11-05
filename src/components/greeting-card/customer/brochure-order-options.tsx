@@ -1,5 +1,8 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
+import { NativeSelect } from "@/components/ui/select"
+import { Input } from "@/components/ui/input"
 import React, { useState } from "react"
 import { Minus, Plus, Ticket } from "@/components/ui/icons"
 import type { ShippingConfig, BrochureQuote } from "@/modules/greeting-card/domain/brochure-pricing"
@@ -24,7 +27,7 @@ interface Props {
   industryKey?: string | null | undefined
 }
 
-const FIELD = "w-full h-10 px-3 rounded-lg border border-border bg-background text-body text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20"
+const FIELD = "w-full h-10 px-3 rounded-lg border border-border bg-bg text-body text-text focus:outline-none focus:ring-2 focus:ring-primary/20"
 const vnd = (n: number) => `${n.toLocaleString("vi-VN")} đ`
 
 /** Size, số lượng, khu vực giao, mã giảm giá (khi tiệm bật), mã thanh toán (khi tiệm có mã) + bảng tổng tiền do server tính (đã trừ ưu đãi). */
@@ -50,8 +53,8 @@ export function BrochureOrderOptions({ variants, priceDimensions, basePrice, shi
           />
         ) : variants.length > 0 && (
           <label className="flex flex-col gap-1">
-            <span className="text-caption font-bold text-foreground">Kích thước / Phiên bản</span>
-            <select value={selection.variantId} onChange={(e) => onChange({ variantId: e.target.value })} className={FIELD}>
+            <span className="text-caption font-bold text-text">Kích thước / Phiên bản</span>
+            <NativeSelect value={selection.variantId} onChange={(e) => onChange({ variantId: e.target.value })} className={FIELD}>
               {/* Khoảng giá theo phiên bản: không có "bản tiêu chuẩn", khách phải chọn */}
               {variants.some((v) => isOptionId(v.id)) ? (
                 <option value="">Chọn phiên bản</option>
@@ -64,45 +67,45 @@ export function BrochureOrderOptions({ variants, priceDimensions, basePrice, shi
                   {v.peakPriceVnd && v.peakPriceVnd !== v.priceVnd ? ` (ngày cao điểm ${vnd(v.peakPriceVnd)})` : ""}
                 </option>
               ))}
-            </select>
+            </NativeSelect>
             {errors.variantId && <span className="text-caption text-danger">{errors.variantId}</span>}
           </label>
         )}
         <div className="flex flex-col gap-1">
-          <span className="text-caption font-bold text-foreground" id="qty-label">Số lượng</span>
+          <span className="text-caption font-bold text-text" id="qty-label">Số lượng</span>
           <div className="flex items-center gap-2" role="group" aria-labelledby="qty-label">
-            <button
+            <Button variant="outline"
               type="button"
               aria-label="Giảm số lượng"
               disabled={selection.quantity <= 1}
               onClick={() => onChange({ quantity: selection.quantity - 1 })}
-              className="h-10 w-10 rounded-lg border border-border flex items-center justify-center disabled:opacity-40"
+              className="font-[inherit] gap-0 h-10 w-10 rounded-lg border border-border flex items-center justify-center disabled:opacity-40"
             >
               <Minus size={16} />
-            </button>
+            </Button>
             <span className="w-10 text-center font-extrabold text-body" aria-live="polite">{selection.quantity}</span>
-            <button
+            <Button variant="outline"
               type="button"
               aria-label="Tăng số lượng"
               disabled={selection.quantity >= MAX_ORDER_QUANTITY}
               onClick={() => onChange({ quantity: selection.quantity + 1 })}
-              className="h-10 w-10 rounded-lg border border-border flex items-center justify-center disabled:opacity-40"
+              className="font-[inherit] gap-0 h-10 w-10 rounded-lg border border-border flex items-center justify-center disabled:opacity-40"
             >
               <Plus size={16} />
-            </button>
+            </Button>
           </div>
         </div>
       </div>
 
       {shipping.zones.length > 0 && (
         <label className="flex flex-col gap-1">
-          <span className="text-caption font-bold text-foreground">{shippingZoneLabel} <span className="text-danger">*</span></span>
-          <select value={selection.shippingZoneId} onChange={(e) => onChange({ shippingZoneId: e.target.value })} className={FIELD}>
+          <span className="text-caption font-bold text-text">{shippingZoneLabel} <span className="text-danger">*</span></span>
+          <NativeSelect value={selection.shippingZoneId} onChange={(e) => onChange({ shippingZoneId: e.target.value })} className={FIELD}>
             <option value="">— Chọn khu vực —</option>
             {shipping.zones.map((z) => (
               <option key={z.id} value={z.id}>{z.name} — {z.feeVnd > 0 && !shipping.freeShippingAll ? vnd(z.feeVnd) : "Miễn phí"}</option>
             ))}
-          </select>
+          </NativeSelect>
           {shipping.freeShippingAll ? (
             <span className="text-caption text-success">{freeShippingText}</span>
           ) : shipping.freeShippingOverVnd !== null && (
@@ -114,13 +117,13 @@ export function BrochureOrderOptions({ variants, priceDimensions, basePrice, shi
       {/* Khối Mã ưu đãi — luôn có cho mọi ngành */}
       <div className="flex flex-col gap-1.5 p-3 rounded-xl border border-border bg-surface-muted/30">
         <div className="flex items-center justify-between">
-          <span className="text-caption font-bold text-foreground flex items-center gap-1.5">
+          <span className="text-caption font-bold text-text flex items-center gap-1.5">
             <Ticket size={14} className="text-primary" />
             Mã ưu đãi
           </span>
         </div>
         <div className="flex gap-2">
-          <input
+          <Input
             type="text"
             value={voucherInput}
             maxLength={40}
@@ -128,13 +131,13 @@ export function BrochureOrderOptions({ variants, priceDimensions, basePrice, shi
             onChange={(e) => setVoucherInput(e.target.value.toUpperCase())}
             className={FIELD}
           />
-          <button
+          <Button variant="outline"
             type="button"
             onClick={() => onChange({ voucherCode: voucherInput.trim() })}
             className="h-10 px-3 rounded-lg border border-primary text-primary font-bold text-body-sm whitespace-nowrap flex items-center gap-1.5 hover:bg-primary/5 transition"
           >
             <Ticket size={14} /> Áp dụng
-          </button>
+          </Button>
         </div>
         {errors.voucherCode && <span className="text-caption text-danger">{errors.voucherCode}</span>}
       </div>

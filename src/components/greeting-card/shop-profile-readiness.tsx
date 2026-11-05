@@ -1,5 +1,6 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
 import React, { useState } from "react"
 import Link from "next/link"
 import type { Route } from "next"
@@ -53,15 +54,15 @@ export function ShopProfileReadiness() {
       </p>
       <div className="flex shrink-0 items-center gap-2">
         {can("F2") && (
-          <button
+          <Button variant="outline"
             type="button"
             onClick={handleConfirm}
             disabled={isConfirming}
             className="flex items-center gap-1.5 rounded-lg border border-warning-border bg-surface px-3 py-2 text-body-sm font-bold text-text hover:bg-surface-alt disabled:opacity-50"
           >
-            {isConfirming ? <Loader2 size={14} className="animate-spin" /> : <Check size={14} className="text-success" />}
+            {isConfirming ? <Loader2 size={14} className="animate-spin motion-reduce:animate-none" /> : <Check size={14} className="text-success" />}
             <span>Xác nhận dùng thông tin này</span>
-          </button>
+          </Button>
         )}
         {can("F2") ? (
           <Link href={"/ho-so" as Route} className="shrink-0 rounded-lg border border-warning-border bg-surface px-3 py-2 text-body-sm font-bold text-warning-text hover:bg-surface-alt">

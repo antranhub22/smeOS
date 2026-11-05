@@ -1,5 +1,6 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
 import React, { useState } from "react"
 import { ImageIcon, Trash2 } from "@/components/ui/icons"
 
@@ -61,14 +62,14 @@ export function SubcontractQcGallery({ photos, onDeletePhoto }: SubcontractQcGal
                   <span className="text-caption text-danger/80">Không tải được</span>
                 </div>
               )}
-              <button
+              <Button variant="ghost"
                 type="button"
                 onClick={() => onDeletePhoto(url)}
                 title="Xóa ảnh này"
-                className="absolute top-1 right-1 p-1 rounded-md bg-black/60 hover:bg-danger text-white transition-colors opacity-80 hover:opacity-100 z-10 cursor-pointer"
+                className="font-[inherit] gap-0 absolute top-1 right-1 p-1 rounded-md bg-black/60 hover:bg-danger text-white transition-colors opacity-80 hover:opacity-100 z-10 cursor-pointer"
               >
                 <Trash2 size={13} />
-              </button>
+              </Button>
             </div>
           )
         })}

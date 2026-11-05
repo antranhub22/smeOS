@@ -1,5 +1,8 @@
 "use client"
 
+import { Disclosure } from "@/components/ui/disclosure"
+import { Button } from "@/components/ui/button"
+import { Checkbox } from "@/components/ui/checkbox"
 import React from "react"
 import { ArrowDown, ArrowUp } from "@/components/ui/icons"
 import { usePagedList } from "@/components/greeting-card/greeting-api"
@@ -41,18 +44,17 @@ export function ListView({ qs, state, onChange, onOpen, onDetail, view = "list" 
   return (
     <div className="flex flex-col gap-3">
       {view === "list" && (
-        <details className="text-body-sm">
-          <summary className="cursor-pointer font-semibold text-text-muted">Cột hiển thị</summary>
+        <Disclosure label="Cột hiển thị" className="text-body-sm">
           <div className="mt-2 flex flex-wrap gap-3">
             {listColumns.map((c) => (
               <label key={c.id} className="flex items-center gap-1.5">
-                <input type="checkbox" checked={state.columns.includes(c.id)}
-                  onChange={(e) => onChange({ columns: e.target.checked ? [...state.columns, c.id] : state.columns.filter((x) => x !== c.id) })} />
+                <Checkbox checked={state.columns.includes(c.id)}
+                  onCheckedChange={(checked) => onChange({ columns: (checked === true) ? [...state.columns, c.id] : state.columns.filter((x) => x !== c.id) })} />
                 {c.label}
               </label>
             ))}
           </div>
-        </details>
+        </Disclosure>
       )}
       <ViewState loading={list.isLoading} error={list.error} empty={!list.isLoading && list.items.length === 0}>
         <div className="overflow-x-auto rounded-2xl border border-border bg-surface">
@@ -64,9 +66,9 @@ export function ListView({ qs, state, onChange, onOpen, onDetail, view = "list" 
                   return (
                     <th key={c.id} className="px-3 py-2" aria-sort={f && state.sort === f ? (state.dir === "asc" ? "ascending" : "descending") : undefined}>
                       {f ? (
-                        <button type="button" onClick={() => toggleSort(f)} className="inline-flex items-center gap-1 font-semibold">
+                        <Button variant="ghost" type="button" onClick={() => toggleSort(f)} className="h-auto p-0 inline-flex items-center gap-1 font-semibold">
                           {c.label}{state.sort === f && (state.dir === "asc" ? <ArrowUp size={12} aria-hidden="true" /> : <ArrowDown size={12} aria-hidden="true" />)}
-                        </button>
+                        </Button>
                       ) : c.label}
                     </th>
                   )
@@ -79,18 +81,18 @@ export function ListView({ qs, state, onChange, onOpen, onDetail, view = "list" 
                 <tr key={i.id} data-focus-key={i.orderId ?? i.sessionId} className="hover:bg-surface-muted">
                   {cols.map((c, n) => (
                     <td key={c.id} className="px-3 py-2 align-top">
-                      {n === 0 ? <button type="button" onClick={() => onOpen(i)} className="text-left font-semibold text-primary hover:underline">{cell(c.id, i)}</button> : cell(c.id, i)}
+                      {n === 0 ? <Button variant="ghost" type="button" onClick={() => onOpen(i)} className="h-auto p-0 justify-start gap-0 text-left font-semibold text-primary hover:underline">{cell(c.id, i)}</Button> : cell(c.id, i)}
                     </td>
                   ))}
                   {onDetail && (
                     <td className="px-3 py-2 text-right align-top">
-                      <button
+                      <Button variant="outline"
                         type="button"
                         onClick={() => onDetail(i)}
-                        className="rounded-lg border border-border px-2 py-1 text-caption font-semibold text-foreground hover:bg-surface-muted hover:text-primary"
+                        className="gap-0 rounded-lg border border-border px-2 py-1 text-caption font-semibold text-text hover:bg-surface-muted hover:text-primary"
                       >
                         Chi tiết
-                      </button>
+                      </Button>
                     </td>
                   )}
                 </tr>
@@ -99,9 +101,9 @@ export function ListView({ qs, state, onChange, onOpen, onDetail, view = "list" 
           </table>
         </div>
         {list.hasMore && (
-          <button type="button" onClick={() => void list.loadMore()} className="min-h-11 rounded-xl border border-border bg-surface text-body-sm font-semibold">
+          <Button variant="outline" type="button" onClick={() => void list.loadMore()} className="gap-0 min-h-11 rounded-xl border border-border bg-surface text-body-sm font-semibold hover:bg-surface">
             {list.isLoadingMore ? "Đang tải..." : "Tải thêm"}
-          </button>
+          </Button>
         )}
       </ViewState>
     </div>

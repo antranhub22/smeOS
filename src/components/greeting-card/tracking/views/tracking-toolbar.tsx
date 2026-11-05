@@ -1,5 +1,8 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
+import { NativeSelect } from "@/components/ui/select"
+import { Input } from "@/components/ui/input"
 import React, { useState } from "react"
 import { ViDateInput } from "@/components/greeting-card/customer/vi-date-input"
 import {
@@ -31,7 +34,7 @@ import {
   type ViewKind,
 } from "./tracking-view-state"
 
-const SELECT = "h-9 rounded-xl border border-border bg-surface px-2.5 text-caption text-foreground focus:border-primary focus:outline-hidden"
+const SELECT = "h-9 rounded-xl border border-border bg-surface px-2.5 text-caption text-text focus:border-primary focus:outline-hidden"
 
 interface Props {
   state: TrackingViewState
@@ -96,28 +99,28 @@ export function TrackingToolbar({ state, onChange, onApplyView, onRefresh }: Pro
           {/* Ô TÌM KIẾM THÔNG MINH */}
           <div className="relative flex-1 min-w-[180px] sm:max-w-xs">
             <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted" aria-hidden="true" />
-            <input
+            <Input
               type="search"
               aria-label="Tìm kiếm đơn hàng"
               value={state.q}
               onChange={(e) => onChange({ q: e.target.value })}
               placeholder="Tìm mã đơn, tên khách, SĐT…"
-              className="h-9 w-full rounded-xl border border-border bg-surface-alt pl-8 pr-7 text-caption text-foreground placeholder:text-text-muted focus:border-primary focus:bg-surface focus:outline-hidden"
+              className="h-9 w-full rounded-xl border border-border bg-surface-alt pl-8 pr-7 text-caption text-text placeholder:text-text-muted focus:border-primary focus:bg-surface focus:outline-hidden"
             />
             {state.q && (
-              <button
+              <Button variant="ghost"
                 type="button"
                 aria-label="Xoá tìm kiếm"
                 onClick={() => onChange({ q: "" })}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-text-muted hover:text-foreground"
+                className="h-auto p-0 font-[inherit] gap-0 absolute right-2.5 top-1/2 -translate-y-1/2 text-text-muted hover:text-text"
               >
                 <X size={13} aria-hidden="true" />
-              </button>
+              </Button>
             )}
           </div>
 
           {/* NHÓM BƯỚC */}
-          <select
+          <NativeSelect
             aria-label="Nhóm bước"
             value={state.category}
             onChange={(e) => onChange({ category: e.target.value as TrackingViewState["category"] })}
@@ -129,10 +132,10 @@ export function TrackingToolbar({ state, onChange, onApplyView, onRefresh }: Pro
                 {c.label}
               </option>
             ))}
-          </select>
+          </NativeSelect>
 
           {/* SALE PHỤ TRÁCH */}
-          <select
+          <NativeSelect
             aria-label="Sale phụ trách"
             value={state.saleId}
             onChange={(e) => onChange({ saleId: e.target.value })}
@@ -144,16 +147,16 @@ export function TrackingToolbar({ state, onChange, onApplyView, onRefresh }: Pro
                 {m.name}
               </option>
             ))}
-          </select>
+          </NativeSelect>
 
           {/* NÚT BẬT/TẮT BỘ LỌC NÂNG CAO */}
-          <button
+          <Button variant="outline"
             type="button"
             onClick={() => setShowAdvanced(!showAdvanced)}
             className={`inline-flex h-9 items-center gap-1.5 rounded-xl border px-2.5 text-caption font-semibold transition-colors ${
               showAdvanced || advancedCount > 0
-                ? "border-primary bg-primary/10 text-primary"
-                : "border-border text-text-muted hover:bg-surface-muted hover:text-foreground"
+                ? "border-primary bg-primary/10 text-primary hover:bg-primary/10"
+                : "border-border text-text-muted hover:bg-surface-muted hover:text-text"
             }`}
           >
             <SlidersHorizontal size={13} />
@@ -163,7 +166,7 @@ export function TrackingToolbar({ state, onChange, onApplyView, onRefresh }: Pro
                 {advancedCount}
               </span>
             )}
-          </button>
+          </Button>
         </div>
 
         {/* CỤM BÊN PHẢI: VIEW SWITCHER + REFRESH */}
@@ -178,33 +181,33 @@ export function TrackingToolbar({ state, onChange, onApplyView, onRefresh }: Pro
               const Icon = VIEW_ICONS[t.id]
               const active = state.view === t.id
               return (
-                <button
+                <Button variant="ghost"
                   key={t.id}
                   type="button"
                   role="tab"
                   aria-selected={active}
                   onClick={() => onChange({ view: t.id })}
                   className={`inline-flex h-8 items-center gap-1 rounded-lg px-2.5 text-caption font-bold transition-all ${
-                    active ? "bg-surface text-primary shadow-xs" : "text-text-muted hover:text-foreground"
+                    active ? "bg-surface text-primary shadow-xs hover:bg-surface" : "text-text-muted hover:text-text"
                   }`}
                   title={t.label}
                 >
                   <Icon size={13} />
                   <span className="hidden sm:inline">{t.label}</span>
-                </button>
+                </Button>
               )
             })}
           </div>
 
           {onRefresh && (
-            <button
+            <Button variant="outline"
               type="button"
               onClick={onRefresh}
               title="Làm mới tiến độ"
-              className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-border text-text-muted hover:bg-surface-muted hover:text-foreground"
+              className="font-[inherit] gap-0 inline-flex h-9 w-9 items-center justify-center rounded-xl border border-border text-text-muted hover:bg-surface-muted hover:text-text"
             >
               <RefreshCw size={14} />
-            </button>
+            </Button>
           )}
         </div>
       </div>
@@ -214,38 +217,38 @@ export function TrackingToolbar({ state, onChange, onApplyView, onRefresh }: Pro
         <Bookmark size={13} className="text-text-muted shrink-0 ml-1" />
         {[...presetViews(organization?.industry), ...saved].map((v) => (
           <span key={v.id} className="inline-flex items-center rounded-lg border border-border bg-surface-alt">
-            <button
+            <Button variant="ghost"
               type="button"
               onClick={() => onApplyView(v)}
-              className="px-2 py-0.5 font-medium text-foreground hover:text-primary transition-colors text-caption"
+              className="gap-0 px-2 py-0.5 font-medium text-text hover:text-primary transition-colors text-caption"
             >
               {v.name}
-            </button>
+            </Button>
             {v.id.startsWith("u-") && (
-              <button
+              <Button variant="ghost"
                 type="button"
                 aria-label={`Xoá view ${v.name}`}
                 onClick={() => remove(v.id)}
-                className="pr-1.5 text-text-muted hover:text-danger"
+                className="h-auto p-0 font-[inherit] gap-0 pr-1.5 text-text-muted hover:text-danger"
               >
                 <Trash2 size={11} aria-hidden="true" />
-              </button>
+              </Button>
             )}
           </span>
         ))}
-        <button
+        <Button variant="outline"
           type="button"
           onClick={saveCurrent}
-          className="rounded-lg border border-dashed border-primary/50 px-2 py-0.5 text-caption font-semibold text-primary hover:bg-primary/5"
+          className="gap-0 rounded-lg border border-dashed border-primary/50 px-2 py-0.5 text-caption font-semibold text-primary hover:bg-primary/5"
         >
           + Lưu view
-        </button>
+        </Button>
       </div>
 
       {/* BỘ LỌC NÂNG CAO (Chỉ hiện khi nhấn "Lọc thêm") */}
       {showAdvanced && (
         <div className="grid grid-cols-1 gap-2 pt-2 border-t border-border/40 sm:grid-cols-2 md:grid-cols-4 animate-in fade-in duration-150">
-          <select
+          <NativeSelect
             aria-label="Thời gian chuẩn"
             value={state.sla}
             onChange={(e) => onChange({ sla: e.target.value as TrackingViewState["sla"] })}
@@ -256,9 +259,9 @@ export function TrackingToolbar({ state, onChange, onApplyView, onRefresh }: Pro
             <option value="OVERDUE">Quá thời gian chuẩn</option>
             <option value="DUE_SOON">Sắp quá hạn</option>
             <option value="ON_TRACK">Đúng tiến độ</option>
-          </select>
+          </NativeSelect>
 
-          <select
+          <NativeSelect
             aria-label="Loại"
             value={state.type}
             onChange={(e) => onChange({ type: e.target.value as TrackingViewState["type"] })}
@@ -267,7 +270,7 @@ export function TrackingToolbar({ state, onChange, onApplyView, onRefresh }: Pro
             <option value="">Đơn và link</option>
             <option value="ORDER">Chỉ đơn đã đặt</option>
             <option value="SESSION">Chỉ link chờ khách</option>
-          </select>
+          </NativeSelect>
 
           <label className="flex items-center gap-1.5 text-caption text-text-muted">
             <span>{getIndustryOrderTerms(organization?.industry).fulfillmentFlow === "CALENDAR_STAY" ? "Nhận phòng từ" : "Giao từ"}</span>
@@ -279,7 +282,7 @@ export function TrackingToolbar({ state, onChange, onApplyView, onRefresh }: Pro
             <ViDateInput compact ariaLabel={getIndustryOrderTerms(organization?.industry).fulfillmentFlow === "CALENDAR_STAY" ? "Đến ngày" : "Giao đến ngày"} value={state.deliveryTo} onChange={(v) => onChange({ deliveryTo: v })} wrapperClassName="flex-1" className={SELECT} />
           </label>
 
-          <select
+          <NativeSelect
             aria-label="Trạng thái hiển thị"
             value={state.statusMode}
             onChange={(e) => onChange({ statusMode: e.target.value as TrackingViewState["statusMode"] })}
@@ -288,7 +291,7 @@ export function TrackingToolbar({ state, onChange, onApplyView, onRefresh }: Pro
             <option value="ACTIVE">Đang hoạt động</option>
             <option value="DISMISSED">Đã hủy / Bỏ hiển thị</option>
             <option value="ALL">Tất cả</option>
-          </select>
+          </NativeSelect>
         </div>
       )}
     </div>

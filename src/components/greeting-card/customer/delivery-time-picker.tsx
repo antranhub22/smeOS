@@ -1,5 +1,7 @@
 "use client"
 
+import { NativeSelect } from "@/components/ui/select"
+import { Input } from "@/components/ui/input"
 import React from "react"
 import type { ShippingConfig } from "@/modules/greeting-card/domain/brochure-pricing"
 import { useI18n } from "@/lib/i18n"
@@ -53,7 +55,7 @@ export function DeliveryTimePicker({
 
   return (
     <div className="flex flex-col gap-2">
-      <select
+      <NativeSelect
         id={id}
         value={custom ? CUSTOM : slots.includes(value) ? value : ""}
         onChange={(e) => onChange(e.target.value === CUSTOM ? customTimeLabel("") : e.target.value)}
@@ -74,11 +76,11 @@ export function DeliveryTimePicker({
             {isEn ? "Specific time (custom)" : "Giờ cụ thể (tự nhập)"}
           </option>
         )}
-      </select>
+      </NativeSelect>
       {custom && (
         <label className="flex items-center gap-2 text-body-sm text-text-muted">
           <span className="shrink-0">{isEn ? "Deliver at" : "Giao lúc"}</span>
-          <input
+          <Input
             type="time"
             aria-label={isEn ? "Specific delivery time" : "Giờ giao cụ thể"}
             min={minTimeStr}

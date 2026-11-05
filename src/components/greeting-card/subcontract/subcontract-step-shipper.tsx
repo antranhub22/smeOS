@@ -1,5 +1,6 @@
 "use client"
 
+import { Input } from "@/components/ui/input"
 import React, { useState } from "react"
 import {
   Truck,
@@ -122,11 +123,11 @@ export function SubcontractStepShipper({
       )}
     >
       {/* Header bar của Bước 3 */}
-      <button
+      <Button variant="ghost"
         type="button"
         onClick={onActivate}
         disabled={!isUnlocked}
-        className="w-full p-4 flex items-center justify-between text-left border-b border-border/60 bg-surface-muted/30 hover:bg-surface-muted/60 transition-colors cursor-pointer disabled:cursor-not-allowed"
+        className="font-[inherit] gap-0 w-full p-4 flex items-center justify-between text-left border-b border-border/60 bg-surface-muted/30 hover:bg-surface-muted/60 transition-colors cursor-pointer disabled:cursor-not-allowed"
       >
         <div className="flex items-center gap-2.5">
           <div
@@ -137,14 +138,14 @@ export function SubcontractStepShipper({
                 : isActive
                 ? "bg-primary text-white ring-2 ring-primary/30"
                 : isUnlocked
-                ? "bg-surface-muted text-foreground border border-border"
+                ? "bg-surface-muted text-text border border-border"
                 : "bg-surface-muted text-text-muted/60 border border-border/40"
             )}
           >
             {isCompleted ? <CheckCircle2 size={16} /> : !isUnlocked ? <Lock size={12} /> : "3"}
           </div>
           <div>
-            <span className="text-body-sm font-extrabold text-foreground block">
+            <span className="text-body-sm font-extrabold text-text block">
               3. Bàn giao Shipper & Vận chuyển
             </span>
             <span className="text-caption text-text-muted">
@@ -183,7 +184,7 @@ export function SubcontractStepShipper({
             )}
           />
         </div>
-      </button>
+      </Button>
 
       {/* Thân chi tiết Bước 3 */}
       <div className={cn("p-4 sm:p-5 flex flex-col gap-4", !isActive && "hidden")}>
@@ -194,7 +195,7 @@ export function SubcontractStepShipper({
               "p-3 rounded-xl border flex items-center justify-between gap-2 text-caption",
               countdown.isOverdue
                 ? "bg-danger-bg border-danger/30 text-danger font-bold"
-                : "bg-primary/5 border-primary/20 text-foreground"
+                : "bg-primary/5 border-primary/20 text-text"
             )}
           >
             <div className="flex items-center gap-2">
@@ -228,7 +229,7 @@ export function SubcontractStepShipper({
               <div className="text-caption text-text-muted flex flex-col gap-1 pl-6">
                 <span className="flex items-center gap-1.5">
                   <User size={13} className="text-text-muted" />
-                  <strong className="text-foreground">{existingShipperInfo.shipperName}</strong>
+                  <strong className="text-text">{existingShipperInfo.shipperName}</strong>
                 </span>
                 <span className="flex items-center gap-1.5">
                   <Phone size={13} className="text-text-muted" />
@@ -261,10 +262,10 @@ export function SubcontractStepShipper({
             )}
 
             <div>
-              <label htmlFor="shipper-name" className="block text-caption font-bold text-foreground mb-1">
+              <label htmlFor="shipper-name" className="block text-caption font-bold text-text mb-1">
                 Tên Shipper / Tài xế phụ trách <span className="text-danger">*</span>
               </label>
-              <input
+              <Input
                 id="shipper-name"
                 type="text"
                 value={shipperName}
@@ -275,10 +276,10 @@ export function SubcontractStepShipper({
             </div>
 
             <div>
-              <label htmlFor="shipper-phone" className="block text-caption font-bold text-foreground mb-1">
+              <label htmlFor="shipper-phone" className="block text-caption font-bold text-text mb-1">
                 Số điện thoại Shipper <span className="text-danger">*</span>
               </label>
-              <input
+              <Input
                 id="shipper-phone"
                 type="tel"
                 value={shipperPhone}
@@ -289,10 +290,10 @@ export function SubcontractStepShipper({
             </div>
 
             <div>
-              <label htmlFor="shipper-note" className="block text-caption font-bold text-foreground mb-1">
+              <label htmlFor="shipper-note" className="block text-caption font-bold text-text mb-1">
                 Ghi chú điều phối (tùy chọn)
               </label>
-              <input
+              <Input
                 id="shipper-note"
                 type="text"
                 value={shipperNote}
@@ -310,7 +311,7 @@ export function SubcontractStepShipper({
             >
               {submitting ? (
                 <>
-                  <Loader2 size={16} className="animate-spin" /> Đang cập nhật...
+                  <Loader2 size={16} className="animate-spin motion-reduce:animate-none" /> Đang cập nhật...
                 </>
               ) : (
                 <>

@@ -1,5 +1,6 @@
 "use client"
 
+import { Input } from "@/components/ui/input"
 import React from "react"
 import { Search, Plus, Trash2, Loader2, CheckCircle } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
@@ -48,7 +49,7 @@ export function CatalogProductPicker({ catalogId, compact = false, onItemCountCh
   if (loadingItems) {
     return (
       <div className="flex items-center justify-center py-8 text-text-muted gap-2">
-        <Loader2 size={18} className="animate-spin" />
+        <Loader2 size={18} className="animate-spin motion-reduce:animate-none" />
         <span className="text-body-sm">Đang tải danh sách sản phẩm...</span>
       </div>
     )
@@ -103,19 +104,19 @@ export function CatalogProductPicker({ catalogId, compact = false, onItemCountCh
                   {item.product.name}
                 </p>
               </div>
-              {!readOnly && <button
+              {!readOnly && <Button variant="ghost"
                 type="button"
                 onClick={() => handleRemove(item.product.id, item.product.name)}
                 disabled={removingId === item.product.id}
                 aria-label={`Xóa ${item.product.name}`}
-                className="absolute top-1.5 right-1.5 p-1.5 rounded-lg bg-black/50 hover:bg-danger/80 text-white"
+                className="font-[inherit] gap-0 absolute top-1.5 right-1.5 p-1.5 rounded-lg bg-black/50 hover:bg-danger/80 text-white"
               >
                 {removingId === item.product.id ? (
-                  <Loader2 size={11} className="animate-spin" />
+                  <Loader2 size={11} className="animate-spin motion-reduce:animate-none" />
                 ) : (
                   <Trash2 size={13} />
                 )}
-              </button>}
+              </Button>}
             </div>
           ))}
         </div>
@@ -137,7 +138,7 @@ export function CatalogProductPicker({ catalogId, compact = false, onItemCountCh
         <div className="rounded-2xl border border-border bg-surface-muted p-4 flex flex-col gap-3">
           <div className="flex items-center justify-between">
             <p className="text-body-sm font-bold text-text">Chọn từ kho sản phẩm</p>
-            <button type="button" onClick={() => setShowPicker(false)} className="text-caption text-text-muted hover:text-text font-medium underline">Đóng</button>
+            <Button variant="ghost" type="button" onClick={() => setShowPicker(false)} className="h-auto p-0 gap-0 text-caption text-text-muted hover:text-text font-medium underline">Đóng</Button>
           </div>
           {/* Search */}
           <div className="relative">
@@ -145,12 +146,12 @@ export function CatalogProductPicker({ catalogId, compact = false, onItemCountCh
               size={14}
               className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted"
             />
-            <input
+            <Input
               type="text"
               placeholder="Tìm tên hoặc mã sản phẩm..."
               value={ci.searchQuery}
               onChange={(e) => ci.setSearchQuery(e.target.value)}
-              className="w-full h-9 pl-8 pr-3 rounded-lg border border-border bg-background text-body-sm text-text focus:outline-none focus:ring-1 focus:ring-primary"
+              className="w-full h-9 pl-8 pr-3 rounded-lg border border-border bg-bg text-body-sm text-text focus:outline-none focus:ring-1 focus:ring-primary"
             />
           </div>
 
@@ -162,13 +163,13 @@ export function CatalogProductPicker({ catalogId, compact = false, onItemCountCh
                 ⚡ Lọc nhanh {ti("sampleProduct").toLowerCase()}
               </span>
               {ci.hasActiveFilters && (
-                <button
+                <Button variant="ghost"
                   type="button"
                   onClick={ci.resetFilters}
-                  className="text-caption text-primary hover:underline font-medium"
+                  className="h-auto p-0 gap-0 text-caption text-primary hover:underline font-medium"
                 >
                   Xóa bộ lọc
-                </button>
+                </Button>
               )}
             </div>
 
@@ -178,7 +179,7 @@ export function CatalogProductPicker({ catalogId, compact = false, onItemCountCh
               {ci.priceBudgets.map((b) => {
                 const isSelected = ci.selectedBudgets.includes(b.id)
                 return (
-                  <button
+                  <Button variant="outline"
                     type="button"
                     key={b.id}
                     onClick={() =>
@@ -188,14 +189,14 @@ export function CatalogProductPicker({ catalogId, compact = false, onItemCountCh
                           : [...ci.selectedBudgets, b.id]
                       )
                     }
-                    className={`px-2 py-0.5 rounded-lg text-caption font-medium transition border ${
+                    className={`gap-0 px-2 py-0.5 rounded-lg text-caption font-medium transition border ${
                       isSelected
-                        ? "border-primary bg-primary text-white font-bold"
-                        : "border-border bg-surface text-text-muted hover:border-primary/40"
+                        ? "border-primary bg-primary text-white font-bold hover:bg-primary"
+                        : "border-border bg-surface text-text-muted hover:border-primary/40 hover:bg-surface"
                     }`}
                   >
                     {b.label}
-                  </button>
+                  </Button>
                 )
               })}
             </div>
@@ -206,18 +207,18 @@ export function CatalogProductPicker({ catalogId, compact = false, onItemCountCh
               {(activeIndustry.taxonomy?.occasions?.map((o) => o.label) || ["Dự tiệc", "Hằng ngày", "Quà tặng", "Khai trương"]).map((occ) => {
                 const isSelected = ci.filterOccasion === occ
                 return (
-                  <button
+                  <Button variant="outline"
                     type="button"
                     key={occ}
                     onClick={() => ci.setFilterOccasion(isSelected ? "" : occ)}
-                    className={`px-2 py-0.5 rounded-lg text-caption font-medium transition border ${
+                    className={`gap-0 px-2 py-0.5 rounded-lg text-caption font-medium transition border ${
                       isSelected
-                        ? "border-primary bg-primary text-white font-bold"
-                        : "border-border bg-surface text-text-muted hover:border-primary/40"
+                        ? "border-primary bg-primary text-white font-bold hover:bg-primary"
+                        : "border-border bg-surface text-text-muted hover:border-primary/40 hover:bg-surface"
                     }`}
                   >
                     {occ}
-                  </button>
+                  </Button>
                 )
               })}
             </div>
@@ -228,18 +229,18 @@ export function CatalogProductPicker({ catalogId, compact = false, onItemCountCh
               {(activeIndustry.taxonomy?.defaultCategories?.map((c) => c.label) || ["Tiêu chuẩn", "Đặc biệt"]).map((cat) => {
                 const isSelected = ci.filterCategory === cat
                 return (
-                  <button
+                  <Button variant="outline"
                     type="button"
                     key={cat}
                     onClick={() => ci.setFilterCategory(isSelected ? "" : cat)}
-                    className={`px-2 py-0.5 rounded-lg text-caption font-medium transition border ${
+                    className={`gap-0 px-2 py-0.5 rounded-lg text-caption font-medium transition border ${
                       isSelected
-                        ? "border-primary bg-primary/10 text-primary font-bold"
-                        : "border-border bg-surface text-text-muted hover:border-primary/40"
+                        ? "border-primary bg-primary/10 text-primary font-bold hover:bg-primary/10"
+                        : "border-border bg-surface text-text-muted hover:border-primary/40 hover:bg-surface"
                     }`}
                   >
                     {cat}
-                  </button>
+                  </Button>
                 )
               })}
             </div>
@@ -265,18 +266,18 @@ export function CatalogProductPicker({ catalogId, compact = false, onItemCountCh
                 ).map((fl) => {
                   const isSelected = ci.filterFlowerType === fl
                   return (
-                    <button
+                    <Button variant="outline"
                       type="button"
                       key={fl}
                       onClick={() => ci.setFilterFlowerType(isSelected ? "" : fl)}
-                      className={`px-2 py-0.5 rounded-lg text-caption font-medium transition border ${
+                      className={`gap-0 px-2 py-0.5 rounded-lg text-caption font-medium transition border ${
                         isSelected
-                          ? "border-primary bg-primary/10 text-primary font-bold"
-                          : "border-border bg-surface text-text-muted hover:border-primary/40"
+                          ? "border-primary bg-primary/10 text-primary font-bold hover:bg-primary/10"
+                          : "border-border bg-surface text-text-muted hover:border-primary/40 hover:bg-surface"
                       }`}
                     >
                       {fl}
-                    </button>
+                    </Button>
                   )
                 })}
               </div>
@@ -288,18 +289,18 @@ export function CatalogProductPicker({ catalogId, compact = false, onItemCountCh
                   {["Pastel", "Đỏ", "Vàng", "Hồng", "Trắng"].map((col) => {
                     const isSelected = ci.filterColorTone === col
                     return (
-                      <button
+                      <Button variant="outline"
                         type="button"
                         key={col}
                         onClick={() => ci.setFilterColorTone(isSelected ? "" : col)}
-                        className={`px-2 py-0.5 rounded-lg text-caption font-medium transition border ${
+                        className={`gap-0 px-2 py-0.5 rounded-lg text-caption font-medium transition border ${
                           isSelected
-                            ? "border-primary bg-primary/10 text-primary font-bold"
-                            : "border-border bg-surface text-text-muted hover:border-primary/40"
+                            ? "border-primary bg-primary/10 text-primary font-bold hover:bg-primary/10"
+                            : "border-border bg-surface text-text-muted hover:border-primary/40 hover:bg-surface"
                         }`}
                       >
                         {col}
-                      </button>
+                      </Button>
                     )
                   })}
                 </div>
@@ -311,7 +312,7 @@ export function CatalogProductPicker({ catalogId, compact = false, onItemCountCh
           <div className="flex flex-col gap-2 max-h-64 overflow-y-auto pr-1">
             {loadingProducts ? (
               <div className="flex items-center justify-center py-8 text-text-muted gap-2">
-                <Loader2 size={16} className="animate-spin" />
+                <Loader2 size={16} className="animate-spin motion-reduce:animate-none" />
                 <span className="text-body-sm">Đang tải danh sách {ti("sampleProduct").toLowerCase()}...</span>
               </div>
             ) : ci.available.length === 0 ? (
@@ -326,7 +327,7 @@ export function CatalogProductPicker({ catalogId, compact = false, onItemCountCh
               ci.available.map((product) => (
                 <div
                   key={product.id}
-                  className="flex items-center gap-3 p-2.5 rounded-xl border border-border bg-background hover:border-primary/30 transition-colors"
+                  className="flex items-center gap-3 p-2.5 rounded-xl border border-border bg-bg hover:border-primary/30 transition-colors"
                 >
                   <div className="w-11 h-11 rounded-lg bg-surface-alt border border-border flex items-center justify-center shrink-0 overflow-hidden">
                     <FlowerImage src={product.masterImageUrl} driveLink={product.driveLink} alt={product.name} sizes="44px" fallback="icon" className="w-full h-full" />
@@ -342,19 +343,19 @@ export function CatalogProductPicker({ catalogId, compact = false, onItemCountCh
                       <p className="text-caption text-text-muted italic">Liên hệ báo giá</p>
                     )}
                   </div>
-                  <button
+                  <Button variant="ghost"
                     type="button"
                     onClick={() => void handleAdd(product.id)}
                     disabled={addingId === product.id}
                     aria-label={`Thêm ${product.name} vào bộ sưu tập`}
-                    className="p-2 rounded-lg bg-primary/10 hover:bg-primary/20 text-primary transition-colors shrink-0"
+                    className="font-[inherit] gap-0 p-2 rounded-lg bg-primary/10 hover:bg-primary/20 text-primary transition-colors shrink-0"
                   >
                     {addingId === product.id ? (
-                      <Loader2 size={15} className="animate-spin" />
+                      <Loader2 size={15} className="animate-spin motion-reduce:animate-none" />
                     ) : (
                       <Plus size={15} />
                     )}
-                  </button>
+                  </Button>
                 </div>
               ))
             )}

@@ -110,7 +110,7 @@ export function BrochureTrackingView({ orderCode, sendCode, failedCta, onPayment
   if (loading && !data) {
     return (
       <div className="flex flex-col items-center justify-center p-12 text-center text-text-muted">
-        <RefreshCw size={32} className="animate-spin text-primary mb-3" />
+        <RefreshCw size={32} className="animate-spin motion-reduce:animate-none text-primary mb-3" />
         <p className="text-body font-medium">Đang tải tiến trình đơn hoa của bạn...</p>
       </div>
     )
@@ -141,7 +141,7 @@ export function BrochureTrackingView({ orderCode, sendCode, failedCta, onPayment
           <span className="text-caption font-bold uppercase tracking-wider text-primary">
             {isHomestayStay ? "Thông tin đặt phòng & Lưu trú" : "Theo dõi tiến độ Đơn hàng"}
           </span>
-          <h2 className="text-title font-extrabold text-foreground">
+          <h2 className="text-title font-extrabold text-text">
             {isHomestayStay ? "Mã đặt phòng" : "Đơn hàng"} <span className="whitespace-nowrap">#{order.code}</span>
           </h2>
         </div>
@@ -152,7 +152,7 @@ export function BrochureTrackingView({ orderCode, sendCode, failedCta, onPayment
           onClick={loadTracking}
           className="gap-1.5 text-caption h-8 shrink-0 whitespace-nowrap"
         >
-          <RefreshCw size={13} className={loading ? "animate-spin" : ""} />
+          <RefreshCw size={13} className={loading ? "animate-spin motion-reduce:animate-none" : ""} />
           <span>Cập nhật</span>
         </Button>
       </div>
@@ -221,7 +221,7 @@ export function BrochureTrackingView({ orderCode, sendCode, failedCta, onPayment
             <Camera size={15} />
             <span>Thông tin từ Cửa hàng</span>
           </div>
-          <p className="text-foreground text-caption leading-relaxed">
+          <p className="text-text text-caption leading-relaxed">
             {order.bypassNotices.qc}
           </p>
         </section>
@@ -230,7 +230,7 @@ export function BrochureTrackingView({ orderCode, sendCode, failedCta, onPayment
       {!isHomestayStay && productPhotos.length > 0 && (
         <section className="flex flex-col gap-3 p-4 rounded-2xl bg-surface-muted border border-border">
           <div className="flex items-center justify-between">
-            <h3 className="flex items-center gap-2 text-foreground font-extrabold text-body">
+            <h3 className="flex items-center gap-2 text-text font-extrabold text-body">
               <Camera size={18} className="text-primary" aria-hidden="true" />
               {getIndustryOrderTerms(order.industryKey).completedPhotoSectionTitle}
             </h3>
@@ -271,7 +271,7 @@ export function BrochureTrackingView({ orderCode, sendCode, failedCta, onPayment
       )}
       {recipientPhotos.length > 0 && (
         <section className="flex flex-col gap-2 p-4 rounded-2xl bg-surface-muted border border-border">
-          <h3 className="flex items-center gap-2 text-foreground font-extrabold text-body">
+          <h3 className="flex items-center gap-2 text-text font-extrabold text-body">
             <Camera size={18} className="text-success" aria-hidden="true" />
             Ảnh {getIndustryOrderTerms(order.industryKey).recipientShortLabel}
           </h3>
@@ -285,7 +285,7 @@ export function BrochureTrackingView({ orderCode, sendCode, failedCta, onPayment
             <CheckCircle2 size={15} />
             <span>Xác nhận giao hàng trực tiếp</span>
           </div>
-          <p className="text-foreground text-caption leading-relaxed">
+          <p className="text-text text-caption leading-relaxed">
             {order.bypassNotices.pod}
           </p>
         </section>
@@ -300,8 +300,8 @@ export function BrochureTrackingView({ orderCode, sendCode, failedCta, onPayment
       {order.deliveryFailure && (
         <div role="status" className="rounded-2xl border border-warning/30 bg-warning-bg p-4 flex flex-col gap-1 text-body-sm">
           <p className="font-extrabold text-warning">Lần giao {order.deliveryFailure.attempts > 1 ? `thứ ${order.deliveryFailure.attempts} ` : ""}chưa thành công: {order.deliveryFailure.reasonLabel}</p>
-          {order.deliveryFailure.note && <p className="text-foreground">Shipper ghi: {order.deliveryFailure.note}</p>}
-          {order.deliveryFailure.feeVnd > 0 && <p className="text-foreground">Phí giao lại: {order.deliveryFailure.feeVnd.toLocaleString("vi-VN")}đ (đã cộng vào đơn).</p>}
+          {order.deliveryFailure.note && <p className="text-text">Shipper ghi: {order.deliveryFailure.note}</p>}
+          {order.deliveryFailure.feeVnd > 0 && <p className="text-text">Phí giao lại: {order.deliveryFailure.feeVnd.toLocaleString("vi-VN")}đ (đã cộng vào đơn).</p>}
           <p className="text-text-muted">
             {order.change ? "Cửa hàng sẽ liên hệ để hẹn giao lại. Bạn có thể đổi giờ, địa chỉ hoặc người nhận ngay bên dưới." : "Cửa hàng sẽ liên hệ để hẹn giao lại. Xác minh bằng 4 số cuối SĐT người đặt để đổi giờ hoặc địa chỉ giao."}
           </p>
@@ -318,11 +318,11 @@ export function BrochureTrackingView({ orderCode, sendCode, failedCta, onPayment
       <div id={THANK_YOU_TARGET.details} className="flex flex-col gap-2 text-body-sm text-text-muted bg-surface-muted p-4 rounded-xl border border-border">
         <div className="flex justify-between gap-3">
           <span className="shrink-0">Người nhận:</span>
-          <span className="font-bold text-foreground text-right break-words">{order.recipientName}</span>
+          <span className="font-bold text-text text-right break-words">{order.recipientName}</span>
         </div>
         <div className="flex justify-between gap-3">
           <span className="shrink-0">Địa chỉ giao:</span>
-          <span className="min-w-0 font-bold text-foreground text-right break-words">
+          <span className="min-w-0 font-bold text-text text-right break-words">
             {order.deliveryAddress}
           </span>
         </div>
@@ -337,7 +337,7 @@ export function BrochureTrackingView({ orderCode, sendCode, failedCta, onPayment
             <span className="text-caption font-semibold text-text-muted block mb-0.5">
               Lời nhắn thiệp:
             </span>
-            <p className="text-body-sm italic text-foreground border-l-2 border-primary/40 pl-3 py-0.5">
+            <p className="text-body-sm italic text-text border-l-2 border-primary/40 pl-3 py-0.5">
               &ldquo;{order.cardMessage}&rdquo;
             </p>
           </div>

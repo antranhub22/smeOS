@@ -1,5 +1,6 @@
 "use client"
 
+import { Input } from "@/components/ui/input"
 import React, { useState } from "react"
 import { AlertOctagon, CheckCircle2, Loader2, XCircle } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
@@ -61,7 +62,7 @@ export function CancellationDecision({
         <span>Yêu cầu phê duyệt: {typeLabel}</span>
       </div>
 
-      <div className="text-foreground flex flex-col gap-1 bg-surface p-2.5 rounded-lg border border-border">
+      <div className="text-text flex flex-col gap-1 bg-surface p-2.5 rounded-lg border border-border">
         <p><strong>Lý do đề xuất:</strong> {reason}</p>
         {refundAmountVnd > 0 && (
           <p><strong>Số tiền hoàn:</strong> <span className="text-danger font-mono font-bold">{vnd(refundAmountVnd)}</span></p>
@@ -70,13 +71,13 @@ export function CancellationDecision({
 
       {error && <p role="alert" className="text-caption font-semibold text-danger">{error}</p>}
 
-      <input
+      <Input
         type="text"
         placeholder="Ghi chú phản hồi cho người đề xuất..."
         value={note}
         onChange={(e) => setNote(e.target.value)}
         disabled={busy}
-        className="h-8 w-full rounded-lg border border-border bg-background px-2.5 text-caption text-foreground focus:outline-none focus:ring-1 focus:ring-primary"
+        className="h-8 w-full rounded-lg border border-border bg-bg px-2.5 text-caption text-text focus:outline-none focus:ring-1 focus:ring-primary"
       />
 
       <div className="flex items-center justify-end gap-2 pt-1">
@@ -98,7 +99,7 @@ export function CancellationDecision({
           onClick={() => void handleDecide(true)}
           className="h-8 gap-1 bg-danger hover:bg-danger-dark text-white text-caption font-bold"
         >
-          {busy ? <Loader2 size={14} className="animate-spin" /> : <CheckCircle2 size={14} />}
+          {busy ? <Loader2 size={14} className="animate-spin motion-reduce:animate-none" /> : <CheckCircle2 size={14} />}
           <span>Phê duyệt</span>
         </Button>
       </div>

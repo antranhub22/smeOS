@@ -1,5 +1,6 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { Loader2 } from "@/components/ui/icons"
@@ -26,17 +27,17 @@ export function BrochureClaimGate({ sendCode }: { sendCode: string }) {
   }, [sendCode, router])
 
   return (
-    <main className="flex min-h-dvh flex-col items-center justify-center gap-3 bg-background px-6 text-center text-foreground">
+    <main className="flex min-h-dvh flex-col items-center justify-center gap-3 bg-bg px-6 text-center text-text">
       {failed ? (
         <>
           <p className="text-body">Mất kết nối mạng, chưa mở được bộ sưu tập.</p>
-          <button type="button" onClick={() => window.location.reload()} className="h-11 rounded-xl bg-primary px-5 text-body font-bold text-surface">
+          <Button variant="primary" type="button" onClick={() => window.location.reload()} className="gap-0 h-11 rounded-xl bg-primary px-5 text-body font-bold text-surface hover:bg-primary">
             Thử lại
-          </button>
+          </Button>
         </>
       ) : (
         <>
-          <Loader2 className="animate-spin text-primary" size={28} aria-hidden="true" />
+          <Loader2 className="animate-spin motion-reduce:animate-none text-primary" size={28} aria-hidden="true" />
           <p className="text-body text-text-muted">Đang mở bộ sưu tập…</p>
         </>
       )}

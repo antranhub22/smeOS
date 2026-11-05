@@ -1,5 +1,6 @@
 "use client"
 
+import { Input } from "@/components/ui/input"
 import React, { useState } from "react"
 import { computeCraftFee, type CraftFeePolicy } from "@/modules/greeting-card/domain/craft-fee-policy"
 
@@ -18,9 +19,9 @@ export function CraftFeePreview({ policy, feeLabel }: { policy: CraftFeePolicy; 
 
   return (
     <div className="p-4 rounded-xl bg-surface-muted border border-border flex flex-col gap-2">
-      <label className="flex items-center justify-between gap-3 text-body-sm font-bold text-foreground">
+      <label className="flex items-center justify-between gap-3 text-body-sm font-bold text-text">
         Xem thử với đơn giá hàng (trước VAT)
-        <input
+        <Input
           type="number"
           min={0}
           step={50_000}
@@ -37,7 +38,7 @@ export function CraftFeePreview({ policy, feeLabel }: { policy: CraftFeePolicy; 
           </li>
         ))}
       </ul>
-      <div className="flex justify-between border-t border-border pt-2 text-body-sm font-extrabold text-foreground">
+      <div className="flex justify-between border-t border-border pt-2 text-body-sm font-extrabold text-text">
         <span>{feeLabel} (đơn giao sau 6 giờ, ngày thường)</span>
         <span className="text-primary">{vnd(result.feeVnd)}</span>
       </div>

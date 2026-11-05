@@ -1,7 +1,8 @@
 "use client"
 
+import { Disclosure } from "@/components/ui/disclosure"
 import React, { useState } from "react"
-import { BellRing, Clock, History, PencilLine } from "@/components/ui/icons"
+import { BellRing, Clock, PencilLine } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import type { ShippingConfig } from "@/modules/greeting-card/domain/brochure-pricing"
 import type { ChangeItem, ChangeStatus, OrderChangeSnapshot } from "@/modules/greeting-card/domain/order-change-request"
@@ -41,8 +42,8 @@ function ChangeList({ changes }: { changes: ChangeItem[] }) {
     <ul className="flex flex-col gap-1 text-body-sm">
       {changes.map((c) => (
         <li key={c.field}>
-          <span className="font-bold text-foreground">{c.label}:</span>{" "}
-          <span className="text-text-muted line-through">{c.before}</span> → <span className="text-foreground">{c.after}</span>
+          <span className="font-bold text-text">{c.label}:</span>{" "}
+          <span className="text-text-muted line-through">{c.before}</span> → <span className="text-text">{c.after}</span>
         </li>
       ))}
     </ul>
@@ -71,7 +72,7 @@ export function OrderChangePanel({
 
   return (
     <section aria-labelledby="order-change-title" className="flex flex-col gap-3 rounded-xl border border-border bg-surface-muted p-4">
-      <h3 id="order-change-title" className="text-body font-extrabold text-foreground">Thay đổi thông tin đơn</h3>
+      <h3 id="order-change-title" className="text-body font-extrabold text-text">Thay đổi thông tin đơn</h3>
 
       {decided && (
         <div role="status" className={`rounded-xl border p-3 flex gap-2 text-body-sm ${decided.status === "APPROVED" ? "border-success/30 bg-success-bg text-success" : "border-warning/30 bg-warning-bg text-warning"}`}>
@@ -81,10 +82,10 @@ export function OrderChangePanel({
               {decided.status === "APPROVED" ? "Cửa hàng đã cập nhật đơn theo yêu cầu của bạn" : "Cửa hàng chưa đổi thông tin theo yêu cầu của bạn"}
               {decided.decidedAt && <span className="font-normal"> · {when(decided.decidedAt)}</span>}
             </p>
-            <p className="text-foreground">{decided.changes.map((c) => c.label).join(", ")}</p>
-            {decided.decisionNote && <p className="text-foreground">Cửa hàng nhắn: {decided.decisionNote}</p>}
+            <p className="text-text">{decided.changes.map((c) => c.label).join(", ")}</p>
+            {decided.decisionNote && <p className="text-text">Cửa hàng nhắn: {decided.decisionNote}</p>}
             {decided.status === "APPROVED" && decided.feeDeltaVnd > 0 && (
-              <p className="text-foreground">Phí giao tăng thêm {vnd(decided.feeDeltaVnd)} — vui lòng thanh toán phần còn lại.</p>
+              <p className="text-text">Phí giao tăng thêm {vnd(decided.feeDeltaVnd)} — vui lòng thanh toán phần còn lại.</p>
             )}
           </div>
         </div>
@@ -119,10 +120,7 @@ export function OrderChangePanel({
       )}
 
       {change.history.some((h) => h.status !== "PENDING") && (
-        <details className="rounded-xl border border-border p-3">
-          <summary className="flex cursor-pointer items-center gap-2 text-body-sm font-bold text-foreground">
-            <History size={16} aria-hidden="true" /> Lịch sử thay đổi ({change.history.filter((h) => h.status !== "PENDING").length})
-          </summary>
+        <Disclosure label={`Lịch sử thay đổi (${change.history.filter((h) => h.status !== "PENDING").length})`}>
           <ol className="mt-3 flex flex-col gap-3">
             {change.history.filter((h) => h.status !== "PENDING").map((h) => (
               <li key={h.id} className="border-l-2 border-border pl-3">
@@ -135,7 +133,7 @@ export function OrderChangePanel({
               </li>
             ))}
           </ol>
-        </details>
+        </Disclosure>
       )}
     </section>
   )

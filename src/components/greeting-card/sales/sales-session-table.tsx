@@ -20,7 +20,7 @@ interface Props {
 }
 
 const ACTION_BTN =
-  "inline-flex items-center justify-center h-8 rounded-lg border border-border text-text-muted hover:bg-surface-muted hover:text-foreground disabled:opacity-40"
+  "inline-flex items-center justify-center h-8 rounded-lg border border-border text-text-muted hover:bg-surface-muted hover:text-text disabled:opacity-40"
 
 function formatDate(iso: string | null): string {
   return iso ? _formatDate(iso) : "Không hết hạn"
@@ -85,12 +85,12 @@ export function SalesSessionTable({ sessions, hasMore, isLoadingMore, onLoadMore
               return (
                 <tr key={row.id} className="hover:bg-surface-muted/50 transition-colors">
                   <td className="px-4 py-3">
-                    <div className="font-mono font-bold text-foreground">{row.send_code}</div>
+                    <div className="font-mono font-bold text-text">{row.send_code}</div>
                     <div className="text-caption text-text-muted">Hạn: {formatDate(row.expires_at)}</div>
                   </td>
-                  <td className="px-4 py-3 text-foreground font-medium">{row.catalog.name}</td>
+                  <td className="px-4 py-3 text-text font-medium">{row.catalog.name}</td>
                   <td className="px-4 py-3">
-                    <div className="font-semibold text-foreground">{row.customer_name || "Khách chưa đặt tên"}</div>
+                    <div className="font-semibold text-text">{row.customer_name || "Khách chưa đặt tên"}</div>
                     {row.customer_phone && <div className="text-caption text-text-muted">{row.customer_phone}</div>}
                   </td>
                   <td className="px-4 py-3">
@@ -114,7 +114,7 @@ export function SalesSessionTable({ sessions, hasMore, isLoadingMore, onLoadMore
                   </td>
                   <td className="px-4 py-3 text-right">
                     <div className="flex items-center justify-end gap-1.5 whitespace-nowrap">
-                      <button
+                      <Button variant="ghost"
                         type="button"
                         disabled={!active}
                         onClick={() => copyLink(row.send_code)}
@@ -122,7 +122,7 @@ export function SalesSessionTable({ sessions, hasMore, isLoadingMore, onLoadMore
                       >
                         {copiedCode === row.send_code ? <Check size={13} className="text-success" /> : <Copy size={13} />}
                         <span>{copiedCode === row.send_code ? "Đã copy" : "Copy link"}</span>
-                      </button>
+                      </Button>
                       <a
                         href={`/b/${row.send_code}`}
                         target="_blank"
@@ -133,16 +133,16 @@ export function SalesSessionTable({ sessions, hasMore, isLoadingMore, onLoadMore
                         <ExternalLink size={14} />
                       </a>
                       {active && !row.order_id && (
-                        <button
+                        <Button variant="ghost"
                           type="button"
                           disabled={revokingId === row.id}
                           onClick={() => void revoke(row)}
                           aria-label={`Thu hồi link ${row.send_code}`}
                           title="Thu hồi link"
-                          className={`${ACTION_BTN} w-8 text-danger`}
+                          className={`h-auto p-0 font-[inherit] gap-0 ${ACTION_BTN} w-8 text-danger`}
                         >
                           <Ban size={14} />
-                        </button>
+                        </Button>
                       )}
                     </div>
                   </td>

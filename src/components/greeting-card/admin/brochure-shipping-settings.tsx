@@ -1,5 +1,7 @@
 "use client"
 
+import { Checkbox } from "@/components/ui/checkbox"
+import { Input } from "@/components/ui/input"
 import React, { useState } from "react"
 import { Loader2, Plus, Save, Trash2, Truck } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
@@ -21,7 +23,7 @@ interface ZoneDraft {
   fee: string
 }
 
-const FIELD = "h-10 px-3 rounded-lg border border-border bg-background text-body text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20"
+const FIELD = "h-10 px-3 rounded-lg border border-border bg-bg text-body text-text focus:outline-none focus:ring-2 focus:ring-primary/20"
 
 type Draft = {
   zones: ZoneDraft[]; freeOver: string; cutoff: string; prep: string; slotIds: string[]; allowCustomTime: boolean
@@ -129,13 +131,13 @@ export function BrochureShippingSettings() {
     <form onSubmit={save} className="bg-surface rounded-2xl border border-border p-5 shadow-sm flex flex-col gap-4">
       <div className="flex items-center gap-2">
         <Truck size={18} className="text-primary" />
-        <h3 className="text-title-sm font-extrabold text-foreground">Khu vực, phí giao & giờ nhận đơn</h3>
+        <h3 className="text-title-sm font-extrabold text-text">Khu vực, phí giao & giờ nhận đơn</h3>
       </div>
 
       {org.error ? (
         <p role="alert" className="text-body-sm text-danger">{org.error.message}</p>
       ) : !current ? (
-        <div className="h-20 rounded-lg bg-surface-muted animate-pulse" aria-busy="true" />
+        <div className="h-20 rounded-lg bg-surface-muted animate-pulse motion-reduce:animate-none" aria-busy="true" />
       ) : (
         <>
           <ul className="flex flex-col gap-2">
@@ -144,7 +146,7 @@ export function BrochureShippingSettings() {
             )}
             {current.zones.map((z, i) => (
               <li key={z.id} className="flex gap-2 items-center">
-                <input
+                <Input
                   aria-label="Tên khu vực"
                   value={z.name}
                   maxLength={80}
@@ -152,7 +154,7 @@ export function BrochureShippingSettings() {
                   onChange={(e) => edit({ ...current, zones: current.zones.map((x, j) => (j === i ? { ...x, name: e.target.value } : x)) })}
                   className={`${FIELD} flex-1`}
                 />
-                <input
+                <Input
                   aria-label="Phí giao (đ)"
                   inputMode="numeric"
                   value={z.fee}
@@ -160,14 +162,14 @@ export function BrochureShippingSettings() {
                   onChange={(e) => edit({ ...current, zones: current.zones.map((x, j) => (j === i ? { ...x, fee: e.target.value } : x)) })}
                   className={`${FIELD} w-32`}
                 />
-                <button
+                <Button variant="outline"
                   type="button"
                   aria-label={`Xoá khu vực ${z.name || i + 1}`}
                   onClick={() => edit({ ...current, zones: current.zones.filter((_, j) => j !== i) })}
-                  className="h-10 w-10 rounded-lg border border-border text-danger flex items-center justify-center"
+                  className="font-[inherit] gap-0 h-10 w-10 rounded-lg border border-border text-danger flex items-center justify-center"
                 >
                   <Trash2 size={14} />
-                </button>
+                </Button>
               </li>
             ))}
           </ul>
@@ -183,7 +185,7 @@ export function BrochureShippingSettings() {
             </Button>
             <label className="flex items-center gap-2 text-body-sm">
               <span className="text-text-muted">Miễn phí giao cho đơn từ</span>
-              <input
+              <Input
                 inputMode="numeric"
                 value={current.freeOver}
                 placeholder="Bỏ trống = không miễn"
@@ -196,7 +198,7 @@ export function BrochureShippingSettings() {
           <div className="flex flex-wrap items-center gap-3 border-t border-border pt-3">
             <label className="flex items-center gap-2 text-body-sm">
               <span className="text-text-muted">Nhận giao trong ngày đến</span>
-              <input
+              <Input
                 inputMode="numeric"
                 value={current.cutoff}
                 placeholder="VD: 16"
@@ -207,7 +209,7 @@ export function BrochureShippingSettings() {
             </label>
             <label className="flex items-center gap-2 text-body-sm">
               <span className="text-text-muted">Chuẩn bị tối thiểu</span>
-              <input
+              <Input
                 inputMode="decimal"
                 value={current.prep}
                 placeholder="2"
@@ -218,7 +220,7 @@ export function BrochureShippingSettings() {
             </label>
             <label className="flex items-center gap-2 text-body-sm">
               <span className="text-text-muted">Phí giao lại khi giao không thành công</span>
-              <input
+              <Input
                 inputMode="numeric"
                 value={current.redelivery}
                 placeholder="Bỏ trống = không thu"
@@ -239,11 +241,11 @@ export function BrochureShippingSettings() {
           <SlotCapacityFields value={current.capacity} onChange={(capacity) => edit({ ...current, capacity })} />
           <div className="flex flex-col gap-2 border-t border-border pt-3 text-body-sm">
             <label className="flex items-center gap-2 cursor-pointer">
-              <input type="checkbox" checked={current.freeAll} onChange={(e) => edit({ ...current, freeAll: e.target.checked })} className="accent-primary" />
+              <Checkbox checked={current.freeAll} onCheckedChange={(checked) => edit({ ...current, freeAll: (checked === true) })} className="accent-primary" />
               <span><strong>Miễn phí giao hàng cho mọi đơn</strong> (khách không trả phí giao ở mọi khu vực)</span>
             </label>
             <label className="flex items-center gap-2 cursor-pointer">
-              <input type="checkbox" checked={current.vouchers} onChange={(e) => edit({ ...current, vouchers: e.target.checked })} className="accent-primary" />
+              <Checkbox checked={current.vouchers} onCheckedChange={(checked) => edit({ ...current, vouchers: (checked === true) })} className="accent-primary" />
               <span>Cho khách nhập <strong>mã giảm giá</strong> (tắt = ẩn ô nhập mã)</span>
             </label>
           </div>
@@ -255,7 +257,7 @@ export function BrochureShippingSettings() {
           {message?.text ?? "Phí giao được cộng vào tổng tiền và mã QR thanh toán của khách."}
         </p>
         <Button type="submit" size="sm" disabled={saving || !draft} className="gap-1.5 shrink-0">
-          {saving ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} />}
+          {saving ? <Loader2 size={14} className="animate-spin motion-reduce:animate-none" /> : <Save size={14} />}
           <span>Lưu phí giao</span>
         </Button>
       </div>

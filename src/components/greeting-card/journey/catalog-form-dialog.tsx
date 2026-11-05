@@ -1,5 +1,6 @@
 "use client"
 
+import { Input } from "@/components/ui/input"
 import { useState } from "react"
 import { Loader2 } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
@@ -20,7 +21,7 @@ interface CatalogFormDialogProps {
 }
 
 const inputClass =
-  "h-11 w-full rounded-xl border border-border bg-background px-3.5 text-body text-foreground placeholder:text-text-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
+  "h-11 w-full rounded-xl border border-border bg-bg px-3.5 text-body text-text placeholder:text-text-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary"
 
 /** Mỗi lần mở nên gắn `key` mới để form khởi tạo lại từ giá trị ban đầu. */
 export function CatalogFormDialog(props: CatalogFormDialogProps) {
@@ -68,7 +69,7 @@ export function CatalogFormDialog(props: CatalogFormDialogProps) {
             Hủy
           </Button>
           <Button type="submit" form="catalog-form" size="sm" disabled={!canSubmit}>
-            {saving && <Loader2 size={16} className="mr-1.5 animate-spin" aria-hidden="true" />}
+            {saving && <Loader2 size={16} className="mr-1.5 animate-spin motion-reduce:animate-none" aria-hidden="true" />}
             {mode === "create" ? "Tạo và chọn" : "Tạo link"}
           </Button>
         </div>
@@ -76,10 +77,10 @@ export function CatalogFormDialog(props: CatalogFormDialogProps) {
     >
       <form id="catalog-form" onSubmit={handleSubmit} className="flex flex-col gap-4">
         <div className="flex flex-col gap-1.5">
-          <label htmlFor="catalog-name" className="text-body-sm font-bold text-foreground">
+          <label htmlFor="catalog-name" className="text-body-sm font-bold text-text">
             Tên bộ sưu tập
           </label>
-          <input
+          <Input
             id="catalog-name"
             autoFocus
             required
@@ -91,10 +92,10 @@ export function CatalogFormDialog(props: CatalogFormDialogProps) {
           />
         </div>
         <div className="flex flex-col gap-1.5">
-          <label htmlFor="catalog-code" className="text-body-sm font-bold text-foreground">
+          <label htmlFor="catalog-code" className="text-body-sm font-bold text-text">
             Đuôi link {codeRequired ? "" : <span className="font-normal text-text-muted">(không bắt buộc)</span>}
           </label>
-          <input
+          <Input
             id="catalog-code"
             required={codeRequired}
             maxLength={60}
@@ -106,7 +107,7 @@ export function CatalogFormDialog(props: CatalogFormDialogProps) {
           />
           <p id="catalog-code-hint" className="text-caption text-text-muted">
             Link khách nhận:{" "}
-            <span className="break-all font-mono font-semibold text-foreground">
+            <span className="break-all font-mono font-semibold text-text">
               /bst/{orgSlug || "cua-hang"}/{normalized || (codeRequired ? "…" : "tự tạo")}
             </span>
           </p>

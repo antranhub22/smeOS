@@ -1,5 +1,6 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
 import React, { useState, useEffect, useCallback, useRef } from "react"
 import { Check, ChevronLeft, ChevronRight, Layers, Settings2, Sparkles } from "@/components/ui/icons"
 import { enabledFieldsFor, type DisplaySettings, type OptionalDisplayField } from "@/modules/greeting-card/domain/display-fields"
@@ -161,13 +162,13 @@ function TemplateListItem({
   }, [isActive])
 
   return (
-    <button
+    <Button variant="ghost"
       ref={ref}
       type="button"
       onClick={onClick}
-      className={`w-full text-left flex items-center gap-2.5 px-2.5 py-2 rounded-xl transition-all duration-150 cursor-pointer ${
+      className={`justify-start font-[inherit] w-full text-left flex items-center gap-2.5 px-2.5 py-2 rounded-xl transition-all duration-150 cursor-pointer ${
         isActive
-          ? "bg-primary/10 border border-primary/25"
+          ? "bg-primary/10 border border-primary/25 hover:bg-primary/10"
           : "hover:bg-surface-muted border border-transparent"
       }`}
     >
@@ -199,7 +200,7 @@ function TemplateListItem({
         size={13}
         className={`shrink-0 transition-opacity ${isActive ? "opacity-100 text-primary" : "opacity-0"}`}
       />
-    </button>
+    </Button>
   )
 }
 
@@ -264,7 +265,7 @@ function LivePreviewPane({
             className="flex flex-col items-center justify-center gap-2 text-text-muted rounded-2xl bg-surface-muted"
           >
             <div
-              className="rounded-full border-2 border-primary/30 border-t-primary animate-spin"
+              className="rounded-full border-2 border-primary/30 border-t-primary animate-spin motion-reduce:animate-none"
               style={{ width: 20, height: 20 }}
             />
           </div>
@@ -281,41 +282,41 @@ function LivePreviewPane({
       <div className="flex flex-col justify-center gap-4 flex-1 min-w-0">
         {/* Name + style badge */}
         <div className="flex flex-col gap-1">
-          <h3 className="text-body font-bold text-foreground leading-tight">{tpl.name}</h3>
+          <h3 className="text-body font-bold text-text leading-tight">{tpl.name}</h3>
         </div>
 
         {/* Dot navigator */}
         {products.length > 1 && (
           <div className="flex flex-col gap-2">
             <div className="flex items-center gap-1.5">
-              <button
+              <Button variant="outline"
                 type="button"
                 onClick={prev}
-                className="size-8 sm:size-6 rounded-full border border-border flex items-center justify-center text-text-muted hover:text-foreground transition-colors cursor-pointer"
+                className="font-[inherit] gap-0 size-8 sm:size-6 rounded-full border border-border flex items-center justify-center text-text-muted hover:text-text transition-colors cursor-pointer"
                 aria-label="Sản phẩm trước"
               >
                 <ChevronLeft size={12} />
-              </button>
+              </Button>
               <div className="flex items-center gap-1">
                 {products.map((_, i) => (
-                  <button
+                  <Button variant="ghost"
                     key={i}
                     type="button"
                     onClick={() => setProductIdx(i)}
-                    className="group flex h-6 min-w-6 items-center justify-center cursor-pointer"
+                    className="font-[inherit] gap-0 group flex h-6 min-w-6 items-center justify-center cursor-pointer"
                     aria-label={`Sản phẩm ${i + 1}`}
                     aria-current={i === safeIdx ? "true" : undefined}
-                  ><span className={`rounded-full transition-all ${i === safeIdx ? "bg-primary w-3.5 h-1.5" : "bg-border w-1.5 h-1.5 group-hover:bg-border-focus"}`} /></button>
+                  ><span className={`rounded-full transition-all ${i === safeIdx ? "bg-primary w-3.5 h-1.5" : "bg-border w-1.5 h-1.5 group-hover:bg-border-focus"}`} /></Button>
                 ))}
               </div>
-              <button
+              <Button variant="outline"
                 type="button"
                 onClick={next}
-                className="size-8 sm:size-6 rounded-full border border-border flex items-center justify-center text-text-muted hover:text-foreground transition-colors cursor-pointer"
+                className="font-[inherit] gap-0 size-8 sm:size-6 rounded-full border border-border flex items-center justify-center text-text-muted hover:text-text transition-colors cursor-pointer"
                 aria-label="Sản phẩm tiếp"
               >
                 <ChevronRight size={12} />
-              </button>
+              </Button>
             </div>
             <p className="text-caption text-text-muted">
               {safeIdx + 1} / {products.length}
@@ -325,14 +326,14 @@ function LivePreviewPane({
         )}
 
         {onOpenSettings && (
-          <button
+          <Button variant="ghost"
             type="button"
             onClick={onOpenSettings}
-            className="inline-flex items-center gap-1.5 self-start text-body-sm font-semibold text-primary hover:underline"
+            className="h-auto p-0 inline-flex items-center gap-1.5 self-start text-body-sm font-semibold text-primary hover:underline"
           >
             <Settings2 size={14} aria-hidden="true" />
             Thông tin hiển thị
-          </button>
+          </Button>
         )}
 
         {/* CTA */}
@@ -342,14 +343,14 @@ function LivePreviewPane({
             <span>Đang dùng</span>
           </div>
         ) : (
-          <button
+          <Button variant="primary"
             type="button"
             onClick={onSelect}
             className="w-full py-2 px-3 rounded-xl text-body-sm font-bold flex items-center justify-center gap-1.5 bg-primary text-white hover:bg-primary-hover shadow-sm transition-colors cursor-pointer"
           >
             <Sparkles size={13} />
             <span>Chọn mẫu</span>
-          </button>
+          </Button>
         )}
       </div>
     </div>
@@ -409,7 +410,7 @@ export function TemplateSelectorSplitPane({
               2
             </span>
             <div>
-              <label className="text-body-sm font-extrabold text-foreground flex items-center gap-1.5">
+              <label className="text-body-sm font-extrabold text-text flex items-center gap-1.5">
                 <Layers size={15} className="text-primary" />
                 <span>Giao diện khách xem</span>
               </label>
@@ -427,18 +428,18 @@ export function TemplateSelectorSplitPane({
                 ["all", "Tất cả"],
               ] as const
             ).map(([val, label]) => (
-              <button
+              <Button variant="ghost"
                 key={val}
                 type="button"
                 onClick={() => setActiveFilter(val)}
-                className={`px-2.5 py-1 rounded-lg text-caption font-semibold transition-colors cursor-pointer whitespace-nowrap ${
+                className={`gap-0 px-2.5 py-1 rounded-lg text-caption font-semibold transition-colors cursor-pointer whitespace-nowrap ${
                   activeFilter === val
-                    ? "bg-surface text-foreground shadow-2xs"
-                    : "text-text-muted hover:text-foreground"
+                    ? "bg-surface text-text shadow-2xs hover:bg-surface"
+                    : "text-text-muted hover:text-text"
                 }`}
               >
                 {label}
-              </button>
+              </Button>
             ))}
           </div>
         </div>

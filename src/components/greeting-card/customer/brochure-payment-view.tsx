@@ -134,7 +134,7 @@ export function BrochurePaymentView({
 
       {vietQr ? (
         <>
-        <h2 className="text-title font-extrabold text-foreground mb-1">
+        <h2 className="text-title font-extrabold text-text mb-1">
           Thanh toán Chuyển khoản QR
         </h2>
         <p className="text-caption text-text-muted mb-4">
@@ -147,7 +147,7 @@ export function BrochurePaymentView({
           <p className="mb-4 -mt-2 text-caption text-text-muted">Hết thời gian mà chưa chuyển khoản và chưa bấm “Tôi đã chuyển khoản”, đơn sẽ tự huỷ.</p>
         )}
           {vietQr.purpose !== "FULL" && (
-            <p className="text-body-sm text-foreground mb-3">
+            <p className="text-body-sm text-text mb-3">
               Tổng giá trị đơn: <strong>{vietQr.orderTotalVnd.toLocaleString("vi-VN")} đ</strong>
               {vietQr.purpose === "DEPOSIT" && ` — phần còn lại ${(vietQr.orderTotalVnd - vietQr.amount).toLocaleString("vi-VN")} đ thanh toán sau khi hoa hoàn thành và cửa hàng gửi ảnh xác nhận.`}
             </p>
@@ -184,26 +184,26 @@ export function BrochurePaymentView({
         <div className="w-full bg-surface-muted rounded-xl p-3.5 flex flex-col gap-2.5 text-body-sm text-left mb-5 border border-border">
           <div className="flex items-center justify-between">
             <span className="text-text-muted">Ngân hàng:</span>
-            <span className="font-bold text-foreground">{vietQr.bankName}</span>
+            <span className="font-bold text-text">{vietQr.bankName}</span>
           </div>
 
           <div className="flex items-center justify-between">
             <span className="text-text-muted">Chủ tài khoản:</span>
-            <span className="font-bold text-foreground">{vietQr.accountName}</span>
+            <span className="font-bold text-text">{vietQr.accountName}</span>
           </div>
 
           <div className="flex items-center justify-between">
             <span className="text-text-muted">Số tài khoản:</span>
             <div className="flex items-center gap-1.5">
-              <span className="font-mono font-extrabold text-foreground">{vietQr.accountNo}</span>
-              <button
+              <span className="font-mono font-extrabold text-text">{vietQr.accountNo}</span>
+              <Button variant="ghost"
                 type="button"
                 onClick={() => copyToClipboard(vietQr.accountNo, "acc")}
                 aria-label="Sao chép số tài khoản"
-                className="text-primary hover:text-primary-dark p-1 cursor-pointer"
+                className="font-[inherit] gap-0 text-primary hover:text-primary-dark p-1 cursor-pointer"
               >
                 {copiedField === "acc" ? <Check size={14} className="text-success" /> : <Copy size={14} />}
-              </button>
+              </Button>
             </div>
           </div>
 
@@ -213,29 +213,29 @@ export function BrochurePaymentView({
             </span>
             <div className="flex items-center gap-1.5">
               <span className="font-bold text-primary">{vietQr.amount.toLocaleString("vi-VN")} đ</span>
-              <button
+              <Button variant="ghost"
                 type="button"
                 onClick={() => copyToClipboard(String(vietQr.amount), "amount")}
                 aria-label="Sao chép số tiền"
-                className="text-primary hover:text-primary-dark p-1 cursor-pointer"
+                className="font-[inherit] gap-0 text-primary hover:text-primary-dark p-1 cursor-pointer"
               >
                 {copiedField === "amount" ? <Check size={14} className="text-success" /> : <Copy size={14} />}
-              </button>
+              </Button>
             </div>
           </div>
 
           <div className="flex items-center justify-between">
             <span className="text-text-muted">Nội dung chuyển khoản:</span>
             <div className="flex items-center gap-1.5">
-              <span className="font-mono font-extrabold text-foreground">{vietQr.transferMemo}</span>
-              <button
+              <span className="font-mono font-extrabold text-text">{vietQr.transferMemo}</span>
+              <Button variant="ghost"
                 type="button"
                 onClick={() => copyToClipboard(vietQr.transferMemo, "memo")}
                 aria-label="Sao chép nội dung chuyển khoản"
-                className="text-primary hover:text-primary-dark p-1 cursor-pointer"
+                className="font-[inherit] gap-0 text-primary hover:text-primary-dark p-1 cursor-pointer"
               >
                 {copiedField === "memo" ? <Check size={14} className="text-success" /> : <Copy size={14} />}
-              </button>
+              </Button>
             </div>
           </div>
         </div>
@@ -243,11 +243,11 @@ export function BrochurePaymentView({
         {/* Khối hướng dẫn thanh toán quốc tế dành riêng cho khách nước ngoài */}
         {internationalGuide && (
           <div className="w-full p-4 rounded-xl border border-primary/20 bg-primary/5 space-y-2 text-left">
-            <div className="flex items-center gap-2 text-body-sm font-bold text-foreground">
-              <span className="text-base">🌍</span>
+            <div className="flex items-center gap-2 text-body-sm font-bold text-text">
+              <span className="text-title">🌍</span>
               <span>International Payment (Wise / PayPal / Swift / Zelle)</span>
             </div>
-            <p className="text-body-sm text-foreground/90 whitespace-pre-line leading-relaxed font-mono">
+            <p className="text-body-sm text-text/90 whitespace-pre-line leading-relaxed font-mono">
               {internationalGuide}
             </p>
           </div>
@@ -255,9 +255,9 @@ export function BrochurePaymentView({
         </>
       ) : (
         <>
-          <h2 className="text-title font-extrabold text-foreground mb-1">Đặt hàng thành công!</h2>
+          <h2 className="text-title font-extrabold text-text mb-1">Đặt hàng thành công!</h2>
           <p className="text-body-sm text-text-muted mb-4">
-            Đơn <span className="font-mono font-bold text-foreground">#{orderCode}</span> trị giá{" "}
+            Đơn <span className="font-mono font-bold text-text">#{orderCode}</span> trị giá{" "}
             <span className="font-bold text-primary">{totalVnd.toLocaleString("vi-VN")} đ</span>. Cửa hàng sẽ liên hệ
             bạn để hướng dẫn thanh toán.
             {shopPhone && <span className="block mt-1">Hotline cửa hàng: {shopPhone}</span>}
@@ -276,11 +276,11 @@ export function BrochurePaymentView({
       ) : hasReported ? (
         <div className="w-full flex flex-col gap-3">
           <div className="p-3.5 rounded-xl bg-info-bg border border-info/30 text-info text-body-sm flex flex-col items-center justify-center gap-1.5 text-center">
-            <div className="flex items-center gap-2 font-bold text-foreground">
+            <div className="flex items-center gap-2 font-bold text-text">
               <ShieldCheck size={18} className="text-info" />
               <span>Đã báo chuyển khoản thành công!</span>
             </div>
-            <p className="text-body-sm text-foreground font-semibold">
+            <p className="text-body-sm text-text font-semibold">
               Thời gian xác nhận chuyển khoản sẽ trong vòng 15’
             </p>
             <p className="text-caption text-text-muted">
@@ -322,7 +322,7 @@ export function BrochurePaymentView({
           {reportError && (
             <p role="alert" className="text-caption text-danger font-medium">{reportError}</p>
           )}
-          <button
+          <Button variant="ghost"
             type="button"
             disabled={loading || !canSubmit}
             onClick={handleReportPaid}
@@ -330,7 +330,7 @@ export function BrochurePaymentView({
           >
             <Check size={18} />
             <span>{loading ? "Đang xử lý..." : "TÔI ĐÃ CHUYỂN KHOẢN THANH TOÁN"}</span>
-          </button>
+          </Button>
           {!canSubmit && (
             <p className="text-caption text-warning font-medium text-center">
               Vui lòng tải ảnh chuyển khoản để xác nhận

@@ -1,5 +1,7 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import React, { useState } from "react"
 import { Gift, UserCheck } from "@/components/ui/icons"
 import { useI18n } from "@/lib/i18n"
@@ -47,7 +49,7 @@ export function JourneyContactForm({
   }
 
   const inputClass =
-    "w-full h-11 px-3.5 rounded-xl border border-border bg-background text-body text-foreground placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors"
+    "w-full h-11 px-3.5 rounded-xl border border-border bg-bg text-body text-text placeholder:text-text-muted focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors"
 
   return (
     <section
@@ -105,7 +107,7 @@ export function JourneyContactForm({
           <label htmlFor="intake-name" className="block text-body-sm font-semibold mb-1" style={{ color: theme.stageText }}>
             {t("greetingCard.customer.journey.yourName")} <span className="text-danger">*</span>
           </label>
-          <input
+          <Input
             id="intake-name"
             type="text"
             required
@@ -123,7 +125,7 @@ export function JourneyContactForm({
             {t("greetingCard.customer.journey.phone")}{" "}
             <span className="text-caption font-normal opacity-70">{t("greetingCard.customer.journey.optional")}</span>
           </label>
-          <input
+          <Input
             id="intake-phone"
             type="tel"
             autoComplete="tel"
@@ -140,7 +142,7 @@ export function JourneyContactForm({
             {t("greetingCard.customer.journey.email")}{" "}
             <span className="text-caption font-normal opacity-70">{t("greetingCard.customer.journey.optional")}</span>
           </label>
-          <input
+          <Input
             id="intake-email"
             type="email"
             autoComplete="email"
@@ -151,14 +153,14 @@ export function JourneyContactForm({
           />
         </div>
 
-        <button
+        <Button variant="ghost"
           type="submit"
           disabled={!canContinue}
-          className="mt-1 h-12 w-full rounded-xl text-body font-bold shadow-md transition-all active:scale-[0.98] disabled:pointer-events-none disabled:opacity-40"
+          className="gap-0 mt-1 h-12 w-full rounded-xl text-body font-bold shadow-md transition-all active:scale-[0.98] disabled:pointer-events-none disabled:opacity-40"
           style={{ background: theme.ctaBg, color: theme.ctaText }}
         >
           {t("greetingCard.customer.journey.continue")}
-        </button>
+        </Button>
 
         <p className="text-center text-caption opacity-70">
           {t("greetingCard.customer.journey.savedNote")}

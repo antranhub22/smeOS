@@ -1,5 +1,8 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
+import { Checkbox } from "@/components/ui/checkbox"
+import { Input } from "@/components/ui/input"
 import React, { useState } from "react"
 import { Timer, CheckCircle2, AlertCircle } from "@/components/ui/icons"
 import { apiSend, useApi } from "@/components/greeting-card/greeting-api"
@@ -52,7 +55,7 @@ export function BrochureStepTimeoutSettings() {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Timer size={18} className="text-primary" aria-hidden="true" />
-          <h3 className="text-title-sm font-extrabold text-foreground">
+          <h3 className="text-title-sm font-extrabold text-text">
             Thời hạn & Tự động huỷ đơn theo bước
           </h3>
         </div>
@@ -66,18 +69,16 @@ export function BrochureStepTimeoutSettings() {
       </p>
 
       {savedPolicy === null ? (
-        <div className="h-40 rounded-xl bg-surface-muted animate-pulse" aria-busy="true" />
+        <div className="h-40 rounded-xl bg-surface-muted animate-pulse motion-reduce:animate-none" aria-busy="true" />
       ) : (
         <div className="space-y-3.5">
           {/* Bước 1: Quá hạn mở link */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 rounded-xl border border-border bg-surface-alt">
             <div className="space-y-0.5">
-              <label className="flex items-center gap-2 text-body-sm font-bold text-foreground cursor-pointer">
-                <input
-                  type="checkbox"
+              <label className="flex items-center gap-2 text-body-sm font-bold text-text cursor-pointer">
+                <Checkbox
                   checked={current.autoCancelUnopened}
-                  onChange={(e) =>
-                    setPolicy({ ...current, autoCancelUnopened: e.target.checked })
+                  onCheckedChange={(checked) => setPolicy({ ...current, autoCancelUnopened: (checked === true) })
                   }
                   className="rounded border-border text-primary focus:ring-primary"
                 />
@@ -88,7 +89,7 @@ export function BrochureStepTimeoutSettings() {
               </p>
             </div>
             <div className="flex items-center gap-2 shrink-0">
-              <input
+              <Input
                 type="number"
                 min={1}
                 max={720}
@@ -100,7 +101,7 @@ export function BrochureStepTimeoutSettings() {
                     unopenedExpiryHours: Math.max(1, parseInt(e.target.value) || 24),
                   })
                 }
-                className="h-9 w-20 rounded-lg border border-border bg-surface px-2 text-right text-body-sm font-bold text-foreground disabled:opacity-40"
+                className="h-9 w-20 rounded-lg border border-border bg-surface px-2 text-right text-body-sm font-bold text-text disabled:opacity-40"
               />
               <span className="text-caption text-text-muted">giờ</span>
               <span className="text-caption font-medium text-text-muted">
@@ -112,12 +113,10 @@ export function BrochureStepTimeoutSettings() {
           {/* Bước 2: Quá hạn lướt chọn mẫu */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 rounded-xl border border-border bg-surface-alt">
             <div className="space-y-0.5">
-              <label className="flex items-center gap-2 text-body-sm font-bold text-foreground cursor-pointer">
-                <input
-                  type="checkbox"
+              <label className="flex items-center gap-2 text-body-sm font-bold text-text cursor-pointer">
+                <Checkbox
                   checked={current.autoCancelBrowsing}
-                  onChange={(e) =>
-                    setPolicy({ ...current, autoCancelBrowsing: e.target.checked })
+                  onCheckedChange={(checked) => setPolicy({ ...current, autoCancelBrowsing: (checked === true) })
                   }
                   className="rounded border-border text-primary focus:ring-primary"
                 />
@@ -128,7 +127,7 @@ export function BrochureStepTimeoutSettings() {
               </p>
             </div>
             <div className="flex items-center gap-2 shrink-0">
-              <input
+              <Input
                 type="number"
                 min={1}
                 max={168}
@@ -140,7 +139,7 @@ export function BrochureStepTimeoutSettings() {
                     browsingExpiryHours: Math.max(1, parseInt(e.target.value) || 12),
                   })
                 }
-                className="h-9 w-20 rounded-lg border border-border bg-surface px-2 text-right text-body-sm font-bold text-foreground disabled:opacity-40"
+                className="h-9 w-20 rounded-lg border border-border bg-surface px-2 text-right text-body-sm font-bold text-text disabled:opacity-40"
               />
               <span className="text-caption text-text-muted">giờ</span>
               <span className="text-caption font-medium text-text-muted">
@@ -152,12 +151,10 @@ export function BrochureStepTimeoutSettings() {
           {/* Bước 3: Quá hạn thanh toán cọc */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 rounded-xl border border-border bg-surface-alt">
             <div className="space-y-0.5">
-              <label className="flex items-center gap-2 text-body-sm font-bold text-foreground cursor-pointer">
-                <input
-                  type="checkbox"
+              <label className="flex items-center gap-2 text-body-sm font-bold text-text cursor-pointer">
+                <Checkbox
                   checked={current.autoCancelUnpaid}
-                  onChange={(e) =>
-                    setPolicy({ ...current, autoCancelUnpaid: e.target.checked })
+                  onCheckedChange={(checked) => setPolicy({ ...current, autoCancelUnpaid: (checked === true) })
                   }
                   className="rounded border-border text-primary focus:ring-primary"
                 />
@@ -168,7 +165,7 @@ export function BrochureStepTimeoutSettings() {
               </p>
             </div>
             <div className="flex items-center gap-2 shrink-0">
-              <input
+              <Input
                 type="number"
                 min={5}
                 max={1440}
@@ -180,7 +177,7 @@ export function BrochureStepTimeoutSettings() {
                     unpaidExpiryMinutes: Math.max(5, parseInt(e.target.value) || 30),
                   })
                 }
-                className="h-9 w-20 rounded-lg border border-border bg-surface px-2 text-right text-body-sm font-bold text-foreground disabled:opacity-40"
+                className="h-9 w-20 rounded-lg border border-border bg-surface px-2 text-right text-body-sm font-bold text-text disabled:opacity-40"
               />
               <span className="text-caption text-text-muted">phút</span>
               <span className="text-caption font-medium text-text-muted">
@@ -192,12 +189,10 @@ export function BrochureStepTimeoutSettings() {
           {/* Bước 4: Chờ khách duyệt ảnh hoa */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-3.5 rounded-xl border border-border bg-surface-alt">
             <div className="space-y-0.5">
-              <label className="flex items-center gap-2 text-body-sm font-bold text-foreground cursor-pointer">
-                <input
-                  type="checkbox"
+              <label className="flex items-center gap-2 text-body-sm font-bold text-text cursor-pointer">
+                <Checkbox
                   checked={current.autoApprovePhotoOnTimeout}
-                  onChange={(e) =>
-                    setPolicy({ ...current, autoApprovePhotoOnTimeout: e.target.checked })
+                  onCheckedChange={(checked) => setPolicy({ ...current, autoApprovePhotoOnTimeout: (checked === true) })
                   }
                   className="rounded border-border text-primary focus:ring-primary"
                 />
@@ -208,7 +203,7 @@ export function BrochureStepTimeoutSettings() {
               </p>
             </div>
             <div className="flex items-center gap-2 shrink-0">
-              <input
+              <Input
                 type="number"
                 min={5}
                 max={120}
@@ -220,7 +215,7 @@ export function BrochureStepTimeoutSettings() {
                     photoReviewTimeoutMinutes: Math.max(5, parseInt(e.target.value) || 15),
                   })
                 }
-                className="h-9 w-20 rounded-lg border border-border bg-surface px-2 text-right text-body-sm font-bold text-foreground disabled:opacity-40"
+                className="h-9 w-20 rounded-lg border border-border bg-surface px-2 text-right text-body-sm font-bold text-text disabled:opacity-40"
               />
               <span className="text-caption text-text-muted">phút</span>
             </div>
@@ -243,14 +238,14 @@ export function BrochureStepTimeoutSettings() {
         ) : (
           <span />
         )}
-        <button
+        <Button variant="primary"
           type="button"
           onClick={() => void handleSave()}
           disabled={savedPolicy === null || saving}
-          className="h-9 rounded-lg bg-primary px-4 text-body-sm font-bold text-white hover:bg-primary-dark disabled:opacity-50"
+          className="gap-0 h-9 rounded-lg bg-primary px-4 text-body-sm font-bold text-white hover:bg-primary-dark disabled:opacity-50"
         >
           {saving ? "Đang lưu..." : "Lưu thời hạn tiệm"}
-        </button>
+        </Button>
       </div>
     </section>
   )

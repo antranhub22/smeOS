@@ -1,5 +1,7 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import React, { useState } from "react"
 import { BadgePercent } from "@/components/ui/icons"
 import { apiSend, useApi } from "@/components/greeting-card/greeting-api"
@@ -37,19 +39,19 @@ export function BrochureDiscountSettings() {
     <section className="flex flex-col gap-3 rounded-2xl border border-border bg-surface p-5 shadow-sm">
       <div className="flex items-center gap-2">
         <BadgePercent size={18} className="text-primary" aria-hidden="true" />
-        <h3 className="text-title-sm font-extrabold text-foreground">Giảm giá tối đa mỗi đơn</h3>
+        <h3 className="text-title-sm font-extrabold text-text">Giảm giá tối đa mỗi đơn</h3>
       </div>
       <p className="text-caption text-text-muted">Sale chỉ xin được và Điều hành chỉ duyệt được trong mức này. Đặt 0 để tắt xin giảm giá.</p>
       <div className="flex items-center gap-2">
         <label htmlFor="max-discount" className="sr-only">Phần trăm giảm tối đa</label>
-        <input id="max-discount" type="number" inputMode="numeric" min={0} max={100} value={value}
+        <Input id="max-discount" type="number" inputMode="numeric" min={0} max={100} value={value}
           onChange={(e) => { setEdited(e.target.value); setMessage(null) }}
-          className="h-11 w-24 rounded-xl border border-border bg-surface px-3 text-right text-body text-foreground" />
+          className="h-11 w-24 rounded-xl border border-border bg-surface px-3 text-right text-body text-text" />
         <span className="text-body-sm text-text-muted">%</span>
-        <button type="button" onClick={() => void save()} disabled={saving || edited === null}
-          className="ml-auto h-11 rounded-xl bg-primary px-4 text-body-sm font-bold text-white hover:bg-primary-dark disabled:opacity-50">
+        <Button variant="primary" type="button" onClick={() => void save()} disabled={saving || edited === null}
+          className="gap-0 ml-auto h-11 rounded-xl bg-primary px-4 text-body-sm font-bold text-white hover:bg-primary-dark disabled:opacity-50">
           {saving ? "Đang lưu..." : "Lưu"}
-        </button>
+        </Button>
       </div>
       {message && <p role="status" className={`text-caption font-medium ${message.ok ? "text-success" : "text-danger"}`}>{message.text}</p>}
     </section>

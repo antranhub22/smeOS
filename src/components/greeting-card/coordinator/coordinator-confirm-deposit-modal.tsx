@@ -1,9 +1,11 @@
 "use client"
 
+import { Input } from "@/components/ui/input"
 import React, { useState } from "react"
 import Image from "next/image"
 import { CheckCircle2, Banknote } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
+import { Dialog } from "@/components/ui/dialog"
 import { apiSend } from "@/components/greeting-card/greeting-api"
 
 interface CoordinatorConfirmDepositModalProps {
@@ -57,26 +59,13 @@ export function CoordinatorConfirmDepositModal({
   }
 
   return (
-    <div
-      className="fixed inset-0 z-50 bg-black/40 flex items-end sm:items-center justify-center p-4"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="confirm-deposit-title"
-    >
-      <form
-        onSubmit={handleConfirm}
-        className="bg-surface rounded-2xl border border-border shadow-xl w-full max-w-md p-5 flex flex-col gap-4"
-      >
-        <div className="flex items-center gap-2">
-          <Banknote size={20} className="text-success shrink-0" />
-          <h3 id="confirm-deposit-title" className="text-body font-extrabold text-foreground">
-            Xác nhận Tiền Cọc Đợt 1 — #{orderCode}
-          </h3>
-        </div>
+    <Dialog open onOpenChange={(o) => { if (!o && !busy) onClose() }} size="sm"
+      title={<span className="flex items-center gap-2"><Banknote size={20} className="text-success shrink-0" /> Xác nhận Tiền Cọc Đợt 1 — #{orderCode}</span>}>
+      <form onSubmit={handleConfirm} className="flex flex-col gap-4">
 
         <p className="text-body-sm text-text-muted">
           Số tiền cọc cần thu:{" "}
-          <span className="font-extrabold text-foreground">
+          <span className="font-extrabold text-text">
             {depositVnd != null ? `${depositVnd.toLocaleString("vi-VN")}đ` : "theo kế hoạch thanh toán của đơn"}
           </span>
         </p>
@@ -106,12 +95,12 @@ export function CoordinatorConfirmDepositModal({
 
         <label className="flex flex-col gap-1">
           <span className="text-caption font-bold">Ghi chú (không bắt buộc)</span>
-          <input
+          <Input
             value={note}
             onChange={(e) => setNote(e.target.value)}
             maxLength={500}
             placeholder="VD: Khớp bill chuyển khoản tiền cọc"
-            className="w-full h-10 px-3 rounded-lg border border-border bg-background text-body text-foreground"
+            className="w-full h-10 px-3 rounded-lg border border-border bg-bg text-body text-text"
           />
         </label>
 
@@ -135,6 +124,6 @@ export function CoordinatorConfirmDepositModal({
           </Button>
         </div>
       </form>
-    </div>
+    </Dialog>
   )
 }

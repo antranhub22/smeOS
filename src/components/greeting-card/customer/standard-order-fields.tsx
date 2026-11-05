@@ -1,5 +1,6 @@
 "use client"
 
+import { Input } from "@/components/ui/input"
 import React from "react"
 import { ORDER_FIELD_MAX } from "@/modules/greeting-card/domain/greeting-card-rules"
 import type { ShippingConfig } from "@/modules/greeting-card/domain/brochure-pricing"
@@ -66,10 +67,10 @@ export function StandardOrderFields({
       {!hideRecipient && (
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div>
-          <label htmlFor={`${idPrefix}-recipientName`} className="block text-body-sm font-bold text-foreground mb-1">
+          <label htmlFor={`${idPrefix}-recipientName`} className="block text-body-sm font-bold text-text mb-1">
             Họ tên {recipientLabel} <span className="text-danger">*</span>
           </label>
-          <input
+          <Input
             type="text"
             required
             placeholder="VD: Trần Thị B"
@@ -82,10 +83,10 @@ export function StandardOrderFields({
           />
         </div>
         <div>
-          <label htmlFor={`${idPrefix}-recipientPhone`} className="block text-body-sm font-bold text-foreground mb-1">
+          <label htmlFor={`${idPrefix}-recipientPhone`} className="block text-body-sm font-bold text-text mb-1">
             Số điện thoại người nhận <span className="text-danger">*</span>
           </label>
-          <input
+          <Input
             type="tel"
             required
             placeholder="VD: 0912345678"
@@ -104,7 +105,7 @@ export function StandardOrderFields({
       {/* Ngày & Giờ giao */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div>
-          <label htmlFor={`${idPrefix}-deliveryDate`} className="block text-body-sm font-bold text-foreground mb-1">
+          <label htmlFor={`${idPrefix}-deliveryDate`} className="block text-body-sm font-bold text-text mb-1">
             {dateLabel} <span className="text-danger">*</span>
           </label>
           <ViDateInput
@@ -118,7 +119,7 @@ export function StandardOrderFields({
           />
         </div>
         <div>
-          <label htmlFor={`${idPrefix}-deliveryTimeSlot`} className="block text-body-sm font-bold text-foreground mb-1">
+          <label htmlFor={`${idPrefix}-deliveryTimeSlot`} className="block text-body-sm font-bold text-text mb-1">
             Khung giờ mong muốn
           </label>
           <DeliveryTimePicker

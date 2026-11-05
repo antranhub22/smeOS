@@ -138,7 +138,7 @@ export function AdminOrderTable({
                   <ProductCell order={o} />
                 </td>
                 <td className="px-4 py-3">
-                  <div className="font-semibold text-foreground">{o.customer?.name || "Khách hàng"}</div>
+                  <div className="font-semibold text-text">{o.customer?.name || "Khách hàng"}</div>
                   <div className="text-caption text-text-muted">{o.customer?.phone ?? ""}</div>
                 </td>
                 <td className="px-4 py-3 text-right font-extrabold">
@@ -293,7 +293,7 @@ function ProductCell({ order }: { order: AdminOrder }) {
         <FlowerImage src={c.imageUrl} alt={c.productName} sizes="40px" fallback="icon" className="h-full w-full" />
       </div>
       <div className="min-w-0">
-        <div className="truncate font-semibold text-foreground">{c.productName}</div>
+        <div className="truncate font-semibold text-text">{c.productName}</div>
         <div className="text-caption text-text-muted">
           {c.listedPriceVnd !== null ? `Công bố ${vnd(c.listedPriceVnd)}` : "Chưa niêm yết giá"}
           {c.reasons.length > 0 && <span className="text-warning"> · {c.reasons.length} điều chỉnh</span>}

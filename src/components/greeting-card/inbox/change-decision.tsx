@@ -1,5 +1,7 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
+import { Textarea } from "@/components/ui/textarea"
 import React, { useState } from "react"
 import { Loader2 } from "@/components/ui/icons"
 import { apiSend } from "@/components/greeting-card/greeting-api"
@@ -37,8 +39,8 @@ export function ChangeDecision({ requestId, changes, note, expectedFeeDeltaVnd, 
       <ul className="flex flex-col gap-1 text-body-sm">
         {changes.map((c) => (
           <li key={c.field}>
-            <span className="font-bold text-foreground">{c.label}:</span>{" "}
-            <span className="text-text-muted line-through">{c.before}</span> → <span className="font-bold text-foreground">{c.after}</span>
+            <span className="font-bold text-text">{c.label}:</span>{" "}
+            <span className="text-text-muted line-through">{c.before}</span> → <span className="font-bold text-text">{c.after}</span>
           </li>
         ))}
       </ul>
@@ -47,19 +49,19 @@ export function ChangeDecision({ requestId, changes, note, expectedFeeDeltaVnd, 
         <p className="text-body-sm text-warning">Duyệt sẽ cộng thêm {expectedFeeDeltaVnd.toLocaleString("vi-VN")}đ phí giao vào đơn.</p>
       )}
       <label className="sr-only" htmlFor={`change-note-${requestId}`}>Lời nhắn cho khách</label>
-      <textarea id={`change-note-${requestId}`} rows={2} value={reply} maxLength={500} onChange={(e) => setReply(e.target.value)}
+      <Textarea id={`change-note-${requestId}`} rows={2} value={reply} maxLength={500} onChange={(e) => setReply(e.target.value)}
         placeholder="Lời nhắn cho khách (bắt buộc khi không đồng ý)"
-        className="min-h-11 rounded-xl border border-border bg-surface px-3 py-2 text-body-sm text-foreground placeholder:text-text-muted" />
+        className="min-h-11 rounded-xl border border-border bg-surface px-3 py-2 text-body-sm text-text placeholder:text-text-muted" />
       {error && <p role="alert" className="rounded-lg bg-danger-bg px-3 py-2 text-body-sm text-danger">{error}</p>}
       <div className="flex gap-2">
-        <button type="button" disabled={busy !== null} onClick={() => void decide(true)}
-          className="inline-flex h-11 flex-1 items-center justify-center gap-2 rounded-xl bg-success px-4 text-body-sm font-bold text-white disabled:opacity-40">
-          {busy === "approve" && <Loader2 size={16} className="animate-spin" aria-hidden="true" />} Đồng ý cập nhật
-        </button>
-        <button type="button" disabled={busy !== null || reply.trim().length < 3} onClick={() => void decide(false)}
-          className="inline-flex h-11 flex-1 items-center justify-center gap-2 rounded-xl bg-danger px-4 text-body-sm font-bold text-white disabled:opacity-40">
-          {busy === "reject" && <Loader2 size={16} className="animate-spin" aria-hidden="true" />} Không đồng ý
-        </button>
+        <Button variant="ghost" type="button" disabled={busy !== null} onClick={() => void decide(true)}
+          className="inline-flex h-11 flex-1 items-center justify-center gap-2 rounded-xl bg-success px-4 text-body-sm font-bold text-white disabled:opacity-40 hover:bg-success">
+          {busy === "approve" && <Loader2 size={16} className="animate-spin motion-reduce:animate-none" aria-hidden="true" />} Đồng ý cập nhật
+        </Button>
+        <Button variant="ghost" type="button" disabled={busy !== null || reply.trim().length < 3} onClick={() => void decide(false)}
+          className="inline-flex h-11 flex-1 items-center justify-center gap-2 rounded-xl bg-danger px-4 text-body-sm font-bold text-white disabled:opacity-40 hover:bg-danger">
+          {busy === "reject" && <Loader2 size={16} className="animate-spin motion-reduce:animate-none" aria-hidden="true" />} Không đồng ý
+        </Button>
       </div>
     </div>
   )

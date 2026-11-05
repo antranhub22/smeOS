@@ -113,7 +113,7 @@ export function StaffNametag({ role, id, name, compact = false, className }: Sta
         </span>
         <span className="font-mono font-black text-primary text-caption tracking-tight">{staffCode}</span>
         {!compact && (
-          <span className="max-w-[110px] truncate font-bold text-foreground text-caption">{staffName}</span>
+          <span className="max-w-[110px] truncate font-bold text-text text-caption">{staffName}</span>
         )}
       </span>
     )
@@ -133,7 +133,7 @@ export function StaffNametag({ role, id, name, compact = false, className }: Sta
       </span>
       <span className="font-mono font-black text-info-text text-caption tracking-tight">{staffCode}</span>
       {!compact && (
-        <span className="max-w-[110px] truncate font-bold text-foreground text-caption">{staffName}</span>
+        <span className="max-w-[110px] truncate font-bold text-text text-caption">{staffName}</span>
       )}
     </span>
   )

@@ -1,5 +1,6 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
 import { useState } from "react"
 import type { GreetingCatalogProduct } from "@/modules/greeting-card/domain/greeting-card-types"
 import { EmptyCatalog, HeartToggle, ProductImage, useShortlist } from "./aux/aux-kit"
@@ -57,20 +58,20 @@ export function EditorialStoryDeck({ products, catalogName, onSelectProduct }: E
                       className="mt-2"
                     />
                     <div className="mt-5 flex gap-2">
-                      <button
+                      <Button variant="ghost"
                         type="button"
                         onClick={() => onSelectProduct(p)}
-                        className="h-11 flex-1 rounded-full bg-text text-body-sm font-bold text-surface active:scale-[0.99]"
+                        className="gap-0 h-11 flex-1 rounded-full bg-text text-body-sm font-bold text-surface active:scale-[0.99] hover:bg-text"
                       >
                         Đặt mẫu này
-                      </button>
-                      <button
+                      </Button>
+                      <Button variant="outline"
                         type="button"
                         onClick={() => setOpen(p)}
-                        className="h-11 rounded-full border border-border px-5 text-body-sm font-semibold"
+                        className="gap-0 h-11 rounded-full border border-border px-5 text-body-sm font-semibold"
                       >
                         Chi tiết
-                      </button>
+                      </Button>
                     </div>
                   </div>
                 </article>

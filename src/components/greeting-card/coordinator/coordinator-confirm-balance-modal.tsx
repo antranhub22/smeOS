@@ -1,7 +1,9 @@
 "use client"
 
+import { Input } from "@/components/ui/input"
 import React, { useState } from "react"
 import { Button } from "@/components/ui/button"
+import { Dialog } from "@/components/ui/dialog"
 import { apiSend } from "@/components/greeting-card/greeting-api"
 import Image from "next/image"
 import { Banknote, CheckCircle2 } from "@/components/ui/icons"
@@ -51,26 +53,13 @@ export function CoordinatorConfirmBalanceModal({
   }
 
   return (
-    <div
-      className="fixed inset-0 z-50 bg-black/40 flex items-end sm:items-center justify-center p-4"
-      role="dialog"
-      aria-modal="true"
-      aria-labelledby="confirm-balance-title"
-    >
-      <form
-        onSubmit={handleConfirm}
-        className="bg-surface rounded-2xl border border-border shadow-xl w-full max-w-md p-5 flex flex-col gap-4"
-      >
-        <div className="flex items-center gap-2">
-          <Banknote size={20} className="text-warning shrink-0" />
-          <h3 id="confirm-balance-title" className="text-body font-extrabold text-foreground">
-            Xác nhận Nhận Đủ Tiền Lần 2 — #{orderCode}
-          </h3>
-        </div>
+    <Dialog open onOpenChange={(o) => { if (!o && !busy) onClose() }} size="sm"
+      title={<span className="flex items-center gap-2"><Banknote size={20} className="text-warning shrink-0" /> Xác nhận Nhận Đủ Tiền Lần 2 — #{orderCode}</span>}>
+      <form onSubmit={handleConfirm} className="flex flex-col gap-4">
 
         <p className="text-body-sm text-text-muted">
           Phần còn lại:{" "}
-          <span className="font-extrabold text-foreground">
+          <span className="font-extrabold text-text">
             {balanceVnd.toLocaleString("vi-VN")}đ
           </span>
         </p>
@@ -100,12 +89,12 @@ export function CoordinatorConfirmBalanceModal({
 
         <label className="flex flex-col gap-1">
           <span className="text-caption font-bold">Ghi chú (không bắt buộc)</span>
-          <input
+          <Input
             value={note}
             onChange={(e) => setNote(e.target.value)}
             maxLength={500}
             placeholder="VD: Đã kiểm tra sao kê, khớp số tiền và nội dung CK"
-            className="w-full h-10 px-3 rounded-lg border border-border bg-background text-body text-foreground"
+            className="w-full h-10 px-3 rounded-lg border border-border bg-bg text-body text-text"
           />
         </label>
 
@@ -129,6 +118,6 @@ export function CoordinatorConfirmBalanceModal({
           </Button>
         </div>
       </form>
-    </div>
+    </Dialog>
   )
 }

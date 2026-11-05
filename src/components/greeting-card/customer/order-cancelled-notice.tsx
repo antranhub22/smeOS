@@ -25,8 +25,8 @@ export function OrderCancelledNotice({ orderCode, notice }: { orderCode: string;
       <h2 id="order-cancelled-title" className="text-title-sm font-extrabold text-danger">
         Rất tiếc, cửa hàng không thể thực hiện đơn #{orderCode}
       </h2>
-      <p className="text-body-sm text-foreground">Cửa hàng đang quá tải nên không thực hiện được đơn hàng của bạn.</p>
-      <p className="text-body-sm text-foreground">
+      <p className="text-body-sm text-text">Cửa hàng đang quá tải nên không thực hiện được đơn hàng của bạn.</p>
+      <p className="text-body-sm text-text">
         {notice.refundVnd > 0 ? (
           <>
             Nhân viên cửa hàng sẽ liên hệ và hoàn <strong>{notice.refundVnd.toLocaleString("vi-VN")}đ</strong> cho bạn trước{" "}

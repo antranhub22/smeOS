@@ -1,5 +1,7 @@
 "use client"
 
+import { Checkbox } from "@/components/ui/checkbox"
+import { Input } from "@/components/ui/input"
 import React, { useState } from "react"
 import { ViDateInput } from "@/components/greeting-card/customer/vi-date-input"
 import { CalendarHeart, Loader2, Plus, Save, Trash2 } from "@/components/ui/icons"
@@ -18,7 +20,7 @@ import {
   type HolidayDay,
 } from "@/modules/greeting-card/domain/holiday-policy"
 
-const FIELD = "h-10 px-3 rounded-lg border border-border bg-background text-body text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20"
+const FIELD = "h-10 px-3 rounded-lg border border-border bg-bg text-body text-text focus:outline-none focus:ring-2 focus:ring-primary/20"
 
 interface Row { id: string; name: string; date: string; yearly: boolean; cutoff: string; maxOrders: string; surcharge: string }
 
@@ -91,7 +93,7 @@ export function BrochureHolidaySettings() {
     <form onSubmit={save} className="bg-surface rounded-2xl border border-border p-5 shadow-sm flex flex-col gap-4">
       <div className="flex items-center gap-2">
         <CalendarHeart size={18} className="text-primary" aria-hidden="true" />
-        <h3 className="text-title-sm font-extrabold text-foreground">Ngày lễ</h3>
+        <h3 className="text-title-sm font-extrabold text-text">Ngày lễ</h3>
       </div>
       <p className="text-caption text-text-muted">
         Giờ chốt nhận đơn và số đơn tối đa mỗi ngày lễ áp cho cả tiệm (mặc định {DEFAULT_HOLIDAY_MAX_ORDERS} đơn). Phụ phí chỉ cộng ở bộ sưu tập bật &ldquo;Áp dụng phụ phí ngày lễ&rdquo;.
@@ -108,24 +110,24 @@ export function BrochureHolidaySettings() {
             {rows.map((r, i) => (
               <li key={r.id} className="rounded-xl border border-border p-3 flex flex-col gap-2">
                 <div className="flex flex-wrap items-center gap-2">
-                  <input aria-label="Tên ngày lễ" value={r.name} maxLength={HOLIDAY_NAME_MAX} placeholder="VD: Valentine" onChange={(e) => patch(i, { name: e.target.value })} className={`${FIELD} flex-1 min-w-40`} />
+                  <Input aria-label="Tên ngày lễ" value={r.name} maxLength={HOLIDAY_NAME_MAX} placeholder="VD: Valentine" onChange={(e) => patch(i, { name: e.target.value })} className={`${FIELD} flex-1 min-w-40`} />
                   <ViDateInput compact ariaLabel="Ngày" value={r.date} onChange={(date) => patch(i, { date })} wrapperClassName="w-44" className={FIELD} />
-                  <label className="flex items-center gap-1.5 text-body-sm text-foreground">
-                    <input type="checkbox" checked={r.yearly} onChange={(e) => patch(i, { yearly: e.target.checked })} /> Lặp lại hằng năm
+                  <label className="flex items-center gap-1.5 text-body-sm text-text">
+                    <Checkbox checked={r.yearly} onCheckedChange={(checked) => patch(i, { yearly: (checked === true) })} /> Lặp lại hằng năm
                   </label>
-                  <button type="button" aria-label={`Xoá ${r.name || "ngày lễ"}`} onClick={() => edit(rows.filter((_, j) => j !== i))} className="ml-auto p-2 rounded-lg text-text-muted hover:text-danger hover:bg-danger-bg">
+                  <Button variant="ghost" type="button" aria-label={`Xoá ${r.name || "ngày lễ"}`} onClick={() => edit(rows.filter((_, j) => j !== i))} className="font-[inherit] gap-0 ml-auto p-2 rounded-lg text-text-muted hover:text-danger hover:bg-danger-bg">
                     <Trash2 size={16} />
-                  </button>
+                  </Button>
                 </div>
                 <div className="flex flex-wrap items-center gap-3 text-body-sm">
                   <label className="flex items-center gap-2"><span className="text-text-muted">Chốt đơn giao trong ngày lúc</span>
-                    <input inputMode="numeric" value={r.cutoff} placeholder="VD: 12" onChange={(e) => patch(i, { cutoff: e.target.value })} className={`${FIELD} w-16`} />
+                    <Input inputMode="numeric" value={r.cutoff} placeholder="VD: 12" onChange={(e) => patch(i, { cutoff: e.target.value })} className={`${FIELD} w-16`} />
                     <span className="text-text-muted">giờ</span></label>
                   <label className="flex items-center gap-2"><span className="text-text-muted">Tối đa</span>
-                    <input inputMode="numeric" value={r.maxOrders} onChange={(e) => patch(i, { maxOrders: e.target.value })} className={`${FIELD} w-24`} />
+                    <Input inputMode="numeric" value={r.maxOrders} onChange={(e) => patch(i, { maxOrders: e.target.value })} className={`${FIELD} w-24`} />
                     <span className="text-text-muted">đơn</span></label>
                   <label className="flex items-center gap-2"><span className="text-text-muted">Phụ phí</span>
-                    <input inputMode="numeric" value={r.surcharge} placeholder="0" onChange={(e) => patch(i, { surcharge: e.target.value })} className={`${FIELD} w-32`} />
+                    <Input inputMode="numeric" value={r.surcharge} placeholder="0" onChange={(e) => patch(i, { surcharge: e.target.value })} className={`${FIELD} w-32`} />
                     <span className="text-text-muted">đ</span></label>
                 </div>
               </li>
@@ -147,7 +149,7 @@ export function BrochureHolidaySettings() {
           {message?.text ?? "Tết âm lịch đổi ngày mỗi năm: thêm từng ngày cụ thể, bỏ chọn “Lặp lại hằng năm”."}
         </p>
         <Button type="submit" size="sm" disabled={saving || !draft} className="gap-1.5 shrink-0">
-          {saving ? <Loader2 size={14} className="animate-spin" /> : <Save size={14} />}
+          {saving ? <Loader2 size={14} className="animate-spin motion-reduce:animate-none" /> : <Save size={14} />}
           <span>Lưu ngày lễ</span>
         </Button>
       </div>

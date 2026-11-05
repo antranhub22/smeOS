@@ -25,7 +25,7 @@ function ChecklistRow({ done, label }: { done: boolean; label: string }) {
   return (
     <li className="flex items-center gap-2 text-body-sm">
       <Icon size={16} aria-hidden="true" className={done ? "text-success" : "text-text-muted"} />
-      <span className={done ? "text-foreground" : "text-text-muted"}>{label}</span>
+      <span className={done ? "text-text" : "text-text-muted"}>{label}</span>
       <span className="sr-only">{done ? "(đã xong)" : "(chưa xong)"}</span>
     </li>
   )
@@ -60,7 +60,7 @@ export function ShareSummaryPanel(props: ShareSummaryPanelProps) {
           </span>
           <div className="flex items-center gap-1.5">
             <LinkIcon size={16} aria-hidden="true" className="text-primary" />
-            <h2 className="text-body font-bold text-foreground">Link dùng chung</h2>
+            <h2 className="text-body font-bold text-text">Link dùng chung</h2>
           </div>
         </div>
         <p className="mt-1 text-body-sm text-text-muted">
@@ -70,7 +70,7 @@ export function ShareSummaryPanel(props: ShareSummaryPanelProps) {
         {ready ? (
           <>
             <p className="mt-4 rounded-xl border border-border bg-surface px-3 py-2.5 text-body-sm text-text-muted">
-              Mỗi lần bấm <strong className="text-foreground">Sao chép</strong> tạo một link <strong className="text-foreground">mang tên bạn</strong> — khách mở link này được tính cho bạn từ lúc mở tới khi xong đơn.
+              Mỗi lần bấm <strong className="text-text">Sao chép</strong> tạo một link <strong className="text-text">mang tên bạn</strong> — khách mở link này được tính cho bạn từ lúc mở tới khi xong đơn.
             </p>
             <div className="mt-3 grid grid-cols-2 gap-2">
               <Button variant="secondary" size="sm" onClick={onPreview} className="gap-1.5 whitespace-nowrap px-3">
@@ -88,18 +88,18 @@ export function ShareSummaryPanel(props: ShareSummaryPanelProps) {
               </p>
             )}
             {copyFallback && (
-              <output className="mt-2 block break-all rounded-xl border border-border bg-background p-2.5 font-mono text-caption text-foreground select-all">
+              <output className="mt-2 block break-all rounded-xl border border-border bg-bg p-2.5 font-mono text-caption text-text select-all">
                 {copyFallback}
               </output>
             )}
-            <button
+            <Button variant="ghost"
               type="button"
               onClick={onClone}
-              className="mt-3 inline-flex items-center gap-1.5 text-body-sm font-semibold text-primary hover:underline"
+              className="h-auto p-0 mt-3 inline-flex items-center gap-1.5 text-body-sm font-semibold text-primary hover:underline"
             >
               <CopyPlus size={16} aria-hidden="true" />
               Tạo link riêng cho kênh khác
-            </button>
+            </Button>
           </>
         ) : (
           <p className="mt-4 rounded-xl bg-surface-alt px-3 py-2.5 text-body-sm text-text-muted">

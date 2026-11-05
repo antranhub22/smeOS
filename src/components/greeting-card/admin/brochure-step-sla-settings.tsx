@@ -1,5 +1,8 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
+import { Checkbox } from "@/components/ui/checkbox"
+import { Input } from "@/components/ui/input"
 import React, { useState } from "react"
 import { Timer } from "@/components/ui/icons"
 import { apiSend, useApi } from "@/components/greeting-card/greeting-api"
@@ -54,11 +57,11 @@ export function BrochureStepSlaSettings() {
     <section className="bg-surface rounded-2xl border border-border p-5 shadow-sm flex flex-col gap-3">
       <div className="flex items-center gap-2">
         <Timer size={18} className="text-primary" aria-hidden="true" />
-        <h3 className="text-title-sm font-extrabold text-foreground">Thời gian chuẩn từng bước</h3>
+        <h3 className="text-title-sm font-extrabold text-text">Thời gian chuẩn từng bước</h3>
       </div>
       <p className="text-caption text-text-muted">Quá thời gian mà bước chưa xong, đơn được đánh dấu kẹt và người phụ trách nhận thông báo.</p>
       {!draft ? (
-        <div className="h-24 rounded-lg bg-surface-muted animate-pulse" aria-busy="true" />
+        <div className="h-24 rounded-lg bg-surface-muted animate-pulse motion-reduce:animate-none" aria-busy="true" />
       ) : (
         <ul className="flex flex-col divide-y divide-border rounded-xl border border-border">
           {STEP_SLA_RULES.map((r) => {
@@ -67,22 +70,22 @@ export function BrochureStepSlaSettings() {
             return (
               <li key={r.stepId} className="flex flex-wrap items-center gap-x-3 gap-y-1 px-3 py-2">
                 <label className="flex min-w-0 flex-1 items-start gap-2">
-                  <input type="checkbox" checked={s.enabled} onChange={(e) => patch(r.stepId, { enabled: e.target.checked })} className="mt-1" />
+                  <Checkbox checked={s.enabled} onCheckedChange={(checked) => patch(r.stepId, { enabled: (checked === true) })} className="mt-1" />
                   <span className="min-w-0">
-                    <span className="block text-body-sm font-semibold text-foreground">{title}</span>
+                    <span className="block text-body-sm font-semibold text-text">{title}</span>
                     <span className="block text-caption text-text-muted">{r.waitingFor} · báo cho {STEP_OWNER_LABEL[r.owner]}</span>
                   </span>
                 </label>
                 <label className="flex items-center gap-1 text-caption text-text-muted">
                   <span className="sr-only">Số phút tối đa cho bước {title}</span>
-                  <input
+                  <Input
                     type="number"
                     min={1}
                     max={MAX_SLA_MINUTES}
                     value={s.minutes}
                     disabled={!s.enabled}
                     onChange={(e) => patch(r.stepId, { minutes: Number(e.target.value) })}
-                    className="h-9 w-20 rounded-lg border border-border bg-surface px-2 text-right text-body-sm text-foreground disabled:opacity-50"
+                    className="h-9 w-20 rounded-lg border border-border bg-surface px-2 text-right text-body-sm text-text disabled:opacity-50"
                   />
                   phút
                 </label>
@@ -95,14 +98,14 @@ export function BrochureStepSlaSettings() {
         {message ? (
           <p role="status" className={`text-caption font-medium ${message.ok ? "text-success" : "text-danger"}`}>{message.text}</p>
         ) : <span />}
-        <button
+        <Button variant="primary"
           type="button"
           onClick={() => void save()}
           disabled={!draft || saving}
-          className="h-9 rounded-lg bg-primary px-4 text-body-sm font-bold text-white hover:bg-primary-dark disabled:opacity-50"
+          className="gap-0 h-9 rounded-lg bg-primary px-4 text-body-sm font-bold text-white hover:bg-primary-dark disabled:opacity-50"
         >
           {saving ? "Đang lưu..." : "Lưu"}
-        </button>
+        </Button>
       </div>
     </section>
   )

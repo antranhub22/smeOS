@@ -1,5 +1,6 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
 import React, { useState, useEffect, useCallback } from "react"
 import { Clock, UserCheck, Sparkles, Copy, Check, Eye, ChevronDown, ChevronRight, EyeOff, RotateCcw, Timer } from "@/components/ui/icons"
 import type { TrackingViewItem } from "@/modules/greeting-card/domain/tracking-views"
@@ -106,26 +107,26 @@ export function KanbanCard({
       {/* HÀNG TIÊU ĐỀ */}
       <div className="flex items-center justify-between gap-1 w-full">
         <div className="flex items-center gap-1 min-w-0">
-          <button
+          <Button variant="ghost"
             type="button"
             onClick={toggleCollapse}
             title={collapsed ? "Mở rộng chi tiết đơn" : "Thu gọn đơn"}
             aria-expanded={!collapsed}
             aria-label={collapsed ? "Mở rộng đơn" : "Thu gọn đơn"}
-            className="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded text-text-muted hover:bg-surface-muted hover:text-foreground transition-colors cursor-pointer"
+            className="font-[inherit] gap-0 inline-flex h-5 w-5 shrink-0 items-center justify-center rounded text-text-muted hover:bg-surface-muted hover:text-text transition-colors cursor-pointer"
           >
             {collapsed ? <ChevronRight size={13} aria-hidden="true" /> : <ChevronDown size={13} aria-hidden="true" />}
-          </button>
+          </Button>
 
           {isAnonymousSession && <Eye size={12} className="text-primary shrink-0 opacity-70" aria-hidden="true" />}
 
-          <button
+          <Button variant="ghost"
             type="button"
             onClick={() => onOpen(item)}
-            className="font-bold text-foreground truncate text-left hover:text-primary transition-colors cursor-pointer"
+            className="h-auto p-0 justify-start gap-0 font-bold text-text truncate text-left hover:text-primary transition-colors cursor-pointer"
           >
             {displayCustomerName}
-          </button>
+          </Button>
         </div>
 
         <span
@@ -146,20 +147,20 @@ export function KanbanCard({
           </div>
           {canDecide && onDecide && (
             <div className="flex items-center gap-1 shrink-0">
-              <button
+              <Button variant="ghost"
                 type="button"
                 onClick={(e) => { e.stopPropagation(); onDecide(item, true) }}
-                className="rounded bg-danger px-1.5 py-0.5 text-caption font-bold text-white hover:bg-danger-text transition-colors cursor-pointer"
+                className="gap-0 rounded bg-danger px-1.5 py-0.5 text-caption font-bold text-white hover:bg-danger-text transition-colors cursor-pointer"
               >
                 Duyệt
-              </button>
-              <button
+              </Button>
+              <Button variant="outline"
                 type="button"
                 onClick={(e) => { e.stopPropagation(); onDecide(item, false) }}
-                className="rounded border border-border bg-surface px-1.5 py-0.5 text-caption font-medium text-text-muted hover:bg-surface-muted transition-colors cursor-pointer"
+                className="gap-0 rounded border border-border bg-surface px-1.5 py-0.5 text-caption font-medium text-text-muted hover:bg-surface-muted transition-colors cursor-pointer"
               >
                 Từ chối
-              </button>
+              </Button>
             </div>
           )}
         </div>
@@ -172,7 +173,7 @@ export function KanbanCard({
             {item.dismissal?.reason || "Đã bỏ hiển thị"}
           </span>
           {onRestore && item.dismissal?.status === "APPROVED" && (
-            <button
+            <Button variant="outline"
               type="button"
               onClick={(e) => { e.stopPropagation(); onRestore(item) }}
               title="Khôi phục đơn vào tiến độ"
@@ -180,17 +181,17 @@ export function KanbanCard({
             >
               <RotateCcw size={10} aria-hidden="true" />
               Khôi phục
-            </button>
+            </Button>
           )}
         </div>
       )}
 
       {/* CHẾ ĐỘ THU GỌN */}
       {collapsed ? (
-        <button
+        <Button variant="ghost"
           type="button"
           onClick={() => onOpen(item)}
-          className="flex items-center justify-between gap-1.5 pt-0.5 text-left w-full cursor-pointer"
+          className="h-auto p-0 font-[inherit] flex items-center justify-between gap-1.5 pt-0.5 text-left w-full cursor-pointer"
         >
           <span className="truncate text-caption text-text-muted">
             {item.productName === "Chưa chốt mẫu" ? "Chưa chốt" : item.productName} ·{" "}
@@ -199,14 +200,14 @@ export function KanbanCard({
             </strong>
           </span>
           <SlaBadge item={item} compact />
-        </button>
+        </Button>
       ) : (
         /* CHẾ ĐỘ ĐẦY ĐỦ */
         <>
-          <button
+          <Button variant="ghost"
             type="button"
             onClick={() => onOpen(item)}
-            className="flex w-full flex-col gap-1.5 text-left cursor-pointer"
+            className="h-auto p-0 justify-start font-[inherit] flex w-full flex-col gap-1.5 text-left cursor-pointer"
           >
             {/* Ảnh sản phẩm / hạng phòng & Giá tiền */}
             <div className="flex items-center gap-2 rounded-lg bg-surface-muted/40 p-1.5 w-full">
@@ -218,7 +219,7 @@ export function KanbanCard({
                 className="h-9 w-9 shrink-0 rounded-md border border-border/70 bg-surface object-cover"
               />
               <div className="min-w-0 flex-1">
-                <p className="truncate font-semibold text-foreground text-caption" title={item.productName}>
+                <p className="truncate font-semibold text-text text-caption" title={item.productName}>
                   {item.productName === "Chưa chốt mẫu"
                     ? (isStay ? "Chưa chốt phòng" : `Chưa chốt ${terms.sampleProduct.toLowerCase()}`)
                     : item.productName}
@@ -242,7 +243,7 @@ export function KanbanCard({
                 </span>
               </div>
             )}
-          </button>
+          </Button>
 
           {/* Chân thẻ — 2 hàng để không đè nhau ở cột hẹp: (1) trạng thái thời gian + tác vụ nhanh, (2) người phụ trách */}
           <div className="flex w-full flex-col gap-1 border-t border-border/40 pt-1">
@@ -253,28 +254,28 @@ export function KanbanCard({
               <div className="flex shrink-0 items-center gap-1">
                 {/* Nút sao chép link 1-chạm */}
                 {item.sendCode && (
-                  <button
+                  <Button variant="outline"
                     type="button"
                     onClick={handleCopyLink}
                     title={copied ? "Đã sao chép link khách!" : "Sao chép link khách"}
                     aria-label="Sao chép link khách"
-                    className="inline-flex h-6 w-6 items-center justify-center rounded border border-border bg-surface text-text-muted hover:border-primary hover:text-primary transition-colors cursor-pointer"
+                    className="font-[inherit] gap-0 inline-flex h-6 w-6 items-center justify-center rounded border border-border bg-surface text-text-muted hover:border-primary hover:text-primary transition-colors cursor-pointer hover:bg-surface"
                   >
                     {copied ? <Check size={12} className="text-success" aria-hidden="true" /> : <Copy size={12} aria-hidden="true" />}
-                  </button>
+                  </Button>
                 )}
 
                 {/* Nút Bỏ hiển thị (chỉ khi đơn còn active và chưa dismiss) */}
                 {!isDismissed && !isPending && onDismiss && (
-                  <button
+                  <Button variant="outline"
                     type="button"
                     onClick={(e) => { e.stopPropagation(); onDismiss(item) }}
                     title="Bỏ hiển thị đơn này"
                     aria-label="Bỏ hiển thị đơn"
-                    className="inline-flex h-6 w-6 items-center justify-center rounded border border-border bg-surface text-text-muted hover:border-danger hover:text-danger transition-colors cursor-pointer"
+                    className="font-[inherit] gap-0 inline-flex h-6 w-6 items-center justify-center rounded border border-border bg-surface text-text-muted hover:border-danger hover:text-danger transition-colors cursor-pointer hover:bg-surface"
                   >
                     <EyeOff size={12} aria-hidden="true" />
-                  </button>
+                  </Button>
                 )}
               </div>
             </div>

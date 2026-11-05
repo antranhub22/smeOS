@@ -12,7 +12,7 @@ export function PaymentFailedNotice({ orderCode, cta }: { orderCode: string; cta
     <section role="status" aria-labelledby="payment-failed-title" className="w-full flex flex-col items-center gap-2 rounded-2xl border border-danger/30 bg-danger-bg p-5 text-center">
       <XCircle size={32} className="text-danger" aria-hidden="true" />
       <h2 id="payment-failed-title" className="text-title-sm font-extrabold text-danger">Đơn hàng không hoàn thành</h2>
-      <p className="text-body-sm text-foreground">
+      <p className="text-body-sm text-text">
         Đơn #{orderCode} đã hết thời gian thanh toán mà cửa hàng chưa nhận được chuyển khoản, nên đơn đã được huỷ.
       </p>
       <p className="text-body-sm text-text-muted">

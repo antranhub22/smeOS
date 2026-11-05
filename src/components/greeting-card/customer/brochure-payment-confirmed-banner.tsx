@@ -55,7 +55,7 @@ export function BrochurePaymentConfirmedBanner({
         </div>
         <div className="text-center">
           <p className="text-title-sm font-extrabold text-success">{title}</p>
-          <p className="text-body-sm text-foreground font-semibold mt-1">{subtitle}</p>
+          <p className="text-body-sm text-text font-semibold mt-1">{subtitle}</p>
           <p className="text-caption text-text-muted mt-1 leading-relaxed">{description}</p>
         </div>
       </div>
