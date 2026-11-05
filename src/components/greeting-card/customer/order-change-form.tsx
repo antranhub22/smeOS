@@ -1,5 +1,6 @@
 "use client"
 
+import { NativeSelect } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
 import { Input } from "@/components/ui/input"
 import React, { useId, useState } from "react"
@@ -129,10 +130,10 @@ export function OrderChangeForm({
       {shipping.zones.length > 0 && (
         <div>
           <label htmlFor={`${uid}-zone`} className={LABEL}>Khu vực giao</label>
-          <select id={`${uid}-zone`} value={v.shippingZoneId} onChange={(e) => set({ shippingZoneId: e.target.value })} className={INPUT}>
+          <NativeSelect id={`${uid}-zone`} value={v.shippingZoneId} onChange={(e) => set({ shippingZoneId: e.target.value })} className={INPUT}>
             {!v.shippingZoneId && <option value="">Chọn khu vực</option>}
             {shipping.zones.map((z) => <option key={z.id} value={z.id}>{z.name} · {z.feeVnd.toLocaleString("vi-VN")}đ</option>)}
-          </select>
+          </NativeSelect>
           <p className="mt-1 text-caption text-text-muted">Khu vực mới phí cao hơn thì phần chênh được cộng vào đơn; phí thấp hơn thì giữ nguyên số tiền.</p>
         </div>
       )}

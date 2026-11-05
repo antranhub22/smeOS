@@ -1,5 +1,6 @@
 "use client"
 
+import { NativeSelect } from "@/components/ui/select"
 import { Input } from "@/components/ui/input"
 import React, { useState } from "react"
 import { ViDateInput } from "@/components/greeting-card/customer/vi-date-input"
@@ -118,7 +119,7 @@ export function TrackingToolbar({ state, onChange, onApplyView, onRefresh }: Pro
           </div>
 
           {/* NHÓM BƯỚC */}
-          <select
+          <NativeSelect
             aria-label="Nhóm bước"
             value={state.category}
             onChange={(e) => onChange({ category: e.target.value as TrackingViewState["category"] })}
@@ -130,10 +131,10 @@ export function TrackingToolbar({ state, onChange, onApplyView, onRefresh }: Pro
                 {c.label}
               </option>
             ))}
-          </select>
+          </NativeSelect>
 
           {/* SALE PHỤ TRÁCH */}
-          <select
+          <NativeSelect
             aria-label="Sale phụ trách"
             value={state.saleId}
             onChange={(e) => onChange({ saleId: e.target.value })}
@@ -145,7 +146,7 @@ export function TrackingToolbar({ state, onChange, onApplyView, onRefresh }: Pro
                 {m.name}
               </option>
             ))}
-          </select>
+          </NativeSelect>
 
           {/* NÚT BẬT/TẮT BỘ LỌC NÂNG CAO */}
           <button
@@ -246,7 +247,7 @@ export function TrackingToolbar({ state, onChange, onApplyView, onRefresh }: Pro
       {/* BỘ LỌC NÂNG CAO (Chỉ hiện khi nhấn "Lọc thêm") */}
       {showAdvanced && (
         <div className="grid grid-cols-1 gap-2 pt-2 border-t border-border/40 sm:grid-cols-2 md:grid-cols-4 animate-in fade-in duration-150">
-          <select
+          <NativeSelect
             aria-label="Thời gian chuẩn"
             value={state.sla}
             onChange={(e) => onChange({ sla: e.target.value as TrackingViewState["sla"] })}
@@ -257,9 +258,9 @@ export function TrackingToolbar({ state, onChange, onApplyView, onRefresh }: Pro
             <option value="OVERDUE">Quá thời gian chuẩn</option>
             <option value="DUE_SOON">Sắp quá hạn</option>
             <option value="ON_TRACK">Đúng tiến độ</option>
-          </select>
+          </NativeSelect>
 
-          <select
+          <NativeSelect
             aria-label="Loại"
             value={state.type}
             onChange={(e) => onChange({ type: e.target.value as TrackingViewState["type"] })}
@@ -268,7 +269,7 @@ export function TrackingToolbar({ state, onChange, onApplyView, onRefresh }: Pro
             <option value="">Đơn và link</option>
             <option value="ORDER">Chỉ đơn đã đặt</option>
             <option value="SESSION">Chỉ link chờ khách</option>
-          </select>
+          </NativeSelect>
 
           <label className="flex items-center gap-1.5 text-caption text-text-muted">
             <span>{getIndustryOrderTerms(organization?.industry).fulfillmentFlow === "CALENDAR_STAY" ? "Nhận phòng từ" : "Giao từ"}</span>
@@ -280,7 +281,7 @@ export function TrackingToolbar({ state, onChange, onApplyView, onRefresh }: Pro
             <ViDateInput compact ariaLabel={getIndustryOrderTerms(organization?.industry).fulfillmentFlow === "CALENDAR_STAY" ? "Đến ngày" : "Giao đến ngày"} value={state.deliveryTo} onChange={(v) => onChange({ deliveryTo: v })} wrapperClassName="flex-1" className={SELECT} />
           </label>
 
-          <select
+          <NativeSelect
             aria-label="Trạng thái hiển thị"
             value={state.statusMode}
             onChange={(e) => onChange({ statusMode: e.target.value as TrackingViewState["statusMode"] })}
@@ -289,7 +290,7 @@ export function TrackingToolbar({ state, onChange, onApplyView, onRefresh }: Pro
             <option value="ACTIVE">Đang hoạt động</option>
             <option value="DISMISSED">Đã hủy / Bỏ hiển thị</option>
             <option value="ALL">Tất cả</option>
-          </select>
+          </NativeSelect>
         </div>
       )}
     </div>

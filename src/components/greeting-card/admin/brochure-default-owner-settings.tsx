@@ -1,5 +1,6 @@
 "use client"
 
+import { NativeSelect } from "@/components/ui/select"
 import React, { useState } from "react"
 import { UserCheck } from "@/components/ui/icons"
 import { apiSend, useApi } from "@/components/greeting-card/greeting-api"
@@ -46,11 +47,11 @@ export function BrochureDefaultOwnerSettings() {
       </p>
       <label className="flex flex-col gap-1 text-body-sm">
         <span className="sr-only">Người phụ trách link cũ</span>
-        <select value={current} disabled={saving || !org.data} onChange={(e) => void save(e.target.value)}
+        <NativeSelect value={current} disabled={saving || !org.data} onChange={(e) => void save(e.target.value)}
           className="h-11 rounded-xl border border-border bg-surface px-3 text-body-sm text-text">
           <option value="">Chủ tiệm (mặc định)</option>
           {options.map((m) => <option key={m.userId} value={m.userId}>{m.name}</option>)}
-        </select>
+        </NativeSelect>
       </label>
       {message && <p role="status" className={`text-caption font-medium ${message.ok ? "text-success" : "text-danger"}`}>{message.text}</p>}
     </section>

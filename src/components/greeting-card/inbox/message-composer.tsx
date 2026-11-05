@@ -1,5 +1,6 @@
 "use client"
 
+import { NativeSelect } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
 import React, { useState } from "react"
 import { Loader2, Send, X } from "@/components/ui/icons"
@@ -87,7 +88,7 @@ export function MessageComposer({ target, stepKey, replyTo, onCancelReply, onSen
       ) : (
         <label className="flex items-center gap-2 text-body-sm">
           <span className="shrink-0 font-semibold text-text-muted">Gửi cho</span>
-          <select value={to} onChange={(e) => setTo(e.target.value)} className="h-11 min-w-0 flex-1 rounded-xl border border-border bg-surface px-3 text-body-sm text-text">
+          <NativeSelect value={to} onChange={(e) => setTo(e.target.value)} className="h-11 min-w-0 flex-1 rounded-xl border border-border bg-surface px-3 text-body-sm text-text">
             {(recipients.data?.data.roles ?? [{ role: "ADMIN", label: "Điều hành" }]).map((r) => (
               <option key={r.role} value={`ROLE:${r.role}`}>{r.label}</option>
             ))}
@@ -97,7 +98,7 @@ export function MessageComposer({ target, stepKey, replyTo, onCancelReply, onSen
                 {recipients.data!.data.members.map((m) => <option key={m.userId} value={`USER:${m.userId}`}>{m.name}</option>)}
               </optgroup>
             )}
-          </select>
+          </NativeSelect>
         </label>
       )}
       <div className="flex items-end gap-2">

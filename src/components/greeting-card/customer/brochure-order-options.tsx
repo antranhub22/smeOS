@@ -1,5 +1,6 @@
 "use client"
 
+import { NativeSelect } from "@/components/ui/select"
 import { Input } from "@/components/ui/input"
 import React, { useState } from "react"
 import { Minus, Plus, Ticket } from "@/components/ui/icons"
@@ -52,7 +53,7 @@ export function BrochureOrderOptions({ variants, priceDimensions, basePrice, shi
         ) : variants.length > 0 && (
           <label className="flex flex-col gap-1">
             <span className="text-caption font-bold text-text">Kích thước / Phiên bản</span>
-            <select value={selection.variantId} onChange={(e) => onChange({ variantId: e.target.value })} className={FIELD}>
+            <NativeSelect value={selection.variantId} onChange={(e) => onChange({ variantId: e.target.value })} className={FIELD}>
               {/* Khoảng giá theo phiên bản: không có "bản tiêu chuẩn", khách phải chọn */}
               {variants.some((v) => isOptionId(v.id)) ? (
                 <option value="">Chọn phiên bản</option>
@@ -65,7 +66,7 @@ export function BrochureOrderOptions({ variants, priceDimensions, basePrice, shi
                   {v.peakPriceVnd && v.peakPriceVnd !== v.priceVnd ? ` (ngày cao điểm ${vnd(v.peakPriceVnd)})` : ""}
                 </option>
               ))}
-            </select>
+            </NativeSelect>
             {errors.variantId && <span className="text-caption text-danger">{errors.variantId}</span>}
           </label>
         )}
@@ -98,12 +99,12 @@ export function BrochureOrderOptions({ variants, priceDimensions, basePrice, shi
       {shipping.zones.length > 0 && (
         <label className="flex flex-col gap-1">
           <span className="text-caption font-bold text-text">{shippingZoneLabel} <span className="text-danger">*</span></span>
-          <select value={selection.shippingZoneId} onChange={(e) => onChange({ shippingZoneId: e.target.value })} className={FIELD}>
+          <NativeSelect value={selection.shippingZoneId} onChange={(e) => onChange({ shippingZoneId: e.target.value })} className={FIELD}>
             <option value="">— Chọn khu vực —</option>
             {shipping.zones.map((z) => (
               <option key={z.id} value={z.id}>{z.name} — {z.feeVnd > 0 && !shipping.freeShippingAll ? vnd(z.feeVnd) : "Miễn phí"}</option>
             ))}
-          </select>
+          </NativeSelect>
           {shipping.freeShippingAll ? (
             <span className="text-caption text-success">{freeShippingText}</span>
           ) : shipping.freeShippingOverVnd !== null && (

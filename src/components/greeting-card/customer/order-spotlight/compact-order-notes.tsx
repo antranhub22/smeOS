@@ -1,5 +1,6 @@
 "use client"
 
+import { NativeSelect } from "@/components/ui/select"
 import React, { useState } from "react"
 import { Plus, X } from "@/components/ui/icons"
 import { OrderNoteField, orderNoteLabel } from "../order-notes-fields"
@@ -62,7 +63,7 @@ export function CompactOrderNotes({
           <label htmlFor={selectId} className="sr-only">
             Thêm ghi chú
           </label>
-          <select
+          <NativeSelect
             id={selectId}
             value=""
             onChange={(e) => {
@@ -76,7 +77,7 @@ export function CompactOrderNotes({
                 {orderNoteLabel(kind, industryKey)}
               </option>
             ))}
-          </select>
+          </NativeSelect>
         </div>
       )}
     </>

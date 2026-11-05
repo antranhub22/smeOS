@@ -1,5 +1,6 @@
 "use client"
 
+import { NativeSelect } from "@/components/ui/select"
 import { Checkbox } from "@/components/ui/checkbox"
 import React, { useState } from "react"
 import {
@@ -230,7 +231,7 @@ export function BrochureWorkflowSettings() {
                   Chọn cách xử lý khi khách xem ảnh trên link theo dõi tiến độ.
                 </p>
               </div>
-              <select
+              <NativeSelect
                 disabled={!policy.requireFinishedPhoto}
                 value={policy.customerApprovalMode}
                 onChange={(e) => handleToggle("customerApprovalMode", e.target.value)}
@@ -239,7 +240,7 @@ export function BrochureWorkflowSettings() {
                 <option value="AUTO_PASS_10M">Tự duyệt sau 10 phút (Chuẩn)</option>
                 <option value="REQUIRE_CUSTOMER">Bắt buộc khách bấm duyệt</option>
                 <option value="BYPASS">Bỏ qua duyệt khách (Giao ngay)</option>
-              </select>
+              </NativeSelect>
             </div>
 
             {/* Gate 5: Chặn giao ship nếu chưa thu đủ */}
@@ -293,7 +294,7 @@ export function BrochureWorkflowSettings() {
                   className="h-5 w-5 rounded border-border text-primary focus:ring-primary/20"
                 />
                 {policy.allowSlaEscalation && (
-                  <select
+                  <NativeSelect
                     value={policy.slaEscalationMinutes}
                     onChange={(e) => handleToggle("slaEscalationMinutes", Number(e.target.value))}
                     className="h-8 px-2 rounded-lg border border-border bg-surface text-caption font-semibold"
@@ -302,7 +303,7 @@ export function BrochureWorkflowSettings() {
                     <option value={10}>Sau 10 phút</option>
                     <option value={15}>Sau 15 phút</option>
                     <option value={30}>Sau 30 phút</option>
-                  </select>
+                  </NativeSelect>
                 )}
               </div>
             </div>

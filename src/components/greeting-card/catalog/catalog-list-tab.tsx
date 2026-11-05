@@ -1,5 +1,6 @@
 "use client"
 
+import { NativeSelect } from "@/components/ui/select"
 import React, { useState } from "react"
 import { BookOpen, Plus, RefreshCw, Loader2 } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
@@ -137,7 +138,7 @@ export function CatalogListTab({ onSelectCatalog }: Props) {
       )}
       <label className="flex flex-wrap items-center gap-2 text-body-sm text-text-muted">
         Sao chép link cho kênh
-        <select
+        <NativeSelect
           value={shareChannel}
           onChange={(e) => setShareChannel(e.target.value)}
           className="h-9 rounded-lg border border-border bg-surface px-2 text-body-sm text-text"
@@ -146,7 +147,7 @@ export function CatalogListTab({ onSelectCatalog }: Props) {
           {CATALOG_CHANNELS.map((c) => (
             <option key={c.code} value={c.code}>{c.label}</option>
           ))}
-        </select>
+        </NativeSelect>
         <span className="text-caption">Link này gắn với tên bạn. Đơn khách đặt từ link sẽ được tính cho bạn.</span>
       </label>
       {/* Header */}

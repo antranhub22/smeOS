@@ -1,5 +1,6 @@
 "use client"
 
+import { NativeSelect } from "@/components/ui/select"
 import React, { useState } from "react"
 import { Loader2, Save, ShieldCheck } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
@@ -66,14 +67,14 @@ export function BrochurePolicySettings() {
               <span className="font-bold text-text text-body-sm">Mức đặt cọc tối thiểu mặc định</span>
               <p className="text-caption text-text-muted">Tỉ lệ giá trị đơn hàng khách cần chuyển khoản trước khi xưởng tiến hành thực hiện đơn hàng.</p>
             </div>
-            <select
+            <NativeSelect
               value={policy.depositPercent}
               onChange={(e) => edit({ depositPercent: Number(e.target.value) })}
               className="h-9 px-3 rounded-lg border border-border bg-bg text-body-sm font-semibold text-text focus:outline-none focus:ring-2 focus:ring-primary/20"
             >
               <option value={0}>Không — Thu đủ 100%</option>
               {[20, 30, 50, 70].map((p) => <option key={p} value={p}>Cọc {p}% giá trị đơn</option>)}
-            </select>
+            </NativeSelect>
           </div>
 
           <PolicyMatrixTable

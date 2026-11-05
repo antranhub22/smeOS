@@ -1,5 +1,6 @@
 "use client"
 
+import { NativeSelect } from "@/components/ui/select"
 import { useState } from "react"
 import { ArrowLeftRight } from "@/components/ui/icons"
 import type { GreetingCatalogProduct } from "@/modules/greeting-card/domain/greeting-card-types"
@@ -19,7 +20,7 @@ interface SplitCompareDeckProps {
 
 function Picker({ products, value, onChange, label }: { products: GreetingCatalogProduct[]; value: number; onChange: (i: number) => void; label: string }) {
   return (
-    <select
+    <NativeSelect
       aria-label={label}
       value={value}
       onChange={(e) => onChange(Number(e.target.value))}
@@ -28,7 +29,7 @@ function Picker({ products, value, onChange, label }: { products: GreetingCatalo
       {products.map((p, i) => (
         <option key={p.id} value={i}>{p.name}</option>
       ))}
-    </select>
+    </NativeSelect>
   )
 }
 

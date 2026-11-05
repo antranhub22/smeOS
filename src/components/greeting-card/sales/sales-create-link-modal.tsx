@@ -1,5 +1,6 @@
 "use client"
 
+import { NativeSelect } from "@/components/ui/select"
 import { Input } from "@/components/ui/input"
 import React, { useState } from "react"
 import { markPersonalLinkCopied } from "@/components/greeting-card/share/tracked-copy"
@@ -102,11 +103,11 @@ export function SalesCreateLinkModal({ catalogs, onClose, onCreated, onNavigateT
                   )}
                 </span>
               ) : (
-                <select value={catalogId} onChange={(e) => setCatalogId(e.target.value)} className={INPUT}>
+                <NativeSelect value={catalogId} onChange={(e) => setCatalogId(e.target.value)} className={INPUT}>
                   {catalogs.map((c) => (
                     <option key={c.id} value={c.id}>{c.name} ({c.code})</option>
                   ))}
-                </select>
+                </NativeSelect>
               )}
             </label>
             <label className="flex flex-col gap-1">

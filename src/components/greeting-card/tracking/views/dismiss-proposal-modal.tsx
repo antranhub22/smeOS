@@ -1,5 +1,6 @@
 "use client"
 
+import { NativeSelect } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
 import { Input } from "@/components/ui/input"
 import React, { useState } from "react"
@@ -87,7 +88,7 @@ export function DismissProposalModal({ item, onClose, onSuccess }: DismissPropos
             <label htmlFor="dismiss-reason-select" className="block text-caption font-semibold text-text mb-1">
               Lý do bỏ hiển thị <span className="text-danger">*</span>
             </label>
-            <select
+            <NativeSelect
               id="dismiss-reason-select"
               value={reasonId}
               onChange={(e) => setReasonId(e.target.value as DismissalReasonId)}
@@ -98,7 +99,7 @@ export function DismissProposalModal({ item, onClose, onSuccess }: DismissPropos
                   {r.label}
                 </option>
               ))}
-            </select>
+            </NativeSelect>
           </div>
 
           {reasonId === "OTHER" && (

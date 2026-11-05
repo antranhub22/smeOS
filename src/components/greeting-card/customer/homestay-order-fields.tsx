@@ -1,5 +1,6 @@
 "use client"
 
+import { NativeSelect } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
 import React, { useId } from "react"
 import { Calendar, Home, Clock, Car, Bike, Plane, CheckCircle2 } from "@/components/ui/icons"
@@ -189,7 +190,7 @@ export function HomestayOrderFields({
             Giờ nhận phòng dự kiến
           </label>
           <div className="relative">
-            <select
+            <NativeSelect
               id={`${uid}-checkInTime`}
               value={checkInTimeSlot}
               onChange={(e) => onTimeSlotChange(e.target.value)}
@@ -201,7 +202,7 @@ export function HomestayOrderFields({
                   {slot}
                 </option>
               ))}
-            </select>
+            </NativeSelect>
             <Clock size={15} className="absolute right-3 top-3.5 text-text-muted pointer-events-none" />
           </div>
         </div>

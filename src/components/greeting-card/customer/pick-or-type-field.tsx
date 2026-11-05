@@ -1,5 +1,6 @@
 "use client"
 
+import { NativeSelect } from "@/components/ui/select"
 import { Input } from "@/components/ui/input"
 import { useState } from "react"
 import { ADDRESS_PART_MAX } from "@/modules/greeting-card/domain/delivery-address"
@@ -52,7 +53,7 @@ export function PickOrTypeField(props: {
           )}
         </div>
       ) : (
-        <select
+        <NativeSelect
           id={id}
           required={required}
           disabled={disabled}
@@ -67,7 +68,7 @@ export function PickOrTypeField(props: {
             <option key={o} value={o}>{o}</option>
           ))}
           <option value={OTHER}>Khác (tự nhập)…</option>
-        </select>
+        </NativeSelect>
       )}
     </div>
   )

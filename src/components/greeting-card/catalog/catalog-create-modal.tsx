@@ -1,5 +1,6 @@
 "use client"
 
+import { NativeSelect } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
 import { Input } from "@/components/ui/input"
 import React, { useState } from "react"
@@ -83,14 +84,14 @@ export function CatalogCreateModal({ onClose, onCreated }: { onClose: () => void
           </div>
           <div>
             <label className="block text-caption font-bold text-text mb-1">Loại</label>
-            <select
+            <NativeSelect
               value={createForm.type}
               onChange={(e) => setCreateForm((f) => ({ ...f, type: e.target.value as "STANDARD" | "CLIENT" }))}
               className="w-full h-10 px-3 rounded-lg border border-border bg-bg text-body text-text"
             >
               <option value="STANDARD">Tiêu chuẩn (dùng chung)</option>
               <option value="CLIENT">Riêng theo khách</option>
-            </select>
+            </NativeSelect>
           </div>
           <div>
             <label className="block text-caption font-bold text-text mb-1">Mô tả (không bắt buộc)</label>

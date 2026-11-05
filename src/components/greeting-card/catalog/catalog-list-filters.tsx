@@ -1,5 +1,6 @@
 "use client"
 
+import { NativeSelect } from "@/components/ui/select"
 import React from "react"
 import { Archive, Filter, User } from "@/components/ui/icons"
 
@@ -57,7 +58,7 @@ export function CatalogListFilters({
         <div className="flex items-center gap-2 text-body-sm text-text-muted ml-auto">
           <User size={14} className="text-text-muted" />
           <span>Nhân sự:</span>
-          <select
+          <NativeSelect
             value={staffFilter}
             onChange={(e) => setStaffFilter(e.target.value)}
             className="h-8 rounded-lg border border-border bg-surface px-2.5 text-body-sm text-text focus:outline-none focus:ring-1 focus:ring-primary"
@@ -68,7 +69,7 @@ export function CatalogListFilters({
                 {s.name}
               </option>
             ))}
-          </select>
+          </NativeSelect>
         </div>
       )}
     </div>
