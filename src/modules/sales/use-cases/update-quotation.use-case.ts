@@ -14,7 +14,6 @@ import type {
 import { getQuotationRepository } from "../infra/quotation-repository"
 import { QuotationRevisionRepository } from "../infra/quotation-revision-repository"
 import { quotationSnapshot } from "../domain/quotation-revision"
-import type { Prisma } from "@/generated/prisma/client"
 import type { CreateQuotationItemInput } from "./create-quotation.use-case"
 
 export interface UpdateQuotationInput {
@@ -106,7 +105,7 @@ export async function updateQuotationUseCase(
 
   // Sửa nội dung (không phải chỉ đổi trạng thái) → lưu ảnh chụp bản trước khi sửa (checklist ALG 3.10)
   const contentChanged = Object.keys(dto).some((k) => k !== "status")
-  if (contentChanged) await revisions.add(ctx, id, quotationSnapshot(existing) as unknown as Prisma.InputJsonValue)
+  if (contentChanged) await revisions.add(ctx, id, quotationSnapshot(existing))
   return repo.update(ctx, id, dto)
 }
 

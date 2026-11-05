@@ -2,6 +2,7 @@
 
 import type { Prisma } from "@/generated/prisma/client"
 import { prisma } from "@/core/tenancy/infra/prisma"
+import type { QuotationSnapshot } from "../domain/quotation-revision"
 import { scopedData, scopedWhere, type TenantContext } from "@/core/tenancy/tenant-context"
 
 export interface QuotationRevisionRow {
@@ -13,7 +14,8 @@ export interface QuotationRevisionRow {
 
 export class QuotationRevisionRepository {
   /** Ghi một phiên bản mới (số thứ tự tăng dần theo báo giá). */
-  async add(ctx: TenantContext, quotationId: string, snapshot: Prisma.InputJsonValue): Promise<number> {
+  async add(ctx: TenantContext, quotationId: string, snapshotValue: QuotationSnapshot): Promise<number> {
+    const snapshot = snapshotValue as unknown as Prisma.InputJsonValue
     return prisma.$transaction(async (tx) => {
       const last = await tx.quotation_revisions.findFirst({
         where: scopedWhere(ctx, { quotation_id: quotationId }), orderBy: { version: "desc" }, select: { version: true },
