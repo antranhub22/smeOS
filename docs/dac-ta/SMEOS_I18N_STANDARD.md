@@ -14,7 +14,7 @@
 | §3.2 Số nhiều `tp()` | 🟡 **Lộ trình — chưa có hàm** | Không dùng `tp()` cho tới khi được thêm |
 | §4 Fallback locale → vi → nhãn thân thiện (production) | ✅ Đã có | `translate()`, `missingKeyLabel()` — `i18n-integrity.test.ts` |
 | §4 Đối xứng vi/en mọi cấp khóa | ✅ Đã có | `i18n-integrity.test.ts` |
-| §5 Formatter SSOT, múi giờ GMT+7 | ✅ Đã có · 🟡 áp dụng một phần | Ratchet `tests/unit/architecture/i18n-direct-intl-ratchet.test.ts` (baseline 173 file, chỉ được giảm) |
+| §5 Formatter SSOT, múi giờ GMT+7 | ✅ Đã có · 🟡 áp dụng một phần | Ratchet `tests/unit/architecture/i18n-direct-intl-ratchet.test.ts` (baseline 172 file, chỉ được giảm) |
 | §6 Mã lỗi API `{ code, message }` | 🟡 **Lộ trình — 0 route áp dụng** | Route mới nên theo; không refactor route cũ khi chưa có lệnh |
 | §1.1 `domain/` không phụ thuộc i18n | 🔴 **Đang vi phạm — 9 file `domain/` import `@/lib/i18n`** | Nợ kỹ thuật; không thêm import mới vào `domain/` — truyền chuỗi/formatter từ use-case hoặc UI |
 

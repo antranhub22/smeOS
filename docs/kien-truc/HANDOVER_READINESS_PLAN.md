@@ -73,6 +73,13 @@ Nhánh `Hoan_Thien_Kien_Truc_He_Thong_UI_UX_Tieu_Chuan_Enterprise` có 6 commit 
 - [x] **I-4** 8 tệp > 350 dòng bị phình giữ bản `main`. Baseline UX lint 5.491 → 3.945 (gồm 45 điểm R18 mới bắt trên mã có sẵn).
 - [x] **I-5** Hàng nút đầu trang `/san-pham` xuống dòng ở khổ 390 thay vì bị cắt. 5 vùng có `div role="button"` chứa điều khiển lồng nhau: vùng tải ảnh (`auto-generate-panel`, `photo-upload-panel`) là `<button>` với ô chọn tệp tách ra ngoài; thẻ chọn tính năng (`optimization-mode-selector`) là `<label>` của ô chọn; thẻ ngành (`industry-select-section`) và thẻ bài lên lịch (`schedule-post-item-card`) dùng nút chính phủ cả thẻ, điều khiển phụ nằm trên lớp phủ.
 
+## 7b. Tích hợp đợt giảm nợ UI thứ hai của nhánh Enterprise (05/11/2026)
+
+Nhánh có thêm 4 commit (`06a9821a` Creative Studio, `85b80546`, `5a3353c2`, `c40c1a26` Thẻ chào) dựng trên nền `4e9f9876`, chưa có các bản sửa của PR #107/#109. Rà soát 05/11: không merge nguyên trạng (lặp lỗi §14 #18, #20; xem #21). PO 05/11/2026 duyệt: dựng lại phần đúng trên nền `main`; Creative Studio chỉ sửa giao diện, không đổi luồng 14 chặng, API hay nghiệp vụ; Thẻ chào được nâng giao diện ở PR riêng có E2E.
+
+- [x] **J-1** Creative Studio (nhánh `claude/vibrant-goodall-qpf2wh`): nhận phần tách tệp và token của `06a9821a`, áp lại thay đổi của `main` (icon theo module, nhãn và cỡ nút ở cài đặt nhà cung cấp). Sửa thêm: 12 `div role="button|radio"` → `Button`/`RadioGroup`; nhóm chọn khung ảnh dùng `aria-pressed` (nhánh làm mất `aria-selected`); mã màu cứng → token; khôi phục các dòng gợi ý bị cắt (gồm phí credit khi xuất 2×); bỏ `useEffect` đồng bộ trạng thái thừa; `use-package-workspace.ts` 539 → 308 dòng (tách `package-workspace-model.ts`, `use-package-sources.ts`, `use-post-rewrite.ts`, `use-video-ratio.ts`); gộp 3 bản `postJson` vào `revise-client.ts`; ngày giờ qua `formatDateTime`. Test mới: `tests/unit/creative-studio/package-workspace-model.test.ts`, `revise-client.test.ts`.
+- [ ] **J-2** Thẻ chào (PR riêng): làm lại thay đổi giao diện trên bản `main` hiện hành của từng tệp (không lấy bản của nhánh vì nhánh dựng trên bản Thẻ chào đã bị hoàn tác ở `a3cf2399`); không đổi so sánh trạng thái để né R14; cập nhật mốc `the-chao-freeze` kèm ngày duyệt; `test:e2e:ux` cho các màn Thẻ chào.
+
 ## 8. Lịch thực hiện
 
 | Ngày | Việc |
