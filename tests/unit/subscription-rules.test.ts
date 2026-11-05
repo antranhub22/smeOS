@@ -11,8 +11,9 @@ describe("vòng đời thuê bao", () => {
   })
 
   it("mã hoá đơn đọc lại được từ nội dung chuyển khoản có khoảng trắng, chữ thường", () => {
-    const code = formatInvoiceCode(new Uint8Array([0, 1, 2, 3, 4, 5, 6, 7]))
-    expect(code).toMatch(/^TB[A-Z2-9]{8}$/)
+    const code = formatInvoiceCode([0, 1, 2, 3, 4, 5, 6, 31])
+    expect(code).toBe("TBABCDEFG9")
+    expect(() => formatInvoiceCode([0, 1, 2, 3, 4, 5, 6, 32])).toThrow(RangeError)
     expect(findInvoiceCode(`ck thanh toan ${code.slice(0, 5).toLowerCase()} ${code.slice(5)} cam on`)).toBe(code)
     expect(findInvoiceCode("chuyen tien an trua")).toBeNull()
   })

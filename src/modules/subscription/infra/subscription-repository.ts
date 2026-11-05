@@ -1,8 +1,8 @@
-import { randomBytes } from "node:crypto"
+import { randomInt } from "node:crypto"
 
 import { prisma } from "@/core/tenancy/infra/prisma"
 import type { DbClient } from "@/modules/organization/infra/db-client"
-import { addCycle, formatInvoiceCode, type SubscriptionCycle } from "../domain/subscription-rules"
+import { addCycle, CODE_ALPHABET, formatInvoiceCode, INVOICE_CODE_LENGTH, type SubscriptionCycle } from "../domain/subscription-rules"
 
 /**
  * Thuê bao và hoá đơn kỳ (checklist ALG 10.7). Tổ chức truyền vào là tổ chức của phiên (`TenantContext`)
@@ -30,7 +30,7 @@ export function findPendingInvoices(subscriptionId: string, db: DbClient = prism
 
 async function uniqueCode(db: DbClient): Promise<string> {
   for (let i = 0; i < 10; i++) {
-    const code = formatInvoiceCode(randomBytes(8))
+    const code = formatInvoiceCode(Array.from({ length: INVOICE_CODE_LENGTH }, () => randomInt(CODE_ALPHABET.length)))
     if (!(await db.subscription_invoices.findUnique({ where: { code }, select: { id: true } }))) return code
   }
   throw new Error("Không sinh được mã hoá đơn")

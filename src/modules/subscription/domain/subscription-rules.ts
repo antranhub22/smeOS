@@ -17,7 +17,8 @@ export const PLAN_LABEL: Record<SubscriptionPlanCode, string> = {
 export const RENEWAL_NOTICE_DAYS = 7
 const DAY_MS = 86_400_000
 export const INVOICE_CODE_PREFIX = "TB"
-const CODE_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"
+export const CODE_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"
+export const INVOICE_CODE_LENGTH = 8
 
 export function isPlanCode(v: unknown): v is SubscriptionPlanCode {
   return typeof v === "string" && (SUBSCRIPTION_PLANS as readonly string[]).includes(v)
@@ -35,11 +36,15 @@ export function addCycle(from: Date, cycle: SubscriptionCycle): Date {
   return d
 }
 
-/** Mã hoá đơn TB + 8 ký tự (bỏ 0/O/1/I để đọc không nhầm), từ byte ngẫu nhiên bên gọi cấp. */
-export function formatInvoiceCode(bytes: Uint8Array): string {
-  let out = INVOICE_CODE_PREFIX
-  for (let i = 0; i < 8; i++) out += CODE_ALPHABET[(bytes[i] ?? 0) % CODE_ALPHABET.length]
-  return out
+/**
+ * Mã hoá đơn TB + 8 ký tự (bỏ 0/O/1/I để đọc không nhầm). `indices`: 8 chỉ số trong [0, độ dài bảng chữ),
+ * bên gọi sinh bằng `crypto.randomInt` (phân bố đều).
+ */
+export function formatInvoiceCode(indices: readonly number[]): string {
+  if (indices.length !== INVOICE_CODE_LENGTH || indices.some((i) => !Number.isInteger(i) || i < 0 || i >= CODE_ALPHABET.length)) {
+    throw new RangeError("Chỉ số mã hoá đơn không hợp lệ")
+  }
+  return INVOICE_CODE_PREFIX + indices.map((i) => CODE_ALPHABET[i]).join("")
 }
 
 /** Tìm mã hoá đơn trong nội dung chuyển khoản (ngân hàng có thể thêm khoảng trắng, đổi chữ hoa). */
