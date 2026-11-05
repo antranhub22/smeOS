@@ -31,11 +31,11 @@ export function MissingInfoRequestCard({
   onResolved,
 }: MissingInfoRequestCardProps) {
   return (
-    <Card className="rounded-2xl border border-sand-200 bg-sand-50/50 p-5 shadow-sm flex flex-col gap-4">
+    <Card className="rounded-2xl border border-warning-border bg-warning-bg/50 p-5 shadow-sm flex flex-col gap-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <HelpCircle size={17} className="text-sand-600" />
-          <span className="text-caption font-bold text-sand-950">YÊU CẦU BỔ SUNG THÔNG TIN (T03)</span>
+          <HelpCircle size={17} className="text-warning-text" />
+          <span className="text-caption font-bold text-warning-text">YÊU CẦU BỔ SUNG THÔNG TIN (T03)</span>
           <Badge tone="warning" className="text-caption font-bold">
             Đơn #{orderCode}
           </Badge>
@@ -49,9 +49,9 @@ export function MissingInfoRequestCard({
         <span className="font-bold text-text">Các trường thông tin còn thiếu cần Sales bổ sung gấp:</span>
         <div className="space-y-2">
           {missingItems.map((item, idx) => (
-            <div key={idx} className="p-3 rounded-xl bg-surface border border-sand-200 flex flex-col gap-0.5">
-              <div className="font-extrabold text-sand-900 flex items-center gap-1.5">
-                <AlertTriangle size={13} className="text-sand-600" />
+            <div key={idx} className="p-3 rounded-xl bg-surface border border-warning-border flex flex-col gap-0.5">
+              <div className="font-extrabold text-warning-text flex items-center gap-1.5">
+                <AlertTriangle size={13} className="text-warning-text" />
                 <span>{item.label} ({item.field})</span>
               </div>
               <p className="text-text-muted text-caption">{item.reason}</p>
@@ -60,7 +60,7 @@ export function MissingInfoRequestCard({
         </div>
       </div>
 
-      <div className="flex items-center justify-end gap-2.5 pt-2 border-t border-dashed border-sand-200">
+      <div className="flex items-center justify-end gap-2.5 pt-2 border-t border-dashed border-warning-border">
         {onResolved && (
           <Button variant="outline" size="sm" onClick={onResolved} className="h-8 text-caption gap-1">
             <CheckCircle2 size={13} />
@@ -68,7 +68,7 @@ export function MissingInfoRequestCard({
           </Button>
         )}
         {onSendToSales && (
-          <Button size="sm" onClick={onSendToSales} className="bg-sand-600 hover:bg-sand-700 text-white h-8 text-caption gap-1 font-bold">
+          <Button size="sm" onClick={onSendToSales} className="bg-warning hover:bg-warning-text text-white h-8 text-caption gap-1 font-bold">
             <Send size={13} />
             <span>Gửi Yêu Cầu Cho Sales Qua Zalo / Chat</span>
           </Button>
