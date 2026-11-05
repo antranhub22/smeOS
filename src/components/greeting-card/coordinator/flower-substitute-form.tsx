@@ -2,7 +2,7 @@
 
 import { Textarea } from "@/components/ui/textarea"
 import { Input } from "@/components/ui/input"
-import { useEffect, useRef, useState } from "react"
+import { useRef, useState } from "react"
 import { ImagePlus } from "@/components/ui/icon-set/image-plus"
 import { Button } from "@/components/ui/button"
 import { SkeletonBlock } from "@/components/ui/skeleton"
@@ -28,14 +28,12 @@ export function FlowerSubstituteForm({ orderId, onClose, onDone }: { orderId: st
   const [name, setName] = useState("")
   const [color, setColor] = useState("")
   const [reason, setReason] = useState("")
-  const [photo, setPhoto] = useState<{ assetId: string; previewUrl: string } | null>(null)
+  const [photo, setPhoto] = useState<{ assetId: string } | null>(null)
   const [busy, setBusy] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const info = data?.data
   const pending = info?.latest?.status === "PENDING"
   const blocked = busy || pending || !!info?.lockedReason
-
-  useEffect(() => () => { if (photo) URL.revokeObjectURL(photo.previewUrl) }, [photo])
 
   const invalid = lineIndex === null ? "Chọn thành phần cần đổi"
     : name.trim().length < 2 ? "Nhập tên hoa thay thế"
@@ -47,7 +45,10 @@ export function FlowerSubstituteForm({ orderId, onClose, onDone }: { orderId: st
     setBusy(true)
     setError(null)
     try {
-      setPhoto(await uploadCoordinatorPhoto(file))
+      // Chỉ giữ mã ảnh đã lưu trong kho; không dựng ảnh xem trước từ tệp cục bộ
+      const uploaded = await uploadCoordinatorPhoto(file)
+      URL.revokeObjectURL(uploaded.previewUrl)
+      setPhoto({ assetId: uploaded.assetId })
     } catch (err) {
       setError(err instanceof Error ? err.message : "Chưa tải được ảnh")
     } finally {
@@ -110,8 +111,7 @@ export function FlowerSubstituteForm({ orderId, onClose, onDone }: { orderId: st
           </div>
           <input ref={fileRef} type="file" accept="image/jpeg,image/png,image/webp" capture="environment" className="hidden" onChange={(e) => void pickPhoto(e.target.files?.[0])} />
           <div className="flex items-center gap-3">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            {photo && <img src={photo.previewUrl} alt="Ảnh hoa thay thế" className="h-16 w-16 rounded-lg object-cover" />}
+            {photo && <span role="status" className="text-caption font-semibold text-success">Đã lưu ảnh hoa thay thế</span>}
             <Button type="button" variant="outline" size="sm" disabled={blocked} onClick={() => fileRef.current?.click()} className="gap-1.5">
               <ImagePlus size={14} aria-hidden="true" /> {photo ? "Chụp lại ảnh" : "Chụp ảnh hoa thay thế"}
             </Button>
