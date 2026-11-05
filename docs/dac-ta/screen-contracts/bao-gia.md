@@ -1,3 +1,19 @@
+---
+id: SCR-STORE-bao-gia
+tier: STORE
+module: sales
+route: /bao-gia
+archetype: B
+snapshots:
+  - 390x844
+  - 1280x800
+acceptance:
+  - Tiêu đề cấp 1 qua PageHeader/ToolHero (ADR-011 D-UI-05)
+  - Tối đa 1 nút chính (primary) theo K2
+  - Đủ trạng thái tải, rỗng, lỗi, không quyền
+  - Không vi phạm axe-core critical/serious ở 390px và 1280px
+---
+
 # Screen Contract — Báo giá bán hàng (Quotations)
 
 **Tuyến:** `/bao-gia`, `/bg/[token]` · **Tệp chính:** `src/app/(app)/bao-gia/page.tsx`, `src/components/sales/quotation/` · **Cập nhật:** 01/11/2026 (PO 01/11/2026, PR-4) · **Thẻ:** công cụ #58 · **Asset:** #24 (Bản báo giá chi tiết — Sẵn)

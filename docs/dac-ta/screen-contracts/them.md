@@ -1,3 +1,19 @@
+---
+id: SCR-STORE-them
+tier: STORE
+module: organization
+route: /them
+archetype: A
+snapshots:
+  - 390x844
+  - 1280x800
+acceptance:
+  - Tiêu đề cấp 1 qua PageHeader/ToolHero (ADR-011 D-UI-05)
+  - Tối đa 1 nút chính (primary) theo K2
+  - Đủ trạng thái tải, rỗng, lỗi, không quyền
+  - Không vi phạm axe-core critical/serious ở 390px và 1280px
+---
+
 # Screen Contract — Trang Thêm & Điều hướng Mobile (`/them`)
 
 **Tuyến:** `/them` · **Tệp chính:** `src/app/(app)/them/page.tsx` · **Cập nhật:** 27/09/2026 · **Thẻ:** T5.B7

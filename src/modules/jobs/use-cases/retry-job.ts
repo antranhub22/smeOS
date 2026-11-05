@@ -29,7 +29,7 @@ export async function retryJob(ctx: TenantContext, id: string) {
     const usageRepo = getUsageRepository(tx)
     const cost = creditTruKhiChayLai(await usageRepo.listByJob(ctx, id))
     if (cost > 0) {
-      const ok = await getOrganizationRepository(tx).tryDeductCredit(ctx, cost)
+      const ok = await getOrganizationRepository(tx).tryDeductCredit(ctx, cost, { service: "AI", reason: `Chạy lại ${current.feature}`, reference: id })
       if (!ok) throw quotaExceeded("Không đủ credit để chạy lại", { required: cost })
       await usageRepo.record(ctx, {
         workspaceId: current.workspace_id,

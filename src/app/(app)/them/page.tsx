@@ -1,5 +1,6 @@
 "use client"
 
+import { PageHeader } from "@/components/ui/page-header"
 import { useI18n } from "@/lib/i18n"
 import { useState, useMemo, type ComponentType } from "react"
 import { useRouter } from "next/navigation"
@@ -199,8 +200,8 @@ export default function ThemPage() {
 
   return (
     <div className="flex h-full flex-col overflow-hidden">
-      <div className="flex flex-shrink-0 items-center border-b border-border bg-surface px-4 py-4">
-        <div className="text-title-sm font-extrabold text-primary">Thêm & Điều hướng</div>
+      <div className="flex-shrink-0 border-b border-border bg-surface px-4 py-4">
+        <PageHeader title="Thêm & Điều hướng" />
       </div>
 
       <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4 pb-20">

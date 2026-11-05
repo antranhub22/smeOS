@@ -1,13 +1,10 @@
 "use client"
 
 import React, { useState, use } from "react"
-import Link from "next/link"
-import { Printer } from "@/components/ui/icon-set/printer"
 import { History } from "@/components/ui/icon-set/history"
 import { Sparkles } from "@/components/ui/icon-set/sparkles"
-import { ArrowLeft } from "@/components/ui/icon-set/arrow-left"
 import { Button } from "@/components/ui/button"
-import { MobileMenuButton } from "@/components/layout/mobile-nav-context"
+import { PageHeader } from "@/components/ui/page-header"
 import { useSession } from "@/lib/session"
 import { PrintWorkflow } from "@/components/marketing-center/print/print-workflow"
 import { PrintRenditionList } from "@/components/marketing-center/print/print-rendition-list"
@@ -29,59 +26,43 @@ export default function PrintWorkspacePage({ searchParams }: PageProps) {
 
   return (
     <div className="min-h-screen bg-bg pb-16">
-      {/* Top Header */}
-      <header className="sticky top-0 z-30 bg-surface/90 backdrop-blur-md border-b border-border">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
-          <div className="flex items-center gap-3">
-            <MobileMenuButton />
-            <Link
-              href="/cong-cu"
-              className="p-1.5 rounded-lg text-text-muted hover:text-text hover:bg-surface-alt transition-colors"
-              title="Quay lại Trung tâm công cụ"
-            >
-              <ArrowLeft className="w-5 h-5" />
-            </Link>
-            <div>
-              <div className="flex items-center gap-2">
-                <Printer className="w-5 h-5 text-primary" aria-hidden="true" />
-                <h2 className="text-title-sm font-bold text-text">
-                  Ấn phẩm & In ấn chất lượng cao
-                </h2>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
+        <PageHeader
+          title="Ấn phẩm & In ấn chất lượng cao"
+          description="Xuất file PDF chuẩn nhà in (300 DPI, tràn lề 3mm, dấu định vị xén)"
+          backHref="/cong-cu"
+          backLabel="Trung tâm công cụ"
+          actions={
+              <div role="group" aria-label="Chế độ xem" className="flex items-center p-1 rounded-xl bg-surface-alt border border-border">
+                <Button
+                  type="button"
+                  variant={activeTab === "workflow" ? "secondary" : "ghost"}
+                  aria-pressed={activeTab === "workflow"}
+                  size="sm"
+                  onClick={() => setActiveTab("workflow")}
+                  className="flex items-center gap-1.5 px-3 py-1.5 h-auto text-caption font-semibold"
+                >
+                  <Sparkles className="w-4 h-4" />
+                  <span>Tạo bản in</span>
+                </Button>
+                <Button
+                  type="button"
+                  variant={activeTab === "history" ? "secondary" : "ghost"}
+                  aria-pressed={activeTab === "history"}
+                  size="sm"
+                  onClick={() => setActiveTab("history")}
+                  className="flex items-center gap-1.5 px-3 py-1.5 h-auto text-caption font-semibold"
+                >
+                  <History className="w-4 h-4" />
+                  <span>Lịch sử ấn phẩm</span>
+                </Button>
               </div>
-              <p className="text-caption text-text-muted hidden sm:block">
-                Xuất file PDF chuẩn nhà in (300 DPI, tràn lề 3mm, dấu định vị xén)
-              </p>
-            </div>
-          </div>
-
-          {/* Navigation Tabs */}
-          <div className="flex items-center p-1 rounded-xl bg-surface-alt border border-border">
-            <Button
-              type="button"
-              variant={activeTab === "workflow" ? "secondary" : "ghost"}
-              size="sm"
-              onClick={() => setActiveTab("workflow")}
-              className="flex items-center gap-1.5 px-3 py-1.5 h-auto text-caption font-semibold"
-            >
-              <Sparkles className="w-4 h-4" />
-              <span>Tạo bản in</span>
-            </Button>
-            <Button
-              type="button"
-              variant={activeTab === "history" ? "secondary" : "ghost"}
-              size="sm"
-              onClick={() => setActiveTab("history")}
-              className="flex items-center gap-1.5 px-3 py-1.5 h-auto text-caption font-semibold"
-            >
-              <History className="w-4 h-4" />
-              <span>Lịch sử ấn phẩm</span>
-            </Button>
-          </div>
-        </div>
-      </header>
+          }
+        />
+      </div>
 
       {/* Main Content Area */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">
         {activeTab === "workflow" ? (
           <PrintWorkflow
             initialPresetCode={initialPresetCode}
@@ -101,7 +82,7 @@ export default function PrintWorkspacePage({ searchParams }: PageProps) {
             <PrintRenditionList />
           </div>
         )}
-      </main>
+      </div>
     </div>
   )
 }

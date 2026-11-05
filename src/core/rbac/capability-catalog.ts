@@ -253,6 +253,7 @@ const CORE_NEW: Record<string, Omit<CapabilityDefinition, "code">> = {
   R17: { name: "order.assigned_work", group: "order_operations", label: "Xem và báo tiến độ việc chế tác được giao cho mình", defaultRoles: ["dieu_hanh", "dieu_phoi", "tho_cam"] },
   R18: { name: "delivery.assigned", group: "order_operations", label: "Xem và cập nhật đơn được giao đi giao", defaultRoles: ["dieu_hanh", "dieu_phoi", "shipper"] },
   R19: { name: "payment.reconciliation.read", group: "order_operations", label: "Xem sổ thu và đối soát giao dịch ngân hàng", defaultRoles: ["dieu_hanh", "ke_toan"] },
+  R20: { name: "report.read", group: "order_operations", label: "Xem báo cáo kinh doanh theo kỳ", defaultRoles: ["dieu_hanh", "ke_toan"] }, // Đợt 5 ALG, PO Q7
   // Q — CRM & Khách hàng ngành hoa (M09, P21)
   Q1: { name: "crm.customer.read", group: "crm", label: "Xem thông tin khách hàng và hồ sơ RFM", defaultRoles: ["dieu_hanh", "dieu_phoi", "sale", "crm", "customer_service", "ke_toan"] },
   Q2: { name: "crm.customer.create", group: "crm", label: "Thêm khách hàng mới", defaultRoles: ["dieu_hanh", "dieu_phoi", "sale", "crm", "customer_service"] },

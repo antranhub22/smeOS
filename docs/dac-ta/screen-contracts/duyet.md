@@ -1,3 +1,19 @@
+---
+id: SCR-STORE-duyet
+tier: STORE
+module: duyet
+route: /duyet
+archetype: B
+snapshots:
+  - 390x844
+  - 1280x800
+acceptance:
+  - Tiêu đề cấp 1 qua PageHeader/ToolHero (ADR-011 D-UI-05)
+  - Tối đa 1 nút chính (primary) theo K2
+  - Đủ trạng thái tải, rỗng, lỗi, không quyền
+  - Không vi phạm axe-core critical/serious ở 390px và 1280px
+---
+
 # Screen Contract — Hàng đợi duyệt (`/duyet`)
 
 **Tuyến:** `/duyet` · **Tệp chính:** `src/app/(app)/duyet/page.tsx` + `approval-tab-panels.tsx` · **Cập nhật:** 26/09/2026 · **Thẻ:** T5.A5

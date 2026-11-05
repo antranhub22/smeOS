@@ -27,6 +27,8 @@ export class UserRepository {
     password_hash: string
     name: string | null
     approval_status?: "PENDING" | "APPROVED"
+    /** Mật khẩu tạm do người khác cấp → buộc đổi lần đầu (checklist ALG 1.4) */
+    must_change_password?: boolean
   }): Promise<users> {
     return this.db.users.create({ data: input })
   }

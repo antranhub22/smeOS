@@ -224,6 +224,11 @@ model organizations {
   order_payments                                   order_payments[]
   order_exceptions                                 order_exceptions[]
   field_config_overrides                           field_config_overrides[]
+  credit_transactions                              credit_transactions[]
+  usage_limits                                     usage_limits[]
+  provider_cost_entries                            provider_cost_entries[]
+  subscription                                     subscriptions?
+  subscription_invoices                            subscription_invoices[]
   owned_field_definitions                          field_definitions[]             @relation("field_definition_owner")
   order_info_requests                              order_info_requests[]
   order_change_requests                            order_change_requests[]
@@ -750,6 +755,149 @@ model job_events {
  * tạo `generation_jobs` (`YC-U3`). Worker không bao giờ ghi bảng này
  * (`YC-U4`).
  */
+/// Sổ cái credit (checklist ALG 10.6): mọi thay đổi `organizations.credit_balance` ghi một dòng cùng
+/// giao dịch — số dư = tổng `amount`. OPENING: số dư lúc bật sổ; TOPUP: nạp mua; GIFT: tặng;
+/// REFUND: hoàn lại (job hỏng, Console hoàn); USAGE: trừ khi dùng (số âm); EXPIRE: credit tặng theo gói còn
+/// thừa cuối tháng bị thu hồi (PO Q10). Chỉ ghi thêm.
+enum credit_transaction_kind {
+  OPENING
+  TOPUP
+  GIFT
+  REFUND
+  USAGE
+  EXPIRE
+}
+
+model credit_transactions {
+  id              String                  @id @default(uuid())
+  organization_id String
+  kind            credit_transaction_kind
+  amount          Int // dương = cộng, âm = trừ
+  balance_after   Int
+  /// AI · SMS · ZNS · CHAT · SUBSCRIPTION — nhóm dịch vụ để báo cáo, null với nạp/tặng
+  service         String?
+  reason          String?
+  /// job_id, mã hoá đơn… để đối soát ngược
+  reference       String?
+  actor_id        String?
+  created_at      DateTime                @default(now()) @db.Timestamptz(3)
+
+  organization organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+
+  @@index([organization_id])
+  @@index([organization_id, created_at])
+}
+
+/// Gói thuê bao của tổ chức (checklist ALG 10.7, PO Q9). Một tổ chức một thuê bao. Giá theo kỳ nhập ở Console.
+/// Kỳ tiếp theo có hoá đơn `subscription_invoices`; tới `current_period_end` mà hoá đơn kỳ sau chưa thu thì
+/// tổ chức chuyển sang chỉ xem dữ liệu ngay (không ân hạn). `plan_credit_*`: credit tặng theo gói của tháng.
+enum subscription_cycle {
+  MONTHLY
+  YEARLY
+}
+
+enum subscription_status {
+  ACTIVE
+  OVERDUE
+  CANCELLED
+}
+
+enum subscription_invoice_status {
+  PENDING
+  PAID
+  VOID
+}
+
+model subscriptions {
+  id                       String              @id @default(uuid())
+  organization_id          String              @unique
+  plan                     String // EXPERIENCE · STARTER · PRO · FLOWER_NETWORK · ENTERPRISE
+  cycle                    subscription_cycle
+  price_vnd                Int
+  included_credits_monthly Int                 @default(0)
+  status                   subscription_status @default(ACTIVE)
+  current_period_start     DateTime @db.Timestamptz(3)
+  current_period_end       DateTime @db.Timestamptz(3)
+  plan_credit_period       String?
+  plan_credit_granted      Int                 @default(0)
+  created_by               String?
+  created_at               DateTime            @default(now()) @db.Timestamptz(3)
+  updated_at               DateTime            @updatedAt @db.Timestamptz(3)
+
+  organization organizations           @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+  invoices     subscription_invoices[]
+
+  @@unique([id, organization_id])
+  @@index([organization_id])
+}
+
+model subscription_invoices {
+  id                String                      @id @default(uuid())
+  organization_id   String
+  subscription_id   String
+  /// Mã ghi trong nội dung chuyển khoản để SePay đối soát
+  code              String                      @unique
+  period_start      DateTime @db.Timestamptz(3)
+  period_end        DateTime @db.Timestamptz(3)
+  amount_vnd        Int
+  status            subscription_invoice_status @default(PENDING)
+  due_at            DateTime @db.Timestamptz(3)
+  paid_at           DateTime? @db.Timestamptz(3)
+  /// Mã giao dịch (SePay hoặc xác nhận tay) — chống ghi trùng
+  payment_reference String?                     @unique
+  reminded_7d       Boolean                     @default(false)
+  reminded_1d       Boolean                     @default(false)
+  created_at        DateTime                    @default(now()) @db.Timestamptz(3)
+  updated_at        DateTime                    @updatedAt @db.Timestamptz(3)
+
+  organization organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+  // Khoá ghép: hoá đơn và thuê bao cùng tổ chức, Postgres từ chối dòng lệch tổ chức
+  subscription subscriptions @relation(fields: [subscription_id, organization_id], references: [id, organization_id], onDelete: Cascade)
+
+  @@unique([subscription_id, period_start])
+  @@index([organization_id])
+  @@index([status, due_at])
+}
+
+/// Chi phí thật phía nhà cung cấp ngoài AI (checklist ALG 10.4): mỗi tin SMS/ZNS gửi thành công một dòng,
+/// theo giá vốn tham chiếu Console nhập. Chi phí AI đọc từ `ai_requests.cost_usd`, không ghi lại ở đây.
+model provider_cost_entries {
+  id              String   @id @default(uuid())
+  organization_id String
+  provider        String // ESMS · ZALO_ZNS
+  service         String // SMS · ZNS
+  cost_usd        Float?
+  cost_vnd        Int
+  reference       String?
+  occurred_at     DateTime @default(now()) @db.Timestamptz(3)
+
+  organization organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+
+  @@index([organization_id])
+  @@index([organization_id, occurred_at])
+}
+
+/// Hạn mức credit theo tháng (checklist ALG 10.3, 9.7, 10.5). `service`: CREDIT = mọi dịch vụ (Console đặt),
+/// AI = trần AI do cửa hàng tự đặt. `period`: YYYY-MM giờ Việt Nam; dòng `DEFAULT` giữ mức cấu hình áp cho
+/// các tháng sau. `monthly_limit` null = không giới hạn. Cờ cảnh báo bật một lần mỗi kỳ.
+model usage_limits {
+  id              String   @id @default(uuid())
+  organization_id String
+  service         String
+  period          String
+  monthly_limit   Int?
+  used            Int      @default(0)
+  alerted_near    Boolean  @default(false)
+  alerted_low     Boolean  @default(false)
+  created_at      DateTime @default(now()) @db.Timestamptz(3)
+  updated_at      DateTime @updatedAt @db.Timestamptz(3)
+
+  organization organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+
+  @@unique([organization_id, service, period])
+  @@index([organization_id])
+}
+
 model usage {
   id              String   @id @default(uuid())
   organization_id String

@@ -11,6 +11,10 @@ import type {
 } from "../domain/repositories/organization-repository.interface"
 
 import type { DbClient } from "./db-client"
+import { claimLowBalanceAlert, consumeMonthlyCredit, lastTopupAmount, releaseMonthlyCredit } from "@/modules/usage/infra/usage-limit-repository"
+import { lowBalanceThreshold } from "@/modules/usage/domain/monthly-limit"
+import type { PrismaClient } from "@/generated/prisma/client"
+import { appendCreditEntry, type CreditEntryKind, type CreditEntryMeta } from "./credit-ledger"
 
 function mapOrganization(org: organizations): OrganizationEntity {
   return {
@@ -93,6 +97,8 @@ export class OrganizationRepository implements IOrganizationRepository {
       data.settings = input.settings as InputJsonValue
     }
     const row = await this.db.organizations.create({ data })
+    // Credit khởi tạo (dùng thử) vào sổ cái như một khoản tặng (checklist ALG 10.6)
+    if (row.credit_balance > 0) await appendCreditEntry(this.db, row.id, "GIFT", row.credit_balance, { reason: "Credit khởi tạo khi mở tài khoản" })
     return mapOrganization(row)
   }
 
@@ -105,14 +111,35 @@ export class OrganizationRepository implements IOrganizationRepository {
    * `QUOTA_EXCEEDED` (422) và toàn bộ giao dịch cha rollback, nên job không
    * bao giờ được tạo khi hạn mức chặn (`YC-U3`).
    */
-  async tryDeductCredit(ctx: TenantContext, cost: number): Promise<boolean> {
-    if (cost <= 0) return true
-    const result = await this.db.organizations.updateMany({
-      where: { id: ctx.organizationId, credit_balance: { gte: cost } },
-      data: { credit_balance: { decrement: cost } },
-    })
-    return result.count > 0
+  async tryDeductCredit(ctx: TenantContext, cost: number, meta: CreditEntryMeta = {}): Promise<boolean> {
+    return this.tryDeductCreditFor(ctx.organizationId, cost, { actorId: ctx.userId, ...meta })
   }
+
+  /** Như `tryDeductCredit` cho đường không có phiên người dùng (khách chat qua kênh). */
+  async tryDeductCreditFor(organizationId: string, cost: number, meta: CreditEntryMeta = {}): Promise<boolean> {
+    if (cost <= 0) return true
+    // Trừ số dư, ghi sổ cái, tính hạn mức tháng (10.3/9.7) và cờ cảnh báo (10.5) trong MỘT giao dịch:
+    // chạm hạn mức → QUOTA_EXCEEDED, số dư không bị trừ.
+    const run = async (db: DbClient) => {
+      const result = await db.organizations.updateMany({
+        where: { id: organizationId, credit_balance: { gte: cost } },
+        data: { credit_balance: { decrement: cost } },
+      })
+      if (result.count === 0) return null
+      const balance = await appendCreditEntry(db, organizationId, "USAGE", -cost, meta)
+      const consumed = await consumeMonthlyCredit(db, organizationId, cost, meta.service)
+      const threshold = lowBalanceThreshold(await lastTopupAmount(db, organizationId), consumed.creditLimit)
+      const low = threshold !== null && balance < threshold && (await claimLowBalanceAlert(db, organizationId)) ? balance : null
+      return { near: consumed.near, lowBalance: low }
+    }
+    const alerts = "$transaction" in this.db ? await (this.db as PrismaClient).$transaction(run) : await run(this.db)
+    if (!alerts) return false
+    const { queueCreditAlerts } = await import("@/modules/usage/use-cases/credit-alerts")
+    queueCreditAlerts(organizationId, alerts)
+    return true
+  }
+
+
 
   /**
    * Nạp credit cho một tổ chức — thao tác của NGƯỜI VẬN HÀNH NỀN TẢNG, không
@@ -127,7 +154,12 @@ export class OrganizationRepository implements IOrganizationRepository {
    *
    * Trả số dư mới, hoặc `null` nếu không có tổ chức nào mang `id` đó.
    */
-  async topUpCredit(organizationId: string, amount: number): Promise<number | null> {
+  async topUpCredit(
+    organizationId: string,
+    amount: number,
+    kind: Extract<CreditEntryKind, "TOPUP" | "GIFT" | "REFUND"> = "TOPUP",
+    meta: CreditEntryMeta = {},
+  ): Promise<number | null> {
     if (!Number.isInteger(amount) || amount <= 0) {
       throw new RangeError("Số credit nạp phải là số nguyên dương")
     }
@@ -136,18 +168,42 @@ export class OrganizationRepository implements IOrganizationRepository {
       data: { credit_balance: { increment: amount } },
     })
     if (result.count === 0) return null
-    const organization = await this.db.organizations.findUnique({ where: { id: organizationId } })
-    return organization?.credit_balance ?? null
+    return appendCreditEntry(this.db, organizationId, kind, amount, meta)
   }
 
+
   /** Hoàn credit — job bị Identity Guard từ chối, quyết định D3. */
-  async refundCredit(ctx: TenantContext, amount: number): Promise<void> {
+  async refundCredit(ctx: TenantContext, amount: number, meta: CreditEntryMeta = {}): Promise<void> {
+    return this.refundCreditFor(ctx.organizationId, amount, meta)
+  }
+
+  /** Thu hồi credit tặng theo gói hết hạn cuối tháng (PO Q10) — không tính vào hạn mức dùng. */
+  async expireCredit(organizationId: string, amount: number, meta: CreditEntryMeta = {}): Promise<number> {
+    if (amount <= 0) return 0
+    const result = await this.db.organizations.updateMany({
+      where: { id: organizationId, credit_balance: { gte: amount } },
+      data: { credit_balance: { decrement: amount } },
+    })
+    if (result.count === 0) return 0
+    await appendCreditEntry(this.db, organizationId, "EXPIRE", -amount, meta)
+    return amount
+  }
+
+  /** Hoàn credit cho đường không có phiên (tin nhắn gửi lỗi sau khi đã trừ). */
+  async refundCreditFor(organizationId: string, amount: number, meta: CreditEntryMeta = {}): Promise<void> {
     if (amount <= 0) return
-    await this.db.organizations.updateMany({
-      where: { id: ctx.organizationId },
+    const result = await this.db.organizations.updateMany({
+      where: { id: organizationId },
       data: { credit_balance: { increment: amount } },
     })
+    if (result.count === 0) return
+    await appendCreditEntry(this.db, organizationId, "REFUND", amount, meta)
+    // Hoàn lượt dùng → trả lại phần đã tính vào hạn mức tháng
+    await releaseMonthlyCredit(this.db, organizationId, amount, meta.service)
   }
+
+
+
 
   /**
    * Danh sách tổ chức người dùng là thành viên — nguồn của `GET /organizations`

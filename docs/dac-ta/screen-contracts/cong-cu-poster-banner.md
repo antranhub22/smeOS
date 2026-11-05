@@ -1,3 +1,19 @@
+---
+id: SCR-STORE-cong-cu-poster-banner
+tier: STORE
+module: ad-banner-poster
+route: /cong-cu/poster-banner
+archetype: E
+snapshots:
+  - 390x844
+  - 1280x800
+acceptance:
+  - Tiêu đề cấp 1 qua PageHeader/ToolHero (ADR-011 D-UI-05)
+  - Tối đa 1 nút chính (primary) theo K2
+  - Đủ trạng thái tải, rỗng, lỗi, không quyền
+  - Không vi phạm axe-core critical/serious ở 390px và 1280px
+---
+
 # Screen Contract — Tạo poster và banner quảng cáo (/cong-cu/poster-banner)
 
 **Tuyến:** `/cong-cu/poster-banner` · **Tệp chính:** `src/components/ad-banner-poster/poster-banner-client.tsx` · **Cập nhật:** 01/11/2026 · **Thẻ:** PR-1 (Marketing & Sales Center)

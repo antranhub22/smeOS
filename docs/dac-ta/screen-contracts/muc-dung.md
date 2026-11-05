@@ -1,6 +1,22 @@
+---
+id: SCR-STORE-muc-dung
+tier: STORE
+module: muc-dung
+route: /muc-dung
+archetype: A
+snapshots:
+  - 390x844
+  - 1280x800
+acceptance:
+  - Tiêu đề cấp 1 qua PageHeader/ToolHero (ADR-011 D-UI-05)
+  - Tối đa 1 nút chính (primary) theo K2
+  - Đủ trạng thái tải, rỗng, lỗi, không quyền
+  - Không vi phạm axe-core critical/serious ở 390px và 1280px
+---
+
 # Screen Contract — Mức Dùng & Hạn Mức Credit Của Tiệm
 
-**Tuyến:** `/muc-dung` · **Tệp chính:** `src/app/(app)/muc-dung/page.tsx` · **Cập nhật:** 27/09/2026 · **Thẻ:** T5.D7
+**Tuyến:** `/muc-dung` · **Tệp chính:** `src/app/(app)/muc-dung/page.tsx`, `src/components/usage/monthly-limit-card.tsx`, `subscription-card.tsx` · **Cập nhật:** 05/11/2026 · **Thẻ:** T5.D7
 
 ## 1. Vai và mục đích
 - Vai chính (03b): `store_manager`, `operations_manager` · Vai phụ: `financial_auditor`
@@ -13,7 +29,10 @@
 - API:
   - `GET /api/v1/usage/summary` → Tổng hợp mức dùng theo tính năng và số dư credit (cần quyền `G8`)
   - `GET /api/v1/usage` → Danh sách lịch sử giao dịch trừ/hoàn credit (cần quyền `G8`)
-- Khối: 4 khối (Hướng dẫn K1 `FeatureGuidanceCard`, Thẻ tổng quan số dư & credit đã dùng, Bảng phân bổ theo phân hệ, Nhật ký giao dịch gần nhất)
+  - `GET /api/v1/usage/summary?period=YYYY-MM` → Mức dùng của một tháng, kèm hạn mức tháng và credit tặng theo gói; ô "Xem theo tháng" cạnh nút "Làm mới" (bỏ trống = toàn thời gian)
+  - `GET /api/v1/subscription` → Gói thuê bao, kỳ hiện tại, hoá đơn cần trả kèm mã VietQR (cần quyền `D1`)
+  - `GET /api/v1/usage/limits` → Hạn mức tháng: tổng credit và phần AI đã dùng/hạn mức (cần quyền `G8`); `PUT` đặt trần credit AI (cần quyền `U2`)
+- Khối: 6 khối (Hướng dẫn K1 `FeatureGuidanceCard`, Thẻ tổng quan số dư & credit đã dùng, Gói dịch vụ `SubscriptionCard` — chỉ hiện khi có `D1` và tổ chức đã có gói: tên gói, giá theo kỳ, hạn kỳ, huy hiệu trạng thái, cảnh báo "chỉ xem" khi quá hạn, mỗi hoá đơn chờ thu có ảnh mã VietQR + ngân hàng + số tài khoản + nội dung chuyển khoản, Hạn mức tháng `MonthlyLimitCard` — thanh tiến độ đổi màu ở 80%/100%, ô "Trần credit AI mỗi tháng" + nút "Lưu trần AI" chỉ hiện khi có `U2`, Bảng phân bổ theo phân hệ, Nhật ký giao dịch gần nhất)
 - Nút primary: Không cần nút primary (màn hình tra cứu tài nguyên), có nút "Làm mới" `variant: "outline"`
 - Phân quyền: Gác quyền `G8`
 - Trạng thái có sẵn: tải ☑ rỗng ☑ lỗi ☑ không quyền ☑ thành công ☑
@@ -56,8 +75,8 @@
 - Là màn hình tra cứu mức tiêu thụ tài nguyên AI của tenant: phản ánh chính xác chi phí credit của các mô hình và cơ chế hoàn credit tự động khi Guard từ chối.
 
 ## 10. Dữ liệu và quyền
-- Nguồn sự thật: Bảng `usage` và `organizations.credit_balance`.
-- Quyền: `G8` (xem mức dùng tổ chức).
+- Nguồn sự thật: Bảng `usage`, `organizations.credit_balance`, `usage_limits` (hạn mức tháng).
+- Quyền: `G8` (xem mức dùng tổ chức), `U2` (đặt trần credit AI).
 
 ## 11. Component
 - Dùng lại: `Button`, `Badge`, `SkeletonBlock`, `FeatureGuidanceCard`.

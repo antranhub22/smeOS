@@ -53,5 +53,6 @@ export interface IUsageRepository {
   listByJob(ctx: TenantContext, jobId: string): Promise<usage[]>
   recordRefund(ctx: TenantContext, input: IRecordRefundInput): Promise<usage>
   list(ctx: TenantContext, options: { limit: number; cursor?: string | null }): Promise<usage[]>
-  summaryByFeature(ctx: TenantContext): Promise<IUsageSummaryItem[]>
+  /** Tổng theo `feature`; `range` lọc theo kỳ (checklist ALG 6.9), bỏ trống = toàn thời gian. */
+  summaryByFeature(ctx: TenantContext, range?: { from: Date; to: Date }): Promise<IUsageSummaryItem[]>
 }

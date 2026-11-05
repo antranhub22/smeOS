@@ -1,8 +1,8 @@
 "use client";
 
+import { PageHeader } from "@/components/ui/page-header"
 import { useI18n } from "@/lib/i18n"
 import React, { useState, useEffect, useCallback } from "react";
-import { Film } from "@/components/ui/icon-set/film"
 import { Sparkles } from "@/components/ui/icon-set/sparkles"
 import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
 import { Clock } from "@/components/ui/icon-set/clock"
@@ -241,10 +241,7 @@ export default function VideoStudioPage() {
             </Button>
           ) : (
             <div>
-              <div className="text-caption text-text-muted font-bold tracking-wider uppercase">Studio Tiếp thị & Video</div>
-              <div className="text-title font-extrabold text-primary flex items-center gap-2">
-                <Film size={20} /> AI Video Studio
-              </div>
+              <PageHeader title="AI Video Studio" breadcrumbs="Studio Tiếp thị & Video" />
             </div>
           )}
         </div>

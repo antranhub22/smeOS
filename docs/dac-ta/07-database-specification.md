@@ -528,6 +528,115 @@ model usage {
 }
 ```
 
+Sổ cái credit (checklist ALG 10.6): mọi thay đổi `organizations.credit_balance` ghi một dòng `credit_transactions` trong cùng giao dịch, qua `OrganizationRepository` (`tryDeductCredit`/`tryDeductCreditFor` → `USAGE`, `refundCredit` → `REFUND`, `topUpCredit` → `TOPUP`/`GIFT`/`REFUND`, tạo tổ chức có credit khởi tạo → `GIFT`). Số dư luôn bằng tổng `amount`; migration mở sổ ghi một dòng `OPENING` cho số dư đang có. Console nạp/tặng/hoàn qua `POST /platform/organizations/:id/credits` (`N3`, bắt buộc lý do, ghi `platform_audit_logs`).
+
+```prisma
+enum credit_transaction_kind { OPENING  TOPUP  GIFT  REFUND  USAGE  EXPIRE }
+
+model credit_transactions {
+  id              String                  @id @default(uuid())
+  organization_id String
+  kind            credit_transaction_kind
+  amount          Int                     // dương = cộng, âm = trừ
+  balance_after   Int
+  service         String?                 // AI · SMS · ZNS · CHAT · SUBSCRIPTION
+  reason          String?
+  reference       String?                 // job_id, mã hoá đơn…
+  actor_id        String?
+  created_at      DateTime                @default(now())
+
+  @@index([organization_id])
+  @@index([organization_id, created_at])
+}
+```
+
+Hạn mức credit theo tháng (checklist ALG 10.3, 9.7, 10.5). `service = CREDIT`: tổng credit mọi dịch vụ trong tháng, Console đặt (`N3`, mặc định lấy `platform_settings.credit_pricing.defaultMonthlyLimit`); `service = AI`: trần phần AI do Điều hành cửa hàng đặt (`U2`). Dòng `period = DEFAULT` giữ mức cấu hình cho các tháng sau; dòng kỳ (YYYY-MM giờ Việt Nam) sinh khi trừ credit lần đầu trong tháng. `OrganizationRepository.tryDeductCreditFor` cộng `used` bằng một câu UPDATE có điều kiện (`used + cost <= monthly_limit`) cùng giao dịch với trừ số dư; hoàn credit trừ lại `used`. `alerted_near`/`alerted_low` bật một lần mỗi kỳ cho thông báo `USAGE_LIMIT_NEAR`/`CREDIT_LOW`.
+
+```prisma
+model usage_limits {
+  id              String   @id @default(uuid())
+  organization_id String
+  service         String   // CREDIT · AI
+  period          String   // YYYY-MM · DEFAULT
+  monthly_limit   Int?     // null = không giới hạn
+  used            Int      @default(0)
+  alerted_near    Boolean  @default(false)
+  alerted_low     Boolean  @default(false)
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
+
+  @@unique([organization_id, service, period])
+  @@index([organization_id])
+}
+```
+
+Chi phí nhà cung cấp ngoài AI (checklist ALG 10.4): mỗi tin SMS/ZNS gửi khách thành công ghi một dòng theo giá vốn tham chiếu Console nhập (`credit_pricing.smsCostVnd`/`znsCostVnd`; 0 thì không ghi). Chi phí AI đọc thẳng `ai_requests.cost_usd`. Báo cáo `GET /platform/margin` cộng hai nguồn với credit đã dùng trong sổ cái.
+
+```prisma
+model provider_cost_entries {
+  id              String   @id @default(uuid())
+  organization_id String
+  provider        String   // ESMS · ZALO_ZNS
+  service         String   // SMS · ZNS
+  cost_usd        Float?
+  cost_vnd        Int
+  reference       String?
+  occurred_at     DateTime @default(now())
+
+  @@index([organization_id])
+  @@index([organization_id, occurred_at])
+}
+```
+
+Gói thuê bao (checklist ALG 10.7, PO Q9). Một tổ chức một thuê bao; giá theo kỳ nhập ở Console (`N19`). Hoá đơn kỳ đầu hạn trả ngay — chưa thu thì `OVERDUE` (chỉ xem); kỳ sau sinh 7 ngày trước `current_period_end`, hạn = ngày bắt đầu kỳ sau. Ghi đã thu (SePay theo `code` trong nội dung chuyển khoản, hoặc Console) dời kỳ hiện tại; `payment_reference` duy nhất chống ghi trùng. `plan_credit_period`/`plan_credit_granted`: credit tặng theo gói của tháng (PO Q10) — đầu tháng cấp `GIFT`, phần tháng trước chưa dùng thu hồi `EXPIRE`. Gói đang thuê bao quyết định tính năng (`entitlement-service`), đứng trước `organizations.credit_plan`. Tài khoản nhận tiền của nền tảng ở `platform_settings.platform_billing_account`.
+
+```prisma
+enum subscription_cycle          { MONTHLY  YEARLY }
+enum subscription_status         { ACTIVE  OVERDUE  CANCELLED }
+enum subscription_invoice_status { PENDING  PAID  VOID }
+
+model subscriptions {
+  id                       String              @id @default(uuid())
+  organization_id          String              @unique
+  plan                     String              // EXPERIENCE · STARTER · PRO · FLOWER_NETWORK · ENTERPRISE
+  cycle                    subscription_cycle
+  price_vnd                Int
+  included_credits_monthly Int                 @default(0)
+  status                   subscription_status @default(ACTIVE)
+  current_period_start     DateTime
+  current_period_end       DateTime
+  plan_credit_period       String?
+  plan_credit_granted      Int                 @default(0)
+  created_by               String?
+  created_at               DateTime            @default(now())
+  updated_at               DateTime            @updatedAt
+
+  @@index([organization_id])
+}
+
+model subscription_invoices {
+  id                String                      @id @default(uuid())
+  organization_id   String
+  subscription_id   String
+  code              String                      @unique   // TB + 8 ký tự, nội dung chuyển khoản
+  period_start      DateTime
+  period_end        DateTime
+  amount_vnd        Int
+  status            subscription_invoice_status @default(PENDING)
+  due_at            DateTime
+  paid_at           DateTime?
+  payment_reference String?                     @unique
+  reminded_7d       Boolean                     @default(false)
+  reminded_1d       Boolean                     @default(false)
+  created_at        DateTime                    @default(now())
+  updated_at        DateTime                    @updatedAt
+
+  @@unique([subscription_id, period_start])
+  @@index([organization_id])
+  @@index([status, due_at])
+}
+```
+
 **Một bảng usage duy nhất cho toàn hệ thống.** Mọi module ở cả ba repo ghi vào bảng này, phân biệt bằng `feature`. Không repo nào dựng bảng usage hay credit riêng — tách ra thì không tính được hạn mức trải nghiệm và không xuất được hoá đơn hợp nhất.
 
 **Ghi tại điểm tạo job phía core, không ghi ở worker.** Trình tự trong một giao dịch:

@@ -1,3 +1,19 @@
+---
+id: SCR-STORE-ket-noi
+tier: STORE
+module: organization
+route: /ket-noi
+archetype: F
+snapshots:
+  - 390x844
+  - 1280x800
+acceptance:
+  - Tiêu đề cấp 1 qua PageHeader/ToolHero (ADR-011 D-UI-05)
+  - Tối đa 1 nút chính (primary) theo K2
+  - Đủ trạng thái tải, rỗng, lỗi, không quyền
+  - Không vi phạm axe-core critical/serious ở 390px và 1280px
+---
+
 # Screen Contract — Kết Nối Nền Tảng Mạng Xã Hội
 
 **Tuyến:** `/ket-noi` · **Tệp chính:** `src/app/(app)/ket-noi/page.tsx` + `src/components/channel-connections/use-channel-accounts.ts` · **Cập nhật:** 30/10/2026 · **Thẻ:** T5.D2

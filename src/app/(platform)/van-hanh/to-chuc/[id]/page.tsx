@@ -12,6 +12,8 @@ import { Store } from "@/components/ui/icon-set/store"
 import { Clock } from "@/components/ui/icon-set/clock"
 import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
 import { formatDateTime } from "@/lib/i18n/formatters"
+import { CreditLedgerPanel } from "@/components/platform/credit-ledger-panel"
+import { SubscriptionPanel } from "@/components/platform/subscription-panel"
 
 type PlatformOrganizationDetail = {
   id: string
@@ -253,6 +255,10 @@ export default function ChiTietToChucPage() {
         <Dong nhan="Workspace" giaTri={org.workspaceKinds.join(", ") || "—"} />
         <Dong nhan="Tạo lúc" giaTri={formatDateTime(org.createdAt)} />
       </Card>
+
+      <SubscriptionPanel organizationId={params.id} />
+
+      <CreditLedgerPanel organizationId={params.id} orgCode={org.slug.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 12)} onChanged={() => void taiDuLieu()} />
 
       {/* Khối quản trị mở khóa ngôn ngữ đa quốc gia (SaaS Admin Language Unlock) */}
       <Card className="p-4 space-y-3">

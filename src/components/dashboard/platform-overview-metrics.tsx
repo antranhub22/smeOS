@@ -1,15 +1,13 @@
 "use client"
 
-import React, { useState } from "react"
+import React from "react"
 import Link from "next/link"
-import { Button } from "@/components/ui/button"
 import { StatTile } from "@/components/ui/stat-tile"
 import { Building2 } from "@/components/ui/icon-set/building2"
 import { Clock } from "@/components/ui/icon-set/clock"
 import { AlertTriangle } from "@/components/ui/icon-set/alert-triangle"
 import { ArrowRight } from "@/components/ui/icon-set/arrow-right"
-import { Zap } from "@/components/ui/icon-set/zap"
-import { VietQrTopupModal } from "@/components/platform/vietqr-topup-modal"
+import { SubscriptionOverviewCard } from "@/components/platform/subscription-overview-card"
 
 export interface PlatformOrganizationSummary {
   id: string
@@ -40,8 +38,6 @@ export function PlatformOverviewMetrics({
   orgs,
   health,
 }: PlatformOverviewMetricsProps) {
-  const [isTopupOpen, setIsTopupOpen] = useState(false)
-
   return (
     <div className="space-y-6">
       {/* 3 Metric Cards - Chuẩn StatTile */}
@@ -68,6 +64,9 @@ export function PlatformOverviewMetrics({
         />
       </div>
 
+      {/* Thuê bao & doanh thu (checklist ALG 9.8) — nạp credit làm ở trang chi tiết từng tổ chức */}
+      <SubscriptionOverviewCard />
+
       {/* Danh sách tổ chức gần đây */}
       <div className="p-5 rounded-2xl bg-surface border border-border shadow-xs space-y-4">
         <div className="flex items-center justify-between pb-3 border-b border-border">
@@ -80,16 +79,6 @@ export function PlatformOverviewMetrics({
             </p>
           </div>
           <div className="flex items-center gap-2">
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              onClick={() => setIsTopupOpen(true)}
-              className="inline-flex items-center gap-1.5 border-primary/30 bg-primary/5 text-body-sm font-semibold text-primary hover:bg-primary/10"
-            >
-              <Zap className="w-4 h-4" aria-hidden="true" />
-              <span>Nạp Credit VietQR</span>
-            </Button>
             <Link
               href={"/van-hanh/to-chuc" as never}
               className="inline-flex items-center gap-1.5 text-body-sm font-semibold text-primary hover:underline"
@@ -126,11 +115,6 @@ export function PlatformOverviewMetrics({
         </div>
       </div>
 
-      <VietQrTopupModal
-        open={isTopupOpen}
-        onOpenChange={setIsTopupOpen}
-        orgCode="FLORA_HQ"
-      />
     </div>
   )
 }

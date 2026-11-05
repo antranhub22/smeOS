@@ -2,6 +2,7 @@
 
 // Danh sách mọi tổ chức (`N1`, P25a). Xem đặc tả 06 mục 21.
 
+import { CreateOrganizationCard } from "@/components/platform/create-organization-card"
 import { useEffect, useState } from "react"
 import Link from "next/link"
 import { Card } from "@/components/ui/card"
@@ -55,6 +56,7 @@ export default function DanhSachToChucPage() {
           <span className="rounded bg-surface-alt px-2 py-0.5 text-caption text-text-muted">{dict.platform.organizations.scopeSystem}</span>
         }
       />
+      <div className="mb-3"><CreateOrganizationCard onCreated={() => window.location.reload()} /></div>
       <table className="w-full text-left text-caption">
         <thead>
           <tr className="border-b border-border text-text-muted">

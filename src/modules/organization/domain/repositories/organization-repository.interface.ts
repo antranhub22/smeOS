@@ -6,6 +6,16 @@
 
 import type { TenantContext } from "@/core/tenancy"
 
+/** Sổ cái credit (checklist ALG 10.6) — loại dòng và thông tin đi kèm mỗi lần đổi số dư. */
+export type CreditEntryKind = "OPENING" | "TOPUP" | "GIFT" | "REFUND" | "USAGE" | "EXPIRE"
+export type CreditService = "AI" | "SMS" | "ZNS" | "CHAT" | "SUBSCRIPTION"
+export interface CreditEntryMeta {
+  service?: CreditService | null | undefined
+  reason?: string | null | undefined
+  reference?: string | null | undefined
+  actorId?: string | null | undefined
+}
+
 export type OrganizationType =
   | "EXPERIENCE"
   | "SINGLE"
@@ -56,13 +66,22 @@ export interface IOrganizationRepository {
   create(input: CreateOrganizationInput): Promise<OrganizationEntity>
 
   /** Trừ credit có điều kiện chống đua cho job. */
-  tryDeductCredit(ctx: TenantContext, cost: number): Promise<boolean>
+  tryDeductCredit(ctx: TenantContext, cost: number, meta?: CreditEntryMeta): Promise<boolean>
+
+  /** Trừ credit có điều kiện cho đường không có phiên (khách chat qua kênh). */
+  tryDeductCreditFor(organizationId: string, cost: number, meta?: CreditEntryMeta): Promise<boolean>
 
   /** Nạp credit cấp nền tảng. */
-  topUpCredit(organizationId: string, amount: number): Promise<number | null>
+  topUpCredit(organizationId: string, amount: number, kind?: "TOPUP" | "GIFT" | "REFUND", meta?: CreditEntryMeta): Promise<number | null>
 
   /** Hoàn credit khi job thất bại hoặc bị huỷ. */
-  refundCredit(ctx: TenantContext, amount: number): Promise<void>
+  refundCredit(ctx: TenantContext, amount: number, meta?: CreditEntryMeta): Promise<void>
+
+  /** Thu hồi credit tặng hết hạn. */
+  expireCredit(organizationId: string, amount: number, meta?: CreditEntryMeta): Promise<number>
+
+  /** Hoàn credit cho đường không có phiên. */
+  refundCreditFor(organizationId: string, amount: number, meta?: CreditEntryMeta): Promise<void>
 
   /** Danh sách tổ chức mà user là thành viên. */
   listForUser(userId: string): Promise<OrganizationEntity[]>
