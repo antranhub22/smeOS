@@ -1,5 +1,6 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
 import React, { useCallback, useState } from "react"
 import { useApi } from "@/components/greeting-card/greeting-api"
 import { formatMinutes } from "@/modules/greeting-card/domain/step-sla"
@@ -140,14 +141,14 @@ export function KanbanView({ qs, onOpen, canDecide = false, onDismiss }: KanbanV
               </div>
 
               {c.hasMore && (
-                <button
+                <Button variant="outline"
                   type="button"
                   onClick={() => showMore(c)}
                   disabled={res.isValidating}
-                  className="h-9 rounded-xl border border-border bg-surface text-body-sm font-bold text-text hover:bg-surface-muted disabled:opacity-60"
+                  className="gap-0 h-9 rounded-xl border border-border bg-surface text-body-sm font-bold text-text hover:bg-surface-muted disabled:opacity-60"
                 >
                   {res.isValidating ? "Đang tải..." : `Xem thêm ${Math.min(KANBAN_PAGE_SIZE, c.count - c.items.length)} (còn ${c.count - c.items.length})`}
-                </button>
+                </Button>
               )}
             </section>
           )

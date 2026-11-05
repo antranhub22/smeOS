@@ -127,13 +127,13 @@ export function BrochureWorkflowSettings() {
         {PRESETS.map((p) => {
           const isSelected = policy.preset === p.id
           return (
-            <button
+            <Button variant="ghost"
               key={p.id}
               type="button"
               onClick={() => handleApplyPreset(p.id as "LEAN" | "STANDARD" | "STRICT")}
-              className={`flex flex-col text-left p-3.5 rounded-xl border-2 transition-all relative ${
+              className={`justify-start font-[inherit] gap-0 flex flex-col text-left p-3.5 rounded-xl border-2 transition-all relative ${
                 isSelected
-                  ? "border-primary bg-primary/5 shadow-xs"
+                  ? "border-primary bg-primary/5 shadow-xs hover:bg-primary/5"
                   : "border-border hover:border-border/80 bg-surface hover:bg-surface-muted/40"
               }`}
             >
@@ -148,17 +148,17 @@ export function BrochureWorkflowSettings() {
               </div>
               <span className="text-caption font-bold text-text-muted mb-2">{p.subtitle}</span>
               <p className="text-caption text-text-muted leading-relaxed">{p.desc}</p>
-            </button>
+            </Button>
           )
         })}
       </div>
 
       {/* Tầng 2: Tùy biến nâng cao */}
       <div className="border border-border rounded-xl overflow-hidden bg-bg/50">
-        <button
+        <Button variant="ghost"
           type="button"
           onClick={() => setShowAdvanced(!showAdvanced)}
-          className="w-full flex items-center justify-between p-3.5 bg-surface text-body-sm font-bold text-text hover:bg-surface-muted transition-colors"
+          className="gap-0 w-full flex items-center justify-between p-3.5 bg-surface text-body-sm font-bold text-text hover:bg-surface-muted transition-colors"
         >
           <span className="flex items-center gap-2">
             <span>Tùy biến nâng cao từng chốt chặn</span>
@@ -169,7 +169,7 @@ export function BrochureWorkflowSettings() {
             )}
           </span>
           {showAdvanced ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
-        </button>
+        </Button>
 
         {showAdvanced && (
           <div className="p-4 flex flex-col gap-3.5 divide-y divide-border/60">

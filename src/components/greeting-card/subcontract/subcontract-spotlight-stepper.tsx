@@ -1,5 +1,6 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
 import React from "react"
 import { Check, Lock, ShieldCheck, Camera, Truck, FileCheck2 } from "@/components/ui/icons"
 import { cn } from "@/lib/utils"
@@ -53,12 +54,12 @@ export function SubcontractSpotlightStepper({
 
           return (
             <li key={step.id} className="min-w-0">
-              <button
+              <Button variant="outline"
                 type="button"
                 aria-current={isActive ? "step" : undefined}
                 disabled={!isUnlocked && !isCompleted}
                 onClick={() => onSelectStep(step.id)}
-                className={cn(
+                className={cn("font-[inherit]", 
                   "group flex w-full flex-col items-center gap-1 text-center rounded-xl p-2 transition-all duration-200 border cursor-pointer",
                   isActive
                     ? "bg-primary/10 border-primary shadow-xs ring-1 ring-primary/30"
@@ -121,7 +122,7 @@ export function SubcontractSpotlightStepper({
                     </span>
                   )}
                 </div>
-              </button>
+              </Button>
             </li>
           )
         })}

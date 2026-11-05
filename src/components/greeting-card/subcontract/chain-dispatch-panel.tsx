@@ -341,21 +341,21 @@ export function ChainDispatchPanel({
               Chọn chi nhánh bạn muốn phát lệnh ({selectedBranchIds.length}/{topBranches.length}):
             </span>
             <div className="flex items-center gap-2">
-              <button
+              <Button variant="ghost"
                 type="button"
                 onClick={() => setSelectedBranchIds(topBranches.map((b) => b.branchId))}
-                className="text-caption text-primary hover:underline font-semibold"
+                className="h-auto p-0 gap-0 text-caption text-primary hover:underline font-semibold"
               >
                 Chọn tất cả
-              </button>
+              </Button>
               <span className="text-text-muted/40">·</span>
-              <button
+              <Button variant="ghost"
                 type="button"
                 onClick={() => setSelectedBranchIds([])}
-                className="text-caption text-text-muted hover:underline font-semibold"
+                className="h-auto p-0 gap-0 text-caption text-text-muted hover:underline font-semibold"
               >
                 Bỏ chọn
-              </button>
+              </Button>
             </div>
           </div>
 

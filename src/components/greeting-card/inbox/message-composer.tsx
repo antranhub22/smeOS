@@ -1,5 +1,6 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
 import { NativeSelect } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
 import React, { useState } from "react"
@@ -58,10 +59,10 @@ export function MessageComposer({ target, stepKey, replyTo, onCancelReply, onSen
   const modeSwitch = target.orderId && !replyTo && (
     <div role="group" aria-label="Loại tin" className="grid grid-cols-2 gap-1 rounded-xl bg-surface-muted p-1">
       {(["MESSAGE", "DISCOUNT"] as const).map((m) => (
-        <button key={m} type="button" aria-pressed={mode === m} onClick={() => setMode(m)}
-          className={`h-10 rounded-lg text-body-sm font-bold ${mode === m ? "bg-surface text-primary shadow-xs" : "text-text-muted"}`}>
+        <Button variant="ghost" key={m} type="button" aria-pressed={mode === m} onClick={() => setMode(m)}
+          className={`gap-0 h-10 rounded-lg text-body-sm font-bold ${mode === m ? "bg-surface text-primary shadow-xs hover:bg-surface" : "text-text-muted"}`}>
           {m === "MESSAGE" ? "Tin nhắn" : "Xin giảm giá"}
-        </button>
+        </Button>
       ))}
     </div>
   )
@@ -81,9 +82,9 @@ export function MessageComposer({ target, stepKey, replyTo, onCancelReply, onSen
       {replyTo ? (
         <div className="flex items-center justify-between gap-2 rounded-lg bg-primary/5 px-3 py-1.5 text-body-sm">
           <span>Trả lời <strong>{replyTo.senderName}</strong></span>
-          <button type="button" onClick={onCancelReply} aria-label="Huỷ trả lời" className="inline-flex h-9 w-9 items-center justify-center rounded-full text-text-muted hover:bg-surface-muted">
+          <Button variant="ghost" type="button" onClick={onCancelReply} aria-label="Huỷ trả lời" className="font-[inherit] gap-0 inline-flex h-9 w-9 items-center justify-center rounded-full text-text-muted hover:bg-surface-muted">
             <X size={16} aria-hidden="true" />
-          </button>
+          </Button>
         </div>
       ) : (
         <label className="flex items-center gap-2 text-body-sm">
@@ -118,10 +119,10 @@ export function MessageComposer({ target, stepKey, replyTo, onCancelReply, onSen
           placeholder="Nhập tin nhắn…"
           className="max-h-40 min-h-11 flex-1 resize-y rounded-xl border border-border bg-surface px-3 py-2 text-body text-text placeholder:text-text-muted"
         />
-        <button type="button" onClick={() => void send()} disabled={!body.trim() || sending} aria-label="Gửi tin nhắn"
-          className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary text-white hover:bg-primary-dark disabled:opacity-40">
+        <Button variant="primary" type="button" onClick={() => void send()} disabled={!body.trim() || sending} aria-label="Gửi tin nhắn"
+          className="font-[inherit] gap-0 inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-primary text-white hover:bg-primary-dark disabled:opacity-40">
           {sending ? <Loader2 size={18} className="animate-spin" aria-hidden="true" /> : <Send size={18} aria-hidden="true" />}
-        </button>
+        </Button>
       </div>
     </div>
   )

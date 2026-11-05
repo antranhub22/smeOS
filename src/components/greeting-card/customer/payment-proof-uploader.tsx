@@ -1,5 +1,6 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
 import React, { useRef, useState } from "react"
 import Image from "next/image"
 import { Camera, CheckCircle2, Image as ImageIcon, Loader2, RefreshCw } from "@/components/ui/icons"
@@ -128,23 +129,23 @@ export function PaymentProofUploader({
               </div>
             ) : null}
 
-            <button
+            <Button variant="ghost"
               type="button"
               onClick={handleReset}
               disabled={uploading || disabled}
-              className="inline-flex items-center gap-1 text-caption text-primary hover:text-primary-dark font-medium underline cursor-pointer disabled:opacity-50 mt-1 self-start"
+              className="h-auto p-0 inline-flex items-center gap-1 text-caption text-primary hover:text-primary-dark font-medium underline cursor-pointer disabled:opacity-50 mt-1 self-start"
             >
               <RefreshCw size={12} />
               <span>Đổi ảnh khác</span>
-            </button>
+            </Button>
           </div>
         </div>
       ) : (
-        <button
+        <Button variant="ghost"
           type="button"
           onClick={() => fileInputRef.current?.click()}
           disabled={disabled || uploading}
-          className="w-full p-4 rounded-xl border-2 border-dashed border-primary/40 hover:border-primary bg-primary/5 hover:bg-primary/10 transition-colors flex flex-col items-center justify-center gap-2 cursor-pointer disabled:opacity-50 text-center"
+          className="font-[inherit] w-full p-4 rounded-xl border-2 border-dashed border-primary/40 hover:border-primary bg-primary/5 hover:bg-primary/10 transition-colors flex flex-col items-center justify-center gap-2 cursor-pointer disabled:opacity-50 text-center"
         >
           <div className="w-10 h-10 rounded-full bg-primary/15 text-primary flex items-center justify-center">
             <ImageIcon size={20} />
@@ -157,7 +158,7 @@ export function PaymentProofUploader({
               JPG, PNG hoặc WebP · Tối đa 5MB
             </span>
           </div>
-        </button>
+        </Button>
       )}
 
       {uploadError && (

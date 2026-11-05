@@ -90,13 +90,13 @@ export function SubstituteProposalModal({ orderId, orderCode, onClose, onDone }:
                   const on = picked.includes(o.productId)
                   return (
                     <li key={o.productId}>
-                      <button type="button" aria-pressed={on} disabled={busy || pending || !!info.lockedReason} onClick={() => toggle(o.productId)}
-                        className={`relative flex w-full flex-col gap-1 rounded-xl border p-2 text-left ${on ? "border-primary bg-primary/5" : "border-border"}`}>
+                      <Button variant="outline" type="button" aria-pressed={on} disabled={busy || pending || !!info.lockedReason} onClick={() => toggle(o.productId)}
+                        className={`justify-start font-[inherit] relative flex w-full flex-col gap-1 rounded-xl border p-2 text-left ${on ? "border-primary bg-primary/5 hover:bg-primary/5" : "border-border"}`}>
                         <FlowerImage src={o.imageUrl} driveLink={o.driveLink} alt={o.name} className="aspect-square w-full rounded-lg" sizes="160px" fallback="icon" />
                         <span className="text-caption font-bold text-text line-clamp-2">{o.name}</span>
                         <span className="text-caption text-text-muted">{money(o.priceVnd)}</span>
                         {on && <Check size={16} className="absolute right-3 top-3 rounded-full bg-primary text-primary-foreground" aria-hidden="true" />}
-                      </button>
+                      </Button>
                     </li>
                   )
                 })}

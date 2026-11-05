@@ -73,9 +73,9 @@ export function BrochureBankSyncSettings() {
             <div key={row.field} className="flex items-center gap-2">
               <span className="w-24 shrink-0 text-text-muted">{row.label}</span>
               <code className="flex-1 break-all bg-surface px-2 py-1 rounded">{row.value}</code>
-              <button type="button" aria-label={`Sao chép ${row.label}`} onClick={() => copy(row.value, row.field)} className="p-1 text-primary">
+              <Button variant="ghost" type="button" aria-label={`Sao chép ${row.label}`} onClick={() => copy(row.value, row.field)} className="font-[inherit] gap-0 p-1 text-primary">
                 {copied === row.field ? <Check size={14} /> : <Copy size={14} />}
-              </button>
+              </Button>
             </div>
           ))}
         </div>

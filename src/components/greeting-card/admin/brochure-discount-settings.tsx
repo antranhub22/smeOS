@@ -1,5 +1,6 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import React, { useState } from "react"
 import { BadgePercent } from "@/components/ui/icons"
@@ -47,10 +48,10 @@ export function BrochureDiscountSettings() {
           onChange={(e) => { setEdited(e.target.value); setMessage(null) }}
           className="h-11 w-24 rounded-xl border border-border bg-surface px-3 text-right text-body text-text" />
         <span className="text-body-sm text-text-muted">%</span>
-        <button type="button" onClick={() => void save()} disabled={saving || edited === null}
-          className="ml-auto h-11 rounded-xl bg-primary px-4 text-body-sm font-bold text-white hover:bg-primary-dark disabled:opacity-50">
+        <Button variant="primary" type="button" onClick={() => void save()} disabled={saving || edited === null}
+          className="gap-0 ml-auto h-11 rounded-xl bg-primary px-4 text-body-sm font-bold text-white hover:bg-primary-dark disabled:opacity-50">
           {saving ? "Đang lưu..." : "Lưu"}
-        </button>
+        </Button>
       </div>
       {message && <p role="status" className={`text-caption font-medium ${message.ok ? "text-success" : "text-danger"}`}>{message.text}</p>}
     </section>

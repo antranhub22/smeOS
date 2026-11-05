@@ -1,5 +1,6 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
 import React, { useState } from "react"
 import { MessageCircle, MessageSquareText, Phone } from "@/components/ui/icons"
 import type { ShopContact } from "@/modules/greeting-card/domain/shop-contact"
@@ -12,7 +13,7 @@ interface Props {
   variantName?: string | null | undefined
 }
 
-const BTN = "flex min-h-11 flex-1 items-center justify-center gap-1.5 rounded-xl border border-border bg-surface text-body-sm font-bold text-text hover:bg-surface-muted"
+const BTN = "flex h-auto min-h-11 flex-1 items-center justify-center gap-1.5 rounded-xl border border-border bg-surface text-body-sm font-bold text-text hover:bg-surface-muted"
 
 /** Ba cách liên hệ cho mẫu "Liên hệ" / phiên bản theo ý khách: Gọi điện, Zalo, Nhắn tin (form). */
 export function ProductContactActions({ shop, inquiryUrl, product, variantName }: Props) {
@@ -30,9 +31,9 @@ export function ProductContactActions({ shop, inquiryUrl, product, variantName }
             <MessageCircle size={16} aria-hidden="true" /> Zalo
           </a>
         )}
-        <button type="button" aria-expanded={showForm} onClick={() => setShowForm((v) => !v)} className={BTN}>
+        <Button variant="ghost" type="button" aria-expanded={showForm} onClick={() => setShowForm((v) => !v)} className={BTN}>
           <MessageSquareText size={16} aria-hidden="true" /> Nhắn tin
-        </button>
+        </Button>
       </div>
       {showForm && <ProductInquiryForm inquiryUrl={inquiryUrl} product={product} variantName={variantName} />}
     </div>

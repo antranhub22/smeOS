@@ -196,14 +196,14 @@ export function BrochurePaymentView({
             <span className="text-text-muted">Số tài khoản:</span>
             <div className="flex items-center gap-1.5">
               <span className="font-mono font-extrabold text-text">{vietQr.accountNo}</span>
-              <button
+              <Button variant="ghost"
                 type="button"
                 onClick={() => copyToClipboard(vietQr.accountNo, "acc")}
                 aria-label="Sao chép số tài khoản"
-                className="text-primary hover:text-primary-dark p-1 cursor-pointer"
+                className="font-[inherit] gap-0 text-primary hover:text-primary-dark p-1 cursor-pointer"
               >
                 {copiedField === "acc" ? <Check size={14} className="text-success" /> : <Copy size={14} />}
-              </button>
+              </Button>
             </div>
           </div>
 
@@ -213,14 +213,14 @@ export function BrochurePaymentView({
             </span>
             <div className="flex items-center gap-1.5">
               <span className="font-bold text-primary">{vietQr.amount.toLocaleString("vi-VN")} đ</span>
-              <button
+              <Button variant="ghost"
                 type="button"
                 onClick={() => copyToClipboard(String(vietQr.amount), "amount")}
                 aria-label="Sao chép số tiền"
-                className="text-primary hover:text-primary-dark p-1 cursor-pointer"
+                className="font-[inherit] gap-0 text-primary hover:text-primary-dark p-1 cursor-pointer"
               >
                 {copiedField === "amount" ? <Check size={14} className="text-success" /> : <Copy size={14} />}
-              </button>
+              </Button>
             </div>
           </div>
 
@@ -228,14 +228,14 @@ export function BrochurePaymentView({
             <span className="text-text-muted">Nội dung chuyển khoản:</span>
             <div className="flex items-center gap-1.5">
               <span className="font-mono font-extrabold text-text">{vietQr.transferMemo}</span>
-              <button
+              <Button variant="ghost"
                 type="button"
                 onClick={() => copyToClipboard(vietQr.transferMemo, "memo")}
                 aria-label="Sao chép nội dung chuyển khoản"
-                className="text-primary hover:text-primary-dark p-1 cursor-pointer"
+                className="font-[inherit] gap-0 text-primary hover:text-primary-dark p-1 cursor-pointer"
               >
                 {copiedField === "memo" ? <Check size={14} className="text-success" /> : <Copy size={14} />}
-              </button>
+              </Button>
             </div>
           </div>
         </div>
@@ -322,7 +322,7 @@ export function BrochurePaymentView({
           {reportError && (
             <p role="alert" className="text-caption text-danger font-medium">{reportError}</p>
           )}
-          <button
+          <Button variant="ghost"
             type="button"
             disabled={loading || !canSubmit}
             onClick={handleReportPaid}
@@ -330,7 +330,7 @@ export function BrochurePaymentView({
           >
             <Check size={18} />
             <span>{loading ? "Đang xử lý..." : "TÔI ĐÃ CHUYỂN KHOẢN THANH TOÁN"}</span>
-          </button>
+          </Button>
           {!canSubmit && (
             <p className="text-caption text-warning font-medium text-center">
               Vui lòng tải ảnh chuyển khoản để xác nhận

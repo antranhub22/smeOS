@@ -1,5 +1,6 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
 import React, { useState } from "react"
 import { Share2 } from "@/components/ui/icons"
 import { useApi } from "@/components/greeting-card/greeting-api"
@@ -30,17 +31,17 @@ export function ChannelFunnelStats() {
         </h3>
         <div role="group" aria-label="Khoảng thời gian" className="flex gap-1">
           {PERIODS.map((p) => (
-            <button
+            <Button variant="outline"
               key={p}
               type="button"
               onClick={() => setDays(p)}
               aria-pressed={days === p}
-              className={`px-3 h-8 rounded-lg text-caption font-bold border ${
-                days === p ? "bg-primary text-white border-primary" : "border-border text-text-muted hover:bg-surface-muted"
+              className={`gap-0 px-3 h-8 rounded-lg text-caption font-bold border ${
+                days === p ? "bg-primary text-white border-primary hover:bg-primary" : "border-border text-text-muted hover:bg-surface-muted"
               }`}
             >
               {p} ngày
-            </button>
+            </Button>
           ))}
         </div>
       </div>

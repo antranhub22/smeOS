@@ -1,5 +1,6 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
 import { NativeSelect } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
 import React, { useId } from "react"
@@ -248,19 +249,19 @@ export function HomestayOrderFields({
               const Icon = opt.icon
               const active = transitMethod === opt.key
               return (
-                <button
+                <Button variant="outline"
                   type="button"
                   key={opt.key}
                   onClick={() => onTransitChange(active ? "" : opt.key)}
-                  className={`p-2.5 rounded-lg border text-caption font-bold flex items-center gap-2 transition text-left ${
+                  className={`justify-start p-2.5 rounded-lg border text-caption font-bold flex items-center gap-2 transition text-left ${
                     active
-                      ? "border-primary bg-primary/10 text-primary"
-                      : "border-border bg-bg text-text hover:border-primary/40"
+                      ? "border-primary bg-primary/10 text-primary hover:bg-primary/10"
+                      : "border-border bg-bg text-text hover:border-primary/40 hover:bg-bg"
                   }`}
                 >
                   <Icon size={16} />
                   <span>{opt.label}</span>
-                </button>
+                </Button>
               )
             })}
           </div>

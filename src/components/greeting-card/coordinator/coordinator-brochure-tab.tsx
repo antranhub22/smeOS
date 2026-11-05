@@ -118,12 +118,12 @@ export function CoordinatorBrochureTab({ canDecideInTransitCancel = false }: { c
         <div className="flex flex-1 flex-wrap items-center gap-2">
           <div className="flex flex-wrap gap-2" role="group" aria-label="Lọc việc">
             {BUCKETS.map((b) => (
-              <button key={b} type="button" aria-pressed={bucket === b} onClick={() => setBucket(bucket === b ? null : b)}
-                className={`h-9 rounded-xl border px-3 text-caption font-bold ${
-                  bucket === b ? "border-primary bg-primary text-white" : b === "ACTION" && counts.ACTION > 0 ? "border-danger/40 bg-danger-bg text-danger" : "border-border text-text-muted hover:bg-surface-muted"
+              <Button variant="outline" key={b} type="button" aria-pressed={bucket === b} onClick={() => setBucket(bucket === b ? null : b)}
+                className={`gap-0 h-9 rounded-xl border px-3 text-caption font-bold ${
+                  bucket === b ? "border-primary bg-primary text-white hover:bg-primary" : b === "ACTION" && counts.ACTION > 0 ? "border-danger/40 bg-danger-bg text-danger hover:bg-danger-bg" : "border-border text-text-muted hover:bg-surface-muted"
                 }`}>
                 {WORK_BUCKET_LABEL[b]} ({counts[b]})
-              </button>
+              </Button>
             ))}
           </div>
 
@@ -138,14 +138,14 @@ export function CoordinatorBrochureTab({ canDecideInTransitCancel = false }: { c
               className="h-9 w-full rounded-xl border border-border bg-surface pl-9 pr-8 text-caption text-text placeholder:text-text-muted focus:border-primary focus:outline-hidden"
             />
             {search && (
-              <button
+              <Button variant="ghost"
                 type="button"
                 aria-label="Xoá tìm kiếm"
                 onClick={() => setSearch("")}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-text-muted hover:text-text"
+                className="h-auto p-0 font-[inherit] gap-0 absolute right-2.5 top-1/2 -translate-y-1/2 text-text-muted hover:text-text"
               >
                 <X size={13} aria-hidden="true" />
-              </button>
+              </Button>
             )}
           </div>
         </div>
@@ -159,10 +159,10 @@ export function CoordinatorBrochureTab({ canDecideInTransitCancel = false }: { c
             ) : (
               <>
                 {dayChips.map((c) => (
-                  <button key={c.label} type="button" aria-pressed={day === c.id} onClick={() => setDay(c.id)}
-                    className={`h-9 rounded-xl border px-3 text-caption font-bold ${day === c.id ? "border-primary bg-primary text-white" : "border-border text-text-muted hover:bg-surface-muted"}`}>
+                  <Button variant="outline" key={c.label} type="button" aria-pressed={day === c.id} onClick={() => setDay(c.id)}
+                    className={`gap-0 h-9 rounded-xl border px-3 text-caption font-bold ${day === c.id ? "border-primary bg-primary text-white hover:bg-primary" : "border-border text-text-muted hover:bg-surface-muted"}`}>
                     {c.label}
-                  </button>
+                  </Button>
                 ))}
                 <ViDateInput compact ariaLabel="Chọn ngày giao" value={day} onChange={setDay} wrapperClassName="w-36"
                   className="h-9 rounded-xl border border-border bg-surface px-2 text-caption text-text" />
@@ -172,24 +172,24 @@ export function CoordinatorBrochureTab({ canDecideInTransitCancel = false }: { c
 
           {/* View Mode Toggle (Spec #14) */}
           <div className="flex items-center rounded-xl border border-border bg-surface p-1">
-            <button
+            <Button variant="ghost"
               type="button"
               onClick={() => setViewMode("kanban")}
-              className={`px-3 py-1 text-caption font-bold rounded-lg transition-colors ${
-                viewMode === "kanban" ? "bg-primary text-white" : "text-text-muted hover:text-text"
+              className={`gap-0 px-3 py-1 text-caption font-bold rounded-lg transition-colors ${
+                viewMode === "kanban" ? "bg-primary text-white hover:bg-primary" : "text-text-muted hover:text-text"
               }`}
             >
               Kanban
-            </button>
-            <button
+            </Button>
+            <Button variant="ghost"
               type="button"
               onClick={() => setViewMode("grid")}
-              className={`px-3 py-1 text-caption font-bold rounded-lg transition-colors ${
-                viewMode === "grid" ? "bg-primary text-white" : "text-text-muted hover:text-text"
+              className={`gap-0 px-3 py-1 text-caption font-bold rounded-lg transition-colors ${
+                viewMode === "grid" ? "bg-primary text-white hover:bg-primary" : "text-text-muted hover:text-text"
               }`}
             >
               Lưới thẻ
-            </button>
+            </Button>
           </div>
         </div>
       </div>

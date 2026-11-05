@@ -1,5 +1,6 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import { Input } from "@/components/ui/input"
 import React, { useState } from "react"
@@ -75,9 +76,9 @@ export function ProductInquiryForm({ inquiryUrl, product, variantName }: Props) 
       {/* Ô bẫy: người thật không thấy, máy tự điền */}
       <Input type="text" tabIndex={-1} autoComplete="off" aria-hidden="true" value={website} onChange={(e) => setWebsite(e.target.value)} className="hidden" />
       {errors.form && <span className="text-caption text-danger">{errors.form}</span>}
-      <button type="submit" disabled={sending} className="h-11 rounded-xl bg-primary font-bold text-white disabled:opacity-50">
+      <Button variant="primary" type="submit" disabled={sending} className="gap-0 h-11 rounded-xl bg-primary font-bold text-white disabled:opacity-50 hover:bg-primary">
         {sending ? "Đang gửi…" : "Gửi tin nhắn"}
-      </button>
+      </Button>
     </form>
   )
 }

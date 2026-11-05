@@ -114,7 +114,7 @@ export function SalesSessionTable({ sessions, hasMore, isLoadingMore, onLoadMore
                   </td>
                   <td className="px-4 py-3 text-right">
                     <div className="flex items-center justify-end gap-1.5 whitespace-nowrap">
-                      <button
+                      <Button variant="ghost"
                         type="button"
                         disabled={!active}
                         onClick={() => copyLink(row.send_code)}
@@ -122,7 +122,7 @@ export function SalesSessionTable({ sessions, hasMore, isLoadingMore, onLoadMore
                       >
                         {copiedCode === row.send_code ? <Check size={13} className="text-success" /> : <Copy size={13} />}
                         <span>{copiedCode === row.send_code ? "Đã copy" : "Copy link"}</span>
-                      </button>
+                      </Button>
                       <a
                         href={`/b/${row.send_code}`}
                         target="_blank"
@@ -133,16 +133,16 @@ export function SalesSessionTable({ sessions, hasMore, isLoadingMore, onLoadMore
                         <ExternalLink size={14} />
                       </a>
                       {active && !row.order_id && (
-                        <button
+                        <Button variant="ghost"
                           type="button"
                           disabled={revokingId === row.id}
                           onClick={() => void revoke(row)}
                           aria-label={`Thu hồi link ${row.send_code}`}
                           title="Thu hồi link"
-                          className={`${ACTION_BTN} w-8 text-danger`}
+                          className={`h-auto p-0 font-[inherit] gap-0 ${ACTION_BTN} w-8 text-danger`}
                         >
                           <Ban size={14} />
-                        </button>
+                        </Button>
                       )}
                     </div>
                   </td>

@@ -202,7 +202,7 @@ export function OrderDetailFooter({
 
         {target.orderId ? (
           <div className="border-t border-border/60 pt-2">
-            <button
+            <Button variant="outline"
               type="button"
               disabled={!cancellationCheck.allowed}
               title={
@@ -217,7 +217,7 @@ export function OrderDetailFooter({
               {cancellationCheck.allowed
                 ? "Đề xuất Hủy / Hoàn tiền đơn này"
                 : `Không thể đề xuất — ${cancellationCheck.reason}`}
-            </button>
+            </Button>
           </div>
         ) : (
           <div className="border-t border-border/60 pt-2">

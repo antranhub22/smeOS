@@ -1,5 +1,6 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
 import { Textarea } from "@/components/ui/textarea"
 import React, { useState } from "react"
 import { Loader2 } from "@/components/ui/icons"
@@ -53,14 +54,14 @@ export function ChangeDecision({ requestId, changes, note, expectedFeeDeltaVnd, 
         className="min-h-11 rounded-xl border border-border bg-surface px-3 py-2 text-body-sm text-text placeholder:text-text-muted" />
       {error && <p role="alert" className="rounded-lg bg-danger-bg px-3 py-2 text-body-sm text-danger">{error}</p>}
       <div className="flex gap-2">
-        <button type="button" disabled={busy !== null} onClick={() => void decide(true)}
-          className="inline-flex h-11 flex-1 items-center justify-center gap-2 rounded-xl bg-success px-4 text-body-sm font-bold text-white disabled:opacity-40">
+        <Button variant="ghost" type="button" disabled={busy !== null} onClick={() => void decide(true)}
+          className="inline-flex h-11 flex-1 items-center justify-center gap-2 rounded-xl bg-success px-4 text-body-sm font-bold text-white disabled:opacity-40 hover:bg-success">
           {busy === "approve" && <Loader2 size={16} className="animate-spin" aria-hidden="true" />} Đồng ý cập nhật
-        </button>
-        <button type="button" disabled={busy !== null || reply.trim().length < 3} onClick={() => void decide(false)}
-          className="inline-flex h-11 flex-1 items-center justify-center gap-2 rounded-xl bg-danger px-4 text-body-sm font-bold text-white disabled:opacity-40">
+        </Button>
+        <Button variant="ghost" type="button" disabled={busy !== null || reply.trim().length < 3} onClick={() => void decide(false)}
+          className="inline-flex h-11 flex-1 items-center justify-center gap-2 rounded-xl bg-danger px-4 text-body-sm font-bold text-white disabled:opacity-40 hover:bg-danger">
           {busy === "reject" && <Loader2 size={16} className="animate-spin" aria-hidden="true" />} Không đồng ý
-        </button>
+        </Button>
       </div>
     </div>
   )

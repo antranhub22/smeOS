@@ -1,5 +1,6 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
 import { Plus } from "@/components/ui/icons"
@@ -34,7 +35,7 @@ export function ReorderButton({ sendCode, label = "Đặt thêm một đơn khá
 
   return (
     <div className="mt-4 flex w-full flex-col items-center gap-1">
-      <button
+      <Button variant="ghost"
         type="button"
         onClick={() => void start()}
         disabled={busy}
@@ -44,7 +45,7 @@ export function ReorderButton({ sendCode, label = "Đặt thêm một đơn khá
       >
         <Plus size={16} aria-hidden="true" />
         {busy ? "Đang mở đơn mới..." : label}
-      </button>
+      </Button>
       {error && <p role="alert" className="text-caption text-danger">{error}</p>}
     </div>
   )

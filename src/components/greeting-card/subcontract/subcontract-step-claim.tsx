@@ -120,10 +120,10 @@ export function SubcontractStepClaim({
       )}
     >
       {/* Header bar của Bước 1 */}
-      <button
+      <Button variant="ghost"
         type="button"
         onClick={onActivate}
-        className="w-full p-4 flex items-center justify-between text-left border-b border-border/60 bg-surface-muted/30 hover:bg-surface-muted/60 transition-colors cursor-pointer"
+        className="font-[inherit] gap-0 w-full p-4 flex items-center justify-between text-left border-b border-border/60 bg-surface-muted/30 hover:bg-surface-muted/60 transition-colors cursor-pointer"
       >
         <div className="flex items-center gap-2.5">
           <div
@@ -172,7 +172,7 @@ export function SubcontractStepClaim({
             )}
           />
         </div>
-      </button>
+      </Button>
 
       {/* Thân chi tiết của Bước 1 */}
       <div className={cn("p-4 sm:p-5 flex flex-col gap-4", !isActive && isCompleted && "hidden sm:flex")}>

@@ -1,5 +1,6 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
 import { NativeSelect } from "@/components/ui/select"
 import { Input } from "@/components/ui/input"
 import { useState } from "react"
@@ -47,9 +48,9 @@ export function PickOrTypeField(props: {
             className={inputClassName}
           />
           {options.length > 0 && (
-            <button type="button" onClick={() => { setTyping(false); onChange("") }} className="self-start text-caption font-medium text-primary hover:underline">
+            <Button variant="ghost" type="button" onClick={() => { setTyping(false); onChange("") }} className="h-auto p-0 gap-0 self-start text-caption font-medium text-primary hover:underline">
               Chọn từ danh sách
-            </button>
+            </Button>
           )}
         </div>
       ) : (

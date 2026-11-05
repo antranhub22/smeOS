@@ -1,5 +1,6 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { Loader2 } from "@/components/ui/icons"
@@ -30,9 +31,9 @@ export function BrochureClaimGate({ sendCode }: { sendCode: string }) {
       {failed ? (
         <>
           <p className="text-body">Mất kết nối mạng, chưa mở được bộ sưu tập.</p>
-          <button type="button" onClick={() => window.location.reload()} className="h-11 rounded-xl bg-primary px-5 text-body font-bold text-surface">
+          <Button variant="primary" type="button" onClick={() => window.location.reload()} className="gap-0 h-11 rounded-xl bg-primary px-5 text-body font-bold text-surface hover:bg-primary">
             Thử lại
-          </button>
+          </Button>
         </>
       ) : (
         <>

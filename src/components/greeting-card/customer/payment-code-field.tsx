@@ -1,5 +1,6 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import React, { useState } from "react"
 import { CheckCircle2, Wallet } from "@/components/ui/icons"
@@ -48,26 +49,26 @@ export function PaymentCodeField({
           onChange={(e) => setInput(e.target.value.toUpperCase())}
           className={FIELD}
         />
-        <button
+        <Button variant="outline"
           type="button"
           onClick={() => onApply(input.trim())}
           className="h-10 px-3 rounded-lg border border-primary text-primary font-bold text-body-sm whitespace-nowrap flex items-center gap-1.5 hover:bg-primary/5 transition"
         >
           <Wallet size={14} /> {t("greetingCard.customer.options.apply")}
-        </button>
+        </Button>
       </div>
       {error && <span role="alert" className="text-caption text-danger">{error}</span>}
       {value && (
-        <button
+        <Button variant="ghost"
           type="button"
           onClick={() => {
             setInput("")
             onApply("")
           }}
-          className="self-start text-caption text-text-muted underline"
+          className="h-auto p-0 font-[inherit] gap-0 self-start text-caption text-text-muted underline"
         >
           {isEn ? "Remove code, proceed with default" : "Bỏ mã, thanh toán theo mặc định"}
-        </button>
+        </Button>
       )}
       {applied && (
         <div role="status" className="rounded-lg bg-success-bg p-2.5 text-caption text-success flex gap-2">

@@ -153,18 +153,18 @@ export function BrochureOrderDetailModal({ target: inputTarget, onClose, onOpenN
             {/* Tab switcher: Chi tiết · Lịch sử · Thẻ đơn khách · Thẻ gia công/chuẩn bị */}
             <div role="tablist" className="flex shrink-0 items-stretch gap-1 overflow-x-auto px-5">
               {tabs.filter((t) => t.key !== "florist" || canShowFloristJob).map((t) => (
-                <button
+                <Button variant="ghost"
                   key={t.key}
                   type="button"
                   role="tab"
                   aria-selected={activeTab === t.key}
                   onClick={() => setActiveTab(t.key)}
-                  className={`-mb-px inline-flex min-h-11 shrink-0 items-center whitespace-nowrap border-b-2 px-3 text-body-sm font-bold leading-none transition-colors ${
+                  className={`gap-0 -mb-px inline-flex min-h-11 shrink-0 items-center whitespace-nowrap border-b-2 px-3 text-body-sm font-bold leading-none transition-colors ${
                     activeTab === t.key ? "border-primary text-primary" : "border-transparent text-text-muted hover:text-text"
                   }`}
                 >
                   {t.label}
-                </button>
+                </Button>
               ))}
             </div>
           </>

@@ -162,12 +162,12 @@ export function CatalogPoliciesSettings({ catalogId, currentFilters, onSaved }: 
           {policies.promotions.map((p) => {
             const active = selectedPromos.includes(p.id)
             return (
-              <button
+              <Button variant="outline"
                 key={p.id}
                 type="button"
                 onClick={() => togglePromo(p.id)}
-                className={`p-3 rounded-xl border text-left transition-all flex flex-col gap-1 ${
-                  active ? "border-primary bg-primary/5 text-text" : "border-border text-text-muted opacity-60 hover:opacity-100"
+                className={`justify-start font-[inherit] p-3 rounded-xl border text-left transition-all flex flex-col gap-1 ${
+                  active ? "border-primary bg-primary/5 text-text hover:bg-primary/5" : "border-border text-text-muted opacity-60 hover:opacity-100"
                 }`}
               >
                 <div className="flex items-center justify-between font-bold text-caption">
@@ -177,7 +177,7 @@ export function CatalogPoliciesSettings({ catalogId, currentFilters, onSaved }: 
                   </div>
                 </div>
                 <p className="text-caption text-text-muted line-clamp-2">{p.description}</p>
-              </button>
+              </Button>
             )
           })}
         </div>
@@ -193,12 +193,12 @@ export function CatalogPoliciesSettings({ catalogId, currentFilters, onSaved }: 
           {policies.commitments.map((c) => {
             const active = selectedCommits.includes(c.id)
             return (
-              <button
+              <Button variant="outline"
                 key={c.id}
                 type="button"
                 onClick={() => toggleCommit(c.id)}
-                className={`p-3 rounded-xl border text-left transition-all flex flex-col gap-1 ${
-                  active ? "border-success bg-success/5 text-text" : "border-border text-text-muted opacity-60 hover:opacity-100"
+                className={`justify-start font-[inherit] p-3 rounded-xl border text-left transition-all flex flex-col gap-1 ${
+                  active ? "border-success bg-success/5 text-text hover:bg-success/5" : "border-border text-text-muted opacity-60 hover:opacity-100"
                 }`}
               >
                 <div className="flex items-center justify-between font-bold text-caption">
@@ -208,7 +208,7 @@ export function CatalogPoliciesSettings({ catalogId, currentFilters, onSaved }: 
                   </div>
                 </div>
                 <p className="text-caption text-text-muted line-clamp-2">{c.customerText}</p>
-              </button>
+              </Button>
             )
           })}
         </div>
@@ -224,12 +224,12 @@ export function CatalogPoliciesSettings({ catalogId, currentFilters, onSaved }: 
           {policies.agreements.map((a) => {
             const active = selectedAgrees.includes(a.id)
             return (
-              <button
+              <Button variant="outline"
                 key={a.id}
                 type="button"
                 onClick={() => toggleAgree(a.id)}
-                className={`p-3 rounded-xl border text-left transition-all flex flex-col gap-1 ${
-                  active ? "border-warning bg-warning/5 text-text" : "border-border text-text-muted opacity-60 hover:opacity-100"
+                className={`justify-start font-[inherit] p-3 rounded-xl border text-left transition-all flex flex-col gap-1 ${
+                  active ? "border-warning bg-warning/5 text-text hover:bg-warning/5" : "border-border text-text-muted opacity-60 hover:opacity-100"
                 }`}
               >
                 <div className="flex items-center justify-between font-bold text-caption">
@@ -239,7 +239,7 @@ export function CatalogPoliciesSettings({ catalogId, currentFilters, onSaved }: 
                   </div>
                 </div>
                 <p className="text-caption text-text-muted line-clamp-2">{a.customerText}</p>
-              </button>
+              </Button>
             )
           })}
         </div>

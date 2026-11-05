@@ -1,5 +1,6 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { useState } from "react"
 import { Layers, Loader2 } from "@/components/ui/icons"
@@ -34,18 +35,18 @@ export function ExcludeCatalogsFilter({ currentCatalogId, selected, onChange, lo
         <TooltipProvider delayDuration={150}>
           <Tooltip>
             <TooltipTrigger asChild>
-              <button
+              <Button variant="outline"
                 type="button"
                 onClick={() => setOpen((o) => !o)}
                 aria-expanded={open}
                 aria-label={`Không trùng mẫu với bộ sưu tập khác. ${HINT}`}
                 className={`inline-flex min-h-9 items-center gap-1.5 rounded-lg border px-2.5 text-caption font-semibold transition ${
-                  active ? "border-primary bg-primary/10 text-primary" : "border-border bg-surface text-text-muted hover:border-primary/40"
+                  active ? "border-primary bg-primary/10 text-primary hover:bg-primary/10" : "border-border bg-surface text-text-muted hover:border-primary/40 hover:bg-surface"
                 }`}
               >
                 <Layers size={14} aria-hidden="true" />
                 Không trùng với bộ sưu tập khác{active ? ` (${selected.length})` : ""}
-              </button>
+              </Button>
             </TooltipTrigger>
             <TooltipContent className="max-w-72 text-caption">{HINT}</TooltipContent>
           </Tooltip>
@@ -54,9 +55,9 @@ export function ExcludeCatalogsFilter({ currentCatalogId, selected, onChange, lo
           <span className="flex items-center gap-1 text-caption text-text-muted">
             {loading ? <Loader2 size={12} className="animate-spin" aria-hidden="true" /> : null}
             {loading ? "Đang lọc..." : `Đã ẩn ${hiddenCount} mẫu trùng`}
-            <button type="button" onClick={() => onChange([])} className="ml-1 font-medium text-primary hover:underline">
+            <Button variant="ghost" type="button" onClick={() => onChange([])} className="h-auto p-0 gap-0 ml-1 font-medium text-primary hover:underline">
               Bỏ chọn
-            </button>
+            </Button>
           </span>
         )}
       </div>

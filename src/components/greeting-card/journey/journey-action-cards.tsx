@@ -119,14 +119,14 @@ export function JourneyActionCards({
           </div>
 
           <div className="mt-5 pt-3.5 border-t border-border flex items-center justify-between">
-            <button
+            <Button variant="ghost"
               type="button"
               onClick={onStartCreateCatalog}
-              className="text-body-sm font-bold text-primary inline-flex items-center gap-1.5 hover:underline"
+              className="h-auto p-0 text-body-sm font-bold text-primary inline-flex items-center gap-1.5 hover:underline"
             >
               <span>{catalogCount === 0 ? "Tạo bộ sưu tập đầu tiên" : `Quản lý & Thêm ${ti("sampleProduct").toLowerCase()}`}</span>
               <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
-            </button>
+            </Button>
             {catalogCount > 0 && (
               <span className="inline-flex items-center gap-1 text-caption text-success font-medium">
                 <CheckCircle2 size={13} />
@@ -166,11 +166,11 @@ export function JourneyActionCards({
           </div>
 
           <div className="mt-5 pt-3.5 border-t border-border flex items-center justify-between">
-            <button
+            <Button variant="ghost"
               type="button"
               onClick={onStartCreateLink}
               disabled={hasNoCatalog}
-              className={`text-body-sm font-bold inline-flex items-center gap-1.5 ${
+              className={`h-auto p-0 text-body-sm font-bold inline-flex items-center gap-1.5 ${
                 hasNoCatalog
                   ? "text-text-muted cursor-not-allowed"
                   : "text-primary hover:underline"
@@ -178,7 +178,7 @@ export function JourneyActionCards({
             >
               <span>{hasNoCatalog ? "Cần tạo catalog trước" : "Tạo link gửi khách ngay"}</span>
               {!hasNoCatalog && <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />}
-            </button>
+            </Button>
             <span className="text-caption text-text-muted font-medium">
               {sessionCount} link đã tạo
             </span>
@@ -209,14 +209,14 @@ export function JourneyActionCards({
           </div>
 
           <div className="mt-5 pt-3.5 border-t border-border flex items-center justify-between">
-            <button
+            <Button variant="ghost"
               type="button"
               onClick={onViewPayments}
-              className="text-body-sm font-bold text-primary inline-flex items-center gap-1.5 hover:underline"
+              className="h-auto p-0 text-body-sm font-bold text-primary inline-flex items-center gap-1.5 hover:underline"
             >
               <span>Vào trang đối soát thanh toán</span>
               <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
-            </button>
+            </Button>
           </div>
         </div>
       </div>

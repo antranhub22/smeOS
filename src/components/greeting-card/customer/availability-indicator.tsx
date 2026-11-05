@@ -1,5 +1,6 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
 import React from "react"
 import { CheckCircle2, AlertCircle, CalendarX, Sparkles, Loader2 } from "@/components/ui/icons"
 import type { AvailabilityMode } from "@/modules/greeting-card/domain/product-availability-config"
@@ -68,14 +69,14 @@ export function AvailabilityIndicator({
         {nextAvailableDate && onSelectDate && (
           <div className="flex items-center justify-between pt-1 border-t border-danger/20">
             <span className="text-caption font-medium">{isEn ? "Nearest available date:" : "Gợi ý ngày trống gần nhất:"}</span>
-            <button
+            <Button variant="ghost"
               type="button"
               onClick={() => onSelectDate(nextAvailableDate)}
-              className="inline-flex items-center gap-1 font-bold underline underline-offset-2 hover:opacity-80 transition"
+              className="h-auto p-0 inline-flex items-center gap-1 font-bold underline underline-offset-2 hover:opacity-80 transition"
             >
               <Sparkles size={12} />
               {nextAvailableDate}
-            </button>
+            </Button>
           </div>
         )}
       </div>

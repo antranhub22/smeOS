@@ -1,5 +1,6 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
 import { NativeSelect } from "@/components/ui/select"
 import { Input } from "@/components/ui/input"
 import React, { useState } from "react"
@@ -107,14 +108,14 @@ export function TrackingToolbar({ state, onChange, onApplyView, onRefresh }: Pro
               className="h-9 w-full rounded-xl border border-border bg-surface-alt pl-8 pr-7 text-caption text-text placeholder:text-text-muted focus:border-primary focus:bg-surface focus:outline-hidden"
             />
             {state.q && (
-              <button
+              <Button variant="ghost"
                 type="button"
                 aria-label="Xoá tìm kiếm"
                 onClick={() => onChange({ q: "" })}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-text-muted hover:text-text"
+                className="h-auto p-0 font-[inherit] gap-0 absolute right-2.5 top-1/2 -translate-y-1/2 text-text-muted hover:text-text"
               >
                 <X size={13} aria-hidden="true" />
-              </button>
+              </Button>
             )}
           </div>
 
@@ -149,12 +150,12 @@ export function TrackingToolbar({ state, onChange, onApplyView, onRefresh }: Pro
           </NativeSelect>
 
           {/* NÚT BẬT/TẮT BỘ LỌC NÂNG CAO */}
-          <button
+          <Button variant="outline"
             type="button"
             onClick={() => setShowAdvanced(!showAdvanced)}
             className={`inline-flex h-9 items-center gap-1.5 rounded-xl border px-2.5 text-caption font-semibold transition-colors ${
               showAdvanced || advancedCount > 0
-                ? "border-primary bg-primary/10 text-primary"
+                ? "border-primary bg-primary/10 text-primary hover:bg-primary/10"
                 : "border-border text-text-muted hover:bg-surface-muted hover:text-text"
             }`}
           >
@@ -165,7 +166,7 @@ export function TrackingToolbar({ state, onChange, onApplyView, onRefresh }: Pro
                 {advancedCount}
               </span>
             )}
-          </button>
+          </Button>
         </div>
 
         {/* CỤM BÊN PHẢI: VIEW SWITCHER + REFRESH */}
@@ -180,33 +181,33 @@ export function TrackingToolbar({ state, onChange, onApplyView, onRefresh }: Pro
               const Icon = VIEW_ICONS[t.id]
               const active = state.view === t.id
               return (
-                <button
+                <Button variant="ghost"
                   key={t.id}
                   type="button"
                   role="tab"
                   aria-selected={active}
                   onClick={() => onChange({ view: t.id })}
                   className={`inline-flex h-8 items-center gap-1 rounded-lg px-2.5 text-caption font-bold transition-all ${
-                    active ? "bg-surface text-primary shadow-xs" : "text-text-muted hover:text-text"
+                    active ? "bg-surface text-primary shadow-xs hover:bg-surface" : "text-text-muted hover:text-text"
                   }`}
                   title={t.label}
                 >
                   <Icon size={13} />
                   <span className="hidden sm:inline">{t.label}</span>
-                </button>
+                </Button>
               )
             })}
           </div>
 
           {onRefresh && (
-            <button
+            <Button variant="outline"
               type="button"
               onClick={onRefresh}
               title="Làm mới tiến độ"
-              className="inline-flex h-9 w-9 items-center justify-center rounded-xl border border-border text-text-muted hover:bg-surface-muted hover:text-text"
+              className="font-[inherit] gap-0 inline-flex h-9 w-9 items-center justify-center rounded-xl border border-border text-text-muted hover:bg-surface-muted hover:text-text"
             >
               <RefreshCw size={14} />
-            </button>
+            </Button>
           )}
         </div>
       </div>
@@ -216,32 +217,32 @@ export function TrackingToolbar({ state, onChange, onApplyView, onRefresh }: Pro
         <Bookmark size={13} className="text-text-muted shrink-0 ml-1" />
         {[...presetViews(organization?.industry), ...saved].map((v) => (
           <span key={v.id} className="inline-flex items-center rounded-lg border border-border bg-surface-alt">
-            <button
+            <Button variant="ghost"
               type="button"
               onClick={() => onApplyView(v)}
-              className="px-2 py-0.5 font-medium text-text hover:text-primary transition-colors text-caption"
+              className="gap-0 px-2 py-0.5 font-medium text-text hover:text-primary transition-colors text-caption"
             >
               {v.name}
-            </button>
+            </Button>
             {v.id.startsWith("u-") && (
-              <button
+              <Button variant="ghost"
                 type="button"
                 aria-label={`Xoá view ${v.name}`}
                 onClick={() => remove(v.id)}
-                className="pr-1.5 text-text-muted hover:text-danger"
+                className="h-auto p-0 font-[inherit] gap-0 pr-1.5 text-text-muted hover:text-danger"
               >
                 <Trash2 size={11} aria-hidden="true" />
-              </button>
+              </Button>
             )}
           </span>
         ))}
-        <button
+        <Button variant="outline"
           type="button"
           onClick={saveCurrent}
-          className="rounded-lg border border-dashed border-primary/50 px-2 py-0.5 text-caption font-semibold text-primary hover:bg-primary/5"
+          className="gap-0 rounded-lg border border-dashed border-primary/50 px-2 py-0.5 text-caption font-semibold text-primary hover:bg-primary/5"
         >
           + Lưu view
-        </button>
+        </Button>
       </div>
 
       {/* BỘ LỌC NÂNG CAO (Chỉ hiện khi nhấn "Lọc thêm") */}

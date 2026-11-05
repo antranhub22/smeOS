@@ -1,5 +1,6 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
 import React from "react"
 import {
   ExternalLink,
@@ -69,23 +70,23 @@ export function TrackingStepperView({
               {/* Step Item */}
               <div className="flex flex-col items-center relative group flex-1">
                 {/* Node Button */}
-                <button
+                <Button variant="ghost"
                   type="button"
                   onClick={() => onSelectStepNote?.(step.id)}
                   title={`${step.title} (${step.roleResponsible}) — Nhấp để xem/thêm ghi chú nội bộ`}
-                  className={`relative z-10 w-9 h-9 rounded-full flex items-center justify-center transition-all ${
+                  className={`font-[inherit] gap-0 relative z-10 w-9 h-9 rounded-full flex items-center justify-center transition-all ${
                     isCompleted
-                      ? "bg-success text-white shadow-xs hover:scale-105"
+                      ? "bg-success text-white shadow-xs hover:scale-105 hover:bg-success"
                       : isCurrent && stuck
-                      ? "bg-danger text-white ring-4 ring-danger/20 shadow-sm"
+                      ? "bg-danger text-white ring-4 ring-danger/20 shadow-sm hover:bg-danger"
                       : isCurrent
-                      ? "bg-primary text-white ring-4 ring-primary/20 shadow-sm animate-pulse"
-                      : "bg-surface border border-border text-text-muted hover:border-primary/50"
+                      ? "bg-primary text-white ring-4 ring-primary/20 shadow-sm animate-pulse hover:bg-primary"
+                      : "bg-surface border border-border text-text-muted hover:border-primary/50 hover:bg-surface"
                   }`}
                 >
                   {isCompleted ? <CheckCircle2 size={16} /> : getStepIcon(step.id, 16)}
 
-                </button>
+                </Button>
 
                 {/* Step Info */}
                 <div className="flex flex-col items-center text-center mt-2 px-0.5 w-full">
@@ -110,14 +111,14 @@ export function TrackingStepperView({
                   })()}
 
                   {/* Gợi ý mở note */}
-                  <button
+                  <Button variant="ghost"
                     type="button"
                     onClick={() => onSelectStepNote?.(step.id)}
-                    className="mt-1 opacity-0 group-hover:opacity-100 transition-opacity inline-flex items-center gap-0.5 text-caption text-primary hover:underline"
+                    className="h-auto p-0 font-[inherit] mt-1 opacity-0 group-hover:opacity-100 transition-opacity inline-flex items-center gap-0.5 text-caption text-primary hover:underline"
                   >
                     <MessageSquare size={10} />
                     <span>Lưu ý</span>
-                  </button>
+                  </Button>
                 </div>
               </div>
 

@@ -105,13 +105,13 @@ export function StepCatalog(props: StepCatalogProps) {
           {catalogs.map((cat) => {
             const selected = cat.id === selectedId
             return (
-              <button
+              <Button variant="outline"
                 key={cat.id}
                 type="button"
                 role="radio"
                 aria-checked={selected}
                 onClick={() => props.onSelect(cat)}
-                className={cn(
+                className={cn("font-[inherit]", 
                   "flex items-start justify-between gap-3 rounded-xl border p-4 text-left transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
                   selected ? "border-primary bg-selected ring-1 ring-primary" : "border-border bg-surface hover:border-primary/40",
                 )}
@@ -141,7 +141,7 @@ export function StepCatalog(props: StepCatalogProps) {
                 >
                   {selected && <Check size={12} />}
                 </span>
-              </button>
+              </Button>
             )
           })}
         </div>

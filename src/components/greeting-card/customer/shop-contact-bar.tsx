@@ -1,5 +1,6 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
 import { Dialog } from "@/components/ui/dialog"
 import { useState, useEffect } from "react"
 import { ChevronDown, MessageCircle, QrCode } from "@/components/ui/icons"
@@ -45,17 +46,17 @@ export function ShopContactBar({ shop, inquiry }: ShopContactBarProps) {
     <>
       <header className="sticky top-0 z-30 w-full border-b border-border bg-surface/95 backdrop-blur">
         <div className="mx-auto flex h-14 max-w-md items-center gap-2.5 px-4">
-          <button
+          <Button variant="ghost"
             type="button"
             onClick={() => setInfoSection("info")}
             aria-haspopup="dialog"
             aria-label={`Thông tin cửa hàng ${shop.name}`}
-            className="flex min-h-11 min-w-0 flex-1 items-center gap-2.5 rounded-full text-left"
+            className="justify-start font-[inherit] flex min-h-11 min-w-0 flex-1 items-center gap-2.5 rounded-full text-left"
           >
             <ShopLogo shop={shop} />
             <span className="min-w-0 truncate text-body font-bold text-text">{shop.name}</span>
             <ChevronDown size={16} className="shrink-0 text-text-muted" aria-hidden="true" />
-          </button>
+          </Button>
 
           {/* Nút chuyển đổi ngôn ngữ khi cửa hàng bật tính năng này */}
           {showLanguageToggle && (
@@ -64,7 +65,7 @@ export function ShopContactBar({ shop, inquiry }: ShopContactBarProps) {
 
           {/* Nút xem QR Code Zalo (từ hồ sơ cửa hàng) */}
           {qrImageUrl && (
-            <button
+            <Button variant="outline"
               type="button"
               onClick={() => setShowQrModal(true)}
               aria-label="Mã QR Zalo"
@@ -72,7 +73,7 @@ export function ShopContactBar({ shop, inquiry }: ShopContactBarProps) {
             >
               <QrCode size={16} aria-hidden="true" />
               <span>Mã QR</span>
-            </button>
+            </Button>
           )}
 
           {/* Nút Chat Zalo */}

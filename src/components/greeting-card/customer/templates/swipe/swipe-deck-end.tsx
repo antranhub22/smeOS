@@ -1,5 +1,6 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
 import { useState } from "react"
 import { Heart, MessageCircle, Palette, RefreshCw, RotateCcw, Tags } from "@/components/ui/icons"
 import type { GreetingCatalogProduct } from "@/modules/greeting-card/domain/greeting-card-types"
@@ -63,14 +64,14 @@ export function SwipeDeckEnd({
                 <ProductImage product={p} backdrop={photoBackdrop(theme)} />
               </span>
               <ProductInfo product={p} level="compact" size="sm" accent={light ? theme.ctaBg : theme.accent} titleClassName="font-semibold" className="flex-1" />
-              <button
+              <Button variant="ghost"
                 type="button"
                 onClick={() => onOrder(p)}
-                className="h-11 shrink-0 rounded-xl px-4 text-body-sm font-bold"
+                className="gap-0 h-11 shrink-0 rounded-xl px-4 text-body-sm font-bold"
                 style={{ background: theme.ctaBg, color: theme.ctaText }}
               >
                 Đặt mẫu
-              </button>
+              </Button>
             </li>
           ))}
         </ul>
@@ -85,15 +86,15 @@ export function SwipeDeckEnd({
           {pickingPrice && (
             <div className="flex flex-wrap gap-2" role="group" aria-label="Khoảng giá">
               {priceRanges.map((r) => (
-                <button
+                <Button variant="outline"
                   key={r.key}
                   type="button"
                   onClick={() => onPickPriceRange?.(r.key)}
-                  className="h-10 rounded-full border px-3 text-body-sm font-semibold"
+                  className="gap-0 h-10 rounded-full border px-3 text-body-sm font-semibold"
                   style={{ borderColor: line, background: panel }}
                 >
                   {r.label} · {r.count}
-                </button>
+                </Button>
               ))}
             </div>
           )}
@@ -103,7 +104,7 @@ export function SwipeDeckEnd({
       )}
 
       <div className="mt-auto grid grid-cols-2 gap-2">
-        <button
+        <Button variant="outline"
           type="button"
           onClick={onRewind}
           className="flex h-12 items-center justify-center gap-2 rounded-2xl border text-body-sm font-semibold"
@@ -111,8 +112,8 @@ export function SwipeDeckEnd({
         >
           <RotateCcw size={16} aria-hidden="true" />
           Quay lại mẫu cuối
-        </button>
-        <button
+        </Button>
+        <Button variant="outline"
           type="button"
           onClick={onRestart}
           className="flex h-12 items-center justify-center gap-2 rounded-2xl border text-body-sm font-semibold"
@@ -120,7 +121,7 @@ export function SwipeDeckEnd({
         >
           <RefreshCw size={16} aria-hidden="true" />
           Xem lại từ đầu
-        </button>
+        </Button>
       </div>
     </section>
   )
@@ -129,7 +130,7 @@ export function SwipeDeckEnd({
 function EndOption(props: { label: string; icon: typeof Heart; line: string; panel: string; onClick: () => void }) {
   const Icon = props.icon
   return (
-    <button
+    <Button variant="outline"
       type="button"
       onClick={props.onClick}
       className="flex h-12 items-center gap-3 rounded-2xl border px-4 text-body-sm font-semibold"
@@ -137,6 +138,6 @@ function EndOption(props: { label: string; icon: typeof Heart; line: string; pan
     >
       <Icon size={18} aria-hidden="true" />
       {props.label}
-    </button>
+    </Button>
   )
 }

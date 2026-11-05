@@ -122,15 +122,15 @@ export function StaffNotifySettings() {
                 const isAllowed = saasAllowed.has(ch) || ch === "APP_INBOX"
                 const isChecked = activeChannels.includes(ch)
                 return (
-                  <button
+                  <Button variant="outline"
                     key={ch}
                     type="button"
                     disabled={!isAllowed || ch === "APP_INBOX"}
                     onClick={() => toggleChannel(ch)}
-                    className={`flex items-center justify-between rounded-xl border p-3 text-left transition-all ${
+                    className={`font-[inherit] gap-0 flex items-center justify-between rounded-xl border p-3 text-left transition-all ${
                       isChecked
-                        ? "border-primary bg-primary/5 text-text"
-                        : "border-border bg-bg text-text-muted"
+                        ? "border-primary bg-primary/5 text-text hover:bg-primary/5"
+                        : "border-border bg-bg text-text-muted hover:bg-bg"
                     } ${!isAllowed ? "cursor-not-allowed opacity-40" : "cursor-pointer"}`}
                   >
                     <div>
@@ -138,7 +138,7 @@ export function StaffNotifySettings() {
                       {!isAllowed && <div className="text-caption text-danger">Chưa cấp phép SaaS</div>}
                     </div>
                     {isChecked && <ShieldCheck size={16} className="text-primary" />}
-                  </button>
+                  </Button>
                 )
               })}
             </div>

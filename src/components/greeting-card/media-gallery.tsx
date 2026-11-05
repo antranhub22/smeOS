@@ -35,11 +35,11 @@ export function MediaGallery({ urls, label }: { urls: readonly string[]; label: 
       <ul className="grid grid-cols-3 gap-2" aria-label={label}>
         {urls.map((url, i) => (
           <li key={url}>
-            <button
+            <Button variant="outline"
               type="button"
               onClick={() => setOpen(i)}
               aria-label={`${label} — xem ${isVideoUrl(url) ? "video" : "ảnh"} ${i + 1}/${urls.length}`}
-              className="relative block aspect-square w-full overflow-hidden rounded-lg border border-border bg-surface-muted"
+              className="h-auto p-0 font-[inherit] gap-0 relative block aspect-square w-full overflow-hidden rounded-lg border border-border bg-surface-muted hover:bg-surface-muted"
             >
               {isVideoUrl(url) ? (
                 <>
@@ -52,7 +52,7 @@ export function MediaGallery({ urls, label }: { urls: readonly string[]; label: 
                 // eslint-disable-next-line @next/next/no-img-element
                 <img src={url} alt="" loading="lazy" className="h-full w-full object-cover" />
               )}
-            </button>
+            </Button>
           </li>
         ))}
       </ul>

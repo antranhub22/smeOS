@@ -1,5 +1,6 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
 import React, { useMemo } from "react"
 import { availableValues, matchOption, type SellableOption } from "@/modules/products/domain/product-pricing"
 
@@ -47,18 +48,18 @@ export function VariantStepPicker({ dimensions, variants, value, onChange, error
                 const on = picked[i] === v
                 const ok = avail.has(v)
                 return (
-                  <button
+                  <Button variant="outline"
                     key={v}
                     type="button"
                     aria-pressed={on}
                     disabled={!ok && !on}
                     onClick={() => pick(i, v)}
-                    className={`min-h-10 rounded-full border px-4 text-body-sm font-semibold transition-colors disabled:opacity-40 disabled:line-through ${
-                      on ? "border-primary bg-primary/10 text-primary" : "border-border bg-bg text-text"
+                    className={`gap-0 min-h-10 rounded-full border px-4 text-body-sm font-semibold transition-colors disabled:opacity-40 disabled:line-through ${
+                      on ? "border-primary bg-primary/10 text-primary hover:bg-primary/10" : "border-border bg-bg text-text hover:bg-bg"
                     }`}
                   >
                     {v}
-                  </button>
+                  </Button>
                 )
               })}
             </div>

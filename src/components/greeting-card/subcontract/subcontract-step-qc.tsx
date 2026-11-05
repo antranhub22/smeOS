@@ -166,11 +166,11 @@ export function SubcontractStepQc({
       )}
     >
       {/* Header bar của Bước 2 */}
-      <button
+      <Button variant="ghost"
         type="button"
         onClick={onActivate}
         disabled={!isUnlocked}
-        className="w-full p-4 flex items-center justify-between text-left border-b border-border/60 bg-surface-muted/30 hover:bg-surface-muted/60 transition-colors cursor-pointer disabled:cursor-not-allowed"
+        className="font-[inherit] gap-0 w-full p-4 flex items-center justify-between text-left border-b border-border/60 bg-surface-muted/30 hover:bg-surface-muted/60 transition-colors cursor-pointer disabled:cursor-not-allowed"
       >
         <div className="flex items-center gap-2.5">
           <div
@@ -227,7 +227,7 @@ export function SubcontractStepQc({
             )}
           />
         </div>
-      </button>
+      </Button>
 
       {/* Thân chi tiết Bước 2 */}
       <div className={cn("p-4 sm:p-5 flex flex-col gap-4", !isActive && "hidden")}>

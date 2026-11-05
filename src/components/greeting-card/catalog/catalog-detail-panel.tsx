@@ -87,14 +87,14 @@ export function CatalogDetailPanel({ catalogId, catalogName, onBack }: Props) {
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-surface p-5 rounded-2xl border border-border shadow-sm">
         <div className="flex items-center gap-3">
-          <button
+          <Button variant="outline"
             type="button"
             onClick={onBack}
             aria-label="Quay lại danh sách bộ sưu tập"
-            className="p-2 rounded-xl border border-border hover:bg-surface-muted transition-colors text-text-muted hover:text-text"
+            className="font-[inherit] gap-0 p-2 rounded-xl border border-border hover:bg-surface-muted transition-colors text-text-muted hover:text-text"
           >
             <ArrowLeft size={16} />
-          </button>
+          </Button>
           <div>
             <h2 className="text-title font-extrabold text-text">{catalogName}</h2>
             <p className="text-body-sm text-text-muted">
@@ -186,16 +186,16 @@ export function CatalogDetailPanel({ catalogId, catalogName, onBack }: Props) {
                           <p className="text-caption text-text-muted italic">Liên hệ báo giá</p>
                         )}
                       </div>
-                      <button
+                      <Button variant="ghost"
                         type="button"
                         onClick={() => void handleAddProduct(product.id)}
                         disabled={addingId === product.id}
-                        className="p-2 rounded-lg bg-primary/10 hover:bg-primary/20 text-primary transition-colors shrink-0"
+                        className="font-[inherit] gap-0 p-2 rounded-lg bg-primary/10 hover:bg-primary/20 text-primary transition-colors shrink-0"
                       >
                         {addingId === product.id
                           ? <Loader2 size={16} className="animate-spin" />
                           : <Plus size={16} />}
-                      </button>
+                      </Button>
                     </div>
                   )
                 })
@@ -251,17 +251,17 @@ export function CatalogDetailPanel({ catalogId, catalogName, onBack }: Props) {
                       {item.sort_order + 1}
                     </span>
                   </div>
-                  {canEdit && <button
+                  {canEdit && <Button variant="ghost"
                     type="button"
                     onClick={() => void handleRemoveProduct(item.product.id)}
                     disabled={removingId === item.product.id}
                     aria-label={`Xóa ${item.product.name} khỏi bộ sưu tập`}
-                    className="absolute top-2 right-2 p-1.5 rounded-lg bg-black/50 hover:bg-danger/80 text-white"
+                    className="font-[inherit] gap-0 absolute top-2 right-2 p-1.5 rounded-lg bg-black/50 hover:bg-danger/80 text-white"
                   >
                     {removingId === item.product.id
                       ? <Loader2 size={12} className="animate-spin" />
                       : <Trash2 size={12} />}
-                  </button>}
+                  </Button>}
                 </div>
                 <div className="p-3 flex flex-col gap-1">
                   <p className="text-caption font-bold text-text line-clamp-2 leading-tight">
@@ -278,14 +278,14 @@ export function CatalogDetailPanel({ catalogId, catalogName, onBack }: Props) {
           })}
 
           {/* Add More Card */}
-          {canEdit && <button
+          {canEdit && <Button variant="ghost"
             type="button"
             onClick={() => void openAddProduct()}
-            className="aspect-square rounded-xl border-2 border-dashed border-border hover:border-primary/50 hover:bg-primary/5 transition-all duration-200 flex flex-col items-center justify-center gap-2 text-text-muted hover:text-primary"
+            className="h-auto p-0 font-[inherit] aspect-square rounded-xl border-2 border-dashed border-border hover:border-primary/50 hover:bg-primary/5 transition-all duration-200 flex flex-col items-center justify-center gap-2 text-text-muted hover:text-primary"
           >
             <Plus size={24} />
             <span className="text-caption font-bold">Thêm mẫu</span>
-          </button>}
+          </Button>}
         </div>
       )}
 

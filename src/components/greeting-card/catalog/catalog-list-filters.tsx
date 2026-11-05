@@ -1,5 +1,6 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
 import { NativeSelect } from "@/components/ui/select"
 import React from "react"
 import { Archive, Filter, User } from "@/components/ui/icons"
@@ -31,25 +32,25 @@ export function CatalogListFilters({
           <span>Xem:</span>
         </span>
         <div className="inline-flex rounded-lg border border-border bg-surface p-0.5">
-          <button
+          <Button variant="ghost"
             type="button"
             onClick={() => setStatusFilter("active")}
-            className={`px-3 py-1 text-caption font-bold rounded-md transition-colors ${
-              statusFilter === "active" ? "bg-primary text-white shadow-xs" : "text-text-muted hover:text-text"
+            className={`gap-0 px-3 py-1 text-caption font-bold rounded-md transition-colors ${
+              statusFilter === "active" ? "bg-primary text-white shadow-xs hover:bg-primary" : "text-text-muted hover:text-text"
             }`}
           >
             Đang hoạt động
-          </button>
-          <button
+          </Button>
+          <Button variant="ghost"
             type="button"
             onClick={() => setStatusFilter("archived")}
             className={`px-3 py-1 text-caption font-bold rounded-md transition-colors flex items-center gap-1 ${
-              statusFilter === "archived" ? "bg-danger-bg text-danger shadow-xs" : "text-text-muted hover:text-text"
+              statusFilter === "archived" ? "bg-danger-bg text-danger shadow-xs hover:bg-danger-bg" : "text-text-muted hover:text-text"
             }`}
           >
             <Archive size={12} />
             <span>Đã ẩn</span>
-          </button>
+          </Button>
         </div>
       </div>
 

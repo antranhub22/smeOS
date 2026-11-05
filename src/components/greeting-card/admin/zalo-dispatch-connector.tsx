@@ -108,15 +108,15 @@ export function ZaloDispatchConnector() {
                     )}
                   </div>
                 </div>
-                <button
+                <Button variant="outline"
                   type="button"
                   onClick={() => copy(b.linkCode)}
-                  className="font-mono text-body-sm font-bold px-3 py-1.5 rounded-lg bg-surface-muted border border-border inline-flex items-center gap-1.5 shrink-0"
+                  className="font-mono text-body-sm font-bold px-3 py-1.5 rounded-lg bg-surface-muted border border-border inline-flex items-center gap-1.5 shrink-0 hover:bg-surface-muted"
                   aria-label={`Sao chép mã liên kết của ${b.name}`}
                 >
                   {b.linkCode}
                   {copied === b.linkCode ? <CheckCircle2 size={14} className="text-success" /> : <Copy size={14} />}
-                </button>
+                </Button>
               </div>
             ))}
             {branches.length === 0 && (

@@ -16,7 +16,7 @@ export function BrochureUserGuideModal() {
 
   return (
     <>
-      <button
+      <Button variant="outline"
         type="button"
         onClick={() => setOpen(true)}
         aria-expanded={open}
@@ -31,7 +31,7 @@ export function BrochureUserGuideModal() {
       >
         <HelpCircle size={16} className={open ? "text-primary" : "text-text-muted"} aria-hidden="true" />
         <span className="hidden sm:inline">Hướng dẫn thẻ chào</span>
-      </button>
+      </Button>
 
       {open && (
         <Dialog open onOpenChange={(o) => { if (!o) setOpen(false) }} size="lg"
@@ -39,7 +39,7 @@ export function BrochureUserGuideModal() {
           <div className="-m-5 sm:-m-6 flex flex-col">
             {/* Role Tabs */}
             <div className="flex border-b border-border bg-surface-alt px-5 pt-2">
-              <button
+              <Button variant="ghost"
                 type="button"
                 onClick={() => setActiveTab("admin")}
                 className={`flex items-center gap-1.5 border-b-2 px-3 py-2.5 text-body-sm font-bold transition-colors ${
@@ -50,8 +50,8 @@ export function BrochureUserGuideModal() {
               >
                 <Shield size={16} />
                 <span>Điều hành và kế toán</span>
-              </button>
-              <button
+              </Button>
+              <Button variant="ghost"
                 type="button"
                 onClick={() => setActiveTab("sales")}
                 className={`flex items-center gap-1.5 border-b-2 px-3 py-2.5 text-body-sm font-bold transition-colors ${
@@ -62,8 +62,8 @@ export function BrochureUserGuideModal() {
               >
                 <Users size={16} />
                 <span>Nhân viên bán hàng</span>
-              </button>
-              <button
+              </Button>
+              <Button variant="ghost"
                 type="button"
                 onClick={() => setActiveTab("coordinator")}
                 className={`flex items-center gap-1.5 border-b-2 px-3 py-2.5 text-body-sm font-bold transition-colors ${
@@ -74,7 +74,7 @@ export function BrochureUserGuideModal() {
               >
                 <Sparkles size={16} />
                 <span>Điều phối & {ti("makerTitle")}</span>
-              </button>
+              </Button>
             </div>
 
             {/* Nội dung chi tiết theo tab */}

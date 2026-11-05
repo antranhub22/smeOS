@@ -1,5 +1,6 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
 import { NativeSelect } from "@/components/ui/select"
 import React, { useState } from "react"
 import { Plus, X } from "@/components/ui/icons"
@@ -38,14 +39,14 @@ export function CompactOrderNotes({
     <>
       {open.map((kind) => (
         <div key={kind} className="relative rounded-xl border border-border bg-bg p-3">
-          <button
+          <Button variant="ghost"
             type="button"
             onClick={() => remove(kind)}
             aria-label={`Bỏ ô ${orderNoteLabel(kind, industryKey).toLowerCase()}`}
-            className="absolute right-2 top-2 rounded-md p-1 text-text-muted transition hover:bg-surface-muted hover:text-text"
+            className="font-[inherit] gap-0 absolute right-2 top-2 rounded-md p-1 text-text-muted transition hover:bg-surface-muted hover:text-text"
           >
             <X size={16} aria-hidden="true" />
-          </button>
+          </Button>
           <OrderNoteField
             kind={kind}
             idPrefix={idPrefix}

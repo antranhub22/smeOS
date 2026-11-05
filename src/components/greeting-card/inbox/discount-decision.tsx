@@ -1,5 +1,6 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Textarea } from "@/components/ui/textarea"
 import { Input } from "@/components/ui/input"
@@ -78,12 +79,12 @@ export function DiscountDecision({ requestId, baseTotalVnd, requestedVnd, percen
         placeholder={choice === "REJECT" ? "Lý do không duyệt (bắt buộc)" : "Ghi chú cho sale (vd. Duyệt 5% thay vì 10%)"}
         className="min-h-11 rounded-xl border border-border bg-surface px-3 py-2 text-body-sm text-text placeholder:text-text-muted" />
       {error && <p role="alert" className="rounded-lg bg-danger-bg px-3 py-2 text-body-sm text-danger">{error}</p>}
-      <button type="button" onClick={() => void submit()}
+      <Button variant="ghost" type="button" onClick={() => void submit()}
         disabled={(choice === "OTHER" && !(Number(otherPercent) >= 1)) || (choice === "REJECT" && note.trim().length < 3)}
-        className={`inline-flex h-11 items-center justify-center gap-2 rounded-xl px-4 text-body-sm font-bold text-white disabled:opacity-40 ${choice === "REJECT" ? "bg-danger" : "bg-success"}`}>
+        className={`inline-flex h-11 items-center justify-center gap-2 rounded-xl px-4 text-body-sm font-bold text-white disabled:opacity-40 ${choice === "REJECT" ? "bg-danger hover:bg-danger" : "bg-success hover:bg-success"}`}>
         {busy && <Loader2 size={16} className="animate-spin" aria-hidden="true" />}
         {choice === "REJECT" ? "Xác nhận không duyệt" : "Xác nhận duyệt"}
-      </button>
+      </Button>
     </fieldset>
   )
 }

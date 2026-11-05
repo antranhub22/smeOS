@@ -97,9 +97,9 @@ export function SalesCreateLinkModal({ catalogs, onClose, onCreated, onNavigateT
                 <span className="p-3 bg-warning-bg/50 border border-warning/30 rounded-xl text-body-sm text-text flex flex-col gap-2">
                   Chưa có {catalogHeading} nào. Cần tạo {catalogHeading} trước!
                   {onNavigateToCatalog && (
-                    <button type="button" onClick={() => { onClose(); onNavigateToCatalog() }} className="text-primary font-bold underline text-left">
+                    <Button variant="ghost" type="button" onClick={() => { onClose(); onNavigateToCatalog() }} className="h-auto p-0 justify-start gap-0 text-primary font-bold underline text-left">
                       → Đến trang tạo {catalogTitleCap} ngay
-                    </button>
+                    </Button>
                   )}
                 </span>
               ) : (

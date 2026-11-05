@@ -1,5 +1,6 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
 import React from "react"
 import { usePagedList, useApi } from "@/components/greeting-card/greeting-api"
 import { formatMinutes } from "@/modules/greeting-card/domain/step-sla"
@@ -62,9 +63,9 @@ function HistoryContent({ refQs }: { refQs: string }) {
           ))}
         </ul>
         {events.hasMore && (
-          <button type="button" onClick={() => void events.loadMore()} className="min-h-11 rounded-xl border border-border bg-surface text-body-sm font-semibold">
+          <Button variant="outline" type="button" onClick={() => void events.loadMore()} className="gap-0 min-h-11 rounded-xl border border-border bg-surface text-body-sm font-semibold hover:bg-surface">
             {events.isLoadingMore ? "Đang tải..." : "Tải thêm"}
-          </button>
+          </Button>
         )}
       </section>
     </div>

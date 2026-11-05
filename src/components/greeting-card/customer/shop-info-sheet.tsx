@@ -1,5 +1,6 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
 import { BottomSheet } from "@/components/ui/bottom-sheet"
 import React, { useState } from "react"
 import { ChevronDown, Globe, Mail, MapPin, Phone, ShieldCheck } from "@/components/ui/icons"
@@ -90,12 +91,12 @@ export function ShopInfoContent({ shop, section }: { shop: ShopContact; section:
 
         {commitments.length > 0 && (
           <div className="mt-3 rounded-2xl border border-success/20 bg-success/5">
-            <button type="button" aria-expanded={showCommitments} onClick={() => setShowCommitments((v) => !v)}
-              className="flex min-h-12 w-full items-center gap-2 px-4 text-left text-body-sm font-extrabold text-success">
+            <Button variant="ghost" type="button" aria-expanded={showCommitments} onClick={() => setShowCommitments((v) => !v)}
+              className="justify-start flex min-h-12 w-full items-center gap-2 px-4 text-left text-body-sm font-extrabold text-success">
               <ShieldCheck size={18} aria-hidden="true" />
               <span className="flex-1">Cam kết của cửa hàng ({commitments.length})</span>
               <ChevronDown size={18} aria-hidden="true" className={`transition-transform ${showCommitments ? "rotate-180" : ""}`} />
-            </button>
+            </Button>
             {showCommitments && (
               <ul className="flex flex-col gap-2 px-4 pb-4 text-body-sm text-text-muted">
                 {commitments.map((c) => (

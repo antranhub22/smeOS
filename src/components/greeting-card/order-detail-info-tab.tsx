@@ -1,5 +1,6 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
 import React from "react"
 import { User, Phone, MapPin, Flower2, CheckCircle2, Home, Utensils, Shirt, Sparkles } from "@/components/ui/icons"
 import { FlowerImage } from "@/components/greeting-card/flower-image"
@@ -166,7 +167,7 @@ export function OrderDetailInfoTab({ target, onCustomerSaved }: OrderDetailInfoT
             <span className="text-caption font-bold text-warning-text">
               ⚠️ Đơn cọc — Cần thanh toán lần 2: {(target.balanceVnd ?? 0).toLocaleString("vi-VN")} đ
             </span>
-            <button
+            <Button variant="outline"
               type="button"
               onClick={() => {
                 const url = target.sendCode ? `${window.location.origin}/b/${target.sendCode}` : ""
@@ -175,10 +176,10 @@ export function OrderDetailInfoTab({ target, onCustomerSaved }: OrderDetailInfoT
                   : `Dạ chào anh/chị, ${terms.sampleProduct.toLowerCase()} cho đơn #${target.orderCode || target.sendCode} đã ${terms.makerAction.toLowerCase()} hoàn tất ạ! Anh/chị mở link kiểm tra ${terms.completedProductPhoto.toLowerCase()} và thanh toán phần còn lại ${(target.balanceVnd ?? 0).toLocaleString("vi-VN")} đ để cửa hàng tiến hành bàn giao nhé ạ:${url ? ` ${url}` : ""}`
                 void navigator.clipboard.writeText(msg)
               }}
-              className="rounded-lg border border-border bg-surface px-2.5 py-1 text-caption font-bold text-text hover:bg-surface-muted transition-colors"
+              className="gap-0 rounded-lg border border-border bg-surface px-2.5 py-1 text-caption font-bold text-text hover:bg-surface-muted transition-colors"
             >
               📋 Chép tin nhắc khách
-            </button>
+            </Button>
           </div>
         )}
 

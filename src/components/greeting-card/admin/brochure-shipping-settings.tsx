@@ -162,14 +162,14 @@ export function BrochureShippingSettings() {
                   onChange={(e) => edit({ ...current, zones: current.zones.map((x, j) => (j === i ? { ...x, fee: e.target.value } : x)) })}
                   className={`${FIELD} w-32`}
                 />
-                <button
+                <Button variant="outline"
                   type="button"
                   aria-label={`Xoá khu vực ${z.name || i + 1}`}
                   onClick={() => edit({ ...current, zones: current.zones.filter((_, j) => j !== i) })}
-                  className="h-10 w-10 rounded-lg border border-border text-danger flex items-center justify-center"
+                  className="font-[inherit] gap-0 h-10 w-10 rounded-lg border border-border text-danger flex items-center justify-center"
                 >
                   <Trash2 size={14} />
-                </button>
+                </Button>
               </li>
             ))}
           </ul>

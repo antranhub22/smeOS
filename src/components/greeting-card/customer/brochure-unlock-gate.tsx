@@ -1,5 +1,6 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { useState, type FormEvent } from "react"
 import { useRouter } from "next/navigation"
@@ -57,10 +58,10 @@ export function BrochureUnlockGate({ sendCode, shop }: { sendCode: string; shop:
             className="h-12 w-full rounded-xl border border-border bg-surface px-4 text-center text-title tracking-widest text-text focus:outline-none focus:ring-2 focus:ring-primary/20"
           />
           {error && <p role="alert" className="text-body-sm text-danger">{error}</p>}
-          <button type="submit" disabled={busy} className="inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-primary text-body font-bold text-surface disabled:opacity-60">
+          <Button variant="primary" type="submit" disabled={busy} className="inline-flex h-12 items-center justify-center gap-2 rounded-xl bg-primary text-body font-bold text-surface disabled:opacity-60 hover:bg-primary">
             {busy && <Loader2 size={18} className="animate-spin" aria-hidden="true" />}
             Xem đơn hàng
-          </button>
+          </Button>
         </form>
       </main>
     </div>

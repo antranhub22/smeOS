@@ -1,5 +1,6 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import React from "react"
 import { MapPin, Star, Layers } from "@/components/ui/icons"
@@ -41,13 +42,13 @@ export interface ChainBranchCardProps {
 
 export function ChainBranchCard({ branch, isSelected, onToggle }: ChainBranchCardProps) {
   return (
-    <button
+    <Button variant="outline"
       type="button"
       onClick={() => onToggle(branch.branchId)}
-      className={`p-2.5 rounded-xl border text-caption text-left transition-all cursor-pointer flex flex-col justify-between gap-2 ${
+      className={`font-[inherit] p-2.5 rounded-xl border text-caption text-left transition-all cursor-pointer flex flex-col justify-between gap-2 ${
         isSelected
-          ? "border-primary bg-surface shadow-xs"
-          : "border-border/70 bg-surface/60 opacity-60 hover:opacity-100"
+          ? "border-primary bg-surface shadow-xs hover:bg-surface"
+          : "border-border/70 bg-surface/60 opacity-60 hover:opacity-100 hover:bg-surface/60"
       }`}
     >
       <div className="flex items-start justify-between gap-1.5 w-full">
@@ -107,6 +108,6 @@ export function ChainBranchCard({ branch, isSelected, onToggle }: ChainBranchCar
         </div>
         <span className="text-text-muted font-mono">{branch.channels?.phone || "—"}</span>
       </div>
-    </button>
+    </Button>
   )
 }

@@ -1,5 +1,6 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Input } from "@/components/ui/input"
 import React from "react"
@@ -95,46 +96,46 @@ export function HomestayGuestFields({
         <div className="flex items-center justify-between p-2.5 rounded-lg border border-border bg-bg">
           <span className="text-caption font-bold text-text">Người lớn</span>
           <div className="flex items-center gap-2">
-            <button
+            <Button variant="outline"
               type="button"
               disabled={adultsCount <= 1}
               onClick={() => onAdultsChange(Math.max(1, adultsCount - 1))}
-              className="h-7 w-7 rounded-md border border-border flex items-center justify-center font-bold text-body-sm disabled:opacity-30"
+              className="gap-0 h-7 w-7 rounded-md border border-border flex items-center justify-center font-bold text-body-sm disabled:opacity-30"
             >
               −
-            </button>
+            </Button>
             <span className="font-extrabold text-body-sm w-5 text-center">{adultsCount}</span>
-            <button
+            <Button variant="outline"
               type="button"
               disabled={adultsCount >= 30}
               onClick={() => onAdultsChange(adultsCount + 1)}
-              className="h-7 w-7 rounded-md border border-border flex items-center justify-center font-bold text-body-sm disabled:opacity-30"
+              className="gap-0 h-7 w-7 rounded-md border border-border flex items-center justify-center font-bold text-body-sm disabled:opacity-30"
             >
               +
-            </button>
+            </Button>
           </div>
         </div>
 
         <div className="flex items-center justify-between p-2.5 rounded-lg border border-border bg-bg">
           <span className="text-caption font-bold text-text">Trẻ em (&lt;12t)</span>
           <div className="flex items-center gap-2">
-            <button
+            <Button variant="outline"
               type="button"
               disabled={childrenCount <= 0}
               onClick={() => onChildrenChange(Math.max(0, childrenCount - 1))}
-              className="h-7 w-7 rounded-md border border-border flex items-center justify-center font-bold text-body-sm disabled:opacity-30"
+              className="gap-0 h-7 w-7 rounded-md border border-border flex items-center justify-center font-bold text-body-sm disabled:opacity-30"
             >
               −
-            </button>
+            </Button>
             <span className="font-extrabold text-body-sm w-5 text-center">{childrenCount}</span>
-            <button
+            <Button variant="outline"
               type="button"
               disabled={childrenCount >= 20}
               onClick={() => onChildrenChange(childrenCount + 1)}
-              className="h-7 w-7 rounded-md border border-border flex items-center justify-center font-bold text-body-sm disabled:opacity-30"
+              className="gap-0 h-7 w-7 rounded-md border border-border flex items-center justify-center font-bold text-body-sm disabled:opacity-30"
             >
               +
-            </button>
+            </Button>
           </div>
         </div>
       </div>

@@ -303,14 +303,14 @@ export function BrochureFloristJobTab({
                     <MapPin size={14} className="text-primary shrink-0" />
                     <span>{orderTerms.recipientInfoLabel}</span>
                   </div>
-                  <button
+                  <Button variant="ghost"
                     type="button"
                     onClick={() => setMaskPhone(!maskPhone)}
-                    className="inline-flex items-center gap-1 text-caption text-text-muted hover:text-text font-medium shrink-0"
+                    className="h-auto p-0 inline-flex items-center gap-1 text-caption text-text-muted hover:text-text font-medium shrink-0"
                   >
                     {maskPhone ? <Eye size={12} /> : <EyeOff size={12} />}
                     <span>{maskPhone ? "Hiện số đầy đủ" : "Che số ĐT"}</span>
-                  </button>
+                  </Button>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-text text-body-sm">
                   <div>

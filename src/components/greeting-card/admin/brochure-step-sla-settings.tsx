@@ -1,5 +1,6 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Input } from "@/components/ui/input"
 import React, { useState } from "react"
@@ -97,14 +98,14 @@ export function BrochureStepSlaSettings() {
         {message ? (
           <p role="status" className={`text-caption font-medium ${message.ok ? "text-success" : "text-danger"}`}>{message.text}</p>
         ) : <span />}
-        <button
+        <Button variant="primary"
           type="button"
           onClick={() => void save()}
           disabled={!draft || saving}
-          className="h-9 rounded-lg bg-primary px-4 text-body-sm font-bold text-white hover:bg-primary-dark disabled:opacity-50"
+          className="gap-0 h-9 rounded-lg bg-primary px-4 text-body-sm font-bold text-white hover:bg-primary-dark disabled:opacity-50"
         >
           {saving ? "Đang lưu..." : "Lưu"}
-        </button>
+        </Button>
       </div>
     </section>
   )

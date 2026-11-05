@@ -1,5 +1,6 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
 import { BottomSheet } from "@/components/ui/bottom-sheet"
 import { useEffect, useState } from "react"
 import { History, ChevronRight } from "@/components/ui/icons"
@@ -30,14 +31,14 @@ export function OrderHistorySheet({ members, currentSendCode }: { members: Famil
   return (
     <>
       <div className="flex justify-end px-4 pt-3 sm:px-6">
-        <button
+        <Button variant="outline"
           type="button"
           onClick={() => setOpen(true)}
           className="inline-flex h-11 items-center gap-1.5 rounded-xl border border-border bg-surface px-3.5 text-body-sm font-semibold text-text hover:bg-surface-muted"
         >
           <History size={16} aria-hidden="true" />
           Lịch sử đơn hàng ({orderCount})
-        </button>
+        </Button>
       </div>
 
       {open && (

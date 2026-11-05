@@ -92,14 +92,14 @@ export function ShareSummaryPanel(props: ShareSummaryPanelProps) {
                 {copyFallback}
               </output>
             )}
-            <button
+            <Button variant="ghost"
               type="button"
               onClick={onClone}
-              className="mt-3 inline-flex items-center gap-1.5 text-body-sm font-semibold text-primary hover:underline"
+              className="h-auto p-0 mt-3 inline-flex items-center gap-1.5 text-body-sm font-semibold text-primary hover:underline"
             >
               <CopyPlus size={16} aria-hidden="true" />
               Tạo link riêng cho kênh khác
-            </button>
+            </Button>
           </>
         ) : (
           <p className="mt-4 rounded-xl bg-surface-alt px-3 py-2.5 text-body-sm text-text-muted">

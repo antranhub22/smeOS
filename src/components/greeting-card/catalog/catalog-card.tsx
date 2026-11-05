@@ -94,24 +94,24 @@ export function CatalogCard({
           <Edit2 size={12} />
           <span>Quản lý {itemLabel}</span>
         </Button>
-        <button
+        <Button variant="outline"
           type="button"
           onClick={onPreview}
           title="Xem trước giao diện thẻ chào khách hàng"
           aria-label={`Xem trước link công khai của ${catalog.name}`}
-          className="p-1.5 rounded-lg border border-border hover:bg-surface-muted transition-colors text-text-muted hover:text-text inline-flex items-center"
+          className="font-[inherit] gap-0 p-1.5 rounded-lg border border-border hover:bg-surface-muted transition-colors text-text-muted hover:text-text inline-flex items-center"
         >
           <Eye size={14} />
-        </button>
-        <button
+        </Button>
+        <Button variant="outline"
           type="button"
           onClick={onCopy}
           title="Sao chép link mang tên bạn — khách mở link này được tính cho bạn"
           aria-label={`Sao chép link bộ sưu tập ${catalog.name} mang tên bạn`}
-          className="p-1.5 rounded-lg border border-border hover:bg-surface-muted transition-colors text-text-muted hover:text-text"
+          className="font-[inherit] gap-0 p-1.5 rounded-lg border border-border hover:bg-surface-muted transition-colors text-text-muted hover:text-text"
         >
           {copied ? <Check size={14} className="text-success" /> : <Copy size={14} />}
-        </button>
+        </Button>
         <a
           href={`/api/v1/greeting-card/catalogs/${catalog.id}/collage`}
           download
@@ -123,47 +123,47 @@ export function CatalogCard({
         </a>
         {catalog.is_active ? (
           canManageState && (
-            <button
+            <Button variant="outline"
               type="button"
               onClick={onDelete}
               disabled={deleting}
               aria-label={`Xóa bộ sưu tập ${catalog.name}`}
               title="Ẩn bộ sưu tập (có thể khôi phục)"
-              className="p-1.5 rounded-lg border border-border hover:bg-danger-bg hover:border-danger/40 hover:text-danger transition-colors text-text-muted"
+              className="font-[inherit] gap-0 p-1.5 rounded-lg border border-border hover:bg-danger-bg hover:border-danger/40 hover:text-danger transition-colors text-text-muted"
             >
               {deleting ? (
                 <Loader2 size={14} className="animate-spin" />
               ) : (
                 <Trash2 size={14} />
               )}
-            </button>
+            </Button>
           )
         ) : (
           canManageState && (
-            <button
+            <Button variant="outline"
               type="button"
               onClick={onRestore}
               disabled={restoring}
               aria-label={`Khôi phục bộ sưu tập ${catalog.name}`}
               title="Khôi phục bộ sưu tập này"
-              className="p-1.5 rounded-lg border border-success/40 bg-success-bg text-success hover:bg-success hover:text-white transition-colors"
+              className="font-[inherit] gap-0 p-1.5 rounded-lg border border-success/40 bg-success-bg text-success hover:bg-success hover:text-white transition-colors"
             >
               {restoring ? (
                 <Loader2 size={14} className="animate-spin" />
               ) : (
                 <RotateCcw size={14} />
               )}
-            </button>
+            </Button>
           )
         )}
-        <button
+        <Button variant="outline"
           type="button"
           onClick={onSelect}
           aria-label={`Mở chi tiết catalog ${catalog.name}`}
-          className="p-1.5 rounded-lg border border-border hover:bg-surface-muted transition-colors text-text-muted"
+          className="font-[inherit] gap-0 p-1.5 rounded-lg border border-border hover:bg-surface-muted transition-colors text-text-muted"
         >
           <ChevronRight size={14} />
-        </button>
+        </Button>
       </div>
     </div>
   )

@@ -94,16 +94,16 @@ export function BrochureNotifySettings() {
 
       <div className="flex gap-2" role="radiogroup" aria-label="Kênh gửi">
         {(["ZNS", "ESMS"] as const).map((c) => (
-          <button
+          <Button variant="outline"
             key={c}
             type="button"
             role="radio"
             aria-checked={ch === c}
             onClick={() => setChannel(c)}
-            className={`px-3 h-8 rounded-lg text-caption font-bold border ${ch === c ? "bg-primary text-white border-primary" : "border-border text-text-muted"}`}
+            className={`gap-0 px-3 h-8 rounded-lg text-caption font-bold border ${ch === c ? "bg-primary text-white border-primary hover:bg-primary" : "border-border text-text-muted"}`}
           >
             {c === "ZNS" ? "Zalo ZNS" : "SMS (eSMS.vn)"}
-          </button>
+          </Button>
         ))}
       </div>
 

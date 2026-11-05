@@ -1,5 +1,6 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
 import { useCallback, useEffect, useMemo, useState } from "react"
 import { ChevronLeft, ChevronRight, Heart, Info } from "@/components/ui/icons"
 import type { GreetingCatalogProduct } from "@/modules/greeting-card/domain/greeting-card-types"
@@ -42,18 +43,18 @@ function RoundButton(props: {
 }) {
   const dim = props.size === "lg" ? "h-16 w-16" : "h-12 w-12"
   return (
-    <button
+    <Button variant="outline"
       type="button"
       aria-label={props.label}
       title={props.label}
       disabled={props.disabled}
       aria-pressed={props.pressed}
       onClick={props.onClick}
-      className={`${dim} flex items-center justify-center rounded-full border shadow-[0_6px_20px_rgba(0,0,0,0.18)] transition-transform hover:scale-105 active:scale-90 disabled:pointer-events-none disabled:opacity-35`}
+      className={`h-auto p-0 font-[inherit] gap-0 ${dim} flex items-center justify-center rounded-full border shadow-[0_6px_20px_rgba(0,0,0,0.18)] transition-transform hover:scale-105 active:scale-90 disabled:pointer-events-none disabled:opacity-35`}
       style={{ color: props.color, background: props.bg, borderColor: props.border }}
     >
       {props.children}
-    </button>
+    </Button>
   )
 }
 
@@ -147,9 +148,9 @@ export function SwipeBrochureEngine({
         {range && (
           <p className="flex items-center justify-between px-1 pb-2 text-caption" style={{ color: theme.stageMuted }}>
             <span>Đang xem mẫu {range.label.toLowerCase()}</span>
-            <button type="button" className="font-semibold underline" onClick={() => setPriceKey(null)}>
+            <Button variant="ghost" type="button" className="h-auto p-0 gap-0 font-semibold underline" onClick={() => setPriceKey(null)}>
               Xem tất cả
-            </button>
+            </Button>
           </p>
         )}
 
@@ -209,7 +210,7 @@ export function SwipeBrochureEngine({
                     {liked.length}
                   </span>
                 )}
-                <button
+                <Button variant="ghost"
                   type="button"
                   onClick={() => onSelectProduct(current)}
                   className="flex h-12 min-w-0 flex-1 items-center justify-between gap-3 rounded-2xl px-5 text-body font-bold shadow-lg transition-transform active:scale-[0.98]"
@@ -217,7 +218,7 @@ export function SwipeBrochureEngine({
                 >
                   <span>{selectedProductId === current.id ? "Đã chọn mẫu này" : "Đặt mẫu này"}</span>
                   <span className="tabular-nums opacity-90">{productPriceText(current)}</span>
-                </button>
+                </Button>
               </div>
             )}
           </>

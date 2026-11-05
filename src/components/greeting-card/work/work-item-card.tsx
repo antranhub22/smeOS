@@ -1,5 +1,6 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
 import React from "react"
 import { MessageSquare, Phone } from "@/components/ui/icons"
 import { FlowerImage } from "@/components/greeting-card/flower-image"
@@ -65,14 +66,14 @@ export function WorkItemCard({ item, me, onOpenNotes, actions, now }: Props) {
               </a>
             </>
           )}
-          <button
+          <Button variant="outline"
             type="button"
             onClick={() => onOpenNotes(item, item.currentStepId)}
             className="inline-flex h-9 items-center gap-1 rounded-lg border border-border px-2.5 text-caption font-bold text-text hover:bg-surface-muted"
           >
             <MessageSquare size={13} className="text-primary" aria-hidden="true" />
             Nhắn tin
-          </button>
+          </Button>
           {actions}
         </div>
       </div>

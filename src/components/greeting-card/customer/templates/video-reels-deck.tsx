@@ -1,5 +1,6 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
 import { useEffect, useRef, useState } from "react"
 import { ChevronUp, Info } from "@/components/ui/icons"
 import type { GreetingCatalogProduct } from "@/modules/greeting-card/domain/greeting-card-types"
@@ -69,23 +70,23 @@ export function VideoReelsDeck({ products, catalogName, onSelectProduct }: Video
                 <HeartToggle active={shortlist.has(p.id)} onToggle={() => shortlist.toggle(p.id)} name={p.name} className="h-12 w-12" />
                 <span className="text-caption font-semibold">Thích</span>
               </div>
-              <button type="button" onClick={() => setOpen(p)} className="flex flex-col items-center gap-1" aria-label={`Chi tiết ${p.name}`}>
+              <Button variant="ghost" type="button" onClick={() => setOpen(p)} className="h-auto p-0 font-[inherit] flex flex-col items-center gap-1" aria-label={`Chi tiết ${p.name}`}>
                 <span className="flex h-12 w-12 items-center justify-center rounded-full bg-black/35 backdrop-blur-md">
                   <Info size={22} aria-hidden="true" />
                 </span>
                 <span className="text-caption font-semibold">Chi tiết</span>
-              </button>
+              </Button>
             </div>
 
             <div className="absolute inset-x-0 bottom-0 z-10 px-4 pb-[max(env(safe-area-inset-bottom),20px)]">
               <ProductInfo product={p} level="standard" size="lg" as="h2" accent="var(--color-warning-bg)" titleClassName="font-bold" className="pr-16" />
-              <button
+              <Button variant="ghost"
                 type="button"
                 onClick={() => onSelectProduct(p)}
-                className="mt-4 h-12 w-full rounded-2xl bg-white text-body font-bold text-black shadow-lg active:scale-[0.99]"
+                className="gap-0 mt-4 h-12 w-full rounded-2xl bg-white text-body font-bold text-black shadow-lg active:scale-[0.99] hover:bg-white"
               >
                 Đặt mẫu này
-              </button>
+              </Button>
               {i === 0 && products.length > 1 && (
                 <p className="mt-3 flex items-center justify-center gap-1 text-caption text-white/70" aria-hidden="true">
                   <ChevronUp size={14} className="animate-bounce" /> Vuốt lên để xem mẫu tiếp

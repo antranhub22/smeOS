@@ -1,5 +1,6 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Input } from "@/components/ui/input"
 import React, { useState } from "react"
@@ -237,14 +238,14 @@ export function BrochureStepTimeoutSettings() {
         ) : (
           <span />
         )}
-        <button
+        <Button variant="primary"
           type="button"
           onClick={() => void handleSave()}
           disabled={savedPolicy === null || saving}
-          className="h-9 rounded-lg bg-primary px-4 text-body-sm font-bold text-white hover:bg-primary-dark disabled:opacity-50"
+          className="gap-0 h-9 rounded-lg bg-primary px-4 text-body-sm font-bold text-white hover:bg-primary-dark disabled:opacity-50"
         >
           {saving ? "Đang lưu..." : "Lưu thời hạn tiệm"}
-        </button>
+        </Button>
       </div>
     </section>
   )

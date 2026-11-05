@@ -132,14 +132,14 @@ export function OrderReview(props: {
         )}
 
         {/* Cam kết chuyển lên khung "Thông tin cửa hàng" ở thanh trên cùng (PO 08/10/2026) — ở đây chỉ còn lối mở */}
-        <button
+        <Button variant="outline"
           type="button"
           onClick={() => openShopInfo("commitments")}
-          className="flex min-h-11 w-full items-center gap-2 rounded-xl border border-success/20 bg-success/5 px-3.5 text-left text-body-sm font-bold text-success"
+          className="justify-start flex min-h-11 w-full items-center gap-2 rounded-xl border border-success/20 bg-success/5 px-3.5 text-left text-body-sm font-bold text-success hover:bg-success/5"
         >
           <ShieldCheck size={16} aria-hidden="true" />
           <span>{isEn ? "View store commitments & guarantees" : "Xem cam kết của cửa hàng"}</span>
-        </button>
+        </Button>
 
         {appliedPolicies?.agreements && appliedPolicies.agreements.length > 0 && (
           <div className="p-3.5 rounded-xl border border-border bg-surface-muted space-y-2">

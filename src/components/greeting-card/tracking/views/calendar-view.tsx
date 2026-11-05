@@ -38,14 +38,14 @@ export function CalendarView({ qs, from: fixedFrom, to: fixedTo, onOpen }: { qs:
                   <ul className="mt-1 flex flex-col gap-1">
                     {s.items.map((i) => (
                       <li key={i.id}>
-                        <button type="button" onClick={() => onOpen(i)} data-focus-key={i.orderId ?? i.sessionId}
-                          className="flex w-full flex-wrap items-center justify-between gap-2 rounded-xl border border-border px-3 py-2 text-left text-body-sm hover:border-primary">
+                        <Button variant="outline" type="button" onClick={() => onOpen(i)} data-focus-key={i.orderId ?? i.sessionId}
+                          className="font-[inherit] flex w-full flex-wrap items-center justify-between gap-2 rounded-xl border border-border px-3 py-2 text-left text-body-sm hover:border-primary">
                           <div className="flex flex-wrap items-center gap-2">
                             <span><strong>{i.customerName}</strong> · <span className="font-mono text-caption text-text-muted">{codeOf(i)}</span> · {i.currentStepTitle}</span>
                             <StaffNametagGroup item={i} compact />
                           </div>
                           <SlaBadge item={i} compact />
-                        </button>
+                        </Button>
                       </li>
                     ))}
                   </ul>

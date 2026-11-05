@@ -1,5 +1,6 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
 import { useState, type ReactNode } from "react"
 import { Heart } from "@/components/ui/icons"
 import type { GreetingCatalogProduct } from "@/modules/greeting-card/domain/greeting-card-types"
@@ -113,7 +114,7 @@ export function ProductImage({
 
 export function HeartToggle({ active, onToggle, name, className }: { active: boolean; onToggle: () => void; name: string; className?: string }) {
   return (
-    <button
+    <Button variant="ghost"
       type="button"
       onClick={(e) => {
         e.stopPropagation()
@@ -121,14 +122,14 @@ export function HeartToggle({ active, onToggle, name, className }: { active: boo
       }}
       aria-pressed={active}
       aria-label={active ? `Bỏ thích ${name}` : `Thích ${name}`}
-      className={cn(
+      className={cn("font-[inherit] gap-0", 
         "flex h-10 w-10 items-center justify-center rounded-full shadow-sm backdrop-blur-md transition-transform active:scale-90",
         active ? "bg-white text-danger" : "bg-black/35 text-white",
         className,
       )}
     >
       <Heart size={18} fill={active ? "currentColor" : "none"} aria-hidden="true" />
-    </button>
+    </Button>
   )
 }
 
@@ -145,12 +146,12 @@ interface ProductTileProps {
 export function ProductTile({ product, liked, onLike, onOpen, selected, aspect = "aspect-[4/5]" }: ProductTileProps) {
   return (
     <div className="group relative">
-      <button type="button" onClick={onOpen} className="block w-full text-left" aria-label={`Xem ${toProductDisplay(product).ariaLabel}`}>
+      <Button variant="ghost" type="button" onClick={onOpen} className="h-auto p-0 justify-start font-[inherit] gap-0 block w-full text-left" aria-label={`Xem ${toProductDisplay(product).ariaLabel}`}>
         <div className={cn("relative w-full overflow-hidden rounded-2xl bg-surface-alt", aspect, selected && "ring-2 ring-primary ring-offset-2 ring-offset-bg")}>
           <ProductImage product={product} className="transition-transform duration-500 group-hover:scale-[1.04]" />
         </div>
         <ProductInfo product={product} level="compact" size="sm" titleClassName="font-medium" className="mt-2" />
-      </button>
+      </Button>
       <HeartToggle active={liked} onToggle={onLike} name={product.name} className="absolute right-2 top-2" />
     </div>
   )
@@ -164,20 +165,20 @@ export function OrderBar({ product, onOrder, hint }: { product: GreetingCatalogP
   return (
     <div className="flex items-center gap-3">
       <ProductInfo product={product} level="compact" size="sm" titleLines={1} titleClassName="font-semibold" className="flex-1" />
-      <button
+      <Button variant="primary"
         type="button"
         onClick={() => onOrder(product)}
-        className="h-12 shrink-0 rounded-2xl bg-primary px-6 text-body font-bold text-white shadow-md transition-transform active:scale-[0.98]"
+        className="gap-0 h-12 shrink-0 rounded-2xl bg-primary px-6 text-body font-bold text-white shadow-md transition-transform active:scale-[0.98] hover:bg-primary"
       >
         Đặt mẫu này
-      </button>
+      </Button>
     </div>
   )
 }
 
 export function Chip({ active, onClick, children }: { active: boolean; onClick: () => void; children: ReactNode }) {
   return (
-    <button
+    <Button variant="outline"
       type="button"
       aria-pressed={active}
       onClick={onClick}
@@ -187,6 +188,6 @@ export function Chip({ active, onClick, children }: { active: boolean; onClick: 
       )}
     >
       {children}
-    </button>
+    </Button>
   )
 }

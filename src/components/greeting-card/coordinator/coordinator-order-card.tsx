@@ -1,5 +1,6 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
 import { PhotoApprovalNote, photoWaitBlocker, type PhotoApprovalState } from "./photo-approval-note"
 import React from "react"
 import { MapPin, Calendar, CheckCircle2, ExternalLink } from "@/components/ui/icons"
@@ -165,10 +166,10 @@ export function CoordinatorOrderCard({
       {/* Top bar */}
       <div className="flex flex-wrap items-center justify-between gap-2 border-b border-border pb-3">
         <div className="flex flex-wrap items-center gap-2">
-          <button
+          <Button variant="ghost"
             type="button"
             onClick={() => onOpen({ type: "detail", order })}
-            className="flex items-center gap-2 text-left group cursor-pointer"
+            className="h-auto p-0 justify-start font-[inherit] flex items-center gap-2 text-left group cursor-pointer"
           >
             <span className="text-title-sm font-extrabold text-text group-hover:text-primary transition-colors">
               #{order.code}
@@ -184,7 +185,7 @@ export function CoordinatorOrderCard({
               </span>
             )}
             <span className="text-caption text-primary underline font-medium ml-1">Xem chi tiết</span>
-          </button>
+          </Button>
           <StaffNametagGroup
             item={work}
             fallbackSaleName={order.saleName}

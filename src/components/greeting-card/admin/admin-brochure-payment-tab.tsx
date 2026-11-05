@@ -77,7 +77,7 @@ export function AdminBrochurePaymentTab({ focusOrderId = null, onClearFocus }: {
         {focusOrderId && (
           <div role="status" className="flex flex-wrap items-center justify-between gap-2 border-b border-border bg-primary/5 px-4 py-2.5 text-body-sm">
             <span className="font-semibold text-text">Đang mở đơn từ Hộp việc</span>
-            <button type="button" onClick={onClearFocus} className="min-h-9 font-semibold text-primary hover:underline">Xem tất cả đơn</button>
+            <Button variant="ghost" type="button" onClick={onClearFocus} className="gap-0 min-h-9 font-semibold text-primary hover:underline">Xem tất cả đơn</Button>
           </div>
         )}
         {!focusOrderId && (
@@ -87,17 +87,17 @@ export function AdminBrochurePaymentTab({ focusOrderId = null, onClearFocus }: {
         )}
         <div className="p-4 border-b border-border flex flex-wrap items-center gap-2" role="group" aria-label="Lọc đơn">
           {ORDER_FILTERS.map((f) => (
-            <button
+            <Button variant="outline"
               key={f.id}
               type="button"
               aria-pressed={filter === f.id}
               onClick={() => { setFilter(f.id); onClearFocus?.() }}
-              className={`px-3 h-8 rounded-lg text-caption font-bold border ${
-                filter === f.id ? "bg-primary text-white border-primary" : "border-border text-text-muted hover:bg-surface-muted"
+              className={`gap-0 px-3 h-8 rounded-lg text-caption font-bold border ${
+                filter === f.id ? "bg-primary text-white border-primary hover:bg-primary" : "border-border text-text-muted hover:bg-surface-muted"
               }`}
             >
               {f.label}
-            </button>
+            </Button>
           ))}
           <div className="relative ml-auto w-full sm:w-64">
             <Search size={14} className="absolute left-2.5 top-1/2 -translate-y-1/2 text-text-muted" aria-hidden="true" />
@@ -110,14 +110,14 @@ export function AdminBrochurePaymentTab({ focusOrderId = null, onClearFocus }: {
               className="h-8 w-full rounded-lg border border-border bg-surface pl-8 pr-7 text-caption text-text placeholder:text-text-muted focus:border-primary focus:outline-hidden"
             />
             {search && (
-              <button
+              <Button variant="ghost"
                 type="button"
                 aria-label="Xoá tìm kiếm"
                 onClick={() => setSearch("")}
-                className="absolute right-2 top-1/2 -translate-y-1/2 text-text-muted hover:text-text"
+                className="h-auto p-0 font-[inherit] gap-0 absolute right-2 top-1/2 -translate-y-1/2 text-text-muted hover:text-text"
               >
                 <X size={12} aria-hidden="true" />
-              </button>
+              </Button>
             )}
           </div>
         </div>

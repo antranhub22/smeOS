@@ -115,9 +115,9 @@ export function BrochureHolidaySettings() {
                   <label className="flex items-center gap-1.5 text-body-sm text-text">
                     <Checkbox checked={r.yearly} onCheckedChange={(checked) => patch(i, { yearly: (checked === true) })} /> Lặp lại hằng năm
                   </label>
-                  <button type="button" aria-label={`Xoá ${r.name || "ngày lễ"}`} onClick={() => edit(rows.filter((_, j) => j !== i))} className="ml-auto p-2 rounded-lg text-text-muted hover:text-danger hover:bg-danger-bg">
+                  <Button variant="ghost" type="button" aria-label={`Xoá ${r.name || "ngày lễ"}`} onClick={() => edit(rows.filter((_, j) => j !== i))} className="font-[inherit] gap-0 ml-auto p-2 rounded-lg text-text-muted hover:text-danger hover:bg-danger-bg">
                     <Trash2 size={16} />
-                  </button>
+                  </Button>
                 </div>
                 <div className="flex flex-wrap items-center gap-3 text-body-sm">
                   <label className="flex items-center gap-2"><span className="text-text-muted">Chốt đơn giao trong ngày lúc</span>

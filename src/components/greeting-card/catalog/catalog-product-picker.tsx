@@ -104,19 +104,19 @@ export function CatalogProductPicker({ catalogId, compact = false, onItemCountCh
                   {item.product.name}
                 </p>
               </div>
-              {!readOnly && <button
+              {!readOnly && <Button variant="ghost"
                 type="button"
                 onClick={() => handleRemove(item.product.id, item.product.name)}
                 disabled={removingId === item.product.id}
                 aria-label={`Xóa ${item.product.name}`}
-                className="absolute top-1.5 right-1.5 p-1.5 rounded-lg bg-black/50 hover:bg-danger/80 text-white"
+                className="font-[inherit] gap-0 absolute top-1.5 right-1.5 p-1.5 rounded-lg bg-black/50 hover:bg-danger/80 text-white"
               >
                 {removingId === item.product.id ? (
                   <Loader2 size={11} className="animate-spin" />
                 ) : (
                   <Trash2 size={13} />
                 )}
-              </button>}
+              </Button>}
             </div>
           ))}
         </div>
@@ -138,7 +138,7 @@ export function CatalogProductPicker({ catalogId, compact = false, onItemCountCh
         <div className="rounded-2xl border border-border bg-surface-muted p-4 flex flex-col gap-3">
           <div className="flex items-center justify-between">
             <p className="text-body-sm font-bold text-text">Chọn từ kho sản phẩm</p>
-            <button type="button" onClick={() => setShowPicker(false)} className="text-caption text-text-muted hover:text-text font-medium underline">Đóng</button>
+            <Button variant="ghost" type="button" onClick={() => setShowPicker(false)} className="h-auto p-0 gap-0 text-caption text-text-muted hover:text-text font-medium underline">Đóng</Button>
           </div>
           {/* Search */}
           <div className="relative">
@@ -163,13 +163,13 @@ export function CatalogProductPicker({ catalogId, compact = false, onItemCountCh
                 ⚡ Lọc nhanh {ti("sampleProduct").toLowerCase()}
               </span>
               {ci.hasActiveFilters && (
-                <button
+                <Button variant="ghost"
                   type="button"
                   onClick={ci.resetFilters}
-                  className="text-caption text-primary hover:underline font-medium"
+                  className="h-auto p-0 gap-0 text-caption text-primary hover:underline font-medium"
                 >
                   Xóa bộ lọc
-                </button>
+                </Button>
               )}
             </div>
 
@@ -179,7 +179,7 @@ export function CatalogProductPicker({ catalogId, compact = false, onItemCountCh
               {ci.priceBudgets.map((b) => {
                 const isSelected = ci.selectedBudgets.includes(b.id)
                 return (
-                  <button
+                  <Button variant="outline"
                     type="button"
                     key={b.id}
                     onClick={() =>
@@ -189,14 +189,14 @@ export function CatalogProductPicker({ catalogId, compact = false, onItemCountCh
                           : [...ci.selectedBudgets, b.id]
                       )
                     }
-                    className={`px-2 py-0.5 rounded-lg text-caption font-medium transition border ${
+                    className={`gap-0 px-2 py-0.5 rounded-lg text-caption font-medium transition border ${
                       isSelected
-                        ? "border-primary bg-primary text-white font-bold"
-                        : "border-border bg-surface text-text-muted hover:border-primary/40"
+                        ? "border-primary bg-primary text-white font-bold hover:bg-primary"
+                        : "border-border bg-surface text-text-muted hover:border-primary/40 hover:bg-surface"
                     }`}
                   >
                     {b.label}
-                  </button>
+                  </Button>
                 )
               })}
             </div>
@@ -207,18 +207,18 @@ export function CatalogProductPicker({ catalogId, compact = false, onItemCountCh
               {(activeIndustry.taxonomy?.occasions?.map((o) => o.label) || ["Dự tiệc", "Hằng ngày", "Quà tặng", "Khai trương"]).map((occ) => {
                 const isSelected = ci.filterOccasion === occ
                 return (
-                  <button
+                  <Button variant="outline"
                     type="button"
                     key={occ}
                     onClick={() => ci.setFilterOccasion(isSelected ? "" : occ)}
-                    className={`px-2 py-0.5 rounded-lg text-caption font-medium transition border ${
+                    className={`gap-0 px-2 py-0.5 rounded-lg text-caption font-medium transition border ${
                       isSelected
-                        ? "border-primary bg-primary text-white font-bold"
-                        : "border-border bg-surface text-text-muted hover:border-primary/40"
+                        ? "border-primary bg-primary text-white font-bold hover:bg-primary"
+                        : "border-border bg-surface text-text-muted hover:border-primary/40 hover:bg-surface"
                     }`}
                   >
                     {occ}
-                  </button>
+                  </Button>
                 )
               })}
             </div>
@@ -229,18 +229,18 @@ export function CatalogProductPicker({ catalogId, compact = false, onItemCountCh
               {(activeIndustry.taxonomy?.defaultCategories?.map((c) => c.label) || ["Tiêu chuẩn", "Đặc biệt"]).map((cat) => {
                 const isSelected = ci.filterCategory === cat
                 return (
-                  <button
+                  <Button variant="outline"
                     type="button"
                     key={cat}
                     onClick={() => ci.setFilterCategory(isSelected ? "" : cat)}
-                    className={`px-2 py-0.5 rounded-lg text-caption font-medium transition border ${
+                    className={`gap-0 px-2 py-0.5 rounded-lg text-caption font-medium transition border ${
                       isSelected
-                        ? "border-primary bg-primary/10 text-primary font-bold"
-                        : "border-border bg-surface text-text-muted hover:border-primary/40"
+                        ? "border-primary bg-primary/10 text-primary font-bold hover:bg-primary/10"
+                        : "border-border bg-surface text-text-muted hover:border-primary/40 hover:bg-surface"
                     }`}
                   >
                     {cat}
-                  </button>
+                  </Button>
                 )
               })}
             </div>
@@ -266,18 +266,18 @@ export function CatalogProductPicker({ catalogId, compact = false, onItemCountCh
                 ).map((fl) => {
                   const isSelected = ci.filterFlowerType === fl
                   return (
-                    <button
+                    <Button variant="outline"
                       type="button"
                       key={fl}
                       onClick={() => ci.setFilterFlowerType(isSelected ? "" : fl)}
-                      className={`px-2 py-0.5 rounded-lg text-caption font-medium transition border ${
+                      className={`gap-0 px-2 py-0.5 rounded-lg text-caption font-medium transition border ${
                         isSelected
-                          ? "border-primary bg-primary/10 text-primary font-bold"
-                          : "border-border bg-surface text-text-muted hover:border-primary/40"
+                          ? "border-primary bg-primary/10 text-primary font-bold hover:bg-primary/10"
+                          : "border-border bg-surface text-text-muted hover:border-primary/40 hover:bg-surface"
                       }`}
                     >
                       {fl}
-                    </button>
+                    </Button>
                   )
                 })}
               </div>
@@ -289,18 +289,18 @@ export function CatalogProductPicker({ catalogId, compact = false, onItemCountCh
                   {["Pastel", "Đỏ", "Vàng", "Hồng", "Trắng"].map((col) => {
                     const isSelected = ci.filterColorTone === col
                     return (
-                      <button
+                      <Button variant="outline"
                         type="button"
                         key={col}
                         onClick={() => ci.setFilterColorTone(isSelected ? "" : col)}
-                        className={`px-2 py-0.5 rounded-lg text-caption font-medium transition border ${
+                        className={`gap-0 px-2 py-0.5 rounded-lg text-caption font-medium transition border ${
                           isSelected
-                            ? "border-primary bg-primary/10 text-primary font-bold"
-                            : "border-border bg-surface text-text-muted hover:border-primary/40"
+                            ? "border-primary bg-primary/10 text-primary font-bold hover:bg-primary/10"
+                            : "border-border bg-surface text-text-muted hover:border-primary/40 hover:bg-surface"
                         }`}
                       >
                         {col}
-                      </button>
+                      </Button>
                     )
                   })}
                 </div>
@@ -343,19 +343,19 @@ export function CatalogProductPicker({ catalogId, compact = false, onItemCountCh
                       <p className="text-caption text-text-muted italic">Liên hệ báo giá</p>
                     )}
                   </div>
-                  <button
+                  <Button variant="ghost"
                     type="button"
                     onClick={() => void handleAdd(product.id)}
                     disabled={addingId === product.id}
                     aria-label={`Thêm ${product.name} vào bộ sưu tập`}
-                    className="p-2 rounded-lg bg-primary/10 hover:bg-primary/20 text-primary transition-colors shrink-0"
+                    className="font-[inherit] gap-0 p-2 rounded-lg bg-primary/10 hover:bg-primary/20 text-primary transition-colors shrink-0"
                   >
                     {addingId === product.id ? (
                       <Loader2 size={15} className="animate-spin" />
                     ) : (
                       <Plus size={15} />
                     )}
-                  </button>
+                  </Button>
                 </div>
               ))
             )}

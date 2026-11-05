@@ -156,14 +156,14 @@ export function PendingCancellationPanel() {
             )}
           </h3>
         </div>
-        <button
+        <Button variant="ghost"
           type="button"
           aria-label="Làm mới danh sách đề xuất hủy/hoàn"
           onClick={() => void mutate()}
-          className="p-1.5 rounded-lg text-text-muted hover:text-text hover:bg-surface-muted"
+          className="font-[inherit] gap-0 p-1.5 rounded-lg text-text-muted hover:text-text hover:bg-surface-muted"
         >
           <RefreshCw size={14} className={isLoading ? "animate-spin" : ""} />
-        </button>
+        </Button>
       </div>
 
       {isLoading && rows.length === 0 ? (

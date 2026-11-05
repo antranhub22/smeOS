@@ -140,18 +140,18 @@ export function CoordinatorAcceptRejectModal({
             </label>
             <div className="flex flex-wrap gap-1.5 mb-1">
               {COMMON_REJECT_REASONS.map((r) => (
-                <button
+                <Button variant="outline"
                   key={r}
                   type="button"
                   onClick={() => setReason(r)}
-                  className={`text-caption px-2.5 py-1 rounded-lg border text-left transition-colors ${
+                  className={`justify-start gap-0 text-caption px-2.5 py-1 rounded-lg border text-left transition-colors ${
                     reason === r
-                      ? "border-danger bg-danger-bg text-danger font-semibold"
-                      : "border-border bg-surface text-text-muted hover:border-border-strong hover:text-text"
+                      ? "border-danger bg-danger-bg text-danger font-semibold hover:bg-danger-bg"
+                      : "border-border bg-surface text-text-muted hover:border-border-strong hover:text-text hover:bg-surface"
                   }`}
                 >
                   {r}
-                </button>
+                </Button>
               ))}
             </div>
             <Textarea

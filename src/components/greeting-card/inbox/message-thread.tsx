@@ -1,5 +1,6 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
 import React, { useEffect, useRef, useState } from "react"
 import { CornerUpLeft } from "@/components/ui/icons"
 import { apiSend, useApi } from "@/components/greeting-card/greeting-api"
@@ -50,9 +51,9 @@ export function MessageThread({ target, stepKey = "GENERAL", title, onClose, onB
       title={title ?? thread.data?.data.label ?? "Trao đổi nội bộ"}
       onClose={onClose}
       leading={onBack && (
-        <button type="button" onClick={onBack} className="inline-flex h-11 items-center rounded-full px-3 text-body-sm font-bold text-primary hover:bg-surface-muted">
+        <Button variant="ghost" type="button" onClick={onBack} className="gap-0 inline-flex h-11 items-center rounded-full px-3 text-body-sm font-bold text-primary hover:bg-surface-muted">
           ‹ Hộp việc
-        </button>
+        </Button>
       )}
       footer={<MessageComposer target={target} stepKey={stepKey} replyTo={replyTo} onCancelReply={() => setReplyTo(null)} onSent={() => { void thread.mutate(); onChanged?.() }} />}
     >
@@ -141,10 +142,10 @@ export function MessageThread({ target, stepKey = "GENERAL", title, onClose, onB
               <div className="flex items-center gap-2">
                 {m.stepKey !== "GENERAL" && <span className="rounded-full bg-surface-muted px-2 text-caption text-text-muted">{m.stepTitle}</span>}
                 {!m.mine && m.kind === "MESSAGE" && (
-                  <button type="button" onClick={() => setReplyTo({ id: m.id, senderName: m.senderName })}
+                  <Button variant="ghost" type="button" onClick={() => setReplyTo({ id: m.id, senderName: m.senderName })}
                     className="inline-flex h-9 items-center gap-1 rounded-lg px-2 text-caption font-bold text-primary hover:bg-primary/10">
                     <CornerUpLeft size={13} aria-hidden="true" /> Trả lời
-                  </button>
+                  </Button>
                 )}
               </div>
             </article>

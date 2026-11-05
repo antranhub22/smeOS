@@ -1,5 +1,6 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
 import React, { useEffect, useRef, useState } from "react"
 import { Bell } from "@/components/ui/icons"
 import { InboxPanel, type InboxTarget } from "./inbox-panel"
@@ -32,14 +33,14 @@ export function InboxButton({ onOpenTarget }: { onOpenTarget: (t: InboxTarget) =
   useEffect(() => () => { document.title = stripCountPrefix(document.title) }, [])
   return (
     <>
-      <button
+      <Button variant="outline"
         type="button"
         onClick={() => { setFresh(0); setOpen(true) }}
         aria-haspopup="dialog"
         aria-expanded={open}
         aria-label={total > 0 ? `Hộp việc: ${total} việc và tin chưa xử lý` : "Hộp việc"}
         title={total > 0 ? `Hộp việc: ${total} việc và tin chưa xử lý` : "Hộp việc"}
-        className={cn(
+        className={cn("font-[inherit] gap-0", 
           "relative inline-flex h-11 w-11 items-center justify-center rounded-xl border transition-all",
           "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary",
           open
@@ -53,7 +54,7 @@ export function InboxButton({ onOpenTarget }: { onOpenTarget: (t: InboxTarget) =
             {total > 99 ? "99+" : total}
           </span>
         )}
-      </button>
+      </Button>
       <span className="sr-only" aria-live="polite">{fresh > 0 ? `Có ${fresh} việc mới. Tổng ${total} việc chưa xử lý` : total > 0 ? `${total} việc chưa xử lý` : ""}</span>
       {open && <InboxPanel onClose={() => setOpen(false)} onOpenTarget={onOpenTarget} />}
     </>

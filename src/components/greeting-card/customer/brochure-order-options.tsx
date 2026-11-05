@@ -1,5 +1,6 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
 import { NativeSelect } from "@/components/ui/select"
 import { Input } from "@/components/ui/input"
 import React, { useState } from "react"
@@ -73,25 +74,25 @@ export function BrochureOrderOptions({ variants, priceDimensions, basePrice, shi
         <div className="flex flex-col gap-1">
           <span className="text-caption font-bold text-text" id="qty-label">Số lượng</span>
           <div className="flex items-center gap-2" role="group" aria-labelledby="qty-label">
-            <button
+            <Button variant="outline"
               type="button"
               aria-label="Giảm số lượng"
               disabled={selection.quantity <= 1}
               onClick={() => onChange({ quantity: selection.quantity - 1 })}
-              className="h-10 w-10 rounded-lg border border-border flex items-center justify-center disabled:opacity-40"
+              className="font-[inherit] gap-0 h-10 w-10 rounded-lg border border-border flex items-center justify-center disabled:opacity-40"
             >
               <Minus size={16} />
-            </button>
+            </Button>
             <span className="w-10 text-center font-extrabold text-body" aria-live="polite">{selection.quantity}</span>
-            <button
+            <Button variant="outline"
               type="button"
               aria-label="Tăng số lượng"
               disabled={selection.quantity >= MAX_ORDER_QUANTITY}
               onClick={() => onChange({ quantity: selection.quantity + 1 })}
-              className="h-10 w-10 rounded-lg border border-border flex items-center justify-center disabled:opacity-40"
+              className="font-[inherit] gap-0 h-10 w-10 rounded-lg border border-border flex items-center justify-center disabled:opacity-40"
             >
               <Plus size={16} />
-            </button>
+            </Button>
           </div>
         </div>
       </div>
@@ -130,13 +131,13 @@ export function BrochureOrderOptions({ variants, priceDimensions, basePrice, shi
             onChange={(e) => setVoucherInput(e.target.value.toUpperCase())}
             className={FIELD}
           />
-          <button
+          <Button variant="outline"
             type="button"
             onClick={() => onChange({ voucherCode: voucherInput.trim() })}
             className="h-10 px-3 rounded-lg border border-primary text-primary font-bold text-body-sm whitespace-nowrap flex items-center gap-1.5 hover:bg-primary/5 transition"
           >
             <Ticket size={14} /> Áp dụng
-          </button>
+          </Button>
         </div>
         {errors.voucherCode && <span className="text-caption text-danger">{errors.voucherCode}</span>}
       </div>

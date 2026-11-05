@@ -1,5 +1,6 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import React, { useState } from "react"
 import { Gift, UserCheck } from "@/components/ui/icons"
@@ -152,14 +153,14 @@ export function JourneyContactForm({
           />
         </div>
 
-        <button
+        <Button variant="ghost"
           type="submit"
           disabled={!canContinue}
-          className="mt-1 h-12 w-full rounded-xl text-body font-bold shadow-md transition-all active:scale-[0.98] disabled:pointer-events-none disabled:opacity-40"
+          className="gap-0 mt-1 h-12 w-full rounded-xl text-body font-bold shadow-md transition-all active:scale-[0.98] disabled:pointer-events-none disabled:opacity-40"
           style={{ background: theme.ctaBg, color: theme.ctaText }}
         >
           {t("greetingCard.customer.journey.continue")}
-        </button>
+        </Button>
 
         <p className="text-center text-caption opacity-70">
           {t("greetingCard.customer.journey.savedNote")}

@@ -69,14 +69,14 @@ export function OrderVatForm({ vat, onSaved }: { vat: OrderVatData; onSaved: (ne
           <div className="flex flex-wrap items-center gap-2 text-body-sm">
             <span className="text-text-muted">Thuế suất:</span>
             {([8, 10] as const).map((r) => (
-              <button
+              <Button variant="outline"
                 key={r}
                 type="button"
                 onClick={() => setRate(r)}
-                className={`rounded-full border px-3 py-1 font-semibold ${rate === r ? "border-primary bg-primary/10 text-primary" : "border-border text-text-muted"}`}
+                className={`gap-0 rounded-full border px-3 py-1 font-semibold ${rate === r ? "border-primary bg-primary/10 text-primary hover:bg-primary/10" : "border-border text-text-muted"}`}
               >
                 {r}%
-              </button>
+              </Button>
             ))}
             <span className="text-text-muted">
               · Tiền VAT: <strong className="text-text">{preview.toLocaleString("vi-VN")} đ</strong>

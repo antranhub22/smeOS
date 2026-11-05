@@ -80,7 +80,7 @@ export function SubstitutePanel({
     setChoice(c)
     setProductId(id)
   }
-  const radio = (on: boolean) => `flex min-h-11 w-full items-center gap-2 rounded-xl border px-3 py-2 text-left text-body-sm ${on ? "border-primary bg-primary/5" : "border-border"}`
+  const radio = (on: boolean) => `flex h-auto min-h-11 w-full items-center justify-start gap-2 font-normal rounded-xl border px-3 py-2 text-left text-body-sm ${on ? "border-primary bg-primary/5 hover:bg-primary/5" : "border-border"}`
 
   return (
     <section aria-labelledby="substitute-title" className="rounded-2xl border border-warning/30 bg-warning-bg p-4 flex flex-col gap-3">
@@ -97,23 +97,23 @@ export function SubstitutePanel({
           const on = choice === "OPTION" && productId === o.productId
           return (
             <li key={o.productId}>
-              <button type="button" aria-pressed={on} disabled={busy} onClick={() => pick("OPTION", o.productId)}
-                className={`relative flex w-full flex-col gap-1 rounded-xl border bg-surface p-2 text-left ${on ? "border-primary ring-2 ring-primary/40" : "border-border"}`}>
+              <Button variant="outline" type="button" aria-pressed={on} disabled={busy} onClick={() => pick("OPTION", o.productId)}
+                className={`justify-start font-[inherit] relative flex w-full flex-col gap-1 rounded-xl border bg-surface p-2 text-left hover:bg-surface ${on ? "border-primary ring-2 ring-primary/40" : "border-border"}`}>
                 <FlowerImage src={o.imageUrl} driveLink={o.driveLink} alt={o.name} className="aspect-square w-full rounded-lg" sizes="(max-width: 640px) 50vw, 200px" fallback="icon" />
                 <span className="text-body-sm font-bold text-text line-clamp-2">{o.name}</span>
                 {on && <Check size={18} className="absolute right-3 top-3 rounded-full bg-primary text-primary-foreground" aria-hidden="true" />}
-              </button>
+              </Button>
             </li>
           )
         })}
       </ul>
 
-      <button type="button" aria-pressed={choice === "SHOP_DECIDES"} disabled={busy} onClick={() => pick("SHOP_DECIDES")} className={radio(choice === "SHOP_DECIDES")}>
+      <Button variant="ghost" type="button" aria-pressed={choice === "SHOP_DECIDES"} disabled={busy} onClick={() => pick("SHOP_DECIDES")} className={radio(choice === "SHOP_DECIDES")}>
         Nhờ tiệm chọn mẫu tương đương
-      </button>
-      <button type="button" aria-pressed={choice === "CANCEL"} disabled={busy} onClick={() => pick("CANCEL")} className={radio(choice === "CANCEL")}>
+      </Button>
+      <Button variant="ghost" type="button" aria-pressed={choice === "CANCEL"} disabled={busy} onClick={() => pick("CANCEL")} className={radio(choice === "CANCEL")}>
         Tôi muốn huỷ đơn
-      </button>
+      </Button>
 
       <label className="sr-only" htmlFor="substitute-note">Ghi chú cho tiệm</label>
       <Textarea id="substitute-note" rows={2} maxLength={SUBSTITUTE_NOTE_MAX} value={note} onChange={(e) => setNote(e.target.value)} disabled={busy}
