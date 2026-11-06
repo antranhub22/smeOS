@@ -38,6 +38,12 @@ async function ensureRlsPolicies(): Promise<void> {
   if (!migration) throw new Error("Không thấy migration row_level_security")
   const sql = readFileSync(path.join(dir, migration, "migration.sql"), "utf8")
   for (const stmt of sql.split(/;\s*\n/).map((x) => x.replace(/^--.*$/gm, "").trim()).filter(Boolean)) {
+    // Bảng đã xoá ở migration contract sau đó (vd. chain_branches — ADR-012 T-4c) không có trong CSDL dựng bằng db push
+    const table = stmt.match(/(?:ALTER TABLE|ON) "([a-z0-9_]+)"/)?.[1]
+    if (table) {
+      const found = await prisma.$queryRawUnsafe<Array<{ t: string | null }>>(`SELECT to_regclass('public."${table}"')::text AS t`)
+      if (!found[0]?.t) continue
+    }
     await prisma.$executeRawUnsafe(stmt)
   }
 }

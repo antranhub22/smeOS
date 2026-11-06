@@ -14,7 +14,7 @@ export const GET = handle(async (request, context: { params: Promise<{ id: strin
 })
 
 const patchSchema = z.object({
-  target_type: z.enum(["SINGLE", "STORE", "CHAIN", "FLOWER_NETWORK"]).optional(),
+  target_type: z.enum(["SINGLE", "STORE", "CHAIN"]).optional(), // FLOWER_NETWORK gộp vào CHAIN (ADR-012 T-8b)
   note: z.string().trim().max(500).nullish(),
   unlocked_locales: z.array(z.string().trim()).optional(),
   /** Từ chối yêu cầu mở khóa ngôn ngữ — xóa pending field khỏi settings */

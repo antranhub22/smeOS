@@ -6,7 +6,7 @@ export type TenantViewerTier = "INDUSTRY" | "CHAIN" | "STORE"
 /**
  * Tầng ma trận thông báo của tổ chức đang đăng nhập — cùng luật với điều hướng 4 tầng
  * (`buildNav`). AUD-024: trước đây so với "HEADQUARTERS" (không có trong enum) nên
- * chuỗi FLOWER_NETWORK rơi xuống ma trận Cửa hàng.
+ * tổ chức chuỗi rơi xuống ma trận Cửa hàng.
  */
 export function resolveNotificationViewerTier(
   organizationType?: string | null,

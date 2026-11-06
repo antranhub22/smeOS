@@ -84,7 +84,7 @@ export const STRICT_WORKFLOW_POLICY: Readonly<BrochureWorkflowPolicy> = Object.f
  * 1 cửa hàng, gói "Tiêu chuẩn" tắt nó với tổ chức Chuỗi.
  */
 export function isChainOrganizationType(orgType: string | null | undefined): boolean {
-  return orgType === "CHAIN" || orgType === "FLOWER_NETWORK"
+  return orgType === "CHAIN" // FLOWER_NETWORK đã gộp vào CHAIN (ADR-012 T-8b)
 }
 
 /** Lý do từ chối khi tổ chức 1 cửa hàng gọi tính năng của Chuỗi (mời chi nhánh, nhập chi nhánh). */
@@ -119,7 +119,7 @@ function parseStoredWorkflowPolicy(settings: unknown, orgType?: string | null): 
   const root = settings && typeof settings === "object" ? (settings as Record<string, unknown>) : {}
   const raw = root[BROCHURE_WORKFLOW_POLICY_KEY] as Record<string, unknown> | undefined
 
-  // Nếu là tổ chức Chuỗi / Mạng lưới (CHAIN, FLOWER_NETWORK): mặc định cần điều phối nhận đơn
+  // Nếu là tổ chức Chuỗi (CHAIN): mặc định cần điều phối nhận đơn
   const defaultForOrg = isChainOrganizationType(orgType)
 
   // Nếu chưa có cài đặt workflow mới, kế thừa thông minh từ brochure_policy cũ nếu có

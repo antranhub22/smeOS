@@ -1,17 +1,14 @@
 /**
  * chain-branch-repository.ts
  *
- * Chi nhánh nhận gia công của điều phối chuỗi — bảng `chain_branches` (trước 22/10/2026 nằm trong
- * `organizations.settings.chain_branches`). `branchId` phía domain chính là `branch_code` ở đây.
- * ADR-012 T-4a: mọi lệnh ghi chép sang `branches` trong cùng giao dịch (`syncBranchFromChain`).
- * T-4b: mọi đường ĐỌC lấy từ `branches` có `accepts_dispatch` (`code` = mã chi nhánh); ghi kép giữ tới T-4c.
+ * Chi nhánh nhận gia công của điều phối chuỗi — dòng `branches` có `accepts_dispatch` (ADR-012 D-T2; bảng
+ * `chain_branches` đã gộp vào và xoá ở T-4c). `branchId` phía domain chính là `branches.code`.
  */
 
 import { randomBytes } from "node:crypto"
 import { prisma } from "@/core/tenancy/infra/prisma"
 import type { Prisma } from "@/generated/prisma/client"
 import type { BranchCandidate, BranchChannelConfig } from "../domain/chain-dispatch-engine"
-import { syncBranchFromChain, syncBranchRow } from "./chain-branch-sync"
 
 /** Mỗi lần hủy nhận đơn hoặc xin bỏ qua bằng chứng: trừ 2 điểm, không dưới 10. */
 export const BRANCH_PENALTY_POINTS = 2
@@ -117,13 +114,13 @@ export class ChainBranchRepository {
   async upsertMany(organizationId: string, branches: BranchCandidate[]): Promise<{ created: number; updated: number; total: number }> {
     const byCode = new Map(branches.map((b) => [b.branchId, b]))
     return this.db.$transaction(async (tx) => {
-      const existing = await tx.chain_branches.findMany({
-        where: { organization_id: organizationId, branch_code: { in: [...byCode.keys()] } },
-        select: { branch_code: true, channels: true },
+      const existing = await tx.branches.findMany({
+        where: { organization_id: organizationId, code: { in: [...byCode.keys()] } },
+        select: { code: true, channels: true, accepts_dispatch: true },
       })
-      const existingCodes = new Set(existing.map((e) => e.branch_code))
+      const existingCodes = new Set(existing.filter((e) => e.accepts_dispatch).map((e) => e.code))
       // Liên kết Zalo do nhân viên tự làm qua OA, không có trong tệp Excel → giữ nguyên khi nhập lại
-      const linkedZalo = new Map(existing.map((e) => [e.branch_code, channelsOf(e.channels).zaloUserId]))
+      const linkedZalo = new Map(existing.map((e) => [e.code, channelsOf(e.channels).zaloUserId]))
       for (const b of byCode.values()) {
         const data = {
           name: b.branchName,
@@ -138,31 +135,29 @@ export class ChainBranchRepository {
           active_jobs_count: b.activeJobsCount,
           max_concurrent_jobs: b.maxConcurrentJobs,
           is_active: b.isActive,
+          accepts_dispatch: true,
           channels: channelsJson({ ...b.channels, zaloUserId: b.channels?.zaloUserId || linkedZalo.get(b.branchId) }),
         }
-        const saved = await tx.chain_branches.upsert({
-          where: { organization_id_branch_code: { organization_id: organizationId, branch_code: b.branchId } },
-          create: { organization_id: organizationId, branch_code: b.branchId, ...data },
+        // Trùng mã với chi nhánh thường có sẵn → chính chi nhánh đó nhận đơn điều phối (D-57)
+        await tx.branches.upsert({
+          where: { organization_id_code: { organization_id: organizationId, code: b.branchId } },
+          create: { organization_id: organizationId, code: b.branchId, ...data },
           update: data,
         })
-        await syncBranchRow(tx, saved, { withProfile: true })
       }
-      const total = await tx.chain_branches.count({ where: { organization_id: organizationId } })
+      const total = await tx.branches.count({ where: dispatchBranches(organizationId) })
       const updated = [...byCode.keys()].filter((code) => existingCodes.has(code)).length
       return { created: byCode.size - updated, updated, total }
-    }, { maxWait: 5_000, timeout: 30_000 }) // tới 500 dòng × 2 lệnh ghi (ghi kép T-4a)
+    }, { maxWait: 5_000, timeout: 30_000 }) // tới 500 dòng mỗi lô
   }
 
   /** Bật / tạm dừng một chi nhánh của tổ chức; `false` khi mã không thuộc tổ chức. */
   async setActive(organizationId: string, branchCode: string, isActive: boolean): Promise<boolean> {
-    return this.db.$transaction(async (tx) => {
-      const res = await tx.chain_branches.updateMany({
-        where: { organization_id: organizationId, branch_code: branchCode },
-        data: { is_active: isActive },
-      })
-      if (res.count > 0) await syncBranchFromChain(tx, organizationId, branchCode, { withProfile: true })
-      return res.count > 0
+    const res = await this.db.branches.updateMany({
+      where: { ...dispatchBranches(organizationId), code: branchCode },
+      data: { is_active: isActive },
     })
+    return res.count > 0
   }
 
   /** Chi nhánh của tổ chức kèm mã liên kết Zalo (sinh mã cho chi nhánh chưa có) */
@@ -179,14 +174,11 @@ export class ChainBranchRepository {
       let linkCode = row.zalo_link_code
       for (let attempt = 0; !linkCode && attempt < 5; attempt++) {
         const candidate = newZaloLinkCode()
-        const updated = await this.db.chain_branches.updateMany({
-          where: { organization_id: organizationId, branch_code: row.branch_code, zalo_link_code: null },
+        const updated = await this.db.branches.updateMany({
+          where: { ...dispatchBranches(organizationId), code: row.branch_code, zalo_link_code: null },
           data: { zalo_link_code: candidate },
         }).catch(() => ({ count: 0 })) // trùng mã (cực hiếm) → thử mã khác
-        if (updated.count > 0) {
-          linkCode = candidate
-          await syncBranchFromChain(this.db, organizationId, row.branch_code)
-        }
+        if (updated.count > 0) linkCode = candidate
       }
       out.push({ branchCode: row.branch_code, name: row.name, linkCode: linkCode ?? "", linked: Boolean(channelsOf(row.channels).zaloUserId) })
     }
@@ -203,32 +195,29 @@ export class ChainBranchRepository {
       select: { organization_id: true, name: true, code: true },
     })
     if (!row) return null
-    await this.db.$transaction(async (tx) => {
-      await tx.$executeRaw`
-        UPDATE "chain_branches"
-        SET "channels" = jsonb_set(COALESCE("channels", '{}'::jsonb), '{zaloUserId}', to_jsonb(${zaloUserId}::text), true),
-            "updated_at" = NOW()
-        WHERE "organization_id" = ${row.organization_id} AND "branch_code" = ${row.code}`
-      await syncBranchFromChain(tx, row.organization_id, row.code)
-    })
+    await this.db.$executeRaw`
+      UPDATE "branches"
+      SET "channels" = jsonb_set(COALESCE("channels", '{}'::jsonb), '{zaloUserId}', to_jsonb(${zaloUserId}::text), true),
+          "updated_at" = NOW()
+      WHERE "organization_id" = ${row.organization_id} AND "code" = ${row.code} AND "accepts_dispatch"`
     return { organizationId: row.organization_id, branchName: row.name }
   }
 
   /**
    * Trừ điểm chất lượng KPI và ghi lịch sử (tối đa 50 mục gần nhất). Khoá dòng trong giao dịch để
-   * hai lần phạt cùng lúc không ghi đè nhau. Chi nhánh không có trong bảng (vd. thuộc `branches`)
+   * hai lần phạt cùng lúc không ghi đè nhau. Chi nhánh không nhận đơn điều phối (hoặc không có)
    * → không ghi gì, trả về giá trị mặc định như trước.
    */
   async applyPenalty(organizationId: string, branchCode: string, kind: BranchPenaltyKind, reason: string): Promise<BranchPenaltyResult> {
     return this.db.$transaction(async (tx) => {
       const locked = await tx.$queryRaw<Array<{ id: string }>>`
-        SELECT "id" FROM "chain_branches"
-        WHERE "organization_id" = ${organizationId} AND "branch_code" = ${branchCode}
+        SELECT "id" FROM "branches"
+        WHERE "organization_id" = ${organizationId} AND "code" = ${branchCode} AND "accepts_dispatch"
         FOR UPDATE`
       const id = locked[0]?.id
       if (!id) return { newQualityScore: DEFAULT_QUALITY_SCORE, count: 1 }
 
-      const row = await tx.chain_branches.findUniqueOrThrow({ where: { id } })
+      const row = await tx.branches.findUniqueOrThrow({ where: { id } })
       const newQualityScore = Math.max(BRANCH_MIN_QUALITY_SCORE, row.quality_score - BRANCH_PENALTY_POINTS)
       const previousHistory = kind === "CANCELLATION" ? row.cancellation_history : row.bypass_history
       const history = [
@@ -237,14 +226,13 @@ export class ChainBranchRepository {
       ].slice(0, BRANCH_HISTORY_LIMIT) as Prisma.InputJsonValue
 
       const count = (kind === "CANCELLATION" ? row.cancellation_count : row.bypass_count) + 1
-      await tx.chain_branches.update({
+      await tx.branches.update({
         where: { id },
         data:
           kind === "CANCELLATION"
             ? { quality_score: newQualityScore, cancellation_count: count, cancellation_history: history }
             : { quality_score: newQualityScore, bypass_count: count, bypass_history: history },
       })
-      await syncBranchFromChain(tx, organizationId, branchCode)
       return { newQualityScore, count }
     })
   }

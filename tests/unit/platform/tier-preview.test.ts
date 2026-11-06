@@ -17,7 +17,7 @@ describe("tier-preview", () => {
   it("suy loại tổ chức từ danh mục cho cả 4 tầng", () => {
     expect(buildTierPreview("platform_admin")?.organizationType).toBe("PLATFORM")
     expect(buildTierPreview("industry_admin")?.organizationType).toBe("INDUSTRY")
-    expect(buildTierPreview("flower_network_admin")?.organizationType).toBe("FLOWER_NETWORK")
+    expect(buildTierPreview("flower_network_admin")?.organizationType).toBe("CHAIN")
     expect(buildTierPreview("store_admin")?.organizationType).toBe("SINGLE")
   })
 

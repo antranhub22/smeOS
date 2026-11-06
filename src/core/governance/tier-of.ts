@@ -21,7 +21,7 @@ export interface TierRoleHint {
   readonly group?: string | undefined
 }
 
-const CHAIN_ORGANIZATION_TYPES = new Set(["CHAIN", "FLOWER_NETWORK"])
+const CHAIN_ORGANIZATION_TYPES = new Set(["CHAIN"]) // FLOWER_NETWORK gộp vào CHAIN (ADR-012 T-8b)
 
 /** Tổ chức/vai thuộc tầng ChainOS. */
 export function isChainTier(organizationType?: string | null, role?: TierRoleHint | null): boolean {

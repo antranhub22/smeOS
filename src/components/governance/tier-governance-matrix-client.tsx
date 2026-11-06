@@ -33,7 +33,7 @@ export function TierGovernanceMatrixClient({ systemKey, title, description }: Ti
   const { organizationType, organization } = useSession()
   // Tầng thật do máy chủ trả về; giá trị này chỉ dùng trong lúc tải
   const fallbackTier: GovernanceViewerTier =
-    organizationType === "CHAIN" || organizationType === "FLOWER_NETWORK" ? "CHAIN" : "STORE"
+    organizationType === "CHAIN" ? "CHAIN" : "STORE"
   const industryKey = organization?.industry ?? "FLORAL"
 
   const base = useMemo(

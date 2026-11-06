@@ -11,7 +11,6 @@ export function resolveNavTier(organizationType?: string | null, roleKey?: strin
   if (organizationType === "INDUSTRY" || roleKey === "industry_admin") return "industry"
   if (
     organizationType === "CHAIN" ||
-    organizationType === "FLOWER_NETWORK" ||
     roleKey === "flower_network_admin"
   )
     return "chain"

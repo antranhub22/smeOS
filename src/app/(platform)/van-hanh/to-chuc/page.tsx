@@ -79,7 +79,7 @@ export default function DanhSachToChucPage() {
               <td className="py-2 pr-3">
                 <span className="inline-flex items-center px-1.5 py-0.5 rounded text-caption font-medium bg-surface-alt text-text">
                   {org.type === "STORE" || org.type === "SINGLE" ? dict.platform.organizations.types.store :
-                   org.type === "FLOWER_NETWORK" || org.type === "CHAIN" ? dict.platform.organizations.types.network :
+                   org.type === "CHAIN" ? dict.platform.organizations.types.network :
                    org.type === "PLATFORM" ? dict.platform.organizations.types.platform :
                    org.type === "EXPERIENCE" ? dict.platform.organizations.types.experience : org.type}
                 </span>

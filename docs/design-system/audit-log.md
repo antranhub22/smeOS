@@ -258,3 +258,9 @@ Còn lại (chưa sửa): `flower-network-command-center` (StatTile có InfoTip 
 - `<input>` thô → `Input`: ô ghi chú đơn (`order-notes-fields.tsx`), ô khoá kết nối Zalo/SMS (`brochure-notify-settings.tsx`).
 - Nút "Copy ảnh sản phẩm": trạng thái tự đặt → `TaskUiState` (`running`/`succeeded`/`failed`).
 - Để lại có lý do: 7 ô `range` ở điều phối chuỗi (chờ Slider, luồng ADR-011); ô bẫy chống spam `honeypot-field` (phải là `<input>` ẩn); `<details>` trong ô bảng thanh toán (Disclosure dạng thẻ làm vỡ bảng dày — cần quyết định thiết kế); 6 `<h1>` ở trang khách công khai (không có PageHeader của app); trạng thái bước "done/completed" của dải tiến độ xưởng/theo dõi giao hàng là trạng thái bước miền, không phải tác vụ.
+
+### Thẻ chào — đợt 2 (06/11/2026, PO: "theo đề xuất tối ưu, phù hợp hệ thống thiết kế")
+
+- Ô thanh toán trong bảng đơn (`admin-payment-plan-cell.tsx`): `<details>` → `Disclosure` (bỏ viền/nền để vừa ô bảng); test khoá hành vi B5 `admin/__tests__/admin-payment-plan-cell.characterization.test.tsx`.
+- R20 miễn trừ cho `greeting-card/customer/**` (`ux-lint-allow.json`): trang khách công khai không có khung app, tiêu đề theo mẫu brochure; `PageHeader` dành cho màn trong app.
+- 7 ô `range` vẫn chờ Slider (luồng ADR-011). UX lint 45 → 38.

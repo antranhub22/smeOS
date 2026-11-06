@@ -4,11 +4,10 @@ import { requirePlatformCapability } from "@/core/platform/platform-capabilities
 import { OrganizationRepository, getOrganizationRepository } from "@/modules/organization/infra/organization-repository"
 import type { organization_type } from "@/modules/organization/infra/entities"
 import { recordAuditLog } from "@/modules/audit/use-cases/record-audit-log"
-import { toStoredOrganizationType } from "@/modules/organization/domain/organization-type"
 
 export type ApproveModelChangeInput = {
   organizationId: string
-  targetType: "SINGLE" | "STORE" | "CHAIN" | "FLOWER_NETWORK"
+  targetType: "SINGLE" | "STORE" | "CHAIN"
   note?: string | null
 }
 
@@ -19,7 +18,7 @@ export type ApproveModelChangeInput = {
  * Khi phê duyệt:
  * - Cập nhật `organizations.type` thành loại mục tiêu.
  * - Cập nhật `require_coordinator_acceptance` trong `brochure_workflow_policy`:
- *   * `true` với Chuỗi (`CHAIN`; yêu cầu cũ `FLOWER_NETWORK` lưu thành `CHAIN` — D-55, ADR-012 T-8a).
+ *   * `true` với Chuỗi (`CHAIN`; `FLOWER_NETWORK` đã gộp vào — D-55, ADR-012 T-8b).
  *   * `false` với 1 Cửa hàng (SINGLE / STORE).
  * - Xóa cờ `pending_model_change` trong `settings`.
  * - Ghi nhận nhật ký kiểm toán nền tảng.
@@ -34,7 +33,7 @@ export async function approveOrganizationModelChange(
   const org = await orgRepo.findById(input.organizationId)
   if (!org) throw notFound()
 
-  const validTypes: organization_type[] = ["SINGLE", "STORE", "CHAIN", "FLOWER_NETWORK"]
+  const validTypes: organization_type[] = ["SINGLE", "STORE", "CHAIN"]
   if (!validTypes.includes(input.targetType as organization_type)) {
     throw validationFailed({ targetType: "Loại tổ chức không hợp lệ" })
   }
@@ -49,7 +48,7 @@ export async function approveOrganizationModelChange(
       ? (currentSettings.brochure_workflow_policy as Record<string, unknown>)
       : {}
 
-  const targetType = toStoredOrganizationType(input.targetType)
+  const targetType = input.targetType
   const isChain = targetType === "CHAIN"
 
   const updatedSettings: Record<string, unknown> = {

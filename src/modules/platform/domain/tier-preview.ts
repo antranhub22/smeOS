@@ -28,7 +28,7 @@ export function canUseTierPreview(platformCapabilities: readonly string[]): bool
 function organizationTypeFor(role: RoleUxDefinition): string {
   if (role.key === "platform_admin") return "PLATFORM"
   if (role.key === "industry_admin") return "INDUSTRY"
-  if (role.group === "FLOWER_NETWORK" || role.group === "CHAIN") return "FLOWER_NETWORK"
+  if (role.group === "FLOWER_NETWORK" || role.group === "CHAIN") return "CHAIN"
   return "SINGLE"
 }
 

@@ -14,9 +14,8 @@ describe("tier-of — một nơi xác định tầng", () => {
     expect(tierOf("SINGLE", { key: "x", group: "PLATFORM" })).toBe("MOTHER")
   })
 
-  it("ChainOS: loại CHAIN/FLOWER_NETWORK, nhóm vai chuỗi hoặc flower_network_admin", () => {
+  it("ChainOS: loại CHAIN, nhóm vai chuỗi hoặc flower_network_admin", () => {
     expect(tierOf("CHAIN", null)).toBe("CHAIN")
-    expect(tierOf("FLOWER_NETWORK", null)).toBe("CHAIN")
     expect(tierOf("SINGLE", { key: "chain_manager", group: "CHAIN" })).toBe("CHAIN")
     expect(tierOf(null, { key: "flower_network_admin" })).toBe("CHAIN")
   })
@@ -35,7 +34,6 @@ describe("tier-of — một nơi xác định tầng", () => {
 
   it("tầng dữ liệu của tổ chức tenant chỉ là CHAIN hoặc STORE", () => {
     expect(organizationTierOf("CHAIN")).toBe("CHAIN")
-    expect(organizationTierOf("FLOWER_NETWORK")).toBe("CHAIN")
     expect(organizationTierOf("SINGLE")).toBe("STORE")
     expect(organizationTierOf(null)).toBe("STORE")
   })

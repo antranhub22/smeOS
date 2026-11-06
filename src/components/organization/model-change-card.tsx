@@ -17,7 +17,7 @@ export function ModelChangeCard() {
   const { organizationType, pendingModelChange, can } = useSession()
   const canRequest = can("F2") || can("H4") // Điều hành / chủ cửa hàng
 
-  const isChain = organizationType === "CHAIN" || organizationType === "FLOWER_NETWORK"
+  const isChain = organizationType === "CHAIN"
   const targetType = isChain ? "SINGLE" : "CHAIN"
   const targetLabel = isChain ? "1 Cửa hàng độc lập" : "Chuỗi nhiều chi nhánh"
 

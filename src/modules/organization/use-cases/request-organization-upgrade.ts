@@ -2,9 +2,8 @@ import { conflict, validationFailed } from "@/core/http/errors"
 import type { TenantContext } from "@/core/tenancy"
 import { recordAuditLog } from "@/modules/audit/use-cases/record-audit-log"
 import { OrganizationRepository, getOrganizationRepository } from "@/modules/organization/infra/organization-repository"
-import { toStoredOrganizationType } from "@/modules/organization/domain/organization-type"
 
-const REQUESTABLE_TYPES = ["SINGLE", "STORE", "CHAIN", "FLOWER_NETWORK"] as const
+const REQUESTABLE_TYPES = ["SINGLE", "STORE", "CHAIN"] as const
 
 export type RequestedOrganizationType = (typeof REQUESTABLE_TYPES)[number]
 
@@ -42,9 +41,8 @@ export async function requestOrganizationUpgrade(
   const organization = await orgRepo.current(ctx)
   if (!organization) throw validationFailed({ organization: "Không tìm thấy tổ chức" })
 
-  // D-55 / ADR-012 T-8a: yêu cầu "FLOWER_NETWORK" ghi thành "CHAIN"
-  const requestedType = toStoredOrganizationType(input.requestedType)
-  if (toStoredOrganizationType(organization.type) === requestedType) {
+  const requestedType = input.requestedType
+  if (organization.type === requestedType) {
     throw conflict("Tổ chức của bạn hiện đã ở mô hình này")
   }
 

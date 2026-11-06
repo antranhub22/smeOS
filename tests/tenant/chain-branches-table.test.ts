@@ -9,11 +9,11 @@ import { disconnectDatabase, prisma, resetDatabase } from "../helpers/database"
 import { createTenant, makeChainOrganization, withSession, type Tenant } from "../helpers/fixtures"
 
 /**
- * Chi nhánh điều phối chuỗi chuyển từ `organizations.settings.chain_branches` sang bảng
- * `chain_branches` (rà soát M5, 22/10/2026): mỗi tổ chức chỉ thấy chi nhánh của mình, nhập lại
+ * Chi nhánh điều phối chuỗi chuyển từ `organizations.settings.chain_branches` sang bảng riêng (rà soát M5,
+ * 22/10/2026; từ ADR-012 T-4c là `branches` có `accepts_dispatch`): mỗi tổ chức chỉ thấy chi nhánh của mình, nhập lại
  * không xoá lịch sử phạt, hai lần phạt cùng lúc không ghi đè nhau.
  */
-describe("bảng chain_branches", () => {
+describe("chi nhánh điều phối chuỗi (branches nhận đơn)", () => {
   let a: Tenant
   let b: Tenant
   const repo = new ChainBranchRepository()

@@ -88,7 +88,6 @@ export function ArchitectureNametag({ isDev = false }: Props) {
 
     // 3. ChainOS (Tầng 3)
     const isChain =
-      organizationType === "FLOWER_NETWORK" ||
       organizationType === "CHAIN" ||
       roleKey === "flower_network_admin" ||
       roleKey === "chain_admin"
