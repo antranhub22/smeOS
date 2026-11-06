@@ -249,4 +249,6 @@ Catalog đã được phiên khác di trú trên `main` cùng ngày (PO 05/11) �
 | X-05 | P2 | Radio thô ở hộp nâng giới hạn chat, đối soát thanh toán, cách xử lý ảnh, mục đích trang landing | `RadioGroup` (phím mũi tên chuẩn) |
 | X-06 | — | Công cụ audit: UI Studio (chỉ có ở dev) che nút góc phải; trang có kết nối mở lâu không "networkidle" | `ux:audit` ẩn UI Studio, chờ `load` + tối đa 15s |
 
+- Bỏ hẳn "thử nghiệm nhanh với mẫu" (21 ảnh Unsplash) ở quét xu hướng theo ảnh (PO 06/11/2026); test `market-intelligence-no-stock-images.test.ts`. Ảnh minh hoạ xu hướng ở `opportunity-illustration.ts` vẫn dùng ảnh kho — cần PO.
+
 Còn lại (chưa sửa): `flower-network-command-center` (StatTile có InfoTip lồng — cần đổi `StatTile`, luồng component); `upload-wizard.tsx` 1.458 dòng không còn được dùng (mã chết, ngoài phạm vi); 4 ô `range` chờ Slider; Thẻ chào ~30 vi phạm (cần test khoá hành vi B5 từng đường).
