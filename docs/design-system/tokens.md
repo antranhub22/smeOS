@@ -264,7 +264,7 @@
 | `--radius-card` | `1rem` | — |
 | `--radius-button` | `0.75rem` | — |
 | `--radius-dialog` | `1rem` | — |
-| `--color-primary` | `#2563EB` | — |
+| `--color-primary` | `#1554E0` | ≥4,54:1 trên nền primary/10–15% (#2563EB chỉ 3,85–4,48:1 < AA) |
 | `--color-primary-dark` | `#1D4ED8` | — |
 | `--color-primary-muted` | `#EFF6FF` | — |
 | `--color-primary-border` | `#BFDBFE` | — |
@@ -280,7 +280,7 @@
 | `--color-text` | `#0F172A` | — |
 | `--color-text-muted` | `#5D6C81` | 4,88:1 trên surface-alt (#64748B chỉ 4,34:1 < AA) |
 | `--color-selected` | `#EFF6FF` | — |
-| `--color-selected-text` | `#2563EB` | — |
+| `--color-selected-text` | `#1554E0` | — |
 | `--radius-card` | `0.75rem` | — |
 | `--radius-button` | `0.5rem` | — |
 | `--radius-dialog` | `0.75rem` | — |
