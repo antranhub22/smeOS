@@ -3,11 +3,12 @@
 import { prisma } from "@/core/tenancy/infra/prisma"
 import { branchScopedWhere } from "@/core/tenancy"
 import { scopedWhere, type TenantContext } from "@/core/tenancy/tenant-context"
+import { customerBranchWhere } from "@/modules/crm/infra/customer-branch-scope"
 
 export const CUSTOMER_ORDERS_MAX = 50
 
 export async function findCustomerForOrders(ctx: TenantContext, customerId: string) {
-  return prisma.customers.findFirst({ where: scopedWhere(ctx, { id: customerId }), select: { id: true, phone: true } })
+  return prisma.customers.findFirst({ where: scopedWhere(ctx, { id: customerId, ...(await customerBranchWhere(ctx)) }), select: { id: true, phone: true } })
 }
 
 export async function listOrdersOfCustomer(ctx: TenantContext, customer: { id: string; phone: string | null }) {

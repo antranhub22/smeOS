@@ -5,6 +5,7 @@
 
 import { prisma } from "@/core/tenancy/infra/prisma"
 import type { TenantContext } from "@/core/tenancy"
+import { customerBranchWhere } from "./customer-branch-scope"
 
 const MAX_CUSTOMERS = 10_000
 
@@ -16,6 +17,7 @@ export interface CustomerExportFilter {
 export async function queryCustomersForExport(ctx: TenantContext, filter: CustomerExportFilter = {}) {
   const where = {
     organization_id: ctx.organizationId,
+    AND: [await customerBranchWhere(ctx)], // phạm vi chi nhánh (ADR-012 T-5)
     ...(filter.tier ? { tier: filter.tier as never } : {}),
     ...(filter.search
       ? {

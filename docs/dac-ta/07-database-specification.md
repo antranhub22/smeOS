@@ -4111,3 +4111,25 @@ enum industry_status {
 //   @@index([industry_key])
 ```
 
+## 44. Phạm vi chi nhánh theo mã quyền — đợt 1: khách hàng (06/11/2026)
+
+ADR-012 D-T7, bước T-5 (quyết định D-58, D-59).
+
+- `TenantContext.grants`: phạm vi của từng mã quyền (`role_capabilities.scope`: `ORGANIZATION` | `BRANCH`), nạp ở
+  `resolve-session`. `branchScopeFor(ctx, code)` / `scopedWhereForBranch(ctx, code)` (`src/core/tenancy/branch-scope.ts`):
+  mã phạm vi `BRANCH` luôn giới hạn vào chi nhánh của người dùng (kể cả có F7); mã phạm vi `ORGANIZATION` theo luật cũ
+  (có chi nhánh mà không có F7 thì giới hạn). Mặc định mọi mã phạm vi `ORGANIZATION` — không đổi hành vi.
+- **D-58** `customers.branch_id` (khoá ngoại `branches`, `ON DELETE SET NULL`, index `(organization_id, branch_id)`):
+  khách tạo ở CRM nhận chi nhánh của người tạo khi người đó bị giới hạn theo chi nhánh; khách chưa có chi nhánh nhận
+  chi nhánh của đơn đầu tiên có chi nhánh (trigger `orders_customer_branch`, mọi đường tạo/gán đơn kể cả đơn công
+  khai); null = khách dùng chung toàn tổ chức. Migration `20261106090000_customers_branch`: thêm cột, chép từ đơn sớm
+  nhất có chi nhánh cùng tổ chức, tạo trigger.
+- **D-59** cờ `organizations.settings.branch_scope.wave1` (mặc định tắt; chỉ Admin SaaS bật —
+  `PATCH /platform/organizations/:id { branch_scope_wave1 }`, N2; tổ chức không tự sửa khoá `branch_scope`). Bật: nhân
+  viên bị giới hạn theo chi nhánh cho quyền xem khách (`Q1`) chỉ thấy khách của chi nhánh mình và khách dùng chung —
+  danh sách, chi tiết, sửa, xoá, xuất, đơn của khách; ngoài phạm vi → 404. Tra theo số điện thoại (chống trùng khách)
+  không lọc. Đơn hàng và điều phối đã lọc theo chi nhánh từ trước (`branchScopedWhere`), không cần cờ.
+
+Ca thử: `tests/tenant/branch-scope-customers.test.ts` (tự cài trigger từ tệp migration khi CSDL test dựng bằng
+`db push`), `src/core/tenancy/branch-scope-grants.test.ts`, `tests/unit/platform/set-branch-scope-wave.test.ts`.
+
