@@ -18,10 +18,13 @@ export interface CreditPricing {
   znsCostVnd: number
   /** Hạn mức credit/tháng mặc định cho tổ chức chưa đặt riêng; null = không giới hạn */
   defaultMonthlyLimit: number | null
+  /** Tin nhắn gửi khách vẫn đi khi hết credit, số dư được âm tối đa chừng này credit (PO 05/11/2026); 0 = không thấu chi */
+  messageOverdraftCredit: number
 }
 
 export const DEFAULT_CREDIT_PRICING: CreditPricing = {
   smsCredit: 0, znsCredit: 0, usdToVnd: 25_000, creditValueVnd: 1_000, smsCostVnd: 0, znsCostVnd: 0, defaultMonthlyLimit: null,
+  messageOverdraftCredit: 50,
 }
 
 const num = (v: unknown, min: number, max: number): number | undefined =>
@@ -39,6 +42,7 @@ export function parseCreditPricing(raw: unknown): CreditPricing {
     smsCostVnd: Math.round(num(r.smsCostVnd, 0, 100_000) ?? DEFAULT_CREDIT_PRICING.smsCostVnd),
     znsCostVnd: Math.round(num(r.znsCostVnd, 0, 100_000) ?? DEFAULT_CREDIT_PRICING.znsCostVnd),
     defaultMonthlyLimit: limit === null ? null : (num(limit, 0, 10_000_000) !== undefined ? Math.round(limit as number) : null),
+    messageOverdraftCredit: Math.round(num(r.messageOverdraftCredit, 0, 100_000) ?? DEFAULT_CREDIT_PRICING.messageOverdraftCredit),
   }
 }
 
@@ -51,6 +55,8 @@ export function creditPricingProblem(input: Record<string, unknown>): string | n
   for (const k of ["smsCostVnd", "znsCostVnd"] as const) {
     if (input[k] !== undefined && num(input[k], 0, 100_000) === undefined) return "Giá vốn mỗi tin trong khoảng 0–100.000đ"
   }
+  const o = input.messageOverdraftCredit
+  if (o !== undefined && (num(o, 0, 100_000) === undefined || !Number.isInteger(o))) return "Mức thấu chi tin nhắn là số nguyên 0–100.000"
   const l = input.defaultMonthlyLimit
   if (l !== undefined && l !== null && (num(l, 0, 10_000_000) === undefined || !Number.isInteger(l))) return "Hạn mức mặc định là số nguyên 0–10.000.000 hoặc bỏ trống"
   return null

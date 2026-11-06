@@ -15,6 +15,7 @@ function deps(over: Partial<PublicOrderDeps> & { page?: unknown } = {}): PublicO
     ingest: vi.fn(async (_ctx, i: { items: { unitPriceVnd: number; quantity: number }[] }) => ({ code: "DH251031-0001", totalVnd: i.items[0]!.unitPriceVnd * i.items[0]!.quantity })) as never,
     verifier: { verify: vi.fn(async () => true) },
     now: () => new Date("2026-10-31T00:00:00Z"),
+    acceptsOrders: vi.fn(async () => {}),
     ...over,
   } as never
 }
@@ -49,5 +50,13 @@ describe("khách đặt hàng trên catalog công khai", () => {
     const d = deps()
     await expect(placePublicCatalogOrder("bst", { ...input, phone: "12", quantity: 0, address: " " }, undefined, d)).rejects.toMatchObject({ code: "VALIDATION_FAILED" })
     expect(d.catalogLinks.findBySlug).not.toHaveBeenCalled()
+  })
+
+  it("gói dịch vụ của cửa hàng quá hạn → không tạo đơn, không tạo khách", async () => {
+    const paused = Object.assign(new Error("Cửa hàng đang tạm ngưng nhận đơn trực tuyến."), { code: "SUBSCRIPTION_OVERDUE" })
+    const d = deps({ acceptsOrders: vi.fn(async () => { throw paused }) })
+    await expect(placePublicCatalogOrder("bst", input, undefined, d)).rejects.toMatchObject({ code: "SUBSCRIPTION_OVERDUE" })
+    expect(d.ingest).not.toHaveBeenCalled()
+    expect(d.customers.findOrCreateCustomer).not.toHaveBeenCalled()
   })
 })

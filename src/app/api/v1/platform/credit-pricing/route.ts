@@ -1,6 +1,6 @@
 /**
  * GET/PUT /api/v1/platform/credit-pricing — quy đổi credit cấp nền tảng (PO Q10, checklist ALG 10.3, 10.4).
- * GET (`N4`). PUT (`N3`): `{ smsCredit?, znsCredit?, usdToVnd?, creditValueVnd?, defaultMonthlyLimit? }`.
+ * GET (`N4`). PUT (`N3`): `{ smsCredit?, znsCredit?, usdToVnd?, creditValueVnd?, defaultMonthlyLimit?, messageOverdraftCredit? }`.
  */
 import { z } from "zod"
 import { validationFailed } from "@/core/http/errors"
@@ -21,6 +21,8 @@ const bodySchema = z.object({
   smsCostVnd: z.number().optional(),
   znsCostVnd: z.number().optional(),
   defaultMonthlyLimit: z.number().int().nullable().optional(),
+  /** Tin nhắn gửi khách được âm số dư tối đa chừng này credit */
+  messageOverdraftCredit: z.number().int().optional(),
 })
 
 export const PUT = handle(async (request) => {
