@@ -4079,3 +4079,46 @@ ADR-012 D-T11 (D-55), bước T-8. `organization_type.FLOWER_NETWORK` và `CHAIN
 
 Ca thử: `tests/unit/organization/organization-type-flower-network.test.ts`.
 
+## 43. Ngành — bảng `industries`, cột `organizations.industry_key` (06/11/2026)
+
+ADR-012 D-T6, bước T-6. `industries` là bảng **NỀN TẢNG** (không có `organization_id`): `key` = khoá plugin ngành
+(`src/modules/organization/domain/industries`), `name`, `status` (`ACTIVE` · `INACTIVE`). `organizations.industry_key`
+là khoá ngoại về `industries.key` (`ON DELETE RESTRICT`, `ON UPDATE CASCADE`), thay dần `settings.industry`. Tầng
+Ngành **chưa bật**: không có loại tổ chức `INDUSTRY`, không có vai quản trị ngành, chưa dùng `link_type`
+`INDUSTRY_MEMBER`/`AFFILIATE`.
+
+**T-6a** — migration `20261106050000_industries` (một giao dịch): tạo bảng, seed 7 ngành của plugin (Điện hoa
+`FLORAL` đầu tiên), chép `industry_key` từ `settings.industry` (không phân biệt hoa thường; mã lạ để trống, NOTICE báo
+số dòng). Trigger `organizations_sync_industry_key` (`BEFORE INSERT OR UPDATE OF settings`): mỗi lần ghi
+`settings.industry` qua bất kỳ đường cũ nào (đăng ký, Admin SaaS tạo tổ chức, dùng thử, dữ liệu mẫu,
+`PATCH /organizations/current`) thì `industry_key` theo trong cùng lệnh ghi; đổi cột khác không đụng.
+`resolveTierChain` đọc `industry_key`, dự phòng `settings.industry`.
+
+**T-6b**: các đường đọc ngành còn lại chuyển sang `industry_key` và khoá phạm vi về dạng D-T5
+(`platform · industry:<key> · org:<id> · branch:<id>`) cho `notification_hard_locks` / `integration_governance`.
+**T-6c** (contract): bỏ `settings.industry` và trigger.
+
+Ca thử: `tests/tenant/industries.test.ts` (tự cài seed + trigger từ tệp migration khi CSDL test dựng bằng `db push`).
+
+```prisma
+model industries {
+  key        String          @id
+  name       String
+  status     industry_status @default(ACTIVE)
+  created_at DateTime        @default(now()) @db.Timestamptz(3)
+  updated_at DateTime        @default(now()) @updatedAt @db.Timestamptz(3)
+
+  organizations organizations[]
+}
+
+enum industry_status {
+  ACTIVE
+  INACTIVE
+}
+
+// organizations: thêm
+//   industry_key String?
+//   industry     industries? @relation(fields: [industry_key], references: [key], onUpdate: Cascade, onDelete: Restrict)
+//   @@index([industry_key])
+```
+

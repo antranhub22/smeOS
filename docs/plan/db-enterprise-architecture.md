@@ -89,7 +89,9 @@ cần test khoá hành vi trước.
 | [ ] | T-4c [SCHEMA] Ghi thẳng `branches`; contract: xoá `chain_branches`, `memberships.chain_branch_code` — sau khi T-4b chạy trên production | P2-A3 | `check:migrations` (`-- contract:`) |
 | [ ] | T-5 `grants` có phạm vi trong `TenantContext`; phạm vi chi nhánh đợt 1 (đơn, khách, điều phối) | P2-A4, P2-A5 | Tenant test chéo chi nhánh |
 | [ ] | T-5b Phạm vi chi nhánh đợt 2 (sản phẩm/giá, kho, báo cáo) và đợt 3 (còn lại) | P2-A5 | Như trên, từng đợt |
-| [ ] | T-6 [SCHEMA nhỏ] `industries` + `organizations.industry_key`; khoá phạm vi dạng `platform · industry: · org: · branch:` | P2-A1 (xem ghi chú) | `npm run check:industry` |
+| [x] | T-6a [SCHEMA nhỏ] `industries` (seed 7 ngành plugin) + `organizations.industry_key` (khoá ngoại), chép từ `settings.industry`, trigger đồng bộ; `resolveTierChain` đọc cột | P2-A1 (xem ghi chú) | `npm run check:industry`; `tests/tenant/industries.test.ts` |
+| [ ] | T-6b Đường đọc ngành còn lại sang `industry_key`; khoá phạm vi dạng `platform · industry: · org: · branch:` (`notification_hard_locks`, `integration_governance`) | P2-A1 | Ma trận thông báo, tích hợp không đổi kết quả |
+| [ ] | T-6c [SCHEMA] Contract: bỏ `settings.industry` và trigger đồng bộ | — | `check:migrations` |
 | [ ] | T-7 [SCHEMA] `governance_decisions` + backfill + chuyển `layered-resolver` + contract | — | Ma trận, thông báo, tích hợp không đổi kết quả |
 | [x] | T-8a Đổi dữ liệu `organization_type.FLOWER_NETWORK` → `CHAIN` (kể cả yêu cầu đổi mô hình đang chờ); mọi đường ghi lưu `CHAIN` (D-55) | — | Chuỗi cũ loại `FLOWER_NETWORK` vẫn vào đúng ChainOS |
 | [ ] | T-8b [SCHEMA] Contract: bỏ giá trị enum `FLOWER_NETWORK` và các nhánh so loại tổ chức này — sau khi T-8a chạy trên production | — | `check:migrations`; tier-of, điều hướng, ma trận không đổi kết quả |

@@ -155,8 +155,13 @@ model organizations {
   // SDAGF D-04 — legal hold cấp tổ chức: còn hạn thì không xoá vĩnh viễn dữ
   // liệu nào của tổ chức (asset, sản phẩm trong thùng rác, dọn bàn giao).
   legal_hold_until DateTime?         @db.Timestamptz(3)
+  /// ADR-012 D-T6 (T-6a): ngành của tổ chức → `industries.key`. Thay `settings.industry`; tới T-6c trigger
+  /// `organizations_sync_industry_key` giữ cột này khớp `settings.industry` mỗi lần ghi settings.
+  industry_key     String?
   created_at       DateTime          @default(now()) @db.Timestamptz(3)
   updated_at       DateTime          @updatedAt @db.Timestamptz(3)
+
+  industry industries? @relation(fields: [industry_key], references: [key], onUpdate: Cascade, onDelete: Restrict)
 
   // Khoá ngoại tới organizations mở lại ở P3 (TECHNICAL_DEBT #8) — bốn bảng
   // dưới đây là bốn bảng nợ đó; assets/generation_jobs/usage/audit_logs khai
@@ -285,6 +290,26 @@ model organizations {
   organization_links_as_parent                     organization_links[]            @relation("OrgLinkParent")
   organization_links_as_child                      organization_links[]            @relation("OrgLinkChild")
   custom_domains                                   custom_domains[]
+
+  @@index([industry_key])
+}
+
+/// Ngành — bảng NỀN TẢNG (không có organization_id), ADR-012 D-T6. `key` = khoá plugin ngành
+/// (`src/modules/organization/domain/industries`). Tầng Ngành chưa bật: chưa có tổ chức loại INDUSTRY,
+/// chưa có vai quản trị ngành. Thêm ngành = thêm plugin + một dòng ở đây.
+model industries {
+  key        String          @id
+  name       String
+  status     industry_status @default(ACTIVE)
+  created_at DateTime        @default(now()) @db.Timestamptz(3)
+  updated_at DateTime        @default(now()) @updatedAt @db.Timestamptz(3)
+
+  organizations organizations[]
+}
+
+enum industry_status {
+  ACTIVE
+  INACTIVE
 }
 
 model workspaces {
