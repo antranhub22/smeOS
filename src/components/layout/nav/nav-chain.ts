@@ -212,6 +212,15 @@ export const CHAIN_NAV_ENTRIES: readonly NavEntry[] = [
     mobileLabel: "Cài đặt",
   },
   {
+    href: "/cai-dat/thanh-vien",
+    label: "Đội ngũ & phân quyền",
+    group: "thiet-lap-chuoi",
+    iconKey: "Users",
+    navKey: "chain-team",
+    capability: "F1",
+    mobileLabel: "Đội ngũ",
+  },
+  {
     href: "/cai-dat/thong-bao",
     label: "Ma trận thông báo",
     group: "thiet-lap-chuoi",

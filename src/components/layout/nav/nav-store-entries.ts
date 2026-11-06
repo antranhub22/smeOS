@@ -274,6 +274,15 @@ export const STORE_NAV_ENTRIES: readonly NavEntry[] = [
     mobileLabel: "Cài đặt",
   },
   {
+    href: "/cai-dat/thanh-vien",
+    label: "Đội ngũ & phân quyền",
+    group: "quan-tri",
+    iconKey: "Users",
+    navKey: "team",
+    capability: "F1",
+    mobileLabel: "Đội ngũ",
+  },
+  {
     href: "/cai-dat/thong-bao",
     label: "Ma trận thông báo",
     group: "quan-tri",

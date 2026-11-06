@@ -9,6 +9,7 @@ import { BrochureStepSlaSettings } from "@/components/greeting-card/admin/brochu
 import { BrochureLinkLifetimeSettings } from "@/components/greeting-card/admin/brochure-link-lifetime-settings"
 import { StaffNotifySettings } from "@/components/greeting-card/admin/staff-notify-settings"
 import { TelegramDispatchConnector } from "@/components/greeting-card/admin/telegram-dispatch-connector"
+import { BrochureCommerceSettings } from "@/components/greeting-card/admin/brochure-commerce-settings"
 
 /**
  * Tab 8: Thiết lập toàn diện cơ chế vận hành, quy trình duyệt, thời hạn và kênh điều phối Thẻ chào
@@ -48,6 +49,9 @@ export function BrochureFlowSettingsTab() {
           <TelegramDispatchConnector />
         </div>
       </div>
+
+      {/* Giá, giao hàng, ngày lễ, phí chế tác, quyền xem của Sale (checklist ALG 1.8, 3.2, 3.6, 3.7, 4.21, 5.8) */}
+      <BrochureCommerceSettings />
     </div>
   )
 }

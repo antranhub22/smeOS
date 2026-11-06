@@ -4,6 +4,8 @@ import React from "react"
 import { useApi } from "@/components/greeting-card/greeting-api"
 import type { TrackingDashboard } from "@/modules/greeting-card/domain/tracking-views"
 import { ShareLinksSummary } from "../share-links-summary"
+import { SalesFunnelStats } from "../../sales/sales-funnel-stats"
+import { ChannelFunnelStats } from "../../sales/channel-funnel-stats"
 import { ViewState, vnd } from "./tracking-bits"
 
 import { STEP_OWNER_LABEL as OWNER_LABEL } from "@/modules/greeting-card/domain/step-sla"
@@ -60,6 +62,9 @@ export function DashboardView({ qs }: { qs: string }) {
             </section>
           </div>
           <ShareLinksSummary />
+          {/* Phễu chuyển đổi theo nhân viên bán và theo kênh, bộ sưu tập (checklist ALG 6.4) */}
+          <SalesFunnelStats />
+          <ChannelFunnelStats />
         </div>
       )}
     </ViewState>

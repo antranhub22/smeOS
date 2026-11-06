@@ -31,5 +31,10 @@ acceptance:
 | Trạng thái lỗi | có |
 | Chặn quyền / không tìm thấy trong mã trang (layout và API có thể chặn thêm) | có |
 
+## Điều hướng
+
+- Mục menu "Đội ngũ & phân quyền" (Quản trị tiệm; chuỗi: Thiết lập chuỗi), quyền `F1`.
+- Nút "Vai trò & quyền" ở đầu trang (chỉ khi có `F5`) mở `/cai-dat/thanh-vien/vai-tro` (checklist ALG 1.13).
+
 ## Chưa kiểm
 - Ảnh mốc 390×844 và 1280×800, quét axe, bàn phím, đọc màn hình: chưa có ca trong `tests/e2e/ux` cho tuyến này.
