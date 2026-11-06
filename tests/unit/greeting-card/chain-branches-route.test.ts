@@ -4,7 +4,7 @@ const ctx = { organizationId: "org-a", workspaceId: "ws", userId: "u", branchId:
 vi.mock("@/modules/organization/use-cases/resolve-session", () => ({ requireTenantContext: async () => ({ ctx }) }))
 vi.mock("@/core/rbac/capabilities", () => ({ requireCapability: () => undefined }))
 
-// Chi nhánh theo tổ chức (bản trong bộ nhớ thay cho bảng chain_branches)
+// Chi nhánh theo tổ chức (bản trong bộ nhớ thay cho dòng branches nhận đơn điều phối)
 const rows = new Map<string, Array<{ branchId: string; branchName: string; isActive: boolean; channels?: Record<string, string> }>>()
 vi.mock("@/modules/greeting-card/infra/chain-branch-repository", () => ({
   ChainBranchRepository: class {

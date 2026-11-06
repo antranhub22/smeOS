@@ -1,4 +1,5 @@
 import type { TenantContext } from "@/core/tenancy"
+import { getBranchRepository } from "@/modules/organization/infra/branch-repository"
 import { MembershipRepository, getMembershipRepository } from "@/modules/organization/infra/membership-repository"
 import { RoleRepository, getRoleRepository } from "@/modules/organization/infra/role-repository"
 import { UserRepository, getUserRepository } from "@/modules/organization/infra/user-repository"
@@ -9,7 +10,7 @@ export type MemberSummary = {
   user: { id: string; name: string | null; email: string; phone?: string | null }
   role: { id: string; key: string; name: string } | null
   branch_id: string | null
-  /** Chi nhánh chuỗi của tài khoản cửa hàng nhận gia công (null = chưa gắn) */
+  /** Mã chi nhánh nhận đơn điều phối của tài khoản (suy từ `branch_id`, ADR-012 T-4c; null = chưa gắn) */
   chain_branch_code: string | null
   status: string
   invited_at: string
@@ -18,7 +19,8 @@ export type MemberSummary = {
 
 /** `GET /members` (`F1`, đặc tả 06 mục 4). */
 export async function listMembers(ctx: TenantContext): Promise<MemberSummary[]> {
-  const memberships = await getMembershipRepository().list(ctx)
+  const [memberships, branches] = await Promise.all([getMembershipRepository().list(ctx), getBranchRepository().list(ctx)])
+  const dispatchCodeById = new Map(branches.filter((b) => b.accepts_dispatch).map((b) => [b.id, b.code]))
   const users = getUserRepository()
   const roles = getRoleRepository()
 
@@ -35,7 +37,7 @@ export async function listMembers(ctx: TenantContext): Promise<MemberSummary[]> 
           : { id: membership.user_id, name: null, email: "" },
         role: role ? { id: role.id, key: role.key, name: role.name } : null,
         branch_id: membership.branch_id,
-        chain_branch_code: membership.chain_branch_code,
+        chain_branch_code: membership.branch_id ? (dispatchCodeById.get(membership.branch_id) ?? null) : null,
         status: membership.status,
         invited_at: membership.invited_at.toISOString(),
         joined_at: membership.joined_at ? membership.joined_at.toISOString() : null,

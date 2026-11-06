@@ -168,7 +168,6 @@ model organizations {
   // khoá ngoại ngay từ khi tạo, không nợ.
   workspaces                                       workspaces[]
   branches                                         branches[]
-  chain_branches                                   chain_branches[]
   capability_overrides                             capability_overrides[]
   memberships                                      memberships[]
   assets                                           assets[]
@@ -334,7 +333,7 @@ model workspaces {
 }
 
 /// Chi nhánh của một tổ chức — ranh giới phạm vi quyền (`memberships.branch_id`), không phải ranh giới tenant.
-/// ADR-012 D-T2 (T-4): gộp `chain_branches` vào đây; `accepts_dispatch` = chi nhánh nằm trong danh sách nhận
+/// ADR-012 D-T2 (T-4): `chain_branches` đã gộp vào đây (xoá ở T-4c); `accepts_dispatch` = chi nhánh nằm trong danh sách nhận
 /// đơn điều phối chuỗi (nhập Excel), `code` là mã trên link gia công (`?branch=`). Các cột vận hành điều phối
 /// chỉ có nghĩa khi `accepts_dispatch = true`.
 model branches {
@@ -378,46 +377,6 @@ model branches {
   orders_by_branch_id          orders[]          @relation("fk_orders_branch_id")
 
   @@unique([organization_id, code])
-  @@index([organization_id])
-}
-
-/**
- * Chi nhánh nhận gia công trong điều phối chuỗi (nhập Excel, cấu hình kênh nhắn). Trước 22/10/2026
- * nằm trong `organizations.settings.chain_branches` — ghi đè cả mảng mỗi lần trừ điểm (rà soát M5).
- * `branch_code` là mã chi nhánh trên link gia công (`?branch=`), khác `branches.id`.
- */
-model chain_branches {
-  id                   String   @id @default(uuid())
-  organization_id      String
-  branch_code          String
-  name                 String
-  /// @pii business
-  address              String?
-  /// Khu vực hành chính (PO 22/10/2026) — sàng lọc theo phường/quận/tỉnh khi không có toạ độ
-  ward                 String?
-  district             String? // quận/huyện cũ (bỏ từ 01/07/2025), tuỳ chọn
-  province             String?
-  /// Phường/xã lân cận chi nhánh nhận giao thêm (mảng chuỗi), ngoài phường của chính chi nhánh
-  service_wards        Json?
-  latitude             Float?
-  longitude            Float?
-  quality_score        Float    @default(90)
-  active_jobs_count    Int      @default(0)
-  max_concurrent_jobs  Int      @default(5)
-  is_active            Boolean  @default(true)
-  channels             Json? // { phone, telegramChatId, zaloPhone, zaloUserId, messengerId }
-  /// Mã chi nhánh nhắn vào Zalo OA chung để liên kết (sinh khi cần, duy nhất toàn nền tảng)
-  zalo_link_code       String?  @unique
-  cancellation_count   Int      @default(0)
-  bypass_count         Int      @default(0)
-  cancellation_history Json? // tối đa 50 mục gần nhất
-  bypass_history       Json?
-  created_at           DateTime @default(now()) @db.Timestamptz(3)
-  updated_at           DateTime @updatedAt @db.Timestamptz(3)
-
-  organization organizations @relation(fields: [organization_id], references: [id])
-
-  @@unique([organization_id, branch_code])
   @@index([organization_id])
 }
 
@@ -496,9 +455,6 @@ model memberships {
   user_id           String
   role_id           String
   branch_id         String? // null = phạm vi toàn tổ chức
-  /// Chi nhánh chuỗi (`chain_branches.branch_code`) của tài khoản vai `cua_hang` — trang cửa hàng chỉ
-  /// hiện đơn gia công của chi nhánh này. Khác `branch_id` (bảng `branches`, dùng cho giá/tồn kho).
-  chain_branch_code String?
   status            membership_status @default(INVITED)
   invited_at        DateTime          @default(now()) @db.Timestamptz(3)
   joined_at         DateTime?         @db.Timestamptz(3)
@@ -514,7 +470,6 @@ model memberships {
   @@unique([organization_id, user_id])
   @@index([organization_id])
   @@index([user_id])
-  @@index([organization_id, chain_branch_code])
   @@index([branch_id]) // khoá ngoại cần index (ADR-015 O-1)
   @@index([role_id]) // khoá ngoại cần index (ADR-015 O-1)
 }
