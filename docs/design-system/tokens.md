@@ -278,7 +278,7 @@
 | `--color-surface-alt` | `#F1F5F9` | — |
 | `--color-border` | `#E2E8F0` | — |
 | `--color-text` | `#0F172A` | — |
-| `--color-text-muted` | `#64748B` | — |
+| `--color-text-muted` | `#5D6C81` | 4,88:1 trên surface-alt (#64748B chỉ 4,34:1 < AA) |
 | `--color-selected` | `#EFF6FF` | — |
 | `--color-selected-text` | `#2563EB` | — |
 | `--radius-card` | `0.75rem` | — |
@@ -298,7 +298,7 @@
 | `--color-surface-alt` | `#F4F4F5` | — |
 | `--color-border` | `#E4E4E7` | — |
 | `--color-text` | `#09090B` | — |
-| `--color-text-muted` | `#71717A` | — |
+| `--color-text-muted` | `#696971` | 4,95:1 trên surface-alt (#71717A chỉ 4,40:1 < AA) |
 | `--color-selected` | `#F4F4F5` | — |
 | `--color-selected-text` | `#18181B` | — |
 | `--radius-card` | `0.25rem` | — |
