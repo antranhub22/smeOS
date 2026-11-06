@@ -119,6 +119,7 @@ Thứ tự này là thứ tự thi hành, không phải thứ tự trình bày. 
 | `D16` | Sửa định mức tiền công theo độ khó | Điều hành | Điều hành |
 | `D17` | Đặt tham số giá của chiều tính từ giá sản xuất | Điều hành | Điều hành |
 | `D18` | Tạo trường dữ liệu riêng và ẩn trường tuỳ chọn của cửa hàng | Điều hành | Điều hành |
+| `D19` | Gắn và gỡ tên miền riêng của cửa hàng (checklist ALG 10.8) | Điều hành | Điều hành |
 
 ### Hệ thống
 
@@ -396,6 +397,7 @@ không qua vai. Cấp lần đầu bằng script chạy tay
 | `N16` | `platform.integrations.govern` | Trung tâm Tích hợp GĐ3 (31/10/2026): khoá/cấp sẵn tích hợp cho toàn nền tảng (`GLOBAL`) hoặc một ngành (`industry:<key>`), ghi nhật ký nền tảng | — (gán thẳng) | — |
 | `N17` | `platform.marketplace.manage` | Chợ đối tác (PO 31/10/2026): đồng bộ Google Sheet khảo sát, nhập Excel, tải ảnh khảo sát từ Drive vào kho; tạo/huỷ link chia sẻ xem không cần đăng nhập (PO 01/11/2026); ghi nhật ký nền tảng. Xem danh sách dùng `N1` | — (gán thẳng) | — |
 | `N18` | `platform.marketplace.delete` | Xoá hồ sơ cửa hàng khỏi chợ đối tác — từng hồ sơ, theo lựa chọn hoặc toàn bộ (PO 03/11/2026) — **chỉ superadmin nền tảng**, tách khỏi `N17` để người đồng bộ/nhập dữ liệu không xoá được. Ghi nhật ký nền tảng. Migration `20261103090000_grant_marketplace_delete_to_superadmin` cấp cho người vận hành đang giữ đủ 14 mã trước đó; superadmin mới nhận qua `gan-van-hanh-nen-tang` (mặc định gán đủ mã) | — (gán thẳng) | — |
+| `N20` | `platform.custom_domains.manage` | Tên miền riêng (checklist ALG 10.8, PO 06/11/2026): khoá tên miền của một tổ chức kèm lý do (ngừng phục vụ ngay, cửa hàng không tự gỡ) hoặc mở lại về chờ xác minh; ghi nhật ký nền tảng. Xem danh sách dùng `N1`. Migration `20261106030100_grant_custom_domains_to_superadmin` cấp cho người vận hành đang giữ đủ 16 mã trước đó | — (gán thẳng) | — |
 
 Cột "Mặc định"/"Trần cứng" ghi "— (gán thẳng)" vì không có khái niệm vai ở
 đây: `platform_operators` + `platform_role_capabilities` không đi qua

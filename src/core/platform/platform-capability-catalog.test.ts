@@ -8,10 +8,14 @@ import {
 } from "./platform-capability-catalog"
 
 describe("platform-capability-catalog", () => {
-  it("có đúng mười sáu mã (N1..N8, N12..N19), không nhiều hơn không ít hơn", () => {
+  it("có đúng mười bảy mã (N1..N8, N12..N20), không nhiều hơn không ít hơn", () => {
     expect(ALL_PLATFORM_CAPABILITY_CODES).toEqual([
-      "N1", "N12", "N13", "N14", "N15", "N16", "N17", "N18", "N19", "N2", "N3", "N4", "N5", "N6", "N7", "N8",
+      "N1", "N12", "N13", "N14", "N15", "N16", "N17", "N18", "N19", "N2", "N20", "N3", "N4", "N5", "N6", "N7", "N8",
     ])
+  })
+
+  it("N20 khoá/mở tên miền riêng (checklist ALG 10.8)", () => {
+    expect(platformCapability("N20").name).toBe("platform.custom_domains.manage")
   })
 
   it("N19 quản lý thuê bao (checklist ALG 10.7)", () => {

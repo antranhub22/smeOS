@@ -15,6 +15,7 @@ import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
 import { formatDateTime } from "@/lib/i18n/formatters"
 import { CreditLedgerPanel } from "@/components/platform/credit-ledger-panel"
 import { SubscriptionPanel } from "@/components/platform/subscription-panel"
+import { CustomDomainsPanel } from "@/components/platform/custom-domains-panel"
 
 type PlatformOrganizationDetail = {
   id: string
@@ -259,6 +260,8 @@ export default function ChiTietToChucPage() {
       </Card>
 
       <SubscriptionPanel organizationId={params.id} />
+
+      <CustomDomainsPanel organizationId={params.id} />
 
       <CreditLedgerPanel organizationId={params.id} orgCode={org.slug.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 12)} onChanged={() => void taiDuLieu()} />
 

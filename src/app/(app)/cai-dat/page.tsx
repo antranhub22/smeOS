@@ -28,6 +28,7 @@ import { BrochureFlowSettingsTab } from "@/components/organization/brochure-flow
 import { AiChannelsSettingsTab } from "@/components/organization/ai-channels-settings-tab"
 import { SettingsTabsNav, type SettingsTab } from "@/components/organization/settings-tabs-nav"
 import { ShopFieldsSettingsTab } from "@/components/organization/shop-fields-settings-tab"
+import { CustomDomainSettingsTab } from "@/components/organization/custom-domain-settings-tab"
 import { BROCHURE_PAYMENT_SETTINGS_KEY } from "@/modules/greeting-card/domain/brochure-commerce-rules"
 import {
   parseStorePolicies,
@@ -49,6 +50,7 @@ const VALID_TABS: SettingsTab[] = [
   "AI_CHANNELS",
   "COLLECTION_PROFILE",
   "FIELDS",
+  "DOMAIN",
 ]
 
 function CaiDatTiemContent() {
@@ -319,6 +321,7 @@ function CaiDatTiemContent() {
 
       {/* MỤC 11: TRƯỜNG DỮ LIỆU CỦA CỬA HÀNG (checklist ALG 1.9) */}
       {activeTab === "FIELDS" && <ShopFieldsSettingsTab />}
+      {activeTab === "DOMAIN" && <CustomDomainSettingsTab />}
     </SettingsLayout>
   )
 }

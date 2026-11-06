@@ -92,6 +92,7 @@
 | D16 | `config.labor_rate.edit` | ● | · | · | · | · | · | · | · | ĐH | **không** |
 | D17 | `config.production_price_param.edit` | ● | · | · | · | · | · | · | · | ĐH | **không** |
 | D18 | `config.custom_field.manage` | ● | · | · | · | · | · | · | · | ĐH | **không** |
+| D19 | `config.custom_domain.manage` | ● | · | · | · | · | · | · | · | ĐH | **không** |
 
 ### E — Hệ thống (thu hoạch)
 

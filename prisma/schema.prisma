@@ -286,6 +286,7 @@ model organizations {
   reconciliation_findings                          reconciliation_findings[]
   organization_links_as_parent                     organization_links[]            @relation("OrgLinkParent")
   organization_links_as_child                      organization_links[]            @relation("OrgLinkChild")
+  custom_domains                                   custom_domains[]
 }
 
 model workspaces {
@@ -4886,4 +4887,39 @@ model organization_links {
   @@unique([parent_org_id, partner_code])
   @@index([parent_org_id, status])
   @@index([child_org_id, status])
+}
+
+/// Checklist ALG 10.8 (PO 06/11/2026): tên miền riêng của cửa hàng cho trang danh mục và Thẻ Chào.
+/// Chỉ phục vụ khi VERIFIED (bản ghi TXT đúng mã xác minh); LOCKED do Console nền tảng khoá, cửa hàng không tự gỡ.
+enum custom_domain_status {
+  PENDING
+  VERIFIED
+  LOCKED
+}
+
+/// Chứng chỉ HTTPS (PO Q11): cấp tự động qua API Render; chưa cấu hình khoá API → MANUAL (vận hành thêm tay).
+enum custom_domain_certificate_status {
+  NOT_REQUESTED
+  REQUESTED
+  MANUAL
+  FAILED
+}
+
+model custom_domains {
+  id                 String                          @id @default(uuid())
+  organization_id    String
+  hostname           String                          @unique
+  verification_token String
+  status             custom_domain_status            @default(PENDING)
+  verified_at        DateTime?                       @db.Timestamptz(3)
+  last_checked_at    DateTime?                       @db.Timestamptz(3)
+  certificate_status custom_domain_certificate_status @default(NOT_REQUESTED)
+  locked_reason      String?
+  created_by         String?
+  created_at         DateTime                        @default(now()) @db.Timestamptz(3)
+  updated_at         DateTime                        @default(now()) @updatedAt @db.Timestamptz(3)
+
+  organization organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+
+  @@index([organization_id])
 }

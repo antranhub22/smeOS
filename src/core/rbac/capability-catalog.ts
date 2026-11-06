@@ -133,6 +133,8 @@ const HARVESTED: Record<string, Omit<CapabilityDefinition, "code">> = {
   D17: { name: "config.production_price_param.edit", group: "config", label: "Đặt tham số giá của chiều tính từ giá sản xuất", defaultRoles: ["dieu_hanh"], hardCap: ["dieu_hanh"] },
   // Checklist ALG 1.9: cửa hàng tự tạo trường dữ liệu riêng, ẩn/đổi nhãn trường tuỳ chọn trong phạm vi sàn nền tảng.
   D18: { name: "config.custom_field.manage", group: "config", label: "Tạo trường dữ liệu riêng và ẩn trường tuỳ chọn của cửa hàng", defaultRoles: ["dieu_hanh"], hardCap: ["dieu_hanh"] },
+  // Checklist ALG 10.8 (PO 06/11/2026): tên miền riêng cho trang danh mục và Thẻ Chào — chỉ Điều hành.
+  D19: { name: "config.custom_domain.manage", group: "config", label: "Gắn và gỡ tên miền riêng của cửa hàng", defaultRoles: ["dieu_hanh"], hardCap: ["dieu_hanh"] },
   E1: { name: "system.admin_screen.open", group: "system", label: "Mở màn Điều hành", defaultRoles: ["dieu_hanh"], hardCap: ["dieu_hanh"] },
   E2: { name: "system.status.view", group: "system", label: "Xem trạng thái kho và mã API dạng ✓/✕", defaultRoles: ["dieu_hanh", "dieu_phoi", "sale"] },
   E3: { name: "system.api_key.view_masked", group: "system", label: "Xem bản che mã API", defaultRoles: ["dieu_hanh"], hardCap: ["dieu_hanh"] },

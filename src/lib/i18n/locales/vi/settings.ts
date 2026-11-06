@@ -61,6 +61,7 @@ export const settingsVi = {
     aiChannels: "9. AI & Kênh",
     collectionProfile: "10. Thu Thập Chuỗi",
     fields: "11. Trường Dữ Liệu",
+    customDomain: "12. Tên Miền Riêng",
   },
 } as const
 
