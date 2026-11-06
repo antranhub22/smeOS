@@ -4,11 +4,14 @@
  */
 
 import { prisma } from "@/core/tenancy/infra/prisma"
+import { withIndustryKey } from "@/modules/organization/domain/industry-key"
+import { ORG_SETTINGS_SELECT } from "@/modules/organization/infra/organization-industry"
 import { OPEN_LEAD_STATUSES } from "@/modules/acquisition/domain/lead-recovery"
 
 export class PublicOrderRepository {
   async orgSettings(organizationId: string): Promise<unknown> {
-    return (await prisma.organizations.findUnique({ where: { id: organizationId }, select: { settings: true } }))?.settings ?? null
+    const org = await prisma.organizations.findUnique({ where: { id: organizationId }, select: ORG_SETTINGS_SELECT })
+    return org ? (withIndustryKey(org).settings ?? null) : null // ngành theo cột (ADR-012 T-6c-1)
   }
 
   /** Đơn công khai (catalog/landing) của cùng SĐT trong khoảng gần đây — chặn gửi dồn. */

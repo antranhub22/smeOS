@@ -2,6 +2,8 @@ import { randomUUID } from "node:crypto"
 import type { Prisma } from "@/generated/prisma/client"
 import { conflict, notFound } from "@/core/http/errors"
 import { prisma } from "@/core/tenancy/infra/prisma"
+import { withOrganizationIndustry } from "@/modules/organization/domain/industry-key"
+import { ORG_SETTINGS_SELECT } from "@/modules/organization/infra/organization-industry"
 import { scopedData, scopedWhere, type TenantContext } from "@/core/tenancy"
 import { recordAuditLog } from "@/modules/audit/use-cases/record-audit-log"
 import { needsFollowUp, type CancellationPayload } from "../domain/cancellation-request"
@@ -20,17 +22,18 @@ export class CancellationFollowUpRepository {
 
   /** Đề xuất từ chối nhận đơn của Điều phối còn PENDING, tạo trước `before` (bộ quét lọc kỹ theo từng tiệm). */
   async listExpiredCoordinatorRejections(before: Date, take = 50) {
-    return this.db.greeting_messages.findMany({
+    const rows = await this.db.greeting_messages.findMany({
       where: {
         kind: "CANCELLATION_REQUEST",
         sender_role: "COORDINATOR",
         created_at: { lte: before },
         payload: { path: ["status"], equals: "PENDING" },
       },
-      select: { id: true, organization_id: true, order_id: true, created_at: true, organization: { select: { settings: true } } },
+      select: { id: true, organization_id: true, order_id: true, created_at: true, organization: { select: ORG_SETTINGS_SELECT } },
       orderBy: { created_at: "asc" },
       take,
     })
+    return rows.map((r) => withOrganizationIndustry(r)) // ngành theo cột (ADR-012 T-6c-1)
   }
 
   /** Tự duyệt huỷ do quá hạn — không ghi sổ hoàn, đánh dấu việc chờ Điều hành, báo Điều hành. */

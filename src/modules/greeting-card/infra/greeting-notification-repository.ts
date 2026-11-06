@@ -1,4 +1,6 @@
 import { prisma } from "@/core/tenancy/infra/prisma"
+import { withOrganizationIndustry } from "@/modules/organization/domain/industry-key"
+import { ORG_SETTINGS_SELECT } from "@/modules/organization/infra/organization-industry"
 import type { TenantContext } from "@/core/tenancy"
 import { Prisma } from "@/generated/prisma/client"
 import { isUniqueViolation } from "@/modules/coordinator/infra/transaction"
@@ -40,7 +42,7 @@ export class GreetingNotificationRepository {
 
   /** Thông tin đơn cần cho tin nhắn — chỉ đơn Thẻ chào của đúng tổ chức. */
   async orderFacts(organizationId: string, orderId: string) {
-    return this.db.orders.findFirst({
+    return withOrganizationIndustry(await this.db.orders.findFirst({
       where: { id: orderId, organization_id: organizationId, source: "BROCHURE" },
       select: {
         id: true,
@@ -50,10 +52,10 @@ export class GreetingNotificationRepository {
         pricing_rule_ref: true,
         source_session_id: true,
         customer: { select: { name: true, phone: true } },
-        organization: { select: { name: true, settings: true, business_profile: { select: { display_name: true } } } },
+        organization: { select: { name: true, ...ORG_SETTINGS_SELECT, business_profile: { select: { display_name: true } } } },
         qc_records: { select: { notes: true } },
       },
-    })
+    }))
   }
 
   async sendCodeOf(organizationId: string, sessionId: string): Promise<string | null> {

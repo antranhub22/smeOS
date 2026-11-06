@@ -12,6 +12,7 @@ import { requirePlatformCapability } from "@/core/platform/platform-capabilities
 import { INPUT_DOMAINS, type InputDomainKey } from "@/modules/field-platform/domain/input-domains"
 import { STANDARD_G1_CORE_FIELDS } from "@/modules/field-platform/domain/standard-core-fields"
 import { PlatformDataRepository, getPlatformDataRepository } from "../infra/platform-data-repository"
+import { industryKeyOf } from "@/modules/organization/domain/industry-key"
 
 export interface PlatformOrgFieldRecord {
   readonly fieldKey: string
@@ -62,7 +63,6 @@ export async function getPlatformOrgFolderData(
   const business = org.business_profile
   const brand = org.brand_profile
   const primaryBranch = org.branches[0]
-  const settings = org.settings as Record<string, unknown> | null
 
   const valuesMap: Record<string, unknown> = {
     "core.org.store_name": org.name,
@@ -70,7 +70,7 @@ export async function getPlatformOrgFolderData(
     "core.org.hotline_phone": business?.phone ?? "Chưa thiết lập",
     "core.org.tax_code": business?.tax_code ?? "Chưa thiết lập",
     "core.org.legal_name": business?.legal_name ?? org.name,
-    "core.org.industry": settings?.industry_key ?? "Chưa phân loại",
+    "core.org.industry": industryKeyOf(org) ?? "Chưa phân loại", // cột industry_key (ADR-012 T-6c-1)
     "core.brand.logo_url": brand?.logo_asset_id ?? "Chưa có logo",
     "core.brand.primary_color": brand?.primary_color ?? "Chưa thiết lập",
     "core.catalog.product_name": `${productCount} sản phẩm trong catalog`,

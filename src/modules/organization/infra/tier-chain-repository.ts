@@ -11,6 +11,8 @@ import { organizationTierOf } from "@/core/governance/tier-of"
 
 import type { DbClient } from "./db-client"
 import { ACTIVE_CHAIN_LINK } from "./organization-links"
+import { ORG_SETTINGS_SELECT } from "./organization-industry"
+import { withIndustryKey } from "../domain/industry-key"
 
 /** Chuỗi cha chính của một tổ chức đối tác, kèm cấu hình của chuỗi (ma trận quản trị đọc từ đây). */
 export interface PrimaryChainLink {
@@ -31,10 +33,10 @@ export interface TierChain {
 export async function findPrimaryChainLink(organizationId: string, db: DbClient = prisma): Promise<PrimaryChainLink | null> {
   const link = await db.organization_links.findFirst({
     where: { child_org_id: organizationId, is_primary: true, ...ACTIVE_CHAIN_LINK },
-    select: { parent_org_id: true, parent_organization: { select: { name: true, settings: true } } },
+    select: { parent_org_id: true, parent_organization: { select: { name: true, ...ORG_SETTINGS_SELECT } } },
   })
   if (!link) return null
-  return { chainOrgId: link.parent_org_id, chainName: link.parent_organization.name, chainSettings: link.parent_organization.settings }
+  return { chainOrgId: link.parent_org_id, chainName: link.parent_organization.name, chainSettings: withIndustryKey(link.parent_organization).settings }
 }
 
 /** `null` khi tổ chức không tồn tại. */

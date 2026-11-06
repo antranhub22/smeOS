@@ -1,4 +1,6 @@
 import { prisma } from "@/core/tenancy/infra/prisma"
+import { withIndustryKey } from "@/modules/organization/domain/industry-key"
+import { ORG_SETTINGS_SELECT } from "@/modules/organization/infra/organization-industry"
 
 type Db = typeof prisma
 
@@ -21,9 +23,9 @@ export class AvailabilityCheckRepository {
   async findOrganizationSettings(organizationId: string): Promise<unknown> {
     const row = await this.db.organizations.findFirst({
       where: { id: organizationId },
-      select: { settings: true },
+      select: ORG_SETTINGS_SELECT, // ngành theo cột (ADR-012 T-6c-1)
     })
-    return row?.settings ?? null
+    return row ? (withIndustryKey(row).settings ?? null) : null
   }
 
   /** Số đơn chưa huỷ có `delivery_window.date` đúng ngày. */

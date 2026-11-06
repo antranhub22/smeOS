@@ -4,6 +4,8 @@
  */
 
 import { prisma } from "@/core/tenancy/infra/prisma"
+import { withIndustryKey } from "@/modules/organization/domain/industry-key"
+import { ORG_SETTINGS_SELECT } from "@/modules/organization/infra/organization-industry"
 import { scopedWhere, type TenantContext } from "@/core/tenancy/tenant-context"
 import type { Prisma } from "@/generated/prisma/client"
 import { formatCurrency } from "@/lib/i18n/formatters"
@@ -36,7 +38,8 @@ export class ApprovalRequestRepository {
   }
 
   async orgSettings(ctx: TenantContext): Promise<unknown> {
-    return (await prisma.organizations.findUnique({ where: { id: ctx.organizationId }, select: { settings: true } }))?.settings ?? null
+    const org = await prisma.organizations.findUnique({ where: { id: ctx.organizationId }, select: ORG_SETTINGS_SELECT })
+    return org ? (withIndustryKey(org).settings ?? null) : null // ngành theo cột (ADR-012 T-6c-1)
   }
 
   async customerStats(ctx: TenantContext, customerId: string | null, now: Date) {

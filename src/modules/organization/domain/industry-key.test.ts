@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest"
 
-import { industryKeyOf, withIndustryKey } from "./industry-key"
+import { industryKeyOf, normalizeIndustryKey, splitIndustrySettings, withIndustryKey, withOrganizationIndustry } from "./industry-key"
 
 describe("ngành của tổ chức theo cột industry_key (ADR-012 T-6b)", () => {
   it("cột trước, settings.industry sau", () => {
@@ -16,5 +16,21 @@ describe("ngành của tổ chức theo cột industry_key (ADR-012 T-6b)", () =
     expect(withIndustryKey({ industry_key: "FNB", settings: null }).settings).toEqual({ industry: "FNB" })
     const unchanged = { industry_key: null, settings: { industry: "KHONG_CO" } }
     expect(withIndustryKey(unchanged)).toBe(unchanged)
+  })
+
+  it("withOrganizationIndustry phủ ngành lên quan hệ lồng organization; không có thì giữ nguyên", () => {
+    const row = { id: "s", organization: { industry_key: "HOMESTAY", settings: { a: 1 } } }
+    expect(withOrganizationIndustry(row).organization.settings).toEqual({ a: 1, industry: "HOMESTAY" })
+    expect(withOrganizationIndustry(null)).toBeNull()
+    const noOrg = { id: "s", organization: null }
+    expect(withOrganizationIndustry(noOrg)).toBe(noOrg)
+  })
+
+  it("T-6c-1: ghi settings tách ngành ra cột — mã chuẩn hoá, mã lạ thành null, không có khoá thì không đụng cột", () => {
+    expect(splitIndustrySettings({ industry: "homestay", x: 1 })).toEqual({ settings: { x: 1 }, industryKey: "HOMESTAY" })
+    expect(splitIndustrySettings({ industry: "KHONG_CO" })).toEqual({ settings: {}, industryKey: null })
+    expect(splitIndustrySettings({ x: 1 })).toEqual({ settings: { x: 1 } })
+    expect(normalizeIndustryKey(" fnb ")).toBe("FNB")
+    expect(normalizeIndustryKey(3)).toBeNull()
   })
 })

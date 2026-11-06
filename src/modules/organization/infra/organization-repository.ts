@@ -17,6 +17,7 @@ import { lowBalanceThreshold } from "@/modules/usage/domain/monthly-limit"
 import type { PrismaClient } from "@/generated/prisma/client"
 import { appendCreditEntry, type CreditEntryKind, type CreditEntryMeta } from "./credit-ledger"
 import { withIndustryKey } from "../domain/industry-key"
+import { organizationSettingsData as settingsData } from "./organization-industry" // ADR-012 T-6c-1: ngành ghi vào cột
 
 function mapOrganization(row: organizations): OrganizationEntity {
   const org = withIndustryKey(row) // ADR-012 T-6b: settings.industry lấy từ cột industry_key
@@ -70,9 +71,9 @@ export class OrganizationRepository implements IOrganizationRepository {
     ctx: TenantContext,
     input: UpdateOrganizationInput
   ): Promise<OrganizationEntity | null> {
-    const data: { name?: string; settings?: InputJsonValue } = {}
+    const data: { name?: string; settings?: InputJsonValue; industry_key?: string | null } = {}
     if (input.name !== undefined) data.name = input.name
-    if (input.settings !== undefined) data.settings = input.settings as InputJsonValue
+    if (input.settings !== undefined) Object.assign(data, settingsData(input.settings as Record<string, unknown>))
 
     const result = await this.db.organizations.updateMany({
       where: { id: ctx.organizationId },
@@ -90,15 +91,14 @@ export class OrganizationRepository implements IOrganizationRepository {
       type: organization_type
       credit_balance: number
       settings?: InputJsonValue
+      industry_key?: string | null
     } = {
       name: input.name,
       slug: input.slug,
       type: input.type as organization_type,
       credit_balance: input.credit_balance,
     }
-    if (input.settings !== undefined) {
-      data.settings = input.settings as InputJsonValue
-    }
+    if (input.settings !== undefined) Object.assign(data, settingsData(input.settings as Record<string, unknown>))
     const row = await this.db.organizations.create({ data })
     // Credit khởi tạo (dùng thử) vào sổ cái như một khoản tặng (checklist ALG 10.6)
     if (row.credit_balance > 0) await appendCreditEntry(this.db, row.id, "GIFT", row.credit_balance, { reason: "Credit khởi tạo khi mở tài khoản" })
@@ -252,7 +252,7 @@ export class OrganizationRepository implements IOrganizationRepository {
   async updateSettings(ctx: TenantContext, settings: Record<string, unknown>): Promise<void> {
     await this.db.organizations.update({
       where: { id: ctx.organizationId },
-      data: { settings: settings as InputJsonValue },
+      data: settingsData(settings),
     })
   }
 
@@ -266,10 +266,7 @@ export class OrganizationRepository implements IOrganizationRepository {
   ): Promise<OrganizationEntity> {
     const row = await this.db.organizations.update({
       where: { id: organizationId },
-      data: {
-        type: type as organization_type,
-        settings: settings as InputJsonValue,
-      },
+      data: { type: type as organization_type, ...settingsData(settings) },
     })
     return mapOrganization(row)
   }

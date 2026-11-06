@@ -6,7 +6,8 @@ import { isUniqueViolation } from "@/modules/coordinator/infra/transaction"
 import { generateSendCode, linkAvailability } from "../domain/greeting-card-rules"
 import { CATALOG_ITEMS_INCLUDE, GreetingCatalogRepository } from "./greeting-catalog-repository"
 import type { GreetingSessionStatus, ProductSnapshot } from "../domain/greeting-card-types"
-import { withIndustryKey } from "@/modules/organization/domain/industry-key"
+import { withIndustryKey, withOrganizationIndustry } from "@/modules/organization/domain/industry-key"
+import { ORG_SETTINGS_SELECT } from "@/modules/organization/infra/organization-industry"
 
 const SEND_CODE_ATTEMPTS = 5
 
@@ -133,8 +134,8 @@ export class GreetingCardRepository extends GreetingCatalogRepository {
     const matches = await this.db.greeting_sessions.findMany({
       where: { send_code: sendCode.toUpperCase().trim() },
       include: {
-        // Chỉ đọc khoá cấu hình hiển thị trong settings (xem toPublicCatalogFilters) — không gửi nguyên ra ngoài
-        organization: { select: { settings: true } },
+        // Chỉ đọc khoá cấu hình hiển thị trong settings (toPublicCatalogFilters); ngành theo cột (ADR-012 T-6c-1)
+        organization: { select: ORG_SETTINGS_SELECT },
         catalog: { include: CATALOG_ITEMS_INCLUDE },
         order: { include: { items: { select: { product_id: true } } } },
       },
@@ -144,18 +145,15 @@ export class GreetingCardRepository extends GreetingCatalogRepository {
       log.warn("greeting_card.send_code_ambiguous", { feature: "greeting-card", sendCode })
       return null
     }
-    return matches[0] ?? null
+    return withOrganizationIndustry(matches[0] ?? null)
   }
 
   /** Lấy catalog công khai theo ID — không cần auth, dùng cho route /g/[id]. */
   async getPublicCatalogById(catalogId: string) {
-    return this.db.greeting_catalogs.findFirst({
+    return withOrganizationIndustry(await this.db.greeting_catalogs.findFirst({
       where: { id: catalogId, is_active: true },
-      include: {
-        organization: { select: { id: true, name: true, slug: true, settings: true } },
-        ...CATALOG_ITEMS_INCLUDE,
-      },
-    })
+      include: { organization: { select: { id: true, name: true, slug: true, ...ORG_SETTINGS_SELECT } }, ...CATALOG_ITEMS_INCLUDE },
+    }))
   }
 
   /**
@@ -163,24 +161,21 @@ export class GreetingCardRepository extends GreetingCatalogRepository {
    * Dùng cho route /g/[orgSlug]/[catalogCode] — URL thân thiện, có ý nghĩa.
    */
   async getPublicCatalogBySlugAndCode(orgSlug: string, catalogCode: string) {
-    return this.db.greeting_catalogs.findFirst({
+    return withOrganizationIndustry(await this.db.greeting_catalogs.findFirst({
       where: {
         code: catalogCode.toLowerCase().trim(),
         is_active: true,
         organization: { slug: orgSlug.toLowerCase().trim() },
       },
-      include: {
-        organization: { select: { id: true, name: true, slug: true, settings: true } },
-        ...CATALOG_ITEMS_INCLUDE,
-      },
-    })
+      include: { organization: { select: { id: true, name: true, slug: true, ...ORG_SETTINGS_SELECT } }, ...CATALOG_ITEMS_INCLUDE },
+    }))
   }
 
   /** Tên hiển thị + cài đặt của tiệm cho trang công khai (không lộ gì khác). */
   async getShopProfile(organizationId: string) {
     const org = await this.db.organizations.findUnique({
       where: { id: organizationId },
-      select: { name: true, type: true, settings: true, industry_key: true, business_profile: { select: { display_name: true, phone: true } } },
+      select: { name: true, type: true, ...ORG_SETTINGS_SELECT, business_profile: { select: { display_name: true, phone: true } } },
     })
     return {
       name: org?.business_profile?.display_name || org?.name || "Cửa hàng", phone: org?.business_profile?.phone ?? null,
@@ -347,19 +342,10 @@ export class GreetingCardRepository extends GreetingCatalogRepository {
   }
 
   async findSessionForVerification(organizationId: string, sendCode: string) {
-    return this.db.greeting_sessions.findUnique({
+    return withOrganizationIndustry(await this.db.greeting_sessions.findUnique({
       where: { organization_id_send_code: { organization_id: organizationId, send_code: sendCode } },
-      include: {
-        order: {
-          include: {
-            items: true,
-          },
-        },
-        organization: {
-          select: { settings: true },
-        },
-      },
-    })
+      include: { order: { include: { items: true } }, organization: { select: ORG_SETTINGS_SELECT } },
+    }))
   }
 
   async findAssetForVerification(organizationId: string, assetId: string) {
