@@ -269,5 +269,13 @@ Còn lại (chưa sửa): `flower-network-command-center` (StatTile có InfoTip 
 
 - `templates/coordinator/partner-assignment-modal.tsx`: lớp phủ `fixed inset-0` tự viết → `Dialog`; radio thô → `RadioGroup`; bỏ mã "T06"/"T07" khỏi màn hình. Test khoá hành vi B5 `components/coordinator/__tests__/partner-assignment-modal.characterization.test.tsx`.
 - `sales-order-intake-modal.tsx`: bỏ mã "P1"/"P2"/"T01" khỏi câu chữ (luật 6). Lớp phủ của hộp này (1.196 dòng) chưa chuyển — cần tách tệp khi viết lại.
-- Miễn trừ có lý do: ô bẫy chống spam (R18), trạng thái bước của dải tiến độ xưởng/theo dõi giao hàng (R14).
+- Miễn trừ có lý do: ô bẫy chống spam (R18). (Trạng thái bước của dải tiến độ xưởng/theo dõi giao hàng đã được sửa thật trong PR #156, bỏ miễn trừ R14.)
 - UX lint 38 → 29. Còn: ô `range` chờ Slider (11), layout/feature-guidance-card (luồng khác/PO khoá), Catalog, `flower-network-command-center` (StatTile), `upload-wizard.tsx` (mã chết).
+
+### Đợt 4 (06/11/2026)
+
+- `sales-order-intake-modal.tsx`: lớp phủ `fixed inset-0` tự viết → `Dialog` (giữ khổ rộng 3xl). Tệp 1.290 → 1.281 dòng; việc tách theo bước (k11) để một đợt riêng. Test khoá hành vi B5 `components/coordinator/__tests__/sales-order-intake-modal.characterization.test.tsx`. UX lint 29 → 28.
+
+### Đợt 5 (06/11/2026) — tách hộp "Tiếp nhận đơn hàng" (k11)
+
+- `sales-order-intake-modal.tsx` 1.281 → 71 dòng: state/tải dữ liệu/gửi vào `use-sales-order-intake-form.ts`; giao diện thành 4 phần `sales-order-intake-{customer,product,bom,details}-section.tsx`; kiểu dùng chung `sales-order-intake-types.ts`. Mọi tệp ≤ 350 dòng; bỏ khỏi `file-size-baseline.json`. JSX và xử lý giữ nguyên (tách cơ học), test khoá hành vi B5 vẫn qua.

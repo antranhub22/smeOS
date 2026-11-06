@@ -60,7 +60,6 @@
     "src/components/templates/content-engine/social-post-preview.tsx": 482,
     "src/components/templates/coordinator/florist-job-card.tsx": 351,
     "src/components/templates/coordinator/partner-product-card.tsx": 583,
-    "src/components/templates/coordinator/sales-order-intake-modal.tsx": 1290,
     "src/components/templates/social-publishing/post-status-report-card.tsx": 527,
     "src/components/upload/upload-wizard.tsx": 1382,
     "src/lib/feature-catalog.ts": 990,

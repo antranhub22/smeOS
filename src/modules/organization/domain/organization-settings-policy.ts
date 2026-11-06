@@ -17,6 +17,8 @@ export const PLATFORM_OWNED_SETTING_KEYS = [
   "lead_captured_at",
   // Quyền mở khóa công cụ đa tầng — chỉ cấp quản lý (Chuỗi/SaaS Mother) mới được phê duyệt
   "unlocked_tools",
+  // Phạm vi chi nhánh theo đợt — chỉ Admin SaaS bật (D-59, ADR-012 T-5)
+  "branch_scope",
   // Chat Telegram đã chứng minh thuộc tổ chức — chỉ máy chủ ghi (greeting-card/infra/telegram-linked-chats.ts)
   "telegram_linked_chat_ids",
   "telegram_unlinked_chats",

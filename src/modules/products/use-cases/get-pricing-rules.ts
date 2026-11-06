@@ -1,4 +1,4 @@
-import type { TenantContext } from "@/core/tenancy"
+import { branchScopeFor, type TenantContext } from "@/core/tenancy"
 import { parsePeakHours, parseTierDiscount } from "@/modules/products/domain/customer-tier-pricing"
 import {
   mergeEffectiveFloorCeilingRatio,
@@ -22,7 +22,9 @@ export async function getPricingRules(
   overrideBranchId?: string | null,
   pricingRepo: IPricingRuleRepository = getPricingRuleRepository()
 ) {
-  const branchId = overrideBranchId !== undefined ? overrideBranchId : ctx.branchId
+  // Bị giới hạn theo chi nhánh → chỉ xem cấu hình hiệu lực của chi nhánh mình (ALG 9.13, ADR-012 T-5b)
+  const scope = branchScopeFor(ctx, "L5")
+  const branchId = scope ?? (overrideBranchId !== undefined ? overrideBranchId : ctx.branchId)
   const rows = await pricingRepo.currentRows(ctx)
 
   const config = mergeEffectivePricingConfig(rows, branchId)

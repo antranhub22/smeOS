@@ -3,10 +3,15 @@ import type { TenantContext } from "@/core/tenancy"
 import * as XLSX from "xlsx"
 
 const findMany = vi.fn()
+// Cờ phạm vi chi nhánh đợt 1 của tổ chức (ADR-012 T-5, D-59) — mặc định tắt
+const orgSettings = vi.fn(async (): Promise<{ settings: unknown } | null> => ({ settings: null }))
 vi.mock("@/core/tenancy/infra/prisma", () => ({
   prisma: {
     customers: {
       findMany: (...a: unknown[]) => findMany(...a),
+    },
+    organizations: {
+      findUnique: () => orgSettings(),
     },
   },
 }))
@@ -115,5 +120,12 @@ describe("exportCustomers", () => {
     })
     expect(parsed.customers[0]?.code).toBe("KH-0001")
     expect(parsed.customers[0]?.occasions).toHaveLength(2)
+  })
+
+  it("tổ chức bật phạm vi chi nhánh đợt 1: chỉ xuất khách của chi nhánh mình và khách dùng chung (ADR-012 T-5)", async () => {
+    orgSettings.mockResolvedValueOnce({ settings: { branch_scope: { wave1: true } } })
+    findMany.mockResolvedValue([])
+    await exportCustomers(ctx, { format: "json" })
+    expect(findMany.mock.calls[0]?.[0]).toMatchObject({ where: { AND: [{ OR: [{ branch_id: null }, { branch_id: "br-1" }] }] } })
   })
 })

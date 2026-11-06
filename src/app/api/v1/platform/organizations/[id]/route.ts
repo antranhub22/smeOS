@@ -5,6 +5,7 @@ import { requirePlatformContext } from "@/modules/platform/use-cases/resolve-pla
 import { getOrganization } from "@/modules/platform/use-cases/get-organization"
 import { approveOrganizationModelChange } from "@/modules/platform/use-cases/approve-organization-model-change"
 import { decidePublicChatLimits } from "@/modules/platform/use-cases/decide-public-chat-limits"
+import { setBranchScopeWave1 } from "@/modules/platform/use-cases/set-branch-scope-wave"
 import { getOrganizationRepository } from "@/modules/organization/infra/organization-repository"
 
 export const GET = handle(async (request, context: { params: Promise<{ id: string }> }) => {
@@ -23,6 +24,8 @@ const patchSchema = z.object({
   clear_pending_model_change: z.boolean().optional(),
   /** Duyệt hoặc từ chối yêu cầu nâng hạn mức chat công khai */
   public_chat_limits_decision: z.enum(["approve", "reject"]).optional(),
+  /** Bật/tắt phạm vi chi nhánh đợt 1 (khách hàng) — D-59, ADR-012 T-5 */
+  branch_scope_wave1: z.boolean().optional(),
 })
 
 export const PATCH = handle(async (request, context: { params: Promise<{ id: string }> }) => {
@@ -79,6 +82,10 @@ export const PATCH = handle(async (request, context: { params: Promise<{ id: str
       organizationId: id,
       approve: parsed.data.public_chat_limits_decision === "approve",
     })
+  }
+
+  if (parsed.data.branch_scope_wave1 !== undefined) {
+    result = await setBranchScopeWave1(pctx, { organizationId: id, enabled: parsed.data.branch_scope_wave1 })
   }
 
   return jsonResponse({ data: result })
