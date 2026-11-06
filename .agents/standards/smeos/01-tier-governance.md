@@ -11,7 +11,7 @@
 | 3 · ChainOS | `organization_type` `CHAIN` hoặc `FLOWER_NETWORK`, hoặc nhóm vai `CHAIN`/`FLOWER_NETWORK` (`isChainOrganization`) | `nav-chain.ts` | `/dieu-phoi/*` |
 | 4 · StoreOS | mọi trường hợp còn lại (`EXPERIENCE`, `SINGLE`, `STORE`) | `nav-store.ts` | — |
 
-Quan hệ Chuỗi → Cửa hàng: bảng `chain_partnerships` (`status = ACTIVE`, lấy bản ghi **sớm nhất**) — không phải `parent_id`.
+Quan hệ Chuỗi → Cửa hàng: bảng `organization_links` (cạnh chính `is_primary` = liên kết chuỗi ACTIVE **sớm nhất**; đọc qua `resolveTierChain`) — không phải `parent_id`.
 
 **Ngành** tác động qua **plugin trong code**, không qua dữ liệu: `src/modules/organization/domain/industries/*.ts` theo `industry-plugin-contract.ts` (thuật ngữ, taxonomy, preset giá, `craftFee`…). Thêm ngành = thêm file plugin + đăng ký registry (`npm run check:industry` kiểm).
 

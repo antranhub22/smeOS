@@ -3,7 +3,7 @@ import type { Prisma, PrismaClient } from "@/generated/prisma/client"
 import { prisma as defaultPrisma } from "@/core/tenancy/infra/prisma"
 import { hashPassword } from "@/modules/organization/infra/password-hasher"
 import { slugCandidates } from "@/modules/organization/domain/slug"
-import { CHAIN_LINK_TYPES, syncOrganizationLink } from "@/modules/organization/infra/organization-link-sync"
+import { CHAIN_LINK_TYPES, recomputePrimaryLink, toChainLinkType } from "@/modules/organization/infra/organization-links"
 import { findStoreByIdentifier, type StoreByIdentifier } from "./store-identifier-lookup"
 import type {
   IChainPartnershipRepository,
@@ -17,8 +17,8 @@ import type {
 } from "../domain/partnership-entities"
 
 /**
- * ADR-012 T-3a: đọc từ `organization_links`; ghi vẫn ghi `chain_partnerships` rồi chép sang trong cùng giao dịch
- * (giữ tới T-3b để bản phát hành trước còn chạy được khi quay lui). Giá trị trả về luôn đọc lại từ `organization_links`.
+ * Quan hệ chuỗi → cửa hàng đối tác nằm ở `organization_links` (ADR-012 D-T3; `chain_partnerships` xoá ở T-3b).
+ * Mỗi lệnh ghi đặt lại cạnh chính (`recomputePrimaryLink`) trong cùng giao dịch rồi đọc lại dòng để trả về.
  */
 const LINK_INCLUDE = { child_organization: { select: { name: true, slug: true, settings: true } } } as const
 type LinkRow = Prisma.organization_linksGetPayload<{ include: typeof LINK_INCLUDE }>
@@ -110,13 +110,13 @@ export class PrismaChainPartnershipRepository implements IChainPartnershipReposi
         })
       }
 
-      // 6. Tạo Liên kết quan hệ Chuỗi - Đối tác (chain_partnerships)
-      const row = await tx.chain_partnerships.create({
+      // 6. Tạo liên kết Chuỗi → Đối tác (organization_links)
+      const row = await tx.organization_links.create({
         data: {
-          chain_org_id: input.chainOrgId,
-          partner_org_id: partnerOrg.id,
+          parent_org_id: input.chainOrgId,
+          child_org_id: partnerOrg.id,
           partner_code: input.partnerCode,
-          partnership_type: input.partnershipType ?? "SUBCONTRACTOR",
+          link_type: toChainLinkType(input.partnershipType),
           status: "ACTIVE",
           capacity_daily: input.capacityDaily ?? 10,
           commission_rate: input.commissionRate ? Number(input.commissionRate) : null,
@@ -128,7 +128,7 @@ export class PrismaChainPartnershipRepository implements IChainPartnershipReposi
           district: input.district ?? null,
         },
       })
-      await syncOrganizationLink(tx, row.id) // ADR-012 T-2: ghi kép sang organization_links
+      await recomputePrimaryLink(tx, partnerOrg.id)
 
       return {
         partnership: this.mapEntity(await readLink(tx, row.id)),
@@ -185,8 +185,12 @@ export class PrismaChainPartnershipRepository implements IChainPartnershipReposi
 
   async updateStatus(id: string, status: PartnershipStatus): Promise<ChainPartnershipEntity> {
     const row = await this.prisma.$transaction(async (tx) => {
-      await tx.chain_partnerships.update({ where: { id }, data: { status } })
-      await syncOrganizationLink(tx, id)
+      const updated = await tx.organization_links.update({
+        where: { id },
+        data: { status, valid_to: status === "TERMINATED" ? new Date() : null },
+        select: { child_org_id: true },
+      })
+      await recomputePrimaryLink(tx, updated.child_org_id)
       return readLink(tx, id)
     })
     return this.mapEntity(row)
@@ -207,10 +211,11 @@ export class PrismaChainPartnershipRepository implements IChainPartnershipReposi
     contactPhone?: string | undefined
     contactEmail?: string | undefined
   }): Promise<ChainPartnershipEntity> {
-    const updateData: Prisma.chain_partnershipsUncheckedUpdateInput = {
+    const updateData: Prisma.organization_linksUncheckedUpdateInput = {
       status: "ACTIVE",
+      valid_to: null,
       partner_code: params.partnerCode,
-      partnership_type: params.partnershipType ?? "SUBCONTRACTOR",
+      link_type: toChainLinkType(params.partnershipType),
       commission_rate: params.commissionRate ? Number(params.commissionRate) : null,
       capacity_daily: params.capacityDaily ?? 10,
     }
@@ -219,19 +224,19 @@ export class PrismaChainPartnershipRepository implements IChainPartnershipReposi
     if (params.contactEmail !== undefined) updateData.contact_email = params.contactEmail
 
     const row = await this.prisma.$transaction(async (tx) => {
-      const saved = await tx.chain_partnerships.upsert({
+      const saved = await tx.organization_links.upsert({
       where: {
-        chain_org_id_partner_org_id: {
-          chain_org_id: params.chainOrgId,
-          partner_org_id: params.partnerOrgId,
+        parent_org_id_child_org_id: {
+          parent_org_id: params.chainOrgId,
+          child_org_id: params.partnerOrgId,
         },
       },
       update: updateData,
       create: {
-        chain_org_id: params.chainOrgId,
-        partner_org_id: params.partnerOrgId,
+        parent_org_id: params.chainOrgId,
+        child_org_id: params.partnerOrgId,
         partner_code: params.partnerCode,
-        partnership_type: params.partnershipType ?? "SUBCONTRACTOR",
+        link_type: toChainLinkType(params.partnershipType),
         status: "ACTIVE",
         commission_rate: params.commissionRate ? Number(params.commissionRate) : null,
         capacity_daily: params.capacityDaily ?? 10,
@@ -241,7 +246,7 @@ export class PrismaChainPartnershipRepository implements IChainPartnershipReposi
       },
         select: { id: true },
       })
-      await syncOrganizationLink(tx, saved.id)
+      await recomputePrimaryLink(tx, params.partnerOrgId)
       return readLink(tx, saved.id)
     })
     return this.mapEntity(row)

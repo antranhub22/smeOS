@@ -10,7 +10,7 @@ import { prisma } from "@/core/tenancy/infra/prisma"
 import { organizationTierOf } from "@/core/governance/tier-of"
 
 import type { DbClient } from "./db-client"
-import { ACTIVE_CHAIN_LINK } from "./organization-link-sync"
+import { ACTIVE_CHAIN_LINK } from "./organization-links"
 
 /** Chuỗi cha chính của một tổ chức đối tác, kèm cấu hình của chuỗi (ma trận quản trị đọc từ đây). */
 export interface PrimaryChainLink {

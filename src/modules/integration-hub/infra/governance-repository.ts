@@ -5,7 +5,7 @@
 
 import { prisma } from "@/core/tenancy/infra/prisma"
 import type { GovernanceTier } from "@/core/governance/layered-resolver"
-import { ACTIVE_CHAIN_LINK } from "@/modules/organization/infra/organization-link-sync"
+import { ACTIVE_CHAIN_LINK } from "@/modules/organization/infra/organization-links"
 import { resolveTierChain } from "@/modules/organization/infra/tier-chain-repository"
 import type { GovernanceMode, GovernanceRow, OrgGovernanceScope } from "../domain/integration-governance"
 

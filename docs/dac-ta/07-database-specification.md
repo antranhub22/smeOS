@@ -1137,7 +1137,7 @@ model catalog_links {
 }
 
 // Công cụ 45 (30/10/2026) — thư viện nhận diện thương hiệu có phiên bản. Cửa hàng thành
-// viên chỉ đọc mục `share_with_members` + ACTIVE của chuỗi (chain_partnerships ACTIVE).
+// viên chỉ đọc mục `share_with_members` + ACTIVE của chuỗi (liên kết chuỗi ACTIVE ở organization_links).
 model brand_library_items {
   id                 String   @id @default(uuid())
   organization_id    String
@@ -3250,38 +3250,9 @@ model notification_inbox {
 
 ## 34. Đối tác chuỗi và chat nội bộ (26/10/2026)
 
-`chain_partnerships`: quan hệ chuỗi ↔ cửa hàng đối tác (`chain_org_id`, `partner_org_id`), mỗi cặp một dòng. Chỉ chuỗi sở hữu quan hệ được đổi trạng thái / mở khoá công cụ; tổ chức khác → 404 (audit 28/10/2026).
+Quan hệ chuỗi ↔ cửa hàng đối tác: từ 06/11/2026 là `organization_links` (§40; `chain_partnerships` đã xoá ở ADR-012 T-3b), mỗi cặp cha–con một dòng. Chỉ chuỗi sở hữu quan hệ được đổi trạng thái / mở khoá công cụ; tổ chức khác → 404 (audit 28/10/2026).
 
 Chat nội bộ: `internal_chat_conversations` thuộc tổ chức tạo (`organization_id`); `internal_chat_participants` ghi người tham gia kèm tổ chức của họ (cho phép đối tác chuỗi cùng một luồng đơn); `internal_chat_messages` theo cuộc hội thoại. Chỉ người tham gia đọc/gửi tin; luồng đơn của tổ chức khác không tự tham gia được; chỉ mời được người của chính tổ chức hoặc chuỗi/đối tác đang liên kết ACTIVE. Ca thử: `tests/tenant/internal-chat-isolation.test.ts`.
-
-```prisma
-model chain_partnerships {
-  id               String   @id @default(uuid())
-  chain_org_id     String
-  partner_org_id   String
-  partner_code     String
-  partnership_type String   @default("SUBCONTRACTOR") // SUBCONTRACTOR | FRANCHISE | BRANCH
-  status           String   @default("ACTIVE")         // PENDING | ACTIVE | SUSPENDED | TERMINATED
-  capacity_daily   Int      @default(10)
-  commission_rate  Decimal?
-  contact_name     String?
-  contact_phone    String?
-  contact_email    String?
-  address          String?
-  province         String?
-  district         String?
-  created_at       DateTime @default(now())
-  updated_at       DateTime @updatedAt
-
-  chain_organization   organizations @relation("ChainOrg", fields: [chain_org_id], references: [id], onDelete: Cascade)
-  partner_organization organizations @relation("PartnerOrg", fields: [partner_org_id], references: [id], onDelete: Cascade)
-
-  @@unique([chain_org_id, partner_code])
-  @@unique([chain_org_id, partner_org_id])
-  @@index([chain_org_id, status])
-  @@index([partner_org_id])
-}
-```
 
 ```prisma
 model internal_chat_conversations {
@@ -3956,8 +3927,8 @@ model reconciliation_findings {
 ADR-012 D-T3, bước T-2 của `docs/plan/db-enterprise-architecture.md`. Quan hệ giữa các tổ chức là đồ thị có hướng
 cha → con; "tầng trên" của một tổ chức đi theo cạnh `is_primary` (tối đa một cạnh chính ACTIVE mỗi tổ chức con —
 trigger ràng buộc `organization_links_one_primary` trong migration `20261106010000_organization_links`). Giai đoạn
-chuyển: `id` trùng `chain_partnerships.id`, repository đối tác ghi kép
-(`src/modules/organization/infra/organization-link-sync.ts`).
+chuyển T-2 → T-3: `id` giữ nguyên từ `chain_partnerships`, repository đối tác ghi kép. Luật chung (lọc cạnh chuỗi,
+cạnh chính): `src/modules/organization/infra/organization-links.ts`.
 `INDUSTRY_MEMBER`, `AFFILIATE` khai sẵn cho tầng Ngành (D-48), chưa dùng.
 
 **T-3a (06/11/2026):** mọi đường ĐỌC quan hệ chuỗi–đối tác ở `organization_links`, lọc `ACTIVE_CHAIN_LINK`
@@ -3965,8 +3936,12 @@ chuyển: `id` trùng `chain_partnerships.id`, repository đối tác ghi kép
 cha): chuỗi cha (`findPrimaryChainLink` theo `is_primary`), kiểm đích đẩy đơn / chat (`partner-link-guard.ts`),
 danh sách và chi tiết đối tác, `identity-query`, `partnerOrgIds` của Integration Hub. Đường ghi vẫn ghi
 `chain_partnerships` trước rồi chép sang — bản phát hành trước còn đọc bảng cũ, nên quay lui không mất dữ liệu.
-`partnership_type = BRANCH` không còn được nhận ở API (D-T2). **T-3b** (bản phát hành sau, khi T-3a đã chạy trên
-production): ghi thẳng `organization_links`, migration contract xoá `chain_partnerships`.
+`partnership_type = BRANCH` không còn được nhận ở API (D-T2).
+
+**T-3b (06/11/2026):** repository đối tác ghi thẳng `organization_links` (đặt lại cạnh chính trong cùng giao dịch;
+`TERMINATED` → `valid_to = now()`, liên kết lại → `valid_to = null`). Migration contract
+`20261106020000_drop_chain_partnerships` xoá `chain_partnerships`; trước khi xoá, chốt an toàn dừng cả migration nếu
+còn dòng nào chưa có bản khớp (cùng id, cha, con, trạng thái) ở `organization_links`.
 
 ```prisma
 enum organization_link_type {

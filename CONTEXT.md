@@ -18,7 +18,7 @@ smeOS là nền tảng SaaS đa tenant, đa ngành, dùng để quản trị và
 |---|---|---|
 | SaaS Mother | Người vận hành nền tảng, xuyên tổ chức | Console Vận hành `/van-hanh`, route group `(platform)`, `src/core/platform/`, bảng `platform_operators` |
 | SaaS Ngành | Cấu hình theo ngành | Industry Plugin (chỉ là mã, không phải dữ liệu) |
-| ChainOS | Chuỗi / đối tác quản lý nhiều cửa hàng | `chain_partnerships` ở trạng thái ACTIVE, `src/layers/chain-os/`, `src/modules/chain-partnership/` |
+| ChainOS | Chuỗi / đối tác quản lý nhiều cửa hàng | `organization_links` (cạnh chuỗi) ở trạng thái ACTIVE, `src/layers/chain-os/`, `src/modules/chain-partnership/` |
 | StoreOS | Một tổ chức (cửa hàng) và các chi nhánh | `organization_id` trên mọi bảng thuộc tenant |
 
 Quyết định của tầng trên khoá tầng dưới theo thứ tự: khoá dựng sẵn → Mẹ → Chuỗi → cửa hàng. Lõi giải quyết dùng chung: `src/core/governance/layered-resolver.ts`. Ba trục độc lập:

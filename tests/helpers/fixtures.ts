@@ -2,7 +2,7 @@ import type { TenantContext } from "@/core/tenancy"
 import { prisma } from "@/core/tenancy/infra/prisma"
 import { SESSION_COOKIE } from "@/core/http/cookies"
 import { WorkspaceRepository } from "@/modules/organization/infra/workspace-repository"
-import { syncOrganizationLink } from "@/modules/organization/infra/organization-link-sync"
+import { recomputePrimaryLink } from "@/modules/organization/infra/organization-links"
 import { signUp } from "@/modules/organization/use-cases/sign-up"
 import { SSO_HEADER } from "@/modules/integration/domain/integration-credential"
 import { ssoClaimsFor } from "@/modules/sso/domain/sso-claims"
@@ -154,23 +154,23 @@ export async function makeChainOrganization(tenant: Tenant): Promise<void> {
 }
 
 /**
- * Liên kết chuỗi → cửa hàng đối tác đúng như đường ghi thật (ADR-012 T-3a: ghi `chain_partnerships` rồi chép sang
- * `organization_links` — nơi mọi đường đọc dùng). T-3b bỏ bảng cũ thì chỉ sửa ở đây. Trả id liên kết.
+ * Liên kết chuỗi → cửa hàng đối tác như đường ghi thật: một dòng `organization_links` rồi đặt lại cạnh chính
+ * (ADR-012 T-3b). Trả id liên kết.
  */
 export async function linkPartner(
   chain: Tenant,
   partner: Tenant,
-  opts: { code: string; status?: string; createdAt?: Date },
+  opts: { code: string; status?: "PENDING" | "ACTIVE" | "SUSPENDED" | "TERMINATED"; createdAt?: Date },
 ): Promise<string> {
-  const row = await prisma.chain_partnerships.create({
+  const row = await prisma.organization_links.create({
     data: {
-      chain_org_id: chain.organizationId,
-      partner_org_id: partner.organizationId,
+      parent_org_id: chain.organizationId,
+      child_org_id: partner.organizationId,
       partner_code: opts.code,
       status: opts.status ?? "ACTIVE",
-      ...(opts.createdAt ? { created_at: opts.createdAt } : {}),
+      ...(opts.createdAt ? { created_at: opts.createdAt, valid_from: opts.createdAt } : {}),
     },
   })
-  await syncOrganizationLink(prisma, row.id)
+  await recomputePrimaryLink(prisma, partner.organizationId)
   return row.id
 }

@@ -27,7 +27,7 @@ describe("resolveTierChain — chuỗi cha của một cửa hàng đối tác",
     await disconnectDatabase()
   })
 
-  async function link(chain: Tenant, code: string, createdAt: Date, status = "ACTIVE") {
+  async function link(chain: Tenant, code: string, createdAt: Date, status: "ACTIVE" | "SUSPENDED" = "ACTIVE") {
     await linkPartner(chain, store, { code, status, createdAt })
   }
 

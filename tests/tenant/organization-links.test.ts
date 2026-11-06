@@ -9,10 +9,10 @@ import { disconnectDatabase, prisma, resetDatabase } from "../helpers/database"
 import { createTenant, makeChainOrganization, withSession, type Tenant } from "../helpers/fixtures"
 
 /**
- * ADR-012 T-2: repository đối tác ghi kép `chain_partnerships` → `organization_links` trong cùng giao dịch;
- * cạnh chính = liên kết chuỗi ACTIVE sớm nhất của cửa hàng (luật hiện hành), tối đa một cạnh chính.
+ * ADR-012 D-T3: repository đối tác ghi thẳng `organization_links` (T-3b) và mọi đường đọc dùng bảng này (T-3a);
+ * cạnh chính = liên kết chuỗi ACTIVE sớm nhất của cửa hàng, tối đa một cạnh chính.
  */
-describe("organization_links — ghi kép từ repository đối tác", () => {
+describe("organization_links — quan hệ chuỗi → cửa hàng đối tác", () => {
   let chainA: Tenant
   let chainB: Tenant
   let store: Tenant
@@ -37,7 +37,7 @@ describe("organization_links — ghi kép từ repository đối tác", () => {
   const links = () =>
     prisma.organization_links.findMany({ where: { child_org_id: store.organizationId }, orderBy: { created_at: "asc" } })
 
-  it("mỗi liên kết có một dòng organization_links cùng id, đúng loại", async () => {
+  it("mỗi liên kết là một dòng organization_links, đúng loại, là cạnh chính", async () => {
     const b = await link(chainB, "B-01", "FRANCHISE")
     const rows = await links()
     expect(rows).toHaveLength(1)
@@ -66,6 +66,15 @@ describe("organization_links — ghi kép từ repository đối tác", () => {
     const rows = await links()
     expect(rows).toHaveLength(1)
     expect(rows[0]?.partner_code).toBe("A-02")
+  })
+
+  it("chấm dứt rồi liên kết lại: cùng dòng, ACTIVE trở lại, hết hạn được xoá, lại là cạnh chính", async () => {
+    const a = await link(chainA, "A-01")
+    await repo.updateStatus(a.id, "TERMINATED")
+    const again = await link(chainA, "A-03", "FRANCHISE")
+    expect(again.id).toBe(a.id)
+    const row = await prisma.organization_links.findUniqueOrThrow({ where: { id: a.id } })
+    expect(row).toMatchObject({ status: "ACTIVE", valid_to: null, is_primary: true, link_type: "FRANCHISE", partner_code: "A-03" })
   })
 
   // ── T-3a: mọi đường đọc ở organization_links ──────────────────────────────
