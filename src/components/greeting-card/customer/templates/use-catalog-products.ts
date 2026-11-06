@@ -6,6 +6,7 @@ import type { GreetingCatalogProduct } from "@/modules/greeting-card/domain/gree
 import { useI18n } from "@/lib/i18n"
 import { getIndustryPlugin } from "@/modules/organization/domain/industry-profile"
 
+/** Sản phẩm mẫu cho khung xem trước khi tiệm chưa có sản phẩm — không ảnh kho (PO 06/11/2026), hiện ảnh giữ chỗ. */
 const SAMPLE_PRODUCTS_BY_INDUSTRY: Record<string, GreetingCatalogProduct[]> = {
   HOMESTAY: [
     {
@@ -13,7 +14,7 @@ const SAMPLE_PRODUCTS_BY_INDUSTRY: Record<string, GreetingCatalogProduct[]> = {
       name: "Phòng Studio Deluxe Ban Công View Thung Lũng",
       code: "ST-01",
       price: 850000,
-      imageUrl: "https://images.unsplash.com/photo-1590490360182-c33d57733427?w=800&auto=format&fit=crop&q=80",
+      imageUrl: null,
       description: "Không gian phòng thoáng đãng đón trọn ánh nắng sớm, ban công rộng view núi và thung lũng mây mộng mơ.",
       flowersSummary: "1 Giường đôi Queen, Bồn tắm ngâm thảo mộc, Bữa sáng địa phương, Wi-Fi tốc độ cao",
       style: "Thư Giãn",
@@ -25,7 +26,7 @@ const SAMPLE_PRODUCTS_BY_INDUSTRY: Record<string, GreetingCatalogProduct[]> = {
       name: "Villa Sân Vườn Tiệc Nướng BBQ Hoàng Hôn",
       code: "VL-02",
       price: 2500000,
-      imageUrl: "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?w=800&auto=format&fit=crop&q=80",
+      imageUrl: null,
       description: "Nguyên căn 3 phòng ngủ tiện nghi chuẩn gia đình, bếp riêng và sân vườn tiệc nướng chill ngắm hoàng hôn.",
       flowersSummary: "3 Phòng ngủ lớn, Bếp nấu trang bị đầy đủ, Sân BBQ ngoài trời, Hồ bơi thư giãn",
       style: "Ấm Cúng",
@@ -39,7 +40,7 @@ const SAMPLE_PRODUCTS_BY_INDUSTRY: Record<string, GreetingCatalogProduct[]> = {
       name: "Đầm Lụa Tơ Tằm Cổ Yếm Dáng Suông",
       code: "DR-01",
       price: 1250000,
-      imageUrl: "https://images.unsplash.com/photo-1539109136881-3be0616acf4b?w=800&auto=format&fit=crop&q=80",
+      imageUrl: null,
       description: "Chất liệu lụa satin tơ tằm dệt cao cấp, đường may tinh xảo tôn vinh vóc dáng người phụ nữ hiện đại.",
       flowersSummary: "Lụa tơ tằm cao cấp, lót habutai mềm mát, cúc ngọc trai mạ vàng",
       style: "Thanh Lịch",
@@ -53,7 +54,7 @@ const SAMPLE_PRODUCTS_BY_INDUSTRY: Record<string, GreetingCatalogProduct[]> = {
       name: "Set Bò Fuji Nướng Sốt Tiêu Đen & Salad",
       code: "FB-01",
       price: 320000,
-      imageUrl: "https://images.unsplash.com/photo-1544025162-d76694265947?w=800&auto=format&fit=crop&q=80",
+      imageUrl: null,
       description: "Thịt bò nướng mềm mọng nước hòa quyện sốt tiêu đen đậm đà kèm rau rocket tươi giòn.",
       flowersSummary: "Bò thượng hạng 200g, Sốt tiêu đen đặc chế, Salad hữu cơ, Bánh mì bơ tỏi",
       style: "Đậm Đà",
@@ -67,7 +68,7 @@ const SAMPLE_PRODUCTS_BY_INDUSTRY: Record<string, GreetingCatalogProduct[]> = {
       name: "Sản Phẩm Hồng Red Naomi Ecuador",
       code: "HH-01",
       price: 850000,
-      imageUrl: "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?w=800&auto=format&fit=crop&q=80",
+      imageUrl: null,
       description: "Hoa hồng đỏ nhung Ecuador tuyển chọn, phối cành lá bạc bạch đàn.",
       flowersSummary: "12 thành phần hồng Red Naomi Ecuador, lá bạc thơm, giấy gói lụa cao cấp",
       style: "Sang Trọng",
@@ -79,7 +80,7 @@ const SAMPLE_PRODUCTS_BY_INDUSTRY: Record<string, GreetingCatalogProduct[]> = {
       name: "Giỏ Hoa Mẫu Đơn & Tulip Mùa Xuân",
       code: "GH-02",
       price: 1450000,
-      imageUrl: "https://images.unsplash.com/photo-1561181286-d3fee7d55364?w=800&auto=format&fit=crop&q=80",
+      imageUrl: null,
       description: "Mẫu đơn Sarah Bernhardt phối cùng tulip pastel Hà Lan trong giỏ mây tự nhiên.",
       flowersSummary: "5 bông mẫu đơn hồng, 10 cành tulip, hoa thanh liễu",
       style: "Thơ Mộng",
