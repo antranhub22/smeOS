@@ -3,12 +3,14 @@
  *
  * Chi nhánh nhận gia công của điều phối chuỗi — bảng `chain_branches` (trước 22/10/2026 nằm trong
  * `organizations.settings.chain_branches`). `branchId` phía domain chính là `branch_code` ở đây.
+ * ADR-012 T-4a: mọi lệnh ghi chép sang `branches` trong cùng giao dịch (`syncBranchFromChain`).
  */
 
 import { randomBytes } from "node:crypto"
 import { prisma } from "@/core/tenancy/infra/prisma"
 import type { Prisma } from "@/generated/prisma/client"
 import type { BranchCandidate, BranchChannelConfig } from "../domain/chain-dispatch-engine"
+import { syncBranchFromChain, syncBranchRow } from "./chain-branch-sync"
 
 /** Mỗi lần hủy nhận đơn hoặc xin bỏ qua bằng chứng: trừ 2 điểm, không dưới 10. */
 export const BRANCH_PENALTY_POINTS = 2
@@ -131,25 +133,29 @@ export class ChainBranchRepository {
           is_active: b.isActive,
           channels: channelsJson({ ...b.channels, zaloUserId: b.channels?.zaloUserId || linkedZalo.get(b.branchId) }),
         }
-        await tx.chain_branches.upsert({
+        const saved = await tx.chain_branches.upsert({
           where: { organization_id_branch_code: { organization_id: organizationId, branch_code: b.branchId } },
           create: { organization_id: organizationId, branch_code: b.branchId, ...data },
           update: data,
         })
+        await syncBranchRow(tx, saved, { withProfile: true })
       }
       const total = await tx.chain_branches.count({ where: { organization_id: organizationId } })
       const updated = [...byCode.keys()].filter((code) => existingCodes.has(code)).length
       return { created: byCode.size - updated, updated, total }
-    })
+    }, { maxWait: 5_000, timeout: 30_000 }) // tới 500 dòng × 2 lệnh ghi (ghi kép T-4a)
   }
 
   /** Bật / tạm dừng một chi nhánh của tổ chức; `false` khi mã không thuộc tổ chức. */
   async setActive(organizationId: string, branchCode: string, isActive: boolean): Promise<boolean> {
-    const res = await this.db.chain_branches.updateMany({
-      where: { organization_id: organizationId, branch_code: branchCode },
-      data: { is_active: isActive },
+    return this.db.$transaction(async (tx) => {
+      const res = await tx.chain_branches.updateMany({
+        where: { organization_id: organizationId, branch_code: branchCode },
+        data: { is_active: isActive },
+      })
+      if (res.count > 0) await syncBranchFromChain(tx, organizationId, branchCode, { withProfile: true })
+      return res.count > 0
     })
-    return res.count > 0
   }
 
   /** Chi nhánh của tổ chức kèm mã liên kết Zalo (sinh mã cho chi nhánh chưa có) */
@@ -168,7 +174,10 @@ export class ChainBranchRepository {
           where: { id: row.id, organization_id: organizationId, zalo_link_code: null },
           data: { zalo_link_code: candidate },
         }).catch(() => ({ count: 0 })) // trùng mã (cực hiếm) → thử mã khác
-        if (updated.count > 0) linkCode = candidate
+        if (updated.count > 0) {
+          linkCode = candidate
+          await syncBranchFromChain(this.db, organizationId, row.branch_code)
+        }
       }
       out.push({ branchCode: row.branch_code, name: row.name, linkCode: linkCode ?? "", linked: Boolean(channelsOf(row.channels).zaloUserId) })
     }
@@ -182,14 +191,17 @@ export class ChainBranchRepository {
   async linkZaloUser(linkCode: string, zaloUserId: string): Promise<{ organizationId: string; branchName: string } | null> {
     const row = await this.db.chain_branches.findUnique({
       where: { zalo_link_code: linkCode },
-      select: { id: true, organization_id: true, name: true },
+      select: { id: true, organization_id: true, name: true, branch_code: true },
     })
     if (!row) return null
-    await this.db.$executeRaw`
-      UPDATE "chain_branches"
-      SET "channels" = jsonb_set(COALESCE("channels", '{}'::jsonb), '{zaloUserId}', to_jsonb(${zaloUserId}::text), true),
-          "updated_at" = NOW()
-      WHERE "id" = ${row.id} AND "organization_id" = ${row.organization_id}`
+    await this.db.$transaction(async (tx) => {
+      await tx.$executeRaw`
+        UPDATE "chain_branches"
+        SET "channels" = jsonb_set(COALESCE("channels", '{}'::jsonb), '{zaloUserId}', to_jsonb(${zaloUserId}::text), true),
+            "updated_at" = NOW()
+        WHERE "id" = ${row.id} AND "organization_id" = ${row.organization_id}`
+      await syncBranchFromChain(tx, row.organization_id, row.branch_code)
+    })
     return { organizationId: row.organization_id, branchName: row.name }
   }
 
@@ -223,6 +235,7 @@ export class ChainBranchRepository {
             ? { quality_score: newQualityScore, cancellation_count: count, cancellation_history: history }
             : { quality_score: newQualityScore, bypass_count: count, bypass_history: history },
       })
+      await syncBranchFromChain(tx, organizationId, branchCode)
       return { newQualityScore, count }
     })
   }

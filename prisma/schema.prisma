@@ -307,15 +307,38 @@ model workspaces {
   @@index([organization_id])
 }
 
+/// Chi nhánh của một tổ chức — ranh giới phạm vi quyền (`memberships.branch_id`), không phải ranh giới tenant.
+/// ADR-012 D-T2 (T-4): gộp `chain_branches` vào đây; `accepts_dispatch` = chi nhánh nằm trong danh sách nhận
+/// đơn điều phối chuỗi (nhập Excel), `code` là mã trên link gia công (`?branch=`). Các cột vận hành điều phối
+/// chỉ có nghĩa khi `accepts_dispatch = true`.
 model branches {
-  id              String   @id @default(uuid())
-  organization_id String
-  name            String
-  code            String
+  id                   String   @id @default(uuid())
+  organization_id      String
+  name                 String
+  code                 String
   /// @pii business
-  address         String?
-  is_active       Boolean  @default(true)
-  created_at      DateTime @default(now()) @db.Timestamptz(3)
+  address              String?
+  is_active            Boolean  @default(true)
+  accepts_dispatch     Boolean  @default(false)
+  /// Khu vực hành chính — sàng lọc theo phường/quận/tỉnh khi không có toạ độ
+  ward                 String?
+  district             String?
+  province             String?
+  /// Phường/xã lân cận chi nhánh nhận giao thêm (mảng chuỗi)
+  service_wards        Json?
+  latitude             Float?
+  longitude            Float?
+  quality_score        Float    @default(90)
+  active_jobs_count    Int      @default(0)
+  max_concurrent_jobs  Int      @default(5)
+  channels             Json? // { phone, telegramChatId, zaloPhone, zaloUserId, messengerId }
+  /// Mã chi nhánh nhắn vào Zalo OA chung để liên kết (duy nhất toàn nền tảng)
+  zalo_link_code       String?  @unique
+  cancellation_count   Int      @default(0)
+  bypass_count         Int      @default(0)
+  cancellation_history Json? // tối đa 50 mục gần nhất
+  bypass_history       Json?
+  created_at           DateTime @default(now()) @db.Timestamptz(3)
 
   updated_at   DateTime            @default(now()) @updatedAt @db.Timestamptz(3)
   organization organizations       @relation(fields: [organization_id], references: [id])

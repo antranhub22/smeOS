@@ -1,0 +1,114 @@
+import { afterAll, beforeEach, describe, expect, it } from "vitest"
+
+import { POST as actOnSubcontract } from "@/app/api/v1/public/subcontract/[orderCode]/route"
+import type { BranchCandidate } from "@/modules/greeting-card/domain/chain-dispatch-engine"
+import { BranchPortalRepository } from "@/modules/greeting-card/infra/branch-portal-repository"
+import { ChainBranchRepository } from "@/modules/greeting-card/infra/chain-branch-repository"
+import { signSubcontractBranchToken } from "@/modules/greeting-card/infra/subcontract-link-token"
+
+import { disconnectDatabase, prisma, resetDatabase } from "../helpers/database"
+import { createTenant, makeChainOrganization, type Tenant } from "../helpers/fixtures"
+
+/**
+ * ADR-012 D-T2, bước T-4a: mọi lệnh ghi chi nhánh chuỗi chép sang `branches` trong cùng giao dịch (khoá tổ chức + mã);
+ * gắn chi nhánh cho thành viên ghi `memberships.branch_id` (D-56); chi nhánh nhận đơn theo mã ghi `orders.branch_id`.
+ */
+describe("branches — gộp chi nhánh chuỗi (ghi kép T-4a)", () => {
+  let t: Tenant
+  const repo = new ChainBranchRepository()
+
+  const candidate = (code: string, name: string, extra: Partial<BranchCandidate> = {}): BranchCandidate => ({
+    branchId: code, branchName: name, address: "", qualityScore: 90, activeJobsCount: 0, maxConcurrentJobs: 5, isActive: true,
+    area: { ward: "Bến Nghé", district: null, province: "TP.HCM", serviceWards: ["Đa Kao"] }, location: { latitude: 10.77, longitude: 106.7 },
+    channels: { telegramChatId: "-100123" }, ...extra,
+  })
+  const branchOf = (code: string) =>
+    prisma.branches.findUniqueOrThrow({ where: { organization_id_code: { organization_id: t.organizationId, code } } })
+
+  beforeEach(async () => {
+    await resetDatabase()
+    t = await createTenant("chuoi")
+    await makeChainOrganization(t)
+  })
+
+  afterAll(async () => {
+    await disconnectDatabase()
+  })
+
+  it("nhập Excel: mỗi chi nhánh có một dòng branches cùng id, đủ cấu hình nhận đơn; nhập lại cập nhật tên", async () => {
+    await repo.upsertMany(t.organizationId, [candidate("CN1", "Quận 1"), candidate("CN2", "Quận 3", { isActive: false })])
+    const chain = await prisma.chain_branches.findUniqueOrThrow({
+      where: { organization_id_branch_code: { organization_id: t.organizationId, branch_code: "CN1" } },
+    })
+    expect(await branchOf("CN1")).toMatchObject({
+      id: chain.id, name: "Quận 1", accepts_dispatch: true, is_active: true, ward: "Bến Nghé", province: "TP.HCM",
+      service_wards: ["Đa Kao"], latitude: 10.77, channels: { telegramChatId: "-100123" },
+    })
+    expect((await branchOf("CN2")).is_active).toBe(false)
+
+    await repo.upsertMany(t.organizationId, [candidate("CN1", "Quận Một")])
+    expect((await branchOf("CN1")).name).toBe("Quận Một")
+    expect(await prisma.branches.count({ where: { organization_id: t.organizationId } })).toBe(2)
+  })
+
+  it("trùng mã với chi nhánh có sẵn: gộp vào dòng đó; trừ điểm không đè tên, bật/tắt thì theo chuỗi", async () => {
+    const own = await prisma.branches.create({ data: { organization_id: t.organizationId, name: "Kho Q1", code: "CN1" } })
+    await prisma.chain_branches.create({ data: { organization_id: t.organizationId, branch_code: "CN1", name: "Q1 chuỗi" } })
+
+    await repo.applyPenalty(t.organizationId, "CN1", "CANCELLATION", "huỷ nhận")
+    const afterPenalty = await branchOf("CN1")
+    expect(afterPenalty).toMatchObject({ id: own.id, name: "Kho Q1", accepts_dispatch: true, quality_score: 88, cancellation_count: 1 })
+
+    expect(await repo.setActive(t.organizationId, "CN1", false)).toBe(true)
+    expect((await branchOf("CN1")).is_active).toBe(false)
+  })
+
+  it("liên kết Zalo: mã liên kết và người nhận Zalo chép sang branches", async () => {
+    await repo.upsertMany(t.organizationId, [candidate("CN1", "Quận 1")])
+    const [link] = await repo.listZaloLinks(t.organizationId)
+    expect((await branchOf("CN1")).zalo_link_code).toBe(link?.linkCode)
+    await repo.linkZaloUser(link!.linkCode, "zalo-user-1")
+    expect((await branchOf("CN1")).channels).toMatchObject({ telegramChatId: "-100123", zaloUserId: "zalo-user-1" })
+  })
+
+  it("gắn chi nhánh cho thành viên ghi branch_id; gỡ thì bỏ; gỡ không xoá chi nhánh gán ở nơi khác", async () => {
+    await repo.upsertMany(t.organizationId, [candidate("CN1", "Quận 1")])
+    const membership = await prisma.memberships.findFirstOrThrow({ where: { organization_id: t.organizationId } })
+    const portal = new BranchPortalRepository()
+
+    expect(await portal.setMemberChainBranch(t.ctx, membership.id, "CN1")).toBe(true)
+    const cn1 = await branchOf("CN1")
+    expect(await prisma.memberships.findUniqueOrThrow({ where: { id: membership.id } })).toMatchObject({ chain_branch_code: "CN1", branch_id: cn1.id })
+
+    expect(await portal.setMemberChainBranch(t.ctx, membership.id, null)).toBe(true)
+    expect(await prisma.memberships.findUniqueOrThrow({ where: { id: membership.id } })).toMatchObject({ chain_branch_code: null, branch_id: null })
+
+    const kho = await prisma.branches.create({ data: { organization_id: t.organizationId, name: "Kho", code: "KHO" } })
+    await prisma.memberships.update({ where: { id: membership.id }, data: { branch_id: kho.id, chain_branch_code: "CN1" } })
+    await portal.setMemberChainBranch(t.ctx, membership.id, null)
+    expect((await prisma.memberships.findUniqueOrThrow({ where: { id: membership.id } })).branch_id).toBe(kho.id)
+
+    expect(await portal.setMemberChainBranch(t.ctx, membership.id, "KHONG-CO")).toBe(false)
+  })
+
+  it("chi nhánh chuỗi nhận đơn theo mã → orders.branch_id là chi nhánh đó", async () => {
+    await repo.upsertMany(t.organizationId, [candidate("CN1", "Quận 1")])
+    const code = "DH261106-0001"
+    const order = await prisma.orders.create({
+      data: { organization_id: t.organizationId, code, source: "BROCHURE", status: "CONFIRMED", total_vnd: 500_000, paid_vnd: 500_000, balance_vnd: 0, created_by: "test" },
+    })
+    await prisma.order_coordinations.create({
+      data: {
+        organization_id: t.organizationId, order_id: order.id,
+        metadata: { subcontract_dispatch: { orderId: order.id, orderCode: code, dispatchStatus: "OPEN", currentRound: 1, claimedBranchId: null, claimedAt: null, graceExpiresAt: null, declinedBranchIds: [], invitedBranchIds: ["CN1"], roundExpiresAt: null } },
+      },
+    })
+    const token = signSubcontractBranchToken(t.organizationId, code, "CN1")
+    const res = await actOnSubcontract(
+      new Request(`http://localhost/api/v1/public/subcontract/${code}?t=${token}`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify({ action: "CLAIM", branchId: "CN1" }) }),
+      { params: Promise.resolve({ orderCode: code }) },
+    )
+    expect(res.status).toBe(200)
+    expect((await prisma.orders.findUniqueOrThrow({ where: { id: order.id } })).branch_id).toBe((await branchOf("CN1")).id)
+  })
+})

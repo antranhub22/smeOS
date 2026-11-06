@@ -1,6 +1,7 @@
 import { prisma } from "@/core/tenancy/infra/prisma"
 import { scopedWhere, type TenantContext } from "@/core/tenancy"
 import { ACTIVE_DISPATCH_STATUSES } from "./chain-dispatch-sweep-query"
+import { dispatchBranchIdByCode, syncBranchFromChain } from "./chain-branch-sync"
 
 /** Trần số đơn trả về cho trang cửa hàng — danh sách luôn có giới hạn */
 export const PORTAL_MAX_ORDERS = 100
@@ -36,17 +37,33 @@ export class BranchPortalRepository {
     return rows.map((r) => ({ code: r.branch_code, name: r.name }))
   }
 
-  /** Gắn / gỡ chi nhánh cho một thành viên. Trả false nếu thành viên hoặc chi nhánh không thuộc tổ chức. */
+  /**
+   * Gắn / gỡ chi nhánh cho một thành viên. Trả false nếu thành viên hoặc chi nhánh không thuộc tổ chức.
+   * ADR-012 T-4a / D-56: ghi kèm `memberships.branch_id` → thành viên bị giới hạn theo chi nhánh (`branch-scope.ts`).
+   */
   async setMemberChainBranch(ctx: TenantContext, membershipId: string, code: string | null): Promise<boolean> {
-    if (code) {
-      const exists = await this.db.chain_branches.count({ where: scopedWhere(ctx, { branch_code: code }) })
-      if (exists === 0) return false
-    }
-    const updated = await this.db.memberships.updateMany({
-      where: scopedWhere(ctx, { id: membershipId }),
-      data: { chain_branch_code: code },
+    return this.db.$transaction(async (tx) => {
+      const member = await tx.memberships.findFirst({
+        where: scopedWhere(ctx, { id: membershipId }),
+        select: { chain_branch_code: true, branch_id: true },
+      })
+      if (!member) return false
+      let branchId = member.branch_id
+      if (code) {
+        const exists = await tx.chain_branches.count({ where: scopedWhere(ctx, { branch_code: code }) })
+        if (exists === 0) return false
+        branchId = (await dispatchBranchIdByCode(tx, ctx.organizationId, code)) ?? (await syncBranchFromChain(tx, ctx.organizationId, code))
+      } else if (member.chain_branch_code) {
+        // Gỡ chi nhánh chuỗi: chỉ bỏ branch_id khi nó đang trỏ đúng chi nhánh đó (giữ chi nhánh gán ở nơi khác)
+        const old = await dispatchBranchIdByCode(tx, ctx.organizationId, member.chain_branch_code)
+        if (old && old === member.branch_id) branchId = null
+      }
+      const updated = await tx.memberships.updateMany({
+        where: scopedWhere(ctx, { id: membershipId }),
+        data: { chain_branch_code: code, branch_id: branchId },
+      })
+      return updated.count > 0
     })
-    return updated.count > 0
   }
 
   /**
