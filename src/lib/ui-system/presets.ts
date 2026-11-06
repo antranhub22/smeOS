@@ -67,7 +67,7 @@ export const PRESET_MODERN_SLATE: PresetDefinition = {
   scope: "all",
   fontSans: '"Be Vietnam Pro", ui-sans-serif, system-ui, sans-serif',
   tokens: {
-    primary: "#2563EB",
+    primary: "#1554E0",
     primaryDark: "#1D4ED8",
     primaryMuted: "#EFF6FF",
     primaryBorder: "#BFDBFE",
@@ -80,7 +80,7 @@ export const PRESET_MODERN_SLATE: PresetDefinition = {
     surfaceAlt: "#F1F5F9",
     border: "#E2E8F0",
     text: "#0F172A",
-    textMuted: "#64748B",
+    textMuted: "#5D6C81",
     warning: "#D97706",
     warningBg: "#FEF3C7",
     danger: "#DC2626",
@@ -90,7 +90,7 @@ export const PRESET_MODERN_SLATE: PresetDefinition = {
     info: "#0284C7",
     infoBg: "#F0F9FF",
     selected: "#EFF6FF",
-    selectedText: "#2563EB",
+    selectedText: "#1554E0",
   },
   radius: {
     sm: "0.25rem",     // 4px
@@ -130,7 +130,7 @@ export const PRESET_PURE_SWISS: PresetDefinition = {
     surfaceAlt: "#F4F4F5",
     border: "#E4E4E7",
     text: "#09090B",
-    textMuted: "#71717A",
+    textMuted: "#696971",
     warning: "#B45309",
     warningBg: "#FFFBEB",
     danger: "#B91C1C",

@@ -8,7 +8,6 @@
       "R20": 1
     },
     "components/catalog": {
-      "R13": 1,
       "R14": 3
     },
     "components/dashboard": {
@@ -23,12 +22,6 @@
     "components/market-intelligence": {
       "R18": 4
     },
-    "components/product-image-set": {
-      "R13": 1
-    },
-    "components/product-photo-studio": {
-      "R13": 2
-    },
     "components/templates": {
       "R18": 4
     },
@@ -36,6 +29,6 @@
       "R14": 1
     }
   },
-  "total": 32,
-  "updatedAt": "2026-11-06T13:46:30.976Z"
+  "total": 28,
+  "updatedAt": "2026-11-06T15:17:46.184Z"
 }

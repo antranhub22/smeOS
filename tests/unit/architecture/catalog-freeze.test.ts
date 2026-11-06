@@ -28,6 +28,8 @@ import { CAPABILITIES } from "@/core/rbac/capability-catalog"
  *   chuẩn, overlay → Dialog, cỡ chữ → thang hệ thống.
  * - PO 05/11/2026: đặt hàng trên catalog/landing công khai dừng khi gói dịch vụ của cửa hàng quá hạn thanh toán
  *   (`place-public-catalog-order.ts` gọi `assertAcceptingPublicOrders`).
+ * - PO 06/11/2026: `catalog-link-widgets.tsx` báo lỗi tạo catalog bằng `useToast()` thay `alert()` của
+ *   trình duyệt (lint R13) — chỉ đổi cách hiển thị lỗi, không đổi luồng.
  */
 const ROOT = path.resolve(__dirname, "../../..")
 const MANIFEST = path.join(__dirname, "catalog-freeze.manifest.txt")
