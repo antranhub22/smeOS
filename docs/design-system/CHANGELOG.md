@@ -4,6 +4,17 @@ Tất cả các thay đổi đáng chú ý của SMEOS Design System sẽ đư�
 
 ---
 
+## [1.3.1] - 2026-11-06
+
+### Tương phản AA trên cả 3 preset
+
+#### Đã sửa
+- Phép đo "tương phản 3 preset" (`tests/e2e/ux/a11y-journeys.helpers.ts` `applyPreset`) chỉ đổi `data-theme` trên `<html>`, trong khi khung `AppShell` gắn `data-theme` riêng — nội dung trong shell chỉ được đo ở một preset. Nay đổi mọi phần tử mang `data-theme`.
+- Đo lại đủ 3 preset lộ hai cặp màu dưới 4,5:1 ở preset `modern-slate`/`pure-swiss`, dùng rộng khắp ứng dụng:
+  - `text-muted` trên `surface-alt`: `modern-slate` `#64748B` → `#5D6C81` (4,34 → 4,88:1), `pure-swiss` `#71717A` → `#696971` (4,40 → 4,95:1).
+  - `text-primary` trên nền `primary/10` (163 tệp: lựa chọn đang chọn, chip, nhãn): `modern-slate` `--color-primary` `#2563EB` → `#1554E0` (3,85–4,48 → ≥ 4,54:1; chữ trắng trên nút 5,17 → 6,22:1); `--color-selected-text` theo `--color-primary` như hai preset kia.
+- `moc-lan` không đổi (đã đạt).
+
 ## [1.3.0] - 2026-11-06
 
 ### Theme theo tầng có hiệu lực; bỏ hộp thoại của trình duyệt
