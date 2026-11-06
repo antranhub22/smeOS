@@ -28,12 +28,12 @@ datasource db {
 // Bộ giá trị của P1. Các enum còn lại (job_status, asset_kind, …) thêm ở pha
 // sở hữu bảng tương ứng.
 
+/// `FLOWER_NETWORK` đã gộp vào `CHAIN` (ADR-012 D-T11 / D-55, bước T-8b) — chỉ khác nhãn.
 enum organization_type {
   EXPERIENCE
   SINGLE
   STORE
   CHAIN
-  FLOWER_NETWORK
 }
 
 enum workspace_kind {
@@ -155,15 +155,19 @@ model organizations {
   // SDAGF D-04 — legal hold cấp tổ chức: còn hạn thì không xoá vĩnh viễn dữ
   // liệu nào của tổ chức (asset, sản phẩm trong thùng rác, dọn bàn giao).
   legal_hold_until DateTime?         @db.Timestamptz(3)
+  /// ADR-012 D-T6 (T-6a): ngành của tổ chức → `industries.key`. Thay `settings.industry`; tới T-6c trigger
+  /// `organizations_sync_industry_key` giữ cột này khớp `settings.industry` mỗi lần ghi settings.
+  industry_key     String?
   created_at       DateTime          @default(now()) @db.Timestamptz(3)
   updated_at       DateTime          @updatedAt @db.Timestamptz(3)
+
+  industry industries? @relation(fields: [industry_key], references: [key], onUpdate: Cascade, onDelete: Restrict)
 
   // Khoá ngoại tới organizations mở lại ở P3 (TECHNICAL_DEBT #8) — bốn bảng
   // dưới đây là bốn bảng nợ đó; assets/generation_jobs/usage/audit_logs khai
   // khoá ngoại ngay từ khi tạo, không nợ.
   workspaces                                       workspaces[]
   branches                                         branches[]
-  chain_branches                                   chain_branches[]
   capability_overrides                             capability_overrides[]
   memberships                                      memberships[]
   assets                                           assets[]
@@ -285,6 +289,26 @@ model organizations {
   organization_links_as_parent                     organization_links[]            @relation("OrgLinkParent")
   organization_links_as_child                      organization_links[]            @relation("OrgLinkChild")
   custom_domains                                   custom_domains[]
+
+  @@index([industry_key])
+}
+
+/// Ngành — bảng NỀN TẢNG (không có organization_id), ADR-012 D-T6. `key` = khoá plugin ngành
+/// (`src/modules/organization/domain/industries`). Tầng Ngành chưa bật: chưa có tổ chức loại INDUSTRY,
+/// chưa có vai quản trị ngành. Thêm ngành = thêm plugin + một dòng ở đây.
+model industries {
+  key        String          @id
+  name       String
+  status     industry_status @default(ACTIVE)
+  created_at DateTime        @default(now()) @db.Timestamptz(3)
+  updated_at DateTime        @default(now()) @updatedAt @db.Timestamptz(3)
+
+  organizations organizations[]
+}
+
+enum industry_status {
+  ACTIVE
+  INACTIVE
 }
 
 model workspaces {
@@ -309,7 +333,7 @@ model workspaces {
 }
 
 /// Chi nhánh của một tổ chức — ranh giới phạm vi quyền (`memberships.branch_id`), không phải ranh giới tenant.
-/// ADR-012 D-T2 (T-4): gộp `chain_branches` vào đây; `accepts_dispatch` = chi nhánh nằm trong danh sách nhận
+/// ADR-012 D-T2 (T-4): `chain_branches` đã gộp vào đây (xoá ở T-4c); `accepts_dispatch` = chi nhánh nằm trong danh sách nhận
 /// đơn điều phối chuỗi (nhập Excel), `code` là mã trên link gia công (`?branch=`). Các cột vận hành điều phối
 /// chỉ có nghĩa khi `accepts_dispatch = true`.
 model branches {
@@ -353,46 +377,6 @@ model branches {
   orders_by_branch_id          orders[]          @relation("fk_orders_branch_id")
 
   @@unique([organization_id, code])
-  @@index([organization_id])
-}
-
-/**
- * Chi nhánh nhận gia công trong điều phối chuỗi (nhập Excel, cấu hình kênh nhắn). Trước 22/10/2026
- * nằm trong `organizations.settings.chain_branches` — ghi đè cả mảng mỗi lần trừ điểm (rà soát M5).
- * `branch_code` là mã chi nhánh trên link gia công (`?branch=`), khác `branches.id`.
- */
-model chain_branches {
-  id                   String   @id @default(uuid())
-  organization_id      String
-  branch_code          String
-  name                 String
-  /// @pii business
-  address              String?
-  /// Khu vực hành chính (PO 22/10/2026) — sàng lọc theo phường/quận/tỉnh khi không có toạ độ
-  ward                 String?
-  district             String? // quận/huyện cũ (bỏ từ 01/07/2025), tuỳ chọn
-  province             String?
-  /// Phường/xã lân cận chi nhánh nhận giao thêm (mảng chuỗi), ngoài phường của chính chi nhánh
-  service_wards        Json?
-  latitude             Float?
-  longitude            Float?
-  quality_score        Float    @default(90)
-  active_jobs_count    Int      @default(0)
-  max_concurrent_jobs  Int      @default(5)
-  is_active            Boolean  @default(true)
-  channels             Json? // { phone, telegramChatId, zaloPhone, zaloUserId, messengerId }
-  /// Mã chi nhánh nhắn vào Zalo OA chung để liên kết (sinh khi cần, duy nhất toàn nền tảng)
-  zalo_link_code       String?  @unique
-  cancellation_count   Int      @default(0)
-  bypass_count         Int      @default(0)
-  cancellation_history Json? // tối đa 50 mục gần nhất
-  bypass_history       Json?
-  created_at           DateTime @default(now()) @db.Timestamptz(3)
-  updated_at           DateTime @updatedAt @db.Timestamptz(3)
-
-  organization organizations @relation(fields: [organization_id], references: [id])
-
-  @@unique([organization_id, branch_code])
   @@index([organization_id])
 }
 
@@ -471,9 +455,6 @@ model memberships {
   user_id           String
   role_id           String
   branch_id         String? // null = phạm vi toàn tổ chức
-  /// Chi nhánh chuỗi (`chain_branches.branch_code`) của tài khoản vai `cua_hang` — trang cửa hàng chỉ
-  /// hiện đơn gia công của chi nhánh này. Khác `branch_id` (bảng `branches`, dùng cho giá/tồn kho).
-  chain_branch_code String?
   status            membership_status @default(INVITED)
   invited_at        DateTime          @default(now()) @db.Timestamptz(3)
   joined_at         DateTime?         @db.Timestamptz(3)
@@ -489,7 +470,6 @@ model memberships {
   @@unique([organization_id, user_id])
   @@index([organization_id])
   @@index([user_id])
-  @@index([organization_id, chain_branch_code])
   @@index([branch_id]) // khoá ngoại cần index (ADR-015 O-1)
   @@index([role_id]) // khoá ngoại cần index (ADR-015 O-1)
 }

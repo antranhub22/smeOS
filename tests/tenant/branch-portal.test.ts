@@ -95,6 +95,6 @@ describe("trang cửa hàng nhận gia công", () => {
     expect((await assign(a, membershipA, "KHONG-CO")).status).toBe(404)
     expect((await assign(b, membershipA, "Q1")).status).toBe(404)
     const stored = await prisma.memberships.findUniqueOrThrow({ where: { id: membershipA } })
-    expect(stored.chain_branch_code).toBeNull()
+    expect(stored.branch_id).toBeNull()
   })
 })

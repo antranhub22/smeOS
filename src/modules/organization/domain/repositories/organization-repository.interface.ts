@@ -21,7 +21,6 @@ export type OrganizationType =
   | "SINGLE"
   | "STORE"
   | "CHAIN"
-  | "FLOWER_NETWORK"
 
 export interface OrganizationEntity {
   id: string

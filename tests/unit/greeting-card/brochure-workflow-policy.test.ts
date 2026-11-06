@@ -96,9 +96,8 @@ describe("Brochure Workflow Policy Domain Tests", () => {
       expect(parseBrochureWorkflowPolicy({}, "STORE").requireCoordinatorAcceptance).toBe(false)
       expect(parseBrochureWorkflowPolicy({}, null).requireCoordinatorAcceptance).toBe(false)
 
-      // Chuỗi (CHAIN / FLOWER_NETWORK): mặc định true (cần điều phối liên hệ chuỗi & nhận đơn)
+      // Chuỗi (CHAIN): mặc định true (cần điều phối liên hệ chuỗi & nhận đơn)
       expect(parseBrochureWorkflowPolicy({}, "CHAIN").requireCoordinatorAcceptance).toBe(true)
-      expect(parseBrochureWorkflowPolicy({}, "FLOWER_NETWORK").requireCoordinatorAcceptance).toBe(true)
     })
   })
 
@@ -239,7 +238,7 @@ describe("chế độ Chuỗi theo loại tổ chức", () => {
   it("gói Nghiêm ngặt không bật Chuỗi cho tổ chức 1 cửa hàng; gói Tiêu chuẩn không tắt Chuỗi", () => {
     expect(parseBrochureWorkflowPolicy(stored(STRICT_WORKFLOW_POLICY), "SINGLE")).toMatchObject({ preset: "STRICT", requireCoordinatorAcceptance: false })
     expect(parseBrochureWorkflowPolicy(stored(STANDARD_WORKFLOW_POLICY), "CHAIN")).toMatchObject({ preset: "STANDARD", requireCoordinatorAcceptance: true })
-    expect(parseBrochureWorkflowPolicy(stored(LEAN_WORKFLOW_POLICY), "FLOWER_NETWORK").requireCoordinatorAcceptance).toBe(true)
+    expect(parseBrochureWorkflowPolicy(stored(LEAN_WORKFLOW_POLICY), "CHAIN").requireCoordinatorAcceptance).toBe(true)
   })
 
   it("công tắc lưu trong cài đặt bị bỏ qua khi biết loại tổ chức", () => {

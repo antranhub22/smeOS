@@ -42,7 +42,7 @@ Một bảng tự nhận ngoại lệ mà không nêu được lý do ở trên 
 > **Đối chiếu 18/09 với `prisma/schema.prisma`.** Bốn enum từng lệch giá trị (`order_status`, `production_status`, `delivery_status`, `asset_kind`) đã sửa theo lược đồ; mười một enum có trong lược đồ mà thiếu ở đây đã bổ sung; hai enum chỉ tồn tại trên giấy (`consent_state`, `catalog_link_state`) đã bỏ.
 
 ```prisma
-enum organization_type { EXPERIENCE  SINGLE  STORE  CHAIN  FLOWER_NETWORK }
+enum organization_type { EXPERIENCE  SINGLE  STORE  CHAIN }  // FLOWER_NETWORK gộp vào CHAIN — ADR-012 T-8b (mục 42)
 enum workspace_kind    { EXPERIENCE  PRODUCTION }
 enum membership_status { INVITED  ACTIVE  SUSPENDED }
 enum capability_scope  { ORGANIZATION  BRANCH  STORE  FLOWER_NETWORK }
@@ -211,7 +211,6 @@ model memberships {
   user_id         String
   role_id         String
   branch_id       String?           // null = phạm vi toàn tổ chức
-  chain_branch_code String?         // chi nhánh chuỗi của tài khoản vai `cua_hang` (PO 22/10/2026)
   status          membership_status @default(INVITED)
   invited_at      DateTime          @default(now())
   joined_at       DateTime?
@@ -219,7 +218,6 @@ model memberships {
   user            users             @relation(fields: [user_id], references: [id], onDelete: Cascade)
   @@unique([organization_id, user_id])
   @@index([organization_id])
-  @@index([organization_id, chain_branch_code])
   @@index([user_id])
 }
 ```
@@ -2989,40 +2987,8 @@ model staff_notifications {
 > - `users.approval_status` (enum `user_approval_status`, PO 22/10/2026) — duyệt tài khoản tự đăng ký. `/auth/signup` và `/auth/instant-trial` tạo tài khoản `PENDING`. Chỉ `APPROVED` đăng nhập được (`log-in.ts`) và dùng được phiên (`resolve-session.ts`; tài khoản bị chuyển về `PENDING`/`REJECTED` mất luôn phiên đang mở). Mặc định cột là `APPROVED`: tài khoản có sẵn, nhân viên được mời và tài khoản tạo bằng script vận hành không phải duyệt. Superadmin mã `N13` duyệt ở `/van-hanh/dang-ky`; `approval_decided_by` lưu `user_id` của superadmin. Migration `20261022120000_user_approval` chỉ thêm cột. Ca thử: `tests/tenant/registration-approval.test.ts`, `tests/platform/registration-approval.test.ts`.
 > - `platform_settings` — **NỀN TẢNG** (không có `organization_id`, mục 1). Khoá `nav_matrix_overrides`: ma trận điều hướng theo ngành do Admin SaaS ghi đè ở Console `/van-hanh` (`PUT /platform/nav-matrix`, mã `N12`). Trước 22/10 lưu vào một tệp trên máy chủ: mất khi deploy, mỗi instance một bản, và menu không đọc nó. Giờ máy chủ đọc (bộ nhớ đệm 30 giây) và gửi danh sách mục ẩn xuống qua phiên (`organization.navHiddenKeys`). Chưa có dòng thì dùng `src/lib/data/industry-nav-matrix-overrides.json` làm giá trị khởi đầu. Migration `20261022100000_platform_settings`. Ca thử: `tests/platform/nav-matrix-overrides.test.ts`. Khoá `ux_rollout_flags`: cờ rollout giao diện chuẩn Progressive Disclosure theo tổ chức (`PUT /platform/ux-rollout-flags`, mã `N12`; bộ nhớ đệm 30 giây; giá trị lạ thành tắt) — ca thử `tests/platform/ux-rollout-flags.test.ts`.
 
-> - `chain_branches` — **TENANT** (rà soát M5, PO duyệt 22/10/2026). Chi nhánh nhận gia công của điều phối chuỗi, trước nằm trong `organizations.settings.chain_branches`: mỗi lần trừ điểm ghi đè cả mảng JSON, hai lần phạt cùng lúc mất một. Giờ mỗi chi nhánh một dòng, khoá `(organization_id, branch_code)`; `branch_code` là `branchId` phía domain (mã trên link gia công `?branch=`), khác `branches.id`. Nhập Excel (`POST /greeting-card/chain-branches/bulk-import`) cập nhật theo mã, giữ số lần phạt và lịch sử phạt. Trừ điểm (`ChainBranchRepository.applyPenalty`) khoá dòng `FOR UPDATE`: −2 điểm, sàn 10, lịch sử tối đa 50 mục. Migration `20261022130000_chain_branches_table` VIẾT TAY: chép từng phần tử JSON có mã và tên sang bảng (trùng mã giữ phần tử cuối), rồi xoá khoá `chain_branches` khỏi `settings`. Ca thử: `tests/tenant/chain-branches-table.test.ts`.
+> - `chain_branches` — **ĐÃ XOÁ** (ADR-012 T-4c, 06/11/2026; gộp vào `branches` có `accepts_dispatch`, mục 41). Mô tả cũ giữ để tra lịch sử: **TENANT** (rà soát M5, PO duyệt 22/10/2026). Chi nhánh nhận gia công của điều phối chuỗi, trước nằm trong `organizations.settings.chain_branches`: mỗi lần trừ điểm ghi đè cả mảng JSON, hai lần phạt cùng lúc mất một. Giờ mỗi chi nhánh một dòng, khoá `(organization_id, branch_code)`; `branch_code` là `branchId` phía domain (mã trên link gia công `?branch=`), khác `branches.id`. Nhập Excel (`POST /greeting-card/chain-branches/bulk-import`) cập nhật theo mã, giữ số lần phạt và lịch sử phạt. Trừ điểm (`ChainBranchRepository.applyPenalty`) khoá dòng `FOR UPDATE`: −2 điểm, sàn 10, lịch sử tối đa 50 mục. Migration `20261022130000_chain_branches_table` VIẾT TAY: chép từng phần tử JSON có mã và tên sang bảng (trùng mã giữ phần tử cuối), rồi xoá khoá `chain_branches` khỏi `settings`. Ca thử: `tests/tenant/chain-branches-table.test.ts`.
 
-```prisma
-model chain_branches {
-  id                   String   @id @default(uuid())
-  organization_id      String
-  branch_code          String
-  name                 String
-  address              String?
-  ward                 String?
-  district             String?
-  province             String?
-  service_wards        Json?
-  latitude             Float?
-  longitude            Float?
-  quality_score        Float    @default(90)
-  active_jobs_count    Int      @default(0)
-  max_concurrent_jobs  Int      @default(5)
-  is_active            Boolean  @default(true)
-  channels             Json? // { phone, telegramChatId, zaloPhone, zaloUserId, messengerId }
-  zalo_link_code       String?  @unique
-  cancellation_count   Int      @default(0)
-  bypass_count         Int      @default(0)
-  cancellation_history Json?
-  bypass_history       Json?
-  created_at           DateTime @default(now())
-  updated_at           DateTime @updatedAt
-
-  organization organizations @relation(fields: [organization_id], references: [id])
-
-  @@unique([organization_id, branch_code])
-  @@index([organization_id])
-}
-```
 
 > - `platform_secrets` — **NỀN TẢNG** (PO duyệt 22/10/2026). Bí mật không thuộc tổ chức nào, `sealed_value` luôn là bản niêm phong secret-box (không bao giờ trả ra API/log). Hiện chỉ có khoá `zalo_oa_tokens`: access + refresh token của Zalo OA chung. Refresh token Zalo dùng một lần nên làm mới chạy dưới khoá dòng `FOR UPDATE` (`PlatformSecretRepository.withLock`). Không nằm trong TRUNCATE của bộ test tenant (ca thử tự dọn). Cùng migration `20261022140000_zalo_oa_platform`: cột `chain_branches.zalo_link_code` (mã `ZL` + 8 ký tự, duy nhất toàn nền tảng — webhook OA suy ra tổ chức từ mã). Ca thử: `tests/tenant/zalo-oa-branch-link.test.ts`.
 
@@ -4008,13 +3974,20 @@ ADR-012 D-T2, bước T-4. Chi nhánh là đơn vị con trong một tổ chức
 - Ghi kép (`src/modules/greeting-card/infra/chain-branch-sync.ts`): nhập Excel, bật/tắt, trừ điểm, liên kết Zalo chép
   sang `branches` trong cùng giao dịch; tên/địa chỉ/trạng thái chỉ chép khi người dùng đổi chúng (nhập Excel, bật/tắt).
   Gắn chi nhánh cho thành viên ghi kèm `branch_id`; gỡ chỉ bỏ `branch_id` khi nó trỏ đúng chi nhánh vừa gỡ. Chi nhánh
-  nhận đơn theo mã → `orders.branch_id`. **T-4c** ghi thẳng `branches`, xoá `chain_branches` và
-  `memberships.chain_branch_code`.
+  nhận đơn theo mã → `orders.branch_id`.
 
 **T-4b** (không đổi schema): mọi đường đọc lấy từ `branches` có `accepts_dispatch` — danh sách ứng viên và tra theo mã
 (`ChainBranchRepository`), danh sách mã liên kết Zalo và tra mã liên kết, trang cửa hàng (chi nhánh của tài khoản theo
 `memberships.branch_id`; `branch_id` trỏ chi nhánh thường thì dùng `chain_branch_code` tới T-4c), danh sách chi nhánh để
 gắn cho thành viên, Thẻ Gia Công công khai (`findBranchInOrganization`: `branches.id`, rồi mã). Ghi kép giữ nguyên.
+
+**T-4c** (migration contract `20261106060000_drop_chain_branches`): repository ghi thẳng `branches` (nhập Excel upsert
+theo tổ chức + mã, trùng mã với chi nhánh thường thì chính dòng đó nhận đơn; bật/tắt, mã liên kết Zalo, trừ điểm khoá
+dòng `branches` `FOR UPDATE`). Trang cửa hàng chỉ đọc `memberships.branch_id`; API gắn chi nhánh cho thành viên vẫn
+nhận mã (`chain_branch_code`) và ghi `branch_id`; `GET /members` suy mã từ `branch_id`. Migration: chốt an toàn dừng cả
+migration nếu còn chi nhánh `chain_branches` chưa có dòng `branches` nhận đơn cùng mã; gắn `branch_id` cho thành viên
+còn sót; NOTICE số thành viên có `branch_id` khác chi nhánh chuỗi (cần gắn lại); xoá cột `memberships.chain_branch_code`
+và bảng `chain_branches`.
 
 Ca thử: `tests/tenant/branches-merge.test.ts`.
 
@@ -4074,8 +4047,53 @@ ADR-012 D-T11 (D-55), bước T-8. `organization_type.FLOWER_NETWORK` và `CHAIN
   (`settings.pending_model_change.requested_type`) → `CHAIN`. Mọi đường ghi loại tổ chức đi qua
   `toStoredOrganizationType` (`src/modules/organization/domain/organization-type.ts`): gửi yêu cầu đổi mô hình, Admin
   SaaS duyệt. API vẫn nhận `FLOWER_NETWORK` (yêu cầu cũ) và lưu `CHAIN`; đường đọc còn so cả hai giá trị.
-- **T-8b** (sau khi T-8a chạy trên production): bỏ giá trị enum, bỏ các nhánh so `FLOWER_NETWORK` của loại tổ chức
-  (`tier-of.ts`, điều hướng, ma trận, thông báo), API từ chối giá trị này.
+- **T-8b** — migration contract `20261106070000_organization_type_drop_flower_network`: đổi nốt dòng còn sót (NOTICE),
+  rồi dựng lại enum `organization_type` không có `FLOWER_NETWORK` (`EXPERIENCE · SINGLE · STORE · CHAIN`). Bỏ mọi nhánh
+  so loại tổ chức `FLOWER_NETWORK` (`tier-of.ts`, điều hướng, ma trận, thông báo, entitlement, duyệt đổi mô hình); API
+  `requested_type` / `target_type` từ chối giá trị này (400). Hàm chuyển `toStoredOrganizationType` (T-8a) đã bỏ.
 
-Ca thử: `tests/unit/organization/organization-type-flower-network.test.ts`.
+Ca thử: `tests/unit/organization/request-and-approve-model-change.test.ts`, `src/core/governance/tier-of.test.ts`.
+
+## 43. Ngành — bảng `industries`, cột `organizations.industry_key` (06/11/2026)
+
+ADR-012 D-T6, bước T-6. `industries` là bảng **NỀN TẢNG** (không có `organization_id`): `key` = khoá plugin ngành
+(`src/modules/organization/domain/industries`), `name`, `status` (`ACTIVE` · `INACTIVE`). `organizations.industry_key`
+là khoá ngoại về `industries.key` (`ON DELETE RESTRICT`, `ON UPDATE CASCADE`), thay dần `settings.industry`. Tầng
+Ngành **chưa bật**: không có loại tổ chức `INDUSTRY`, không có vai quản trị ngành, chưa dùng `link_type`
+`INDUSTRY_MEMBER`/`AFFILIATE`.
+
+**T-6a** — migration `20261106050000_industries` (một giao dịch): tạo bảng, seed 7 ngành của plugin (Điện hoa
+`FLORAL` đầu tiên), chép `industry_key` từ `settings.industry` (không phân biệt hoa thường; mã lạ để trống, NOTICE báo
+số dòng). Trigger `organizations_sync_industry_key` (`BEFORE INSERT OR UPDATE OF settings`): mỗi lần ghi
+`settings.industry` qua bất kỳ đường cũ nào (đăng ký, Admin SaaS tạo tổ chức, dùng thử, dữ liệu mẫu,
+`PATCH /organizations/current`) thì `industry_key` theo trong cùng lệnh ghi; đổi cột khác không đụng.
+`resolveTierChain` đọc `industry_key`, dự phòng `settings.industry`.
+
+**T-6b**: các đường đọc ngành còn lại chuyển sang `industry_key` và khoá phạm vi về dạng D-T5
+(`platform · industry:<key> · org:<id> · branch:<id>`) cho `notification_hard_locks` / `integration_governance`.
+**T-6c** (contract): bỏ `settings.industry` và trigger.
+
+Ca thử: `tests/tenant/industries.test.ts` (tự cài seed + trigger từ tệp migration khi CSDL test dựng bằng `db push`).
+
+```prisma
+model industries {
+  key        String          @id
+  name       String
+  status     industry_status @default(ACTIVE)
+  created_at DateTime        @default(now()) @db.Timestamptz(3)
+  updated_at DateTime        @default(now()) @updatedAt @db.Timestamptz(3)
+
+  organizations organizations[]
+}
+
+enum industry_status {
+  ACTIVE
+  INACTIVE
+}
+
+// organizations: thêm
+//   industry_key String?
+//   industry     industries? @relation(fields: [industry_key], references: [key], onUpdate: Cascade, onDelete: Restrict)
+//   @@index([industry_key])
+```
 

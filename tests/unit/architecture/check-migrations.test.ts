@@ -18,6 +18,12 @@ describe("check-migrations", () => {
     expect(checkMigrationSql('ALTER TABLE "a" ALTER COLUMN "b" SET DATA TYPE INTEGER USING "b"::integer;').errors).toEqual([])
   })
 
+  it("cột tên \"type\" không bị hiểu là đổi kiểu (ADR-012 T-8b)", () => {
+    expect(checkMigrationSql('ALTER TABLE "o" ALTER COLUMN "type" DROP DEFAULT;').errors).toEqual([])
+    expect(checkMigrationSql('ALTER TABLE "o" ALTER COLUMN "type" SET DEFAULT \'SINGLE\';').errors).toEqual([])
+    expect(checkMigrationSql('ALTER TABLE "o" ALTER COLUMN "type" TYPE "t2";').errors).toHaveLength(1)
+  })
+
   it("chặn thêm cột NOT NULL không DEFAULT", () => {
     expect(checkMigrationSql('ALTER TABLE "a" ADD COLUMN "b" TEXT NOT NULL;').errors).toHaveLength(1)
     expect(checkMigrationSql('ALTER TABLE "a" ADD COLUMN "b" TEXT NOT NULL DEFAULT \'x\';').errors).toEqual([])

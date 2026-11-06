@@ -7,7 +7,6 @@ import {
 describe("entitlement-service (Commercial Feature Entitlement)", () => {
   it("nhận diện đúng gói từ credit_plan và organization_type", () => {
     expect(resolvePlanFromOrg(null, "EXPERIENCE")).toBe("EXPERIENCE")
-    expect(resolvePlanFromOrg(null, "FLOWER_NETWORK")).toBe("FLOWER_NETWORK")
     expect(resolvePlanFromOrg(null, "CHAIN")).toBe("FLOWER_NETWORK")
     expect(resolvePlanFromOrg("STARTER", "STORE")).toBe("STARTER")
     expect(resolvePlanFromOrg("PRO", "STORE")).toBe("PRO")

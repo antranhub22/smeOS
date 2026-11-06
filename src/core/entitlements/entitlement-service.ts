@@ -102,7 +102,7 @@ export function resolvePlanFromOrg(
     if (upperPlan in PLAN_FEATURES) return upperPlan as CommercialPlan
   }
   if (orgType === "EXPERIENCE") return "EXPERIENCE"
-  if (orgType === "FLOWER_NETWORK" || orgType === "CHAIN") return "FLOWER_NETWORK"
+  if (orgType === "CHAIN") return "FLOWER_NETWORK" // gói Mạng lưới cho tổ chức chuỗi
   return "PRO" // Mặc định gói đầy đủ cho các tổ chức cửa hàng chuẩn
 }
 

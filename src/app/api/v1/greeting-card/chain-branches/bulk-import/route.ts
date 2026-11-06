@@ -51,7 +51,7 @@ const bulkImportSchema = z.object({
 
 /**
  * POST /api/v1/greeting-card/chain-branches/bulk-import
- * Nhập danh sách chi nhánh chuỗi từ file Excel vào bảng `chain_branches` (trùng mã → cập nhật)
+ * Nhập danh sách chi nhánh chuỗi từ file Excel vào `branches` có `accepts_dispatch` (ADR-012 T-4c; trùng mã → cập nhật)
  */
 export const POST = handle(async (request) => {
   const { ctx } = await requireTenantContext(request)

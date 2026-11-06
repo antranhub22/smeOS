@@ -34,7 +34,7 @@ export function isChainOrganization(
  * Điều phối sinh cây điều hướng (NavView) chuẩn theo đúng tầng kiến trúc:
  * 1. SaaS Mother: organizationType === "PLATFORM" hoặc roleKey === "platform_admin"
  * 2. SaaS Ngành: organizationType === "INDUSTRY" hoặc roleKey === "industry_admin"
- * 3. ChainOS: organizationType === "CHAIN" | "FLOWER_NETWORK" hoặc roleKey thuộc nhóm Chuỗi
+ * 3. ChainOS: organizationType === "CHAIN" hoặc roleKey thuộc nhóm Chuỗi
  * 4. StoreOS: Cửa hàng cơ sở đơn lẻ (organizationType === "SINGLE" hoặc mặc định)
  */
 export function buildNav(

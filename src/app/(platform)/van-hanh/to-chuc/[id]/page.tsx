@@ -109,7 +109,7 @@ export default function ChiTietToChucPage() {
   if (loi && !org) return <p role="alert" className="text-body-sm text-danger">{loi}</p>
   if (!org) return <div className="py-4"><SkeletonBlock lines={4} /></div>
 
-  const isChain = org.type === "CHAIN" || org.type === "FLOWER_NETWORK"
+  const isChain = org.type === "CHAIN"
 
   return (
     <div className="space-y-4 max-w-xl">

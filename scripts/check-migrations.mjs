@@ -30,7 +30,8 @@ export function checkMigrationSql(text) {
 
   if (has(/\bDROP\s+COLUMN\b/i) && !note("contract")) errors.push("DROP COLUMN cần dòng `-- contract: <lý do>` (bước contract đã duyệt)")
   if (has(/\bDROP\s+TABLE\b/i) && !note("contract")) errors.push("DROP TABLE cần dòng `-- contract: <lý do>` (bước contract đã duyệt)")
-  for (const stmt of sql.split(";")) {
+  for (const raw of sql.split(";")) {
+    const stmt = raw.replace(/"[^"]*"/g, '""') // tên định danh trong ngoặc kép (vd. cột "type") không phải từ khoá
     if (/\bALTER\s+COLUMN\b[\s\S]*\b(SET\s+DATA\s+)?TYPE\b/i.test(stmt) && !/\bUSING\b/i.test(stmt)) {
       errors.push("đổi kiểu cột phải có `USING …` (Prisma sinh DROP + ADD hoặc ép kiểu ngầm)")
     }
