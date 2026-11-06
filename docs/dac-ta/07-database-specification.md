@@ -4130,6 +4130,26 @@ Ca thử: `tests/tenant/branch-scope-customers.test.ts` (tự cài trigger từ 
 
 Ca thử: `tests/tenant/branch-scope-products.test.ts`.
 
+## 46. Nhật ký bất biến — `audit_logs`, `platform_audit_logs`, `order_events`, `job_events`, `usage` (06/11/2026)
+
+ADR-013 D-I4, bước **I-2a** (PO duyệt ADR-013 06/11/2026; không đổi schema Prisma). Migration
+`20261106130000_append_only_logs`: hàm `smeos_append_only_guard()` + trigger `<bảng>_append_only` (`BEFORE UPDATE OR
+DELETE … FOR EACH ROW`) trên năm bảng:
+
+- `UPDATE` → luôn từ chối (mọi tài khoản, kể cả chủ sở hữu).
+- `DELETE` — kể cả xoá dây chuyền từ `orders` (→ `order_events`) và `generation_jobs` (→ `job_events`) — chỉ được khi
+  giao dịch đã đặt `app.purge_reason` (`setPurgeReason(tx, reason)`, `src/core/tenancy/infra/purge-reason.ts`; lý do:
+  `tenant_offboarding` · `test_data_cleanup` · `retention_policy`). `set_config(…, true)` chỉ sống trong giao dịch.
+- `TRUNCATE` không qua trigger theo dòng (chỉ dùng ở CSDL test, `resetDatabase`).
+- Rà mã 06/11/2026: ứng dụng, worker, test không sửa/xoá năm bảng này; chỉ `scripts/handover-clean-tenant.ts` và
+  `prisma/seed/clean-siin-store-orders.ts` xoá — cả hai đặt lý do purge đầu giao dịch.
+- Quyền: `scripts/db/create-roles.sql` thu `UPDATE, DELETE` của `smeos_app`/`smeos_worker` trên năm bảng.
+
+Ca thử: `tests/tenant/append-only-logs.test.ts` (tự cài hàm + trigger từ tệp migration và gỡ khi xong, vì CSDL test
+dựng bằng `db push`).
+
+Còn lại của I-2 (I-2b): bảng `platform_access_logs` (D-I5) và màn hình chỉ đọc cho chủ tổ chức (D-60).
+
 ## 45. Một bảng quyết định theo tầng — `governance_decisions` (06/11/2026)
 
 ADR-012 D-T10, bước **T-7a (expand)** — PO duyệt đổi schema 06/11/2026. Gộp ba nơi lưu "khoá / ghi đè theo tầng":
