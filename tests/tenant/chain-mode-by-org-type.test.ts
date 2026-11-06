@@ -60,7 +60,7 @@ describe("chế độ Chuỗi theo loại tổ chức", () => {
       })
     )
     expect(imported.status).toBe(409)
-    expect(await prisma.chain_branches.count({ where: { organization_id: a.organizationId } })).toBe(0)
+    expect(await prisma.branches.count({ where: { organization_id: a.organizationId, accepts_dispatch: true } })).toBe(0)
   })
 
   it("tiệm tự bật công tắc hoặc chọn gói Nghiêm ngặt không đổi được mô hình; Admin SaaS duyệt thì đổi", async () => {

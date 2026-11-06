@@ -4,6 +4,7 @@
  * Chi nhánh nhận gia công của điều phối chuỗi — bảng `chain_branches` (trước 22/10/2026 nằm trong
  * `organizations.settings.chain_branches`). `branchId` phía domain chính là `branch_code` ở đây.
  * ADR-012 T-4a: mọi lệnh ghi chép sang `branches` trong cùng giao dịch (`syncBranchFromChain`).
+ * T-4b: mọi đường ĐỌC lấy từ `branches` có `accepts_dispatch` (`code` = mã chi nhánh); ghi kép giữ tới T-4c.
  */
 
 import { randomBytes } from "node:crypto"
@@ -70,6 +71,14 @@ export function toBranchCandidate(row: ChainBranchRow): BranchCandidate {
   }
 }
 
+/** Dòng `branches` (T-4b) → ứng viên điều phối: `code` là mã chi nhánh. */
+function fromBranch(row: Omit<ChainBranchRow, "branch_code"> & { code: string }): BranchCandidate {
+  return toBranchCandidate({ ...row, branch_code: row.code })
+}
+
+/** Điều kiện chi nhánh nằm trong danh sách nhận đơn điều phối của một tổ chức. */
+const dispatchBranches = (organizationId: string) => ({ organization_id: organizationId, accepts_dispatch: true })
+
 function channelsJson(channels: BranchChannelConfig | undefined): Prisma.InputJsonValue {
   const out: Record<string, string> = {}
   for (const [key, value] of Object.entries(channels ?? {})) {
@@ -89,18 +98,16 @@ export class ChainBranchRepository {
   constructor(private readonly db = prisma) {}
 
   async listCandidates(organizationId: string): Promise<BranchCandidate[]> {
-    const rows = await this.db.chain_branches.findMany({
-      where: { organization_id: organizationId },
-      orderBy: { created_at: "asc" },
+    const rows = await this.db.branches.findMany({
+      where: dispatchBranches(organizationId),
+      orderBy: [{ created_at: "asc" }, { code: "asc" }],
     })
-    return rows.map(toBranchCandidate)
+    return rows.map(fromBranch)
   }
 
   async findByCode(organizationId: string, branchCode: string): Promise<BranchCandidate | null> {
-    const row = await this.db.chain_branches.findUnique({
-      where: { organization_id_branch_code: { organization_id: organizationId, branch_code: branchCode } },
-    })
-    return row ? toBranchCandidate(row) : null
+    const row = await this.db.branches.findFirst({ where: { ...dispatchBranches(organizationId), code: branchCode } })
+    return row ? fromBranch(row) : null
   }
 
   /**
@@ -160,18 +167,20 @@ export class ChainBranchRepository {
 
   /** Chi nhánh của tổ chức kèm mã liên kết Zalo (sinh mã cho chi nhánh chưa có) */
   async listZaloLinks(organizationId: string): Promise<Array<{ branchCode: string; name: string; linkCode: string; linked: boolean }>> {
-    const rows = await this.db.chain_branches.findMany({
-      where: { organization_id: organizationId },
-      select: { id: true, branch_code: true, name: true, zalo_link_code: true, channels: true },
-      orderBy: { created_at: "asc" },
-    })
+    const rows = (
+      await this.db.branches.findMany({
+        where: dispatchBranches(organizationId),
+        select: { code: true, name: true, zalo_link_code: true, channels: true },
+        orderBy: [{ created_at: "asc" }, { code: "asc" }],
+      })
+    ).map((r) => ({ ...r, branch_code: r.code }))
     const out = []
     for (const row of rows) {
       let linkCode = row.zalo_link_code
       for (let attempt = 0; !linkCode && attempt < 5; attempt++) {
         const candidate = newZaloLinkCode()
         const updated = await this.db.chain_branches.updateMany({
-          where: { id: row.id, organization_id: organizationId, zalo_link_code: null },
+          where: { organization_id: organizationId, branch_code: row.branch_code, zalo_link_code: null },
           data: { zalo_link_code: candidate },
         }).catch(() => ({ count: 0 })) // trùng mã (cực hiếm) → thử mã khác
         if (updated.count > 0) {
@@ -189,9 +198,9 @@ export class ChainBranchRepository {
    * tảng nên tổ chức suy ra TỪ MÃ — webhook không có phiên tenant. `jsonb_set` không đè kênh khác.
    */
   async linkZaloUser(linkCode: string, zaloUserId: string): Promise<{ organizationId: string; branchName: string } | null> {
-    const row = await this.db.chain_branches.findUnique({
-      where: { zalo_link_code: linkCode },
-      select: { id: true, organization_id: true, name: true, branch_code: true },
+    const row = await this.db.branches.findFirst({
+      where: { zalo_link_code: linkCode, accepts_dispatch: true },
+      select: { organization_id: true, name: true, code: true },
     })
     if (!row) return null
     await this.db.$transaction(async (tx) => {
@@ -199,8 +208,8 @@ export class ChainBranchRepository {
         UPDATE "chain_branches"
         SET "channels" = jsonb_set(COALESCE("channels", '{}'::jsonb), '{zaloUserId}', to_jsonb(${zaloUserId}::text), true),
             "updated_at" = NOW()
-        WHERE "id" = ${row.id} AND "organization_id" = ${row.organization_id}`
-      await syncBranchFromChain(tx, row.organization_id, row.branch_code)
+        WHERE "organization_id" = ${row.organization_id} AND "branch_code" = ${row.code}`
+      await syncBranchFromChain(tx, row.organization_id, row.code)
     })
     return { organizationId: row.organization_id, branchName: row.name }
   }

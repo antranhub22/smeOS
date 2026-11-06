@@ -1,14 +1,15 @@
 import { prisma } from "@/core/tenancy/infra/prisma"
 import { scopedWhere, type TenantContext } from "@/core/tenancy"
 import { ACTIVE_DISPATCH_STATUSES } from "./chain-dispatch-sweep-query"
-import { dispatchBranchIdByCode, syncBranchFromChain } from "./chain-branch-sync"
+import { dispatchBranchIdByCode } from "./chain-branch-sync"
 
 /** Trần số đơn trả về cho trang cửa hàng — danh sách luôn có giới hạn */
 export const PORTAL_MAX_ORDERS = 100
 
 /**
  * Dữ liệu trang cửa hàng nhận gia công. Mọi truy vấn đi qua tổ chức của `ctx`; chi nhánh của tài khoản
- * đọc từ `memberships.chain_branch_code` (máy chủ), không bao giờ từ yêu cầu.
+ * đọc từ membership (máy chủ), không bao giờ từ yêu cầu. ADR-012 T-4b: chi nhánh đọc từ `branches`
+ * (`accepts_dispatch`), ưu tiên `memberships.branch_id` (D-56); `chain_branch_code` chỉ còn là đường dự phòng tới T-4c.
  */
 export class BranchPortalRepository {
   constructor(private readonly db = prisma) {}
@@ -17,24 +18,29 @@ export class BranchPortalRepository {
   async memberChainBranch(ctx: TenantContext): Promise<{ code: string; name: string } | null> {
     const membership = await this.db.memberships.findFirst({
       where: scopedWhere(ctx, { user_id: ctx.userId, status: "ACTIVE" as const }),
-      select: { chain_branch_code: true },
+      select: { chain_branch_code: true, branch_id: true },
     })
-    const code = membership?.chain_branch_code
-    if (!code) return null
-    const branch = await this.db.chain_branches.findUnique({
-      where: { organization_id_branch_code: { organization_id: ctx.organizationId, branch_code: code } },
-      select: { branch_code: true, name: true, is_active: true },
-    })
-    return branch?.is_active ? { code: branch.branch_code, name: branch.name } : null
+    if (!membership) return null
+    const select = { code: true, name: true, is_active: true } as const
+    const dispatch = { organization_id: ctx.organizationId, accepts_dispatch: true }
+    const byId = membership.branch_id
+      ? await this.db.branches.findFirst({ where: { ...dispatch, id: membership.branch_id }, select })
+      : null
+    const branch =
+      byId ??
+      (membership.chain_branch_code
+        ? await this.db.branches.findFirst({ where: { ...dispatch, code: membership.chain_branch_code }, select })
+        : null)
+    return branch?.is_active ? { code: branch.code, name: branch.name } : null
   }
 
   async listChainBranches(ctx: TenantContext): Promise<Array<{ code: string; name: string }>> {
-    const rows = await this.db.chain_branches.findMany({
-      where: scopedWhere(ctx, {}),
-      select: { branch_code: true, name: true },
-      orderBy: { name: "asc" },
+    const rows = await this.db.branches.findMany({
+      where: scopedWhere(ctx, { accepts_dispatch: true }),
+      select: { code: true, name: true },
+      orderBy: [{ name: "asc" }, { code: "asc" }],
     })
-    return rows.map((r) => ({ code: r.branch_code, name: r.name }))
+    return rows.map((r) => ({ code: r.code, name: r.name }))
   }
 
   /**
@@ -50,9 +56,9 @@ export class BranchPortalRepository {
       if (!member) return false
       let branchId = member.branch_id
       if (code) {
-        const exists = await tx.chain_branches.count({ where: scopedWhere(ctx, { branch_code: code }) })
-        if (exists === 0) return false
-        branchId = (await dispatchBranchIdByCode(tx, ctx.organizationId, code)) ?? (await syncBranchFromChain(tx, ctx.organizationId, code))
+        const found = await dispatchBranchIdByCode(tx, ctx.organizationId, code)
+        if (!found) return false
+        branchId = found
       } else if (member.chain_branch_code) {
         // Gỡ chi nhánh chuỗi: chỉ bỏ branch_id khi nó đang trỏ đúng chi nhánh đó (giữ chi nhánh gán ở nơi khác)
         const old = await dispatchBranchIdByCode(tx, ctx.organizationId, member.chain_branch_code)

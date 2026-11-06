@@ -27,7 +27,7 @@ export interface ISubcontractOrderRepository {
   /** Tìm đơn gia công theo ID nội bộ có scope tenant. */
   findSubcontractById(orderId: string, organizationId: string): Promise<SubcontractOrderRecord | null>
 
-  /** Tìm thông tin chi nhánh trong tổ chức (DB + settings.chain_branches). */
+  /** Tìm chi nhánh trong tổ chức theo `branches.id` hoặc mã chi nhánh điều phối (`branches.code`). */
   findBranchInOrganization(branchId: string, orgId: string): Promise<BranchLookupResult | null>
 
   /** Ghi nhận hình phạt KPI khi chi nhánh hủy nhận đơn. */

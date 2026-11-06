@@ -3,6 +3,7 @@ import { prisma } from "@/core/tenancy/infra/prisma"
 import { SESSION_COOKIE } from "@/core/http/cookies"
 import { WorkspaceRepository } from "@/modules/organization/infra/workspace-repository"
 import { recomputePrimaryLink } from "@/modules/organization/infra/organization-links"
+import { syncBranchFromChain } from "@/modules/greeting-card/infra/chain-branch-sync"
 import { signUp } from "@/modules/organization/use-cases/sign-up"
 import { SSO_HEADER } from "@/modules/integration/domain/integration-credential"
 import { ssoClaimsFor } from "@/modules/sso/domain/sso-claims"
@@ -173,4 +174,13 @@ export async function linkPartner(
   })
   await recomputePrimaryLink(prisma, partner.organizationId)
   return row.id
+}
+
+/**
+ * Chi nhánh nhận đơn điều phối chuỗi như đường ghi thật (ADR-012 T-4a/b: ghi `chain_branches` rồi chép sang `branches`,
+ * nơi mọi đường đọc dùng). T-4c bỏ bảng cũ thì chỉ sửa ở đây. Trả `branches.id`.
+ */
+export async function seedChainBranch(tenant: Tenant, code: string, name: string): Promise<string> {
+  await prisma.chain_branches.create({ data: { organization_id: tenant.organizationId, branch_code: code, name } })
+  return (await syncBranchFromChain(prisma, tenant.organizationId, code, { withProfile: true }))!
 }

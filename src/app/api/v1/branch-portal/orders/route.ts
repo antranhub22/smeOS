@@ -7,7 +7,7 @@ import { listBranchPortalOrders } from "@/modules/greeting-card/use-cases/branch
 /**
  * GET /api/v1/branch-portal/orders
  * Trang cửa hàng nhận gia công: đơn đang mời chi nhánh của tài khoản và đơn chi nhánh đang làm.
- * Chi nhánh lấy từ `memberships.chain_branch_code` của phiên — không nhận tham số chi nhánh.
+ * Chi nhánh lấy từ membership của phiên (`memberships.branch_id`, ADR-012 T-4b) — không nhận tham số chi nhánh.
  */
 export const GET = handle(async (request) => {
   const { ctx } = await requireTenantContext(request)

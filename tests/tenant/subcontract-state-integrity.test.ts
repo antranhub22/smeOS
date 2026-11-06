@@ -9,7 +9,7 @@ import { prisma } from "@/core/tenancy/infra/prisma"
 import { SUBCONTRACT_TOKEN_HEADER, signSubcontractBranchToken } from "@/modules/greeting-card/infra/subcontract-link-token"
 
 import { disconnectDatabase, resetDatabase } from "../helpers/database"
-import { createTenant, makeChainOrganization, withSession, type Tenant } from "../helpers/fixtures"
+import { createTenant, makeChainOrganization, seedChainBranch, withSession, type Tenant } from "../helpers/fixtures"
 
 const CODE = "DH261022-0101"
 const BRANCH = "CN1"
@@ -17,7 +17,7 @@ const BRANCH = "CN1"
 type OrderState = { status?: "CONFIRMED" | "CANCELLED"; production_status?: "ASSIGNED" | "READY"; delivery_status?: "PENDING" | "DELIVERING" }
 
 async function seed(t: Tenant, dispatch: Record<string, unknown>, order: OrderState = {}, extra: Record<string, unknown> = {}) {
-  await prisma.chain_branches.create({ data: { organization_id: t.organizationId, branch_code: BRANCH, name: "Chi nhánh 1" } })
+  await seedChainBranch(t, BRANCH, "Chi nhánh 1")
   const row = await prisma.orders.create({
     data: {
       organization_id: t.organizationId, code: CODE, source: "BROCHURE", status: order.status ?? "CONFIRMED",
@@ -90,7 +90,7 @@ describe("toàn vẹn trạng thái đơn gia công", () => {
     const statuses = (await Promise.all([approve(), approve()])).map((r) => r.status).sort()
     expect(statuses).toEqual([200, 409])
 
-    const branch = await prisma.chain_branches.findFirstOrThrow({ where: { organization_id: t.organizationId } })
+    const branch = await prisma.branches.findFirstOrThrow({ where: { organization_id: t.organizationId, accepts_dispatch: true } })
     expect(branch.bypass_count).toBe(1)
     expect(branch.quality_score).toBe(88)
     const order = await prisma.orders.findUniqueOrThrow({ where: { id: orderId } })

@@ -76,7 +76,7 @@ describe("bảng chain_branches", () => {
 
     const res = await importBranches(a, [{ branchId: "CN1", branchName: "Quận 1 (mới)" }])
     expect((await res.json()).data).toMatchObject({ created: 0, updated: 1, total: 1 })
-    const row = await prisma.chain_branches.findFirstOrThrow({ where: { organization_id: a.organizationId } })
+    const row = await prisma.branches.findFirstOrThrow({ where: { organization_id: a.organizationId, accepts_dispatch: true } })
     expect(row).toMatchObject({ name: "Quận 1 (mới)", cancellation_count: 2, bypass_count: 1 })
     expect((row.cancellation_history as unknown[]).length).toBe(2)
   })
@@ -84,7 +84,7 @@ describe("bảng chain_branches", () => {
   it("nhiều lần phạt cùng lúc đều được tính, không lần nào bị ghi đè", async () => {
     await importBranches(a, [{ branchId: "CN1", branchName: "Quận 1" }])
     await Promise.all(Array.from({ length: 5 }, () => repo.applyPenalty(a.organizationId, "CN1", "CANCELLATION", "song song")))
-    const row = await prisma.chain_branches.findFirstOrThrow({ where: { organization_id: a.organizationId } })
+    const row = await prisma.branches.findFirstOrThrow({ where: { organization_id: a.organizationId, accepts_dispatch: true } })
     expect(row.cancellation_count).toBe(5)
     expect(row.quality_score).toBe(80)
     expect((row.cancellation_history as unknown[]).length).toBe(5)

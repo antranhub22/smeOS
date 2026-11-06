@@ -5,6 +5,7 @@ import type { BranchCandidate } from "@/modules/greeting-card/domain/chain-dispa
 import { BranchPortalRepository } from "@/modules/greeting-card/infra/branch-portal-repository"
 import { ChainBranchRepository } from "@/modules/greeting-card/infra/chain-branch-repository"
 import { signSubcontractBranchToken } from "@/modules/greeting-card/infra/subcontract-link-token"
+import { SubcontractOrderRepository } from "@/modules/greeting-card/infra/subcontract-order-repository"
 
 import { disconnectDatabase, prisma, resetDatabase } from "../helpers/database"
 import { createTenant, makeChainOrganization, type Tenant } from "../helpers/fixtures"
@@ -12,6 +13,7 @@ import { createTenant, makeChainOrganization, type Tenant } from "../helpers/fix
 /**
  * ADR-012 D-T2, bước T-4a: mọi lệnh ghi chi nhánh chuỗi chép sang `branches` trong cùng giao dịch (khoá tổ chức + mã);
  * gắn chi nhánh cho thành viên ghi `memberships.branch_id` (D-56); chi nhánh nhận đơn theo mã ghi `orders.branch_id`.
+ * T-4b: mọi đường đọc chi nhánh điều phối / trang cửa hàng / Thẻ Gia Công công khai lấy từ `branches`.
  */
 describe("branches — gộp chi nhánh chuỗi (ghi kép T-4a)", () => {
   let t: Tenant
@@ -110,5 +112,36 @@ describe("branches — gộp chi nhánh chuỗi (ghi kép T-4a)", () => {
     )
     expect(res.status).toBe(200)
     expect((await prisma.orders.findUniqueOrThrow({ where: { id: order.id } })).branch_id).toBe((await branchOf("CN1")).id)
+  })
+
+  // ── T-4b: đọc từ branches ─────────────────────────────────────────────────
+  it("danh sách ứng viên và tra theo mã chỉ gồm chi nhánh nhận đơn điều phối, không gồm chi nhánh thường", async () => {
+    await prisma.branches.create({ data: { organization_id: t.organizationId, name: "Kho", code: "KHO" } })
+    await repo.upsertMany(t.organizationId, [candidate("CN1", "Quận 1")])
+    expect((await repo.listCandidates(t.organizationId)).map((c) => c.branchId)).toEqual(["CN1"])
+    expect(await repo.findByCode(t.organizationId, "KHO")).toBeNull()
+    expect((await repo.findByCode(t.organizationId, "CN1"))?.area?.serviceWards).toEqual(["Đa Kao"])
+
+    const sub = new SubcontractOrderRepository()
+    expect(await sub.findBranchInOrganization("CN1", t.organizationId)).toEqual({ id: "CN1", name: "Quận 1", is_active: true })
+    expect(await sub.findBranchInOrganization("CN1", (await createTenant("khac")).organizationId)).toBeNull()
+  })
+
+  it("trang cửa hàng: chi nhánh của tài khoản theo branch_id; branch_id trỏ chi nhánh thường thì dùng mã chuỗi", async () => {
+    await repo.upsertMany(t.organizationId, [candidate("CN1", "Quận 1")])
+    const membership = await prisma.memberships.findFirstOrThrow({ where: { organization_id: t.organizationId } })
+    const portal = new BranchPortalRepository()
+    expect(await portal.memberChainBranch(t.ctx)).toBeNull()
+
+    await portal.setMemberChainBranch(t.ctx, membership.id, "CN1")
+    expect(await portal.memberChainBranch(t.ctx)).toEqual({ code: "CN1", name: "Quận 1" })
+    expect(await portal.listChainBranches(t.ctx)).toEqual([{ code: "CN1", name: "Quận 1" }])
+
+    const kho = await prisma.branches.create({ data: { organization_id: t.organizationId, name: "Kho", code: "KHO" } })
+    await prisma.memberships.update({ where: { id: membership.id }, data: { branch_id: kho.id } })
+    expect(await portal.memberChainBranch(t.ctx)).toEqual({ code: "CN1", name: "Quận 1" })
+
+    await repo.setActive(t.organizationId, "CN1", false)
+    expect(await portal.memberChainBranch(t.ctx)).toBeNull()
   })
 })
