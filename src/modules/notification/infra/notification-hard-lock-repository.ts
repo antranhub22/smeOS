@@ -7,6 +7,8 @@
  *
  * @module notification/infra
  */
+import { notificationLockRecord, notificationVisibilityRecord } from "@/core/governance/decision-record"
+import { recordDecisions } from "@/core/governance/infra/decision-log"
 import { fromScopeKey, storedScopeIds, toScopeKey } from "@/core/governance/scope-key"
 import { prisma } from "@/core/tenancy/infra/prisma"
 import type {
@@ -40,30 +42,17 @@ export class NotificationHardLockRepository {
     }))
   }
 
+  /** Ghi kép `governance_decisions` trong cùng giao dịch (ADR-012 T-7a). */
   async setHardLock(lock: HardLockEntry & { lockedBy: string }): Promise<void> {
-    await prisma.notification_hard_locks.upsert({
-      where: {
-        event_key_channel_tier_scope_id: {
-          event_key: lock.eventKey,
-          channel: lock.channel,
-          tier: lock.tier,
-          scope_id: toScopeKey(lock.scopeId),
-        },
-      },
-      create: {
-        event_key: lock.eventKey,
-        channel: lock.channel,
-        tier: lock.tier,
-        scope_id: toScopeKey(lock.scopeId),
-        enabled: lock.enabled,
-        locked_by: lock.lockedBy,
-        reason: lock.reason ?? null,
-      },
-      update: {
-        enabled: lock.enabled,
-        locked_by: lock.lockedBy,
-        reason: lock.reason ?? null,
-      },
+    const key = { event_key: lock.eventKey, channel: lock.channel, tier: lock.tier, scope_id: toScopeKey(lock.scopeId) }
+    const data = { enabled: lock.enabled, locked_by: lock.lockedBy, reason: lock.reason ?? null }
+    await prisma.$transaction(async (tx) => {
+      await tx.notification_hard_locks.upsert({
+        where: { event_key_channel_tier_scope_id: key },
+        create: { ...key, ...data },
+        update: data,
+      })
+      await recordDecisions(tx, [notificationLockRecord({ ...lock, decidedBy: lock.lockedBy })])
     })
   }
 
@@ -71,15 +60,26 @@ export class NotificationHardLockRepository {
     eventKey: string,
     channel: NotifyChannel,
     tier: NotificationTier,
-    scopeId: string
+    scopeId: string,
+    removedBy: string | null = null
   ): Promise<void> {
-    await prisma.notification_hard_locks.deleteMany({
-      where: {
-        event_key: eventKey,
-        channel,
-        tier,
-        scope_id: { in: storedScopeIds(scopeId) },
-      },
+    await prisma.$transaction(async (tx) => {
+      await tx.notification_hard_locks.deleteMany({
+        where: { event_key: eventKey, channel, tier, scope_id: { in: storedScopeIds(scopeId) } },
+      })
+      await recordDecisions(tx, [notificationLockRecord({ eventKey, channel, tier, scopeId, enabled: null, decidedBy: removedBy })])
+    })
+  }
+
+  /** Mẹ ẩn/hiện sự kiện ở một tầng dưới — ghi kép `governance_decisions` (ADR-012 T-7a). */
+  async setEventVisibility(eventKey: string, tier: string, visible: boolean, updatedBy: string): Promise<void> {
+    await prisma.$transaction(async (tx) => {
+      await tx.notification_event_visibility.upsert({
+        where: { event_key_tier: { event_key: eventKey, tier } },
+        create: { event_key: eventKey, tier, visible, updated_by: updatedBy },
+        update: { visible, updated_by: updatedBy },
+      })
+      await recordDecisions(tx, [notificationVisibilityRecord({ eventKey, targetTier: tier, visible, decidedBy: updatedBy })])
     })
   }
 }

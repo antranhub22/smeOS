@@ -31,6 +31,7 @@ Worker Python đọc lược đồ sinh sẵn, không tự khai bảng.
 | `market_sources` · `trend_signals` · `trend_timeseries` · `topics` · `topic_signals` · `topic_scores` · `research_runs` · `provider_health` | Dữ liệu nghiên cứu thị trường cấp nền tảng (Market Intelligence Engine, Đợt A) — thu thập xu hướng chung toàn ngành, không thuộc một tổ chức nào; chỉ có `content_opportunities` thuộc tenant |
 | `field_definitions` · `field_catalogs` · `field_catalog_values` | Nền quản trị trường (ĐP-3, 26/09/2026) — sổ đăng ký trường (lõi và tự tạo) và danh mục giá trị của TOÀN hệ thống, cùng hạng với `platform_operators`/`ai_models`. `field_config_overrides` (ghi đè THEO TỪNG tổ chức) NGƯỢC LẠI có `organization_id` — thuộc tenant, không nằm trong danh sách này. Trường cửa hàng tự tạo (checklist ALG 1.9) nằm trong `field_definitions` với `owner_organization_id` = tổ chức sở hữu: chỉ tổ chức đó đọc/ghi, Console nền tảng không liệt kê, hạn mức 50 trường/thực thể tính riêng từng tổ chức. Xem mục 22b |
 | `integration_governance` | Trung tâm Tích hợp (30/10/2026) — khoá/cấp sẵn tích hợp theo tầng `(connector_key, tier, scope_id)`; `scope_id` là `GLOBAL` (Mẹ), `industry:<key>` (Ngành) hoặc id tổ chức chuỗi. Cùng mẫu với `notification_*`. Xem mục 36 |
+| `governance_decisions` | Một bảng quyết định theo tầng (ADR-012 D-T10, T-7a, 06/11/2026) — gộp ma trận quản trị, khoá/hiển thị thông báo, khoá tích hợp; phạm vi ở cột `scope` dạng D-T5 (`platform`, `industry:<key>`, `org:<id>`), không phải dữ liệu riêng của một tổ chức nên không có `organization_id`. Xem mục 45 |
 
 | `platform_settings` | Cấu hình cấp nền tảng, một dòng mỗi khoá, chỉ Console vận hành ghi (mã `N12`) — vd ma trận điều hướng theo ngành áp cho MỌI tổ chức cùng ngành. Xem mục 31 |
 Một bảng tự nhận ngoại lệ mà không nêu được lý do ở trên là lỗi chặn ở review.
@@ -4151,3 +4152,48 @@ Ca thử: `tests/tenant/branch-scope-customers.test.ts` (tự cài trigger từ 
 
 Ca thử: `tests/tenant/branch-scope-products.test.ts`.
 
+## 45. Một bảng quyết định theo tầng — `governance_decisions` (06/11/2026)
+
+ADR-012 D-T10, bước **T-7a (expand)** — PO duyệt đổi schema 06/11/2026. Gộp ba nơi lưu "khoá / ghi đè theo tầng":
+
+| Nơi lưu cũ | `system` | `decision_key` | `tier` · `scope` | `locked` · `value` |
+|---|---|---|---|---|
+| `organizations.settings.governance_matrix.<SYSTEM>` | `matrix:<SYSTEM>` | khoá mục | `CHAIN`/`STORE` (theo loại tổ chức) · `org:<id>` | ghi đè: `false` · `{enabled}`; khoá: `true` · `{enabled}` |
+| `platform_settings` `governance_matrix:<SYSTEM>` | `matrix:<SYSTEM>` | khoá mục | `MOTHER` · `platform` | như trên |
+| `notification_hard_locks` | `notification.hard_lock` | `<event_key>:<channel>` | `tier` · `scope_id` | `true` · `{enabled, reason}` |
+| `notification_event_visibility` | `notification.visibility` | `<event_key>:<tầng được hiển thị>` | `MOTHER` · `platform` | `false` · `{visible}` |
+| `integration_governance` | `integration` | `connector_key` | `tier` · `scope_id` | `true` · `{mode}` (`ALLOW_OWN` không lưu) |
+
+```prisma
+model governance_decisions {
+  id           String   @id @default(uuid())
+  version      BigInt   @unique @default(autoincrement())
+  system       String
+  decision_key String
+  tier         String
+  scope        String
+  locked       Boolean
+  value        Json?
+  decided_by   String?
+  decided_at   DateTime @default(now()) @db.Timestamptz(3)
+
+  @@index([system, scope, decision_key, tier, locked, version])
+  @@index([scope])
+}
+```
+
+- **Chỉ thêm dòng.** Một quyết định = bộ (`system`, `decision_key`, `tier`, `scope`, `locked`); dòng hiện hành là dòng
+  `version` lớn nhất (thứ tự toàn cục, không tranh chấp khi ghi đồng thời); `value` null = đã gỡ. Lưu lại đúng giá trị
+  hiện hành không thêm dòng.
+- **Ghi kép (T-7a).** Mọi đường ghi nơi lưu cũ ghi `governance_decisions` trong CÙNG giao dịch
+  (`src/core/governance/infra/decision-log.ts`): `saveOrgGovernance`, `saveMotherGovernance`, khoá cứng thông báo
+  (đặt/gỡ — dòng gỡ ghi người gỡ), `setEventVisibility`, `GovernanceRepository.set`. `PATCH /organizations/current`
+  không còn nhận khoá `governance_matrix` (trước đây ghi thẳng được, bỏ qua kiểm khoá tầng trên) — 403.
+- **Chép dữ liệu.** Migration `20261106100000_governance_decisions` chép mọi quyết định đang có, cùng bộ lọc với
+  `parseDecisions` (6 hệ thống, khoá `^[A-Za-z0-9_.:-]{1,96}$`, giá trị boolean); dòng phạm vi dạng cũ trùng dạng mới
+  gộp về dòng cập nhật sau cùng; chốt cuối so số dòng với nguồn, lệch thì cuộn lại.
+- **Chưa đường nào đọc bảng.** T-7b chuyển `layered-resolver` (ma trận, thông báo, tích hợp) sang đọc bảng; T-7c xoá
+  nơi lưu cũ (contract, PO duyệt riêng).
+
+Ca thử: `tests/tenant/governance-decisions.test.ts` (sau mỗi chuỗi thao tác qua route thật, quyết định hiện hành của
+bảng khớp nơi lưu cũ), `src/core/governance/decision-record.test.ts`, `tests/tenant/tier-consistency.test.ts`.

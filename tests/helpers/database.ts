@@ -19,6 +19,8 @@ const TEST_EXTRA_TABLES = [
   "notification_event_visibility",
   "notification_hard_locks",
   "integration_governance",
+  // Bảng quyết định theo tầng (ADR-012 T-7a) — ghi kép từ ba bảng trên và ma trận quản trị
+  "governance_decisions",
 ] as const
 
 // Con trước cha (TABLES_CHILD_FIRST): TRUNCATE khoá bảng con trước, cùng chiều với giao dịch đang ghi con rồi

@@ -4264,6 +4264,33 @@ model integration_governance {
   @@index([scope_id])
 }
 
+/// Một bảng quyết định theo tầng (ADR-012 D-T10, bước T-7a): gộp ma trận quản trị (`organizations.settings.governance_matrix`,
+/// `platform_settings` `governance_matrix:*`), khoá cứng + hiển thị thông báo (`notification_hard_locks`,
+/// `notification_event_visibility`) và khoá tích hợp (`integration_governance`).
+/// Bảng cấp nền tảng như `integration_governance`: không có `organization_id`; phạm vi nằm ở `scope` (địa chỉ D-T5:
+/// `platform` · `industry:<key>` · `org:<id>` · `branch:<id>`). Chỉ thêm dòng: mỗi lần đổi là một dòng mới; quyết định
+/// hiện hành = dòng `version` lớn nhất của bộ (`system`, `decision_key`, `tier`, `scope`, `locked`); `value` null = đã gỡ.
+/// T-7a: ghi kép cùng giao dịch với nơi lưu cũ, chưa đường nào đọc. T-7b chuyển đọc; T-7c xoá nơi lưu cũ.
+model governance_decisions {
+  id           String   @id @default(uuid())
+  /// Thứ tự toàn cục (tăng dần) — dòng mới nhất của một quyết định là dòng hiện hành
+  version      BigInt   @unique @default(autoincrement())
+  /// `matrix:<SYSTEM>` · `notification.hard_lock` · `notification.visibility` · `integration`
+  system       String
+  decision_key String
+  /// Tầng ra quyết định: MOTHER | INDUSTRY | CHAIN | STORE
+  tier         String
+  scope        String
+  /// true = khoá cho tầng dưới; false = ghi đè / thiết lập của chính phạm vi
+  locked       Boolean
+  value        Json?
+  decided_by   String?
+  decided_at   DateTime @default(now()) @db.Timestamptz(3)
+
+  @@index([system, scope, decision_key, tier, locked, version])
+  @@index([scope])
+}
+
 // ─── Kênh bán hàng — phần chung (Trung tâm Tích hợp GĐ4A, PO 31/10/2026) ─────
 
 enum sales_listing_status {
