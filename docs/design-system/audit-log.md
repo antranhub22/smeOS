@@ -252,3 +252,9 @@ Catalog đã được phiên khác di trú trên `main` cùng ngày (PO 05/11) �
 - Bỏ hẳn "thử nghiệm nhanh với mẫu" (21 ảnh Unsplash) ở quét xu hướng theo ảnh (PO 06/11/2026); test `market-intelligence-no-stock-images.test.ts`. Ảnh minh hoạ theo chủ đề ở `opportunity-illustration.ts` (8 ảnh kho) cũng bỏ (PO 06/11/2026). Dữ liệu mẫu theo ngành (`mock-data-catalog.ts`, 25 ảnh) và sản phẩm mẫu khung xem trước Thẻ chào (`use-catalog-products.ts`, 6 ảnh, có test khoá hành vi B5) bỏ ảnh kho — để trống, hiện ảnh giữ chỗ.
 
 Còn lại (chưa sửa): `flower-network-command-center` (StatTile có InfoTip lồng — cần đổi `StatTile`, luồng component); `upload-wizard.tsx` 1.458 dòng không còn được dùng (mã chết, ngoài phạm vi); 4 ô `range` chờ Slider; Thẻ chào ~30 vi phạm (cần test khoá hành vi B5 từng đường).
+
+### Thẻ chào — đợt 1 (06/11/2026, D-47, test khoá hành vi B5 `greeting-card/__tests__/raw-inputs.characterization.test.tsx`)
+
+- `<input>` thô → `Input`: ô ghi chú đơn (`order-notes-fields.tsx`), ô khoá kết nối Zalo/SMS (`brochure-notify-settings.tsx`).
+- Nút "Copy ảnh sản phẩm": trạng thái tự đặt → `TaskUiState` (`running`/`succeeded`/`failed`).
+- Để lại có lý do: 7 ô `range` ở điều phối chuỗi (chờ Slider, luồng ADR-011); ô bẫy chống spam `honeypot-field` (phải là `<input>` ẩn); `<details>` trong ô bảng thanh toán (Disclosure dạng thẻ làm vỡ bảng dày — cần quyết định thiết kế); 6 `<h1>` ở trang khách công khai (không có PageHeader của app); trạng thái bước "done/completed" của dải tiến độ xưởng/theo dõi giao hàng là trạng thái bước miền, không phải tác vụ.
