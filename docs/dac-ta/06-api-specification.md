@@ -508,7 +508,7 @@ Cùng khuôn với M01: `raw` giữ bản máy sinh, `PATCH` ghi vào `edited`, 
 | GET · POST | `/brand-library` | `F1` · `F2` | Công cụ 45 (30/10/2026): thư viện nhận diện thương hiệu của tổ chức; `?include_archived=true`. POST tạo mục + phiên bản 1; loại LOGO/IMAGE/TEMPLATE cần `asset_id` là ảnh JPG/PNG/WebP của chính tổ chức, loại còn lại cần `text_value` (COLOR chỉ nhận mã hex) |
 | GET · PATCH | `/brand-library/:id` | `F1` · `F2` | Xem kèm các phiên bản; sửa tên/mô tả, `share_with_members`, `status` ACTIVE/ARCHIVED. Mục của tổ chức khác → 404. Ghi nhật ký kiểm toán |
 | POST | `/brand-library/:id/versions` | `F2` | Thêm phiên bản mới (bản cũ giữ nguyên); mục đã lưu trữ → 400 |
-| GET | `/brand-library/chain` | `F1` | Cửa hàng thành viên: mục chuỗi đã chia sẻ, đang dùng (chuỗi suy từ `chain_partnerships` ACTIVE sớm nhất, không nhận từ client); `data: null` khi không thuộc chuỗi |
+| GET | `/brand-library/chain` | `F1` | Cửa hàng thành viên: mục chuỗi đã chia sẻ, đang dùng (chuỗi suy từ cạnh chính `organization_links.is_primary`, không nhận từ client); `data: null` khi không thuộc chuỗi |
 | POST | `/store-share-link/revoke` | `F2` | Ngừng link đang hoạt động; trang `/ch/:slug` cũ báo đã ngừng. Không có link → 404 |
 | GET · POST | `/short-links` | `J1` | Bước 4 — công cụ 12/13/25 (30/10/2026): link/QR động. `?kind=QR\|SALES_LINK`, cursor + `limit` ≤ 100. POST `{ kind, name, targetPath, placementLabel?, utmSource?, utmMedium?, utmCampaign?, expiresAt? }`; `targetPath` chỉ nhận đường dẫn nội bộ bắt đầu bằng `/` (chặn open redirect) |
 | PATCH | `/short-links/:id` | `J1` | Đổi tên/đích/vị trí/UTM/hạn, `isActive`. Mã đã in giữ nguyên. Link tổ chức khác → 404 |

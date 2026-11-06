@@ -106,7 +106,7 @@ export function VideoPreviewModal({ isOpen, onClose, data }: VideoPreviewModalPr
 
         {/* Footer Meta & Controls */}
         <div className="px-4 py-2.5 bg-text/90 border-t border-text/80 flex flex-wrap items-center justify-between gap-2 text-caption">
-          <div className="flex items-center gap-3 text-text-muted text-caption">
+          <div className="flex items-center gap-3 text-surface text-caption">
             {data.author && (
               <span>
                 Kênh: <strong className="text-surface">{data.author}</strong>

@@ -83,8 +83,10 @@ cần test khoá hành vi trước.
 |---|---|---|---|
 | [x] | T-2 [SCHEMA] `organization_links` + backfill + ghi kép + `is_primary` (giữ bằng trigger ràng buộc — Prisma không khai được index riêng phần) | P2-A2 | Tenant test đối tác hai chuỗi: cạnh chính đúng, tạm ngưng thì chuyển — `tests/tenant/organization-links-sync.test.ts` |
 | [x] | T-3a Mọi đọc sang `organization_links` (lọc cạnh chuỗi); bỏ `BRANCH` ở API; ghi kép giữ để quay lui được | P2-A2 | `test:tenant`, `test:platform` |
-| [ ] | T-3b [SCHEMA] Ghi thẳng `organization_links`; contract: xoá `chain_partnerships` — chỉ sau khi T-3a đã chạy trên production | P2-A2 | `test:tenant`, `test:platform`; `check:migrations` (`-- contract:`) |
-| [ ] | T-4 [SCHEMA] **B5** Gộp `chain_branches` vào `branches`; `memberships.branch_id` thay `chain_branch_code` | P2-A3 | Giá theo chi nhánh, `/cua-hang`, điều phối không đổi |
+| [x] | T-3b [SCHEMA] Ghi thẳng `organization_links`; contract: xoá `chain_partnerships` — PO duyệt 06/11/2026 (trang đối tác, chat nội bộ còn khoá "Sắp ra mắt" trên production; migration có chốt dừng khi dữ liệu chưa khớp) | P2-A2 | `test:tenant`, `test:platform`; `check:migrations` (`-- contract:`) |
+| [x] | T-4a [SCHEMA] **B5** Thêm cột điều phối vào `branches`, chép `chain_branches` (D-57), `memberships.branch_id` (D-56), `orders.branch_id` cho đơn đã nhận; ghi kép | P2-A3 | Giá theo chi nhánh, `/cua-hang`, điều phối không đổi; `tests/tenant/branches-merge.test.ts` |
+| [ ] | T-4b Mọi đọc chi nhánh điều phối / trang cửa hàng sang `branches` (`accepts_dispatch`, `memberships.branch_id`) | P2-A3 | Như trên |
+| [ ] | T-4c [SCHEMA] Ghi thẳng `branches`; contract: xoá `chain_branches`, `memberships.chain_branch_code` — sau khi T-4b chạy trên production | P2-A3 | `check:migrations` (`-- contract:`) |
 | [ ] | T-5 `grants` có phạm vi trong `TenantContext`; phạm vi chi nhánh đợt 1 (đơn, khách, điều phối) | P2-A4, P2-A5 | Tenant test chéo chi nhánh |
 | [ ] | T-5b Phạm vi chi nhánh đợt 2 (sản phẩm/giá, kho, báo cáo) và đợt 3 (còn lại) | P2-A5 | Như trên, từng đợt |
 | [ ] | T-6 [SCHEMA nhỏ] `industries` + `organizations.industry_key`; khoá phạm vi dạng `platform · industry: · org: · branch:` | P2-A1 (xem ghi chú) | `npm run check:industry` |

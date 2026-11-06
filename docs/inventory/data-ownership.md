@@ -19,7 +19,7 @@
 | 11 | `campaign_packages` | module:creative-production, other | module:creative-production, other | **Store OS** | ⚠️ Ghi chéo nhiều module |
 | 12 | `capability_overrides` | module:organization, other | module:organization, other | **Cần con người quyết (Identity & Entitlement)** | ⚠️ Ghi chéo nhiều module |
 | 13 | `catalog_links` | module:catalog-links, other | module:catalog-links, other | **Store OS** | ⚠️ Ghi chéo nhiều module |
-| 14 | `chain_partnerships` | module:chain-partnership, other | api-routes, module:chain-partnership, other | **Chain OS** | ⚠️ Ghi chéo nhiều module |
+| 14 | `organization_links` (thay `chain_partnerships`, ADR-012 T-3b) | module:chain-partnership, other | api-routes, module:chain-partnership, other | **Chain OS** | ⚠️ Ghi chéo nhiều module |
 | 15 | `chat_channel_integrations` | module:chat-assistant, other | module:chat-assistant, other | **Store OS** | ⚠️ Ghi chéo nhiều module |
 | 16 | `chat_conversations` | module:chat-assistant, other | module:chat-assistant, module:creative-production, other | **Store OS** | ⚠️ Ghi chéo nhiều module |
 | 17 | `chat_messages` | module:chat-assistant, other | module:chat-assistant, other | **Store OS** | ⚠️ Ghi chéo nhiều module |

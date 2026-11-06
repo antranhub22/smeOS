@@ -29,7 +29,7 @@ Thay vì chỉ lưu danh sách tĩnh dạng text/JSON không có tài khoản, t
 │       organization_type = "CHAIN"            │
 └──────────────────────┬───────────────────────┘
                        │ 1
-                       │ Quan hệ đối tác (chain_partnerships)
+                       │ Quan hệ đối tác (organization_links)
                        │ n
 ┌──────────────────────▼───────────────────────┐
 │     CỬA HÀNG ĐỐI TÁC (PARTNER STORE)         │
@@ -40,34 +40,11 @@ Thay vì chỉ lưu danh sách tĩnh dạng text/JSON không có tài khoản, t
 └──────────────────────────────────────────────┘
 ```
 
-### 2.1 Bảng `chain_partnerships` (Liên kết Chuỗi - Cửa hàng)
-```prisma
-model chain_partnerships {
-  id                    String    @id @default(uuid())
-  chain_org_id          String    // ID của Chuỗi mẹ (organization_type = CHAIN)
-  partner_org_id        String    // ID của Cửa hàng/Đối tác (organization_type = STORE)
-  partner_code          String    // Mã đối tác trong chuỗi (vd: DT-HN-001)
-  partnership_type      String    @default("SUBCONTRACTOR") // SUBCONTRACTOR (Gia công), FRANCHISE (Nhượng quyền), BRANCH (Chi nhánh trực thuộc)
-  status                String    @default("ACTIVE") // PENDING, ACTIVE, SUSPENDED, TERMINATED
-  commission_rate       Decimal?  @db.Decimal(5, 2) // Tỷ lệ chiết khấu/hoa hồng nếu có (%)
-  capacity_daily        Int       @default(10) // Công suất tối đa đơn/ngày
-  contact_name          String?
-  contact_phone         String?
-  contact_email         String?
-  address               String?
-  province              String?
-  district              String?
-  created_at            DateTime  @default(now())
-  updated_at            DateTime  @updatedAt
+### 2.1 Liên kết Chuỗi - Cửa hàng → `organization_links`
 
-  chain_organization    organizations @relation("ChainPartnershipsAsChain", fields: [chain_org_id], references: [id], onDelete: Cascade)
-  partner_organization  organizations @relation("ChainPartnershipsAsPartner", fields: [partner_org_id], references: [id], onDelete: Cascade)
-
-  @@unique([chain_org_id, partner_org_id])
-  @@index([chain_org_id, status])
-  @@index([partner_org_id])
-}
-```
+Từ 06/11/2026 (ADR-012 T-3b) liên kết nằm ở `organization_links` (`parent_org_id` = chuỗi, `child_org_id` = cửa hàng,
+`link_type` `SUBCONTRACTOR`/`FRANCHISE`, cạnh chính `is_primary`); bảng `chain_partnerships` đã xoá. Mô hình đầy đủ:
+`docs/dac-ta/07-database-specification.md` §40. Loại `BRANCH` (chi nhánh trực thuộc) bỏ — chi nhánh là `branches`.
 
 ### 2.2 Bảng `chain_partner_invitations` (Thư mời gia nhập & Cấp tài khoản)
 ```prisma
@@ -103,7 +80,7 @@ Hỗ trợ 2 kịch bản vận hành thực tế:
    - Tạo mới `organizations` (type = `STORE`, name = `<Tên cửa hàng>`).
    - Tạo mới `workspaces` cho cửa hàng đó.
    - Tạo mới `users` (nếu email chưa tồn tại) & liên kết `memberships` (role = `store_admin`).
-   - Tạo bản ghi `chain_partnerships` liên kết Chuỗi mẹ ⟷ Cửa hàng mới.
+   - Tạo bản ghi `organization_links` liên kết Chuỗi mẹ ⟷ Cửa hàng mới.
    - Tự động kích hoạt phòng chat nội bộ `CHAIN_PARTNER` giữa Chuỗi mẹ và Cửa hàng.
 4. Đối tác nhận tài khoản, đăng nhập webapp là thấy ngay giao diện Cửa hàng và kênh chat với Chuỗi.
 

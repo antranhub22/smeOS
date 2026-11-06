@@ -244,7 +244,7 @@ const CORE_NEW: Record<string, Omit<CapabilityDefinition, "code">> = {
   R12: { name: "order.coordinator_reminder.configure", group: "order_operations", label: "Sửa thời điểm nhắc việc Điều phối (chung và theo sản phẩm)", defaultRoles: ["dieu_hanh", "dieu_phoi"] },
   R13: { name: "data.export", group: "order_operations", label: "Xuất đơn hàng / khách hàng ra tệp Excel (Điều hành cấp cho người khác khi duyệt)", defaultRoles: ["dieu_hanh", "ke_toan"] },
   // PO 22/10/2026 — trang cửa hàng nhận gia công: chỉ tài khoản cửa hàng thấy đơn của CHÍNH chi nhánh mình
-  // (chi nhánh lấy từ `memberships.chain_branch_code`, không từ yêu cầu). Điều hành có theo bất biến "mọi mã
+  // (chi nhánh lấy từ `memberships.chain_branch_code` — từ T-4a kèm `branch_id`, D-56 — không từ yêu cầu). Điều hành có theo bất biến "mọi mã
   // trừ K1" và chỉ thấy đơn khi tự gắn chi nhánh. Trần cứng: hai vai này.
   R14: { name: "order.branch_inbox", group: "order_operations", label: "Xem và nhận đơn gia công của chi nhánh mình", defaultRoles: ["dieu_hanh", "cua_hang"], hardCap: ["dieu_hanh", "cua_hang"] },
   // PO 31/10/2026 — Đơn hàng đa nguồn (KIEN_TRUC_SSOT_DON_HANG_DA_NGUON.md §5.2). Chỉ áp cho đơn NGOÀI Thẻ chào

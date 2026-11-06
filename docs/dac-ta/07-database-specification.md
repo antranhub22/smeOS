@@ -1137,7 +1137,7 @@ model catalog_links {
 }
 
 // Công cụ 45 (30/10/2026) — thư viện nhận diện thương hiệu có phiên bản. Cửa hàng thành
-// viên chỉ đọc mục `share_with_members` + ACTIVE của chuỗi (chain_partnerships ACTIVE).
+// viên chỉ đọc mục `share_with_members` + ACTIVE của chuỗi (liên kết chuỗi ACTIVE ở organization_links).
 model brand_library_items {
   id                 String   @id @default(uuid())
   organization_id    String
@@ -3250,38 +3250,9 @@ model notification_inbox {
 
 ## 34. Đối tác chuỗi và chat nội bộ (26/10/2026)
 
-`chain_partnerships`: quan hệ chuỗi ↔ cửa hàng đối tác (`chain_org_id`, `partner_org_id`), mỗi cặp một dòng. Chỉ chuỗi sở hữu quan hệ được đổi trạng thái / mở khoá công cụ; tổ chức khác → 404 (audit 28/10/2026).
+Quan hệ chuỗi ↔ cửa hàng đối tác: từ 06/11/2026 là `organization_links` (§40; `chain_partnerships` đã xoá ở ADR-012 T-3b), mỗi cặp cha–con một dòng. Chỉ chuỗi sở hữu quan hệ được đổi trạng thái / mở khoá công cụ; tổ chức khác → 404 (audit 28/10/2026).
 
 Chat nội bộ: `internal_chat_conversations` thuộc tổ chức tạo (`organization_id`); `internal_chat_participants` ghi người tham gia kèm tổ chức của họ (cho phép đối tác chuỗi cùng một luồng đơn); `internal_chat_messages` theo cuộc hội thoại. Chỉ người tham gia đọc/gửi tin; luồng đơn của tổ chức khác không tự tham gia được; chỉ mời được người của chính tổ chức hoặc chuỗi/đối tác đang liên kết ACTIVE. Ca thử: `tests/tenant/internal-chat-isolation.test.ts`.
-
-```prisma
-model chain_partnerships {
-  id               String   @id @default(uuid())
-  chain_org_id     String
-  partner_org_id   String
-  partner_code     String
-  partnership_type String   @default("SUBCONTRACTOR") // SUBCONTRACTOR | FRANCHISE | BRANCH
-  status           String   @default("ACTIVE")         // PENDING | ACTIVE | SUSPENDED | TERMINATED
-  capacity_daily   Int      @default(10)
-  commission_rate  Decimal?
-  contact_name     String?
-  contact_phone    String?
-  contact_email    String?
-  address          String?
-  province         String?
-  district         String?
-  created_at       DateTime @default(now())
-  updated_at       DateTime @updatedAt
-
-  chain_organization   organizations @relation("ChainOrg", fields: [chain_org_id], references: [id], onDelete: Cascade)
-  partner_organization organizations @relation("PartnerOrg", fields: [partner_org_id], references: [id], onDelete: Cascade)
-
-  @@unique([chain_org_id, partner_code])
-  @@unique([chain_org_id, partner_org_id])
-  @@index([chain_org_id, status])
-  @@index([partner_org_id])
-}
-```
 
 ```prisma
 model internal_chat_conversations {
@@ -3956,8 +3927,8 @@ model reconciliation_findings {
 ADR-012 D-T3, bước T-2 của `docs/plan/db-enterprise-architecture.md`. Quan hệ giữa các tổ chức là đồ thị có hướng
 cha → con; "tầng trên" của một tổ chức đi theo cạnh `is_primary` (tối đa một cạnh chính ACTIVE mỗi tổ chức con —
 trigger ràng buộc `organization_links_one_primary` trong migration `20261106010000_organization_links`). Giai đoạn
-chuyển: `id` trùng `chain_partnerships.id`, repository đối tác ghi kép
-(`src/modules/organization/infra/organization-link-sync.ts`).
+chuyển T-2 → T-3: `id` giữ nguyên từ `chain_partnerships`, repository đối tác ghi kép. Luật chung (lọc cạnh chuỗi,
+cạnh chính): `src/modules/organization/infra/organization-links.ts`.
 `INDUSTRY_MEMBER`, `AFFILIATE` khai sẵn cho tầng Ngành (D-48), chưa dùng.
 
 **T-3a (06/11/2026):** mọi đường ĐỌC quan hệ chuỗi–đối tác ở `organization_links`, lọc `ACTIVE_CHAIN_LINK`
@@ -3965,8 +3936,12 @@ chuyển: `id` trùng `chain_partnerships.id`, repository đối tác ghi kép
 cha): chuỗi cha (`findPrimaryChainLink` theo `is_primary`), kiểm đích đẩy đơn / chat (`partner-link-guard.ts`),
 danh sách và chi tiết đối tác, `identity-query`, `partnerOrgIds` của Integration Hub. Đường ghi vẫn ghi
 `chain_partnerships` trước rồi chép sang — bản phát hành trước còn đọc bảng cũ, nên quay lui không mất dữ liệu.
-`partnership_type = BRANCH` không còn được nhận ở API (D-T2). **T-3b** (bản phát hành sau, khi T-3a đã chạy trên
-production): ghi thẳng `organization_links`, migration contract xoá `chain_partnerships`.
+`partnership_type = BRANCH` không còn được nhận ở API (D-T2).
+
+**T-3b (06/11/2026):** repository đối tác ghi thẳng `organization_links` (đặt lại cạnh chính trong cùng giao dịch;
+`TERMINATED` → `valid_to = now()`, liên kết lại → `valid_to = null`). Migration contract
+`20261106020000_drop_chain_partnerships` xoá `chain_partnerships`; trước khi xoá, chốt an toàn dừng cả migration nếu
+còn dòng nào chưa có bản khớp (cùng id, cha, con, trạng thái) ở `organization_links`.
 
 ```prisma
 enum organization_link_type {
@@ -4014,8 +3989,32 @@ model organization_links {
 }
 ```
 
+## 41. Một bảng chi nhánh — gộp `chain_branches` vào `branches` (06/11/2026)
 
-## 41. Tên miền riêng — `custom_domains` (06/11/2026)
+ADR-012 D-T2, bước T-4. Chi nhánh là đơn vị con trong một tổ chức, ranh giới **phạm vi quyền** (`memberships.branch_id`
+→ `src/core/tenancy/branch-scope.ts`), không phải ranh giới tenant. `branches` nhận thêm các cột vận hành điều phối của
+`chain_branches` và cờ `accepts_dispatch` (chi nhánh nằm trong danh sách nhận đơn điều phối chuỗi, nhập Excel).
+`branches.code` là mã chi nhánh trên link gia công (`?branch=`) — trùng `chain_branches.branch_code`.
+
+**T-4a** (migration `20261106030000_branches_merge_chain_branches`, một giao dịch):
+
+- Chép mọi dòng `chain_branches` sang `branches`, khoá (tổ chức, mã); dòng mới giữ id cũ.
+- **D-57** trùng mã với một dòng `branches` có sẵn → gộp vào dòng đó: giữ tên/địa chỉ của `branches`, lấy cấu hình nhận
+  đơn từ `chain_branches`, `is_active` = cả hai cùng bật; NOTICE báo số dòng trùng.
+- **D-56** thành viên có `chain_branch_code` mà chưa có `branch_id` → `branch_id` = chi nhánh đó (từ đây bị giới hạn theo
+  chi nhánh trên mọi màn hình, trừ người có F7). Đã có `branch_id` khác → giữ, NOTICE.
+- Đơn gia công đã có chi nhánh nhận/chốt (`order_coordinations.metadata.subcontract_dispatch.claimedBranchId` là mã,
+  trạng thái `CLAIMED_GRACE`/`COMMITTED`) → `orders.branch_id`.
+- Ghi kép (`src/modules/greeting-card/infra/chain-branch-sync.ts`): nhập Excel, bật/tắt, trừ điểm, liên kết Zalo chép
+  sang `branches` trong cùng giao dịch; tên/địa chỉ/trạng thái chỉ chép khi người dùng đổi chúng (nhập Excel, bật/tắt).
+  Gắn chi nhánh cho thành viên ghi kèm `branch_id`; gỡ chỉ bỏ `branch_id` khi nó trỏ đúng chi nhánh vừa gỡ. Chi nhánh
+  nhận đơn theo mã → `orders.branch_id`. Đường đọc vẫn ở `chain_branches` tới **T-4b**; **T-4c** ghi thẳng `branches`,
+  xoá `chain_branches` và `memberships.chain_branch_code`.
+
+Ca thử: `tests/tenant/branches-merge.test.ts`.
+
+
+## 42. Tên miền riêng — `custom_domains` (06/11/2026)
 
 Checklist ALG 10.8 (PO 06/11/2026). Cửa hàng gắn tên miền của mình cho trang danh mục và Thẻ Chào. `hostname`
 duy nhất toàn hệ thống (đã chuẩn hoá chữ thường, punycode). Xác minh bằng bản ghi TXT `_smeos-verify.<hostname>`
@@ -4023,7 +4022,7 @@ có giá trị `smeos-verify=<verification_token>`. `src/proxy.ts` chỉ phục 
 có dữ liệu thuộc đúng `organization_id` (`src/modules/custom-domain/use-cases/resolve-custom-domain.ts`); `LOCKED`
 do Console nền tảng đặt (`N20`), cửa hàng không tự gỡ. `certificate_status` ghi kết quả gắn tên miền trên Render
 (PO Q11: tự động qua API; chưa cấu hình khoá → `MANUAL`). Có chính sách RLS `tenant_isolation`
-(migration `20261106030000_custom_domains`).
+(migration `20261106040000_custom_domains`).
 
 ```prisma
 enum custom_domain_status {

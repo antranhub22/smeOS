@@ -146,11 +146,8 @@ export function ProductTopicsList({
 
           return (
             <div
-              role="button"
-              tabIndex={0}
               key={topic.id}
-              onClick={() => handleSelect(topic)}
-              className={`rounded-xl border p-4 space-y-3.5 transition flex flex-col justify-between cursor-pointer ${
+              className={`rounded-xl border p-4 space-y-3.5 transition flex flex-col justify-between ${
                 isSelected
                   ? "border-2 border-primary bg-white shadow-md ring-2 ring-primary/10"
                   : "border-border/80 bg-bg/30 hover:bg-white hover:border-primary-border hover:shadow-xs"
@@ -170,6 +167,7 @@ export function ProductTopicsList({
 
                   <Button variant="ghost"
                     type="button"
+                    aria-pressed={isSelected}
                     onClick={(e) => {
                       e.stopPropagation();
                       handleSelect(topic);
@@ -219,13 +217,11 @@ export function ProductTopicsList({
                   )}
                   <div className="grid grid-cols-2 gap-2">
                     {/* Thumbnail TikTok (9:16 dọc) */}
-                    <div
-                      role="button"
-                      tabIndex={0}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        window.open(tiktok.videoUrl, "_blank");
-                      }}
+                    <a
+                      href={tiktok.videoUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={(e) => e.stopPropagation()}
                       className="group/tt relative rounded-lg overflow-hidden border border-border bg-black cursor-pointer hover:border-success transition flex flex-col"
                     >
                       <div className="relative aspect-[9/14] w-full overflow-hidden">
@@ -265,16 +261,14 @@ export function ProductTopicsList({
                           </>
                         )}
                       </div>
-                    </div>
+                    </a>
 
                     {/* Thumbnail YouTube (16:9 ngang) */}
-                    <div
-                      role="button"
-                      tabIndex={0}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        window.open(youtube.videoUrl, "_blank");
-                      }}
+                    <a
+                      href={youtube.videoUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      onClick={(e) => e.stopPropagation()}
                       className="group/yt relative rounded-lg overflow-hidden border border-border bg-black cursor-pointer hover:border-danger transition flex flex-col justify-between"
                     >
                       <div className="relative aspect-[16/10] w-full overflow-hidden">
@@ -298,7 +292,7 @@ export function ProductTopicsList({
                           {youtube.isLiveEvidence === true ? youtube.metrics : `${youtube.metrics} (ước tính)`}
                         </p>
                       </div>
-                    </div>
+                    </a>
                   </div>
                 </div>
 

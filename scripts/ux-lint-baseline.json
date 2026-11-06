@@ -29,8 +29,7 @@
       "R18": 3
     },
     "components/market-intelligence": {
-      "R18": 20,
-      "R16": 1
+      "R18": 11
     },
     "components/marketing-center": {
       "R18": 7
@@ -59,6 +58,6 @@
       "R14": 1
     }
   },
-  "total": 105,
-  "updatedAt": "2026-11-05T23:12:57.728Z"
+  "total": 95,
+  "updatedAt": "2026-11-06T03:47:20.284Z"
 }

@@ -171,10 +171,11 @@ export function SettingsScheduleTab({
           <span className="font-bold text-text block text-body-sm">Tự động ghép sản phẩm với xu hướng</span>
           <div className="space-y-2 pt-1">
             <div className="flex items-center justify-between">
-              <label className="font-semibold text-text">Ngưỡng điểm Trend Fit đạt chuẩn:</label>
+              <label htmlFor="mi-fit-threshold" className="font-semibold text-text">Ngưỡng điểm phù hợp xu hướng:</label>
               <span className="font-black text-primary text-body-sm">{productMatching.fitThreshold}/100</span>
             </div>
             <input
+              id="mi-fit-threshold"
               type="range"
               min={50}
               max={95}

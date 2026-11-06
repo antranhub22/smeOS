@@ -5,7 +5,7 @@ description: >-
   ma trận quản trị (ưu đãi, cam kết, chính sách, thanh toán, phí gia công, mẫu), khoá cứng
   tầng trên, khoá công cụ chuỗi → chi nhánh, gói dịch vụ, plugin ngành, xem trước tầng.
   Kích hoạt khi sửa governance-matrix, governance-decisions, components/governance,
-  layout/nav, tool-registry, entitlements, industries/, chain_partnerships hoặc /van-hanh, /dieu-phoi.
+  layout/nav, tool-registry, entitlements, industries/, organization_links hoặc /van-hanh, /dieu-phoi.
 ---
 
 # Tier Governance
@@ -16,7 +16,7 @@ description: >-
 
 Tóm tắt bắt buộc:
 - Động cơ đang chạy: `src/modules/organization/domain/governance-decisions.ts`. Quy luật khoá → ghi đè → mặc định nằm ở lõi chung `src/core/governance/layered-resolver.ts` (dùng chung với thông báo); hệ thống mới gọi lõi này, không viết resolver riêng.
-- Tầng trên thật trong ma trận: khoá dựng sẵn → Mẹ → Chuỗi (`chain_partnerships` ACTIVE). Tầng Ngành chỉ là plugin code.
+- Tầng trên thật trong ma trận: khoá dựng sẵn → Mẹ → Chuỗi (cạnh chính `organization_links.is_primary`, qua `resolveTierChain`). Tầng Ngành chỉ là plugin code.
 - Ghi quyết định: kiểm vi phạm ở server (422 + `violations`) + audit log.
 - Ba trục tách biệt: RBAC (capability) · Entitlement (gói / khoá công cụ) · Governance (ma trận).
 - Hệ thống mới chưa áp vào luồng thật → `GovernanceScopeNote`.

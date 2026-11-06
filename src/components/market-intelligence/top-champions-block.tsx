@@ -166,10 +166,7 @@ export function TopChampionsBlock({
 
             return (
               <div
-              role="button"
-              tabIndex={0}
                 key={champ.key}
-                onClick={() => onSelectOpportunity?.(item)}
                 className={`group relative rounded-xl border bg-gradient-to-b ${theme.gradient} ${theme.border} p-3.5 shadow-2xs hover:shadow-md transition-all duration-200 cursor-pointer flex flex-col justify-between overflow-hidden`}
               >
                 {/* Top Banner Tag */}
@@ -186,12 +183,11 @@ export function TopChampionsBlock({
                 </div>
 
                 {/* Thumbnail Ảnh Video: Click hiển thị luôn video */}
-                <div
-              role="button"
-              tabIndex={0}
+                <button
+                  type="button"
                   onClick={handlePlayVideo}
-                  title="Nhấp để xem video trực tiếp"
-                  className="group/thumb relative aspect-[16/10] w-full overflow-hidden rounded-lg bg-text mb-2.5 cursor-pointer"
+                  aria-label={`Xem video: ${headline}`}
+                  className="group/thumb relative z-10 block aspect-[16/10] w-full overflow-hidden rounded-lg bg-text mb-2.5 cursor-pointer"
                 >
                   <img
                     src={evidence.thumbnailUrl}
@@ -225,12 +221,19 @@ export function TopChampionsBlock({
                     <Play size={10} className="fill-current text-primary" />
                     <span className="truncate max-w-[130px]">{item.topicName}</span>
                   </div>
-                </div>
+                </button>
 
                 {/* Title & Headline */}
                 <div className="space-y-1 flex-1">
                   <h3 className="font-bold text-text text-caption leading-snug line-clamp-2 group-hover:text-primary transition-colors">
-                    {headline}
+                    {/* Nút chính phủ cả thẻ (after:inset-0); ô xem video nằm trên lớp phủ */}
+                    <button
+                      type="button"
+                      onClick={() => onSelectOpportunity?.(item)}
+                      className="text-left after:absolute after:inset-0 after:rounded-xl after:content-[''] focus-visible:outline-none focus-visible:after:ring-2 focus-visible:after:ring-primary"
+                    >
+                      {headline}
+                    </button>
                   </h3>
                 </div>
 

@@ -1,6 +1,5 @@
 "use client";
 
-import { Button } from "@/components/ui/button"
 import React from "react";
 import { Video } from "@/components/ui/icon-set/video"
 import { Play } from "@/components/ui/icon-set/play"
@@ -49,18 +48,7 @@ export function OpportunityCard({ item, onSelect }: OpportunityCardProps) {
   const timeframeMeta = getOpportunityTimeframeMeta(item.createdAt);
 
   return (
-    <div
-      role="button"
-      tabIndex={0}
-      onClick={() => onSelect?.(item)}
-      onKeyDown={(e) => {
-        if (e.key === "Enter" || e.key === " ") {
-          e.preventDefault();
-          onSelect?.(item);
-        }
-      }}
-      className="group relative rounded-2xl border border-border/90 bg-white p-5 shadow-xs hover:border-primary-border hover:shadow-md transition-all duration-200 cursor-pointer flex flex-col justify-between space-y-4 focus-visible:outline-2 focus-visible:outline-primary"
-    >
+    <div className="group relative rounded-2xl border border-border/90 bg-white p-5 shadow-xs hover:border-primary-border hover:shadow-md transition-all duration-200 cursor-pointer flex flex-col justify-between space-y-4">
       {/* Top Bar: Badges + Điểm cơ hội */}
       <div className="flex items-start justify-between gap-3">
         <div className="flex flex-wrap items-center gap-1.5">
@@ -85,7 +73,7 @@ export function OpportunityCard({ item, onSelect }: OpportunityCardProps) {
             <Video className="h-3 w-3 text-primary" />
             <span>2 video dẫn chứng</span>
             <span className="flex items-center gap-1 ml-0.5">
-              <span className="text-caption bg-black text-primary px-1 py-0.2 rounded font-black">
+              <span className="text-caption bg-black text-white px-1 py-0.2 rounded font-black">
                 TikTok
               </span>
               <span className="text-caption bg-danger text-white px-1 py-0.2 rounded font-black flex items-center gap-0.5">
@@ -108,7 +96,14 @@ export function OpportunityCard({ item, onSelect }: OpportunityCardProps) {
 
       {/* Headline cơ hội (Chống tràn từ khóa thô) */}
       <h3 className="font-bold text-text text-body-sm sm:text-body leading-snug group-hover:text-primary transition-colors line-clamp-2">
-        {headline}
+        {/* Nút chính phủ cả thẻ (after:inset-0) */}
+        <button
+          type="button"
+          onClick={() => onSelect?.(item)}
+          className="text-left after:absolute after:inset-0 after:rounded-2xl after:content-[''] focus-visible:outline-none focus-visible:after:ring-2 focus-visible:after:ring-primary"
+        >
+          {headline}
+        </button>
       </h3>
 
       {/* 3 Trục Điểm số Xu hướng Tinh gọn */}
@@ -145,17 +140,10 @@ export function OpportunityCard({ item, onSelect }: OpportunityCardProps) {
           )}
         </div>
 
-        <Button variant="ghost"
-          type="button"
-          onClick={(e) => {
-            e.stopPropagation();
-            onSelect?.(item);
-          }}
-          className="h-auto p-0 inline-flex items-center gap-1 text-caption font-bold text-primary group-hover:text-primary group-hover:translate-x-0.5 transition-all"
-        >
+        <span aria-hidden="true" className="inline-flex items-center gap-1 text-caption font-bold text-primary group-hover:translate-x-0.5 transition-all">
           <span>Khám phá kịch bản</span>
           <span>→</span>
-        </Button>
+        </span>
       </div>
     </div>
   );
