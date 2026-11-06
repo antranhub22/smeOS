@@ -17,6 +17,12 @@ export type TenantContext = {
   /** null = phạm vi toàn tổ chức. */
   readonly branchId: string | null
   readonly capabilities: ReadonlySet<string>
+  /**
+   * Phạm vi của từng mã quyền (ADR-012 D-T7, bước T-5): `ORGANIZATION` | `BRANCH`, theo `role_capabilities.scope`.
+   * Không có = mọi mã phạm vi tổ chức (ngữ cảnh dựng tay trong test, đường tích hợp cũ). Lọc theo chi nhánh đọc qua
+   * `branchScopeFor(ctx, code)` (`branch-scope.ts`).
+   */
+  readonly grants?: ReadonlyMap<string, string> | undefined
 }
 
 /**

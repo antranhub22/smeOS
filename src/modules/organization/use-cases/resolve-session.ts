@@ -122,6 +122,7 @@ export async function tenantContextFor(
       userId,
       branchId: membership.branch_id,
       capabilities: new Set(grants.map((grant) => grant.code)),
+      grants: new Map(grants.map((grant) => [grant.code, grant.scope])), // ADR-012 D-T7 (T-5)
     },
     membership,
   }

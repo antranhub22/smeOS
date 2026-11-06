@@ -375,6 +375,7 @@ model branches {
   products_by_branch_id        products[]        @relation("fk_products_branch_id")
   pricing_rules_by_branch_id   pricing_rules[]   @relation("fk_pricing_rules_branch_id")
   orders_by_branch_id          orders[]          @relation("fk_orders_branch_id")
+  customers_by_branch_id       customers[]       @relation("fk_customers_branch_id")
 
   @@unique([organization_id, code])
   @@index([organization_id])
@@ -2131,6 +2132,10 @@ model customers {
   /// @pii address
   address           String?
   tier              customer_tier @default(NEW)
+  /// Chi nhánh của khách (D-58, ADR-012 T-5): chi nhánh của người tạo hoặc của đơn đầu tiên có chi nhánh; null = khách
+  /// dùng chung toàn tổ chức. Tổ chức bật `settings.branch_scope.wave1` thì nhân viên chi nhánh chỉ thấy khách của
+  /// chi nhánh mình và khách dùng chung.
+  branch_id         String?
   notes             String?
   tags              String[]      @default([])
   preferred_flowers String[]      @default([])
@@ -2144,6 +2149,7 @@ model customers {
   updated_at DateTime @updatedAt @db.Timestamptz(3)
 
   organization  organizations           @relation(fields: [organization_id], references: [id])
+  fk_branch     branches?               @relation("fk_customers_branch_id", fields: [branch_id], references: [id], onDelete: SetNull)
   orders        orders[]
   occasions     customer_occasions[]
   consents      customer_consents[]
@@ -2161,6 +2167,8 @@ model customers {
   @@unique([id, organization_id]) // đích của khoá ghép tenant (05/11/2026)
   @@index([organization_id, tier])
   @@index([organization_id, name])
+  @@index([organization_id, branch_id])
+  @@index([branch_id]) // khoá ngoại cần index (ADR-015 O-1)
 }
 
 model customer_occasions {

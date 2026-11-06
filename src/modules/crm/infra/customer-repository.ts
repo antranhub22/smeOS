@@ -3,6 +3,7 @@ import { prisma } from "@/core/tenancy/infra/prisma"
 import type { TenantContext } from "@/core/tenancy/tenant-context"
 import type { CustomerMasterIndex, CustomerTier } from "../domain/customer-master-index"
 import { deriveCustomerTier } from "../domain/crm-rules"
+import { branchForNewCustomer, customerBranchWhere } from "./customer-branch-scope"
 import type {
   ICustomerRepository,
   CreateCustomerInput,
@@ -51,6 +52,7 @@ export class CustomerRepository implements ICustomerRepository {
     const row = await prisma.customers.create({
       data: {
         organization_id: ctx.organizationId,
+        branch_id: branchForNewCustomer(ctx), // D-58: chi nhánh của người tạo
         code,
         name: input.name,
         phone: input.phone,
@@ -77,7 +79,7 @@ export class CustomerRepository implements ICustomerRepository {
 
   async getById(ctx: TenantContext, id: string): Promise<CustomerMasterIndex | null> {
     const row = await prisma.customers.findFirst({
-      where: { id, organization_id: ctx.organizationId },
+      where: { id, organization_id: ctx.organizationId, ...(await customerBranchWhere(ctx)) },
       include: {
         occasions: true,
         consents: true,
@@ -105,7 +107,7 @@ export class CustomerRepository implements ICustomerRepository {
 
   async update(ctx: TenantContext, id: string, input: UpdateCustomerInput): Promise<CustomerMasterIndex | null> {
     const existing = await prisma.customers.findFirst({
-      where: { id, organization_id: ctx.organizationId },
+      where: { id, organization_id: ctx.organizationId, ...(await customerBranchWhere(ctx)) },
     })
     if (!existing) return null
 
@@ -133,7 +135,7 @@ export class CustomerRepository implements ICustomerRepository {
 
   async delete(ctx: TenantContext, id: string): Promise<boolean> {
     const existing = await prisma.customers.findFirst({
-      where: { id, organization_id: ctx.organizationId },
+      where: { id, organization_id: ctx.organizationId, ...(await customerBranchWhere(ctx)) },
     })
     if (!existing) return false
 
@@ -148,6 +150,7 @@ export class CustomerRepository implements ICustomerRepository {
   ): Promise<{ items: CustomerMasterIndex[]; total: number }> {
     const where: Prisma.customersWhereInput = {
       organization_id: ctx.organizationId,
+      AND: [await customerBranchWhere(ctx)], // phạm vi chi nhánh (T-5) — AND để không đè OR của ô tìm
       ...(filters?.tier ? { tier: filters.tier } : {}),
       ...(filters?.search
         ? {
