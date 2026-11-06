@@ -112,7 +112,7 @@ export function BrochureNotifySettings() {
         {CRED_FIELDS[ch].map((f) => (
           <label key={f.key} className="flex flex-col gap-1 text-caption">
             <span className="font-bold">{f.label}</span>
-            <input
+            <Input
               type={f.key === "appId" || f.key === "brandname" ? "text" : "password"}
               autoComplete="off"
               value={creds[f.key] ?? ""}
