@@ -230,6 +230,15 @@ export const CHAIN_NAV_ENTRIES: readonly NavEntry[] = [
     mobileLabel: "Đội ngũ",
   },
   {
+    href: "/audit",
+    label: "Nhật ký thao tác",
+    group: "thiet-lap-chuoi",
+    iconKey: "FileText",
+    navKey: "chain-audit",
+    capability: "G9",
+    mobileLabel: "Nhật ký",
+  },
+  {
     href: "/cai-dat/thong-bao",
     label: "Ma trận thông báo",
     group: "thiet-lap-chuoi",
