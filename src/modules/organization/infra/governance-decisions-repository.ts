@@ -1,11 +1,8 @@
 /**
- * Lưu/đọc quyết định ma trận quản trị theo tầng.
- * - Đọc (ADR-012 T-7b): bảng `governance_decisions`, phạm vi `org:<id>` (tổ chức) hoặc `platform` (Mẹ).
- * - Ghi: nơi lưu cũ (`organizations.settings.governance_matrix.<SYSTEM>`, `platform_settings` khoá
- *   `governance_matrix:<SYSTEM>`) + ghi kép bảng mới cùng giao dịch (T-7a) — nơi lưu cũ giữ tới T-7c để quay lui được.
- * - Tầng Chuỗi của một cửa hàng: chuỗi cha chính (`findPrimaryChainLink`).
+ * Lưu/đọc quyết định ma trận quản trị theo tầng — bảng `governance_decisions` (ADR-012 D-T10), phạm vi `org:<id>`
+ * (tổ chức) hoặc `platform` (Mẹ). T-7c đã bỏ nơi lưu cũ (`settings.governance_matrix`, `platform_settings`
+ * `governance_matrix:*`). Tầng Chuỗi của một cửa hàng: chuỗi cha chính (`findPrimaryChainLink`).
  */
-import type { Prisma } from "@/generated/prisma/client"
 import { matrixRecords } from "@/core/governance/decision-record"
 import { currentDecisions, syncDecisionScope } from "@/core/governance/infra/decision-log"
 import { organizationTierOf } from "@/core/governance/tier-of"
@@ -22,8 +19,6 @@ import {
   type UpperLayer,
 } from "../domain/governance-decisions"
 
-const motherKey = (system: GovernanceSystem) => `governance_matrix:${system}`
-
 const MOTHER_SCOPE = "platform"
 const orgScope = (organizationId: string) => `org:${organizationId}`
 const matrixSystem = (system: GovernanceSystem) => `matrix:${system}` as const
@@ -36,28 +31,23 @@ export async function getOrgGovernance(organizationId: string, system: Governanc
   return readMatrix(system, orgScope(organizationId))
 }
 
-/** Ghi kép (ADR-012 T-7a): cùng giao dịch đưa `governance_decisions` của phạm vi `org:<id>` về đúng tập vừa lưu. */
+/**
+ * Lưu tập ghi đè + khoá của một tổ chức (ADR-012 T-7c: chỉ còn `governance_decisions`). Khoá dòng tổ chức trong giao
+ * dịch để hai lần lưu đồng thời của cùng tổ chức chạy lần lượt (trước đây lệnh UPDATE settings giữ khoá này).
+ */
 export async function saveOrgGovernance(
   organizationId: string,
   system: GovernanceSystem,
   decisions: GovernanceDecisions,
   decidedBy: string | null = null,
 ): Promise<boolean> {
-  const value = JSON.stringify(decisions)
   return prisma.$transaction(async (tx) => {
-    const updated = await tx.$executeRaw`
-    UPDATE organizations
-    SET settings = (CASE WHEN jsonb_typeof(settings) = 'object' THEN settings ELSE '{}'::jsonb END)
-      || jsonb_build_object('governance_matrix',
-           (CASE WHEN jsonb_typeof(settings->'governance_matrix') = 'object' THEN settings->'governance_matrix' ELSE '{}'::jsonb END)
-           || jsonb_build_object(${system}::text, ${value}::jsonb)),
-        updated_at = NOW()
-    WHERE id = ${organizationId}`
-    if (updated !== 1) return false
-    const org = await tx.organizations.findUnique({ where: { id: organizationId }, select: { type: true } })
-    const tier = organizationTierOf(org?.type)
-    const scope = `org:${organizationId}`
-    await syncDecisionScope(tx, { system: `matrix:${system}`, scope }, matrixRecords({ system, tier, scope, decisions, decidedBy }), decidedBy)
+    const rows = await tx.$queryRaw<Array<{ type: string }>>`SELECT "type"::text AS type FROM organizations WHERE id = ${organizationId} FOR UPDATE`
+    const org = rows[0]
+    if (!org) return false
+    const tier = organizationTierOf(org.type)
+    const scope = orgScope(organizationId)
+    await syncDecisionScope(tx, { system: matrixSystem(system), scope }, matrixRecords({ system, tier, scope, decisions, decidedBy }), decidedBy)
     return true
   })
 }
@@ -67,16 +57,15 @@ export async function getMotherGovernance(system: GovernanceSystem): Promise<Gov
 }
 
 export async function saveMotherGovernance(system: GovernanceSystem, decisions: GovernanceDecisions, updatedBy: string | null): Promise<void> {
-  const value = decisions as unknown as Prisma.InputJsonValue
   await prisma.$transaction(async (tx) => {
-    await tx.platform_settings.upsert({
-      where: { key: motherKey(system) },
-      create: { key: motherKey(system), value, updated_by: updatedBy },
-      update: { value, updated_by: updatedBy },
-    })
-    // Ghi kép (ADR-012 T-7a)
-    const scope = "platform"
-    await syncDecisionScope(tx, { system: `matrix:${system}`, scope }, matrixRecords({ system, tier: "MOTHER", scope, decisions, decidedBy: updatedBy }), updatedBy)
+    // Hai lần lưu đồng thời cùng ma trận của Mẹ chạy lần lượt (khoá theo giao dịch)
+    await tx.$executeRaw`SELECT pg_advisory_xact_lock(hashtext(${`governance:${matrixSystem(system)}:${MOTHER_SCOPE}`}))`
+    await syncDecisionScope(
+      tx,
+      { system: matrixSystem(system), scope: MOTHER_SCOPE },
+      matrixRecords({ system, tier: "MOTHER", scope: MOTHER_SCOPE, decisions, decidedBy: updatedBy }),
+      updatedBy,
+    )
   })
 }
 

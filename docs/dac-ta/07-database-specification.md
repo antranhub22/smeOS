@@ -30,8 +30,7 @@ Worker Python đọc lược đồ sinh sẵn, không tự khai bảng.
 | `partner_marketplace_share_links` | Link chia sẻ chợ đối tác (PO 01/11/2026): xem danh sách đã che không cần đăng nhập. Cấp nền tảng, không thuộc tổ chức. Tạo/huỷ `N17`. Chỉ lưu `token_hash` (SHA-256, duy nhất); `expires_at` do người tạo chọn (1–365 ngày); `revoked_at` khi huỷ; `view_count`/`last_viewed_at` |
 | `market_sources` · `trend_signals` · `trend_timeseries` · `topics` · `topic_signals` · `topic_scores` · `research_runs` · `provider_health` | Dữ liệu nghiên cứu thị trường cấp nền tảng (Market Intelligence Engine, Đợt A) — thu thập xu hướng chung toàn ngành, không thuộc một tổ chức nào; chỉ có `content_opportunities` thuộc tenant |
 | `field_definitions` · `field_catalogs` · `field_catalog_values` | Nền quản trị trường (ĐP-3, 26/09/2026) — sổ đăng ký trường (lõi và tự tạo) và danh mục giá trị của TOÀN hệ thống, cùng hạng với `platform_operators`/`ai_models`. `field_config_overrides` (ghi đè THEO TỪNG tổ chức) NGƯỢC LẠI có `organization_id` — thuộc tenant, không nằm trong danh sách này. Trường cửa hàng tự tạo (checklist ALG 1.9) nằm trong `field_definitions` với `owner_organization_id` = tổ chức sở hữu: chỉ tổ chức đó đọc/ghi, Console nền tảng không liệt kê, hạn mức 50 trường/thực thể tính riêng từng tổ chức. Xem mục 22b |
-| `integration_governance` | Trung tâm Tích hợp (30/10/2026) — khoá/cấp sẵn tích hợp theo tầng `(connector_key, tier, scope_id)`; `scope_id` là `GLOBAL` (Mẹ), `industry:<key>` (Ngành) hoặc id tổ chức chuỗi. Cùng mẫu với `notification_*`. Xem mục 36 |
-| `governance_decisions` | Một bảng quyết định theo tầng (ADR-012 D-T10, T-7a, 06/11/2026) — gộp ma trận quản trị, khoá/hiển thị thông báo, khoá tích hợp; phạm vi ở cột `scope` dạng D-T5 (`platform`, `industry:<key>`, `org:<id>`), không phải dữ liệu riêng của một tổ chức nên không có `organization_id`. Xem mục 45 |
+| `governance_decisions` | Một bảng quyết định theo tầng (ADR-012 D-T10, 06/11/2026) — nơi lưu duy nhất của ma trận quản trị, khoá/hiển thị thông báo, khoá tích hợp (T-7c đã bỏ `integration_governance`, `notification_hard_locks`, `notification_event_visibility`); phạm vi ở cột `scope` dạng D-T5 (`platform`, `industry:<key>`, `org:<id>`), không phải dữ liệu riêng của một tổ chức nên không có `organization_id`. Xem mục 45 |
 
 | `platform_settings` | Cấu hình cấp nền tảng, một dòng mỗi khoá, chỉ Console vận hành ghi (mã `N12`) — vd ma trận điều hướng theo ngành áp cho MỌI tổ chức cùng ngành. Xem mục 31 |
 Một bảng tự nhận ngoại lệ mà không nêu được lý do ở trên là lỗi chặn ở review.
@@ -3103,35 +3102,9 @@ model notification_channel_activations {
 }
 ```
 
-```prisma
-model notification_event_visibility {
-  event_key   String
-  tier        String   // INDUSTRY | CHAIN | STORE
-  visible     Boolean  @default(true)
-  updated_by  String
-  updated_at  DateTime @updatedAt
-
-  @@id([event_key, tier])
-}
-```
-
-```prisma
-model notification_hard_locks {
-  id          String   @id @default(uuid())
-  event_key   String
-  channel     String
-  tier        String   // MOTHER | INDUSTRY | CHAIN | STORE
-  scope_id    String   // organization_id hoặc "GLOBAL" nếu tier = MOTHER
-  enabled     Boolean  // true = bắt buộc BẬT | false = bắt buộc TẮT
-  locked_by   String   // user_id người đặt khóa
-  reason      String?  // Lý do khóa
-  created_at  DateTime @default(now())
-  updated_at  DateTime @updatedAt
-
-  @@unique([event_key, channel, tier, scope_id])
-  @@index([tier, scope_id])
-}
-```
+Hiển thị sự kiện theo tầng và khoá cứng (trước đây hai bảng `notification_event_visibility`,
+`notification_hard_locks`) lưu ở `governance_decisions` từ ADR-012 T-7c (06/11/2026) — `system` =
+`notification.visibility` / `notification.hard_lock`. Xem mục 45.
 
 ```prisma
 model notification_org_policies {
@@ -3371,7 +3344,7 @@ model product_recipe_items {
 
 ## 36. Trung tâm Tích hợp — `integration_*` (30/10/2026)
 
-Kế hoạch: `docs/kien-truc/KE_HOACH_TRUNG_TAM_TICH_HOP.md` (GĐ1). Ba bảng thuộc tổ chức (`integration_connections`, `integration_events`, `integration_sync_cursors`) và một bảng cấp nền tảng (`integration_governance`, dùng từ GĐ3).
+Kế hoạch: `docs/kien-truc/KE_HOACH_TRUNG_TAM_TICH_HOP.md` (GĐ1). Ba bảng thuộc tổ chức (`integration_connections`, `integration_events`, `integration_sync_cursors`) và một bảng cấp nền tảng (`integration_governance`, dùng từ GĐ3 — từ 06/11/2026 gộp vào `governance_decisions`, mục 45).
 
 - `integration_connections.credential_encrypted` là bản mã secret-box (AES-256-GCM, purpose `integration:<connector_key>`); `config` không chứa bí mật; API chỉ trả `credential_hint` (4 ký tự cuối). Ngắt kết nối xoá bản mã, giữ dòng để truy vết.
 - `connection_ref` là mã ngẫu nhiên 24 byte dùng trong URL webhook công khai — không lộ `organization_id`.
@@ -3400,12 +3373,6 @@ enum integration_event_status {
   DONE
   FAILED
   DEAD
-}
-
-enum integration_governance_mode {
-  FORBID
-  INHERIT_ONLY
-  ALLOW_OWN
 }
 
 /// Một kết nối của tổ chức tới dịch vụ ngoài. Bí mật chỉ nằm trong `credential_encrypted` (secret-box);
@@ -3481,22 +3448,10 @@ model integration_sync_cursors {
   @@index([organization_id])
 }
 
-/// Bảng cấp nền tảng (không thuộc một tổ chức): khoá/cấp sẵn tích hợp theo tầng.
-/// scope_id: "GLOBAL" (Mẹ) · "industry:<key>" (Ngành) · id tổ chức chuỗi (Chuỗi). Cùng mẫu với notification_*.
-model integration_governance {
-  id            String                      @id @default(uuid())
-  connector_key String
-  tier          String
-  scope_id      String
-  mode          integration_governance_mode
-  updated_by    String
-  created_at    DateTime                    @default(now())
-  updated_at    DateTime                    @updatedAt
-
-  @@unique([connector_key, tier, scope_id])
-  @@index([scope_id])
-}
 ```
+
+Khoá/cấp sẵn tích hợp theo tầng (trước đây bảng nền tảng `integration_governance`) lưu ở `governance_decisions` từ
+ADR-012 T-7c (06/11/2026) — `system` = `integration`, `value` = `{mode: FORBID | INHERIT_ONLY}`. Xem mục 45.
 
 ## 37. Kênh bán hàng — `sales_channel_*` (31/10/2026)
 
@@ -4221,7 +4176,14 @@ model governance_decisions {
   quyết định riêng của tiệm qua `PolicyGovernanceUpper.own` thay cho `settings.governance_matrix`
   (`isGovernedItemEnabled(key, own, …)`); `decisionsFromSettings` bỏ. Nơi lưu cũ vẫn được ghi kép để quay lui được.
   Dòng ghi thẳng vào nơi lưu cũ (không qua ghi kép) không còn tác dụng.
-- **T-7c (chưa làm).** Xoá nơi lưu cũ (contract, PO duyệt riêng), sau khi T-7b đã chạy trên production.
+- **T-7c — contract (PO duyệt 06/11/2026, sau khi T-7b #165 đã chạy ổn trên production).** Migration
+  `20261106120000_governance_decisions_contract` (một giao dịch): CHỐT TRƯỚC — quyết định hiện hành của bảng phải trùng
+  khớp phép chiếu nơi lưu cũ (như T-7a; ma trận so không kể `tier`; bỏ qua ma trận của tổ chức đã xoá), lệch thì in
+  tối đa 20 dòng lệch rồi RAISE, không xoá gì. Sau đó `DROP TABLE` `integration_governance`, `notification_event_visibility`,
+  `notification_hard_locks` + enum `integration_governance_mode`, xoá khoá `settings.governance_matrix` và các dòng
+  `platform_settings` `governance_matrix:*`. Mã bỏ ghi kép; lưu ma trận khoá dòng tổ chức (`SELECT … FOR UPDATE`) hoặc
+  khoá theo giao dịch (Mẹ) để hai lần lưu đồng thời chạy lần lượt. `PATCH /organizations/current` vẫn từ chối khoá
+  `governance_matrix`.
 
 Ca thử: `tests/tenant/governance-decisions.test.ts` (sau mỗi chuỗi thao tác qua route thật, quyết định hiện hành của
 bảng khớp nơi lưu cũ), `tests/tenant/governance-decisions-read.test.ts` (mỗi trục: chỉ bảng mới có tác dụng),
