@@ -1,8 +1,10 @@
-import { readFileSync } from "node:fs"
+import { readdirSync, readFileSync, statSync } from "node:fs"
 import path from "node:path"
 import { describe, expect, it } from "vitest"
 
 /** PO 06/11/2026: bỏ hẳn "thử nghiệm nhanh với mẫu" (ảnh kho) ở quét xu hướng theo ảnh — chỉ dùng ảnh của tiệm. */
+const DIR = path.resolve(__dirname, "../../../src/components/market-intelligence")
+const files = (d: string): string[] => readdirSync(d).flatMap((n) => (statSync(path.join(d, n)).isDirectory() ? files(path.join(d, n)) : [path.join(d, n)]))
 const CARD = path.resolve(__dirname, "../../../src/components/market-intelligence/product-upload-card.tsx")
 
 describe("Quét xu hướng theo ảnh không có ảnh mẫu dùng thử", () => {
@@ -10,5 +12,9 @@ describe("Quét xu hướng theo ảnh không có ảnh mẫu dùng thử", () =
     const src = readFileSync(CARD, "utf8")
     expect(src).not.toContain("images.unsplash.com")
     expect(src).not.toMatch(/thử nghiệm nhanh|handleSelectDemo/)
+  })
+
+  it("PO 06/11/2026: cả Xu hướng thị trường không còn ảnh kho minh hoạ", () => {
+    expect(files(DIR).filter((f) => readFileSync(f, "utf8").includes("images.unsplash.com"))).toEqual([])
   })
 })
