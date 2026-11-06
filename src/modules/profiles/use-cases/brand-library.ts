@@ -1,7 +1,7 @@
 /**
  * Công cụ 45 — thư viện nhận diện thương hiệu.
  * Xem: F1 · thêm/sửa/phiên bản mới/chia sẻ/lưu trữ: F2 (ghi nhật ký kiểm toán).
- * Cửa hàng thành viên đọc mục chuỗi đã chia sẻ qua chain_partnerships ACTIVE —
+ * Cửa hàng thành viên đọc mục chuỗi đã chia sẻ qua liên kết chuỗi ACTIVE (organization_links) —
  * tổ chức chuỗi suy ra ở máy chủ từ tổ chức đang đăng nhập, không nhận từ client.
  */
 import { notFound, validationFailed } from "@/core/http/errors"

@@ -3,12 +3,16 @@
  *
  * Mỗi lần repository đối tác ghi một liên kết, gọi `syncOrganizationLink` trong CÙNG giao dịch. Dòng
  * `organization_links` dùng lại id của `chain_partnerships`, nên chép lại bao nhiêu lần cũng ra một dòng.
- * Cạnh chính (`is_primary`) giữ đúng luật hiện hành: liên kết ACTIVE sớm nhất của tổ chức con. Bước T-3 chuyển
- * đường đọc sang bảng này rồi bỏ `chain_partnerships`.
+ * Cạnh chính (`is_primary`) giữ đúng luật hiện hành: liên kết ACTIVE sớm nhất của tổ chức con.
+ * T-3a: mọi đường ĐỌC đã ở `organization_links` (lọc bằng `CHAIN_LINK_TYPES`); ghi kép giữ tới T-3b để còn quay
+ * lui được bản phát hành trước, rồi T-3b ghi thẳng bảng này và xoá `chain_partnerships`.
  */
 import type { DbClient } from "./db-client"
 
-const CHAIN_LINK_TYPES = ["SUBCONTRACTOR", "FRANCHISE"] as const
+/** Loại cạnh là quan hệ chuỗi → cửa hàng; `INDUSTRY_MEMBER`, `AFFILIATE` (tầng Ngành) không phải. */
+export const CHAIN_LINK_TYPES = ["SUBCONTRACTOR", "FRANCHISE"] as const
+/** Điều kiện `where` cho cạnh chuỗi đang hiệu lực — mọi đường đọc quan hệ chuỗi–đối tác dùng chung. */
+export const ACTIVE_CHAIN_LINK = { status: "ACTIVE" as const, link_type: { in: [...CHAIN_LINK_TYPES] } }
 const STATUSES = ["PENDING", "ACTIVE", "SUSPENDED", "TERMINATED"] as const
 type LinkStatus = (typeof STATUSES)[number]
 
@@ -47,7 +51,7 @@ export async function syncOrganizationLink(db: DbClient, partnershipId: string):
 /** Đặt lại cạnh chính của một tổ chức con = liên kết chuỗi ACTIVE sớm nhất (hoặc không có). */
 export async function recomputePrimaryLink(db: DbClient, childOrgId: string): Promise<string | null> {
   const first = await db.organization_links.findFirst({
-    where: { child_org_id: childOrgId, status: "ACTIVE", link_type: { in: [...CHAIN_LINK_TYPES] } },
+    where: { child_org_id: childOrgId, ...ACTIVE_CHAIN_LINK },
     orderBy: [{ created_at: "asc" }, { id: "asc" }],
     select: { id: true },
   })

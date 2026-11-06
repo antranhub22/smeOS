@@ -2,6 +2,7 @@ import type { TenantContext } from "@/core/tenancy"
 import { prisma } from "@/core/tenancy/infra/prisma"
 import { SESSION_COOKIE } from "@/core/http/cookies"
 import { WorkspaceRepository } from "@/modules/organization/infra/workspace-repository"
+import { syncOrganizationLink } from "@/modules/organization/infra/organization-link-sync"
 import { signUp } from "@/modules/organization/use-cases/sign-up"
 import { SSO_HEADER } from "@/modules/integration/domain/integration-credential"
 import { ssoClaimsFor } from "@/modules/sso/domain/sso-claims"
@@ -150,4 +151,26 @@ export async function addStaffWithSession(
  */
 export async function makeChainOrganization(tenant: Tenant): Promise<void> {
   await prisma.organizations.update({ where: { id: tenant.organizationId }, data: { type: "CHAIN" } })
+}
+
+/**
+ * Liên kết chuỗi → cửa hàng đối tác đúng như đường ghi thật (ADR-012 T-3a: ghi `chain_partnerships` rồi chép sang
+ * `organization_links` — nơi mọi đường đọc dùng). T-3b bỏ bảng cũ thì chỉ sửa ở đây. Trả id liên kết.
+ */
+export async function linkPartner(
+  chain: Tenant,
+  partner: Tenant,
+  opts: { code: string; status?: string; createdAt?: Date },
+): Promise<string> {
+  const row = await prisma.chain_partnerships.create({
+    data: {
+      chain_org_id: chain.organizationId,
+      partner_org_id: partner.organizationId,
+      partner_code: opts.code,
+      status: opts.status ?? "ACTIVE",
+      ...(opts.createdAt ? { created_at: opts.createdAt } : {}),
+    },
+  })
+  await syncOrganizationLink(prisma, row.id)
+  return row.id
 }

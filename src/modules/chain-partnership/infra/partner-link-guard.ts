@@ -1,4 +1,5 @@
 import { prisma } from "@/core/tenancy/infra/prisma"
+import { ACTIVE_CHAIN_LINK } from "@/modules/organization/infra/organization-link-sync"
 
 /**
  * Tổ chức đối tác có đang liên kết ACTIVE với chuỗi không; nếu có `partnerUserId` thì người đó phải
@@ -6,8 +7,8 @@ import { prisma } from "@/core/tenancy/infra/prisma"
  * gửi thông tin khách vào tổ chức tuỳ ý theo id trong body.
  */
 export async function isActivePartnerTarget(chainOrgId: string, partnerOrgId: string, partnerUserId?: string | undefined): Promise<boolean> {
-  const link = await prisma.chain_partnerships.findFirst({
-    where: { chain_org_id: chainOrgId, partner_org_id: partnerOrgId, status: "ACTIVE" },
+  const link = await prisma.organization_links.findFirst({
+    where: { parent_org_id: chainOrgId, child_org_id: partnerOrgId, ...ACTIVE_CHAIN_LINK },
     select: { id: true },
   })
   if (!link) return false
@@ -25,12 +26,12 @@ export async function isActivePartnerTarget(chainOrgId: string, partnerOrgId: st
  */
 export async function isAllowedChatTarget(callerOrgId: string, targetOrgId: string, targetUserId: string): Promise<boolean> {
   if (targetOrgId !== callerOrgId) {
-    const link = await prisma.chain_partnerships.findFirst({
+    const link = await prisma.organization_links.findFirst({
       where: {
-        status: "ACTIVE",
+        ...ACTIVE_CHAIN_LINK,
         OR: [
-          { chain_org_id: callerOrgId, partner_org_id: targetOrgId },
-          { chain_org_id: targetOrgId, partner_org_id: callerOrgId },
+          { parent_org_id: callerOrgId, child_org_id: targetOrgId },
+          { parent_org_id: targetOrgId, child_org_id: callerOrgId },
         ],
       },
       select: { id: true },

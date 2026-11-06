@@ -11,7 +11,7 @@ import { ProvisionPartnerAccountUseCase } from "@/modules/chain-partnership/use-
 const provisionSchema = z.object({
   partnerStoreName: z.string().min(2, "Tên cửa hàng phải từ 2 ký tự"),
   partnerCode: z.string().min(2, "Mã đối tác phải từ 2 ký tự"),
-  partnershipType: z.enum(["SUBCONTRACTOR", "FRANCHISE", "BRANCH"]).optional(),
+  partnershipType: z.enum(["SUBCONTRACTOR", "FRANCHISE"]).optional(), // BRANCH bỏ — ADR-012 D-T2
   contactName: z.string().min(2, "Tên người đại diện không được để trống"),
   contactPhone: z.string().min(8, "Số điện thoại không hợp lệ"),
   contactEmail: z.string().email("Email không hợp lệ"),

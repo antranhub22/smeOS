@@ -5,7 +5,7 @@ import { log } from "@/core/observability/log"
  * Trả về thông tin định danh công khai của tổ chức đang đăng nhập:
  * - Mã ID tổ chức (slug / UUID rút gọn)
  * - Tên hiển thị, loại tổ chức
- * - Danh sách chuỗi mà tổ chức này là thành viên (chain_partnerships)
+ * - Danh sách chuỗi mà tổ chức này là thành viên (organization_links, cạnh chuỗi ACTIVE)
  * - Mã đối tác trong chuỗi (nếu có)
  * Mục đích: Hiển thị trên profile kết nối, dùng để mời/liên kết chuỗi.
  */

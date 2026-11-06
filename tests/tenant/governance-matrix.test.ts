@@ -5,7 +5,7 @@ import { loadPolicyGovernance } from "@/modules/organization/use-cases/governanc
 import { resolveAppliedPolicies } from "@/modules/greeting-card/domain/store-policy"
 
 import { disconnectDatabase, prisma, resetDatabase } from "../helpers/database"
-import { createTenant, makeChainOrganization, readJson, withSession, type Tenant } from "../helpers/fixtures"
+import { createTenant, linkPartner, makeChainOrganization, readJson, withSession, type Tenant } from "../helpers/fixtures"
 
 /**
  * Ma trận quản trị: mỗi tổ chức chỉ ghi được quyết định của chính mình; cửa hàng đối tác thấy khoá
@@ -28,9 +28,7 @@ describe("organizations/current/governance-matrix", () => {
     outsider = await createTenant("outsider")
     await makeChainOrganization(chain)
     await prisma.organizations.update({ where: { id: store.organizationId }, data: { settings: { industry: "FLORAL" } } })
-    await prisma.chain_partnerships.create({
-      data: { chain_org_id: chain.organizationId, partner_org_id: store.organizationId, partner_code: "P-01" },
-    })
+    await linkPartner(chain, store, { code: "P-01" })
   })
 
   afterAll(async () => {

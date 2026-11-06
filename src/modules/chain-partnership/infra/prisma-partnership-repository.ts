@@ -3,7 +3,7 @@ import type { Prisma, PrismaClient } from "@/generated/prisma/client"
 import { prisma as defaultPrisma } from "@/core/tenancy/infra/prisma"
 import { hashPassword } from "@/modules/organization/infra/password-hasher"
 import { slugCandidates } from "@/modules/organization/domain/slug"
-import { syncOrganizationLink } from "@/modules/organization/infra/organization-link-sync"
+import { CHAIN_LINK_TYPES, syncOrganizationLink } from "@/modules/organization/infra/organization-link-sync"
 import { findStoreByIdentifier, type StoreByIdentifier } from "./store-identifier-lookup"
 import type {
   IChainPartnershipRepository,
@@ -16,7 +16,16 @@ import type {
   PartnershipType,
 } from "../domain/partnership-entities"
 
-type PartnershipRow = Prisma.chain_partnershipsGetPayload<object>
+/**
+ * ADR-012 T-3a: đọc từ `organization_links`; ghi vẫn ghi `chain_partnerships` rồi chép sang trong cùng giao dịch
+ * (giữ tới T-3b để bản phát hành trước còn chạy được khi quay lui). Giá trị trả về luôn đọc lại từ `organization_links`.
+ */
+const LINK_INCLUDE = { child_organization: { select: { name: true, slug: true, settings: true } } } as const
+type LinkRow = Prisma.organization_linksGetPayload<{ include: typeof LINK_INCLUDE }>
+
+async function readLink(db: Prisma.TransactionClient | PrismaClient, id: string): Promise<LinkRow> {
+  return db.organization_links.findUniqueOrThrow({ where: { id }, include: LINK_INCLUDE })
+}
 
 export class PrismaChainPartnershipRepository implements IChainPartnershipRepository {
   constructor(private readonly prisma: PrismaClient = defaultPrisma) {}
@@ -122,7 +131,7 @@ export class PrismaChainPartnershipRepository implements IChainPartnershipReposi
       await syncOrganizationLink(tx, row.id) // ADR-012 T-2: ghi kép sang organization_links
 
       return {
-        partnership: this.mapEntity(row, partnerOrg.name),
+        partnership: this.mapEntity(await readLink(tx, row.id)),
         partnerOrgId: partnerOrg.id,
         founderUserId: user.id,
         temporaryPassword: user.password_hash === passwordHash ? temporaryPassword : undefined, // email đã có tài khoản → giữ mật khẩu cũ
@@ -133,8 +142,9 @@ export class PrismaChainPartnershipRepository implements IChainPartnershipReposi
     items: ChainPartnershipEntity[]
     total: number
   }> {
-    const where: Prisma.chain_partnershipsWhereInput = {
-      chain_org_id: filter.chainOrgId,
+    const where: Prisma.organization_linksWhereInput = {
+      parent_org_id: filter.chainOrgId,
+      link_type: { in: [...CHAIN_LINK_TYPES] },
     }
 
     if (filter.status) {
@@ -152,63 +162,34 @@ export class PrismaChainPartnershipRepository implements IChainPartnershipReposi
     }
 
     const [rows, total] = await Promise.all([
-      this.prisma.chain_partnerships.findMany({
+      this.prisma.organization_links.findMany({
         where,
-        orderBy: { created_at: "desc" },
+        orderBy: [{ created_at: "desc" }, { id: "desc" }],
         take: Math.min(filter.limit ?? 50, 100),
         skip: filter.offset ?? 0,
-        include: {
-          partner_organization: {
-            select: { name: true, slug: true, settings: true },
-          },
-        },
+        include: LINK_INCLUDE,
       }),
-      this.prisma.chain_partnerships.count({ where }),
+      this.prisma.organization_links.count({ where }),
     ])
 
-    return {
-      items: rows.map((r) =>
-        this.mapEntity(
-          r,
-          r.partner_organization?.name,
-          r.partner_organization?.slug,
-          r.partner_organization?.settings
-        )
-      ),
-      total,
-    }
+    return { items: rows.map((r) => this.mapEntity(r)), total }
   }
 
   async findPartnershipById(id: string): Promise<ChainPartnershipEntity | null> {
-    const row = await this.prisma.chain_partnerships.findUnique({
-      where: { id },
-      include: {
-        partner_organization: {
-          select: { name: true, slug: true, settings: true },
-        },
-      },
+    const row = await this.prisma.organization_links.findFirst({
+      where: { id, link_type: { in: [...CHAIN_LINK_TYPES] } },
+      include: LINK_INCLUDE,
     })
-    return row
-      ? this.mapEntity(
-          row,
-          row.partner_organization?.name,
-          row.partner_organization?.slug,
-          row.partner_organization?.settings
-        )
-      : null
+    return row ? this.mapEntity(row) : null
   }
 
   async updateStatus(id: string, status: PartnershipStatus): Promise<ChainPartnershipEntity> {
     const row = await this.prisma.$transaction(async (tx) => {
-      const updated = await tx.chain_partnerships.update({
-        where: { id },
-        data: { status },
-        include: { partner_organization: { select: { name: true, slug: true } } },
-      })
-      await syncOrganizationLink(tx, updated.id)
-      return updated
+      await tx.chain_partnerships.update({ where: { id }, data: { status } })
+      await syncOrganizationLink(tx, id)
+      return readLink(tx, id)
     })
-    return this.mapEntity(row, row.partner_organization?.name, row.partner_organization?.slug)
+    return this.mapEntity(row)
   }
 
   findStoreByIdentifier(identifier: string): Promise<StoreByIdentifier | null> {
@@ -258,21 +239,16 @@ export class PrismaChainPartnershipRepository implements IChainPartnershipReposi
         contact_phone: params.contactPhone ?? null,
         contact_email: params.contactEmail ?? null,
       },
-        include: { partner_organization: { select: { name: true } } },
+        select: { id: true },
       })
       await syncOrganizationLink(tx, saved.id)
-      return saved
+      return readLink(tx, saved.id)
     })
-    const partnerName = row.partner_organization?.name
-    return this.mapEntity(row, partnerName)
+    return this.mapEntity(row)
   }
 
-  private mapEntity(
-    row: PartnershipRow,
-    partnerOrgName?: string,
-    partnerOrgSlug?: string,
-    partnerSettings?: unknown
-  ): ChainPartnershipEntity {
+  private mapEntity(row: LinkRow): ChainPartnershipEntity {
+    const partnerSettings = row.child_organization.settings
     const s = partnerSettings && typeof partnerSettings === "object" ? (partnerSettings as Record<string, unknown>) : {}
     const unlocked = Array.isArray(s.unlocked_tools)
       ? (s.unlocked_tools as unknown[]).filter((x): x is string => typeof x === "string")
@@ -280,11 +256,11 @@ export class PrismaChainPartnershipRepository implements IChainPartnershipReposi
 
     return {
       id: row.id,
-      chainOrgId: row.chain_org_id,
-      partnerOrgId: row.partner_org_id,
+      chainOrgId: row.parent_org_id,
+      partnerOrgId: row.child_org_id,
       partnerCode: row.partner_code,
-      partnershipType: row.partnership_type as PartnershipType,
-      status: row.status as PartnershipStatus,
+      partnershipType: row.link_type as PartnershipType,
+      status: row.status,
       commissionRate: row.commission_rate ? Number(row.commission_rate) : undefined,
       capacityDaily: row.capacity_daily,
       contactName: row.contact_name ?? undefined,
@@ -293,8 +269,8 @@ export class PrismaChainPartnershipRepository implements IChainPartnershipReposi
       address: row.address ?? undefined,
       province: row.province ?? undefined,
       district: row.district ?? undefined,
-      partnerOrgName: partnerOrgName ?? undefined,
-      partnerOrgSlug: partnerOrgSlug ?? undefined,
+      partnerOrgName: row.child_organization.name,
+      partnerOrgSlug: row.child_organization.slug,
       unlockedTools: unlocked,
       createdAt: row.created_at,
       updatedAt: row.updated_at,
