@@ -4,7 +4,7 @@ import { POST as sweep } from "@/app/api/v1/internal/chain-dispatch-sweep/route"
 import { prisma } from "@/core/tenancy/infra/prisma"
 
 import { disconnectDatabase, resetDatabase } from "../helpers/database"
-import { createTenant, makeChainOrganization, type Tenant } from "../helpers/fixtures"
+import { createTenant, makeChainOrganization, seedChainBranch, type Tenant } from "../helpers/fixtures"
 
 const run = async () => {
   const res = await sweep(new Request("http://localhost/api/v1/internal/chain-dispatch-sweep", { method: "POST", headers: { "x-cron-secret": "dev" } }))
@@ -22,7 +22,7 @@ describe("sweep tự chốt khi hết hạn huỷ nhận", () => {
     await resetDatabase()
     t = await createTenant("alpha")
     await makeChainOrganization(t)
-    await prisma.chain_branches.create({ data: { organization_id: t.organizationId, branch_code: "CN1", name: "Chi nhánh 1" } })
+    await seedChainBranch(t, "CN1", "Chi nhánh 1")
   })
 
   afterAll(async () => {

@@ -4008,8 +4008,13 @@ ADR-012 D-T2, bước T-4. Chi nhánh là đơn vị con trong một tổ chức
 - Ghi kép (`src/modules/greeting-card/infra/chain-branch-sync.ts`): nhập Excel, bật/tắt, trừ điểm, liên kết Zalo chép
   sang `branches` trong cùng giao dịch; tên/địa chỉ/trạng thái chỉ chép khi người dùng đổi chúng (nhập Excel, bật/tắt).
   Gắn chi nhánh cho thành viên ghi kèm `branch_id`; gỡ chỉ bỏ `branch_id` khi nó trỏ đúng chi nhánh vừa gỡ. Chi nhánh
-  nhận đơn theo mã → `orders.branch_id`. Đường đọc vẫn ở `chain_branches` tới **T-4b**; **T-4c** ghi thẳng `branches`,
-  xoá `chain_branches` và `memberships.chain_branch_code`.
+  nhận đơn theo mã → `orders.branch_id`. **T-4c** ghi thẳng `branches`, xoá `chain_branches` và
+  `memberships.chain_branch_code`.
+
+**T-4b** (không đổi schema): mọi đường đọc lấy từ `branches` có `accepts_dispatch` — danh sách ứng viên và tra theo mã
+(`ChainBranchRepository`), danh sách mã liên kết Zalo và tra mã liên kết, trang cửa hàng (chi nhánh của tài khoản theo
+`memberships.branch_id`; `branch_id` trỏ chi nhánh thường thì dùng `chain_branch_code` tới T-4c), danh sách chi nhánh để
+gắn cho thành viên, Thẻ Gia Công công khai (`findBranchInOrganization`: `branches.id`, rồi mã). Ghi kép giữ nguyên.
 
 Ca thử: `tests/tenant/branches-merge.test.ts`.
 

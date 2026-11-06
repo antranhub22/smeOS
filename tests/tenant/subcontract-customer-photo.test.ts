@@ -14,7 +14,7 @@ import { SubcontractStepStore } from "@/modules/greeting-card/infra/subcontract-
 import { SUBCONTRACT_TOKEN_HEADER, signSubcontractBranchToken } from "@/modules/greeting-card/infra/subcontract-link-token"
 
 import { disconnectDatabase, resetDatabase } from "../helpers/database"
-import { createTenant, makeChainOrganization, withSession, type Tenant } from "../helpers/fixtures"
+import { createTenant, makeChainOrganization, seedChainBranch, withSession, type Tenant } from "../helpers/fixtures"
 
 const CODE = "DH261022-0401"
 const BRANCH = "CN1"
@@ -30,7 +30,7 @@ async function setApprovalMode(t: Tenant, mode: CustomerApprovalMode) {
 
 /** Đơn đã có chi nhánh chốt, đang chờ ảnh thành phẩm; trả id đơn. */
 async function seedOrder(t: Tenant) {
-  await prisma.chain_branches.create({ data: { organization_id: t.organizationId, branch_code: BRANCH, name: "Chi nhánh 1" } })
+  await seedChainBranch(t, BRANCH, "Chi nhánh 1")
   const order = await prisma.orders.create({
     data: {
       organization_id: t.organizationId, code: CODE, source: "BROCHURE", status: "CONFIRMED",
