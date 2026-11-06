@@ -4,6 +4,22 @@ Tất cả các thay đổi đáng chú ý của SMEOS Design System sẽ đư�
 
 ---
 
+## [1.3.0] - 2026-11-06
+
+### Theme theo tầng có hiệu lực; bỏ hộp thoại của trình duyệt
+
+#### Đã sửa
+- Theme máy chủ phân giải theo tầng (`resolveUiTheme`: `modern-slate`/`compact` cho Console Vận hành và ChainOS) trước đây không bao giờ tới DOM: `UiSystemProvider` ở root layout luôn mang preset mặc định `moc-lan` và `AppShell` ưu tiên nó. Provider chuyển vào `AppShell` với cấu hình gốc là theme của phiên; UI Studio đè lên trên, "Khôi phục mặc định" trả về theme của tầng.
+- Density chỉ lưu khi người dùng tự chọn (khoá mới `smeos_ui_density_choice`); khoá cũ `smeos_ui_density` bị ghi tự động mỗi lần gắn nên không đọc nữa. Lựa chọn density đã lưu trước đây không được giữ.
+- Khung toast trên điện thoại cách hai mép 16px (trước tràn mép trái ở 360px).
+
+#### Đã thêm
+- `PromptDialog` / `usePromptDialog()` (`src/components/ui/prompt-dialog.tsx`) thay `window.prompt()`.
+- `ToastProvider` gắn trong `AppShell` — trước chỉ có ở trang thư viện giao diện nên `useToast()` ở nơi khác không hiển thị gì.
+
+#### Đã đổi
+- Lint R13 bắt thêm `alert()` và `prompt()`. 21 chỗ gọi đã chuyển sang Toast/PromptDialog; 4 chỗ còn lại nằm trong vùng cần PO (Catalog đang khoá, công cụ ảnh sản phẩm) và vào baseline ratchet (28 → 32).
+
 ## [1.2.0] - 2026-11-02
 
 ### Screen Contract, di trú màn hình theo tầng, cổng kiểm định kỳ (M4-00 → M4-06, V5-01 → V5-05)

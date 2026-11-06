@@ -27,26 +27,33 @@ function violation(
   return { rule, file: context.relativeFilePath, ...at(sourceFile, node), snippet, message }
 }
 
-/** R13 — `confirm()` của trình duyệt → `ConfirmDialog` / `useConfirmDialog` (UX-015). */
+/** Hộp thoại chặn luồng của trình duyệt → thành phần chuẩn tương ứng. */
+const NATIVE_DIALOGS: Record<string, string> = {
+  confirm: "Hộp confirm() của trình duyệt — dùng ConfirmDialog/useConfirmDialog (03c UX-015).",
+  alert: "Hộp alert() của trình duyệt — dùng useToast() hoặc lỗi tại chỗ (InlineError) (03c UX-015).",
+  prompt: "Hộp prompt() của trình duyệt — dùng usePromptDialog (03c UX-015).",
+}
+
+/** R13 — `confirm()`/`alert()`/`prompt()` của trình duyệt → ConfirmDialog / Toast / PromptDialog (UX-015). */
 export const checkR13: RuleFunction = (sourceFile, context) => {
   if (isSharedUi(context)) return []
   const out: Violation[] = []
-  // Hàm cục bộ tên `confirm` (vd hành động "Xác nhận" của màn) không phải hộp của trình duyệt.
-  const declaresLocalConfirm = /\b(?:function|const|let)\s+(?:\[\s*)?confirm\b/.test(context.sourceCode)
+  // Hàm cục bộ cùng tên (vd hành động "Xác nhận" của màn, `const [confirm] = useConfirmDialog()`) không phải hộp của trình duyệt.
+  const declaresLocal = (name: string) =>
+    new RegExp(`\\b(?:function|const|let)\\s+(?:\\[\\s*)?${name}\\b`).test(context.sourceCode)
   function visit(node: ts.Node) {
     if (ts.isCallExpression(node)) {
       const callee = node.expression
-      const isBare = ts.isIdentifier(callee) && callee.text === "confirm"
-      const isWindow =
+      const bareName = ts.isIdentifier(callee) && callee.text in NATIVE_DIALOGS ? callee.text : null
+      const windowName =
         ts.isPropertyAccessExpression(callee) &&
-        callee.name.text === "confirm" &&
+        callee.name.text in NATIVE_DIALOGS &&
         ts.isIdentifier(callee.expression) &&
         (callee.expression.text === "window" || callee.expression.text === "globalThis")
-      if ((isBare && !declaresLocalConfirm) || isWindow) {
-        out.push(
-          violation("R13", sourceFile, context, node, "confirm(", "Hộp confirm() của trình duyệt — dùng ConfirmDialog/useConfirmDialog (03c UX-015)."),
-        )
-      }
+          ? callee.name.text
+          : null
+      const name = windowName ?? (bareName && !declaresLocal(bareName) ? bareName : null)
+      if (name) out.push(violation("R13", sourceFile, context, node, `${name}(`, NATIVE_DIALOGS[name]!))
     }
     ts.forEachChild(node, visit)
   }
