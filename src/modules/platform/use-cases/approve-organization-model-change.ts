@@ -4,6 +4,7 @@ import { requirePlatformCapability } from "@/core/platform/platform-capabilities
 import { OrganizationRepository, getOrganizationRepository } from "@/modules/organization/infra/organization-repository"
 import type { organization_type } from "@/modules/organization/infra/entities"
 import { recordAuditLog } from "@/modules/audit/use-cases/record-audit-log"
+import { toStoredOrganizationType } from "@/modules/organization/domain/organization-type"
 
 export type ApproveModelChangeInput = {
   organizationId: string
@@ -18,7 +19,7 @@ export type ApproveModelChangeInput = {
  * Khi phê duyệt:
  * - Cập nhật `organizations.type` thành loại mục tiêu.
  * - Cập nhật `require_coordinator_acceptance` trong `brochure_workflow_policy`:
- *   * `true` với Chuỗi (CHAIN / FLOWER_NETWORK).
+ *   * `true` với Chuỗi (`CHAIN`; yêu cầu cũ `FLOWER_NETWORK` lưu thành `CHAIN` — D-55, ADR-012 T-8a).
  *   * `false` với 1 Cửa hàng (SINGLE / STORE).
  * - Xóa cờ `pending_model_change` trong `settings`.
  * - Ghi nhận nhật ký kiểm toán nền tảng.
@@ -48,7 +49,8 @@ export async function approveOrganizationModelChange(
       ? (currentSettings.brochure_workflow_policy as Record<string, unknown>)
       : {}
 
-  const isChain = input.targetType === "CHAIN" || input.targetType === "FLOWER_NETWORK"
+  const targetType = toStoredOrganizationType(input.targetType)
+  const isChain = targetType === "CHAIN"
 
   const updatedSettings: Record<string, unknown> = {
     ...currentSettings,
@@ -60,7 +62,7 @@ export async function approveOrganizationModelChange(
   // Xóa yêu cầu chờ duyệt sau khi đã phê duyệt
   delete updatedSettings.pending_model_change
 
-  await orgRepo.updateTypeAndSettings(org.id, input.targetType as organization_type, updatedSettings)
+  await orgRepo.updateTypeAndSettings(org.id, targetType as organization_type, updatedSettings)
 
   await recordAuditLog(
     {
@@ -76,7 +78,7 @@ export async function approveOrganizationModelChange(
       entityId: org.id,
       before: { type: org.type },
       after: {
-        type: input.targetType,
+        type: targetType,
         require_coordinator_acceptance: isChain,
         approved_by: pctx.userId,
         note: input.note ?? null,
@@ -86,7 +88,7 @@ export async function approveOrganizationModelChange(
 
   return {
     success: true,
-    targetType: input.targetType as organization_type,
+    targetType: targetType as organization_type,
     organizationId: org.id,
   }
 }
