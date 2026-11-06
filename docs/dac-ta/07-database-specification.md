@@ -4062,3 +4062,20 @@ model custom_domains {
   @@index([organization_id])
 }
 ```
+
+## 42. Loại tổ chức chuỗi — `FLOWER_NETWORK` gộp vào `CHAIN` (06/11/2026)
+
+ADR-012 D-T11 (D-55), bước T-8. `organization_type.FLOWER_NETWORK` và `CHAIN` chỉ khác nhãn: mọi tổ chức chuỗi lưu là
+`CHAIN`. Gói dịch vụ `FLOWER_NETWORK` (`credit_plan`/`plan`, `PLAN_FEATURES`), nhóm vai giao diện "Mạng lưới" và
+`capability_scope.FLOWER_NETWORK` là khái niệm khác, không đổi.
+
+- **T-8a** — migration `20261106040000_organization_type_flower_network_to_chain` (một giao dịch, chỉ đổi dữ liệu): tổ
+  chức `FLOWER_NETWORK` → `CHAIN` (NOTICE báo số dòng), yêu cầu đổi mô hình đang chờ
+  (`settings.pending_model_change.requested_type`) → `CHAIN`. Mọi đường ghi loại tổ chức đi qua
+  `toStoredOrganizationType` (`src/modules/organization/domain/organization-type.ts`): gửi yêu cầu đổi mô hình, Admin
+  SaaS duyệt. API vẫn nhận `FLOWER_NETWORK` (yêu cầu cũ) và lưu `CHAIN`; đường đọc còn so cả hai giá trị.
+- **T-8b** (sau khi T-8a chạy trên production): bỏ giá trị enum, bỏ các nhánh so `FLOWER_NETWORK` của loại tổ chức
+  (`tier-of.ts`, điều hướng, ma trận, thông báo), API từ chối giá trị này.
+
+Ca thử: `tests/unit/organization/organization-type-flower-network.test.ts`.
+

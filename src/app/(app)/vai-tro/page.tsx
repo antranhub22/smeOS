@@ -44,7 +44,7 @@ function DongVai({ role, laVaiCuaToi }: { role: RoleUxDefinition; laVaiCuaToi: b
     } else if (role.key === "industry_admin") {
       orgType = "INDUSTRY"
     } else if (role.group === "FLOWER_NETWORK") {
-      orgType = "FLOWER_NETWORK"
+      orgType = "CHAIN" // nhóm vai "Mạng lưới" chạy trên tổ chức loại CHAIN (D-55)
     }
 
     const ketQua = await chuyenTang(role, orgType)
