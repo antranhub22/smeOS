@@ -861,6 +861,34 @@ documents:
     dependencies: ["docs/handover/BAO_CAO_ANH_XA_123_CHUC_NANG.md"]
     supersedes: []
 
+  - id: "DOC-05-TAI-LIEU-KY-THUAT-123"
+    path: "docs/tai-lieu-ky-thuat/README.md"
+    title: "Tài liệu kỹ thuật smeOS — 123 chức năng bàn giao ALG"
+    domain: "Architecture"
+    layer: "Level 5"
+    purpose: "Bản đồ mã cho đội kỹ thuật: kiến trúc, cách ly dữ liệu và phân quyền, quy trình thay đổi, vận hành; mỗi chức năng có mã chính, dữ liệu, quyền, test, điểm cần sửa khi nâng cấp và giới hạn hiện tại"
+    status: "CANONICAL"
+    authority: "Level 5"
+    canonical: true
+    ssot: false
+    owner: "Product Owner"
+    dependencies: ["docs/handover/BAO_CAO_ANH_XA_123_CHUC_NANG.md", "docs/handover/OPERATIONS_RUNBOOK.md", "CLAUDE.md"]
+    supersedes: []
+
+  - id: "DOC-05-HUONG-DAN-SU-DUNG-123"
+    path: "docs/huong-dan-su-dung/README.md"
+    title: "Hướng dẫn sử dụng smeOS — 123 chức năng"
+    domain: "Operations"
+    layer: "Level 5"
+    purpose: "Hướng dẫn thao tác cho nhân sự cửa hàng và đội vận hành nền tảng theo 10 nhóm chức năng: ai dùng, mở ở đâu, các bước, lưu ý"
+    status: "CANONICAL"
+    authority: "Level 5"
+    canonical: true
+    ssot: false
+    owner: "Product Owner"
+    dependencies: ["docs/tai-lieu-ky-thuat/README.md"]
+    supersedes: []
+
   - id: "DOC-05-RA-SOAT-COMMIT-SMEOS"
     path: "docs/kien-truc/RA_SOAT_COMMIT_SMEOS.md"
     title: "Rà soát từng commit smeOS"

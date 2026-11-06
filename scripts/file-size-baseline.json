@@ -13,7 +13,8 @@
     "src/modules/coordinator/contracts/field-registry.ts": "Sổ đăng ký trường (dữ liệu)",
     "src/modules/products/domain/product-master-index.ts": "Chỉ mục sản phẩm chủ (dữ liệu)",
     "src/components/governance/governance-catalog-registry.ts": "Sổ đăng ký ma trận quản trị (dữ liệu)",
-    "src/core/rbac/capability-catalog.ts": "Danh mục mã năng lực thuần dữ liệu (mỗi mã một dòng, đặc tả 02); tách tệp làm vỡ thứ tự mã và test đối chiếu harvest"
+    "src/core/rbac/capability-catalog.ts": "Danh mục mã năng lực thuần dữ liệu (mỗi mã một dòng, đặc tả 02); tách tệp làm vỡ thứ tự mã và test đối chiếu harvest",
+    "src/components/layout/nav/nav-store-entries.ts": "Danh mục mục menu StoreOS (mảng hằng, mỗi mục một khối)"
   },
   "baseline": {
     "src/app/(app)/creative-studio/page.tsx": 486,

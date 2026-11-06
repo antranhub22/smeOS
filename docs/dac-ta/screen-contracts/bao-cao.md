@@ -24,6 +24,10 @@ acceptance:
 - Câu hỏi chính: "Tháng này bán được bao nhiêu, thu về bao nhiêu, mẫu nào chạy, ai làm tốt, tiền về ngân hàng đã khớp sổ chưa?"
 - Mật độ: MEDIUM.
 
+## Điều hướng
+
+Mục menu "Báo cáo theo kỳ" (Quản trị tiệm; chuỗi: Báo cáo & tài chính), quyền `R20`. Tuyến nằm trong danh sách khoá production (`src/lib/feature-lock.ts`) tới khi PO mở.
+
 ## 2. API
 - `GET /api/v1/reports/orders` · `revenue` (`?detail=orders`) · `products` · `performance` · `cashflow` — cùng tham số `from`, `to`, `granularity`; cần `R20`.
 

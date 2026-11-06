@@ -141,6 +141,16 @@ export default function QuanLyThanhVienPage() {
             <span>{dict.common.actions.refresh}</span>
           </Button>
 
+          {canManageRole && (
+            <Link
+              href={"/cai-dat/thanh-vien/vai-tro" as Route}
+              className="inline-flex h-11 items-center gap-2 rounded-[var(--radius-button)] border border-border bg-surface px-4 text-body-sm font-semibold text-text transition-colors hover:bg-surface-alt focus-visible:outline-2 focus-visible:outline-primary"
+            >
+              <Shield size={15} />
+              <span>Vai trò & quyền</span>
+            </Link>
+          )}
+
           {canInvite && (
             <Button
               type="button"
