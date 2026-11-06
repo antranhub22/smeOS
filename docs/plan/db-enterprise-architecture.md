@@ -50,7 +50,7 @@ cần test khoá hành vi trước.
 
 ### GĐ0 — Quyết định (trước mọi PR)
 
-- [ ] PO duyệt ADR-012, ADR-013, ADR-014, ADR-015, ADR-016 (đổi trạng thái thành `ĐÃ CHỐT`)
+- [ ] PO duyệt ADR-012 (✓ 06/11/2026), ADR-013, ADR-014, ADR-015, ADR-016 (đổi trạng thái thành `ĐÃ CHỐT`)
 - [x] ADR-012 §6: (1) nhượng quyền không xem báo cáo chuỗi — D-53 · (2) không làm công cụ tách chi nhánh — D-54 · (3) `FLOWER_NETWORK` chỉ là nhãn, gộp về `CHAIN` — D-55
 - [ ] ADR-013 §6: chủ tổ chức xem nhật ký truy cập trong ứng dụng? mốc bật RLS chặn thật?
 - [x] ADR-014 §6: tìm theo 4 số cuối (D-49) · hạn lưu mức thường dùng (D-50) · vùng dữ liệu B (D-51)
@@ -81,7 +81,7 @@ cần test khoá hành vi trước.
 
 | ☐ | Mục | Thay | Gate thêm |
 |---|---|---|---|
-| [ ] | T-2 [SCHEMA] `organization_links` + backfill + ghi kép + `is_primary` (index riêng phần) | P2-A2 | Tenant test đối tác hai chuỗi nhận khoá chuỗi chính |
+| [x] | T-2 [SCHEMA] `organization_links` + backfill + ghi kép + `is_primary` (giữ bằng trigger ràng buộc — Prisma không khai được index riêng phần) | P2-A2 | Tenant test đối tác hai chuỗi: cạnh chính đúng, tạm ngưng thì chuyển — `tests/tenant/organization-links-sync.test.ts` |
 | [ ] | T-3 Mọi đọc sang `organization_links`; contract: xoá `chain_partnerships` | P2-A2 | `test:tenant`, `test:platform` |
 | [ ] | T-4 [SCHEMA] **B5** Gộp `chain_branches` vào `branches`; `memberships.branch_id` thay `chain_branch_code` | P2-A3 | Giá theo chi nhánh, `/cua-hang`, điều phối không đổi |
 | [ ] | T-5 `grants` có phạm vi trong `TenantContext`; phạm vi chi nhánh đợt 1 (đơn, khách, điều phối) | P2-A4, P2-A5 | Tenant test chéo chi nhánh |
