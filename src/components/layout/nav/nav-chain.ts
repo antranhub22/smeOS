@@ -184,6 +184,15 @@ export const CHAIN_NAV_ENTRIES: readonly NavEntry[] = [
     mobileLabel: "Hiệu suất",
   },
   {
+    href: "/bao-cao",
+    label: "Báo cáo theo kỳ",
+    group: "bao-cao-tai-chinh-chuoi",
+    iconKey: "BarChart3",
+    navKey: "chain-reports",
+    capability: "R20",
+    mobileLabel: "Báo cáo",
+  },
+  {
     href: "/du-lieu",
     label: "Đối soát & công nợ",
     group: "bao-cao-tai-chinh-chuoi",
