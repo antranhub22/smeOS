@@ -24,9 +24,9 @@ const STAFF_LOGIN_CODES = ["A1", "A2"]
 const HARVESTED_CODES = MOI_MA.filter((ma) => /^[A-E]\d+$/.test(ma))
 
 describe("danh mục năng lực — đặc tả 02", () => {
-  it("154 mã: 76 thu hoạch (A–E) cộng 78 mã mới (F–L, U1–U4, H5–H6, R1–R13, Q1–Q9, T1–T4, I4–I5, P3–P4, V1–V3) — ĐP-4a thêm R9/R10 (sổ thu), PO 08/10 thêm R11, PO 14/10 thêm R12 (cấu hình nhắc việc Điều phối), R13 (xuất dữ liệu), PO 30/10 thêm J7 (nội dung AI landing/catalog), PO 31/10 thêm R15 (báo giá) + R16 (duyệt giao trước thu sau), PO 01/11 thêm M1/M2/M3 (marketing usage + campaign), M4 (nhóm khách & chăm sóc), M5 (in ấn), PO Q7 04/11 thêm R17/R18/R19 (Thợ cắm, Shipper, Kế toán), PO 05/11 thêm D18 (trường dữ liệu của cửa hàng), R20 (báo cáo theo kỳ)", () => {
+  it("154 mã: 76 thu hoạch (A–E) cộng 78 mã mới (F–L, U1–U4, H5–H6, R1–R13, Q1–Q9, T1–T4, I4–I5, P3–P4, V1–V3) — ĐP-4a thêm R9/R10 (sổ thu), PO 08/10 thêm R11, PO 14/10 thêm R12 (cấu hình nhắc việc Điều phối), R13 (xuất dữ liệu), PO 30/10 thêm J7 (nội dung AI landing/catalog), PO 31/10 thêm R15 (báo giá) + R16 (duyệt giao trước thu sau), PO 01/11 thêm M1/M2/M3 (marketing usage + campaign), M4 (nhóm khách & chăm sóc), M5 (in ấn), PO Q7 04/11 thêm R17/R18/R19 (Thợ cắm, Shipper, Kế toán), PO 05/11 thêm D18 (trường dữ liệu của cửa hàng), R20 (báo cáo theo kỳ), PO 06/11 thêm D19 (tên miền riêng)", () => {
     expect(HARVESTED_CODES.length).toBe(76)
-    expect(ALL_CAPABILITY_CODES.length).toBe(173)
+    expect(ALL_CAPABILITY_CODES.length).toBe(174)
   })
 
   it("R20 xem báo cáo theo kỳ — Điều hành và Kế toán (Đợt 5, PO Q7)", () => {
@@ -38,6 +38,12 @@ describe("danh mục năng lực — đặc tả 02", () => {
     expect(capability("D18").name).toBe("config.custom_field.manage")
     expect(capability("D18").defaultRoles).toEqual(["dieu_hanh"])
     expect(capability("D18").hardCap).toEqual(["dieu_hanh"])
+  })
+
+  it("D19 gắn/gỡ tên miền riêng — chỉ Điều hành, trần cứng (checklist ALG 10.8)", () => {
+    expect(capability("D19").name).toBe("config.custom_domain.manage")
+    expect(capability("D19").defaultRoles).toEqual(["dieu_hanh"])
+    expect(capability("D19").hardCap).toEqual(["dieu_hanh"])
   })
 
   it("M1, M2 và M3 cho Marketing & Sales Center (PR-2, PR-3)", () => {
@@ -56,10 +62,10 @@ describe("danh mục năng lực — đặc tả 02", () => {
     expect(capability("M5").defaultRoles).toEqual(["dieu_hanh", "dieu_phoi", "marketing"])
   })
 
-  it("18 mã thu hoạch có trần cứng, tổng cả catalog là 50 — ĐP-4a thêm R10 (hoàn tiền), PO 08/10 thêm R11, PO 05/11 thêm D18", () => {
+  it("18 mã thu hoạch có trần cứng, tổng cả catalog là 51 — ĐP-4a thêm R10 (hoàn tiền), PO 08/10 thêm R11, PO 05/11 thêm D18, PO 06/11 thêm D19", () => {
     const harvestedHardCap = HARVESTED_CODES.filter((ma) => khai(ma).tranCung)
     expect(harvestedHardCap.length).toBe(18)
-    expect(HARD_CAPPED_CODES.length).toBe(50)
+    expect(HARD_CAPPED_CODES.length).toBe(51)
   })
 
   it("mỗi mã A–E khớp nguyên vẹn với bản harvest — không lệch khi mã nguồn đổi", () => {

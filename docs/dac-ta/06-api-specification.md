@@ -626,6 +626,10 @@ Mọi route nhận `:id` là id HOẶC mã đơn (`FLR-YYMMDD-NNNN`); tổ chứ
 | POST | `/field-config` | `D18` | Checklist ALG 1.9 — cửa hàng tạo trường riêng `{ entity, label, dataType, requirement?, visibility?, placeholder? }` (không gồm kiểu chọn từ danh mục); khoá máy sinh `cf_…`; tối đa 50 trường/thực thể/tổ chức. 201 |
 | PUT | `/field-config` | `D18` | `{ key, label?, isEnabled?, requirement?, visibility? }` — trường riêng: sửa trực tiếp; trường nền tảng: ghi đè của chính tổ chức, không hạ mức yêu cầu, không ẩn trường bắt buộc, không mở trường chỉ nội bộ (400). Trường riêng của tổ chức khác → 404 |
 | GET | `/field-config/settings` | `D18` | Danh sách cho màn Cài đặt → Trường dữ liệu: trường nền tảng kèm mức sàn (`floorRequirement`, `canHide`) và trường riêng (gồm trường đang ẩn), `?entity=ORDER\|PARTNER` |
+| GET | `/custom-domains` | `D19` | Checklist ALG 10.8 — tên miền riêng của tổ chức người gọi: `hostname`, `status` (`PENDING`·`VERIFIED`·`LOCKED`), `statusText`, `certificateStatus`, `lastCheckedAt`, `lockedReason`, `records` (bản ghi TXT `_smeos-verify.<tên miền>` = `smeos-verify=<mã>` và CNAME về máy chủ hệ thống) |
+| POST | `/custom-domains` | `D19` | `{ hostname }` — chuẩn hoá (chữ thường, punycode); từ chối IP, tên miền một nhãn, tên miền của hệ thống (400); tối đa 3 tên miền/tổ chức, tên miền đã có người gắn (409, không nêu tổ chức). 201, trạng thái chờ xác minh |
+| POST | `/custom-domains/:id/verify` | `D19` | Kiểm bản ghi TXT (giới hạn 20 lần/phút/tổ chức). Đúng → `VERIFIED`, gửi Render gắn tên miền và cấp chứng chỉ HTTPS (`certificateStatus` `REQUESTED`; chưa cấu hình khoá Render → `MANUAL`); chưa đúng → `verified: false`. Tên miền đang khoá → 409; của tổ chức khác → 404 |
+| DELETE | `/custom-domains/:id` | `D19` | Gỡ tên miền (gỡ khỏi Render nếu đã xác minh), ngừng phục vụ ngay. Đang khoá → 409; của tổ chức khác → 404 |
 | GET | `/field-config/catalogs` | `R1` | ĐP-4a.1 — danh mục (§2.15) cho form nhập liệu tenant (T01…), `?keys=priority,serviceLevel,...` (bỏ trống trả hết). CHỈ giá trị đang `is_active`. Khác `/platform/catalogs` (đòi `N12`): route này chỉ đòi đăng nhập tổ chức, không có thao tác ghi |
 
 ## 16. Số liệu và hồ sơ phong cách — M11
@@ -809,6 +813,8 @@ Chín route dưới đây cũng là console vận hành nền tảng (`PlatformC
 | POST | `/platform/subscription-invoices/:id/mark-paid` | `N19` | `{ note }` — Console xác nhận đã nhận tiền; hoá đơn kỳ sau → dời kỳ hiện tại; hết hoá đơn quá hạn → `ACTIVE`; đã thu rồi → 404 |
 | GET | `/platform/billing-account` | `N1` | Tài khoản nhận tiền thuê bao của nền tảng (`platform_settings.platform_billing_account`) |
 | PUT | `/platform/billing-account` | `N19` | `{ bankBin (6 số), bankName, accountNumber (6–20 số), accountHolder }` |
+| GET | `/platform/organizations/:id/custom-domains` | `N1` | Checklist ALG 10.8 — tên miền riêng của tổ chức (cùng dạng `GET /custom-domains`); tổ chức không có → 404 |
+| POST | `/platform/custom-domains/:id/lock` | `N20` | `{ locked: true, reason (5–300 ký tự) }` khoá — tên miền ngừng phục vụ ngay, cửa hàng không tự gỡ hay xác minh được; `{ locked: false }` mở lại về `PENDING` (cửa hàng xác minh lại). Ghi `platform_audit_logs` |
 | GET | `/platform/overview` | `N1` | Checklist ALG 9.8 — số tổ chức theo trạng thái thuê bao (`active`, `overdue`, `cancelled`, `withoutSubscription`), doanh thu thuê bao đã thu 6 tháng gần nhất (giờ Việt Nam), `health` khi người xem có `N5` |
 | GET | `/platform/behaviors` | `N12` | ĐP-3 3.15 — liệt kê mã hành vi có thật trong `field-platform/domain/behaviors.ts` cho một `behavior_kind` (`?kind=…`), để Console gợi ý khi thêm giá trị danh mục CÓ HÀNH VI. CHỈ ĐỌC, không thay luật kiểm ở `upsert-catalog-value.ts` |
 

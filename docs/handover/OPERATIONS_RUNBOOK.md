@@ -33,6 +33,7 @@ Bốn biến bắt buộc để app khởi động (`src/lib/env.ts`) do bluepri
 | Theo dõi lỗi | `SENTRY_DSN`, `SENTRY_ENVIRONMENT` — đặt ở **cả** `smeos-web` và 3 worker | không gửi lỗi lên Sentry, chỉ còn log JSON |
 | Dữ liệu mẫu | `SEED_DEV_DATA` = `"false"` trên production | để `"true"` sẽ nạp tài khoản demo có mật khẩu cố định — **không bật trên production** |
 | Cách ly CSDL | `DB_RLS_MODE` = `off` · `audit` · `enforce` — đặt ở `smeos-web` và 3 worker (blueprint: `audit`) | thiếu = `off`: không đặt ngữ cảnh tổ chức, RLS không chặn; xem §12 |
+| Tên miền riêng | `RENDER_API_KEY` (bí mật, `sync: false`), `RENDER_SERVICE_ID` (mã dịch vụ `smeos-web`, dạng `srv-…`), `CUSTOM_DOMAIN_TARGET` (máy chủ cửa hàng trỏ CNAME về, mặc định lấy từ `RENDER_EXTERNAL_URL`) — chỉ ở `smeos-web` | thiếu khoá: cửa hàng vẫn xác minh được, tên miền ghi `MANUAL`, vận hành thêm tay; xem §13 |
 
 Zalo OA của **từng tiệm** (chat bán hàng) không dùng biến môi trường: tiệm nhập OA ID, App ID, Secret Key, Access Token trong *Hội thoại → Kênh tích hợp*.
 
@@ -167,4 +168,22 @@ cho web, kiểm trên bản khôi phục: `npm run test:tenant` với `DATABASE_
 
 Bảng mới có `organization_id`: chạy `node scripts/gen-rls-policies.mjs` để sinh SQL chính sách vào migration của bảng đó —
 test `tests/unit/architecture/rls-policies.test.ts` đỏ nếu thiếu.
+
+## 13. Tên miền riêng của cửa hàng (checklist ALG 10.8)
+
+Cửa hàng (vai Điều hành) gắn tên miền ở Cài đặt → Tên miền riêng, thêm hai bản ghi DNS: TXT `_smeos-verify.<tên miền>` =
+`smeos-verify=<mã>` (chứng minh sở hữu) và CNAME `<tên miền>` → máy chủ của hệ thống. Bấm "Kiểm tra" → hệ thống đọc TXT; đúng thì
+tên miền chuyển "Đang hoạt động" và gọi API Render gắn tên miền vào `smeos-web`. Render tự cấp chứng chỉ HTTPS khi CNAME trỏ đúng.
+
+`src/proxy.ts` trên tên miền đã xác minh chỉ mở trang danh mục (`/c`, `/bst`, `/g`), Thẻ Chào (`/b`, `/s`), trang cửa hàng (`/ch`,
+trang chủ `/` chuyển tới trang cửa hàng đang chia sẻ) và API; dữ liệu phải thuộc đúng tổ chức sở hữu tên miền, còn lại 404. Tên miền
+chưa xác minh hoặc bị khoá → 404. Lỗi tra cứu CSDL → 503.
+
+**Cấu hình một lần:** Render → Account Settings → API Keys tạo khoá; đặt `RENDER_API_KEY` và `RENDER_SERVICE_ID` cho `smeos-web`,
+deploy lại. Thiếu khoá: trạng thái chứng chỉ ghi `MANUAL` — vận hành vào Render → `smeos-web` → Settings → Custom Domains thêm
+đúng tên miền đã xác minh (danh sách ở Console → tổ chức → Tên miền riêng). `FAILED`: kiểm khoá API còn hiệu lực rồi thêm tay như trên.
+
+**Khoá tên miền** (giả mạo, khiếu nại thương hiệu): Console → tổ chức → Tên miền riêng → ghi lý do → "Khoá" (`N20`). Tên miền ngừng
+phục vụ ngay ở instance đang xử lý, các instance khác trong tối đa 60 giây. Cửa hàng không tự gỡ hay xác minh lại được. "Mở lại" →
+tên miền về "Chờ xác minh", cửa hàng bấm "Kiểm tra" lại.
 

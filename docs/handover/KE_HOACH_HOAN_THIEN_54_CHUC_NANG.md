@@ -18,7 +18,7 @@ Căn cứ: `docs/handover/BAO_CAO_ANH_XA_123_CHUC_NANG.md` (mã nguồn tại `0
 | Mã | Nội dung cần chốt | Chức năng chịu ảnh hưởng | Thời điểm cần chốt | Quyết định |
 |---|---|---|---|---|
 | Q1 | Mở khoá Thẻ Chào (`tests/unit/architecture/the-chao-freeze.test.ts`) cho từng PR được liệt kê; mốc băm cập nhật sau khi PO duyệt PR | 2.8, 3.1, 3.4, 3.6, 4.3, 4.9, 4.14, 4.18, 4.26, 5.4, 5.5, 5.9, 5.14, 5.15, 9.11 | Trước Đợt 1 | Mở khoá |
-| Q2 | Thay đổi lược đồ CSDL theo danh sách mục 6 | 1.4, 2.3, 3.8, 3.10, 9.3, 10.3, 10.4, 10.6, 10.7, 10.8, 1.18 | Trước đợt chứa chức năng | Đã duyệt `users.must_change_password`, `order_payments.status` (1.4, 1.16), giá trị `PAUSED` cho `product_status` (2.3), lược đồ 3.8, 3.10, `field_definitions.owner_organization_id` (1.9), và các bảng Đợt 4: `subscriptions`, `subscription_invoices`, `credit_transactions`, `usage_limits`, `provider_cost_entries`, `business_profiles.brand_message`, `business_profiles.target_customers` (9.3) |
+| Q2 | Thay đổi lược đồ CSDL theo danh sách mục 6 | 1.4, 2.3, 3.8, 3.10, 9.3, 10.3, 10.4, 10.6, 10.7, 10.8, 1.18 | Trước đợt chứa chức năng | Đã duyệt `users.must_change_password`, `order_payments.status` (1.4, 1.16), giá trị `PAUSED` cho `product_status` (2.3), lược đồ 3.8, 3.10, `field_definitions.owner_organization_id` (1.9), và các bảng Đợt 4: `subscriptions`, `subscription_invoices`, `credit_transactions`, `usage_limits`, `provider_cost_entries`, `business_profiles.brand_message`, `business_profiles.target_customers` (9.3), `custom_domains` (10.8) |
 | Q3 | Quyền thu tiền R9: (a) trần cứng Điều hành, hoặc (b) Sale/Điều phối chỉ "ghi nhận chờ xác nhận", Điều hành xác nhận mới vào sổ thu | 1.16 | Trước Đợt 1 | Phương án (b): Sale/Điều phối ghi nhận chờ xác nhận, Điều hành xác nhận mới vào sổ thu |
 | Q4 | Tắt mặc định công tắc tự duyệt (`cho_phep_tu_duyet = false`) | 9.12 | Trước Đợt 1 | Tắt mặc định |
 | Q5 | Ảnh giao hàng bắt buộc ở mọi gói chính sách | 4.18 | Trước Đợt 1 | Bắt buộc mặc định; Điều hành cửa hàng được tắt yêu cầu ảnh giao trong Cài đặt |
@@ -27,7 +27,7 @@ Căn cứ: `docs/handover/BAO_CAO_ANH_XA_123_CHUC_NANG.md` (mã nguồn tại `0
 | Q8 | Danh sách 6 kiểu dáng, đơn giá phí cắm từng kiểu, hệ số ngày lễ mặc định, cách hiện phí cắm trên báo giá | 3.6 | Trước Đợt 3 | 6 kiểu dáng, đơn giá mặc định (cửa hàng sửa được): bó hoa cầm tay 80.000đ, hộp hoa 120.000đ, giỏ hoa 150.000đ, bình hoa 180.000đ, lẵng/kệ khai trương 300.000đ, hoa sự kiện/cưới 500.000đ · hệ số ngày lễ ×1,5 (cửa hàng sửa được) · phí cắm gộp vào giá mẫu khách thấy, tách riêng trong sổ nội bộ; giá niêm yết đã gồm phí cắm — ngày lễ cộng phần chênh phí cắm × (hệ số − 1); mẫu chưa gắn kiểu dáng giữ nguyên giá · lược đồ 3.8 (`quotations.shipping_fee`, `quotation_items.variant_label`) và 3.10 (`quotation_revisions`) đã duyệt |
 | Q9 | Gói thuê bao: giá theo năm, chu kỳ gia hạn, kênh thu phí (VietQR + đối soát SePay), xử lý quá hạn | 10.7, 9.8, 9.10 | Trước Đợt 4 | Chu kỳ tháng và năm; hết kỳ chưa thanh toán thì chuyển ngay sang chỉ xem dữ liệu (không ân hạn), thanh toán xong mở lại; hoá đơn VietQR, SePay tự đối soát theo mã hoá đơn trong nội dung chuyển khoản, Console xác nhận tay khoản lệch; giá từng gói nhập ở Console, lưu theo từng thuê bao; khoá API SePay cấp qua biến môi trường, chưa có khoá thì tắt đối soát tự động |
 | Q10 | Đơn vị hạn mức tháng cho AI (credit), SMS (tin), Zalo ZNS (tin) và giá vốn tham chiếu | 10.3, 10.4 | Trước Đợt 4 | Mọi dịch vụ quy đổi về credit, một số dư chung; tỷ lệ 1 tin SMS / 1 tin ZNS ra credit lưu ở Console; credit tặng theo gói hết hạn cuối tháng, credit cửa hàng tự nạp giữ lại; báo Điều hành ở 80% hạn mức, dừng ở 100%; giá vốn tham chiếu (tỷ giá USD→VND, giá mỗi tin) nhập ở Console |
-| Q11 | Hạ tầng tên miền riêng: dịch vụ cấp chứng chỉ và cách thêm tên miền trên Render (thay đổi `render.yaml` hoặc API Render) | 10.8 | Trước Đợt 4 | Hoãn 10.8 sang đợt sau |
+| Q11 | Hạ tầng tên miền riêng: dịch vụ cấp chứng chỉ và cách thêm tên miền trên Render (thay đổi `render.yaml` hoặc API Render) | 10.8 | Trước Đợt 4 | Gắn tên miền và cấp chứng chỉ tự động qua API Render (`RENDER_API_KEY`, `RENDER_SERVICE_ID`); chưa có khoá thì vận hành thêm tay. Cửa hàng: vai Điều hành gắn/gỡ; Console nền tảng xem và khoá (PO 06/11/2026) |
 | Q12 | Các chặng của hành trình 14 chặng được chạy khi người dùng tải ảnh | 5.14, 7.2 | Trước Đợt 6 | 5.14: chặng 01 Tải ảnh, 02 Nhận diện, 09 Chủ shop duyệt — không sinh nội dung, không trừ credit · 7.2: chặng 01, 02, 06 (nội dung và ảnh), 08 Kiểm tra, 09 Duyệt, 10 Đăng; bỏ 03–05 và 11–14 |
 | Q13 | Phạm vi và lộ trình Row Level Security (bảng nào, chế độ `FORCE`, ngân sách hiệu năng) | 1.18 | Trước Đợt 7 | Bật RLS theo đợt: trước tiên orders, order_payments, customers, quotations, credit_transactions, sau đó các bảng có `organization_id` còn lại; chế độ `FORCE`; worker và nền tảng dùng vai CSDL riêng; mỗi truy vấn không chậm thêm quá 10% đo trên bộ test tenant |
 
@@ -177,17 +177,17 @@ Mọi bảng mới có `organization_id` + `@@index([organization_id])` (trừ b
 | 1 | 13 | 13 |
 | 2 | 11 | 11 |
 | 3 | 6 | 6 |
-| 4 | 9 | 8 |
+| 4 | 9 | 9 |
 | 5 | 6 | 6 |
 | 6 | 8 | 8 |
 | 7 | 1 | 1 |
-| **Tổng** | **54** | **53** |
+| **Tổng** | **54** | **54** |
 
 Đợt 2 hoàn thiện đủ 11/11 chức năng. Phần mở rộng còn theo dõi: link giao riêng cho shipper thuê ngoài (4.5), đưa đơn Thẻ Chào vào hàng đợi của tài khoản thợ (4.13), giá vốn theo phiên bản (2.4), ẩn mẫu bị khoá khỏi danh sách trên link theo ngày khách chọn trước (2.8). Shipper nội bộ được gắn đơn theo số điện thoại Điều phối ghi khi điều xe; Điều hành nhập số điện thoại nhân viên ở màn Thành viên.
 
 Đợt 3 hoàn thiện đủ 6/6 chức năng: phí chế tác theo kiểu dáng và hệ số ngày lễ (3.6), phiên bản và phí vận chuyển trên báo giá (3.8), lịch sử phiên bản báo giá (3.10), link báo giá có ảnh mẫu và tải PNG/PDF A6 (3.11), ưu đãi hạng khách và phụ phí giờ cao điểm (3.1), trường dữ liệu do cửa hàng cấu hình (1.9, mã năng lực `D18`, migration `20261105120000_field_definition_owner`).
 
-Đợt 4 hoàn thiện 8/9 chức năng; 10.8 (tên miền riêng) hoãn theo PO Q11. Sổ cái credit (10.6), hạn mức credit tháng và trần AI (10.3, 9.7), cảnh báo credit (10.5), chi phí thật và biên lợi nhuận (10.4), gói thuê bao với hoá đơn VietQR và SePay (10.7, mã năng lực `N19`), Console tạo tổ chức (9.10) và tổng quan (9.8). Migration: `20261105220000_wave4_credit_usage_subscriptions`. Đối soát SePay bật khi cấu hình `SEPAY_PLATFORM_API_KEY`; Console cần khai tài khoản nhận tiền và giá từng gói. Vòng đời thuê bao xét khi cửa hàng thao tác, không cần lịch chạy nền. Cửa hàng quá hạn thanh toán thì link công khai (Thẻ Chào, catalog, landing) ngừng nhận đơn, khách thấy câu trung tính và được mời liên hệ trực tiếp (PO 05/11/2026).
+Đợt 4 hoàn thiện đủ 9/9 chức năng. Sổ cái credit (10.6), hạn mức credit tháng và trần AI (10.3, 9.7), cảnh báo credit (10.5), chi phí thật và biên lợi nhuận (10.4), gói thuê bao với hoá đơn VietQR và SePay (10.7, mã năng lực `N19`), Console tạo tổ chức (9.10) và tổng quan (9.8). Migration: `20261105220000_wave4_credit_usage_subscriptions`. Đối soát SePay bật khi cấu hình `SEPAY_PLATFORM_API_KEY`; Console cần khai tài khoản nhận tiền và giá từng gói. Vòng đời thuê bao xét khi cửa hàng thao tác, không cần lịch chạy nền. Cửa hàng quá hạn thanh toán thì link công khai (Thẻ Chào, catalog, landing) ngừng nhận đơn, khách thấy câu trung tính và được mời liên hệ trực tiếp (PO 05/11/2026).
 
 Đợt 5 hoàn thiện đủ 6/6 chức năng: trang Báo cáo theo kỳ `/bao-cao` (mã năng lực `R20`, Điều hành và Kế toán) với báo cáo đơn hàng và tỷ lệ trễ (6.1), doanh thu dự kiến và thực thu kèm danh sách đơn theo kỳ (6.2), sản phẩm, màu và phong cách (6.3), hiệu suất Sale/thợ/shipper (6.5), dòng tiền và đối chiếu ngân hàng (6.6); mức dùng AI theo tháng so với hạn mức gói (6.9). Không đổi lược đồ. Trên production, `/bao-cao` nằm trong nhóm khoá cùng `/so-lieu` và `/muc-dung` tới khi PO mở.
 
@@ -195,4 +195,6 @@ Mọi bảng mới có `organization_id` + `@@index([organization_id])` (trừ b
 
 Đợt 7 hoàn thiện 1/1 chức năng: Row Level Security theo tổ chức (1.18) trên 117 bảng (migration `20261106020000_row_level_security`), ngữ cảnh tổ chức đặt ở pool kết nối của web và worker, ba chế độ `off` · `audit` · `enforce` (`DB_RLS_MODE`), script tách vai CSDL. Production khởi đầu ở `audit`; chuyển `enforce` theo `docs/handover/OPERATIONS_RUNBOOK.md` §12 khi 14 ngày liền không còn truy vấn chưa gắn tổ chức. Đo trên Postgres 16 (vai thường, 20.000 dòng): `audit` không tăng thời gian truy vấn; `enforce` đọc một dòng không tăng, trang 50 dòng +7% p50, đếm 10.000 dòng +0,3 ms.
 
-Khi mọi đợt hoàn tất, báo cáo ánh xạ đạt 123/123 chức năng Hoàn thiện và checklist bàn giao ALG đủ điều kiện nghiệm thu.
+Tên miền riêng (10.8, PO Q11, 06/11/2026): bảng `custom_domains` (migration `20261106040000_custom_domains`, có chính sách RLS), cửa hàng gắn tên miền ở Cài đặt → Tên miền riêng (mã năng lực `D19`, chỉ Điều hành), xác minh bằng bản ghi TXT, gắn tên miền và cấp chứng chỉ HTTPS qua API Render; `src/proxy.ts` chỉ mở trang danh mục, Thẻ Chào và trang cửa hàng của đúng tổ chức sở hữu tên miền. Console nền tảng xem (`N1`) và khoá/mở (`N20`). Cấu hình khoá Render theo `docs/handover/OPERATIONS_RUNBOOK.md` §13.
+
+Mọi đợt đã hoàn tất: báo cáo ánh xạ đạt 123/123 chức năng Hoàn thiện, checklist bàn giao ALG đủ điều kiện nghiệm thu.

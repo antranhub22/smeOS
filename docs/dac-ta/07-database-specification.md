@@ -4013,3 +4013,47 @@ ADR-012 D-T2, bước T-4. Chi nhánh là đơn vị con trong một tổ chức
 
 Ca thử: `tests/tenant/branches-merge.test.ts`.
 
+
+## 42. Tên miền riêng — `custom_domains` (06/11/2026)
+
+Checklist ALG 10.8 (PO 06/11/2026). Cửa hàng gắn tên miền của mình cho trang danh mục và Thẻ Chào. `hostname`
+duy nhất toàn hệ thống (đã chuẩn hoá chữ thường, punycode). Xác minh bằng bản ghi TXT `_smeos-verify.<hostname>`
+có giá trị `smeos-verify=<verification_token>`. `src/proxy.ts` chỉ phục vụ tên miền `VERIFIED` và chỉ các trang
+có dữ liệu thuộc đúng `organization_id` (`src/modules/custom-domain/use-cases/resolve-custom-domain.ts`); `LOCKED`
+do Console nền tảng đặt (`N20`), cửa hàng không tự gỡ. `certificate_status` ghi kết quả gắn tên miền trên Render
+(PO Q11: tự động qua API; chưa cấu hình khoá → `MANUAL`). Có chính sách RLS `tenant_isolation`
+(migration `20261106040000_custom_domains`).
+
+```prisma
+enum custom_domain_status {
+  PENDING
+  VERIFIED
+  LOCKED
+}
+
+enum custom_domain_certificate_status {
+  NOT_REQUESTED
+  REQUESTED
+  MANUAL
+  FAILED
+}
+
+model custom_domains {
+  id                 String                           @id @default(uuid())
+  organization_id    String
+  hostname           String                           @unique
+  verification_token String
+  status             custom_domain_status             @default(PENDING)
+  verified_at        DateTime?                        @db.Timestamptz(3)
+  last_checked_at    DateTime?                        @db.Timestamptz(3)
+  certificate_status custom_domain_certificate_status @default(NOT_REQUESTED)
+  locked_reason      String?
+  created_by         String?
+  created_at         DateTime                         @default(now()) @db.Timestamptz(3)
+  updated_at         DateTime                         @default(now()) @updatedAt @db.Timestamptz(3)
+
+  organization organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+
+  @@index([organization_id])
+}
+```

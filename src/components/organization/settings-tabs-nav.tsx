@@ -12,6 +12,7 @@ import { FileText } from "@/components/ui/icon-set/file-text"
 import { Send } from "@/components/ui/icon-set/send"
 import { Cpu } from "@/components/ui/icon-set/cpu"
 import { ListChecks } from "@/components/ui/icon-set/list-checks"
+import { Globe } from "@/components/ui/icon-set/globe"
 import { useI18n } from "@/lib/i18n"
 import { useSession } from "@/lib/session"
 
@@ -27,6 +28,7 @@ export type SettingsTab =
   | "AI_CHANNELS"   // 9. Trợ lý AI & Mạng xã hội
   | "COLLECTION_PROFILE" // 10. Danh mục thu thập chuỗi (§9.5.8)
   | "FIELDS"        // 11. Trường dữ liệu của cửa hàng (checklist ALG 1.9, D18)
+  | "DOMAIN"        // 12. Tên miền riêng (checklist ALG 10.8, D19)
 
 interface SettingsTabsNavProps {
   activeTab: SettingsTab
@@ -58,6 +60,7 @@ export function SettingsTabsNav({
     { key: "AI_CHANNELS" as const, label: dict.settings.tabs.aiChannels, icon: Cpu },
     { key: "COLLECTION_PROFILE" as const, label: dict.settings.tabs.collectionProfile, icon: ShieldCheck },
     ...(can("D18") ? [{ key: "FIELDS" as const, label: dict.settings.tabs.fields, icon: ListChecks }] : []),
+    ...(can("D19") ? [{ key: "DOMAIN" as const, label: dict.settings.tabs.customDomain, icon: Globe }] : []),
   ]
 
   return (

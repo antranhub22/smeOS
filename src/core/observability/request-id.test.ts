@@ -18,8 +18,8 @@ describe("mã yêu cầu (E1.1)", () => {
     }
   })
 
-  it("proxy gắn cùng một mã vào request và phản hồi", () => {
-    const res = proxy(new NextRequest("http://localhost/api/v1/orders", { headers: { [REQUEST_ID_HEADER]: "req-from-edge-1" } }))
+  it("proxy gắn cùng một mã vào request và phản hồi", async () => {
+    const res = await proxy(new NextRequest("http://localhost/api/v1/orders", { headers: { [REQUEST_ID_HEADER]: "req-from-edge-1" } }))
     expect(res.headers.get(REQUEST_ID_HEADER)).toBe("req-from-edge-1")
     expect(res.headers.get(`x-middleware-request-${REQUEST_ID_HEADER}`)).toBe("req-from-edge-1")
   })

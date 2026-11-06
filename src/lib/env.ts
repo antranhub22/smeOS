@@ -68,6 +68,12 @@ const schema = z.object({
   RATE_LIMIT_TRUSTED_PROXY_HOPS: z.preprocess((v) => (v === "" ? undefined : v), z.coerce.number().int().min(1).max(5).optional()),
   // URL công khai cho link theo dõi đơn trong tin nhắn khách (fallback RENDER_EXTERNAL_URL)
   PUBLIC_APP_URL: optionalUrl,
+  // Tên miền riêng của cửa hàng (checklist ALG 10.8, PO Q11): khoá API Render + mã dịch vụ web để tự gắn tên miền
+  // và cấp chứng chỉ HTTPS. Trống → cửa hàng vẫn xác minh được, vận hành thêm tên miền tay trên Render.
+  RENDER_API_KEY: z.string().optional(),
+  RENDER_SERVICE_ID: z.string().optional(),
+  // Máy chủ cửa hàng trỏ CNAME về (vd smeos-web.onrender.com). Trống → lấy từ RENDER_EXTERNAL_URL.
+  CUSTOM_DOMAIN_TARGET: z.string().optional(),
   // === FEATURE FLAGS ===
   // Thẻ chào / Swipe Brochure (§34.16). Mặc định bật (“true”) — đặt "false"
   // để tắt module mà không cần xóa code hay deploy lại.

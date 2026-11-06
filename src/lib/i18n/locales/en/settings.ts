@@ -61,5 +61,6 @@ export const settingsEn = {
     aiChannels: "9. AI & Channels",
     collectionProfile: "10. Chain Collection",
     fields: "11. Data Fields",
+    customDomain: "12. Custom Domain",
   },
 } as const
