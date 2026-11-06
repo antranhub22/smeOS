@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input"
 import { safeImageSrc } from "@/lib/safe-image-src"
 import React, { useState, useEffect } from "react"
 import { ViDateInput } from "@/components/greeting-card/customer/vi-date-input"
-import { X } from "@/components/ui/icon-set/x"
+import { Dialog } from "@/components/ui/dialog"
 import { Plus } from "@/components/ui/icon-set/plus"
 import { Trash2 } from "@/components/ui/icon-set/trash2"
 import { Sparkles } from "@/components/ui/icon-set/sparkles"
@@ -383,31 +383,23 @@ export function SalesOrderIntakeModal({
   }
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-      <div className="bg-surface border border-border rounded-2xl max-w-3xl w-full max-h-[92vh] overflow-y-auto shadow-2xl flex flex-col">
-        {/* Header */}
-        <div className="p-4 border-b border-border flex items-center justify-between sticky top-0 bg-surface z-10">
-          <div className="flex items-center gap-2">
-            <div className="h-8 w-8 rounded-lg bg-danger-bg text-danger-text flex items-center justify-center">
-              <Flower2 size={18} />
-            </div>
-            <div>
-              <h2 className="text-body font-extrabold text-text">
-                Tiếp Nhận Đơn Hàng Mới
-              </h2>
-              <p className="text-caption text-text-muted">
-                Tạo đơn hàng từ Sales & Đưa ngay vào Tháp Điều Phối Control Tower
-              </p>
-            </div>
-          </div>
-          <Button variant="ghost" type="submit"
-              aria-label="Đóng" onClick={onClose} className="text-[length:inherit] h-auto font-[inherit] gap-0 p-1.5 rounded-lg hover:bg-surface-alt text-text-muted">
-            <X size={18} />
-          </Button>
-        </div>
-
+    <Dialog
+      open={isOpen}
+      onOpenChange={(open) => {
+        if (!open) onClose()
+      }}
+      size="lg"
+      className="max-w-3xl"
+      title={
+        <span className="flex items-center gap-2">
+          <Flower2 size={18} className="text-danger-text" />
+          Tiếp Nhận Đơn Hàng Mới
+        </span>
+      }
+      description="Tạo đơn hàng từ Sales & Đưa ngay vào Tháp Điều Phối Control Tower"
+    >
         {/* Form Body */}
-        <form onSubmit={handleSubmit} className="p-6 flex flex-col gap-6 text-caption">
+        <form onSubmit={handleSubmit} className="flex flex-col gap-6 text-caption">
           {/* Quick Select from Master Index */}
           {masterProducts.length > 0 && (
             <div className="p-4 rounded-xl border border-danger-border bg-danger-bg/50 flex flex-col gap-2">
@@ -1284,7 +1276,6 @@ export function SalesOrderIntakeModal({
             </Button>
           </div>
         </form>
-      </div>
-    </div>
+    </Dialog>
   )
 }
