@@ -3,7 +3,7 @@ import { afterAll, beforeEach, describe, expect, it } from "vitest"
 import { PATCH as patchTools } from "@/app/api/v1/coordinator/partners/[id]/tools/route"
 
 import { disconnectDatabase, prisma, resetDatabase } from "../helpers/database"
-import { createTenant, makeChainOrganization, withSession, type Tenant } from "../helpers/fixtures"
+import { createTenant, linkPartner, makeChainOrganization, withSession, type Tenant } from "../helpers/fixtures"
 
 /**
  * AUD-004: chuỗi mở khoá công cụ cho cửa hàng đối tác. Chỉ chuỗi sở hữu quan hệ đối tác được ghi,
@@ -35,10 +35,7 @@ describe("PATCH coordinator/partners/[id]/tools", () => {
       where: { id: partner.organizationId },
       data: { settings: { industry: "FLORAL", brochure_discount: { max_percent: 10 } } },
     })
-    const row = await prisma.chain_partnerships.create({
-      data: { chain_org_id: chain.organizationId, partner_org_id: partner.organizationId, partner_code: "P-01" },
-    })
-    partnershipId = row.id
+    partnershipId = await linkPartner(chain, partner, { code: "P-01" })
   })
 
   afterAll(async () => {

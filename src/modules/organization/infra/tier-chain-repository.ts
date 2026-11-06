@@ -3,13 +3,14 @@
  *
  * Trước đây 4 bản tự truy vấn `chain_partnerships` để tìm chuỗi cha của một cửa hàng đối tác
  * (ma trận quản trị ×2, Integration Hub, thư viện thương hiệu). Luật chọn chuỗi cha đặt ở đây:
- * liên kết ACTIVE sớm nhất. Bước T-2 đổi luật này sang cạnh `is_primary` của `organization_links`
- * mà nơi gọi không phải sửa.
+ * cạnh `is_primary` của `organization_links` (= liên kết chuỗi ACTIVE sớm nhất, giữ bởi `recomputePrimaryLink`
+ * và trigger tối đa một cạnh chính — T-2), nơi gọi không phải sửa.
  */
 import { prisma } from "@/core/tenancy/infra/prisma"
 import { organizationTierOf } from "@/core/governance/tier-of"
 
 import type { DbClient } from "./db-client"
+import { ACTIVE_CHAIN_LINK } from "./organization-link-sync"
 
 /** Chuỗi cha chính của một tổ chức đối tác, kèm cấu hình của chuỗi (ma trận quản trị đọc từ đây). */
 export interface PrimaryChainLink {
@@ -28,13 +29,12 @@ export interface TierChain {
 }
 
 export async function findPrimaryChainLink(organizationId: string, db: DbClient = prisma): Promise<PrimaryChainLink | null> {
-  const link = await db.chain_partnerships.findFirst({
-    where: { partner_org_id: organizationId, status: "ACTIVE" },
-    orderBy: [{ created_at: "asc" }, { id: "asc" }],
-    select: { chain_org_id: true, chain_organization: { select: { name: true, settings: true } } },
+  const link = await db.organization_links.findFirst({
+    where: { child_org_id: organizationId, is_primary: true, ...ACTIVE_CHAIN_LINK },
+    select: { parent_org_id: true, parent_organization: { select: { name: true, settings: true } } },
   })
   if (!link) return null
-  return { chainOrgId: link.chain_org_id, chainName: link.chain_organization.name, chainSettings: link.chain_organization.settings }
+  return { chainOrgId: link.parent_org_id, chainName: link.parent_organization.name, chainSettings: link.parent_organization.settings }
 }
 
 /** `null` khi tổ chức không tồn tại. */

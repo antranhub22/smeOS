@@ -3956,9 +3956,17 @@ model reconciliation_findings {
 ADR-012 D-T3, bước T-2 của `docs/plan/db-enterprise-architecture.md`. Quan hệ giữa các tổ chức là đồ thị có hướng
 cha → con; "tầng trên" của một tổ chức đi theo cạnh `is_primary` (tối đa một cạnh chính ACTIVE mỗi tổ chức con —
 trigger ràng buộc `organization_links_one_primary` trong migration `20261106010000_organization_links`). Giai đoạn
-chuyển T-2 → T-3: `id` trùng `chain_partnerships.id`, repository đối tác ghi kép
-(`src/modules/organization/infra/organization-link-sync.ts`), đường đọc vẫn ở `chain_partnerships` cho tới T-3.
+chuyển: `id` trùng `chain_partnerships.id`, repository đối tác ghi kép
+(`src/modules/organization/infra/organization-link-sync.ts`).
 `INDUSTRY_MEMBER`, `AFFILIATE` khai sẵn cho tầng Ngành (D-48), chưa dùng.
+
+**T-3a (06/11/2026):** mọi đường ĐỌC quan hệ chuỗi–đối tác ở `organization_links`, lọc `ACTIVE_CHAIN_LINK`
+(`status = ACTIVE`, `link_type ∈ {SUBCONTRACTOR, FRANCHISE}` — cạnh tầng Ngành không bao giờ hiện là đối tác hay chuỗi
+cha): chuỗi cha (`findPrimaryChainLink` theo `is_primary`), kiểm đích đẩy đơn / chat (`partner-link-guard.ts`),
+danh sách và chi tiết đối tác, `identity-query`, `partnerOrgIds` của Integration Hub. Đường ghi vẫn ghi
+`chain_partnerships` trước rồi chép sang — bản phát hành trước còn đọc bảng cũ, nên quay lui không mất dữ liệu.
+`partnership_type = BRANCH` không còn được nhận ở API (D-T2). **T-3b** (bản phát hành sau, khi T-3a đã chạy trên
+production): ghi thẳng `organization_links`, migration contract xoá `chain_partnerships`.
 
 ```prisma
 enum organization_link_type {

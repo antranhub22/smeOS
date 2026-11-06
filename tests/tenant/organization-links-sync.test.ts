@@ -1,9 +1,12 @@
 import { afterAll, beforeEach, describe, expect, it } from "vitest"
 
+import { POST as linkExisting } from "@/app/api/v1/coordinator/partners/link-existing/route"
+import { isActivePartnerTarget } from "@/modules/chain-partnership/infra/partner-link-guard"
 import { PrismaChainPartnershipRepository } from "@/modules/chain-partnership/infra/prisma-partnership-repository"
+import { resolveTierChain } from "@/modules/organization/infra/tier-chain-repository"
 
 import { disconnectDatabase, prisma, resetDatabase } from "../helpers/database"
-import { createTenant, makeChainOrganization, type Tenant } from "../helpers/fixtures"
+import { createTenant, makeChainOrganization, withSession, type Tenant } from "../helpers/fixtures"
 
 /**
  * ADR-012 T-2: repository đối tác ghi kép `chain_partnerships` → `organization_links` trong cùng giao dịch;
@@ -63,5 +66,40 @@ describe("organization_links — ghi kép từ repository đối tác", () => {
     const rows = await links()
     expect(rows).toHaveLength(1)
     expect(rows[0]?.partner_code).toBe("A-02")
+  })
+
+  // ── T-3a: mọi đường đọc ở organization_links ──────────────────────────────
+  it("danh sách, chi tiết và giá trị trả về của ghi đọc từ organization_links", async () => {
+    const b = await link(chainB, "B-01", "FRANCHISE")
+    expect(b).toMatchObject({ chainOrgId: chainB.organizationId, partnerOrgId: store.organizationId, partnershipType: "FRANCHISE", status: "ACTIVE" })
+    expect(b.partnerOrgName).toBeTruthy()
+
+    await prisma.organization_links.update({ where: { id: b.id }, data: { partner_code: "B-99" } })
+    const { items, total } = await repo.listPartnerships({ chainOrgId: chainB.organizationId })
+    expect(total).toBe(1)
+    expect(items[0]).toMatchObject({ id: b.id, partnerCode: "B-99", partnerOrgSlug: expect.any(String) })
+    expect((await repo.findPartnershipById(b.id))?.partnerCode).toBe("B-99")
+  })
+
+  it("cạnh không phải quan hệ chuỗi (tầng Ngành) không hiện là đối tác, chuỗi cha hay đích đẩy đơn", async () => {
+    await prisma.organization_links.create({
+      data: { parent_org_id: chainA.organizationId, child_org_id: store.organizationId, link_type: "INDUSTRY_MEMBER", partner_code: "N-01" },
+    })
+    expect((await repo.listPartnerships({ chainOrgId: chainA.organizationId })).total).toBe(0)
+    expect((await resolveTierChain(store.organizationId))?.primaryChain).toBeNull()
+    expect(await isActivePartnerTarget(chainA.organizationId, store.organizationId)).toBe(false)
+
+    await link(chainB, "B-01")
+    expect((await resolveTierChain(store.organizationId))?.primaryChain?.organizationId).toBe(chainB.organizationId)
+    expect(await isActivePartnerTarget(chainB.organizationId, store.organizationId)).toBe(true)
+  })
+
+  it("loại BRANCH bị từ chối (ADR-012 D-T2) — không tạo liên kết", async () => {
+    const res = await linkExisting(withSession("http://localhost/api/v1/coordinator/partners/link-existing", chainA.token, {
+      method: "POST",
+      body: JSON.stringify({ identifier: store.organizationId, partnerCode: "A-01", partnershipType: "BRANCH" }),
+    }))
+    expect(res.status).toBe(400)
+    expect(await links()).toHaveLength(0)
   })
 })

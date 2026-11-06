@@ -1,6 +1,8 @@
 import { afterAll, beforeEach, describe, expect, it } from "vitest"
 import { disconnectDatabase, resetDatabase } from "../helpers/database"
-import { createTenant, type Tenant } from "../helpers/fixtures"
+import { PrismaChainPartnershipRepository } from "@/modules/chain-partnership/infra/prisma-partnership-repository"
+
+import { createTenant, linkPartner, type Tenant } from "../helpers/fixtures"
 import { prisma } from "@/core/tenancy/infra/prisma"
 import {
   addBrandLibraryVersion,
@@ -23,15 +25,14 @@ describe("brand-library: cách ly tenant và chia sẻ chuỗi", () => {
   let chain: Tenant
   let member: Tenant
   let outsider: Tenant
+  let linkId: string
 
   beforeEach(async () => {
     await resetDatabase()
     chain = withCaps(await createTenant("chuoi"))
     member = withCaps(await createTenant("thanh-vien"))
     outsider = withCaps(await createTenant("ngoai"))
-    await prisma.chain_partnerships.create({
-      data: { chain_org_id: chain.organizationId, partner_org_id: member.organizationId, partner_code: "TV01", status: "ACTIVE" },
-    })
+    linkId = await linkPartner(chain, member, { code: "TV01" })
   })
 
   afterAll(async () => {
@@ -86,7 +87,7 @@ describe("brand-library: cách ly tenant và chia sẻ chuỗi", () => {
     const shared = await createBrandLibraryItem(chain.ctx, { title: "Màu", category: "COLOR", textValue: "#123456" })
     await updateBrandLibraryItem(chain.ctx, shared.id, { share_with_members: true })
     await expect(updateBrandLibraryItem(member.ctx, shared.id, { title: "đổi" })).rejects.toMatchObject({ code: "NOT_FOUND" })
-    await prisma.chain_partnerships.updateMany({ where: { partner_org_id: member.organizationId }, data: { status: "SUSPENDED" } })
+    await new PrismaChainPartnershipRepository().updateStatus(linkId, "SUSPENDED")
     expect(await listChainBrandLibrary(member.ctx)).toBeNull()
   })
 

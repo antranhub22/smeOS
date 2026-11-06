@@ -1,4 +1,5 @@
-export type PartnershipType = "SUBCONTRACTOR" | "FRANCHISE" | "BRANCH"
+/** `BRANCH` đã bỏ (ADR-012 D-T2): chi nhánh không phải tổ chức con — xem `branches`. */
+export type PartnershipType = "SUBCONTRACTOR" | "FRANCHISE"
 export type PartnershipStatus = "PENDING" | "ACTIVE" | "SUSPENDED" | "TERMINATED"
 
 export interface ChainPartnershipEntity {

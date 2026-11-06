@@ -3,11 +3,11 @@ import { afterAll, beforeEach, describe, expect, it } from "vitest"
 import { findPrimaryChainLink, resolveTierChain } from "@/modules/organization/infra/tier-chain-repository"
 
 import { disconnectDatabase, prisma, resetDatabase } from "../helpers/database"
-import { createTenant, makeChainOrganization, type Tenant } from "../helpers/fixtures"
+import { createTenant, linkPartner, makeChainOrganization, type Tenant } from "../helpers/fixtures"
 
 /**
  * ADR-012 T-1: một hàm đọc cây tổ chức thay 4 bản tự truy vấn `chain_partnerships`.
- * Luật giữ nguyên hành vi cũ: chuỗi cha = liên kết ACTIVE sớm nhất.
+ * Luật giữ nguyên hành vi cũ: chuỗi cha = liên kết ACTIVE sớm nhất (T-3a: cạnh `is_primary` của `organization_links`).
  */
 describe("resolveTierChain — chuỗi cha của một cửa hàng đối tác", () => {
   let chainA: Tenant
@@ -28,15 +28,7 @@ describe("resolveTierChain — chuỗi cha của một cửa hàng đối tác",
   })
 
   async function link(chain: Tenant, code: string, createdAt: Date, status = "ACTIVE") {
-    await prisma.chain_partnerships.create({
-      data: {
-        chain_org_id: chain.organizationId,
-        partner_org_id: store.organizationId,
-        partner_code: code,
-        status,
-        created_at: createdAt,
-      },
-    })
+    await linkPartner(chain, store, { code, status, createdAt })
   }
 
   it("cửa hàng không liên kết: tầng STORE, không có chuỗi cha", async () => {

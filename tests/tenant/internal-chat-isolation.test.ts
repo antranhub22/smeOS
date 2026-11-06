@@ -7,7 +7,7 @@ import { POST as dispatchToChat } from "@/app/api/v1/coordinator/orders/[id]/dis
 import { POST as createOrder } from "@/app/api/v1/orders/route"
 
 import { disconnectDatabase, prisma, resetDatabase } from "../helpers/database"
-import { createTenant, makeChainOrganization, readJson, withSession, type Tenant } from "../helpers/fixtures"
+import { createTenant, linkPartner, makeChainOrganization, readJson, withSession, type Tenant } from "../helpers/fixtures"
 
 /**
  * Chat nội bộ + điều phối sang đối tác (audit PR #63): không đọc/tham gia hội thoại của tổ chức khác,
@@ -27,7 +27,7 @@ describe("cách ly tenant — chat nội bộ và điều phối đối tác", (
     b = await createTenant("beta")
     partner = await createTenant("doitac")
     await makeChainOrganization(a)
-    await prisma.chain_partnerships.create({ data: { chain_org_id: a.organizationId, partner_org_id: partner.organizationId, partner_code: "P-01" } })
+    await linkPartner(a, partner, { code: "P-01" })
   })
 
   afterAll(async () => {
@@ -70,10 +70,10 @@ describe("cách ly tenant — chat nội bộ và điều phối đối tác", (
   })
 
   it("chuỗi khác không đổi được trạng thái đối tác", async () => {
-    const link = await prisma.chain_partnerships.findFirstOrThrow({ where: { chain_org_id: a.organizationId } })
+    const link = await prisma.organization_links.findFirstOrThrow({ where: { parent_org_id: a.organizationId } })
     const res = await patchPartnerStatus(withSession(`${BASE}/coordinator/partners/${link.id}/status`, b.token, { method: "PATCH", body: JSON.stringify({ status: "TERMINATED" }) }), params(link.id))
     expect(res.status).toBe(404)
-    expect((await prisma.chain_partnerships.findUniqueOrThrow({ where: { id: link.id } })).status).toBe("ACTIVE")
+    expect((await prisma.organization_links.findUniqueOrThrow({ where: { id: link.id } })).status).toBe("ACTIVE")
   })
 
   it("chỉ đẩy đơn sang đối tác ACTIVE của chính chuỗi", async () => {

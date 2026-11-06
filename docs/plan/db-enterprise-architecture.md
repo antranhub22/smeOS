@@ -82,7 +82,8 @@ cần test khoá hành vi trước.
 | ☐ | Mục | Thay | Gate thêm |
 |---|---|---|---|
 | [x] | T-2 [SCHEMA] `organization_links` + backfill + ghi kép + `is_primary` (giữ bằng trigger ràng buộc — Prisma không khai được index riêng phần) | P2-A2 | Tenant test đối tác hai chuỗi: cạnh chính đúng, tạm ngưng thì chuyển — `tests/tenant/organization-links-sync.test.ts` |
-| [ ] | T-3 Mọi đọc sang `organization_links`; contract: xoá `chain_partnerships` | P2-A2 | `test:tenant`, `test:platform` |
+| [x] | T-3a Mọi đọc sang `organization_links` (lọc cạnh chuỗi); bỏ `BRANCH` ở API; ghi kép giữ để quay lui được | P2-A2 | `test:tenant`, `test:platform` |
+| [ ] | T-3b [SCHEMA] Ghi thẳng `organization_links`; contract: xoá `chain_partnerships` — chỉ sau khi T-3a đã chạy trên production | P2-A2 | `test:tenant`, `test:platform`; `check:migrations` (`-- contract:`) |
 | [ ] | T-4 [SCHEMA] **B5** Gộp `chain_branches` vào `branches`; `memberships.branch_id` thay `chain_branch_code` | P2-A3 | Giá theo chi nhánh, `/cua-hang`, điều phối không đổi |
 | [ ] | T-5 `grants` có phạm vi trong `TenantContext`; phạm vi chi nhánh đợt 1 (đơn, khách, điều phối) | P2-A4, P2-A5 | Tenant test chéo chi nhánh |
 | [ ] | T-5b Phạm vi chi nhánh đợt 2 (sản phẩm/giá, kho, báo cáo) và đợt 3 (còn lại) | P2-A5 | Như trên, từng đợt |
