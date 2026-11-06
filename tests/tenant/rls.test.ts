@@ -1,3 +1,5 @@
+import { readdirSync, readFileSync } from "node:fs"
+import path from "node:path"
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from "vitest"
 
 import { PrismaPg } from "@prisma/adapter-pg"
@@ -24,6 +26,22 @@ function appUrl(): string {
   return url.toString()
 }
 
+/**
+ * CSDL test dựng bằng `prisma db push` (CI, `npm run db:test:setup`) không chạy migration — áp đúng SQL của
+ * migration RLS khi chưa có chính sách. Chính sách chỉ chặn khi phiên bật `enforce`, test khác không bị ảnh hưởng.
+ */
+async function ensureRlsPolicies(): Promise<void> {
+  const rows = await prisma.$queryRaw<Array<{ n: bigint }>>`SELECT count(*)::bigint AS n FROM pg_policies WHERE policyname = 'tenant_isolation'`
+  if (Number(rows[0]?.n ?? 0) > 0) return
+  const dir = path.join(__dirname, "../../prisma/migrations")
+  const migration = readdirSync(dir).find((d) => d.endsWith("_row_level_security"))
+  if (!migration) throw new Error("Không thấy migration row_level_security")
+  const sql = readFileSync(path.join(dir, migration, "migration.sql"), "utf8")
+  for (const stmt of sql.split(/;\s*\n/).map((x) => x.replace(/^--.*$/gm, "").trim()).filter(Boolean)) {
+    await prisma.$executeRawUnsafe(stmt)
+  }
+}
+
 async function ensureAppRole(): Promise<void> {
   await prisma.$executeRawUnsafe(`DO $$ BEGIN
     IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = '${APP_ROLE}') THEN
@@ -47,6 +65,7 @@ describe("Row Level Security theo tổ chức", () => {
   const events: RlsAuditEvent[] = []
 
   beforeAll(async () => {
+    await ensureRlsPolicies()
     await ensureAppRole()
     enforce = clientFor("enforce")
     audit = clientFor("audit")
