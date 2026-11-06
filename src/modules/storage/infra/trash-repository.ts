@@ -1,5 +1,5 @@
 import { prisma } from "@/core/tenancy/infra/prisma"
-import { scopedWhere, type TenantContext } from "@/core/tenancy"
+import { branchScopedProductWhere, scopedWhere, type TenantContext } from "@/core/tenancy"
 import type { asset_state, product_status } from "@/generated/prisma/client"
 import { getStorageProvider } from "@/modules/assets/adapters/storage-provider-factory"
 import {
@@ -33,7 +33,7 @@ export class TrashRepository implements ITrashRepository {
     // 2. Lấy danh sách products bị archived / trashed
     const trashedProducts = await prisma.products.findMany({
       where: scopedWhere(ctx, {
-        status: "ARCHIVED" as product_status,
+        status: "ARCHIVED" as product_status, ...branchScopedProductWhere(ctx, undefined), // chi nhánh khác không thấy (T-5b)
       }),
       include: {
         images: { where: { role: "MAIN" }, take: 1 },
@@ -193,7 +193,7 @@ export class TrashRepository implements ITrashRepository {
 
     if (input.type === "PRODUCT") {
       const product = await prisma.products.findFirst({
-        where: scopedWhere(ctx, { id: input.id }),
+        where: scopedWhere(ctx, { id: input.id, ...branchScopedProductWhere(ctx, undefined) }),
       })
       if (!product) return false
 
@@ -240,7 +240,7 @@ export class TrashRepository implements ITrashRepository {
 
     if (input.type === "PRODUCT") {
       const product = await prisma.products.findFirst({
-        where: scopedWhere(ctx, { id: input.id }),
+        where: scopedWhere(ctx, { id: input.id, ...branchScopedProductWhere(ctx, undefined) }),
       })
       if (!product) return false
 
@@ -288,7 +288,7 @@ export class TrashRepository implements ITrashRepository {
 
     if (input.type === "PRODUCT") {
       const product = await prisma.products.findFirst({
-        where: scopedWhere(ctx, { id: input.id }),
+        where: scopedWhere(ctx, { id: input.id, ...branchScopedProductWhere(ctx, undefined) }),
       })
       if (!product) return "not_found"
       // Mẫu đã có đơn chỉ được lưu trữ, không xoá vĩnh viễn — đơn cũ vẫn trỏ tới mẫu (checklist ALG 2.3)

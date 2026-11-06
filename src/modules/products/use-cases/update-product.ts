@@ -1,6 +1,6 @@
 import { AppError, conflict, notFound } from "@/core/http/errors"
 import { hasCapability } from "@/core/rbac/capabilities"
-import type { TenantContext } from "@/core/tenancy"
+import { canAssignBranch, type TenantContext } from "@/core/tenancy"
 import type { IProductRepository, UpdateProductInput } from "@/modules/products/domain/repositories/product-repository.interface"
 import { getProductRepository } from "@/modules/products/infra/product-repository"
 import { PRICING_ONLY_ATTRIBUTE_KEYS } from "@/modules/products/domain/product-lookup"
@@ -18,8 +18,10 @@ export async function updateProduct(
   input: UpdateProductInput,
   repo: IProductRepository = getProductRepository()
 ) {
-  const current = await repo.findById(ctx, id)
+  const current = await repo.findById(ctx, id) // đã lọc theo chi nhánh (T-5b)
   if (!current) throw notFound()
+  // Không chuyển mẫu sang chi nhánh khác khi đang bị giới hạn theo chi nhánh (ADR-012 T-5b)
+  if (input.branchId !== undefined && !canAssignBranch(ctx, "L3", input.branchId, { allowShared: true })) throw notFound()
   const stored = (current.attributes as Record<string, unknown> | null) ?? {}
 
   // Mẫu chính thức: chỉ Điều hành (`H3`) sửa nội dung — xem `product-proposal.ts`.

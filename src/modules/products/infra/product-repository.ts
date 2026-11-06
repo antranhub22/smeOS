@@ -80,8 +80,8 @@ export type ListProductsPage = {
 export class ProductRepository implements IProductRepository {
   constructor(private readonly db: DbClient = prisma) {}
 
-  findById(ctx: TenantContext, id: string): Promise<products | null> {
-    return this.db.products.findFirst({ where: scopedWhere(ctx, { id }) })
+  findById(ctx: TenantContext, id: string): Promise<products | null> { // chi nhánh khác → như không tồn tại (ALG 9.13, ADR-012 T-5b)
+    return this.db.products.findFirst({ where: scopedWhere(ctx, { id, ...branchScopedProductWhere(ctx, undefined) }) })
   }
 
   findByCode(ctx: TenantContext, code: string): Promise<products | null> {

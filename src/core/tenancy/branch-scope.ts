@@ -26,6 +26,22 @@ export function branchScopeFor(ctx: Pick<TenantContext, "branchId" | "capabiliti
   return branchScopeOf(ctx)
 }
 
+/**
+ * Người thao tác có được gán bản ghi vào `branchId` với mã quyền `code` không (ADR-012 T-5b): không bị giới hạn → mọi
+ * chi nhánh; bị giới hạn → chỉ chi nhánh của mình, và `null` (dùng chung toàn tổ chức) khi `allowShared`.
+ */
+export function canAssignBranch(
+  ctx: Pick<TenantContext, "branchId" | "capabilities" | "grants">,
+  code: string,
+  branchId: string | null | undefined,
+  opts: { allowShared: boolean },
+): boolean {
+  const scope = branchScopeFor(ctx, code)
+  if (!scope) return true
+  if (branchId === undefined || branchId === null) return opts.allowShared
+  return branchId === scope
+}
+
 /** `branchScopedWhere` theo một mã quyền — `{}` khi không giới hạn (dùng thay `branchScopedWhere` ở đợt T-5 trở đi). */
 export function scopedWhereForBranch(ctx: Pick<TenantContext, "branchId" | "capabilities" | "grants">, code: string): { branch_id?: string } {
   const scope = branchScopeFor(ctx, code)

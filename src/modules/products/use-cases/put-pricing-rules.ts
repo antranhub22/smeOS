@@ -1,5 +1,5 @@
 import { notFound, validationFailed } from "@/core/http/errors"
-import type { TenantContext } from "@/core/tenancy"
+import { canAssignBranch, type TenantContext } from "@/core/tenancy"
 import {
   isPricingRuleKey,
   validatePricingRuleValue,
@@ -39,6 +39,8 @@ export async function putPricingRules(
   if (problem) throw validationFailed({ value: problem })
 
   const branchId = input.branchId ?? null
+  // Bị giới hạn theo chi nhánh → chỉ ghi quy tắc của chi nhánh mình, không ghi quy tắc toàn tổ chức (ADR-012 T-5b)
+  if (!canAssignBranch(ctx, "L6", branchId, { allowShared: false })) throw notFound()
   if (branchId !== null) {
     const branch = await branchRepo.findById(ctx, branchId)
     if (!branch) throw notFound()
