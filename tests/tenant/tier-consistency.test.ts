@@ -12,7 +12,7 @@ import { NotificationHardLockRepository } from "@/modules/notification/infra/not
 import { notifyOrganization } from "@/modules/notification/use-cases/notify-organization"
 import { resolveEffectiveNotification } from "@/modules/notification/use-cases/resolve-effective-notification"
 import { unlockedToolsFrom } from "@/modules/organization/domain/tool-route-entitlement"
-import { saveMotherGovernance } from "@/modules/organization/infra/governance-decisions-repository"
+import { saveMotherGovernance, saveOrgGovernance } from "@/modules/organization/infra/governance-decisions-repository"
 import { resolveTierChain } from "@/modules/organization/infra/tier-chain-repository"
 
 import { disconnectDatabase, prisma, resetDatabase } from "../helpers/database"
@@ -105,10 +105,8 @@ describe("đối chiếu tầng — mỗi trục × Mẹ / Chuỗi / Cửa hàng
     })
 
     it("Chuỗi khoá → chỉ cửa hàng đối tác thấy", async () => {
-      await prisma.organizations.update({
-        where: { id: chain.organizationId },
-        data: { settings: { governance_matrix: { PAYMENTS: { overrides: {}, locks: LOCK } } } },
-      })
+      // Ghi qua đường thật (ghi kép governance_decisions — nguồn đọc từ ADR-012 T-7b)
+      expect(await saveOrgGovernance(chain.organizationId, "PAYMENTS", { overrides: {}, locks: LOCK }, chain.userId)).toBe(true)
       expect(await locksAt(partner, "CHAIN")).toEqual(LOCK)
       expect(await locksAt(solo, "CHAIN")).toEqual({})
       expect(await locksAt(chain, "CHAIN")).toEqual({})

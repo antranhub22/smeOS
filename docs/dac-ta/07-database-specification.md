@@ -4103,11 +4103,15 @@ số dòng). Trigger `organizations_sync_industry_key` (`BEFORE INSERT OR UPDATE
   `industry_key` chỉ được ở danh sách ghi lý do (chỉ đọc một khoá không phải ngành, hoặc đọc để ghi lại).
 - Ca thử: `tests/tenant/industries.test.ts` (ghi tách ngành ra cột; đọc lồng theo cột khi JSON không còn `industry`).
 
-**T-6c-2** (contract, sau khi T-6c-1 đã deploy): migration xoá `settings.industry` còn lại (NOTICE số dòng mã lạ) và bỏ
-trigger + hàm `smeos_organizations_sync_industry_key`; bỏ dự phòng `settings.industry` ở `industryKeyOf`,
-`withIndustryKey`, `resolveTierChain` và worker.
+**T-6c-2** (contract, PO duyệt 06/11/2026, sau khi T-6c-1 #161 đã chạy trên production; không đổi schema): migration
+`20261106110000_industry_contract` (một giao dịch) bỏ trigger + hàm `smeos_organizations_sync_industry_key` TRƯỚC, chép
+bù `industry_key` cho dòng còn trống mà JSON có mã hợp lệ, báo (NOTICE) số dòng mã lạ sẽ mất, rồi xoá khoá
+`settings.industry`; chốt cuối: không còn dòng nào có khoá đó. Mã: `industryKeyOf` và `resolveTierChain` chỉ đọc cột;
+`withIndustryKey` phủ `settings.industry` = cột, cột trống thì BỎ khoá (JSON sót lại không có tác dụng); worker phân tích
+ảnh chỉ đọc `industry_key`.
 
-Ca thử: `tests/tenant/industries.test.ts` (tự cài seed + trigger từ tệp migration khi CSDL test dựng bằng `db push`).
+Ca thử: `tests/tenant/industries.test.ts` (JSON sót lại không có tác dụng; seed ngành của CSDL test ở
+`tests/helpers/industries-seed.ts`), `tests/tenant/tier-chain.test.ts`, `src/modules/organization/domain/industry-key.test.ts`.
 
 ```prisma
 model industries {
@@ -4211,8 +4215,14 @@ model governance_decisions {
 - **Chép dữ liệu.** Migration `20261106100000_governance_decisions` chép mọi quyết định đang có, cùng bộ lọc với
   `parseDecisions` (6 hệ thống, khoá `^[A-Za-z0-9_.:-]{1,96}$`, giá trị boolean); dòng phạm vi dạng cũ trùng dạng mới
   gộp về dòng cập nhật sau cùng; chốt cuối so số dòng với nguồn, lệch thì cuộn lại.
-- **Chưa đường nào đọc bảng.** T-7b chuyển `layered-resolver` (ma trận, thông báo, tích hợp) sang đọc bảng; T-7c xoá
-  nơi lưu cũ (contract, PO duyệt riêng).
+- **T-7b — đọc từ bảng (không đổi schema).** Mọi đường đọc qua `currentDecisions` (`decision-log.ts`):
+  `getOrgGovernance`, `getMotherGovernance`, `getUpperLayers`, `getPolicyGovernanceUpper` (ma trận); `getHardLocks`,
+  `getEventVisibilityMap` (thông báo); `GovernanceRepository.listForScopes` (tích hợp). Luồng bán hàng (Thẻ chào) nhận
+  quyết định riêng của tiệm qua `PolicyGovernanceUpper.own` thay cho `settings.governance_matrix`
+  (`isGovernedItemEnabled(key, own, …)`); `decisionsFromSettings` bỏ. Nơi lưu cũ vẫn được ghi kép để quay lui được.
+  Dòng ghi thẳng vào nơi lưu cũ (không qua ghi kép) không còn tác dụng.
+- **T-7c (chưa làm).** Xoá nơi lưu cũ (contract, PO duyệt riêng), sau khi T-7b đã chạy trên production.
 
 Ca thử: `tests/tenant/governance-decisions.test.ts` (sau mỗi chuỗi thao tác qua route thật, quyết định hiện hành của
-bảng khớp nơi lưu cũ), `src/core/governance/decision-record.test.ts`, `tests/tenant/tier-consistency.test.ts`.
+bảng khớp nơi lưu cũ), `tests/tenant/governance-decisions-read.test.ts` (mỗi trục: chỉ bảng mới có tác dụng),
+`src/core/governance/decision-record.test.ts`, `tests/tenant/tier-consistency.test.ts`.

@@ -2,7 +2,8 @@
  * Ghi/đọc bảng quyết định theo tầng `governance_decisions` (ADR-012 D-T10).
  *
  * T-7a: các nơi lưu cũ gọi `recordDecisions` / `syncDecisionScope` TRONG CÙNG giao dịch với lệnh ghi của mình (ghi kép),
- * để hai bên không lệch nhau. Chưa đường đọc nào dùng `currentDecisions` ngoài test đối chiếu — T-7b mới chuyển đọc.
+ * để hai bên không lệch nhau. T-7b: mọi đường đọc ma trận, thông báo, tích hợp đi qua `currentDecisions`; nơi lưu cũ
+ * chỉ còn được ghi (kép) để quay lui được, tới T-7c thì xoá.
  */
 import { Prisma, type PrismaClient } from "@/generated/prisma/client"
 
@@ -107,13 +108,27 @@ export async function syncDecisionScope(
   return changes.length
 }
 
-/** Quyết định đang hiệu lực (bỏ dòng gỡ) theo hệ thống và/hoặc phạm vi. */
-export async function currentDecisions(
-  db: Db,
-  filter: { readonly system?: DecisionSystem | undefined; readonly scope?: string | undefined },
-): Promise<DecisionRecord[]> {
+/** Bộ lọc đọc: mọi trường tuỳ chọn; danh sách rỗng = không khớp gì. */
+export interface DecisionFilter {
+  readonly systems?: readonly DecisionSystem[] | undefined
+  readonly scopes?: readonly string[] | undefined
+  readonly tier?: GovernanceTier | undefined
+  readonly decisionKey?: string | undefined
+}
+
+/**
+ * Quyết định đang hiệu lực (bỏ dòng gỡ) — nguồn đọc của ma trận, thông báo, tích hợp từ T-7b. Dòng mới nhất của mỗi
+ * quyết định thắng, kể cả khi đó là dòng gỡ (quyết định đã gỡ không "sống lại" từ dòng cũ hơn).
+ */
+export async function currentDecisions(db: Db, filter: DecisionFilter = {}): Promise<DecisionRecord[]> {
+  if (filter.systems?.length === 0 || filter.scopes?.length === 0) return []
   const rows = await db.governance_decisions.findMany({
-    where: { ...(filter.system ? { system: filter.system } : {}), ...(filter.scope ? { scope: filter.scope } : {}) },
+    where: {
+      ...(filter.systems ? { system: { in: [...filter.systems] } } : {}),
+      ...(filter.scopes ? { scope: { in: [...filter.scopes] } } : {}),
+      ...(filter.tier ? { tier: filter.tier } : {}),
+      ...(filter.decisionKey ? { decision_key: filter.decisionKey } : {}),
+    },
     orderBy: { version: "desc" },
     take: MAX_SCOPE_ROWS,
   })

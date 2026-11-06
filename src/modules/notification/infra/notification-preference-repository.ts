@@ -48,7 +48,7 @@ export class NotificationPreferenceRepository implements INotificationPreference
 
   // ── Event Visibility Matrix (Mother only) ───────────────────────────────
   async getEventVisibilityMap(): Promise<Record<string, Record<NotificationSubTier, boolean>>> {
-    const rows = await prisma.notification_event_visibility.findMany()
+    const rows = await getNotificationHardLockRepository().listEventVisibility() // T-7b: governance_decisions
     const map: Record<string, Record<NotificationSubTier, boolean>> = {}
     for (const r of rows) {
       if (!map[r.event_key]) {

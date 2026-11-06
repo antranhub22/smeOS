@@ -8,7 +8,7 @@
  * @module notification/infra
  */
 import { notificationLockRecord, notificationVisibilityRecord } from "@/core/governance/decision-record"
-import { recordDecisions } from "@/core/governance/infra/decision-log"
+import { currentDecisions, recordDecisions } from "@/core/governance/infra/decision-log"
 import { fromScopeKey, storedScopeIds, toScopeKey } from "@/core/governance/scope-key"
 import { prisma } from "@/core/tenancy/infra/prisma"
 import type {
@@ -18,28 +18,46 @@ import type {
 import type { HardLockEntry } from "../domain/cascading-policy"
 
 export class NotificationHardLockRepository {
+  /** Đọc từ `governance_decisions` (ADR-012 T-7b); `notification_hard_locks` chỉ còn được ghi kép tới T-7c. */
   async getHardLocks(filter?: {
     tier?: NotificationTier | undefined
     scopeId?: string | undefined
     eventKey?: string | undefined
     channel?: NotifyChannel | undefined
   }): Promise<HardLockEntry[]> {
-    const rows = await prisma.notification_hard_locks.findMany({
-      where: {
-        ...(filter?.tier ? { tier: filter.tier } : {}),
-        ...(filter?.scopeId ? { scope_id: { in: storedScopeIds(filter.scopeId) } } : {}),
-        ...(filter?.eventKey ? { event_key: filter.eventKey } : {}),
-        ...(filter?.channel ? { channel: filter.channel } : {}),
-      },
+    const records = await currentDecisions(prisma, {
+      systems: ["notification.hard_lock"],
+      ...(filter?.scopeId ? { scopes: [toScopeKey(filter.scopeId)] } : {}),
+      ...(filter?.tier ? { tier: filter.tier } : {}),
+      ...(filter?.eventKey && filter.channel ? { decisionKey: `${filter.eventKey}:${filter.channel}` } : {}),
     })
-    return rows.map((r) => ({
-      eventKey: r.event_key,
-      channel: r.channel as NotifyChannel,
-      tier: r.tier as NotificationTier,
-      scopeId: fromScopeKey(r.scope_id),
-      enabled: r.enabled,
-      reason: r.reason ?? undefined,
-    }))
+    return records.flatMap((r) => {
+      const cut = r.decisionKey.lastIndexOf(":")
+      const eventKey = r.decisionKey.slice(0, cut)
+      const channel = r.decisionKey.slice(cut + 1) as NotifyChannel
+      const enabled = r.value?.["enabled"]
+      if (cut <= 0 || typeof enabled !== "boolean") return []
+      if ((filter?.eventKey && filter.eventKey !== eventKey) || (filter?.channel && filter.channel !== channel)) return []
+      const reason = r.value?.["reason"]
+      return [{
+        eventKey,
+        channel,
+        tier: r.tier as NotificationTier,
+        scopeId: fromScopeKey(r.scope),
+        enabled,
+        reason: typeof reason === "string" ? reason : undefined,
+      }]
+    })
+  }
+
+  /** Mẹ ẩn/hiện sự kiện theo tầng — đọc từ `governance_decisions` (T-7b), cùng tên trường với bảng cũ. */
+  async listEventVisibility(): Promise<Array<{ event_key: string; tier: string; visible: boolean }>> {
+    const records = await currentDecisions(prisma, { systems: ["notification.visibility"], scopes: ["platform"] })
+    return records.flatMap((r) => {
+      const cut = r.decisionKey.lastIndexOf(":")
+      const visible = r.value?.["visible"]
+      return cut > 0 && typeof visible === "boolean" ? [{ event_key: r.decisionKey.slice(0, cut), tier: r.decisionKey.slice(cut + 1), visible }] : []
+    })
   }
 
   /** Ghi kép `governance_decisions` trong cùng giao dịch (ADR-012 T-7a). */

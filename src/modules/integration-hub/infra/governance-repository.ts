@@ -6,7 +6,7 @@
  */
 
 import { integrationRecord } from "@/core/governance/decision-record"
-import { recordDecisions } from "@/core/governance/infra/decision-log"
+import { currentDecisions, recordDecisions } from "@/core/governance/infra/decision-log"
 import { fromScopeKey, storedScopeIds, toScopeKey } from "@/core/governance/scope-key"
 import { prisma } from "@/core/tenancy/infra/prisma"
 import type { GovernanceTier } from "@/core/governance/layered-resolver"
@@ -15,10 +15,15 @@ import { resolveTierChain } from "@/modules/organization/infra/tier-chain-reposi
 import type { GovernanceMode, GovernanceRow, OrgGovernanceScope } from "../domain/integration-governance"
 
 export class GovernanceRepository {
+  /** Đọc từ `governance_decisions` (ADR-012 T-7b); `integration_governance` chỉ còn được ghi kép tới T-7c. */
   async listForScopes(scopeIds: readonly string[]): Promise<GovernanceRow[]> {
     if (scopeIds.length === 0) return []
-    const rows = await prisma.integration_governance.findMany({ where: { scope_id: { in: scopeIds.flatMap(storedScopeIds) } } })
-    return rows.map((r) => ({ connectorKey: r.connector_key, tier: r.tier as GovernanceTier, scopeId: fromScopeKey(r.scope_id), mode: r.mode }))
+    const records = await currentDecisions(prisma, { systems: ["integration"], scopes: [...new Set(scopeIds.map(toScopeKey))] })
+    return records.flatMap((r) => {
+      const mode = r.value?.["mode"]
+      if (mode !== "FORBID" && mode !== "INHERIT_ONLY") return []
+      return [{ connectorKey: r.decisionKey, tier: r.tier as GovernanceTier, scopeId: fromScopeKey(r.scope), mode }]
+    })
   }
 
   /** ALLOW_OWN là mặc định — xoá dòng thay vì lưu, để bảng chỉ giữ khoá thật. Ghi kép `governance_decisions` (T-7a). */
