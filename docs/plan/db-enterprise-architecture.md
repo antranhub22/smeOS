@@ -93,10 +93,12 @@ cần test khoá hành vi trước.
 | [x] | T-6b Ngành đọc từ cột ở `OrganizationRepository` + `getShopProfile` (`withIndustryKey`); khoá phạm vi dạng `platform · industry: · org: · branch:` (`notification_hard_locks`, `integration_governance`) — các `select` lồng còn lại liệt kê ở đặc tả 07 §43 | P2-A1 | Ma trận thông báo, tích hợp không đổi kết quả; `tests/tenant/scope-keys.test.ts` |
 | [x] | T-6c-1 Đọc ngành từ cột ở mọi `select` lồng, ghi settings tách `industry` ra cột `industry_key` (đặc tả 07 §43) | — | `organization-industry-read.test.ts`, `industries.test.ts` |
 | [ ] | T-6c-2 [SCHEMA] Contract: xoá `settings.industry` còn lại, bỏ trigger đồng bộ và dự phòng đọc settings (sau khi T-6c-1 deploy) | — | `check:migrations` |
-| [ ] | T-7 [SCHEMA] `governance_decisions` + backfill + chuyển `layered-resolver` + contract | — | Ma trận, thông báo, tích hợp không đổi kết quả |
+| [x] | T-7a [SCHEMA] `governance_decisions` + chép từ ba nơi lưu + ghi kép cùng giao dịch; chặn ghi thẳng `settings.governance_matrix` qua PATCH (PO duyệt 06/11/2026; đặc tả 07 §45) | — | `tests/tenant/governance-decisions.test.ts` (bảng mới khớp nơi lưu cũ); `check:migrations` |
+| [ ] | T-7b Chuyển đọc ma trận, thông báo, tích hợp sang `governance_decisions` (`layered-resolver`) | — | `tier-consistency.test.ts`, ma trận, thông báo, tích hợp không đổi kết quả |
+| [ ] | T-7c [SCHEMA] Contract: bỏ `settings.governance_matrix`, khoá `governance_matrix:*` của `platform_settings`, `notification_hard_locks`, `notification_event_visibility`, `integration_governance` (sau khi T-7b deploy) | — | `check:migrations` (`-- contract:`) |
 | [x] | T-8a Đổi dữ liệu `organization_type.FLOWER_NETWORK` → `CHAIN` (kể cả yêu cầu đổi mô hình đang chờ); mọi đường ghi lưu `CHAIN` (D-55) | — | Chuỗi cũ loại `FLOWER_NETWORK` vẫn vào đúng ChainOS |
 | [x] | T-8b [SCHEMA] Contract: bỏ giá trị enum `FLOWER_NETWORK` và các nhánh so loại tổ chức này (PO duyệt 06/11/2026) | — | `check:migrations`; tier-of, điều hướng, ma trận không đổi kết quả |
-| [ ] | `tests/tenant/tier-consistency.test.ts`: mỗi trục × Mẹ / Chuỗi / Cửa hàng | P2-A11 | Xanh trong CI |
+| [x] | `tests/tenant/tier-consistency.test.ts`: mỗi trục × Mẹ / Chuỗi / Cửa hàng (danh tính tầng + chuỗi cha, ma trận, tích hợp, thông báo, khoá công cụ + điều hướng). Vá kèm: khoá cứng thông báo của chuỗi nay áp xuống cửa hàng đối tác (PO 06/11/2026, chỉ khoá — chính sách tổ chức giữ nguyên) | P2-A11 | Xanh trong CI |
 
 Ghi chú P2-A1 (Ngành chỉ là plugin, D-01): vẫn gỡ phần **mô phỏng** tầng Ngành đang không có dữ liệu; tầng Ngành quay
 lại có chủ đích qua T-6 và ADR affiliate sau này (D-48).

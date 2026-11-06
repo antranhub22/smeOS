@@ -5,6 +5,9 @@
  * - Tầng Chuỗi của một cửa hàng: tổ chức chuỗi có quan hệ đối tác ACTIVE với cửa hàng.
  */
 import type { Prisma } from "@/generated/prisma/client"
+import { matrixRecords } from "@/core/governance/decision-record"
+import { syncDecisionScope } from "@/core/governance/infra/decision-log"
+import { organizationTierOf } from "@/core/governance/tier-of"
 import { prisma } from "@/core/tenancy/infra/prisma"
 
 import { findPrimaryChainLink } from "./tier-chain-repository"
@@ -26,9 +29,16 @@ export async function getOrgGovernance(organizationId: string, system: Governanc
   return decisionsFromSettings(org?.settings, system)
 }
 
-export async function saveOrgGovernance(organizationId: string, system: GovernanceSystem, decisions: GovernanceDecisions): Promise<boolean> {
+/** Ghi kép (ADR-012 T-7a): cùng giao dịch đưa `governance_decisions` của phạm vi `org:<id>` về đúng tập vừa lưu. */
+export async function saveOrgGovernance(
+  organizationId: string,
+  system: GovernanceSystem,
+  decisions: GovernanceDecisions,
+  decidedBy: string | null = null,
+): Promise<boolean> {
   const value = JSON.stringify(decisions)
-  const updated = await prisma.$executeRaw`
+  return prisma.$transaction(async (tx) => {
+    const updated = await tx.$executeRaw`
     UPDATE organizations
     SET settings = (CASE WHEN jsonb_typeof(settings) = 'object' THEN settings ELSE '{}'::jsonb END)
       || jsonb_build_object('governance_matrix',
@@ -36,7 +46,13 @@ export async function saveOrgGovernance(organizationId: string, system: Governan
            || jsonb_build_object(${system}::text, ${value}::jsonb)),
         updated_at = NOW()
     WHERE id = ${organizationId}`
-  return updated === 1
+    if (updated !== 1) return false
+    const org = await tx.organizations.findUnique({ where: { id: organizationId }, select: { type: true } })
+    const tier = organizationTierOf(org?.type)
+    const scope = `org:${organizationId}`
+    await syncDecisionScope(tx, { system: `matrix:${system}`, scope }, matrixRecords({ system, tier, scope, decisions, decidedBy }), decidedBy)
+    return true
+  })
 }
 
 export async function getMotherGovernance(system: GovernanceSystem): Promise<GovernanceDecisions> {
@@ -46,10 +62,15 @@ export async function getMotherGovernance(system: GovernanceSystem): Promise<Gov
 
 export async function saveMotherGovernance(system: GovernanceSystem, decisions: GovernanceDecisions, updatedBy: string | null): Promise<void> {
   const value = decisions as unknown as Prisma.InputJsonValue
-  await prisma.platform_settings.upsert({
-    where: { key: motherKey(system) },
-    create: { key: motherKey(system), value, updated_by: updatedBy },
-    update: { value, updated_by: updatedBy },
+  await prisma.$transaction(async (tx) => {
+    await tx.platform_settings.upsert({
+      where: { key: motherKey(system) },
+      create: { key: motherKey(system), value, updated_by: updatedBy },
+      update: { value, updated_by: updatedBy },
+    })
+    // Ghi kép (ADR-012 T-7a)
+    const scope = "platform"
+    await syncDecisionScope(tx, { system: `matrix:${system}`, scope }, matrixRecords({ system, tier: "MOTHER", scope, decisions, decidedBy: updatedBy }), updatedBy)
   })
 }
 

@@ -5,6 +5,8 @@
  * với dạng domain ("GLOBAL", "industry:<key>", id tổ chức) ngay ở đây.
  */
 
+import { integrationRecord } from "@/core/governance/decision-record"
+import { recordDecisions } from "@/core/governance/infra/decision-log"
 import { fromScopeKey, storedScopeIds, toScopeKey } from "@/core/governance/scope-key"
 import { prisma } from "@/core/tenancy/infra/prisma"
 import type { GovernanceTier } from "@/core/governance/layered-resolver"
@@ -19,17 +21,20 @@ export class GovernanceRepository {
     return rows.map((r) => ({ connectorKey: r.connector_key, tier: r.tier as GovernanceTier, scopeId: fromScopeKey(r.scope_id), mode: r.mode }))
   }
 
-  /** ALLOW_OWN là mặc định — xoá dòng thay vì lưu, để bảng chỉ giữ khoá thật. */
+  /** ALLOW_OWN là mặc định — xoá dòng thay vì lưu, để bảng chỉ giữ khoá thật. Ghi kép `governance_decisions` (T-7a). */
   async set(input: { connectorKey: string; tier: GovernanceTier; scopeId: string; mode: GovernanceMode; updatedBy: string }) {
     const key = { connector_key: input.connectorKey, tier: input.tier, scope_id: toScopeKey(input.scopeId) }
-    if (input.mode === "ALLOW_OWN") {
-      await prisma.integration_governance.deleteMany({ where: { ...key, scope_id: { in: storedScopeIds(input.scopeId) } } })
-      return
-    }
-    await prisma.integration_governance.upsert({
-      where: { connector_key_tier_scope_id: key },
-      create: { ...key, mode: input.mode, updated_by: input.updatedBy },
-      update: { mode: input.mode, updated_by: input.updatedBy },
+    await prisma.$transaction(async (tx) => {
+      if (input.mode === "ALLOW_OWN") {
+        await tx.integration_governance.deleteMany({ where: { ...key, scope_id: { in: storedScopeIds(input.scopeId) } } })
+      } else {
+        await tx.integration_governance.upsert({
+          where: { connector_key_tier_scope_id: key },
+          create: { ...key, mode: input.mode, updated_by: input.updatedBy },
+          update: { mode: input.mode, updated_by: input.updatedBy },
+        })
+      }
+      await recordDecisions(tx, [integrationRecord({ ...input, decidedBy: input.updatedBy })])
     })
   }
 
