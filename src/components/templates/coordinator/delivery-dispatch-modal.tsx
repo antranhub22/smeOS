@@ -118,7 +118,7 @@ export function DeliveryDispatchModal({ isOpen, order, onClose, onSubmit }: Deli
     }
   }
 
-  const input = "w-full px-3 py-2 rounded-xl border border-border bg-surface text-text focus:outline-none focus:border-alert-500"
+  const input = "w-full px-3 py-2 rounded-xl border border-border bg-surface text-text focus:outline-none focus:border-danger"
 
   return (
     <Dialog
@@ -129,12 +129,12 @@ export function DeliveryDispatchModal({ isOpen, order, onClose, onSubmit }: Deli
       size="lg"
       title={
         <div className="flex items-center gap-2">
-          <div className="h-8 w-8 rounded-lg bg-alert-100 text-alert-700 flex items-center justify-center">
+          <div className="h-8 w-8 rounded-lg bg-danger-bg text-danger-text flex items-center justify-center">
             <Truck size={18} />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="px-2 py-0.5 rounded bg-cool-100 text-cool-700 text-caption font-black uppercase border border-cool-200">
+              <span className="px-2 py-0.5 rounded bg-surface-alt text-text text-caption font-black uppercase border border-border">
                 BƯỚC 6 • GIAO HÀNG
               </span>
               <h3 className="text-body font-extrabold text-text">Giao Hàng & Bằng Chứng Giao (T20/T21)</h3>
@@ -194,8 +194,8 @@ export function DeliveryDispatchModal({ isOpen, order, onClose, onSubmit }: Deli
           </Button>
         </div>
 
-        <div className="p-3 rounded-xl border border-mint-200 bg-mint-50/40 flex flex-col gap-2">
-          <span className="font-bold text-mint-900">Giao thành công — cần ảnh POD hoặc tên người ký nhận</span>
+        <div className="p-3 rounded-xl border border-success-border bg-success-bg/40 flex flex-col gap-2">
+          <span className="font-bold text-success-text">Giao thành công — cần ảnh POD hoặc tên người ký nhận</span>
           <div className="flex items-center gap-3">
             <div className="w-24 h-24 rounded-lg border border-border bg-surface overflow-hidden flex items-center justify-center shrink-0">
               {podPreview ? (
@@ -222,14 +222,14 @@ export function DeliveryDispatchModal({ isOpen, order, onClose, onSubmit }: Deli
             size="sm"
             disabled={busy || (!podAssetId && !recipientSignedName.trim())}
             onClick={() => send("DELIVERED_SUCCESS")}
-            className="bg-mint-600 hover:bg-mint-700 text-white font-bold gap-1.5 w-fit"
+            className="bg-success hover:bg-success-text text-white font-bold gap-1.5 w-fit"
           >
             <CheckCircle2 size={14} /> Xác nhận giao thành công
           </Button>
         </div>
 
-        <div className="p-3 rounded-xl border border-alert-200 bg-alert-50/40 flex flex-col gap-2">
-          <span className="font-bold text-alert-900">Giao thất bại — mở sự cố</span>
+        <div className="p-3 rounded-xl border border-danger-border bg-danger-bg/40 flex flex-col gap-2">
+          <span className="font-bold text-danger-text">Giao thất bại — mở sự cố</span>
           <Input
             className={input}
             placeholder="Lý do (người nhận không nghe máy, sai địa chỉ…)"
@@ -241,14 +241,14 @@ export function DeliveryDispatchModal({ isOpen, order, onClose, onSubmit }: Deli
             variant="outline"
             disabled={busy || !failureReason.trim()}
             onClick={() => send("DELIVERY_FAILED")}
-            className="gap-1.5 text-alert-700 border-alert-300 w-fit"
+            className="gap-1.5 text-danger-text border-danger-border w-fit"
           >
             <AlertOctagon size={14} /> Báo giao thất bại
           </Button>
         </div>
 
         {error && (
-          <div role="alert" className="p-3 rounded-xl border border-alert-300 bg-alert-50 text-alert-800 font-semibold">
+          <div role="alert" className="p-3 rounded-xl border border-danger-border bg-danger-bg text-danger-text font-semibold">
             {error}
           </div>
         )}

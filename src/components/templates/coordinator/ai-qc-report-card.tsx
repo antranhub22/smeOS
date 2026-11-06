@@ -62,8 +62,8 @@ export function AIQCReportCard({
             {isPassed ? "ĐẠT CHUẨN (PASS)" : isRework ? "YÊU CẦU LÀM LẠI" : "CHỜ KIỂM ĐỊNH"}
           </Badge>
           {aiScore !== null && aiScore !== undefined && (
-            <div className="flex items-center gap-1 px-3 py-1 rounded-full bg-mint-50 border border-mint-200 text-mint-800 font-extrabold text-caption">
-              <Sparkles size={13} className="text-mint-600" />
+            <div className="flex items-center gap-1 px-3 py-1 rounded-full bg-success-bg border border-success-border text-success-text font-extrabold text-caption">
+              <Sparkles size={13} className="text-success-text" />
               <span>{aiScore}/100 Điểm</span>
             </div>
           )}
@@ -94,28 +94,28 @@ export function AIQCReportCard({
             <div className="rounded-xl border border-border bg-surface-alt p-3.5 space-y-2.5 text-caption">
               <div className="flex items-center justify-between">
                 <span className="text-text font-medium">Khớp nguyên phụ liệu & số lượng định mức:</span>
-                <span className="font-bold text-mint-700 flex items-center gap-1">
+                <span className="font-bold text-success-text flex items-center gap-1">
                   <Check size={14} />
                   {checklist?.flowerMatchScore || 95}%
                 </span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-text font-medium">Đúng tone màu & phong cách:</span>
-                <span className="font-bold text-mint-700 flex items-center gap-1">
+                <span className="font-bold text-success-text flex items-center gap-1">
                   <Check size={14} />
                   {checklist?.colorToneMatch !== false ? "Đạt" : "Lệch tone"}
                 </span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-text font-medium">Đúng quy cách đóng gói & phụ kiện:</span>
-                <span className="font-bold text-mint-700 flex items-center gap-1">
+                <span className="font-bold text-success-text flex items-center gap-1">
                   <Check size={14} />
                   {checklist?.wrappingMatch !== false ? "Đạt" : "Sai loại giấy"}
                 </span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-text font-medium">Thiệp chúc mừng đầy đủ, chính xác:</span>
-                <span className="font-bold text-mint-700 flex items-center gap-1">
+                <span className="font-bold text-success-text flex items-center gap-1">
                   <Check size={14} />
                   {checklist?.cardMessageAccurate !== false ? "Đạt" : "Chưa có thiệp"}
                 </span>
@@ -131,9 +131,9 @@ export function AIQCReportCard({
           )}
 
           {reworkInstructions && (
-            <div className="p-3.5 rounded-xl bg-sand-50 border border-sand-200 text-caption text-sand-900">
-              <span className="font-bold block mb-1 flex items-center gap-1 text-sand-950">
-                <AlertTriangle size={14} className="text-sand-600" />
+            <div className="p-3.5 rounded-xl bg-warning-bg border border-warning-border text-caption text-warning-text">
+              <span className="font-bold block mb-1 flex items-center gap-1 text-warning-text">
+                <AlertTriangle size={14} className="text-warning-text" />
                 Hướng dẫn chỉnh sửa / làm lại:
               </span>
               <p>{reworkInstructions}</p>
@@ -144,13 +144,13 @@ export function AIQCReportCard({
 
       <div className="flex items-center justify-end gap-3 pt-3 border-t border-dashed border-border">
         {onRequestRework && (
-          <Button variant="outline" size="sm" onClick={onRequestRework} className="gap-1.5 text-sand-800 border-sand-300 hover:bg-sand-50">
+          <Button variant="outline" size="sm" onClick={onRequestRework} className="gap-1.5 text-warning-text border-warning-border hover:bg-warning-bg">
             <RotateCcw size={14} />
             <span>Yêu cầu sửa / Làm lại</span>
           </Button>
         )}
         {onApprove && (
-          <Button size="sm" onClick={onApprove} className="bg-mint-600 hover:bg-mint-700 text-white gap-1.5 font-bold">
+          <Button size="sm" onClick={onApprove} className="bg-success hover:bg-success-text text-white gap-1.5 font-bold">
             <CheckCircle2 size={15} />
             <span>Chốt Duyệt QC & Bàn Giao Shipper</span>
           </Button>

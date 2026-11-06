@@ -41,10 +41,10 @@ const KIND_LABEL: Record<RecordPaymentBody["kind"], string> = {
 }
 
 const STATUS_LABEL: Record<CoordinationOrder["paymentStatus"], { label: string; className: string }> = {
-  UNPAID: { label: "Chưa thu", className: "bg-cool-100 text-cool-700 border-cool-200" },
-  PARTIALLY_PAID: { label: "Thu một phần", className: "bg-sand-100 text-sand-800 border-sand-200" },
-  PAID: { label: "Đã thu đủ", className: "bg-mint-100 text-mint-800 border-mint-200" },
-  REFUNDED: { label: "Đã hoàn tiền", className: "bg-alert-100 text-alert-700 border-alert-200" },
+  UNPAID: { label: "Chưa thu", className: "bg-surface-alt text-text border-border" },
+  PARTIALLY_PAID: { label: "Thu một phần", className: "bg-warning-bg text-warning-text border-warning-border" },
+  PAID: { label: "Đã thu đủ", className: "bg-success-bg text-success-text border-success-border" },
+  REFUNDED: { label: "Đã hoàn tiền", className: "bg-danger-bg text-danger-text border-danger-border" },
 }
 
 const fmtVnd = (n: number) => `${n.toLocaleString("vi-VN")}đ`
@@ -146,7 +146,7 @@ export function PaymentLedgerModal({ isOpen, order, onClose, onRecorded }: Payme
       className="max-w-lg"
       title={
         <div className="flex items-center gap-2">
-          <div className="h-8 w-8 rounded-lg bg-mint-100 text-mint-800 flex items-center justify-center">
+          <div className="h-8 w-8 rounded-lg bg-success-bg text-success-text flex items-center justify-center">
             <Wallet size={18} />
           </div>
           <div>
@@ -171,11 +171,11 @@ export function PaymentLedgerModal({ isOpen, order, onClose, onRecorded }: Payme
           </div>
           <div>
             <span className="text-text-muted block">Đã thu</span>
-            <strong className="text-mint-700 text-body-sm">{fmtVnd(order.paidVnd)}</strong>
+            <strong className="text-success-text text-body-sm">{fmtVnd(order.paidVnd)}</strong>
           </div>
           <div>
             <span className="text-text-muted block">Còn phải thu</span>
-            <strong className={`text-body-sm ${order.balanceVnd > 0 ? "text-alert-700" : "text-mint-700"}`}>{fmtVnd(order.balanceVnd)}</strong>
+            <strong className={`text-body-sm ${order.balanceVnd > 0 ? "text-danger-text" : "text-success-text"}`}>{fmtVnd(order.balanceVnd)}</strong>
           </div>
           <div className="col-span-3">
             <span className={`inline-block px-2 py-0.5 rounded border text-caption font-bold ${statusTag.className}`}>{statusTag.label}</span>
@@ -216,7 +216,7 @@ export function PaymentLedgerModal({ isOpen, order, onClose, onRecorded }: Payme
                     )}
                     {p.status === "REJECTED" && <span className="text-caption text-danger">Đã từ chối — không vào sổ thu</span>}
                   </div>
-                  <strong className={p.kind === "REFUND" ? "text-alert-700" : "text-mint-700"}>
+                  <strong className={p.kind === "REFUND" ? "text-danger-text" : "text-success-text"}>
                     {p.kind === "REFUND" ? "−" : "+"}
                     {fmtVnd(p.amountVnd)}
                   </strong>
@@ -228,7 +228,7 @@ export function PaymentLedgerModal({ isOpen, order, onClose, onRecorded }: Payme
 
         <div className="p-3.5 rounded-xl border border-border bg-surface flex flex-col gap-2.5">
           <span className="font-bold text-text flex items-center gap-1.5">
-            <PlusCircle size={14} className="text-alert-600" /> Ghi dòng mới:
+            <PlusCircle size={14} className="text-danger-text" /> Ghi dòng mới:
           </span>
           <div className="grid grid-cols-2 gap-2">
             <div>
@@ -288,12 +288,12 @@ export function PaymentLedgerModal({ isOpen, order, onClose, onRecorded }: Payme
             </div>
           </div>
           {kind === "REFUND" && (
-            <p className="text-caption text-sand-700 font-semibold">
+            <p className="text-caption text-warning-text font-semibold">
               Hoàn tiền chỉ dành cho Điều hành (R10) — máy chủ sẽ từ chối nếu tài khoản không đủ quyền.
             </p>
           )}
           {formError && (
-            <p role="alert" className="text-alert-700 font-semibold">
+            <p role="alert" className="text-danger-text font-semibold">
               {formError}
             </p>
           )}

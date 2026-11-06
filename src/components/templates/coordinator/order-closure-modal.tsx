@@ -88,12 +88,12 @@ export function OrderClosureModal({ isOpen, order, onClose, onSubmit }: OrderClo
       className="max-w-xl"
       title={
         <div className="flex items-center gap-2">
-          <div className="h-8 w-8 rounded-lg bg-mint-100 text-mint-800 flex items-center justify-center">
+          <div className="h-8 w-8 rounded-lg bg-success-bg text-success-text flex items-center justify-center">
             <Award size={18} />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="px-2 py-0.5 rounded bg-cool-100 text-cool-700 text-caption font-black uppercase border border-cool-200">
+              <span className="px-2 py-0.5 rounded bg-surface-alt text-text text-caption font-black uppercase border border-border">
                 BƯỚC 7 • HOÀN TẤT ĐƠN
               </span>
               <h3 className="text-body font-extrabold text-text">Nghiệm Thu & Đóng Đơn (T25/T26)</h3>
@@ -111,7 +111,7 @@ export function OrderClosureModal({ isOpen, order, onClose, onSubmit }: OrderClo
             size="sm"
             disabled={busy || !ready}
             onClick={handleClose}
-            className="bg-mint-600 hover:bg-mint-700 text-white font-bold gap-1.5 px-4"
+            className="bg-success hover:bg-success-text text-white font-bold gap-1.5 px-4"
           >
             <CheckCircle2 size={14} />
             <span>{busy ? "Đang đóng đơn…" : "Hoàn tất & đóng đơn"}</span>
@@ -122,7 +122,7 @@ export function OrderClosureModal({ isOpen, order, onClose, onSubmit }: OrderClo
       <div className="p-1 flex flex-col gap-4 text-caption">
         <div
           className={`p-4 rounded-xl border flex flex-col gap-2 ${
-            sla.tone === "ok" ? "border-mint-200 bg-mint-50/50" : sla.tone === "late" ? "border-sand-200 bg-sand-50/50" : "border-border bg-surface-alt"
+            sla.tone === "ok" ? "border-success-border bg-success-bg/50" : sla.tone === "late" ? "border-warning-border bg-warning-bg/50" : "border-border bg-surface-alt"
           }`}
         >
           <span className="font-extrabold text-text flex items-center gap-1.5">
@@ -142,11 +142,11 @@ export function OrderClosureModal({ isOpen, order, onClose, onSubmit }: OrderClo
 
         <div className="p-3.5 rounded-xl border border-border bg-surface-alt flex flex-col gap-2">
           <span className="font-bold text-text flex items-center gap-1.5">
-            <FileCheck size={14} className="text-alert-600" /> Điều kiện đóng đơn:
+            <FileCheck size={14} className="text-danger-text" /> Điều kiện đóng đơn:
           </span>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-caption">
             {checks.map((c) => (
-              <div key={c.label} className={`flex items-center gap-1.5 font-semibold ${c.ok ? "text-mint-800" : "text-alert-700"}`}>
+              <div key={c.label} className={`flex items-center gap-1.5 font-semibold ${c.ok ? "text-success-text" : "text-danger-text"}`}>
                 {c.ok ? <CheckCircle2 size={13} className="shrink-0" /> : <XCircle size={13} className="shrink-0" />}
                 <span>{c.label}</span>
               </div>
@@ -166,7 +166,7 @@ export function OrderClosureModal({ isOpen, order, onClose, onSubmit }: OrderClo
                   onClick={() => setPartnerRating(star)}
                   className="text-[length:inherit] h-auto font-[inherit] gap-0 p-0.5 cursor-pointer"
                 >
-                  <Star size={20} className={star <= partnerRating ? "fill-sand-400 text-sand-500" : "text-cool-300"} />
+                  <Star size={20} className={star <= partnerRating ? "fill-warning text-warning-text" : "text-text-muted"} />
                 </Button>
               ))}
             </div>
@@ -179,7 +179,7 @@ export function OrderClosureModal({ isOpen, order, onClose, onSubmit }: OrderClo
               value={payout}
               onChange={(e) => setPayout(e.target.value)}
               placeholder="Để trống nếu chưa chốt"
-              className="w-full px-3 py-2 rounded-xl border border-border bg-surface text-text focus:outline-none focus:border-alert-500"
+              className="w-full px-3 py-2 rounded-xl border border-border bg-surface text-text focus:outline-none focus:border-danger"
             />
           </div>
           <div>
@@ -188,13 +188,13 @@ export function OrderClosureModal({ isOpen, order, onClose, onSubmit }: OrderClo
               rows={2}
               value={closureNotes}
               onChange={(e) => setClosureNotes(e.target.value)}
-              className="w-full p-2.5 rounded-lg border border-border bg-surface text-text focus:outline-none focus:border-alert-500"
+              className="w-full p-2.5 rounded-lg border border-border bg-surface text-text focus:outline-none focus:border-danger"
             />
           </div>
         </div>
 
         {error && (
-          <div role="alert" className="p-3 rounded-xl border border-alert-300 bg-alert-50 text-alert-800 font-semibold">
+          <div role="alert" className="p-3 rounded-xl border border-danger-border bg-danger-bg text-danger-text font-semibold">
             {error}
           </div>
         )}

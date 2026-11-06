@@ -1,9 +1,11 @@
 "use client"
 
+import { NativeSelect } from "@/components/ui/select"
 import React, { useState, useMemo } from "react"
 import { Search, CheckCircle2, Store, Plus } from "@/components/ui/icons"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
+import { Dialog } from "@/components/ui/dialog"
 import { ProductThumb } from "@/components/products/product-thumb"
 import type { CatalogProduct } from "./catalog-management-tab"
 
@@ -60,36 +62,10 @@ export function ProductLibraryModal({
   if (!open) return null
 
   return (
-    <div
-      role="dialog"
-      aria-modal="true"
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-xs p-4"
-    >
-      <div className="w-full max-w-3xl rounded-2xl bg-surface border border-border shadow-xl flex flex-col max-h-[85vh] overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-        {/* Header */}
-        <div className="flex items-center justify-between border-b border-border p-4 bg-surface-alt/40">
-          <div className="flex items-center gap-2.5">
-            <div className="h-9 w-9 rounded-xl bg-primary-muted text-primary flex items-center justify-center">
-              <Store className="h-5 w-5" />
-            </div>
-            <div>
-              <h3 className="text-title-sm font-bold text-text">
-                Chọn sản phẩm từ Kho cửa hàng
-              </h3>
-              <p className="text-caption text-text-muted">
-                Tái sử dụng sản phẩm và ảnh chất lượng cao đã có sẵn trong shop ({products.length} sản phẩm)
-              </p>
-            </div>
-          </div>
-          <button
-            type="button"
-            onClick={onClose}
-            className="text-text-muted hover:text-text p-1.5 rounded-lg hover:bg-surface-alt transition-colors"
-          >
-            ✕
-          </button>
-        </div>
-
+    <Dialog open onOpenChange={(o) => { if (!o) onClose() }} size="lg"
+      title={<span className="flex items-center gap-2"><Store className="h-5 w-5 text-primary" />Chọn sản phẩm từ Kho cửa hàng</span>}
+      description={`Tái sử dụng sản phẩm và ảnh chất lượng cao đã có sẵn trong shop (${products.length} sản phẩm)`}>
+      <div className="-m-5 sm:-m-6 flex flex-col">
         {/* Filter Toolbar */}
         <div className="p-4 border-b border-border flex flex-col sm:flex-row gap-2.5 bg-surface">
           <div className="relative flex-1">
@@ -102,7 +78,7 @@ export function ProductLibraryModal({
             />
           </div>
           {categories.length > 0 && (
-            <select
+            <NativeSelect
               value={selectedCategory}
               onChange={(e) => setSelectedCategory(e.target.value)}
               className="h-9 rounded-md border border-border bg-surface px-3 text-caption font-medium text-text focus:outline-none focus:ring-1 focus:ring-primary"
@@ -113,7 +89,7 @@ export function ProductLibraryModal({
                   {c}
                 </option>
               ))}
-            </select>
+            </NativeSelect>
           )}
         </div>
 
@@ -129,13 +105,13 @@ export function ProductLibraryModal({
               {filteredProducts.map((p) => {
                 const isSelected = selectedIds.includes(p.id)
                 return (
-                  <button
+                  <Button variant="outline"
                     key={p.id}
                     type="button"
                     onClick={() => handleToggle(p.id)}
-                    className={`relative rounded-xl border text-left p-2 transition-all flex flex-col gap-2 group cursor-pointer ${
+                    className={`h-auto text-[length:inherit] justify-start font-[inherit] relative rounded-xl border text-left p-2 transition-all flex flex-col gap-2 group cursor-pointer ${
                       isSelected
-                        ? "border-primary bg-primary-muted/20 ring-2 ring-primary/30"
+                        ? "border-primary bg-primary-muted/20 ring-2 ring-primary/30 hover:bg-primary-muted/20"
                         : "border-border bg-surface hover:border-primary-border hover:bg-surface-alt/50"
                     }`}
                   >
@@ -165,7 +141,7 @@ export function ProductLibraryModal({
                         )}
                       </div>
                     </div>
-                  </button>
+                  </Button>
                 )
               })}
             </div>
@@ -194,6 +170,6 @@ export function ProductLibraryModal({
           </div>
         </div>
       </div>
-    </div>
+    </Dialog>
   )
 }

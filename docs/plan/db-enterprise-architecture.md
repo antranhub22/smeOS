@@ -50,8 +50,8 @@ cần test khoá hành vi trước.
 
 ### GĐ0 — Quyết định (trước mọi PR)
 
-- [ ] PO duyệt ADR-012, ADR-013, ADR-014, ADR-015, ADR-016 (đổi trạng thái thành `ĐÃ CHỐT`)
-- [ ] ADR-012 §6: (1) nhượng quyền xem báo cáo chuỗi? (2) công cụ tách chi nhánh thành tổ chức? (3) `FLOWER_NETWORK` khác `CHAIN`?
+- [ ] PO duyệt ADR-012 (✓ 06/11/2026), ADR-013, ADR-014, ADR-015, ADR-016 (đổi trạng thái thành `ĐÃ CHỐT`)
+- [x] ADR-012 §6: (1) nhượng quyền không xem báo cáo chuỗi — D-53 · (2) không làm công cụ tách chi nhánh — D-54 · (3) `FLOWER_NETWORK` chỉ là nhãn, gộp về `CHAIN` — D-55
 - [ ] ADR-013 §6: chủ tổ chức xem nhật ký truy cập trong ứng dụng? mốc bật RLS chặn thật?
 - [x] ADR-014 §6: tìm theo 4 số cuối (D-49) · hạn lưu mức thường dùng (D-50) · vùng dữ liệu B (D-51)
 - [ ] Kế toán/pháp lý xác nhận bảng hạn lưu D-50 trước khi cam kết với khách
@@ -81,13 +81,14 @@ cần test khoá hành vi trước.
 
 | ☐ | Mục | Thay | Gate thêm |
 |---|---|---|---|
-| [ ] | T-2 [SCHEMA] `organization_links` + backfill + ghi kép + `is_primary` (index riêng phần) | P2-A2 | Tenant test đối tác hai chuỗi nhận khoá chuỗi chính |
+| [x] | T-2 [SCHEMA] `organization_links` + backfill + ghi kép + `is_primary` (giữ bằng trigger ràng buộc — Prisma không khai được index riêng phần) | P2-A2 | Tenant test đối tác hai chuỗi: cạnh chính đúng, tạm ngưng thì chuyển — `tests/tenant/organization-links-sync.test.ts` |
 | [ ] | T-3 Mọi đọc sang `organization_links`; contract: xoá `chain_partnerships` | P2-A2 | `test:tenant`, `test:platform` |
 | [ ] | T-4 [SCHEMA] **B5** Gộp `chain_branches` vào `branches`; `memberships.branch_id` thay `chain_branch_code` | P2-A3 | Giá theo chi nhánh, `/cua-hang`, điều phối không đổi |
 | [ ] | T-5 `grants` có phạm vi trong `TenantContext`; phạm vi chi nhánh đợt 1 (đơn, khách, điều phối) | P2-A4, P2-A5 | Tenant test chéo chi nhánh |
 | [ ] | T-5b Phạm vi chi nhánh đợt 2 (sản phẩm/giá, kho, báo cáo) và đợt 3 (còn lại) | P2-A5 | Như trên, từng đợt |
 | [ ] | T-6 [SCHEMA nhỏ] `industries` + `organizations.industry_key`; khoá phạm vi dạng `platform · industry: · org: · branch:` | P2-A1 (xem ghi chú) | `npm run check:industry` |
 | [ ] | T-7 [SCHEMA] `governance_decisions` + backfill + chuyển `layered-resolver` + contract | — | Ma trận, thông báo, tích hợp không đổi kết quả |
+| [ ] | T-8 [SCHEMA] Gộp `organization_type.FLOWER_NETWORK` vào `CHAIN` (D-55) | — | Chuỗi cũ loại `FLOWER_NETWORK` vẫn vào đúng ChainOS |
 | [ ] | `tests/tenant/tier-consistency.test.ts`: mỗi trục × Mẹ / Chuỗi / Cửa hàng | P2-A11 | Xanh trong CI |
 
 Ghi chú P2-A1 (Ngành chỉ là plugin, D-01): vẫn gỡ phần **mô phỏng** tầng Ngành đang không có dữ liệu; tầng Ngành quay

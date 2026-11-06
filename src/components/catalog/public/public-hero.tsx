@@ -56,7 +56,7 @@ export function PublicHero({
         )}
         <a
           href={`#${productsAnchorId}`}
-          className="mt-7 inline-flex min-h-11 items-center justify-center rounded-full px-7 text-sm font-semibold shadow-lg transition-transform hover:-translate-y-0.5"
+          className="mt-7 inline-flex min-h-11 items-center justify-center rounded-full px-7 text-body-sm font-semibold shadow-lg transition-transform hover:-translate-y-0.5"
           style={{ backgroundColor: style.tokens.ctaBg, color: style.tokens.ctaText }}
         >
           Xem bộ sưu tập

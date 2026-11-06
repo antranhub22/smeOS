@@ -1,5 +1,7 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import React from "react"
 import { Search, LayoutGrid, BookOpen, List } from "@/components/ui/icons"
 import type { StyleDefinition } from "@/modules/catalog-studio/domain/entities/catalog-studio.types"
@@ -45,7 +47,7 @@ export function CatalogStorefrontToolbar({
             className="absolute left-3.5 top-1/2 -translate-y-1/2"
             style={{ color: style.tokens.textSecondary }}
           />
-          <input
+          <Input
             type="text"
             placeholder="Tìm theo tên, mã sản phẩm…"
             value={searchQuery}
@@ -55,7 +57,7 @@ export function CatalogStorefrontToolbar({
               borderColor: style.tokens.border,
               color: style.tokens.textPrimary,
             }}
-            className="w-full pl-10 pr-4 py-2.5 rounded-2xl border text-sm placeholder:opacity-50 focus:outline-none focus:ring-2 shadow-xs transition-colors"
+            className="w-full pl-10 pr-4 py-2.5 rounded-2xl border text-body-sm placeholder:opacity-50 focus:outline-none focus:ring-2 shadow-xs transition-colors"
           />
         </div>
 
@@ -66,16 +68,16 @@ export function CatalogStorefrontToolbar({
             style={{ backgroundColor: style.tokens.surface, borderColor: style.tokens.border }}
           >
             {(["grid", "lookbook", "compact"] as const).map((mode) => (
-              <button
+              <Button variant="ghost"
                 key={mode}
                 type="button"
                 onClick={() => onStyleChange(mode)}
                 title={mode === "grid" ? "Lưới tiêu chuẩn" : mode === "lookbook" ? "Tạp chí ảnh" : "Danh sách đặt nhanh"}
                 style={catalogStyle === mode ? activeStyle : inactiveStyle}
-                className="p-1.5 rounded-xl transition-colors"
+                className="h-auto text-[length:inherit] font-[inherit] gap-0 p-1.5 rounded-xl transition-colors"
               >
                 {mode === "grid" ? <LayoutGrid size={16} /> : mode === "lookbook" ? <BookOpen size={16} /> : <List size={16} />}
-              </button>
+              </Button>
             ))}
           </div>
         )}
@@ -83,22 +85,22 @@ export function CatalogStorefrontToolbar({
         {/* Occasion Filter */}
         {allOccasions.length > 0 && (
           <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0 scrollbar-none">
-            <button
+            <Button variant="outline" type="submit"
               onClick={() => onOccasionChange("all")}
               style={selectedOccasion === "all" ? activeStyle : { backgroundColor: style.tokens.surface, color: style.tokens.textSecondary, borderColor: style.tokens.border }}
-              className="px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap border transition-colors"
+              className="h-auto gap-0 px-3 py-1.5 rounded-xl text-caption font-bold whitespace-nowrap border transition-colors"
             >
               Tất cả ({totalCount})
-            </button>
+            </Button>
             {allOccasions.map((occ) => (
-              <button
+              <Button variant="outline" type="submit"
                 key={occ}
                 onClick={() => onOccasionChange(occ)}
                 style={selectedOccasion === occ ? activeStyle : { backgroundColor: style.tokens.surface, color: style.tokens.textSecondary, borderColor: style.tokens.border }}
-                className="px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap border transition-colors"
+                className="h-auto gap-0 px-3 py-1.5 rounded-xl text-caption font-bold whitespace-nowrap border transition-colors"
               >
                 {occ}
-              </button>
+              </Button>
             ))}
           </div>
         )}

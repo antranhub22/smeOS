@@ -17,14 +17,14 @@ export function formatStaffCode(id: string | null | undefined): string {
   return `NV-${short}`
 }
 
-/** Bảng màu nhận diện nhân viên — 6 tông R1-compliant (palette aliases đã đăng ký ở globals.css) */
+/** Bảng màu nhận diện nhân viên — 6 tông `--color-tone-*` (PO 05/11/2026; thay 12 thang màu cũ đã xoá) */
 const STAFF_COLOR_PALETTE = [
-  { bg: "bg-orchid-100", border: "border-orchid-200", text: "text-orchid-800", badge: "bg-orchid-600" },
-  { bg: "bg-ocean-100",  border: "border-ocean-200",  text: "text-ocean-800",  badge: "bg-ocean-600"  },
-  { bg: "bg-azure-100",  border: "border-azure-200",  text: "text-azure-800",  badge: "bg-azure-600"  },
-  { bg: "bg-mint-100",   border: "border-mint-200",   text: "text-mint-800",   badge: "bg-mint-600"   },
-  { bg: "bg-sand-100",   border: "border-sand-200",   text: "text-sand-800",   badge: "bg-sand-700"   },
-  { bg: "bg-lagoon-100", border: "border-lagoon-200", text: "text-lagoon-800", badge: "bg-lagoon-600" },
+  { bg: "bg-tone-indigo/10", border: "border-tone-indigo/30", text: "text-tone-indigo", badge: "bg-tone-indigo" },
+  { bg: "bg-tone-blue/10", border: "border-tone-blue/30", text: "text-tone-blue", badge: "bg-tone-blue" },
+  { bg: "bg-tone-teal/10", border: "border-tone-teal/30", text: "text-tone-teal", badge: "bg-tone-teal" },
+  { bg: "bg-tone-green/10", border: "border-tone-green/30", text: "text-tone-green", badge: "bg-tone-green" },
+  { bg: "bg-tone-amber/10", border: "border-tone-amber/30", text: "text-tone-amber", badge: "bg-tone-amber" },
+  { bg: "bg-tone-rose/10", border: "border-tone-rose/30", text: "text-tone-rose", badge: "bg-tone-rose" },
 ] as const
 
 /** Hash đơn giản (FNV-1a 32-bit) để ánh xạ ID → chỉ số màu xác định */

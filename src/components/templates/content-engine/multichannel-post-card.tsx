@@ -314,7 +314,7 @@ export function MultichannelPostCard({
             variant="outline"
             size="sm"
             onClick={handleCopyZaloQuick}
-            className="gap-1.5 text-caption text-ocean-700 border-ocean-200 bg-ocean-50/50 hover:bg-ocean-50"
+            className="gap-1.5 text-caption text-info-text border-info-border bg-info-bg/50 hover:bg-info-bg"
           >
             {copiedZalo ? <Check size={14} className="text-secondary-text" /> : <MessageCircle size={14} />}
             {copiedZalo ? "Đã chép mẫu Zalo" : "Chép mẫu Zalo"}

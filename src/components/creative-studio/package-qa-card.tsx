@@ -14,9 +14,9 @@ import type { CampaignPackageDto } from "./package-client"
 type Report = NonNullable<CampaignPackageDto["qa_report"]>
 
 const VERDICT_STYLE: Record<Report["verdict"], { label: string; cls: string; Icon: typeof CheckCircle2 }> = {
-  PASS: { label: "Đạt", cls: "text-mint-700 bg-success-bg border-mint-200", Icon: CheckCircle2 },
-  NEEDS_REVIEW: { label: "Cần xem lại", cls: "text-warning bg-warning-bg border-sand-200", Icon: AlertCircle },
-  REJECTED: { label: "Từ chối", cls: "text-blush-700 bg-blush-50 border-blush-200", Icon: XCircle },
+  PASS: { label: "Đạt", cls: "text-success-text bg-success-bg border-success-border", Icon: CheckCircle2 },
+  NEEDS_REVIEW: { label: "Cần xem lại", cls: "text-warning bg-warning-bg border-warning-border", Icon: AlertCircle },
+  REJECTED: { label: "Từ chối", cls: "text-primary bg-primary-muted border-primary-border", Icon: XCircle },
 }
 
 export function PackageQACard({ report }: { report: Report }) {

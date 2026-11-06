@@ -1,5 +1,6 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
 import React, { useState } from "react"
 import { Sparkles } from "@/components/ui/icons"
 import { LandingJourneyEntry, type LandingExecutionMode } from "./landing-journey-entry"
@@ -8,10 +9,7 @@ import type { CatalogProduct } from "./catalog-management-tab"
 import { generateQRCodeDataUrl, triggerDownload } from "@/core/media/qr-engine"
 import { CAMPAIGN_OCCASIONS, CAMPAIGN_ARCHETYPES } from "./landing-campaign-constants"
 import type { EnabledSectionsConfig } from "./landing-campaign-preview"
-import {
-  generateLandingPageContent,
-  type GeneratedLandingPackage,
-} from "@/modules/content-engine/domain/landing-content-generator"
+import { generateLandingPageContent, type GeneratedLandingPackage } from "@/modules/content-engine/domain/landing-content-generator"
 import { QuickProductUploadModal } from "./quick-product-upload-modal"
 import { SmartInputDropzone, type SmartInputData } from "./smart-input-dropzone"
 import { JourneyProcessingState, type ProcessingStep } from "./journey-processing-state"
@@ -282,13 +280,13 @@ export function LandingCampaignTab({ products, onRefresh, pageType, shopName }: 
                 <Sparkles className="h-4 w-4 shrink-0" />
                 <span>{fallbackReason === "quyen" ? "Tài khoản của bạn chưa được cấp quyền tạo nội dung bằng AI nên đang dùng nội dung mẫu — nhờ Điều hành bật quyền, hoặc chỉnh lại ở từng bước." : fallbackReason ? "AI chưa soạn được nội dung nên đang dùng nội dung mẫu — hãy chỉnh lại ở từng bước trước khi xuất bản." : "AI đã soạn nội dung và điền sẵn các lựa chọn. Bạn có thể kiểm tra từng bước trước khi xuất bản."}</span>
               </div>
-              <button
+              <Button variant="ghost"
                 type="button"
                 onClick={() => setEntryMode("auto-input")}
-                className="text-caption font-bold text-primary underline hover:text-primary-dark shrink-0 cursor-pointer"
+                className="h-auto px-0 py-0 gap-0 text-caption font-bold text-primary underline hover:text-primary-dark shrink-0 cursor-pointer"
               >
                 Tải lại nguyên liệu khác
-              </button>
+              </Button>
             </div>
           )}
 

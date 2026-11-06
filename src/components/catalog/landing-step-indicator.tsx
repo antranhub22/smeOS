@@ -1,5 +1,6 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
 import React from "react"
 import { Check } from "@/components/ui/icons"
 
@@ -38,15 +39,15 @@ export function LandingStepIndicator({
 
           return (
             <React.Fragment key={step.id}>
-              <button
+              <Button variant="ghost"
                 type="button"
                 disabled={!isClickable}
                 aria-label={`Bước ${step.id}: ${step.title}${isDone ? " (đã xong)" : ""}`}
                 aria-current={isCurrent ? "step" : undefined}
                 onClick={() => isClickable && onStepClick(step.id)}
-                className={`flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-left transition-colors whitespace-nowrap ${
+                className={`h-auto text-[length:inherit] justify-start flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-left transition-colors whitespace-nowrap ${
                   isCurrent
-                    ? "bg-primary-muted text-primary font-bold"
+                    ? "bg-primary-muted text-primary font-bold hover:bg-primary-muted"
                     : isDone
                     ? "text-text hover:bg-surface-alt cursor-pointer"
                     : "text-text-muted cursor-not-allowed"
@@ -67,7 +68,7 @@ export function LandingStepIndicator({
                   <div className="text-caption font-semibold leading-tight">{step.title}</div>
                   <div className="text-caption text-text-muted leading-tight">{step.description}</div>
                 </div>
-              </button>
+              </Button>
 
               {idx < LANDING_WIZARD_STEPS.length - 1 && (
                 <div className="h-[1px] flex-1 bg-border mx-1 min-w-4" />

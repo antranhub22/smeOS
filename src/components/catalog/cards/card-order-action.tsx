@@ -22,7 +22,7 @@ interface CardOrderActionProps {
  * chỉ bật "Liên hệ" → nhắn Zalo đặt mẫu. Trên di động chỉ còn biểu tượng (vẫn có nhãn truy cập).
  */
 export function CardOrderAction({ product, shop, entry, onOrderProduct, ctaBg, ctaText, className = "" }: CardOrderActionProps) {
-  const base = `pointer-events-auto inline-flex min-h-9 items-center gap-1.5 rounded-xl px-3 py-1.5 text-xs font-bold shadow-xs transition-all active:scale-95 ${className}`
+  const base = `pointer-events-auto inline-flex min-h-9 items-center gap-1.5 rounded-xl px-3 py-1.5 text-caption font-bold shadow-xs transition-all active:scale-95 ${className}`
   if (entry.order) {
     return (
       // Màu nút theo phong cách catalog (style ghi đè màu mặc định của Button)

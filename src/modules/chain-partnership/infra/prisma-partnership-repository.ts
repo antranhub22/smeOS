@@ -3,6 +3,8 @@ import type { Prisma, PrismaClient } from "@/generated/prisma/client"
 import { prisma as defaultPrisma } from "@/core/tenancy/infra/prisma"
 import { hashPassword } from "@/modules/organization/infra/password-hasher"
 import { slugCandidates } from "@/modules/organization/domain/slug"
+import { syncOrganizationLink } from "@/modules/organization/infra/organization-link-sync"
+import { findStoreByIdentifier, type StoreByIdentifier } from "./store-identifier-lookup"
 import type {
   IChainPartnershipRepository,
   ListPartnershipsFilter,
@@ -117,6 +119,7 @@ export class PrismaChainPartnershipRepository implements IChainPartnershipReposi
           district: input.district ?? null,
         },
       })
+      await syncOrganizationLink(tx, row.id) // ADR-012 T-2: ghi kép sang organization_links
 
       return {
         partnership: this.mapEntity(row, partnerOrg.name),
@@ -196,81 +199,20 @@ export class PrismaChainPartnershipRepository implements IChainPartnershipReposi
   }
 
   async updateStatus(id: string, status: PartnershipStatus): Promise<ChainPartnershipEntity> {
-    const row = await this.prisma.chain_partnerships.update({
-      where: { id },
-      data: { status },
-      include: {
-        partner_organization: {
-          select: { name: true, slug: true },
-        },
-      },
+    const row = await this.prisma.$transaction(async (tx) => {
+      const updated = await tx.chain_partnerships.update({
+        where: { id },
+        data: { status },
+        include: { partner_organization: { select: { name: true, slug: true } } },
+      })
+      await syncOrganizationLink(tx, updated.id)
+      return updated
     })
     return this.mapEntity(row, row.partner_organization?.name, row.partner_organization?.slug)
   }
 
-  async findStoreByIdentifier(identifier: string): Promise<{
-    orgId: string
-    orgName: string
-    founderUserId: string
-    contactEmail: string
-    contactPhone?: string | undefined
-    address?: string | undefined
-  } | null> {
-    const trimmed = identifier.trim().toLowerCase()
-
-    // 1. Thử tìm qua slug hoặc tên tổ chức
-    const org = await this.prisma.organizations.findFirst({
-      where: {
-        OR: [{ slug: trimmed }, { name: { equals: identifier.trim(), mode: "insensitive" } }],
-      },
-      include: {
-        memberships: {
-          include: {
-            user: { select: { id: true, email: true, phone: true } },
-          },
-          take: 1,
-        },
-      },
-    })
-
-    // 2. Nếu không thấy, thử tìm qua email người dùng
-    if (!org) {
-      const user = await this.prisma.users.findUnique({
-        where: { email: trimmed },
-        include: {
-          memberships: {
-            include: { organization: true },
-            take: 1,
-          },
-        },
-      })
-      if (user && user.memberships[0]?.organization) {
-        const foundOrg = user.memberships[0].organization
-        const settings = (foundOrg.settings as Record<string, unknown> | null) ?? {}
-        return {
-          orgId: foundOrg.id,
-          orgName: foundOrg.name,
-          founderUserId: user.id,
-          contactEmail: user.email,
-          contactPhone: user.phone ?? undefined,
-          address: typeof settings.address === "string" ? settings.address : undefined,
-        }
-      }
-    }
-
-    if (!org) return null
-
-    const founderUser = org.memberships[0]?.user
-    const settings = (org.settings as Record<string, unknown> | null) ?? {}
-
-    return {
-      orgId: org.id,
-      orgName: org.name,
-      founderUserId: founderUser?.id || "",
-      contactEmail: founderUser?.email || "",
-      contactPhone: founderUser?.phone ?? undefined,
-      address: typeof settings.address === "string" ? settings.address : undefined,
-    }
+  findStoreByIdentifier(identifier: string): Promise<StoreByIdentifier | null> {
+    return findStoreByIdentifier(this.prisma, identifier)
   }
 
   async linkExistingStore(params: {
@@ -295,7 +237,8 @@ export class PrismaChainPartnershipRepository implements IChainPartnershipReposi
     if (params.contactPhone !== undefined) updateData.contact_phone = params.contactPhone
     if (params.contactEmail !== undefined) updateData.contact_email = params.contactEmail
 
-    const row = await this.prisma.chain_partnerships.upsert({
+    const row = await this.prisma.$transaction(async (tx) => {
+      const saved = await tx.chain_partnerships.upsert({
       where: {
         chain_org_id_partner_org_id: {
           chain_org_id: params.chainOrgId,
@@ -315,13 +258,11 @@ export class PrismaChainPartnershipRepository implements IChainPartnershipReposi
         contact_phone: params.contactPhone ?? null,
         contact_email: params.contactEmail ?? null,
       },
-      include: {
-        partner_organization: {
-          select: { name: true },
-        },
-      },
+        include: { partner_organization: { select: { name: true } } },
+      })
+      await syncOrganizationLink(tx, saved.id)
+      return saved
     })
-
     const partnerName = row.partner_organization?.name
     return this.mapEntity(row, partnerName)
   }

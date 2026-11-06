@@ -19,7 +19,7 @@ export function resolveNavTier(organizationType?: string | null, roleKey?: strin
 }
 
 export const NAV_TIER_THEME: Record<NavTierKey, { logo: string; accent: string }> = {
-  mother: { logo: "bg-orchid-800", accent: "bg-orchid-700" },
+  mother: { logo: "bg-tone-indigo", accent: "bg-tone-indigo/80" },
   industry: { logo: "bg-tone-amber", accent: "bg-accent" },
   chain: { logo: "bg-tone-blue", accent: "bg-tone-blue" },
   store: { logo: "bg-primary", accent: "bg-primary" },

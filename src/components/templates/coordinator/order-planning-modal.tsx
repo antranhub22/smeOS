@@ -67,12 +67,12 @@ export function OrderPlanningModal({
       size="lg"
       title={
         <div className="flex items-center gap-2">
-          <div className="h-8 w-8 rounded-lg bg-alert-100 text-alert-700 flex items-center justify-center">
+          <div className="h-8 w-8 rounded-lg bg-danger-bg text-danger-text flex items-center justify-center">
             <ClipboardList size={18} />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="px-2 py-0.5 rounded bg-cool-100 text-cool-700 text-caption font-black uppercase border border-cool-200">
+              <span className="px-2 py-0.5 rounded bg-surface-alt text-text text-caption font-black uppercase border border-border">
                 BƯỚC 2 • KẾ HOẠCH
               </span>
               <h3 className="text-body font-extrabold text-text">
@@ -93,7 +93,7 @@ export function OrderPlanningModal({
             size="sm"
             disabled={busy}
             onClick={handleConfirm}
-            className="bg-alert-600 hover:bg-alert-700 text-white font-bold gap-1.5 px-4 shadow-sm"
+            className="bg-danger hover:bg-danger-text text-white font-bold gap-1.5 px-4 shadow-sm"
           >
             <span>Chốt Kế Hoạch ➔ Tìm Đối Tác (Bước 3)</span>
             <ArrowRight size={14} />
@@ -106,18 +106,18 @@ export function OrderPlanningModal({
         <div className="p-3.5 rounded-xl border border-border bg-surface-alt flex flex-col gap-3">
           <div className="flex items-center justify-between border-b border-dashed border-border/80 pb-2">
             <span className="font-bold text-text flex items-center gap-1.5">
-              <Flower2 size={13} className="text-alert-600" />
+              <Flower2 size={13} className="text-danger-text" />
               <span>Mẫu sản phẩm & Giá:</span>
               <strong className="text-text">{order.productTitle}</strong>
             </span>
-            <span className="font-extrabold text-blush-700">
+            <span className="font-extrabold text-primary">
               {(order.unitPriceVnd || 0).toLocaleString("vi-VN")} đ
             </span>
           </div>
 
           <div className="flex items-start gap-3">
             {order.sampleImageUrl && (
-              <div className="w-16 h-16 rounded-lg border border-alert-200 overflow-hidden shrink-0 relative bg-surface">
+              <div className="w-16 h-16 rounded-lg border border-danger-border overflow-hidden shrink-0 relative bg-surface">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={order.sampleImageUrl}
@@ -128,11 +128,11 @@ export function OrderPlanningModal({
             )}
             <div className="flex-1 flex flex-col gap-1 text-caption">
               <div className="flex items-center gap-1 text-text-muted">
-                <MapPin size={12} className="text-alert-600 shrink-0" />
+                <MapPin size={12} className="text-danger-text shrink-0" />
                 <span className="text-text font-medium line-clamp-1">{formattedAddress}</span>
               </div>
               <div className="flex items-center gap-1 text-text-muted">
-                <Clock size={12} className="text-blush-600 shrink-0" />
+                <Clock size={12} className="text-primary shrink-0" />
                 <span>Hẹn giao khách:</span>
                 <strong className="text-text font-bold">{order.deliveryTargetTime}</strong>
               </div>
@@ -165,9 +165,9 @@ export function OrderPlanningModal({
         </div>
 
         {/* 2. Thiết lập Timeline sản xuất lùi từ giờ giao khách (P2 Timeline) */}
-        <div className="p-3.5 rounded-xl border border-alert-200 bg-alert-50/40 flex flex-col gap-3">
-          <span className="font-extrabold text-alert-950 text-caption flex items-center gap-1.5">
-            <Calendar size={13} className="text-alert-600" />
+        <div className="p-3.5 rounded-xl border border-danger-border bg-danger-bg/40 flex flex-col gap-3">
+          <span className="font-extrabold text-danger-text text-caption flex items-center gap-1.5">
+            <Calendar size={13} className="text-danger-text" />
             Thiết Lập Timeline Sản Xuất & Lấy Hàng (Reverse Scheduling):
           </span>
 
@@ -181,7 +181,7 @@ export function OrderPlanningModal({
                 required
                 value={productionTargetTime}
                 onChange={(e) => setProductionTargetTime(e.target.value)}
-                className="w-full px-3 py-2 rounded-xl border border-border bg-surface text-text font-bold focus:outline-none focus:border-alert-500"
+                className="w-full px-3 py-2 rounded-xl border border-border bg-surface text-text font-bold focus:outline-none focus:border-danger"
               />
               <span className="text-caption text-text-muted mt-0.5 block">
                 Nên hoàn thiện trước giờ lấy hoa 30 phút để AI QC kiểm định
@@ -197,7 +197,7 @@ export function OrderPlanningModal({
                 required
                 value={pickupTargetTime}
                 onChange={(e) => setPickupTargetTime(e.target.value)}
-                className="w-full px-3 py-2 rounded-xl border border-border bg-surface text-text font-bold focus:outline-none focus:border-alert-500"
+                className="w-full px-3 py-2 rounded-xl border border-border bg-surface text-text font-bold focus:outline-none focus:border-danger"
               />
               <span className="text-caption text-text-muted mt-0.5 block">
                 Đảm bảo shipper kịp di chuyển trước giờ hẹn khách
@@ -208,7 +208,7 @@ export function OrderPlanningModal({
 
         {/* 3. Rủi ro do máy chủ tính từ giờ hẹn + sự cố (F09) — không tự chọn tay */}
         <div className="p-3 rounded-xl border border-border bg-surface-alt flex items-center gap-2">
-          <AlertTriangle size={13} className="text-sand-500" />
+          <AlertTriangle size={13} className="text-warning-text" />
           <span>
             Rủi ro hiện tại: <strong>{order.riskLevel}</strong>
             {order.riskReason ? ` — ${order.riskReason}` : ""}
@@ -225,12 +225,12 @@ export function OrderPlanningModal({
             placeholder="Ví dụ: Gia công tỉ mỉ theo mẫu thiết kế, đóng gói quy chuẩn chống va đập, thiệp in chuẩn chữ đẹp..."
             value={planningNotes}
             onChange={(e) => setPlanningNotes(e.target.value)}
-            className="w-full px-3 py-2 rounded-xl border border-border bg-surface text-text focus:outline-none focus:border-alert-500"
+            className="w-full px-3 py-2 rounded-xl border border-border bg-surface text-text focus:outline-none focus:border-danger"
           />
         </div>
 
         {error && (
-          <div role="alert" className="p-3 rounded-xl border border-alert-300 bg-alert-50 text-alert-800 text-caption font-semibold">
+          <div role="alert" className="p-3 rounded-xl border border-danger-border bg-danger-bg text-danger-text text-caption font-semibold">
             {error}
           </div>
         )}

@@ -60,7 +60,7 @@ export function DeliveryPODCard({
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-caption">
         <div className="p-3.5 rounded-xl bg-surface-alt border border-border flex flex-col gap-2">
           <div className="font-bold text-text flex items-center gap-1.5">
-            <Truck size={14} className="text-blush-600" />
+            <Truck size={14} className="text-primary" />
             <span>Thông tin Shipper / Tài xế:</span>
           </div>
           <div className="text-text font-semibold">{shipperName}</div>
@@ -72,12 +72,12 @@ export function DeliveryPODCard({
 
         <div className="p-3.5 rounded-xl bg-surface-alt border border-border flex flex-col gap-2">
           <div className="font-bold text-text flex items-center gap-1.5">
-            <User size={14} className="text-blush-600" />
+            <User size={14} className="text-primary" />
             <span>Người nhận hàng:</span>
           </div>
           <div className="text-text font-semibold">{recipientName} ({recipientPhone})</div>
           <div className="text-text-muted flex items-start gap-1">
-            <MapPin size={13} className="text-alert-600 shrink-0 mt-0.5" />
+            <MapPin size={13} className="text-danger-text shrink-0 mt-0.5" />
             <div className="flex flex-col gap-1">
               <span className="text-text font-medium">
                 {typeof deliveryAddress === "object" && deliveryAddress !== null
@@ -86,13 +86,13 @@ export function DeliveryPODCard({
               </span>
               {typeof deliveryAddress === "object" && deliveryAddress !== null && (
                 <div className="flex items-center gap-1 flex-wrap">
-                  <span className="px-1.5 py-0.2 rounded bg-alert-100 text-alert-800 text-caption font-bold">
+                  <span className="px-1.5 py-0.2 rounded bg-danger-bg text-danger-text text-caption font-bold">
                     {deliveryAddress.ward}
                   </span>
-                  <span className="px-1.5 py-0.2 rounded bg-ocean-100 text-ocean-800 text-caption font-bold">
+                  <span className="px-1.5 py-0.2 rounded bg-info-bg text-info-text text-caption font-bold">
                     {deliveryAddress.district}
                   </span>
-                  <span className="px-1.5 py-0.2 rounded bg-orchid-100 text-orchid-800 text-caption font-bold">
+                  <span className="px-1.5 py-0.2 rounded bg-accent-bg text-accent-text text-caption font-bold">
                     {deliveryAddress.city}
                   </span>
                 </div>
@@ -112,7 +112,7 @@ export function DeliveryPODCard({
             <img src={podImageUrl} alt="Bằng chứng giao hàng POD" className="h-full w-full object-cover" />
           </div>
           {deliveredAt && (
-            <div className="text-caption text-mint-800 font-semibold mt-1">
+            <div className="text-caption text-success-text font-semibold mt-1">
               Đã giao hàng lúc: {deliveredAt} {recipientSignatureName ? `(Ký nhận: ${recipientSignatureName})` : ""}
             </div>
           )}
@@ -125,7 +125,7 @@ export function DeliveryPODCard({
 
       {isDelivered && onConfirmComplete && (
         <div className="flex items-center justify-end pt-3 border-t border-dashed border-border">
-          <Button onClick={onConfirmComplete} className="bg-mint-600 hover:bg-mint-700 text-white gap-1.5 font-bold">
+          <Button onClick={onConfirmComplete} className="bg-success hover:bg-success-text text-white gap-1.5 font-bold">
             <CheckCircle2 size={15} />
             <span>Nghiệm Thu Hoàn Tất & Đóng Đơn Hàng</span>
           </Button>

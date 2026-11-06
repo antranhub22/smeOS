@@ -1,5 +1,6 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
 import React from "react"
 import { RefreshCw, Sparkles } from "@/components/ui/icons"
 import type { QuickCollectionResult } from "@/modules/catalog-links/domain/quick-collection-engine"
@@ -23,15 +24,15 @@ export function QuickCollectionPreview({
         </span>
         <div className="flex items-center gap-2">
           {liveResult.selectedProducts.length > 0 && (
-            <button
+            <Button variant="outline"
               type="button"
               onClick={onReshuffle}
               title="Chọn bộ mẫu khác"
-              className="flex items-center gap-1 px-2 py-0.5 rounded-lg border border-border bg-surface text-caption text-text-muted hover:border-primary/40 hover:text-primary transition-all"
+              className="h-auto font-[inherit] flex items-center gap-1 px-2 py-0.5 rounded-lg border border-border bg-surface text-caption text-text-muted hover:border-primary/40 hover:text-primary transition-all hover:bg-surface"
             >
               <RefreshCw size={11} />
               Chọn mẫu khác
-            </button>
+            </Button>
           )}
           <span className="text-caption text-text-muted">
             {liveResult.generatedName}
