@@ -3947,34 +3947,6 @@ model notification_channel_activations {
   @@id([channel])
 }
 
-model notification_event_visibility {
-  event_key  String
-  tier       String // INDUSTRY | CHAIN | STORE
-  visible    Boolean  @default(true)
-  updated_by String
-  updated_at DateTime @updatedAt @db.Timestamptz(3)
-
-  created_at DateTime @default(now()) @db.Timestamptz(3)
-
-  @@id([event_key, tier])
-}
-
-model notification_hard_locks {
-  id         String   @id @default(uuid())
-  event_key  String
-  channel    String
-  tier       String // MOTHER | INDUSTRY | CHAIN | STORE
-  scope_id   String // địa chỉ phạm vi D-T5: "platform" (MOTHER) hoặc "org:<organization_id>" (ADR-012 T-6b)
-  enabled    Boolean // true = bắt buộc BẬT | false = bắt buộc TẮT
-  locked_by  String // user_id người đặt khóa
-  reason     String? // Lý do khóa
-  created_at DateTime @default(now()) @db.Timestamptz(3)
-  updated_at DateTime @updatedAt @db.Timestamptz(3)
-
-  @@unique([event_key, channel, tier, scope_id])
-  @@index([tier, scope_id])
-}
-
 model notification_org_policies {
   id                String   @id @default(uuid())
   organization_id   String
@@ -4162,12 +4134,6 @@ enum integration_event_status {
   DEAD
 }
 
-enum integration_governance_mode {
-  FORBID
-  INHERIT_ONLY
-  ALLOW_OWN
-}
-
 /// Một kết nối của tổ chức tới dịch vụ ngoài. Bí mật chỉ nằm trong `credential_encrypted` (secret-box);
 /// `config` không chứa bí mật. `connection_ref` là mã ngẫu nhiên dùng trong URL webhook công khai.
 model integration_connections {
@@ -4248,29 +4214,12 @@ model integration_sync_cursors {
   @@index([organization_id])
 }
 
-/// Bảng cấp nền tảng (không thuộc một tổ chức): khoá/cấp sẵn tích hợp theo tầng.
-/// scope_id: "GLOBAL" (Mẹ) · "industry:<key>" (Ngành) · id tổ chức chuỗi (Chuỗi). Cùng mẫu với notification_*.
-model integration_governance {
-  id            String                      @id @default(uuid())
-  connector_key String
-  tier          String
-  scope_id      String
-  mode          integration_governance_mode
-  updated_by    String
-  created_at    DateTime                    @default(now()) @db.Timestamptz(3)
-  updated_at    DateTime                    @updatedAt @db.Timestamptz(3)
-
-  @@unique([connector_key, tier, scope_id])
-  @@index([scope_id])
-}
-
-/// Một bảng quyết định theo tầng (ADR-012 D-T10, bước T-7a): gộp ma trận quản trị (`organizations.settings.governance_matrix`,
-/// `platform_settings` `governance_matrix:*`), khoá cứng + hiển thị thông báo (`notification_hard_locks`,
-/// `notification_event_visibility`) và khoá tích hợp (`integration_governance`).
-/// Bảng cấp nền tảng như `integration_governance`: không có `organization_id`; phạm vi nằm ở `scope` (địa chỉ D-T5:
+/// Một bảng quyết định theo tầng (ADR-012 D-T10): ma trận quản trị, khoá cứng + hiển thị thông báo, khoá tích hợp
+/// (T-7c đã bỏ các nơi lưu cũ: `settings.governance_matrix`, `platform_settings` `governance_matrix:*`,
+/// `notification_hard_locks`, `notification_event_visibility`, `integration_governance`).
+/// Bảng cấp nền tảng: không có `organization_id`; phạm vi nằm ở `scope` (địa chỉ D-T5:
 /// `platform` · `industry:<key>` · `org:<id>` · `branch:<id>`). Chỉ thêm dòng: mỗi lần đổi là một dòng mới; quyết định
 /// hiện hành = dòng `version` lớn nhất của bộ (`system`, `decision_key`, `tier`, `scope`, `locked`); `value` null = đã gỡ.
-/// T-7a: ghi kép cùng giao dịch với nơi lưu cũ, chưa đường nào đọc. T-7b chuyển đọc; T-7c xoá nơi lưu cũ.
 model governance_decisions {
   id           String   @id @default(uuid())
   /// Thứ tự toàn cục (tăng dần) — dòng mới nhất của một quyết định là dòng hiện hành

@@ -1,9 +1,8 @@
 /**
  * Ghi/đọc bảng quyết định theo tầng `governance_decisions` (ADR-012 D-T10).
  *
- * T-7a: các nơi lưu cũ gọi `recordDecisions` / `syncDecisionScope` TRONG CÙNG giao dịch với lệnh ghi của mình (ghi kép),
- * để hai bên không lệch nhau. T-7b: mọi đường đọc ma trận, thông báo, tích hợp đi qua `currentDecisions`; nơi lưu cũ
- * chỉ còn được ghi (kép) để quay lui được, tới T-7c thì xoá.
+ * Nguồn duy nhất của ma trận quản trị, khoá cứng + hiển thị thông báo, khoá tích hợp: ghi qua `recordDecisions` /
+ * `syncDecisionScope`, đọc qua `currentDecisions`. Lịch sử: T-7a ghi kép, T-7b chuyển đọc, T-7c bỏ nơi lưu cũ.
  */
 import { Prisma, type PrismaClient } from "@/generated/prisma/client"
 

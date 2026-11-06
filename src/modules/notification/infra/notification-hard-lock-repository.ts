@@ -1,15 +1,14 @@
 /**
  * NOTIFICATION HARD LOCK REPOSITORY
  *
- * Tách riêng thao tác truy xuất dữ liệu Hard Locks
- * để đảm bảo SRP và giới hạn 350 dòng/tệp. `scope_id` lưu theo địa chỉ phạm vi D-T5 (`platform`, `org:<id>`;
- * ADR-012 T-6b) — đổi qua lại với dạng domain ("GLOBAL", id tổ chức) ngay ở đây.
+ * Khoá cứng + hiển thị sự kiện theo tầng, lưu ở `governance_decisions` (ADR-012 D-T10; T-7c bỏ bảng riêng). Phạm vi
+ * lưu theo địa chỉ D-T5 (`platform`, `org:<id>`) — đổi qua lại với dạng domain ("GLOBAL", id tổ chức) ngay ở đây.
  *
  * @module notification/infra
  */
 import { notificationLockRecord, notificationVisibilityRecord } from "@/core/governance/decision-record"
 import { currentDecisions, recordDecisions } from "@/core/governance/infra/decision-log"
-import { fromScopeKey, storedScopeIds, toScopeKey } from "@/core/governance/scope-key"
+import { fromScopeKey, toScopeKey } from "@/core/governance/scope-key"
 import { prisma } from "@/core/tenancy/infra/prisma"
 import type {
   NotifyChannel,
@@ -18,7 +17,6 @@ import type {
 import type { HardLockEntry } from "../domain/cascading-policy"
 
 export class NotificationHardLockRepository {
-  /** Đọc từ `governance_decisions` (ADR-012 T-7b); `notification_hard_locks` chỉ còn được ghi kép tới T-7c. */
   async getHardLocks(filter?: {
     tier?: NotificationTier | undefined
     scopeId?: string | undefined
@@ -50,7 +48,7 @@ export class NotificationHardLockRepository {
     })
   }
 
-  /** Mẹ ẩn/hiện sự kiện theo tầng — đọc từ `governance_decisions` (T-7b), cùng tên trường với bảng cũ. */
+  /** Mẹ ẩn/hiện sự kiện theo tầng (cùng tên trường với bảng cũ để nơi gọi không đổi). */
   async listEventVisibility(): Promise<Array<{ event_key: string; tier: string; visible: boolean }>> {
     const records = await currentDecisions(prisma, { systems: ["notification.visibility"], scopes: ["platform"] })
     return records.flatMap((r) => {
@@ -60,20 +58,12 @@ export class NotificationHardLockRepository {
     })
   }
 
-  /** Ghi kép `governance_decisions` trong cùng giao dịch (ADR-012 T-7a). */
+  /** Đặt khoá cứng — một dòng `governance_decisions` (ADR-012 T-7c: bảng `notification_hard_locks` đã bỏ). */
   async setHardLock(lock: HardLockEntry & { lockedBy: string }): Promise<void> {
-    const key = { event_key: lock.eventKey, channel: lock.channel, tier: lock.tier, scope_id: toScopeKey(lock.scopeId) }
-    const data = { enabled: lock.enabled, locked_by: lock.lockedBy, reason: lock.reason ?? null }
-    await prisma.$transaction(async (tx) => {
-      await tx.notification_hard_locks.upsert({
-        where: { event_key_channel_tier_scope_id: key },
-        create: { ...key, ...data },
-        update: data,
-      })
-      await recordDecisions(tx, [notificationLockRecord({ ...lock, decidedBy: lock.lockedBy })])
-    })
+    await recordDecisions(prisma, [notificationLockRecord({ ...lock, decidedBy: lock.lockedBy })])
   }
 
+  /** Gỡ khoá cứng — dòng gỡ ghi người gỡ. */
   async deleteHardLock(
     eventKey: string,
     channel: NotifyChannel,
@@ -81,24 +71,12 @@ export class NotificationHardLockRepository {
     scopeId: string,
     removedBy: string | null = null
   ): Promise<void> {
-    await prisma.$transaction(async (tx) => {
-      await tx.notification_hard_locks.deleteMany({
-        where: { event_key: eventKey, channel, tier, scope_id: { in: storedScopeIds(scopeId) } },
-      })
-      await recordDecisions(tx, [notificationLockRecord({ eventKey, channel, tier, scopeId, enabled: null, decidedBy: removedBy })])
-    })
+    await recordDecisions(prisma, [notificationLockRecord({ eventKey, channel, tier, scopeId, enabled: null, decidedBy: removedBy })])
   }
 
-  /** Mẹ ẩn/hiện sự kiện ở một tầng dưới — ghi kép `governance_decisions` (ADR-012 T-7a). */
+  /** Mẹ ẩn/hiện sự kiện ở một tầng dưới (T-7c: bảng `notification_event_visibility` đã bỏ). */
   async setEventVisibility(eventKey: string, tier: string, visible: boolean, updatedBy: string): Promise<void> {
-    await prisma.$transaction(async (tx) => {
-      await tx.notification_event_visibility.upsert({
-        where: { event_key_tier: { event_key: eventKey, tier } },
-        create: { event_key: eventKey, tier, visible, updated_by: updatedBy },
-        update: { visible, updated_by: updatedBy },
-      })
-      await recordDecisions(tx, [notificationVisibilityRecord({ eventKey, targetTier: tier, visible, decidedBy: updatedBy })])
-    })
+    await recordDecisions(prisma, [notificationVisibilityRecord({ eventKey, targetTier: tier, visible, decidedBy: updatedBy })])
   }
 }
 

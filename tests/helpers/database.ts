@@ -18,10 +18,7 @@ const TEST_EXTRA_TABLES = [
   "role_capabilities",
   // Bảng cấu hình nền tảng dùng chung mà ca thử thông báo 4 tầng / tích hợp ghi vào
   "notification_channel_activations",
-  "notification_event_visibility",
-  "notification_hard_locks",
-  "integration_governance",
-  // Bảng quyết định theo tầng (ADR-012 T-7a) — ghi kép từ ba bảng trên và ma trận quản trị
+  // Quyết định theo tầng (ADR-012 D-T10): ma trận, khoá/hiển thị thông báo, khoá tích hợp
   "governance_decisions",
 ] as const
 

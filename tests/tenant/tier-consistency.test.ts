@@ -35,10 +35,7 @@ describe("đối chiếu tầng — mỗi trục × Mẹ / Chuỗi / Cửa hàng
   let linkId: string
 
   beforeEach(async () => {
-    await resetDatabase()
-    await prisma.notification_hard_locks.deleteMany({})
-    await prisma.integration_governance.deleteMany({})
-    await prisma.platform_settings.deleteMany({ where: { key: { startsWith: "governance_matrix:" } } })
+    await resetDatabase() // dọn cả governance_decisions (ADR-012 D-T10)
     chain = await createTenant("chuoi")
     partner = await createTenant("cua-hang-doi-tac")
     solo = await createTenant("cua-hang-doc-lap")
@@ -47,9 +44,6 @@ describe("đối chiếu tầng — mỗi trục × Mẹ / Chuỗi / Cửa hàng
   })
 
   afterAll(async () => {
-    await prisma.notification_hard_locks.deleteMany({})
-    await prisma.integration_governance.deleteMany({})
-    await prisma.platform_settings.deleteMany({ where: { key: { startsWith: "governance_matrix:" } } })
     await disconnectDatabase()
   })
 
