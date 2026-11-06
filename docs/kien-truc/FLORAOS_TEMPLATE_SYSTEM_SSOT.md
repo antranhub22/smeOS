@@ -299,6 +299,10 @@ src/
 | File Template | Loại | Mục đích & Trách nhiệm | Props cốt lõi |
 |---|---|---|---|
 | `sales-order-intake-modal.tsx` | Order Intake Form (T01) | Modal tiếp nhận đơn từ Sales: chọn mẫu từ Product Master Index, BOM nguyên tử, ảnh mẫu tải qua `assets` (không base64), giờ hẹn thật `deliveryTargetAt`; lỗi máy chủ hiện tại form | `isOpen`, `onClose`, `onSubmit(body: CreateOrderRequest) => Promise<void>` |
+| `sales-order-intake-customer-section.tsx` | Order Intake Form — phần (T01) | Phần 1 của modal nhận đơn: chọn nhanh mẫu, khách (tìm trong Customer Master Index), người nhận, địa chỉ 5 tầng, giờ hẹn | `form` (từ `useSalesOrderIntakeForm`) |
+| `sales-order-intake-product-section.tsx` | Order Intake Form — phần (T01) | Phần 2 (đầu): ảnh mẫu tải qua `assets`, tên/giá sản phẩm, tiền cọc | `form` |
+| `sales-order-intake-bom-section.tsx` | Order Intake Form — phần (T01) | Phần 2 (cuối): bảng cành hoa nguyên tử; lá/gói/phụ kiện của mẫu (chỉ đọc) | `form` |
+| `sales-order-intake-details-section.tsx` | Order Intake Form — phần (T01) | Phần 2.5–4: phân loại & ưu tiên, lời nhắn/thiệp, trường tự tạo, kiểm tra đủ thông tin đầu vào | `form` |
 | `sales-order-intake-card.tsx` | Order Intake Card (T01) | Thẻ tóm tắt thông tin tiếp nhận đơn hàng từ Sales (kênh bán, người nhận, lời chúc, định mức) | `orderCode`, `channel`, `salesAgentName`, `customerName`, `recipientName`, `cardMessage`, `recipeTitle`, `totalAmount` |
 | `partner-product-card.tsx` | Partner Product Card (T02) | Thẻ sản phẩm gửi đối tác xưởng: ảnh mẫu, BOM, giá công, giao hàng, thiệp; Copy/Gửi Zalo | `orderCode`, `productTitle`, `sampleImageUrl`, `flowers`, `partnerPayoutVnd`, `deliveryAddress`, `cardMessage` |
 | `coordinator-order-brief-card.tsx` | Order Brief (T02) | Thẻ tóm tắt thông số đơn, rủi ro SLA và hành động tiếp theo cho Điều phối viên | `orderCode`, `stageLabel`, `riskLevel`, `recipientName`, `deliveryAddress`, `nextAction` |

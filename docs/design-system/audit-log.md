@@ -275,3 +275,7 @@ Còn lại (chưa sửa): `flower-network-command-center` (StatTile có InfoTip 
 ### Đợt 4 (06/11/2026)
 
 - `sales-order-intake-modal.tsx`: lớp phủ `fixed inset-0` tự viết → `Dialog` (giữ khổ rộng 3xl). Tệp 1.290 → 1.281 dòng; việc tách theo bước (k11) để một đợt riêng. Test khoá hành vi B5 `components/coordinator/__tests__/sales-order-intake-modal.characterization.test.tsx`. UX lint 29 → 28.
+
+### Đợt 5 (06/11/2026) — tách hộp "Tiếp nhận đơn hàng" (k11)
+
+- `sales-order-intake-modal.tsx` 1.281 → 71 dòng: state/tải dữ liệu/gửi vào `use-sales-order-intake-form.ts`; giao diện thành 4 phần `sales-order-intake-{customer,product,bom,details}-section.tsx`; kiểu dùng chung `sales-order-intake-types.ts`. Mọi tệp ≤ 350 dòng; bỏ khỏi `file-size-baseline.json`. JSX và xử lý giữ nguyên (tách cơ học), test khoá hành vi B5 vẫn qua.
