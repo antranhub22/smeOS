@@ -13,6 +13,7 @@ import { PublicOrderRepository } from "@/modules/orders/infra/public-order-repos
 
 import { disconnectDatabase, prisma, resetDatabase } from "../helpers/database"
 import { createTenant, type Tenant } from "../helpers/fixtures"
+import { industriesSeedSql } from "../helpers/industries-seed"
 
 /**
  * CSDL test của CI dựng bằng `db push` (không chạy migration) → thiếu dòng seed và trigger của migration
@@ -23,7 +24,7 @@ async function ensureIndustriesMigration(): Promise<void> {
   const migration = readdirSync(dir).find((d) => d.endsWith("_industries"))
   if (!migration) throw new Error("Không thấy migration industries")
   const sql = readFileSync(path.join(dir, migration, "migration.sql"), "utf8")
-  const seed = sql.match(/INSERT INTO "industries"[\s\S]*?DO NOTHING;/)?.[0]
+  const seed = industriesSeedSql()
   const fn = sql.match(/CREATE OR REPLACE FUNCTION smeos_organizations_sync_industry_key[\s\S]*?END \$\$;/)?.[0]
   const trigger = sql.match(/CREATE TRIGGER "organizations_sync_industry_key"[\s\S]*?;/)?.[0]
   if (!seed || !fn || !trigger) throw new Error("Migration industries thiếu seed / hàm / trigger")
