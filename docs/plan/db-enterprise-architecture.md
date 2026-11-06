@@ -95,7 +95,7 @@ cần test khoá hành vi trước.
 | [ ] | T-7 [SCHEMA] `governance_decisions` + backfill + chuyển `layered-resolver` + contract | — | Ma trận, thông báo, tích hợp không đổi kết quả |
 | [x] | T-8a Đổi dữ liệu `organization_type.FLOWER_NETWORK` → `CHAIN` (kể cả yêu cầu đổi mô hình đang chờ); mọi đường ghi lưu `CHAIN` (D-55) | — | Chuỗi cũ loại `FLOWER_NETWORK` vẫn vào đúng ChainOS |
 | [x] | T-8b [SCHEMA] Contract: bỏ giá trị enum `FLOWER_NETWORK` và các nhánh so loại tổ chức này (PO duyệt 06/11/2026) | — | `check:migrations`; tier-of, điều hướng, ma trận không đổi kết quả |
-| [ ] | `tests/tenant/tier-consistency.test.ts`: mỗi trục × Mẹ / Chuỗi / Cửa hàng | P2-A11 | Xanh trong CI |
+| [x] | `tests/tenant/tier-consistency.test.ts`: mỗi trục × Mẹ / Chuỗi / Cửa hàng (danh tính tầng + chuỗi cha, ma trận, tích hợp, thông báo, khoá công cụ + điều hướng). Vá kèm: khoá cứng thông báo của chuỗi nay áp xuống cửa hàng đối tác (PO 06/11/2026, chỉ khoá — chính sách tổ chức giữ nguyên) | P2-A11 | Xanh trong CI |
 
 Ghi chú P2-A1 (Ngành chỉ là plugin, D-01): vẫn gỡ phần **mô phỏng** tầng Ngành đang không có dữ liệu; tầng Ngành quay
 lại có chủ đích qua T-6 và ADR affiliate sau này (D-48).

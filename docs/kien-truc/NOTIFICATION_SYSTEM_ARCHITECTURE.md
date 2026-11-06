@@ -298,6 +298,11 @@ model notification_hard_locks {
 }
 ```
 
+Phạm vi khoá của chuỗi (P2-A11, PO 06/11/2026): `notifyOrganization` tra chuỗi cha chính của tổ chức nhận
+(`findPrimaryChainLink`, cạnh `is_primary` của `organization_links`) và truyền `lockParentOrgId`, nên khoá cứng CHAIN do
+chuỗi đặt áp xuống cửa hàng đối tác. `lockParentOrgId` chỉ mở phạm vi khoá; chính sách tổ chức (`orgPolicy`, §7.4) của
+cửa hàng đối tác không bị chính sách của chuỗi thay. Test: `tests/tenant/tier-consistency.test.ts`.
+
 ### 7.4 Cài đặt tổ chức — SaaS Ngành / ChainOS (Lớp 2)
 
 ```prisma
