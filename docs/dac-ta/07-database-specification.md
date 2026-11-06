@@ -3949,3 +3949,59 @@ model reconciliation_findings {
   @@index([organization_id, resolved_at])
 }
 ```
+
+
+## 40. Cây tổ chức — `organization_links` (06/11/2026)
+
+ADR-012 D-T3, bước T-2 của `docs/plan/db-enterprise-architecture.md`. Quan hệ giữa các tổ chức là đồ thị có hướng
+cha → con; "tầng trên" của một tổ chức đi theo cạnh `is_primary` (tối đa một cạnh chính ACTIVE mỗi tổ chức con —
+trigger ràng buộc `organization_links_one_primary` trong migration `20261106010000_organization_links`). Giai đoạn
+chuyển T-2 → T-3: `id` trùng `chain_partnerships.id`, repository đối tác ghi kép
+(`src/modules/organization/infra/organization-link-sync.ts`), đường đọc vẫn ở `chain_partnerships` cho tới T-3.
+`INDUSTRY_MEMBER`, `AFFILIATE` khai sẵn cho tầng Ngành (D-48), chưa dùng.
+
+```prisma
+enum organization_link_type {
+  SUBCONTRACTOR
+  FRANCHISE
+  INDUSTRY_MEMBER
+  AFFILIATE
+}
+
+enum organization_link_status {
+  PENDING
+  ACTIVE
+  SUSPENDED
+  TERMINATED
+}
+
+model organization_links {
+  id              String                   @id @default(uuid())
+  parent_org_id   String
+  child_org_id    String
+  link_type       organization_link_type   @default(SUBCONTRACTOR)
+  status          organization_link_status @default(ACTIVE)
+  is_primary      Boolean                  @default(false)
+  valid_from      DateTime                 @default(now()) @db.Timestamptz(3)
+  valid_to        DateTime?                @db.Timestamptz(3)
+  partner_code    String
+  capacity_daily  Int                      @default(10)
+  commission_rate Decimal?
+  contact_name    String?
+  contact_phone   String?
+  contact_email   String?
+  address         String?
+  province        String?
+  district        String?
+  created_at      DateTime                 @default(now()) @db.Timestamptz(3)
+  updated_at      DateTime                 @default(now()) @updatedAt @db.Timestamptz(3)
+
+  parent_organization organizations @relation("OrgLinkParent", fields: [parent_org_id], references: [id], onDelete: Cascade)
+  child_organization  organizations @relation("OrgLinkChild", fields: [child_org_id], references: [id], onDelete: Cascade)
+
+  @@unique([parent_org_id, child_org_id])
+  @@unique([parent_org_id, partner_code])
+  @@index([parent_org_id, status])
+  @@index([child_org_id, status])
+}
+```
