@@ -4103,11 +4103,15 @@ số dòng). Trigger `organizations_sync_industry_key` (`BEFORE INSERT OR UPDATE
   `industry_key` chỉ được ở danh sách ghi lý do (chỉ đọc một khoá không phải ngành, hoặc đọc để ghi lại).
 - Ca thử: `tests/tenant/industries.test.ts` (ghi tách ngành ra cột; đọc lồng theo cột khi JSON không còn `industry`).
 
-**T-6c-2** (contract, sau khi T-6c-1 đã deploy): migration xoá `settings.industry` còn lại (NOTICE số dòng mã lạ) và bỏ
-trigger + hàm `smeos_organizations_sync_industry_key`; bỏ dự phòng `settings.industry` ở `industryKeyOf`,
-`withIndustryKey`, `resolveTierChain` và worker.
+**T-6c-2** (contract, PO duyệt 06/11/2026, sau khi T-6c-1 #161 đã chạy trên production; không đổi schema): migration
+`20261106110000_industry_contract` (một giao dịch) bỏ trigger + hàm `smeos_organizations_sync_industry_key` TRƯỚC, chép
+bù `industry_key` cho dòng còn trống mà JSON có mã hợp lệ, báo (NOTICE) số dòng mã lạ sẽ mất, rồi xoá khoá
+`settings.industry`; chốt cuối: không còn dòng nào có khoá đó. Mã: `industryKeyOf` và `resolveTierChain` chỉ đọc cột;
+`withIndustryKey` phủ `settings.industry` = cột, cột trống thì BỎ khoá (JSON sót lại không có tác dụng); worker phân tích
+ảnh chỉ đọc `industry_key`.
 
-Ca thử: `tests/tenant/industries.test.ts` (tự cài seed + trigger từ tệp migration khi CSDL test dựng bằng `db push`).
+Ca thử: `tests/tenant/industries.test.ts` (JSON sót lại không có tác dụng; seed ngành của CSDL test ở
+`tests/helpers/industries-seed.ts`), `tests/tenant/tier-chain.test.ts`, `src/modules/organization/domain/industry-key.test.ts`.
 
 ```prisma
 model industries {
