@@ -264,3 +264,10 @@ Còn lại (chưa sửa): `flower-network-command-center` (StatTile có InfoTip 
 - Ô thanh toán trong bảng đơn (`admin-payment-plan-cell.tsx`): `<details>` → `Disclosure` (bỏ viền/nền để vừa ô bảng); test khoá hành vi B5 `admin/__tests__/admin-payment-plan-cell.characterization.test.tsx`.
 - R20 miễn trừ cho `greeting-card/customer/**` (`ux-lint-allow.json`): trang khách công khai không có khung app, tiêu đề theo mẫu brochure; `PageHeader` dành cho màn trong app.
 - 7 ô `range` vẫn chờ Slider (luồng ADR-011). UX lint 45 → 38.
+
+### Đợt 3 (06/11/2026, PO: "theo đề xuất tối ưu")
+
+- `templates/coordinator/partner-assignment-modal.tsx`: lớp phủ `fixed inset-0` tự viết → `Dialog`; radio thô → `RadioGroup`; bỏ mã "T06"/"T07" khỏi màn hình. Test khoá hành vi B5 `templates/coordinator/__tests__/partner-assignment-modal.characterization.test.tsx`.
+- `sales-order-intake-modal.tsx`: bỏ mã "P1"/"P2"/"T01" khỏi câu chữ (luật 6). Lớp phủ của hộp này (1.196 dòng) chưa chuyển — cần tách tệp khi viết lại.
+- Miễn trừ có lý do: ô bẫy chống spam (R18), trạng thái bước của dải tiến độ xưởng/theo dõi giao hàng (R14).
+- UX lint 38 → 29. Còn: ô `range` chờ Slider (11), layout/feature-guidance-card (luồng khác/PO khoá), Catalog, `flower-network-command-center` (StatTile), `upload-wizard.tsx` (mã chết).

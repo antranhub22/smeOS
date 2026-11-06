@@ -2,7 +2,8 @@
 
 import { Input } from "@/components/ui/input"
 import React, { useEffect, useState } from "react"
-import { X } from "@/components/ui/icon-set/x"
+import { Dialog } from "@/components/ui/dialog"
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Users } from "@/components/ui/icon-set/users"
 import { CheckCircle2 } from "@/components/ui/icon-set/check-circle2"
 import { MapPin } from "@/components/ui/icon-set/map-pin"
@@ -19,7 +20,7 @@ import {
 } from "@/components/coordinator/coordinator-api"
 
 /**
- * P3 — Phân công đối tác (Template T06, F05).
+ * Phân công đối tác (Template T06, F05).
  *
  * Danh sách lấy từ bảng `partners` của chính tổ chức. Bản trước bày ba xưởng
  * cố định kèm "khoảng cách", "% khớp AI" tự bịa — nay không có ghép AI thì
@@ -128,26 +129,42 @@ export function PartnerAssignmentModal({
   const input = "px-3 py-2 rounded-xl border border-border bg-surface text-text focus:outline-none focus:border-danger"
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
-      <div className="bg-surface border border-border rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl flex flex-col">
-        <div className="p-4 border-b border-border flex items-center justify-between sticky top-0 bg-surface z-10">
-          <div className="flex items-center gap-2">
-            <div className="h-8 w-8 rounded-lg bg-danger-bg text-danger-text flex items-center justify-center">
-              <Users size={18} />
-            </div>
-            <div>
-              <h2 className="text-body font-extrabold text-text">Phân Công Đối Tác / Thợ Chế Tác (Template T06)</h2>
-              <p className="text-caption text-text-muted">
-                Đơn #{orderCode}: {recipeTitle} · Hẹn giao: {deliveryTargetTime}
-              </p>
-            </div>
-          </div>
-          <Button variant="ghost" type="submit" onClick={onClose} aria-label="Đóng" className="text-[length:inherit] h-auto font-[inherit] gap-0 p-1.5 rounded-lg hover:bg-surface-alt text-text-muted">
-            <X size={18} />
-          </Button>
+    <Dialog
+      open={isOpen}
+      onOpenChange={(open) => {
+        if (!open) onClose()
+      }}
+      size="lg"
+      title={
+        <span className="flex items-center gap-2">
+          <Users size={18} className="text-danger-text" />
+          Phân Công Đối Tác / Thợ Chế Tác
+        </span>
+      }
+      description={`Đơn #${orderCode}: ${recipeTitle} · Hẹn giao: ${deliveryTargetTime}`}
+      footer={
+        <div className="flex items-center justify-end gap-3">
+            <Button variant="outline" size="sm" onClick={onClose}>
+              Hủy bỏ
+            </Button>
+            {needsOverride && (
+              <Button size="sm" variant="outline" disabled={submitting} onClick={() => handleConfirm(true)}>
+                Vẫn giao (vượt công suất)
+              </Button>
+            )}
+            <Button
+              size="sm"
+              disabled={!selectedPartnerId || submitting}
+              onClick={() => handleConfirm(false)}
+              className="bg-danger hover:bg-danger-text text-white font-bold gap-1.5"
+            >
+              <CheckCircle2 size={15} />
+              <span>{submitting ? "Đang giao việc…" : "Xác Nhận Giao Việc & Phát Hành Phiếu Giao Việc"}</span>
+            </Button>
         </div>
-
-        <div className="p-6 flex flex-col gap-4 text-caption">
+      }
+    >
+      <div className="flex flex-col gap-4 text-caption">
           <div className="p-3.5 rounded-xl bg-surface-alt border border-border flex items-start gap-2.5">
             <MapPin size={15} className="text-danger-text shrink-0 mt-0.5" />
             <div>
@@ -191,7 +208,7 @@ export function PartnerAssignmentModal({
           ) : partners.length === 0 ? (
             <div className="text-text-muted">Tiệm chưa có đối tác nào đang nhận đơn — thêm đối tác ở trên.</div>
           ) : (
-            <div className="space-y-2.5">
+            <RadioGroup aria-label="Chọn đối tác" value={selectedPartnerId ?? ""} onValueChange={(v) => setSelectedPartnerId(String(v))} className="space-y-2.5">
               {partners.map((p) => {
                 const isSelected = p.id === selectedPartnerId
                 return (
@@ -202,13 +219,7 @@ export function PartnerAssignmentModal({
                     }`}
                   >
                     <div className="flex items-center gap-2">
-                      <input
-                        type="radio"
-                        name="partner"
-                        checked={isSelected}
-                        onChange={() => setSelectedPartnerId(p.id)}
-                        className="text-danger-text focus:ring-danger"
-                      />
+                      <RadioGroupItem value={p.id} />
                       <span className="font-extrabold text-text text-body-sm">{p.name}</span>
                       <Badge tone={p.tier === "STANDARD" ? "neutral" : "warning"} className="text-caption">
                         {p.tier}
@@ -233,7 +244,7 @@ export function PartnerAssignmentModal({
                   </label>
                 )
               })}
-            </div>
+            </RadioGroup>
           )}
 
           <div>
@@ -255,26 +266,6 @@ export function PartnerAssignmentModal({
           )}
         </div>
 
-        <div className="p-4 border-t border-border flex items-center justify-end gap-3 sticky bottom-0 bg-surface">
-          <Button variant="outline" size="sm" onClick={onClose}>
-            Hủy bỏ
-          </Button>
-          {needsOverride && (
-            <Button size="sm" variant="outline" disabled={submitting} onClick={() => handleConfirm(true)}>
-              Vẫn giao (vượt công suất)
-            </Button>
-          )}
-          <Button
-            size="sm"
-            disabled={!selectedPartnerId || submitting}
-            onClick={() => handleConfirm(false)}
-            className="bg-danger hover:bg-danger-text text-white font-bold gap-1.5"
-          >
-            <CheckCircle2 size={15} />
-            <span>{submitting ? "Đang giao việc…" : "Xác Nhận Giao Việc & Phát Hành Phiếu T07"}</span>
-          </Button>
-        </div>
-      </div>
-    </div>
+    </Dialog>
   )
 }

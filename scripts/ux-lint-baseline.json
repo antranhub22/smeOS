@@ -14,8 +14,7 @@
       "R18": 1
     },
     "components/greeting-card": {
-      "R18": 8,
-      "R14": 4
+      "R18": 7
     },
     "components/layout": {
       "R18": 3
@@ -24,14 +23,13 @@
       "R18": 4
     },
     "components/templates": {
-      "R18": 5,
-      "R19": 2,
-      "R16": 2
+      "R19": 1,
+      "R18": 4
     },
     "components/upload": {
       "R14": 1
     }
   },
-  "total": 38,
-  "updatedAt": "2026-11-06T06:52:33.242Z"
+  "total": 29,
+  "updatedAt": "2026-11-06T07:56:41.794Z"
 }
