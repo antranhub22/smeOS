@@ -271,3 +271,7 @@ Còn lại (chưa sửa): `flower-network-command-center` (StatTile có InfoTip 
 - `sales-order-intake-modal.tsx`: bỏ mã "P1"/"P2"/"T01" khỏi câu chữ (luật 6). Lớp phủ của hộp này (1.196 dòng) chưa chuyển — cần tách tệp khi viết lại.
 - Miễn trừ có lý do: ô bẫy chống spam (R18), trạng thái bước của dải tiến độ xưởng/theo dõi giao hàng (R14).
 - UX lint 38 → 29. Còn: ô `range` chờ Slider (11), layout/feature-guidance-card (luồng khác/PO khoá), Catalog, `flower-network-command-center` (StatTile), `upload-wizard.tsx` (mã chết).
+
+### Đợt 4 (06/11/2026)
+
+- `sales-order-intake-modal.tsx`: lớp phủ `fixed inset-0` tự viết → `Dialog` (giữ khổ rộng 3xl). Tệp 1.290 → 1.281 dòng; việc tách theo bước (k11) để một đợt riêng. Test khoá hành vi B5 `components/coordinator/__tests__/sales-order-intake-modal.characterization.test.tsx`. UX lint 29 → 28.
