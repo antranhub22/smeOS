@@ -168,8 +168,8 @@ export function KanbanCard({
 
       {/* BADGE ĐÃ HỦY / ĐÃ BỎ HIỂN THỊ */}
       {isDismissed && (
-        <div className="flex items-center justify-between gap-1 rounded-md bg-cool-100 border border-cool-200 px-2 py-1 text-caption">
-          <span className="text-cool-600 font-medium truncate">
+        <div className="flex items-center justify-between gap-1 rounded-md bg-surface-alt border border-border px-2 py-1 text-caption">
+          <span className="text-text-muted font-medium truncate">
             {item.dismissal?.reason || "Đã bỏ hiển thị"}
           </span>
           {onRestore && item.dismissal?.status === "APPROVED" && (

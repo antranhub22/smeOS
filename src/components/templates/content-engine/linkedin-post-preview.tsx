@@ -21,7 +21,7 @@ export function LinkedInPreview({
   shopName = "smeOS Business Solutions",
 }: SocialPostPreviewProps) {
   return (
-    <div className="max-w-md mx-auto rounded-xl border border-cool-200 bg-white shadow-md overflow-hidden text-cool-900 font-sans">
+    <div className="max-w-md mx-auto rounded-xl border border-border bg-white shadow-md overflow-hidden text-text font-sans">
       {/* Header bài đăng LinkedIn */}
       <div className="p-3.5 flex items-start justify-between">
         <div className="flex items-start gap-2.5">
@@ -30,15 +30,15 @@ export function LinkedInPreview({
           </div>
           <div>
             <div className="flex items-center gap-1.5">
-              <span className="text-body-sm font-bold text-cool-900 leading-tight">
+              <span className="text-body-sm font-bold text-text leading-tight">
                 {shopName}
               </span>
-              <span className="text-caption text-cool-400 font-normal">• 1st</span>
+              <span className="text-caption text-text-muted font-normal">• 1st</span>
             </div>
-            <div className="text-caption text-cool-500 leading-tight mt-0.5 line-clamp-1">
+            <div className="text-caption text-text-muted leading-tight mt-0.5 line-clamp-1">
               Giải Pháp Hoa Tươi & Quà Tặng Doanh Nghiệp Cao Cấp
             </div>
-            <div className="flex items-center gap-1 text-caption text-cool-400 mt-1">
+            <div className="flex items-center gap-1 text-caption text-text-muted mt-1">
               <span>Vừa xong</span>
               <span>•</span>
               <span className="flex items-center gap-0.5">
@@ -52,7 +52,7 @@ export function LinkedInPreview({
           <Button variant="ghost"
             type="button"
             aria-label="Thêm tùy chọn"
-            className="text-[length:inherit] h-auto font-[inherit] gap-0 text-cool-400 hover:text-cool-600 p-1 transition-colors cursor-pointer"
+            className="text-[length:inherit] h-auto font-[inherit] gap-0 text-text-muted hover:text-text-muted p-1 transition-colors cursor-pointer"
             onClick={() => undefined}
           >
             <MoreHorizontal size={18} />
@@ -63,16 +63,16 @@ export function LinkedInPreview({
       {/* Nội dung bài viết */}
       <div className="px-3.5 pb-3 text-caption leading-relaxed space-y-2">
         {post.headline && (
-          <div className="font-extrabold text-body text-cool-900 leading-snug">
+          <div className="font-extrabold text-body text-text leading-snug">
             {post.headline}
           </div>
         )}
-        <div className="whitespace-pre-line text-cool-800 text-meta leading-relaxed">
+        <div className="whitespace-pre-line text-text text-meta leading-relaxed">
           {post.bodyText}
         </div>
 
         {post.cta && (
-          <div className="font-semibold text-[var(--color-linkedin)] bg-ocean-50/70 p-2.5 rounded-lg border border-ocean-100 text-caption">
+          <div className="font-semibold text-[var(--color-linkedin)] bg-info-bg/70 p-2.5 rounded-lg border border-info-border text-caption">
             💼 {post.cta}
           </div>
         )}
@@ -89,7 +89,7 @@ export function LinkedInPreview({
       </div>
 
       {/* Ảnh đính kèm */}
-      <div className="w-full bg-gradient-to-br from-cool-100 via-ocean-50 to-navy-50 aspect-[16/10] flex flex-col items-center justify-center relative overflow-hidden border-y border-cool-100">
+      <div className="w-full bg-gradient-to-br from-surface-alt via-info-bg to-info-bg aspect-[16/10] flex flex-col items-center justify-center relative overflow-hidden border-y border-border">
         {productImageUrl ? (
           <img
             src={productImageUrl}
@@ -101,13 +101,13 @@ export function LinkedInPreview({
           />
         ) : (
           <div className="flex flex-col items-center gap-2 p-6 text-center">
-            <div className="w-14 h-14 rounded-2xl bg-white shadow-md flex items-center justify-center text-display border border-cool-100">
+            <div className="w-14 h-14 rounded-2xl bg-white shadow-md flex items-center justify-center text-display border border-border">
               💐
             </div>
-            <div className="font-extrabold text-body-sm text-cool-900">
+            <div className="font-extrabold text-body-sm text-text">
               {productName}
             </div>
-            <span className="text-caption font-semibold text-[var(--color-linkedin)] bg-ocean-50 px-3 py-1 rounded-full border border-ocean-200/50">
+            <span className="text-caption font-semibold text-[var(--color-linkedin)] bg-info-bg px-3 py-1 rounded-full border border-info-border/50">
               B2B Premium Floral Styling · smeOS
             </span>
           </div>
@@ -115,16 +115,16 @@ export function LinkedInPreview({
       </div>
 
       {/* Thống kê tương tác LinkedIn */}
-      <div className="px-3.5 py-2 flex items-center justify-between text-caption text-cool-500 border-b border-cool-100">
+      <div className="px-3.5 py-2 flex items-center justify-between text-caption text-text-muted border-b border-border">
         <div className="flex items-center gap-1.5">
           <div className="flex -space-x-1">
             <span className="inline-flex items-center justify-center w-4.5 h-4.5 rounded-full bg-[var(--color-linkedin)] text-white text-caption shadow-xs">
               👍
             </span>
-            <span className="inline-flex items-center justify-center w-4.5 h-4.5 rounded-full bg-sand-500 text-white text-caption shadow-xs">
+            <span className="inline-flex items-center justify-center w-4.5 h-4.5 rounded-full bg-warning text-white text-caption shadow-xs">
               💡
             </span>
-            <span className="inline-flex items-center justify-center w-4.5 h-4.5 rounded-full bg-blush-500 text-white text-caption shadow-xs">
+            <span className="inline-flex items-center justify-center w-4.5 h-4.5 rounded-full bg-primary text-white text-caption shadow-xs">
               ❤️
             </span>
           </div>
@@ -140,10 +140,10 @@ export function LinkedInPreview({
       </div>
 
       {/* Thanh hành động LinkedIn (Like, Comment, Repost, Send) */}
-      <div className="px-2 py-1.5 grid grid-cols-4 gap-1 text-caption font-semibold text-cool-600">
+      <div className="px-2 py-1.5 grid grid-cols-4 gap-1 text-caption font-semibold text-text-muted">
         <Button variant="ghost"
           type="button"
-          className="px-0 text-[length:inherit] h-auto font-[inherit] flex items-center justify-center gap-1.5 py-2 rounded-lg hover:bg-cool-100 transition-colors cursor-pointer"
+          className="px-0 text-[length:inherit] h-auto font-[inherit] flex items-center justify-center gap-1.5 py-2 rounded-lg hover:bg-surface-alt transition-colors cursor-pointer"
           onClick={() => undefined}
         >
           <ThumbsUp size={15} />
@@ -151,7 +151,7 @@ export function LinkedInPreview({
         </Button>
         <Button variant="ghost"
           type="button"
-          className="px-0 text-[length:inherit] h-auto font-[inherit] flex items-center justify-center gap-1.5 py-2 rounded-lg hover:bg-cool-100 transition-colors cursor-pointer"
+          className="px-0 text-[length:inherit] h-auto font-[inherit] flex items-center justify-center gap-1.5 py-2 rounded-lg hover:bg-surface-alt transition-colors cursor-pointer"
           onClick={() => undefined}
         >
           <MessageSquare size={15} />
@@ -159,7 +159,7 @@ export function LinkedInPreview({
         </Button>
         <Button variant="ghost"
           type="button"
-          className="px-0 text-[length:inherit] h-auto font-[inherit] flex items-center justify-center gap-1.5 py-2 rounded-lg hover:bg-cool-100 transition-colors cursor-pointer"
+          className="px-0 text-[length:inherit] h-auto font-[inherit] flex items-center justify-center gap-1.5 py-2 rounded-lg hover:bg-surface-alt transition-colors cursor-pointer"
           onClick={() => undefined}
         >
           <Repeat size={15} />
@@ -167,7 +167,7 @@ export function LinkedInPreview({
         </Button>
         <Button variant="ghost"
           type="button"
-          className="px-0 text-[length:inherit] h-auto font-[inherit] flex items-center justify-center gap-1.5 py-2 rounded-lg hover:bg-cool-100 transition-colors cursor-pointer"
+          className="px-0 text-[length:inherit] h-auto font-[inherit] flex items-center justify-center gap-1.5 py-2 rounded-lg hover:bg-surface-alt transition-colors cursor-pointer"
           onClick={() => undefined}
         >
           <Send size={15} />

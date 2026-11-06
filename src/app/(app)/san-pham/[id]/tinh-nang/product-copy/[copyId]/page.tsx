@@ -5,6 +5,7 @@ import { useEffect, useState } from "react"
 import { useParams, useRouter, useSearchParams } from "next/navigation"
 import { ArrowLeft, Save, CheckCircle2, XCircle, AlertCircle, Loader2, RefreshCw } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
+import { PageHeader } from "@/components/ui/page-header"
 import { Input } from "@/components/ui/input"
 import { NativeSelect } from "@/components/ui/select"
 import { Card } from "@/components/ui/card"
@@ -219,41 +220,30 @@ export default function ProductCopyDetailPage() {
       <div className="flex h-full flex-col overflow-hidden">
         {/* Top Bar */}
         <div className="flex flex-shrink-0 items-center justify-between border-b border-border bg-surface px-[18px] py-4">
-          <div className="flex items-center gap-3">
-            <Button
-              aria-label="Quay lại"
-              variant="ghost"
-              size="icon"
-              onClick={() => {
-                // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                router.push(returnTo as any)
-              }}
-            >
-              <ArrowLeft size={20} strokeWidth={2} />
-            </Button>
-            <div>
-              <div className="flex items-center gap-2">
-                <div className="text-title font-extrabold text-primary">
-                  Dữ liệu bán hàng #{copy.id.slice(0, 8)}
-                </div>
-                <Badge
-                  tone={
-                    copy.approval_state === "APPROVED"
-                      ? "success"
-                      : copy.approval_state === "REJECTED"
-                      ? "danger"
-                      : "warning"
-                  }
-                  className="text-caption"
-                >
-                  {copy.approval_state === "APPROVED"
-                    ? "Đã duyệt"
+          <PageHeader
+            title={`Dữ liệu bán hàng #${copy.id.slice(0, 8)}`}
+            backHref={returnTo}
+            backLabel="Quay lại"
+            badge={
+              <Badge
+                tone={
+                  copy.approval_state === "APPROVED"
+                    ? "success"
                     : copy.approval_state === "REJECTED"
-                    ? "Đã từ chối"
-                    : "Chờ duyệt"}
-                </Badge>
-              </div>
-              <div className="mt-0.5 flex items-center gap-2 text-meta text-text-muted">
+                    ? "danger"
+                    : "warning"
+                }
+                className="text-caption"
+              >
+                {copy.approval_state === "APPROVED"
+                  ? "Đã duyệt"
+                  : copy.approval_state === "REJECTED"
+                  ? "Đã từ chối"
+                  : "Chờ duyệt"}
+              </Badge>
+            }
+            description={
+              <span className="flex items-center gap-2 text-meta text-text-muted">
                 <span>Phân tích: <code className="font-mono">{copy.analysis_id.slice(0, 8)}…</code></span>
                 {copy.product_id && (
                   <>
@@ -261,9 +251,9 @@ export default function ProductCopyDetailPage() {
                     <span>Sản phẩm: <code className="font-mono">{copy.product_id.slice(0, 8)}…</code></span>
                   </>
                 )}
-              </div>
-            </div>
-          </div>
+              </span>
+            }
+          />
           <div className="flex items-center gap-2">
             <Button
               aria-label="Làm mới" variant="ghost" size="icon" onClick={() => router.refresh()}>

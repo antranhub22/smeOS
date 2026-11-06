@@ -75,10 +75,10 @@ export function CoordinatorOrderBriefCard({
       : "success"
 
   return (
-    <Card className="rounded-2xl border border-border bg-surface p-5 shadow-sm flex flex-col gap-4 hover:border-alert-200 transition-colors">
+    <Card className="rounded-2xl border border-border bg-surface p-5 shadow-sm flex flex-col gap-4 hover:border-danger-border transition-colors">
       <div className="flex items-center justify-between flex-wrap gap-2">
         <div className="flex items-center gap-2 flex-wrap">
-          <span className="px-2 py-0.5 rounded-md bg-cool-100 text-cool-700 text-caption font-black uppercase border border-cool-200 tracking-wider">
+          <span className="px-2 py-0.5 rounded-md bg-surface-alt text-text text-caption font-black uppercase border border-border tracking-wider">
             BƯỚC 2 • BRIEF (T02)
           </span>
           <span className="text-caption font-bold text-text-muted">ĐIỀU PHỐI ĐƠN</span>
@@ -87,7 +87,7 @@ export function CoordinatorOrderBriefCard({
             {stageLabel}
           </Badge>
           {partnerName && (
-            <span className="px-2 py-0.5 rounded-full bg-ocean-50 text-ocean-700 text-caption font-bold border border-ocean-200">
+            <span className="px-2 py-0.5 rounded-full bg-info-bg text-info-text text-caption font-bold border border-info-border">
               🏪 {partnerName}
             </span>
           )}
@@ -99,9 +99,9 @@ export function CoordinatorOrderBriefCard({
       </div>
 
       {riskLevel !== "NORMAL" && riskReason && (
-        <div className="flex items-start justify-between gap-2 p-2.5 rounded-xl bg-sand-50 border border-sand-200 text-sand-900 text-caption font-medium">
+        <div className="flex items-start justify-between gap-2 p-2.5 rounded-xl bg-warning-bg border border-warning-border text-warning-text text-caption font-medium">
           <div className="flex items-start gap-2">
-            <AlertTriangle size={15} className="shrink-0 text-sand-600 mt-0.5" />
+            <AlertTriangle size={15} className="shrink-0 text-warning-text mt-0.5" />
             <span>{riskReason}</span>
           </div>
           {hasMissingItems && onOpenMissingInfo && (
@@ -109,7 +109,7 @@ export function CoordinatorOrderBriefCard({
               size="sm"
               variant="outline"
               onClick={onOpenMissingInfo}
-              className="h-6 text-caption px-2 font-bold text-sand-900 border-sand-300 bg-sand-100 hover:bg-sand-200 shrink-0"
+              className="h-6 text-caption px-2 font-bold text-warning-text border-warning-border bg-warning-bg hover:bg-warning-border shrink-0"
             >
               Xem Phiếu Thiếu Tin (T03)
             </Button>
@@ -122,7 +122,7 @@ export function CoordinatorOrderBriefCard({
         <div className="p-2.5 rounded-xl bg-surface-alt/70 border border-border/80 flex items-center justify-between gap-3">
           <div className="flex items-center gap-3 min-w-0">
             {sampleImageUrl ? (
-              <div className="w-12 h-12 rounded-lg border border-alert-200 overflow-hidden shrink-0 relative bg-surface shadow-xs">
+              <div className="w-12 h-12 rounded-lg border border-danger-border overflow-hidden shrink-0 relative bg-surface shadow-xs">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={sampleImageUrl}
@@ -132,12 +132,12 @@ export function CoordinatorOrderBriefCard({
               </div>
             ) : (
               <div className="w-12 h-12 rounded-lg border border-border bg-surface flex items-center justify-center shrink-0 text-text-muted">
-                <Flower2 size={20} className="text-alert-400" />
+                <Flower2 size={20} className="text-danger" />
               </div>
             )}
             <div className="min-w-0">
               <div className="flex items-center gap-1.5">
-                <span className="text-caption font-bold text-alert-700 bg-alert-50 border border-alert-200 px-1.5 py-0.2 rounded shrink-0">
+                <span className="text-caption font-bold text-danger-text bg-danger-bg border border-danger-border px-1.5 py-0.2 rounded shrink-0">
                   Mẫu Input
                 </span>
                 <span className="font-extrabold text-text text-caption truncate">
@@ -153,7 +153,7 @@ export function CoordinatorOrderBriefCard({
             <Button variant="ghost"
               type="button"
               onClick={onOpenDetail}
-              className="h-auto p-0 gap-0 text-caption font-bold text-alert-600 hover:text-alert-700 whitespace-nowrap shrink-0 hover:underline cursor-pointer"
+              className="h-auto p-0 gap-0 text-caption font-bold text-danger-text hover:text-danger-text whitespace-nowrap shrink-0 hover:underline cursor-pointer"
             >
               Chi tiết →
             </Button>
@@ -167,7 +167,7 @@ export function CoordinatorOrderBriefCard({
             <User size={13} />
             <span>Khách đặt:</span>
             <span className="text-text font-bold">{customerName}</span>
-            <span className="px-1.5 py-0.5 rounded bg-sand-100 text-sand-800 text-caption font-bold">
+            <span className="px-1.5 py-0.5 rounded bg-warning-bg text-warning-text text-caption font-bold">
               {customerTier}
             </span>
           </div>
@@ -179,11 +179,11 @@ export function CoordinatorOrderBriefCard({
         <div className="p-3 rounded-xl bg-surface-alt border border-border/60 flex flex-col gap-1.5">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-1 text-text-muted font-semibold">
-              <MapPin size={13} className="text-alert-600" />
+              <MapPin size={13} className="text-danger-text" />
               <span>Địa chỉ giao hàng:</span>
             </div>
             {typeof deliveryAddress === "object" && deliveryAddress !== null && (
-              <span className="text-caption font-bold text-alert-700 bg-alert-100 px-1.5 py-0.2 rounded">
+              <span className="text-caption font-bold text-danger-text bg-danger-bg px-1.5 py-0.2 rounded">
                 Chuẩn 5 tầng
               </span>
             )}
@@ -195,13 +195,13 @@ export function CoordinatorOrderBriefCard({
           </div>
           {typeof deliveryAddress === "object" && deliveryAddress !== null && (
             <div className="flex items-center gap-1 flex-wrap pt-0.5">
-              <span className="px-1.5 py-0.2 rounded bg-alert-50 text-alert-700 text-caption font-bold">
+              <span className="px-1.5 py-0.2 rounded bg-danger-bg text-danger-text text-caption font-bold">
                 {deliveryAddress.ward}
               </span>
-              <span className="px-1.5 py-0.2 rounded bg-ocean-50 text-ocean-700 text-caption font-bold">
+              <span className="px-1.5 py-0.2 rounded bg-info-bg text-info-text text-caption font-bold">
                 {deliveryAddress.district}
               </span>
-              <span className="px-1.5 py-0.2 rounded bg-orchid-50 text-orchid-700 text-caption font-bold">
+              <span className="px-1.5 py-0.2 rounded bg-accent-bg text-accent-text text-caption font-bold">
                 {deliveryAddress.city}
               </span>
             </div>
@@ -212,7 +212,7 @@ export function CoordinatorOrderBriefCard({
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-2 border-t border-dashed border-border">
         <div className="text-caption text-text-muted font-medium flex items-center gap-1.5">
           <span className="font-bold text-text">Hành động kế tiếp:</span>
-          <span className="text-blush-700 font-semibold">{nextAction}</span>
+          <span className="text-primary font-semibold">{nextAction}</span>
         </div>
         <div className="flex items-center gap-2 flex-wrap">
           {/* Quick-action buttons for specific stages */}
@@ -221,7 +221,7 @@ export function CoordinatorOrderBriefCard({
               size="sm"
               variant="outline"
               onClick={onOpenAssignModal}
-              className="text-caption h-7 px-2.5 font-bold border-navy-200 text-navy-700 bg-navy-50/70 hover:bg-navy-100"
+              className="text-caption h-7 px-2.5 font-bold border-info-border text-info-text bg-info-bg/70 hover:bg-info-bg"
             >
               ⚡ Phân công xưởng (T06)
             </Button>
@@ -232,7 +232,7 @@ export function CoordinatorOrderBriefCard({
               size="sm"
               variant="outline"
               onClick={onOpenProduction}
-              className="text-caption h-7 px-2.5 font-bold border-sand-200 text-sand-800 bg-sand-50/70 hover:bg-sand-100"
+              className="text-caption h-7 px-2.5 font-bold border-warning-border text-warning-text bg-warning-bg/70 hover:bg-warning-bg"
             >
               🌸 Phiếu cắm hoa (T07)
             </Button>
@@ -243,7 +243,7 @@ export function CoordinatorOrderBriefCard({
               size="sm"
               variant="outline"
               onClick={onOpenQC}
-              className="text-caption h-7 px-2.5 font-bold border-orchid-200 text-orchid-800 bg-orchid-50/70 hover:bg-orchid-100"
+              className="text-caption h-7 px-2.5 font-bold border-accent-border text-accent-text bg-accent-bg/70 hover:bg-accent-bg"
             >
               🤖 Duyệt AI QC (T14)
             </Button>
@@ -254,7 +254,7 @@ export function CoordinatorOrderBriefCard({
               size="sm"
               variant="outline"
               onClick={onOpenPOD}
-              className="text-caption h-7 px-2.5 font-bold border-ocean-200 text-ocean-800 bg-ocean-50/70 hover:bg-ocean-100"
+              className="text-caption h-7 px-2.5 font-bold border-info-border text-info-text bg-info-bg/70 hover:bg-info-bg"
             >
               📦 Biên nhận POD (T21)
             </Button>
@@ -265,7 +265,7 @@ export function CoordinatorOrderBriefCard({
               size="sm"
               variant="outline"
               onClick={onOpenClosure}
-              className="text-caption h-7 px-2.5 font-bold border-mint-200 text-mint-800 bg-mint-50/70 hover:bg-mint-100"
+              className="text-caption h-7 px-2.5 font-bold border-success-border text-success-text bg-success-bg/70 hover:bg-success-bg"
             >
               ✅ Nghiệm thu (T25)
             </Button>
@@ -278,7 +278,7 @@ export function CoordinatorOrderBriefCard({
           )}
 
           {onAdvanceStage && (
-            <Button size="sm" onClick={onAdvanceStage} className="bg-alert-600 hover:bg-alert-700 text-white gap-1 h-7 text-caption font-bold">
+            <Button size="sm" onClick={onAdvanceStage} className="bg-danger hover:bg-danger-text text-white gap-1 h-7 text-caption font-bold">
               <span>Chuyển bước</span>
               <ArrowRight size={13} />
             </Button>

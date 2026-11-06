@@ -95,37 +95,37 @@ export function LandingCampaignPreview({
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-border">
         <div className="flex items-center gap-2">
           <Eye size={16} className="text-primary" />
-          <h3 className="text-sm font-bold text-text">Bản xem trước trang khách</h3>
+          <h3 className="text-body-sm font-bold text-text">Bản xem trước trang khách</h3>
           {isPublished && <Badge tone="success">Đã xuất bản</Badge>}
         </div>
 
         <div className="flex items-center gap-2">
           {/* Device Viewport Toggle */}
-          <div className="flex items-center bg-surface p-0.5 rounded-lg border border-border text-xs mr-2">
-            <button
+          <div className="flex items-center bg-surface p-0.5 rounded-lg border border-border text-caption mr-2">
+            <Button variant="ghost"
               type="button"
               onClick={() => setDeviceView("mobile")}
-              className={`flex items-center gap-1 px-2.5 py-1 rounded-md font-bold transition-colors ${
+              className={`h-auto text-[length:inherit] flex items-center gap-1 px-2.5 py-1 rounded-md font-bold transition-colors ${
                 deviceView === "mobile"
-                  ? "bg-white text-primary shadow-xs"
+                  ? "bg-white text-primary shadow-xs hover:bg-white"
                   : "text-text-muted hover:text-text"
               }`}
             >
               <Smartphone size={13} />
               <span>Điện thoại</span>
-            </button>
-            <button
+            </Button>
+            <Button variant="ghost"
               type="button"
               onClick={() => setDeviceView("desktop")}
-              className={`flex items-center gap-1 px-2.5 py-1 rounded-md font-bold transition-colors ${
+              className={`h-auto text-[length:inherit] flex items-center gap-1 px-2.5 py-1 rounded-md font-bold transition-colors ${
                 deviceView === "desktop"
-                  ? "bg-white text-primary shadow-xs"
+                  ? "bg-white text-primary shadow-xs hover:bg-white"
                   : "text-text-muted hover:text-text"
               }`}
             >
               <Monitor size={13} />
               <span>Máy tính</span>
-            </button>
+            </Button>
           </div>
 
           {/* Action Buttons */}
@@ -136,7 +136,7 @@ export function LandingCampaignPreview({
                 variant="ghost"
                 size="sm"
                 onClick={() => window.open(publishedUrl || "", "_blank")}
-                className="h-8 gap-1.5 text-xs text-primary font-bold"
+                className="h-8 gap-1.5 text-caption text-primary font-bold"
               >
                 <ExternalLink size={13} />
                 <span>Mở trang thật</span>
@@ -146,7 +146,7 @@ export function LandingCampaignPreview({
                 size="sm"
                 onClick={onDownloadQR}
                 disabled={downloadingQR}
-                className="h-8 gap-1.5 text-xs text-primary font-bold"
+                className="h-8 gap-1.5 text-caption text-primary font-bold"
               >
                 <QrCode size={13} />
                 <span>{downloadingQR ? "Đang tạo..." : "Tải mã QR chiến dịch"}</span>
