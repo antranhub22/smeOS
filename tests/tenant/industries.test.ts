@@ -3,7 +3,9 @@ import path from "node:path"
 
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from "vitest"
 
+import { OrganizationRepository } from "@/modules/organization/infra/organization-repository"
 import { resolveTierChain } from "@/modules/organization/infra/tier-chain-repository"
+import { GreetingCardRepository } from "@/modules/greeting-card/infra/greeting-card-repository"
 
 import { disconnectDatabase, prisma, resetDatabase } from "../helpers/database"
 import { createTenant, type Tenant } from "../helpers/fixtures"
@@ -74,5 +76,11 @@ describe("industries — ngành của tổ chức thành cột có khoá ngoại
     ).rejects.toThrow()
     await prisma.organizations.update({ where: { id: t.organizationId }, data: { industry_key: "FNB" } })
     expect((await resolveTierChain(t.organizationId))?.industryKey).toBe("FNB")
+  })
+
+  it("T-6b: dòng tổ chức đọc qua repository lấy settings.industry theo cột (cột là nguồn chuẩn)", async () => {
+    await prisma.organizations.update({ where: { id: t.organizationId }, data: { industry_key: "HOMESTAY" } })
+    expect((await new OrganizationRepository().current(t.ctx))?.settings?.industry).toBe("HOMESTAY")
+    expect(((await new GreetingCardRepository().getShopProfile(t.organizationId)).settings as Record<string, unknown>).industry).toBe("HOMESTAY")
   })
 })

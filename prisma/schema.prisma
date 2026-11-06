@@ -3956,7 +3956,7 @@ model notification_hard_locks {
   event_key  String
   channel    String
   tier       String // MOTHER | INDUSTRY | CHAIN | STORE
-  scope_id   String // organization_id hoặc "GLOBAL" nếu tier = MOTHER
+  scope_id   String // địa chỉ phạm vi D-T5: "platform" (MOTHER) hoặc "org:<organization_id>" (ADR-012 T-6b)
   enabled    Boolean // true = bắt buộc BẬT | false = bắt buộc TẮT
   locked_by  String // user_id người đặt khóa
   reason     String? // Lý do khóa

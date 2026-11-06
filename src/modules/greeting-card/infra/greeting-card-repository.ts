@@ -6,6 +6,7 @@ import { isUniqueViolation } from "@/modules/coordinator/infra/transaction"
 import { generateSendCode, linkAvailability } from "../domain/greeting-card-rules"
 import { CATALOG_ITEMS_INCLUDE, GreetingCatalogRepository } from "./greeting-catalog-repository"
 import type { GreetingSessionStatus, ProductSnapshot } from "../domain/greeting-card-types"
+import { withIndustryKey } from "@/modules/organization/domain/industry-key"
 
 const SEND_CODE_ATTEMPTS = 5
 
@@ -179,13 +180,12 @@ export class GreetingCardRepository extends GreetingCatalogRepository {
   async getShopProfile(organizationId: string) {
     const org = await this.db.organizations.findUnique({
       where: { id: organizationId },
-      select: { name: true, type: true, settings: true, business_profile: { select: { display_name: true, phone: true } } },
+      select: { name: true, type: true, settings: true, industry_key: true, business_profile: { select: { display_name: true, phone: true } } },
     })
     return {
-      name: org?.business_profile?.display_name || org?.name || "Cửa hàng",
-      phone: org?.business_profile?.phone ?? null,
+      name: org?.business_profile?.display_name || org?.name || "Cửa hàng", phone: org?.business_profile?.phone ?? null,
       type: org?.type ?? "SINGLE",
-      settings: org?.settings ?? null,
+      settings: org ? (withIndustryKey(org).settings ?? null) : null, // ngành theo cột industry_key (ADR-012 T-6b)
     }
   }
 
