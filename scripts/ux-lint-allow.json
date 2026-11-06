@@ -255,6 +255,21 @@
       "rule": "R20",
       "pathGlob": "src/components/greeting-card/customer/**",
       "reason": "Trang khách công khai (brochure, khoá link, hết hạn) không có khung app — tiêu đề <h1> theo giao diện mẫu brochure, PageHeader là đầu trang quản trị (ADR-011 D-UI-05 áp cho màn trong app)"
+    },
+    {
+      "rule": "R18",
+      "path": "src/components/greeting-card/customer/honeypot-field.tsx",
+      "reason": "Ô bẫy chống spam phải là <input> thô ẩn khỏi người dùng/trình đọc màn hình để chỉ bot điền vào"
+    },
+    {
+      "rule": "R14",
+      "path": "src/components/greeting-card/coordinator/coordinator-progress-strip.tsx",
+      "reason": "\"done\" là trạng thái bước của dải tiến độ xưởng (miền coordinator-progress), không phải trạng thái tác vụ nền"
+    },
+    {
+      "rule": "R14",
+      "path": "src/components/greeting-card/tracking/tracking-stepper-view.tsx",
+      "reason": "\"completed\" là trạng thái bước của dải theo dõi giao hàng, không phải trạng thái tác vụ nền"
     }
   ]
 }

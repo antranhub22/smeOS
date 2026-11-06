@@ -393,7 +393,7 @@ export function SalesOrderIntakeModal({
             </div>
             <div>
               <h2 className="text-body font-extrabold text-text">
-                Tiếp Nhận Đơn Hàng Mới (Sales Order Intake — T01)
+                Tiếp Nhận Đơn Hàng Mới
               </h2>
               <p className="text-caption text-text-muted">
                 Tạo đơn hàng từ Sales & Đưa ngay vào Tháp Điều Phối Control Tower
@@ -1188,10 +1188,10 @@ export function SalesOrderIntakeModal({
             <div className="flex items-center justify-between">
               <span className="font-extrabold text-danger-text text-caption flex items-center gap-1.5">
                 <CheckCircle2 size={14} className="text-danger-text" />
-                Kiểm Định Tiêu Chuẩn Đầu Vào P1 (Điều 4 Quy chế & Sổ Tay Điều Phối):
+                Kiểm tra đủ thông tin đầu vào (Điều 4 Quy chế & Sổ tay điều phối):
               </span>
               <span className="text-caption font-bold text-danger-text bg-danger-bg px-2 py-0.5 rounded-full">
-                Mục tiêu P1: Đủ thông tin trước khi lập KH P2
+                Mục tiêu: đủ thông tin trước khi lập kế hoạch sản xuất
               </span>
             </div>
 
