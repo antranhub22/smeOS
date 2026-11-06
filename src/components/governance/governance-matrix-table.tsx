@@ -66,7 +66,7 @@ export function GovernanceMatrixTable({
   if (state.error) {
     return (
       <div className="flex flex-col gap-4 p-6 rounded-2xl border border-border-danger/30 bg-danger-bg">
-        <div className="flex items-center gap-3 text-danger">
+        <div className="flex items-center gap-3 text-danger-text">
           <AlertTriangle size={20} />
           <span className="font-semibold text-body">Lỗi tải cấu hình ma trận quản trị</span>
         </div>

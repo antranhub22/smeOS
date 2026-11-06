@@ -253,6 +253,7 @@ export function ProductUploadCard({
               type="file"
               accept="image/*"
               disabled={isUploading}
+              aria-label="Chọn ảnh sản phẩm để phân tích xu hướng"
               className="absolute inset-0 opacity-0 cursor-pointer disabled:cursor-not-allowed"
               onChange={(e) => {
                 const file = e.target.files?.[0];
