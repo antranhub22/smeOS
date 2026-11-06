@@ -4,7 +4,6 @@ import { join } from "node:path"
 import { describe, expect, it } from "vitest"
 
 import { LEAD_STATUSES } from "@/modules/acquisition/domain/lead-rules"
-import type { PartnershipStatus } from "@/modules/chain-partnership/domain/partnership-entities"
 import type { ContentGenerationStatus } from "@/modules/content-engine/domain/repositories/content-generation-repository.interface"
 import { CAMPAIGN_PACKAGE_STATUSES } from "@/modules/creative-production/domain/campaign-package-rules"
 import type { GreetingSessionStatus } from "@/modules/greeting-card/domain/greeting-card-types"
@@ -27,7 +26,6 @@ const greetingSessions: Record<GreetingSessionStatus, true> = {
   ORDER_SUBMITTED: true, PAYMENT_REPORTED: true, COMPLETED: true,
 }
 const paymentEvents: Record<PaymentEventStatus, true> = { RECEIVED: true, MATCHED: true, UNMATCHED: true, IGNORED: true }
-const partnerships: Record<PartnershipStatus, true> = { PENDING: true, ACTIVE: true, SUSPENDED: true, TERMINATED: true }
 const brandLibrary: Record<BrandLibraryStatus, true> = { ACTIVE: true, ARCHIVED: true }
 
 const EXPECTED: Record<string, readonly string[]> = {
@@ -37,7 +35,6 @@ const EXPECTED: Record<string, readonly string[]> = {
   content_generations_status_check: Object.keys(contentGenerations),
   greeting_sessions_status_check: Object.keys(greetingSessions),
   greeting_payment_events_status_check: Object.keys(paymentEvents),
-  chain_partnerships_status_check: Object.keys(partnerships),
   brand_library_items_status_check: Object.keys(brandLibrary),
 }
 
@@ -55,10 +52,14 @@ function constraintsInMigrations(): Map<string, string[]> {
   return found
 }
 
+/** Ràng buộc của bảng đã xoá ở migration contract sau đó — không còn trong CSDL. */
+const DROPPED_WITH_TABLE = new Set(["chain_partnerships_status_check"]) // ADR-012 T-3b (trạng thái nay là enum ở organization_links)
+
 describe("CHECK status khớp tập giá trị trong mã", () => {
   const found = constraintsInMigrations()
+  for (const name of DROPPED_WITH_TABLE) found.delete(name)
 
-  it("đủ 8 ràng buộc", () => {
+  it("đủ 7 ràng buộc", () => {
     expect([...found.keys()].sort()).toEqual(Object.keys(EXPECTED).sort())
   })
 

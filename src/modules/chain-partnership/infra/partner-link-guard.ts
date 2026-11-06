@@ -1,5 +1,5 @@
 import { prisma } from "@/core/tenancy/infra/prisma"
-import { ACTIVE_CHAIN_LINK } from "@/modules/organization/infra/organization-link-sync"
+import { ACTIVE_CHAIN_LINK } from "@/modules/organization/infra/organization-links"
 
 /**
  * Tổ chức đối tác có đang liên kết ACTIVE với chuỗi không; nếu có `partnerUserId` thì người đó phải

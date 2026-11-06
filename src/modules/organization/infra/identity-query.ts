@@ -1,6 +1,6 @@
 import { prisma } from "@/core/tenancy/infra/prisma"
 
-import { ACTIVE_CHAIN_LINK } from "./organization-link-sync"
+import { ACTIVE_CHAIN_LINK } from "./organization-links"
 
 export interface OrganizationIdentityData {
   organization: {

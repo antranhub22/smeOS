@@ -139,7 +139,7 @@ Thứ tự từ rủi ro thấp đến cao. Mỗi connector là một WP, đi qu
 
 | WP | Việc |
 |---|---|
-| 3.1 | `domain/integration-governance.ts`: `effectiveMode(connector, orgChain)` dùng `resolveLayered`, thứ tự Mẹ (GLOBAL) → Ngành (`industry:<key>`) → Chuỗi (qua `chain_partnerships` ACTIVE) → Cửa hàng |
+| 3.1 | `domain/integration-governance.ts`: `effectiveMode(connector, orgChain)` dùng `resolveLayered`, thứ tự Mẹ (GLOBAL) → Ngành (`industry:<key>`) → Chuỗi (qua cạnh chính `organization_links`) → Cửa hàng |
 | 3.2 | `resolveEffectiveConnection(ctx, connectorKey)`: dùng kết nối riêng nếu chế độ là `ALLOW_OWN` và đã có; nếu không thì dùng kết nối kế thừa của chuỗi; nếu không có thì báo `NOT_CONFIGURED`. Tất cả module nghiệp vụ gọi qua hàm này |
 | 3.3 | Kế thừa chỉ cho phép *dùng*, không cho *đọc credential*: cửa hàng thấy tên tài khoản của chuỗi, không thấy và không sửa được cấu hình |
 | 3.4 | API `GET/PUT /api/v1/integrations/governance`, yêu cầu `integration.govern`; trả 422 kèm `violations` (LOCKED_BY_UPPER, STORE_CANNOT_LOCK) giống `governance-matrix`; ghi audit |

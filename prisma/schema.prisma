@@ -250,8 +250,6 @@ model organizations {
   greeting_share_links                             greeting_share_links[]
   greeting_message_reads                           greeting_message_reads[]
   staff_notifications                              staff_notifications[]
-  chain_partnerships_as_chain                      chain_partnerships[]            @relation("ChainOrg")
-  chain_partnerships_as_partner                    chain_partnerships[]            @relation("PartnerOrg")
   internal_chat_conversations                      internal_chat_conversations[]
   internal_chat_participations                     internal_chat_participants[]
   notification_org_policies                        notification_org_policies[]
@@ -1695,7 +1693,7 @@ model store_share_links {
 }
 
 /// Công cụ 45 — thư viện nhận diện thương hiệu có phiên bản. Chuỗi bật
-/// `share_with_members` để cửa hàng thành viên (chain_partnerships ACTIVE) xem và tải;
+/// `share_with_members` để cửa hàng thành viên (liên kết chuỗi ACTIVE ở organization_links) xem và tải;
 /// cửa hàng chỉ đọc, không sửa. Không xoá cứng: lưu trữ (ARCHIVED) để giữ lịch sử.
 model brand_library_items {
   id                 String   @id @default(uuid())
@@ -3855,38 +3853,6 @@ model greeting_journey_events {
   @@index([organization_id, session_id])
 }
 
-// ─── ChainOS: Liên kết Chuỗi ─ Đối tác ──────────────────────────────────────
-model chain_partnerships {
-  id               String   @id @default(uuid())
-  chain_org_id     String
-  partner_org_id   String
-  partner_code     String
-  partnership_type String   @default("SUBCONTRACTOR") // SUBCONTRACTOR | FRANCHISE | BRANCH
-  status           String   @default("ACTIVE") // PENDING | ACTIVE | SUSPENDED | TERMINATED
-  capacity_daily   Int      @default(10)
-  commission_rate  Decimal?
-  /// @pii identity
-  contact_name     String?
-  /// @pii contact
-  contact_phone    String?
-  /// @pii contact
-  contact_email    String?
-  /// @pii business
-  address          String?
-  province         String?
-  district         String?
-  created_at       DateTime @default(now()) @db.Timestamptz(3)
-  updated_at       DateTime @updatedAt @db.Timestamptz(3)
-
-  chain_organization   organizations @relation("ChainOrg", fields: [chain_org_id], references: [id], onDelete: Cascade)
-  partner_organization organizations @relation("PartnerOrg", fields: [partner_org_id], references: [id], onDelete: Cascade)
-
-  @@unique([chain_org_id, partner_code])
-  @@unique([chain_org_id, partner_org_id])
-  @@index([chain_org_id, status])
-  @@index([partner_org_id])
-}
-
 // ─── Internal Chat (ChainOS / PlatformOS) ────────────────────────────────────
 model internal_chat_conversations {
   id                String   @id @default(uuid())
@@ -4838,7 +4804,7 @@ model reconciliation_findings {
 // ── Cây tổ chức (ADR-012 D-T3, bước T-2) ────────────────────────────────────
 // Quan hệ giữa các tổ chức là đồ thị có hướng cha → con. "Tầng trên" của một tổ chức đi theo cạnh
 // is_primary (một cạnh chính ACTIVE mỗi tổ chức con — trigger trong migration giữ luật này).
-// Giai đoạn chuyển (T-2 → T-3): id trùng chain_partnerships.id, ghi kép từ repository đối tác.
+// Thay `chain_partnerships` (xoá ở T-3b, migration 20261106020000): id các liên kết cũ giữ nguyên.
 
 enum organization_link_type {
   SUBCONTRACTOR
