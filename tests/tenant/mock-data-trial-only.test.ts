@@ -29,7 +29,7 @@ describe("nạp dữ liệu mẫu chỉ ở tài khoản dùng thử", () => {
     expect(res.status).toBe(403)
 
     const org = await prisma.organizations.findUniqueOrThrow({ where: { id: shop.organizationId } })
-    expect((org.settings as Record<string, unknown> | null)?.industry).not.toBe("FNB")
+    expect(org.industry_key).not.toBe("FNB") // T-6c-1: ngành nằm ở cột industry_key
     expect(await prisma.products.count({ where: { organization_id: shop.organizationId } })).toBe(0)
   })
 
@@ -57,6 +57,6 @@ describe("nạp dữ liệu mẫu chỉ ở tài khoản dùng thử", () => {
     }))
     expect(bad.status).toBe(400)
     const org = await prisma.organizations.findUniqueOrThrow({ where: { id: created.organization_id } })
-    expect((org.settings as Record<string, unknown> | null)?.industry).toBe("FLORAL")
+    expect(org.industry_key).toBe("FLORAL") // T-6c-1: ngành nằm ở cột industry_key
   })
 })
