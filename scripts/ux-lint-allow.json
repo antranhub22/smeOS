@@ -250,6 +250,11 @@
       "rule": "R20",
       "path": "src/components/store-share/public-store-profile-view.tsx",
       "reason": "Trang công khai / màn lỗi toàn trang không dùng PageHeader của shell nội bộ — tiêu đề trang là <h1> như bản main (cùng nguyên tắc PO 03/11/2026 cho trang catalog công khai)"
+    },
+    {
+      "rule": "R20",
+      "pathGlob": "src/components/greeting-card/customer/**",
+      "reason": "Trang khách công khai (brochure, khoá link, hết hạn) không có khung app — tiêu đề <h1> theo giao diện mẫu brochure, PageHeader là đầu trang quản trị (ADR-011 D-UI-05 áp cho màn trong app)"
     }
   ]
 }
