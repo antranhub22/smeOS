@@ -81,11 +81,11 @@ export function PitchCardTab({
               { id: "square" as const, label: "Vuông 1:1", title: "Khổ vuông 1:1 - tối ưu gửi chat Zalo / Messenger" },
               { id: "story" as const, label: "Story", title: "Khổ dọc dạng Story / Nhật ký Zalo" },
             ].map((f) => (
-              <button
+              <Button variant="ghost"
                 type="button"
                 key={f.id}
                 onClick={() => setCardFormat(f.id)}
-                className={`px-2.5 py-1 text-caption font-semibold rounded-lg transition-all cursor-pointer ${
+                className={`text-[length:inherit] h-auto justify-start font-[inherit] gap-0 inline-block px-2.5 py-1 text-caption font-semibold rounded-lg transition-all cursor-pointer ${
                   cardFormat === f.id
                     ? "bg-surface text-primary shadow-xs font-bold"
                     : "text-text-muted hover:text-text"
@@ -93,7 +93,7 @@ export function PitchCardTab({
                 title={f.title}
               >
                 {f.label}
-              </button>
+              </Button>
             ))}
           </div>
         </div>
@@ -109,18 +109,18 @@ export function PitchCardTab({
               { id: "minimal" as const, label: "Tối giản" },
               { id: "festive" as const, label: "Lễ hội" },
             ].map((t) => (
-              <button
+              <Button variant="ghost"
                 type="button"
                 key={t.id}
                 onClick={() => setCardTheme(t.id)}
-                className={`px-2 py-1 text-caption font-semibold rounded-lg transition-all cursor-pointer ${
+                className={`text-[length:inherit] h-auto justify-start font-[inherit] gap-0 inline-block px-2 py-1 text-caption font-semibold rounded-lg transition-all cursor-pointer ${
                   cardTheme === t.id
                     ? "bg-surface text-primary shadow-xs font-bold"
                     : "text-text-muted hover:text-text"
                 }`}
               >
                 {t.label}
-              </button>
+              </Button>
             ))}
           </div>
         </div>

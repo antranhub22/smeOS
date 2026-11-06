@@ -72,9 +72,9 @@ ${catalogUrl}`
           <input
             readOnly
             value={catalogUrl}
-            className="flex-1 px-3 py-2 rounded-xl bg-surface border text-xs text-text-muted focus:outline-none"
+            className="flex-1 px-3 py-2 rounded-xl bg-surface border text-meta text-text-muted focus:outline-none"
           />
-          <Button variant="ghost" size="sm" onClick={handleCopyLink} className="h-9 gap-1 text-xs shrink-0">
+          <Button variant="ghost" size="sm" onClick={handleCopyLink} className="h-9 gap-1 text-meta shrink-0">
             {copiedLink ? (
               <>
                 <Check size={14} className="text-success" />
@@ -93,12 +93,12 @@ ${catalogUrl}`
       <div className="space-y-5">
         {/* 1. Quick Share 1-Click Buttons */}
         <div>
-          <label className="block text-xs font-bold text-text mb-2">1. Chia sẻ nhanh 1-chạm lên Mạng xã hội</label>
+          <label className="block text-meta font-bold text-text mb-2">1. Chia sẻ nhanh 1-chạm lên Mạng xã hội</label>
           <div className="grid grid-cols-2 gap-2.5">
             <button
               onClick={handleShareFacebook}
               type="button"
-              className="p-3 rounded-2xl border border-info/20 bg-info/5 hover:bg-info/10 text-info text-xs font-bold flex items-center justify-center gap-2 transition-colors focus-visible:outline-2 focus-visible:outline-primary"
+              className="p-3 rounded-2xl border border-info/20 bg-info/5 hover:bg-info/10 text-info text-meta font-bold flex items-center justify-center gap-2 transition-colors focus-visible:outline-2 focus-visible:outline-primary"
             >
               <svg className="w-4 h-4 text-info fill-current" viewBox="0 0 24 24">
                 <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z" />
@@ -108,7 +108,7 @@ ${catalogUrl}`
             <button
               onClick={handleShareZalo}
               type="button"
-              className="p-3 rounded-2xl border border-primary/20 bg-primary/5 hover:bg-primary/10 text-primary text-xs font-bold flex items-center justify-center gap-2 transition-colors focus-visible:outline-2 focus-visible:outline-primary"
+              className="p-3 rounded-2xl border border-primary/20 bg-primary/5 hover:bg-primary/10 text-primary text-meta font-bold flex items-center justify-center gap-2 transition-colors focus-visible:outline-2 focus-visible:outline-primary"
             >
               <MessageCircle size={16} className="text-primary" />
               <span>Chia sẻ lên Zalo</span>
@@ -119,11 +119,11 @@ ${catalogUrl}`
         {/* 2. Sample Caption Box */}
         <div>
           <div className="flex items-center justify-between mb-1.5">
-            <label className="text-xs font-bold text-text">2. Mẫu bài viết bán hàng (Caption gợi ý)</label>
+            <label className="text-meta font-bold text-text">2. Mẫu bài viết bán hàng (Caption gợi ý)</label>
             <button
               onClick={handleCopyCaption}
               type="button"
-              className="text-xs font-bold text-primary hover:underline flex items-center gap-1"
+              className="text-meta font-bold text-primary hover:underline flex items-center gap-1"
             >
               {copiedCaption ? (
                 <>
@@ -138,7 +138,7 @@ ${catalogUrl}`
               )}
             </button>
           </div>
-          <div className="p-3 rounded-2xl bg-surface border border-border text-xs text-text leading-relaxed whitespace-pre-wrap font-sans max-h-28 overflow-y-auto">
+          <div className="p-3 rounded-2xl bg-surface border border-border text-meta text-text leading-relaxed whitespace-pre-wrap font-sans max-h-28 overflow-y-auto">
             {sampleCaption}
           </div>
         </div>
@@ -147,14 +147,14 @@ ${catalogUrl}`
         <div className="p-4 rounded-2xl bg-surface-alt border border-primary/20 space-y-2.5">
           <div className="flex items-center gap-2">
             <Sparkles size={16} className="text-primary shrink-0" />
-            <span className="text-xs font-bold text-text">Quảng bá tự động với AI Content Engine</span>
+            <span className="text-meta font-bold text-text">Quảng bá tự động với AI Content Engine</span>
           </div>
           <p className="text-caption text-text-muted leading-relaxed">
             Chuyển Catalog này sang xưởng nội dung để AI tự động viết bài đa kênh (Fanpage, Instagram, TikTok, Zalo OA) và chuẩn bị lịch xuất bản tự động.
           </p>
           <Button
             onClick={handleOpenM07}
-            className="w-full bg-primary hover:bg-primary-dark text-white font-bold text-xs h-9 gap-1.5 shadow-xs"
+            className="w-full bg-primary hover:bg-primary-dark text-white font-bold text-meta h-9 gap-1.5 shadow-xs"
           >
             <Sparkles size={14} />
             <span>Soạn bài chiến dịch cho Catalog này</span>

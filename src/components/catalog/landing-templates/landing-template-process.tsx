@@ -62,7 +62,7 @@ export function LandingTemplateProcess({
           >
             <div className="flex items-center justify-between">
               {isLuxury ? (
-                <span className="font-display text-2xl text-primary font-bold">
+                <span className="font-display text-display text-primary font-bold">
                   0{st.step}.
                 </span>
               ) : (
@@ -80,7 +80,7 @@ export function LandingTemplateProcess({
             </div>
 
             <div className="space-y-1">
-              <h4 className={`text-xs font-bold text-text group-hover:text-primary transition-colors ${isLuxury ? "font-display text-sm" : ""}`}>
+              <h4 className={`text-meta font-bold text-text group-hover:text-primary transition-colors ${isLuxury ? "font-display text-body" : ""}`}>
                 {st.title}
               </h4>
               <p className={`text-caption leading-relaxed ${isLuxury ? "font-display text-text" : "text-text-muted"}`}>

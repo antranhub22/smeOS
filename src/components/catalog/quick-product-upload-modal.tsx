@@ -1,9 +1,11 @@
 "use client"
 
 import React, { useState, useRef } from "react"
-import { UploadCloud, Sparkles, X, Check, Image as ImageIcon, Flower2 } from "@/components/ui/icons"
+import { UploadCloud, Sparkles, Check, Image as ImageIcon } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { Dialog } from "@/components/ui/dialog"
+import { NativeSelect } from "@/components/ui/select"
 import { readApiError } from "@/components/greeting-card/api-error"
 import type { CatalogProduct } from "./catalog-management-tab"
 import { uploadProductImage, type UploadedImage } from "./quick-product-media"
@@ -167,29 +169,21 @@ export function QuickProductUploadModal({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in">
-      <div role="dialog" aria-modal="true" aria-labelledby="qp-title" className="relative w-full max-w-lg bg-surface rounded-3xl border border-border shadow-2xl overflow-hidden flex flex-col max-h-[90vh]">
-        <div className="p-4 sm:p-5 border-b border-border flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center">
-              <Flower2 size={16} aria-hidden="true" />
-            </div>
-            <div>
-              <h3 id="qp-title" className="text-sm font-extrabold text-text">Thêm nhanh sản phẩm</h3>
-              <p className="text-caption text-text-muted">Chụp ảnh, điền thông tin — AI có thể giúp điền phần mô tả</p>
-            </div>
-          </div>
-          <button type="button" onClick={onClose} aria-label="Đóng cửa sổ" className="p-1.5 rounded-full text-text-muted hover:bg-surface-alt transition-colors">
-            <X size={18} />
-          </button>
-        </div>
-
-        <form onSubmit={handleSubmit} className="p-4 sm:p-5 overflow-y-auto space-y-4">
-          {errorMessage && <div role="alert" className="p-3 rounded-xl bg-danger-bg text-danger text-xs">{errorMessage}</div>}
-          {notice && <div role="status" className="p-3 rounded-xl bg-primary/5 text-primary text-xs">{notice}</div>}
+    <Dialog
+      open={true}
+      onOpenChange={(open) => {
+        if (!open) onClose()
+      }}
+      title="Thêm nhanh sản phẩm"
+      description="Chụp ảnh, điền thông tin — AI có thể giúp điền phần mô tả"
+      size="md"
+    >
+        <form onSubmit={handleSubmit} className="space-y-4">
+          {errorMessage && <div role="alert" className="p-3 rounded-xl bg-danger-bg text-danger-text text-meta">{errorMessage}</div>}
+          {notice && <div role="status" className="p-3 rounded-xl bg-primary/5 text-primary text-meta">{notice}</div>}
 
           <div>
-            <p className="text-xs font-bold text-text mb-1.5 flex items-center gap-1.5">
+            <p className="text-meta font-bold text-text mb-1.5 flex items-center gap-1.5">
               <ImageIcon size={13} className="text-primary" aria-hidden="true" />
               Ảnh chụp sản phẩm hoa
             </p>
@@ -204,21 +198,22 @@ export function QuickProductUploadModal({
                 </div>
               </div>
             ) : (
-              <button
+              <Button
+                variant="ghost"
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                className="w-full relative aspect-16/9 rounded-2xl border-2 border-dashed border-border hover:border-primary/60 bg-surface-alt flex flex-col items-center justify-center gap-2 cursor-pointer p-4 text-center transition-colors"
+                className="h-auto w-full relative aspect-16/9 rounded-2xl border-2 border-dashed border-border hover:border-primary/60 bg-surface-alt flex flex-col items-center justify-center gap-2 cursor-pointer p-4 text-center font-normal transition-colors"
               >
                 <div className="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center">
                   <UploadCloud size={20} aria-hidden="true" />
                 </div>
-                <div className="text-xs font-bold text-text">Bấm vào đây để chọn ảnh chụp sản phẩm</div>
+                <div className="text-meta font-bold text-text">Bấm vào đây để chọn ảnh chụp sản phẩm</div>
                 <div className="text-caption text-text-muted">Hỗ trợ JPG, PNG, WEBP từ điện thoại hoặc máy tính</div>
-              </button>
+              </Button>
             )}
             <input ref={fileInputRef} type="file" accept="image/jpeg,image/png,image/webp" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFileChange(f) }} />
             {previewUrl && (
-              <Button type="button" variant="outline" onClick={() => void handleVisionAnalyze()} disabled={isAnalyzing || isSubmitting} className="mt-2 h-9 w-full text-xs font-bold gap-1.5">
+              <Button type="button" variant="outline" onClick={() => void handleVisionAnalyze()} disabled={isAnalyzing || isSubmitting} className="mt-2 h-9 w-full text-meta font-bold gap-1.5">
                 <Sparkles size={14} className="text-primary" aria-hidden="true" />
                 {isAnalyzing ? "AI đang phân tích ảnh..." : analyzed ? "Phân tích lại (1 credit)" : "Phân tích ảnh bằng AI (1 credit)"}
               </Button>
@@ -230,50 +225,49 @@ export function QuickProductUploadModal({
 
           <div className="space-y-3">
             <div>
-              <label htmlFor="qp-name" className="block text-xs font-bold text-text mb-1">
+              <label htmlFor="qp-name" className="block text-meta font-bold text-text mb-1">
                 Tên sản phẩm *{aiFilled.has("name") && <span className="ml-1 text-caption font-medium text-primary">· AI gợi ý</span>}
               </label>
-              <Input id="qp-name" value={fields.name} onChange={(e) => setField("name", e.target.value)} placeholder="VD: Bó Hồng Đỏ Ecuador 15 Cành" className="h-9 text-xs" required />
+              <Input id="qp-name" value={fields.name} onChange={(e) => setField("name", e.target.value)} placeholder="VD: Bó Hồng Đỏ Ecuador 15 Cành" className="h-9 text-meta" required />
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label htmlFor="qp-code" className="block text-xs font-bold text-text mb-1">Mã sản phẩm</label>
-                <Input id="qp-code" value={code} onChange={(e) => setCode(e.target.value)} placeholder="VD: FL-2026" className="h-9 text-xs font-mono" />
+                <label htmlFor="qp-code" className="block text-meta font-bold text-text mb-1">Mã sản phẩm</label>
+                <Input id="qp-code" value={code} onChange={(e) => setCode(e.target.value)} placeholder="VD: FL-2026" className="h-9 text-meta font-mono" />
               </div>
               <div>
-                <label htmlFor="qp-price" className="block text-xs font-bold text-text mb-1">Giá bán (đồng)</label>
-                <Input id="qp-price" type="number" min={0} value={price} onChange={(e) => setPrice(e.target.value ? Number(e.target.value) : "")} placeholder="Để trống = Liên hệ" className="h-9 text-xs" />
+                <label htmlFor="qp-price" className="block text-meta font-bold text-text mb-1">Giá bán (đồng)</label>
+                <Input id="qp-price" type="number" min={0} value={price} onChange={(e) => setPrice(e.target.value ? Number(e.target.value) : "")} placeholder="Để trống = Liên hệ" className="h-9 text-meta" />
               </div>
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label htmlFor="qp-category" className="block text-xs font-bold text-text mb-1">
+                <label htmlFor="qp-category" className="block text-meta font-bold text-text mb-1">
                   Phân loại{aiFilled.has("category") && <span className="ml-1 text-caption font-medium text-primary">· AI gợi ý</span>}
                 </label>
-                <select id="qp-category" value={fields.category} onChange={(e) => setField("category", e.target.value)} className="w-full h-9 rounded-xl border border-border bg-surface px-3 text-xs text-text focus:outline-none focus:border-primary">
+                <NativeSelect id="qp-category" value={fields.category} onChange={(e) => setField("category", e.target.value)} className="h-9 text-meta">
                   <option value="">Chọn phân loại</option>
                   {CATEGORY_OPTIONS.map((c) => <option key={c} value={c}>{c}</option>)}
-                </select>
+                </NativeSelect>
               </div>
               <div>
-                <label htmlFor="qp-occasion" className="block text-xs font-bold text-text mb-1">
+                <label htmlFor="qp-occasion" className="block text-meta font-bold text-text mb-1">
                   Dịp phù hợp{aiFilled.has("occasion") && <span className="ml-1 text-caption font-medium text-primary">· AI gợi ý</span>}
                 </label>
-                <Input id="qp-occasion" value={fields.occasion} onChange={(e) => setField("occasion", e.target.value)} placeholder="VD: 20-10, Sinh nhật..." className="h-9 text-xs" />
+                <Input id="qp-occasion" value={fields.occasion} onChange={(e) => setField("occasion", e.target.value)} placeholder="VD: 20-10, Sinh nhật..." className="h-9 text-meta" />
               </div>
             </div>
             <QuickProductAiFields values={fields} aiFilled={aiFilled} onChange={setField} />
           </div>
 
           <div className="pt-3 border-t border-border flex items-center justify-end gap-2">
-            <Button type="button" variant="ghost" onClick={onClose} className="h-9 text-xs">Hủy</Button>
-            <Button type="submit" disabled={isSubmitting || isAnalyzing || !fields.name.trim()} className="h-9 text-xs bg-primary text-white hover:bg-primary-dark font-bold gap-1.5">
+            <Button type="button" variant="ghost" onClick={onClose} className="h-9 text-meta">Hủy</Button>
+            <Button type="submit" disabled={isSubmitting || isAnalyzing || !fields.name.trim()} className="h-9 text-meta bg-primary text-white hover:bg-primary-dark font-bold gap-1.5">
               <Check size={14} aria-hidden="true" />
               <span>{isSubmitting ? "Đang lưu..." : "Thêm sản phẩm"}</span>
             </Button>
           </div>
         </form>
-      </div>
-    </div>
+    </Dialog>
   )
 }

@@ -238,7 +238,7 @@ export function QuickCollectionModal({
             </>
           ) : (
             <>
-              <Button variant="outline" onClick={resetAll} className="gap-1.5 text-xs">
+              <Button variant="outline" onClick={resetAll} className="gap-1.5 text-meta">
                 <RefreshCw size={14} /> Tạo thêm bộ khác
               </Button>
               <Button variant="outline" onClick={() => onOpenChange(false)}>

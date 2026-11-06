@@ -26,20 +26,20 @@ export function QuickProductAiFields({ values, aiFilled, onChange }: Props) {
       <div className="grid grid-cols-2 gap-3">
         {FIELDS.map((f) => (
           <div key={f.key}>
-            <label htmlFor={`qp-${f.key}`} className="block text-xs font-bold text-text mb-1">{f.label}{tag(f.key)}</label>
-            <Input id={`qp-${f.key}`} value={values[f.key]} onChange={(e) => onChange(f.key, e.target.value)} placeholder={f.placeholder} className="h-9 text-xs" />
+            <label htmlFor={`qp-${f.key}`} className="block text-meta font-bold text-text mb-1">{f.label}{tag(f.key)}</label>
+            <Input id={`qp-${f.key}`} value={values[f.key]} onChange={(e) => onChange(f.key, e.target.value)} placeholder={f.placeholder} className="h-9 text-meta" />
           </div>
         ))}
       </div>
       <div>
-        <label htmlFor="qp-description" className="block text-xs font-bold text-text mb-1">Mô tả{tag("description")}</label>
+        <label htmlFor="qp-description" className="block text-meta font-bold text-text mb-1">Mô tả{tag("description")}</label>
         <textarea
           id="qp-description"
           value={values.description}
           onChange={(e) => onChange("description", e.target.value)}
           rows={3}
           placeholder="Vài câu giới thiệu sản phẩm cho khách"
-          className="w-full rounded-xl border border-border bg-surface px-3 py-2 text-xs text-text focus:outline-none focus:border-primary"
+          className="w-full rounded-xl border border-border bg-surface px-3 py-2 text-meta text-text focus:outline-none focus:border-primary"
         />
       </div>
     </div>

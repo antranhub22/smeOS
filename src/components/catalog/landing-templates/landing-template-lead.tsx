@@ -66,7 +66,7 @@ export function LandingTemplateLead({
     ? "bg-text text-surface hover:bg-text/90 rounded-lg font-bold px-5"
     : "bg-primary hover:bg-primary-dark text-primary-foreground font-semibold px-4"
 
-  const inputStyle = `h-10 text-xs bg-surface text-text border-border ${isLuxury ? "rounded-full px-4" : isModern ? "rounded-lg" : "rounded-xl"}`
+  const inputStyle = `h-10 text-meta bg-surface text-text border-border ${isLuxury ? "rounded-full px-4" : isModern ? "rounded-lg" : "rounded-xl"}`
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -90,7 +90,7 @@ export function LandingTemplateLead({
 
       {submitted ? (
         <div className="p-4 rounded-2xl bg-success/10 border border-success/30 text-success text-center space-y-1 animate-in fade-in">
-          <div className="flex items-center justify-center gap-1.5 text-xs font-bold">
+          <div className="flex items-center justify-center gap-1.5 text-meta font-bold">
             <CheckCircle2 size={16} />
             <span>Cửa hàng đã nhận thông tin của bạn!</span>
           </div>
@@ -125,7 +125,7 @@ export function LandingTemplateLead({
                 type="submit"
                 size="sm"
                 disabled={submitting}
-                className={`h-10 text-xs shrink-0 flex items-center justify-center gap-1.5 shadow-xs ${buttonStyle}`}
+                className={`h-10 text-meta shrink-0 flex items-center justify-center gap-1.5 shadow-xs ${buttonStyle}`}
               >
                 {submitting ? (
                   <Loader2 size={13} className="animate-spin motion-reduce:animate-none" />

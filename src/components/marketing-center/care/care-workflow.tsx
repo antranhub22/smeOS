@@ -195,11 +195,11 @@ export function CareWorkflow({
             {CARE_GOALS.map((goal) => {
               const isSelected = selectedGoal === goal.id
               return (
-                <button
+                <Button variant="ghost"
                   type="button"
                   key={goal.id}
                   onClick={() => handleSelectGoal(goal)}
-                  className={`p-3 rounded-xl border text-left cursor-pointer transition-all ${
+                  className={`text-[length:inherit] h-auto justify-start font-[inherit] gap-0 inline-block p-3 rounded-xl border text-left cursor-pointer transition-all ${
                     isSelected
                       ? "border-primary bg-primary/5 text-primary ring-2 ring-primary/20 shadow-xs"
                       : "border-border hover:border-border-hover bg-surface-alt/40 text-text"
@@ -207,7 +207,7 @@ export function CareWorkflow({
                 >
                   <div className="font-semibold text-body-sm">{goal.name}</div>
                   <div className="text-caption text-text-muted mt-0.5">{goal.description}</div>
-                </button>
+                </Button>
               )
             })}
           </div>
@@ -234,10 +234,10 @@ export function CareWorkflow({
             </div>
 
             <div>
-              <label className="block text-caption font-medium text-text-muted mb-1.5">
+              <label htmlFor="care-send-1" className="block text-caption font-medium text-text-muted mb-1.5">
                 Chọn phân nhóm gửi tin
               </label>
-              <NativeSelect
+              <NativeSelect id="care-send-1"
                 value={selectedSegmentId}
                 onChange={(e) => setSelectedSegmentId(e.target.value)}
                 className="w-full"

@@ -7,6 +7,7 @@ import { Tag } from "@/components/ui/icon-set/tag"
 import { Sparkles } from "@/components/ui/icon-set/sparkles"
 import { Card } from "@/components/ui/card"
 import { useI18n } from "@/lib/i18n"
+import { Button } from "@/components/ui/button"
 
 export type ContentAngle = "emotional" | "technical" | "promotional"
 
@@ -56,12 +57,10 @@ export function AngleSelectorCard({
           const isSelected = item.id === selectedAngle
           const Icon = item.icon
           return (
-            <div
-              role="button"
-              tabIndex={0}
+            <Button variant="ghost" type="button"
               key={item.id}
               onClick={() => onSelectAngle(item.id)}
-              className={`cursor-pointer rounded-xl border p-3.5 transition-all flex flex-col gap-2 ${
+              className={`text-[length:inherit] h-auto justify-start font-[inherit] gap-0 cursor-pointer rounded-xl border p-3.5 transition-all flex flex-col gap-2 ${
                 isSelected
                   ? "border-primary bg-primary/5 ring-2 ring-primary/20"
                   : "border-border hover:border-text-muted bg-surface"
@@ -73,10 +72,10 @@ export function AngleSelectorCard({
                 </div>
                 <div className="text-caption font-bold text-text">{item.title}</div>
               </div>
-              <p className="text-caption text-text-muted leading-relaxed">
+              <span className="block text-caption text-text-muted leading-relaxed">
                 {item.description}
-              </p>
-            </div>
+              </span>
+            </Button>
           )
         })}
       </div>

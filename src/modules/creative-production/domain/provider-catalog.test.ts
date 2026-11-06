@@ -47,3 +47,23 @@ describe("danh mục nhà cung cấp Creative Studio (PO 25/09/2026)", () => {
     expect(orgProviderOrders(null)).toEqual({})
   })
 })
+
+describe("tên hiển thị cho cửa hàng (PO 06/11/2026: đổi sang tên trung tính)", () => {
+  const BRANDS = /claude|opus|sonnet|gpt|openai|gemini|google|anthropic|photoroom|fal|flux|stability|veo|kling|runway|luma|elevenlabs|minimax|microsoft|edge|tts|ffmpeg|rembg|ken burns|ảnh vàng|khoá/i
+  it("mọi nhà cung cấp có tên trung tính, không lộ tên hãng/model hay từ nội bộ", () => {
+    for (const kind of PROVIDER_KINDS) {
+      const spec = PROVIDER_CATALOG[kind]
+      for (const p of spec.providers) {
+        expect(p.displayName.trim().length).toBeGreaterThan(0)
+        expect(`${p.displayName} ${p.note}`).not.toMatch(BRANDS)
+      }
+      if (spec.localFallback) expect(spec.localFallback.label).not.toMatch(BRANDS)
+    }
+  })
+  it("tên trung tính không trùng trong cùng một loại", () => {
+    for (const kind of PROVIDER_KINDS) {
+      const names = PROVIDER_CATALOG[kind].providers.map((p) => p.displayName)
+      expect(new Set(names).size).toBe(names.length)
+    }
+  })
+})

@@ -145,7 +145,7 @@ export function CampaignMediaSettings({
             <ImageIcon size={15} />
           </div>
           <div>
-            <h4 className="text-xs font-bold text-text">Tùy biến Ảnh Banner & Video Chiến Dịch</h4>
+            <h4 className="text-meta font-bold text-text">Tùy biến Ảnh Banner & Video Chiến Dịch</h4>
             <p className="text-caption text-text-muted">Tải ảnh banner đại diện riêng hoặc chèn video TikTok / YouTube giới thiệu hoa</p>
           </div>
         </div>
@@ -154,7 +154,7 @@ export function CampaignMediaSettings({
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Cột 1: Ảnh Banner Hero */}
         <div className="space-y-3">
-          <label className="block text-xs font-bold text-text flex items-center gap-1.5">
+          <label className="block text-meta font-bold text-text flex items-center gap-1.5">
             <ImageIcon size={13} className="text-primary" />
             <span>Ảnh đầu trang</span>
           </label>
@@ -195,7 +195,7 @@ export function CampaignMediaSettings({
               <div className="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center">
                 <UploadCloud size={20} />
               </div>
-              <div className="text-xs font-bold text-text">
+              <div className="text-meta font-bold text-text">
                 {isUploading ? "Đang tải ảnh..." : "Bấm để tải ảnh Banner Hero"}
               </div>
               <div className="text-caption text-text-muted">Hỗ trợ JPG, PNG, WEBP tỷ lệ 16:9</div>
@@ -252,7 +252,7 @@ export function CampaignMediaSettings({
         {/* Cột 2: Video Chiến Dịch (Tải file hoặc Dán Link) */}
         <div className="space-y-3">
           <div className="flex items-center justify-between">
-            <label className="text-xs font-bold text-text flex items-center gap-1.5">
+            <label className="text-meta font-bold text-text flex items-center gap-1.5">
               <Film size={13} className="text-primary" />
               <span>Video Giới Thiệu (Tải Tệp hoặc Link)</span>
             </label>
@@ -288,7 +288,7 @@ export function CampaignMediaSettings({
                 <div className="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center">
                   <Video size={20} />
                 </div>
-                <div className="text-xs font-bold text-text">
+                <div className="text-meta font-bold text-text">
                   {isVideoUploading ? "Đang tải video lên..." : "Bấm để tải tệp video từ máy"}
                 </div>
                 <div className="text-caption text-text-muted">Hỗ trợ tệp MP4, MOV, WEBM (Tối đa 100MB)</div>
@@ -310,7 +310,7 @@ export function CampaignMediaSettings({
                 value={videoUrl}
                 onChange={(e) => onVideoUrlChange(e.target.value)}
                 placeholder="Dán link YouTube hoặc TikTok (VD: https://youtube.com/watch?v=...)"
-                className="h-9 text-xs"
+                className="h-9 text-meta"
               />
               <span className="text-caption text-text-muted mt-1 block">
                 Video từ TikTok hoặc YouTube sẽ được nhúng phát trực tiếp.

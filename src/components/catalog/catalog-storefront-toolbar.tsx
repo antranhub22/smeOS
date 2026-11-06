@@ -55,7 +55,7 @@ export function CatalogStorefrontToolbar({
               borderColor: style.tokens.border,
               color: style.tokens.textPrimary,
             }}
-            className="w-full pl-10 pr-4 py-2.5 rounded-2xl border text-sm placeholder:opacity-50 focus:outline-none focus:ring-2 shadow-xs transition-colors"
+            className="w-full pl-10 pr-4 py-2.5 rounded-2xl border text-body placeholder:opacity-50 focus:outline-none focus:ring-2 shadow-xs transition-colors"
           />
         </div>
 
@@ -86,7 +86,7 @@ export function CatalogStorefrontToolbar({
             <button
               onClick={() => onOccasionChange("all")}
               style={selectedOccasion === "all" ? activeStyle : { backgroundColor: style.tokens.surface, color: style.tokens.textSecondary, borderColor: style.tokens.border }}
-              className="px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap border transition-colors"
+              className="px-3 py-1.5 rounded-xl text-meta font-bold whitespace-nowrap border transition-colors"
             >
               Tất cả ({totalCount})
             </button>
@@ -95,7 +95,7 @@ export function CatalogStorefrontToolbar({
                 key={occ}
                 onClick={() => onOccasionChange(occ)}
                 style={selectedOccasion === occ ? activeStyle : { backgroundColor: style.tokens.surface, color: style.tokens.textSecondary, borderColor: style.tokens.border }}
-                className="px-3 py-1.5 rounded-xl text-xs font-bold whitespace-nowrap border transition-colors"
+                className="px-3 py-1.5 rounded-xl text-meta font-bold whitespace-nowrap border transition-colors"
               >
                 {occ}
               </button>

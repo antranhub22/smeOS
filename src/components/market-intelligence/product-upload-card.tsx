@@ -380,12 +380,10 @@ export function ProductUploadCard({
               ) : (
                 <div className="grid grid-cols-2 gap-3">
                   {catalogProducts.map((p) => (
-                    <div
-              role="button"
-              tabIndex={0}
+                    <Button variant="ghost" type="button"
                       key={p.id}
                       onClick={() => void handleSelectCatalogProduct(p)}
-                      className="flex items-center gap-2.5 p-2 rounded-xl border border-border hover:border-primary hover:bg-primary-muted/40 cursor-pointer transition text-left"
+                      className="h-auto justify-start gap-2.5 p-2 rounded-xl border border-border hover:border-primary hover:bg-primary-muted/40 cursor-pointer transition text-left font-normal"
                     >
                       {p.imageUrl ? (
                         <img src={p.imageUrl} alt={p.title} className="h-12 w-12 rounded-lg object-cover flex-shrink-0" />
@@ -395,14 +393,14 @@ export function ProductUploadCard({
                         </span>
                       )}
                       <div className="min-w-0 flex-1 text-caption">
-                        <p className="font-bold text-text truncate">{p.title}</p>
+                        <span className="block font-bold text-text truncate">{p.title}</span>
                         {p.price && (
-                          <p className="text-caption font-semibold text-primary mt-0.5">
+                          <span className="block text-caption font-semibold text-primary mt-0.5">
                             {p.price.toLocaleString("vi-VN")}đ
-                          </p>
+                          </span>
                         )}
                       </div>
-                    </div>
+                    </Button>
                   ))}
                 </div>
               )}

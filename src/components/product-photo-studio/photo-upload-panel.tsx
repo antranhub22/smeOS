@@ -1,6 +1,7 @@
 "use client"
 
 import { IconTile } from "@/components/ui/app-icon"
+import { Button } from "@/components/ui/button"
 import { safeImageSrc } from "@/lib/safe-image-src"
 import React, { useRef, useState } from "react"
 import { CheckCircle } from "@/components/ui/icon-set/check-circle"
@@ -87,7 +88,8 @@ export function PhotoUploadPanel({ onFileSelected, disabled }: PhotoUploadPanelP
         disabled={disabled}
         onChange={handleChange}
       />
-      <button
+      <Button
+        variant="ghost"
         type="button"
         disabled={disabled}
         onDragOver={(e) => {
@@ -97,7 +99,7 @@ export function PhotoUploadPanel({ onFileSelected, disabled }: PhotoUploadPanelP
         onDragLeave={() => setDragOver(false)}
         onDrop={handleDrop}
         onClick={() => fileInputRef.current?.click()}
-        className={`block w-full relative border-2 border-dashed rounded-2xl p-8 sm:p-10 text-center transition-all cursor-pointer ${
+        className={`block h-auto w-full relative border-2 border-dashed rounded-2xl p-8 sm:p-10 text-center text-body font-normal transition-all cursor-pointer ${
           dragOver
             ? "border-primary bg-primary/10 scale-[1.01]"
             : "border-border hover:border-primary/50 bg-surface shadow-sm"
@@ -148,7 +150,7 @@ export function PhotoUploadPanel({ onFileSelected, disabled }: PhotoUploadPanelP
             </div>
           </div>
         )}
-      </button>
+      </Button>
     </div>
   )
 }

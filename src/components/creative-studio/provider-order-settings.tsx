@@ -120,13 +120,13 @@ export function ProviderOrderSettings({ canEdit }: { canEdit: boolean }) {
                       <span className="w-4 text-caption font-bold text-text-muted">{i + 1}</span>
                       <span className="flex-1 min-w-0">
                         <span className="block truncate text-caption font-semibold text-text">
-                          {p?.label ?? key} <span className="font-normal text-text-muted">— {p?.vendor}</span>
+                          {p?.display_name ?? key}
                         </span>
                         <span className="block truncate text-caption text-text-muted">{p?.note}</span>
                       </span>
                       {p && !p.configured && (
                         <Badge tone="warning" className="shrink-0 text-caption">
-                          chưa có khoá
+                          chưa kết nối
                         </Badge>
                       )}
                       {canEdit && (

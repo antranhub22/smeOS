@@ -115,14 +115,14 @@ export function CatalogCardOverlay({
             </span>
           )}
           <h4
-            className={`text-lg font-bold leading-snug line-clamp-2 ${fontDisplay}`}
+            className={`text-title font-bold leading-snug line-clamp-2 ${fontDisplay}`}
             style={{ color: textPrimary }}
           >
             {product.name}
           </h4>
           <div className="flex items-center justify-between pt-2">
             <div>
-              <div className="text-base font-black tracking-tight whitespace-nowrap" style={{ color: priceColor }}>
+              <div className="text-title font-black tracking-tight whitespace-nowrap" style={{ color: priceColor }}>
                 {formatVnd(product.price)}
               </div>
             </div>

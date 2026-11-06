@@ -89,14 +89,14 @@ export function CatalogCardGlass({
             </span>
           )}
           <h4
-            className={`text-sm md:text-base font-bold leading-snug line-clamp-1 ${fontDisplay}`}
+            className={`text-body md:text-title font-bold leading-snug line-clamp-1 ${fontDisplay}`}
             style={{ color: textPrimary }}
           >
             {product.name}
           </h4>
           {product.description && (
             <p
-              className="text-xs mt-1 line-clamp-2 leading-relaxed opacity-80"
+              className="text-meta mt-1 line-clamp-2 leading-relaxed opacity-80"
               style={{ color: textSecondary }}
             >
               {product.description}
@@ -110,7 +110,7 @@ export function CatalogCardGlass({
         className="p-4 pt-3 border-t border-white/10 flex items-center justify-between mt-auto"
       >
         <div>
-          <div className="text-sm md:text-base font-black tracking-tight whitespace-nowrap" style={{ color: priceColor }}>
+          <div className="text-body md:text-title font-black tracking-tight whitespace-nowrap" style={{ color: priceColor }}>
             {formatVnd(product.price)}
           </div>
         </div>

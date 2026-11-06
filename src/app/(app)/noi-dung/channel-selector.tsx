@@ -101,19 +101,11 @@ export function ChannelSelector({
         {CHANNELS_CONFIG.map((ch) => {
           const isChecked = selectedChannels.includes(ch.id)
           return (
-            <div
+            <Button variant="ghost" type="button"
               key={ch.id}
-              role="button"
-              tabIndex={0}
               aria-pressed={isChecked}
               onClick={() => onToggle(ch.id)}
-              onKeyDown={(e) => {
-                if (e.key === " " || e.key === "Enter") {
-                  e.preventDefault()
-                  onToggle(ch.id)
-                }
-              }}
-              className={`text-left rounded-xl border p-4 transition-all flex flex-col justify-between gap-2 relative select-none cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
+              className={`text-[length:inherit] h-auto justify-start font-[inherit] gap-0 text-left rounded-xl border p-4 transition-all flex flex-col justify-between gap-2 relative select-none cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
                 isChecked
                   ? "border-primary bg-primary/5 ring-2 ring-primary/20 shadow-sm"
                   : "border-border hover:border-text-muted bg-bg opacity-70 hover:opacity-100"
@@ -153,7 +145,7 @@ export function ChannelSelector({
                   {isChecked ? "Sẽ tạo & đăng" : "Bỏ qua"}
                 </span>
               </div>
-            </div>
+            </Button>
           )
         })}
       </div>

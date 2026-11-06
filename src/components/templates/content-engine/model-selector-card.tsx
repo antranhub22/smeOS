@@ -107,12 +107,10 @@ export function ModelSelectorCard({
           const Icon = model.icon
 
           return (
-            <div
-              role="button"
-              tabIndex={0}
+            <Button variant="ghost" type="button"
               key={model.id}
               onClick={() => !disabled && onSelectProvider(model.id)}
-              className={`cursor-pointer rounded-xl border p-4 transition-all flex flex-col justify-between gap-3 select-none relative ${
+              className={`text-[length:inherit] h-auto justify-start font-[inherit] gap-0 cursor-pointer rounded-xl border p-4 transition-all flex flex-col justify-between gap-3 select-none relative ${
                 isSelected
                   ? "border-primary bg-primary/5 ring-2 ring-primary/20 shadow-xs"
                   : "border-border hover:border-text-muted bg-surface opacity-85 hover:opacity-100"
@@ -144,9 +142,9 @@ export function ModelSelectorCard({
               </div>
 
               {/* Mô tả tính năng */}
-              <p className="text-caption text-text-muted leading-relaxed line-clamp-3">
+              <span className="block text-caption text-text-muted leading-relaxed line-clamp-3">
                 {model.desc}
-              </p>
+              </span>
 
               {/* Footer: Tốc độ & Chi phí */}
               <div className="pt-2 border-t border-border/60 flex items-center justify-between text-caption">
@@ -157,7 +155,7 @@ export function ModelSelectorCard({
                   {model.cost}
                 </span>
               </div>
-            </div>
+            </Button>
           )
         })}
       </div>

@@ -27,16 +27,16 @@ export function PrintStepper({
         const isCompleted = currentStep > s.step
         const isCurrent = currentStep === s.step
         return (
-          <button
+          <Button variant="ghost"
             key={s.step}
             type="button"
             onClick={() => onSelect(s.step)}
-            className={`p-2.5 rounded-xl text-left border transition-all ${
+            className={`text-[length:inherit] h-auto justify-start font-[inherit] gap-0 inline-block p-2.5 rounded-xl text-left border transition-all ${
               isCurrent
                 ? "border-primary bg-selected/20 shadow-2xs"
                 : isCompleted
                 ? "border-success/30 bg-success/5 hover:border-success/50"
-                : "border-border bg-surface-alt/40 opacity-70"
+                : "border-border bg-surface-alt/40"
             }`}
           >
             <div className="flex items-center gap-2">
@@ -52,13 +52,13 @@ export function PrintStepper({
                 {isCompleted ? <Check className="w-3 h-3" /> : s.step}
               </span>
               <div className="min-w-0">
-                <p className="text-caption font-bold text-text truncate">
+                <span className="block text-caption font-bold text-text truncate">
                   {s.label}
-                </p>
-                <p className="text-caption text-text-muted truncate">{s.sub}</p>
+                </span>
+                <span className="block text-caption text-text-muted truncate">{s.sub}</span>
               </div>
             </div>
-          </button>
+          </Button>
         )
         })}
       </div>

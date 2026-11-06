@@ -41,7 +41,7 @@ export function LandingTemplateGallery({
     <section className="space-y-4">
       {/* Header */}
       <div className="flex items-center justify-between px-1">
-        <div className="flex items-center gap-1.5 text-xs font-bold text-text uppercase tracking-wider">
+        <div className="flex items-center gap-1.5 text-meta font-bold text-text uppercase tracking-wider">
           <Camera size={14} className={isLuxury || isRomantic ? "text-primary" : isFestive ? "text-primary" : "text-warning"} />
           <span className={isLuxury ? "font-display" : ""}>
             {"Ảnh mẫu thật"}
@@ -124,8 +124,8 @@ export function LandingTemplateGallery({
             </div>
 
             <div className="p-4 bg-surface space-y-1">
-              <h4 className="text-sm font-bold text-text">{activePhoto.title}</h4>
-              <p className="text-xs text-text-muted">{activePhoto.caption}</p>
+              <h4 className="text-body font-bold text-text">{activePhoto.title}</h4>
+              <p className="text-meta text-text-muted">{activePhoto.caption}</p>
             </div>
           </div>
         </div>

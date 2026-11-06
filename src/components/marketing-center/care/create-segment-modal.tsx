@@ -112,10 +112,10 @@ export function CreateSegmentModal({ isOpen, onClose, onSuccess }: CreateSegment
         )}
 
         <div>
-          <label className="block text-caption font-semibold text-text mb-1">
+          <label htmlFor="care-segment-1" className="block text-caption font-semibold text-text mb-1">
             Tên nhóm khách hàng *
           </label>
-          <Input
+          <Input id="care-segment-1"
             required
             value={name}
             onChange={(e) => setName(e.target.value)}
@@ -124,8 +124,8 @@ export function CreateSegmentModal({ isOpen, onClose, onSuccess }: CreateSegment
         </div>
 
         <div>
-          <label className="block text-caption font-semibold text-text mb-1">Mô tả mục đích</label>
-          <Input
+          <label htmlFor="care-segment-2" className="block text-caption font-semibold text-text mb-1">Mô tả mục đích</label>
+          <Input id="care-segment-2"
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             placeholder="Mô tả ngắn gọn về nhóm này..."
@@ -140,18 +140,18 @@ export function CreateSegmentModal({ isOpen, onClose, onSuccess }: CreateSegment
             {TIERS.map((tier) => {
               const isSelected = selectedTiers.includes(tier.id)
               return (
-                <button
+                <Button variant="ghost"
                   type="button"
                   key={tier.id}
                   onClick={() => handleToggleTier(tier.id)}
-                  className={`px-3 py-1.5 rounded-lg border text-caption font-medium cursor-pointer transition-all ${
+                  className={`text-[length:inherit] h-auto justify-start font-[inherit] gap-0 inline-block px-3 py-1.5 rounded-lg border text-caption font-medium cursor-pointer transition-all ${
                     isSelected
                       ? "bg-primary text-white border-primary"
                       : "bg-surface-alt text-text border-border hover:border-border-hover"
                   }`}
                 >
                   {tier.label}
-                </button>
+                </Button>
               )
             })}
           </div>
@@ -159,20 +159,20 @@ export function CreateSegmentModal({ isOpen, onClose, onSuccess }: CreateSegment
 
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="block text-caption font-semibold text-text mb-1">
+            <label htmlFor="care-segment-3" className="block text-caption font-semibold text-text mb-1">
               Doanh số tối thiểu (đ)
             </label>
-            <Input
+            <Input id="care-segment-3"
               value={minSpentVnd}
               onChange={(e) => setMinSpentVnd(e.target.value)}
               placeholder="VD: 5000000"
             />
           </div>
           <div>
-            <label className="block text-caption font-semibold text-text mb-1">
+            <label htmlFor="care-segment-4" className="block text-caption font-semibold text-text mb-1">
               Số đơn tối thiểu
             </label>
-            <Input
+            <Input id="care-segment-4"
               type="number"
               min="0"
               value={minOrderCount}
@@ -184,10 +184,10 @@ export function CreateSegmentModal({ isOpen, onClose, onSuccess }: CreateSegment
 
         <div className="grid grid-cols-2 gap-3">
           <div>
-            <label className="block text-caption font-semibold text-text mb-1">
+            <label htmlFor="care-segment-5" className="block text-caption font-semibold text-text mb-1">
               Dịp kỷ niệm sắp tới (ngày)
             </label>
-            <Input
+            <Input id="care-segment-5"
               type="number"
               min="1"
               max="90"
@@ -197,10 +197,10 @@ export function CreateSegmentModal({ isOpen, onClose, onSuccess }: CreateSegment
             />
           </div>
           <div>
-            <label className="block text-caption font-semibold text-text mb-1">
+            <label htmlFor="care-segment-6" className="block text-caption font-semibold text-text mb-1">
               Kênh tiếp thị đồng ý
             </label>
-            <NativeSelect
+            <NativeSelect id="care-segment-6"
               value={requiredConsent}
               onChange={(e) => setRequiredConsent(e.target.value)}
               className="w-full"

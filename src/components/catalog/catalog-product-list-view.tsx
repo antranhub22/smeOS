@@ -91,7 +91,7 @@ export function CatalogProductListView({
 
   return (
     <main>
-      <div className="flex items-center justify-between text-xs text-text-muted mb-3 px-1">
+      <div className="flex items-center justify-between text-meta text-text-muted mb-3 px-1">
         <span style={textSecondaryStyle}>
           Hiển thị <strong>{products.length}</strong> sản phẩm
         </span>
@@ -107,16 +107,16 @@ export function CatalogProductListView({
           className="rounded-3xl p-12 text-center border shadow-xs my-6"
         >
           <ShoppingBag size={40} className="mx-auto text-text-muted mb-3" />
-          <h3 className={`text-base font-bold ${fontDisplay}`} style={textPrimaryStyle}>
+          <h3 className={`text-title font-bold ${fontDisplay}`} style={textPrimaryStyle}>
             Không tìm thấy sản phẩm phù hợp
           </h3>
-          <p className="text-xs text-text-muted mt-1 max-w-sm mx-auto" style={textSecondaryStyle}>
+          <p className="text-meta text-text-muted mt-1 max-w-sm mx-auto" style={textSecondaryStyle}>
             Hãy thử từ khóa khác hoặc bấm nút bên dưới để xem lại toàn bộ danh mục.
           </p>
           <button
             onClick={onResetFilter}
             style={{ backgroundColor: style?.tokens.ctaBg || accentColor, color: style?.tokens.ctaText || "#FFFFFF" }}
-            className="mt-4 px-4 py-2 rounded-xl text-xs font-bold transition-all shadow-sm active:scale-95"
+            className="mt-4 px-4 py-2 rounded-xl text-meta font-bold transition-all shadow-sm active:scale-95"
           >
             Xem lại tất cả
           </button>
@@ -153,7 +153,7 @@ export function CatalogProductListView({
                 <div className="min-w-0">
                   <div className="flex items-center gap-2">
                     <span className="text-caption font-mono font-bold text-text-muted">{p.code}</span>
-                    <h4 className={`text-xs font-bold truncate ${fontDisplay}`} style={textPrimaryStyle}>
+                    <h4 className={`text-meta font-bold truncate ${fontDisplay}`} style={textPrimaryStyle}>
                       {p.name}
                     </h4>
                   </div>
@@ -167,7 +167,7 @@ export function CatalogProductListView({
                   <div className="text-caption text-text-muted" style={textSecondaryStyle}>
                     Giá
                   </div>
-                  <div className="text-xs font-black" style={{ color: priceColor }}>
+                  <div className="text-meta font-black" style={{ color: priceColor }}>
                     {formatVnd(p.price)}
                   </div>
                 </div>

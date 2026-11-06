@@ -53,7 +53,7 @@ const DOMAINS: DomainEntry[] = [
     label: "Sản phẩm / Dịch vụ",
     description: "Toàn bộ sản phẩm trong catalog — tên, giá, danh mục, trạng thái",
     icon: Package,
-    color: "text-emerald-600",
+    color: "text-tone-emerald",
     countKey: "productCount",
   },
   {
@@ -61,7 +61,7 @@ const DOMAINS: DomainEntry[] = [
     label: "Đơn hàng",
     description: "Lịch sử đơn hàng — khách hàng, tổng tiền, trạng thái giao hàng",
     icon: ShoppingCart,
-    color: "text-blue-600",
+    color: "text-tone-blue",
     countKey: "orderCount",
   },
   {
@@ -69,7 +69,7 @@ const DOMAINS: DomainEntry[] = [
     label: "Thành viên",
     description: "Danh sách nhân sự đang hoạt động trong tổ chức",
     icon: Users,
-    color: "text-violet-600",
+    color: "text-tone-indigo",
     countKey: "memberCount",
   },
   {
@@ -77,7 +77,7 @@ const DOMAINS: DomainEntry[] = [
     label: "Chi nhánh",
     description: "Các cơ sở / địa điểm kinh doanh với tồn kho",
     icon: Building2,
-    color: "text-amber-600",
+    color: "text-tone-amber",
     countKey: "branchCount",
   },
   {
@@ -85,7 +85,7 @@ const DOMAINS: DomainEntry[] = [
     label: "Khách hàng",
     description: "Danh bạ khách hàng — liên hệ, lịch sử, ghi chú",
     icon: UserCircle,
-    color: "text-rose-600",
+    color: "text-tone-rose",
     countKey: "memberCount", // fallback
   },
   {
@@ -101,7 +101,7 @@ const DOMAINS: DomainEntry[] = [
     label: "File Excel đã tải lên",
     description: "Kho lưu trữ các file Excel (.xlsx, .xls, .csv) do cửa hàng tải lên kèm chứng chỉ quét mã độc",
     icon: FileSpreadsheet,
-    color: "text-teal-600",
+    color: "text-tone-teal",
     countKey: "spreadsheetCount",
   },
 ]
@@ -234,9 +234,9 @@ function DomainPicker({
       {/* Org summary bar */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         {[
-          { icon: Package, label: "Sản phẩm", value: org.productCount, color: "text-emerald-600" },
-          { icon: ShoppingCart, label: "Đơn hàng", value: org.orderCount, color: "text-blue-600" },
-          { icon: Users, label: "Thành viên", value: org.memberCount, color: "text-violet-600" },
+          { icon: Package, label: "Sản phẩm", value: org.productCount, color: "text-tone-emerald" },
+          { icon: ShoppingCart, label: "Đơn hàng", value: org.orderCount, color: "text-tone-blue" },
+          { icon: Users, label: "Thành viên", value: org.memberCount, color: "text-tone-indigo" },
           { icon: BarChart3, label: "Credit", value: org.creditBalance.toLocaleString("vi-VN"), color: "text-primary" },
         ].map((s) => (
           <Card key={s.label} className="p-3 flex items-center gap-2.5">

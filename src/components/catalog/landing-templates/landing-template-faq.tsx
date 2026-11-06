@@ -80,7 +80,7 @@ export function LandingTemplateFaq({
                 onClick={() => toggleFaq(idx)}
                 className="w-full p-4 flex items-center justify-between text-left gap-3 focus:outline-none"
               >
-                <span className={`text-xs font-bold text-text ${isLuxury ? "font-display text-body-sm" : ""}`}>
+                <span className={`text-meta font-bold text-text ${isLuxury ? "font-display text-body-sm" : ""}`}>
                   {item.question}
                 </span>
                 <span className={`${isLuxury ? "text-primary" : "text-text-muted"} shrink-0`}>

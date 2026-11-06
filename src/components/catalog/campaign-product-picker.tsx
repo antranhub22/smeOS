@@ -32,7 +32,7 @@ export function CampaignProductPicker({
   return (
     <div>
       <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
-        <label className="text-xs font-bold text-text flex items-center gap-1.5">
+        <label className="text-meta font-bold text-text flex items-center gap-1.5">
           <Layers size={14} className="text-primary" />
           <span>Tuyển chọn {ti.sampleProduct} bán ({selectedProductIds.length}/{activeProducts.length})</span>
         </label>

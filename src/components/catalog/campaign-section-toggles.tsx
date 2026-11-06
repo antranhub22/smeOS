@@ -25,7 +25,7 @@ export function CampaignSectionToggles({
 }: CampaignSectionTogglesProps) {
   return (
     <div className="space-y-2">
-      <label className="text-xs font-bold text-text flex items-center gap-1.5">
+      <label className="text-meta font-bold text-text flex items-center gap-1.5">
         <Sliders size={14} className="text-primary" />
         <span>Bước 5: Bật/Tắt các phân đoạn (8 Sections)</span>
       </label>

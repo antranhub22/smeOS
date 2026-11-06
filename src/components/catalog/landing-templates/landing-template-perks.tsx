@@ -34,7 +34,7 @@ export function LandingTemplatePerks({
   return (
     <section className="space-y-4">
       <div className="flex items-center justify-between px-1">
-        <div className="flex items-center gap-1.5 text-xs font-bold text-text uppercase tracking-wider">
+        <div className="flex items-center gap-1.5 text-meta font-bold text-text uppercase tracking-wider">
           <CheckCircle2 size={14} className="text-success" />
           <span>Vì sao chọn tiệm</span>
         </div>
@@ -61,7 +61,7 @@ export function LandingTemplatePerks({
             )}
 
             <div className="space-y-1">
-              <h4 className="text-xs font-bold text-text group-hover:text-primary transition-colors">
+              <h4 className="text-meta font-bold text-text group-hover:text-primary transition-colors">
                 {perk.title}
               </h4>
               <p className="text-caption text-text-muted leading-relaxed">
