@@ -12,7 +12,7 @@ vi.mock("@/components/coordinator/coordinator-api", () => ({
   errorMessage: (e: unknown) => String(e),
 }))
 
-import { PartnerAssignmentModal } from "../partner-assignment-modal"
+import { PartnerAssignmentModal } from "@/components/templates/coordinator/partner-assignment-modal"
 
 const props = {
   orderCode: "D-01", recipeTitle: "Bó hồng", deliveryAddress: { formattedAddress: "12 Lê Lợi, Q1" },
