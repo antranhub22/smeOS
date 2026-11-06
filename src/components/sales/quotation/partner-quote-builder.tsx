@@ -90,14 +90,14 @@ export function PartnerQuoteBuilder({
         </div>
         <div className="flex gap-2 overflow-x-auto pb-1">
           {products.slice(0, 5).map((p) => (
-            <button
+            <Button variant="ghost"
               type="button"
               key={p.id}
               onClick={() => {
                 setPartnerItemName(p.title)
                 setPartnerPrice(String(Math.round(p.price * 0.75)))
               }}
-              className="flex-shrink-0 flex items-center gap-2 p-2 rounded-lg border border-border bg-surface hover:border-primary text-left cursor-pointer transition-colors"
+              className="text-[length:inherit] h-auto justify-start font-[inherit] gap-0 flex-shrink-0 flex items-center gap-2 p-2 rounded-lg border border-border bg-surface hover:border-primary text-left cursor-pointer transition-colors"
             >
               {p.image_url ? (
                 <img src={p.image_url} alt={p.title} className="w-8 h-8 rounded-md object-cover" />
@@ -112,7 +112,7 @@ export function PartnerQuoteBuilder({
                   {formatCurrency(Math.round(p.price * 0.75))}
                 </div>
               </div>
-            </button>
+            </Button>
           ))}
         </div>
       </Card>

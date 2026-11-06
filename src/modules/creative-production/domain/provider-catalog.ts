@@ -25,8 +25,11 @@ export type ProviderKind = (typeof PROVIDER_KINDS)[number]
 
 export interface ProviderOption {
   readonly key: string
+  /** Tên model/sản phẩm thật — dùng nội bộ (vận hành nền tảng, đối soát), không hiện cho cửa hàng. */
   readonly label: string
-  /** Hãng — hiển thị cho người chọn. */
+  /** Tên trung tính hiển thị cho cửa hàng: mô tả đặc điểm, không tên hãng/model (PO 06/11/2026). */
+  readonly displayName: string
+  /** Hãng — dùng nội bộ, không hiện cho cửa hàng. */
   readonly vendor: string
   /** Biến môi trường chứa khoá — thiếu thì bên này được bỏ qua trong chuỗi. */
   readonly envKey: string
@@ -46,58 +49,58 @@ export const PROVIDER_CATALOG: Readonly<Record<ProviderKind, ProviderKindSpec>> 
   content: {
     label: "Nội dung (kịch bản, bài đăng, viết lại)",
     providers: [
-      { key: "claude_opus", label: "Claude Opus 5", vendor: "Anthropic", envKey: "ANTHROPIC_API_KEY", quality: "cao", note: "Văn phong tiếng Việt tự nhiên, bám dữ kiện tốt" },
-      { key: "openai_structured", label: "GPT-4o", vendor: "OpenAI", envKey: "OPENAI_API_KEY", quality: "cao", note: "Mặc định cũ, đã đo trên bộ ảnh vàng" },
-      { key: "gemini_pro", label: "Gemini 2.5 Pro", vendor: "Google", envKey: "GEMINI_API_KEY", quality: "cao", note: "Ngữ cảnh dài, đa phương thức" },
-      { key: "claude_sonnet", label: "Claude Sonnet 5", vendor: "Anthropic", envKey: "ANTHROPIC_API_KEY", quality: "trung_binh", note: "Nhanh, rẻ hơn Opus" },
-      { key: "gemini_flash", label: "Gemini 2.5 Flash", vendor: "Google", envKey: "GEMINI_API_KEY", quality: "trung_binh", note: "Nhanh, chi phí thấp" },
-      { key: "openai_direct", label: "GPT-4o mini", vendor: "OpenAI", envKey: "OPENAI_API_KEY", quality: "trung_binh", note: "Nhanh, chi phí thấp" },
+      { key: "claude_opus", label: "Claude Opus 5", displayName: "Văn phong tự nhiên nhất", vendor: "Anthropic", envKey: "ANTHROPIC_API_KEY", quality: "cao", note: "Câu chữ tiếng Việt tự nhiên, bám sát thông tin sản phẩm" },
+      { key: "openai_structured", label: "GPT-4o", displayName: "Ổn định, đã kiểm chứng", vendor: "OpenAI", envKey: "OPENAI_API_KEY", quality: "cao", note: "Kết quả đều, dùng lâu nhất trên hệ thống" },
+      { key: "gemini_pro", label: "Gemini 2.5 Pro", displayName: "Hiểu ngữ cảnh dài", vendor: "Google", envKey: "GEMINI_API_KEY", quality: "cao", note: "Đọc được nhiều thông tin cùng lúc" },
+      { key: "claude_sonnet", label: "Claude Sonnet 5", displayName: "Cân bằng tốc độ và chất lượng", vendor: "Anthropic", envKey: "ANTHROPIC_API_KEY", quality: "trung_binh", note: "Nhanh hơn, chi phí vừa phải" },
+      { key: "gemini_flash", label: "Gemini 2.5 Flash", displayName: "Nhanh, tiết kiệm", vendor: "Google", envKey: "GEMINI_API_KEY", quality: "trung_binh", note: "Phản hồi nhanh, chi phí thấp" },
+      { key: "openai_direct", label: "GPT-4o mini", displayName: "Nhanh, tiết kiệm (dự phòng)", vendor: "OpenAI", envKey: "OPENAI_API_KEY", quality: "trung_binh", note: "Phản hồi nhanh, chi phí thấp" },
     ],
-    localFallback: { key: "template", label: "Khuôn bài tất định (không AI)" },
+    localFallback: { key: "template", label: "Mẫu bài có sẵn (không dùng AI)" },
   },
   image_optimize: {
     label: "Tối ưu ảnh Master (Khu vực A)",
     providers: [
-      { key: "photoroom", label: "Photoroom", vendor: "Photoroom", envKey: "PHOTOROOM_API_KEY", quality: "cao", note: "Tách nền, phông studio, bóng + ánh sáng AI" },
-      { key: "fal_flux", label: "fal.ai Product Shot", vendor: "fal.ai", envKey: "FAL_KEY", quality: "cao", note: "BiRefNet + BRIA Product Shot + ESRGAN" },
-      { key: "imagen", label: "Google Gemini Image", vendor: "Google", envKey: "GEMINI_API_KEY", quality: "cao", note: "Dựng phông + chỉnh sáng, sản phẩm ghép lại từ ảnh gốc" },
-      { key: "openai", label: "OpenAI Image", vendor: "OpenAI", envKey: "OPENAI_API_KEY", quality: "cao", note: "gpt-image-1, mặt nạ bảo vệ sản phẩm" },
+      { key: "photoroom", label: "Photoroom", displayName: "Tách nền và phông studio", vendor: "Photoroom", envKey: "PHOTOROOM_API_KEY", quality: "cao", note: "Tách nền, đặt phông studio, thêm bóng và ánh sáng" },
+      { key: "fal_flux", label: "fal.ai Product Shot", displayName: "Dựng ảnh sản phẩm", vendor: "fal.ai", envKey: "FAL_KEY", quality: "cao", note: "Tách nền, dựng phông và làm nét ảnh" },
+      { key: "imagen", label: "Google Gemini Image", displayName: "Dựng phông theo mô tả", vendor: "Google", envKey: "GEMINI_API_KEY", quality: "cao", note: "Dựng phông, chỉnh sáng, giữ nguyên sản phẩm từ ảnh gốc" },
+      { key: "openai", label: "OpenAI Image", displayName: "Chỉnh ảnh giữ nguyên sản phẩm", vendor: "OpenAI", envKey: "OPENAI_API_KEY", quality: "cao", note: "Chỉnh ảnh, bảo vệ vùng sản phẩm" },
     ],
-    localFallback: { key: "studio", label: "Studio cục bộ (rembg + phông)" },
+    localFallback: { key: "studio", label: "Tách nền và phông có sẵn" },
   },
   image_variant: {
     label: "Biến thể ảnh marketing (Khu vực D)",
     providers: [
-      { key: "fal", label: "fal.ai Product Shot", vendor: "fal.ai", envKey: "FAL_KEY", quality: "cao", note: "Dựng cảnh + hoà sáng, giữ vị trí sản phẩm" },
-      { key: "stability", label: "Stability AI Relight", vendor: "Stability AI", envKey: "STABILITY_API_KEY", quality: "cao", note: "Thay nền + chỉnh hướng sáng, seed tái tạo được" },
-      { key: "imagen", label: "Google Gemini Image", vendor: "Google", envKey: "GEMINI_API_KEY", quality: "cao", note: "Dựng cảnh theo mô tả, sản phẩm ghép lại từ Master" },
+      { key: "fal", label: "fal.ai Product Shot", displayName: "Dựng cảnh giữ vị trí sản phẩm", vendor: "fal.ai", envKey: "FAL_KEY", quality: "cao", note: "Dựng cảnh và hoà ánh sáng, giữ nguyên vị trí sản phẩm" },
+      { key: "stability", label: "Stability AI Relight", displayName: "Thay nền và chỉnh hướng sáng", vendor: "Stability AI", envKey: "STABILITY_API_KEY", quality: "cao", note: "Thay nền, chỉnh hướng sáng, tạo lại được cùng kết quả" },
+      { key: "imagen", label: "Google Gemini Image", displayName: "Dựng cảnh theo mô tả", vendor: "Google", envKey: "GEMINI_API_KEY", quality: "cao", note: "Dựng cảnh theo mô tả, giữ nguyên sản phẩm từ ảnh gốc" },
     ],
-    localFallback: { key: "local_studio", label: "Phông cục bộ" },
+    localFallback: { key: "local_studio", label: "Phông có sẵn" },
   },
   video: {
     label: "Video (Khu vực E)",
     providers: [
-      { key: "veo", label: "Google Veo", vendor: "Google", envKey: "GEMINI_API_KEY", quality: "cao", note: "Ảnh → video điện ảnh" },
-      { key: "kling", label: "Kling", vendor: "Kuaishou (qua fal.ai)", envKey: "FAL_KEY", quality: "cao", note: "Ảnh → video, chuyển động tự nhiên" },
-      { key: "runway", label: "Runway Gen-4", vendor: "Runway", envKey: "RUNWAYML_API_SECRET", quality: "cao", note: "Ảnh → video, kiểm soát camera" },
-      { key: "luma", label: "Luma Ray 2", vendor: "Luma AI (qua fal.ai)", envKey: "FAL_KEY", quality: "cao", note: "Ảnh → video, ánh sáng mềm" },
+      { key: "veo", label: "Google Veo", displayName: "Video điện ảnh", vendor: "Google", envKey: "GEMINI_API_KEY", quality: "cao", note: "Biến ảnh thành video kiểu điện ảnh" },
+      { key: "kling", label: "Kling", displayName: "Chuyển động tự nhiên", vendor: "Kuaishou (qua fal.ai)", envKey: "FAL_KEY", quality: "cao", note: "Biến ảnh thành video, chuyển động mượt" },
+      { key: "runway", label: "Runway Gen-4", displayName: "Điều khiển góc máy", vendor: "Runway", envKey: "RUNWAYML_API_SECRET", quality: "cao", note: "Biến ảnh thành video, chọn được chuyển động máy quay" },
+      { key: "luma", label: "Luma Ray 2", displayName: "Ánh sáng mềm", vendor: "Luma AI (qua fal.ai)", envKey: "FAL_KEY", quality: "cao", note: "Biến ảnh thành video, ánh sáng dịu" },
     ],
-    localFallback: { key: "local_cinematic", label: "Ken Burns cục bộ (FFmpeg)" },
+    localFallback: { key: "local_cinematic", label: "Video trượt ảnh có sẵn" },
   },
   voice: {
     label: "Giọng đọc (Khu vực C)",
     providers: [
-      { key: "elevenlabs", label: "ElevenLabs", vendor: "ElevenLabs", envKey: "ELEVENLABS_API_KEY", quality: "cao", note: "Giọng tự nhiên nhất, nhân bản giọng" },
-      { key: "openai", label: "OpenAI TTS", vendor: "OpenAI", envKey: "OPENAI_API_KEY", quality: "cao", note: "tts-1 / tts-1-hd" },
-      { key: "minimax", label: "MiniMax", vendor: "MiniMax", envKey: "MINIMAX_API_KEY", quality: "trung_binh", note: "Giọng tiếng Việt ấm" },
-      { key: "edge_tts", label: "Microsoft Edge TTS", vendor: "Microsoft", envKey: "", quality: "trung_binh", note: "Miễn phí, không cần khoá" },
+      { key: "elevenlabs", label: "ElevenLabs", displayName: "Giọng tự nhiên nhất", vendor: "ElevenLabs", envKey: "ELEVENLABS_API_KEY", quality: "cao", note: "Giọng đọc tự nhiên, có thể tạo giọng riêng" },
+      { key: "openai", label: "OpenAI TTS", displayName: "Giọng rõ, ổn định", vendor: "OpenAI", envKey: "OPENAI_API_KEY", quality: "cao", note: "Giọng đọc rõ ràng, ổn định" },
+      { key: "minimax", label: "MiniMax", displayName: "Giọng tiếng Việt ấm", vendor: "MiniMax", envKey: "MINIMAX_API_KEY", quality: "trung_binh", note: "Giọng đọc tiếng Việt ấm áp" },
+      { key: "edge_tts", label: "Microsoft Edge TTS", displayName: "Giọng đọc miễn phí", vendor: "Microsoft", envKey: "", quality: "trung_binh", note: "Miễn phí, không cần kết nối thêm" },
     ],
     localFallback: null,
   },
   music: {
     label: "Nhạc nền (Khu vực C)",
     providers: [
-      { key: "elevenlabs_music", label: "ElevenLabs Music", vendor: "ElevenLabs", envKey: "ELEVENLABS_API_KEY", quality: "cao", note: "Sinh nhạc nền theo tâm trạng, có giấy phép thương mại" },
+      { key: "elevenlabs_music", label: "ElevenLabs Music", displayName: "Nhạc nền theo tâm trạng", vendor: "ElevenLabs", envKey: "ELEVENLABS_API_KEY", quality: "cao", note: "Tạo nhạc nền theo cảm xúc video, được dùng thương mại" },
     ],
     localFallback: { key: "library", label: "Thư viện nhạc có sẵn" },
   },

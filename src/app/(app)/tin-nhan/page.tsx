@@ -142,18 +142,10 @@ export default function InternalChatPage() {
             filteredConversations.map((conv) => {
               const isSelected = activeConv?.id === conv.id
               return (
-                <div
-                  role="button"
-                  tabIndex={0}
+                <Button variant="ghost" type="button"
                   key={conv.id}
                   onClick={() => setActiveConv(conv)}
-                  onKeyDown={(e) => {
-                    if (e.key === " " || e.key === "Enter") {
-                      e.preventDefault()
-                      setActiveConv(conv)
-                    }
-                  }}
-                  className={`w-full text-left p-3 rounded-xl cursor-pointer transition-all flex items-start gap-3 border focus-visible:outline-2 focus-visible:outline-primary ${
+                  className={`text-[length:inherit] h-auto justify-start font-[inherit] gap-0 w-full text-left p-3 rounded-xl cursor-pointer transition-all flex items-start gap-3 border focus-visible:outline-2 focus-visible:outline-primary ${
                     isSelected
                       ? "bg-primary-subtle border-primary/30 shadow-xs"
                       : "bg-surface border-transparent hover:bg-surface-muted hover:border-border"
@@ -188,11 +180,11 @@ export default function InternalChatPage() {
                         <span className="w-2 h-2 rounded-full bg-primary shrink-0"></span>
                       )}
                     </div>
-                    <p className="text-caption text-text-muted truncate mt-0.5">
+                    <span className="block text-caption text-text-muted truncate mt-0.5">
                       {conv.lastMessageSnippet || "Chưa có tin nhắn"}
-                    </p>
+                    </span>
                   </div>
-                </div>
+                </Button>
               )
             })
           )}

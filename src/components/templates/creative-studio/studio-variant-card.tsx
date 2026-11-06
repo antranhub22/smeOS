@@ -5,6 +5,7 @@ import { Check } from "@/components/ui/icon-set/check"
 import { Sparkles } from "@/components/ui/icon-set/sparkles"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
 
 export interface StudioVariantItem {
   id: string
@@ -45,12 +46,10 @@ export function StudioVariantCard({
         {variants.map((item) => {
           const isSelected = item.id === selectedId
           return (
-            <div
-              role="button"
-              tabIndex={0}
+            <Button variant="ghost" type="button"
               key={item.id}
               onClick={() => onSelectVariant(item.id)}
-              className={`group relative cursor-pointer overflow-hidden rounded-xl border p-2 transition-all ${
+              className={`text-[length:inherit] h-auto justify-start font-[inherit] gap-0 inline-block group relative cursor-pointer overflow-hidden rounded-xl border p-2 transition-all ${
                 isSelected
                   ? "border-primary bg-primary/5 ring-2 ring-primary/20"
                   : "border-border hover:border-text-muted bg-surface"
@@ -77,7 +76,7 @@ export function StudioVariantCard({
                 <div className="text-caption font-bold text-text truncate">{item.name}</div>
                 <div className="text-caption text-text-muted truncate">{item.description}</div>
               </div>
-            </div>
+            </Button>
           )
         })}
       </div>

@@ -56,7 +56,7 @@ export function ImageUploadTab({
   )
 
   const handleDrop = useCallback(
-    (e: React.DragEvent<HTMLDivElement>) => {
+    (e: React.DragEvent<HTMLButtonElement>) => {
       e.preventDefault()
       const file = e.dataTransfer.files?.[0] ?? null
       if (file && file.type.startsWith("image/")) {
@@ -67,7 +67,7 @@ export function ImageUploadTab({
     [onFileSelected]
   )
 
-  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => e.preventDefault()
+  const handleDragOver = (e: React.DragEvent<HTMLButtonElement>) => e.preventDefault()
 
   const handleStart = useCallback(() => {
     if (!selectedFile || selectedChannels.length === 0) return
@@ -89,15 +89,14 @@ export function ImageUploadTab({
     <div className="flex flex-col gap-4">
       {/* ─── Drag & Drop Zone ─── */}
       <Card className="border border-dashed border-primary/40 bg-surface p-5 shadow-sm">
-        <div
-          role="button"
-          tabIndex={0}
+        <Button
+          variant="ghost"
+          type="button"
           aria-label="Khu vực kéo thả ảnh sản phẩm"
           onDrop={handleDrop}
           onDragOver={handleDragOver}
           onClick={() => !isRunning && fileInputRef.current?.click()}
-          onKeyDown={(e) => e.key === "Enter" && !isRunning && fileInputRef.current?.click()}
-          className="flex flex-col items-center justify-center gap-3 min-h-[180px] cursor-pointer rounded-xl bg-surface/50 hover:bg-primary/5 transition-colors select-none"
+          className="flex h-auto w-full flex-col items-center justify-center gap-3 min-h-[180px] cursor-pointer rounded-xl bg-surface/50 hover:bg-primary/5 font-normal transition-colors select-none"
         >
           {state.previewUrl ? (
             <div className="relative">
@@ -130,7 +129,7 @@ export function ImageUploadTab({
               </span>
             </>
           )}
-        </div>
+        </Button>
         <input
           ref={fileInputRef}
           type="file"

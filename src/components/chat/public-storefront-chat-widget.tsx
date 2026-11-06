@@ -121,7 +121,8 @@ export function PublicStorefrontChatWidget({
   return (
     <>
       {/* NÚT BONG BÓNG TRÒN NỔI GÓC DƯỚI BÊN PHẢI */}
-      <div className="fixed bottom-5 right-5 z-50">
+      {/* Trang catalog/landing có thanh nút đáy (dưới md) — đặt bong bóng phía trên để không che nút Gọi/Zalo */}
+      <div className={`fixed right-5 z-50 ${surface === "catalog" || surface === "landing_page" ? "bottom-24 md:bottom-5" : "bottom-5"}`}>
         {!isOpen && (
           <Button variant="ghost"
             type="button"

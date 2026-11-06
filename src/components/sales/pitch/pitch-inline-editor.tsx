@@ -42,16 +42,16 @@ export function PitchInlineEditor({
             { id: "bom" as const, label: "2. Thành phần hoa" },
             { id: "gifts" as const, label: "3. Quà tặng và cam kết" },
           ].map((t) => (
-            <button
+            <Button variant="ghost"
               type="button"
               key={t.id}
               onClick={() => setEditTab(t.id)}
-              className={`px-3 py-1 text-caption font-semibold rounded-lg transition-all cursor-pointer ${
+              className={`text-[length:inherit] h-auto justify-start font-[inherit] gap-0 inline-block px-3 py-1 text-caption font-semibold rounded-lg transition-all cursor-pointer ${
                 editTab === t.id ? "bg-surface shadow-xs text-primary font-bold" : "text-text-muted hover:text-text"
               }`}
             >
               {t.label}
-            </button>
+            </Button>
           ))}
         </div>
       </div>

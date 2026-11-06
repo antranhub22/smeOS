@@ -234,3 +234,21 @@ Kịch bản `scripts/ux-audit/scenarios/market-intelligence.mjs` (nạp 3 cơ h
 | MI-05 | P3 | 4 ô trượt `type="range"` còn là thẻ HTML thô (R18) | **Chưa sửa:** `src/components/ui` chưa có Slider — cần luồng component (L2) |
 
 Chưa kiểm: bàn phím thủ công, zoom 200%, đọc màn hình.
+
+## Đợt 06/11/2026 (tiếp) — tên nhà cung cấp trung tính, tải ảnh, bán hàng & marketing
+
+PO 06/11/2026: duyệt sửa Catalog, luồng tải ảnh; đổi tên model sang tên trung tính; Slider để luồng ADR-011.
+Catalog đã được phiên khác di trú trên `main` cùng ngày (PO 05/11) — đợt này **không** sửa vùng Catalog để không ghi đè.
+
+| ID | Mức | Finding | Đã làm |
+|---|---|---|---|
+| X-01 | P2 | `/cai-dat-ai`, bộ chọn nhà cung cấp, bộ chọn cách xử lý ảnh hiện tên hãng/model ("GPT-4o", "Fal.ai", "BiRefNet", "bộ ảnh vàng", "khoá") | `displayName` trung tính trong `provider-catalog.ts` (khoá giữ nguyên cho cổng AI/worker); test chặn tên hãng |
+| X-02 | P1 | Bong bóng chat che nút Gọi/Zalo ở thanh đáy trang khách `/c` (390px) | Đẩy bong bóng lên trên thanh đáy ở catalog/landing (< md) |
+| X-03 | P1 | Vùng tải ảnh và thẻ chọn là `div role="button"`/`<button>` thô (nội dung, tin nhắn, kho ảnh, bán hàng, marketing, mẫu dùng chung) | `Button` chuẩn; thẻ có nút lồng → nút phủ cả thẻ |
+| X-04 | P1 | `/in-an` bước chưa tới `opacity-70` (2,9:1); `/cham-soc` 3 ô nhập + 1 ô chọn không nhãn | Bỏ làm mờ; `htmlFor`/`id` |
+| X-05 | P2 | Radio thô ở hộp nâng giới hạn chat, đối soát thanh toán, cách xử lý ảnh, mục đích trang landing | `RadioGroup` (phím mũi tên chuẩn) |
+| X-06 | — | Công cụ audit: UI Studio (chỉ có ở dev) che nút góc phải; trang có kết nối mở lâu không "networkidle" | `ux:audit` ẩn UI Studio, chờ `load` + tối đa 15s |
+
+- Bỏ hẳn "thử nghiệm nhanh với mẫu" (21 ảnh Unsplash) ở quét xu hướng theo ảnh (PO 06/11/2026); test `market-intelligence-no-stock-images.test.ts`. Ảnh minh hoạ theo chủ đề ở `opportunity-illustration.ts` (8 ảnh kho) cũng bỏ (PO 06/11/2026). Dữ liệu mẫu theo ngành (`mock-data-catalog.ts`, 25 ảnh) và sản phẩm mẫu khung xem trước Thẻ chào (`use-catalog-products.ts`, 6 ảnh, có test khoá hành vi B5) bỏ ảnh kho — để trống, hiện ảnh giữ chỗ.
+
+Còn lại (chưa sửa): `flower-network-command-center` (StatTile có InfoTip lồng — cần đổi `StatTile`, luồng component); `upload-wizard.tsx` 1.458 dòng không còn được dùng (mã chết, ngoài phạm vi); 4 ô `range` chờ Slider; Thẻ chào ~30 vi phạm (cần test khoá hành vi B5 từng đường).

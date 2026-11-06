@@ -3,7 +3,7 @@
  *
  * Nguyên tắc:
  * - Ảnh đã tạo bằng AI (superrealistic minimalist): lưu tại /public/mock-data/<industry>/
- * - Ảnh chưa tạo: dùng Unsplash URL chất lượng cao làm placeholder
+ * - Ảnh chưa tạo: để trống — giao diện hiện ảnh giữ chỗ; KHÔNG dùng ảnh kho (PO 06/11/2026)
  * - File này CHỈ import trong môi trường dev hoặc bởi superadmin
  * - Khi tạo ngành mới + mock data → bổ sung entry tương ứng vào đây
  *
@@ -96,7 +96,7 @@ export const MOCK_ASSETS_CATALOG: Record<string, IndustryMockAssets> = {
       },
       {
         name: "Set đồ street style blazer + jogger",
-        image: "https://images.unsplash.com/photo-1548036328-c9fa89d128fa?w=800&q=90",
+        image: "",
         price: 1450000,
         originalPrice: 1800000,
         category: "SET",
@@ -153,12 +153,12 @@ export const MOCK_ASSETS_CATALOG: Record<string, IndustryMockAssets> = {
   },
 
   FNB: {
-    logo: "https://images.unsplash.com/photo-1514432324607-a09d9b4aefdd?w=400&q=80",
-    storeBanner: "https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=1200&q=80",
+    logo: "",
+    storeBanner: "",
     products: [
       {
         name: "Cà phê Cold Brew ủ lạnh hương cam quế 250ml",
-        image: "https://images.unsplash.com/photo-1517701604599-bb29b565090c?w=800&q=80",
+        image: "",
         price: 65000,
         originalPrice: 80000,
         category: "COFFEE",
@@ -166,7 +166,7 @@ export const MOCK_ASSETS_CATALOG: Record<string, IndustryMockAssets> = {
       },
       {
         name: "Bánh Croissant bơ Pháp ngàn lớp nướng giòn",
-        image: "https://images.unsplash.com/photo-1555507036-ab1f4038808a?w=800&q=80",
+        image: "",
         price: 45000,
         originalPrice: 55000,
         category: "BAKERY",
@@ -174,7 +174,7 @@ export const MOCK_ASSETS_CATALOG: Record<string, IndustryMockAssets> = {
       },
       {
         name: "Bánh kem bắp phô mai Mascarpone tươi 18cm",
-        image: "https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=800&q=80",
+        image: "",
         price: 350000,
         originalPrice: 420000,
         category: "PASTRY_CAKE",
@@ -182,7 +182,7 @@ export const MOCK_ASSETS_CATALOG: Record<string, IndustryMockAssets> = {
       },
       {
         name: "Set tiệc Teabreak bánh ngọt & đồ uống cao cấp",
-        image: "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=800&q=80",
+        image: "",
         price: 850000,
         originalPrice: 1050000,
         category: "COMBO",
@@ -192,12 +192,12 @@ export const MOCK_ASSETS_CATALOG: Record<string, IndustryMockAssets> = {
   },
 
   CRAFT_GIFT: {
-    logo: "https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?w=400&q=80",
-    storeBanner: "https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=1200&q=80",
+    logo: "",
+    storeBanner: "",
     products: [
       {
         name: "Bộ ấm chén gốm mộc men tro hỏa biến Bát Tràng",
-        image: "https://images.unsplash.com/photo-1610701596007-11502861dcfa?w=800&q=80",
+        image: "",
         price: 580000,
         originalPrice: 720000,
         category: "CERAMICS",
@@ -205,7 +205,7 @@ export const MOCK_ASSETS_CATALOG: Record<string, IndustryMockAssets> = {
       },
       {
         name: "Nến thơm sáp đậu nành tinh dầu gỗ tuyết tùng 200g",
-        image: "https://images.unsplash.com/photo-1603006905003-be475563bc59?w=800&q=80",
+        image: "",
         price: 290000,
         originalPrice: 350000,
         category: "SCENTED_CANDLE",
@@ -213,7 +213,7 @@ export const MOCK_ASSETS_CATALOG: Record<string, IndustryMockAssets> = {
       },
       {
         name: "Hộp quà tặng thủ công khắc tên gỗ mỹ thuật",
-        image: "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?w=800&q=80",
+        image: "",
         price: 950000,
         originalPrice: 1200000,
         category: "GIFT_BOX",
@@ -221,7 +221,7 @@ export const MOCK_ASSETS_CATALOG: Record<string, IndustryMockAssets> = {
       },
       {
         name: "Bình hoa gốm thủ công vuốt tay men rạn",
-        image: "https://images.unsplash.com/photo-1581783342308-f792dbdd27c5?w=800&q=80",
+        image: "",
         price: 420000,
         originalPrice: 500000,
         category: "CERAMICS",
@@ -231,12 +231,12 @@ export const MOCK_ASSETS_CATALOG: Record<string, IndustryMockAssets> = {
   },
 
   RETAIL_GENERAL: {
-    logo: "https://images.unsplash.com/photo-1534723452862-4c874018d66d?w=400&q=80",
-    storeBanner: "https://images.unsplash.com/photo-1578916171728-46686eac8d58?w=1200&q=80",
+    logo: "",
+    storeBanner: "",
     products: [
       {
         name: "Gạo thơm hữu cơ ST25 túi 5kg chuẩn xuất khẩu",
-        image: "https://images.unsplash.com/photo-1586201375761-83865001e31c?w=800&q=80",
+        image: "",
         price: 220000,
         originalPrice: 260000,
         category: "GROCERY",
@@ -244,7 +244,7 @@ export const MOCK_ASSETS_CATALOG: Record<string, IndustryMockAssets> = {
       },
       {
         name: "Hộp trà ô long đặc sản hữu cơ thượng hạng 200g",
-        image: "https://images.unsplash.com/photo-1576092768241-dec231879fc3?w=800&q=80",
+        image: "",
         price: 185000,
         originalPrice: 230000,
         category: "GROCERY",
@@ -252,7 +252,7 @@ export const MOCK_ASSETS_CATALOG: Record<string, IndustryMockAssets> = {
       },
       {
         name: "Bộ hộp thủy tinh chịu nhiệt nắp khóa khí 3 món",
-        image: "https://images.unsplash.com/photo-1584992236310-6edddc08acff?w=800&q=80",
+        image: "",
         price: 340000,
         originalPrice: 420000,
         category: "HOUSEHOLD",
@@ -260,7 +260,7 @@ export const MOCK_ASSETS_CATALOG: Record<string, IndustryMockAssets> = {
       },
       {
         name: "Giỏ quà tết sum vầy bánh kẹo ngoại nhập cao cấp",
-        image: "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?w=800&q=80",
+        image: "",
         price: 890000,
         originalPrice: 1150000,
         category: "GROCERY",
@@ -270,12 +270,12 @@ export const MOCK_ASSETS_CATALOG: Record<string, IndustryMockAssets> = {
   },
 
   SERVICES: {
-    logo: "https://images.unsplash.com/photo-1540555700478-4be289fbecef?w=400&q=80",
-    storeBanner: "https://images.unsplash.com/photo-1600334089648-b0d9d3028eb2?w=1200&q=80",
+    logo: "",
+    storeBanner: "",
     products: [
       {
         name: "Liệu trình gội đầu dưỡng sinh thảo dược 60 phút",
-        image: "https://images.unsplash.com/photo-1560750588-73207b1ef5b8?w=800&q=80",
+        image: "",
         price: 250000,
         originalPrice: 350000,
         category: "SPA_MASSAGE",
@@ -283,7 +283,7 @@ export const MOCK_ASSETS_CATALOG: Record<string, IndustryMockAssets> = {
       },
       {
         name: "Chăm sóc da mặt chuyên sâu điện di tinh chất HA",
-        image: "https://images.unsplash.com/photo-1570172619644-dfd03ed5d881?w=800&q=80",
+        image: "",
         price: 550000,
         originalPrice: 750000,
         category: "SKINCARE",
@@ -291,7 +291,7 @@ export const MOCK_ASSETS_CATALOG: Record<string, IndustryMockAssets> = {
       },
       {
         name: "Massage body đá nóng Himalaya thư giãn 90 phút",
-        image: "https://images.unsplash.com/photo-1544161515-4ab6ce6db874?w=800&q=80",
+        image: "",
         price: 680000,
         originalPrice: 890000,
         category: "SPA_MASSAGE",
@@ -299,7 +299,7 @@ export const MOCK_ASSETS_CATALOG: Record<string, IndustryMockAssets> = {
       },
       {
         name: "Combo phục hồi cổ vai gáy giải tỏa căng thẳng",
-        image: "https://images.unsplash.com/photo-1519823551278-64ac92734fb1?w=800&q=80",
+        image: "",
         price: 420000,
         originalPrice: 550000,
         category: "SPA_MASSAGE",

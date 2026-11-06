@@ -475,7 +475,7 @@ function AutoRunModuleCard({
       </div>
 
       {!depCheck.canRun && depCheck.reason && (
-        <div className="flex items-start gap-1.5 rounded-lg bg-warning-bg p-2.5 text-caption text-warning">
+        <div className="flex items-start gap-1.5 rounded-lg bg-warning-bg p-2.5 text-caption text-warning-text">
           <AlertCircle size={12} strokeWidth={1.8} className="mt-0.5 flex-shrink-0" />
           <span>{depCheck.reason}</span>
         </div>
@@ -517,10 +517,9 @@ function ModuleAccordion({
 
 return (
       <Card className={cn("border-border", !depCheck.canRun && "opacity-50")}>
-        <div
-              role="button"
-              tabIndex={0} 
-          className="flex flex-row items-center justify-between p-3 cursor-pointer"
+        <Button variant="ghost" type="button"
+          aria-expanded={isExpanded}
+          className="text-[length:inherit] h-auto justify-start font-[inherit] gap-0 flex w-full flex-row items-center justify-between p-3 text-left cursor-pointer"
           onClick={onToggleExpand}
         >
           <div className="flex items-center gap-3">
@@ -529,7 +528,7 @@ return (
             </div>
             <div>
               <h3 className="text-title-sm font-bold">{group.label}</h3>
-              <p className="text-caption text-text-muted">{group.description}</p>
+              <span className="block text-caption text-text-muted">{group.description}</span>
             </div>
           </div>
           <div className="flex items-center gap-2">
@@ -547,12 +546,12 @@ return (
               className={cn("text-text-muted transition-transform", isExpanded && "rotate-180")}
             />
           </div>
-        </div>
+        </Button>
 
         {isExpanded && (
           <div className="pt-0 pb-4">
           {!depCheck.canRun && depCheck.reason && (
-            <div className="mb-3 flex items-start gap-1.5 rounded-lg bg-warning-bg p-2.5 text-caption text-warning">
+            <div className="mb-3 flex items-start gap-1.5 rounded-lg bg-warning-bg p-2.5 text-caption text-warning-text">
               <AlertCircle size={12} strokeWidth={1.8} className="mt-0.5 flex-shrink-0" />
               <span>{depCheck.reason}</span>
             </div>

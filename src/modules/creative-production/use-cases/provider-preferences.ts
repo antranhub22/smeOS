@@ -29,6 +29,8 @@ export interface ProviderPreferencesView {
       readonly providers: {
         key: string
         label: string
+        /** Tên trung tính cho cửa hàng (không tên hãng/model). */
+        display_name: string
         vendor: string
         quality: string
         note: string
@@ -64,6 +66,7 @@ export async function getProviderPreferences(ctx: TenantContext): Promise<Provid
       providers: spec.providers.map((p) => ({
         key: p.key,
         label: p.label,
+        display_name: p.displayName,
         vendor: p.vendor,
         quality: p.quality,
         note: p.note,

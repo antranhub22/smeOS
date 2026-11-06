@@ -274,10 +274,7 @@ export function StorageSidebar({
             const rawAsset = item.data as RawAssetItem
             return (
               <div
-              role="button"
-              tabIndex={0}
                 key={`raw-${item.id}`}
-                onClick={() => onSelectRawPhoto(rawAsset)}
                 className={`group relative flex flex-col gap-2 rounded-2xl border p-2.5 cursor-pointer transition-all hover:shadow-md ${
                   isSelected
                     ? "border-primary bg-primary/[0.04] ring-1 ring-primary/40"
@@ -294,7 +291,7 @@ export function StorageSidebar({
                         <ImageIcon size={18} className="opacity-40" />
                       </div>
                     )}
-                    <Badge className="absolute left-1 top-1 bg-warning text-white text-caption py-0 px-1 border-none font-bold">
+                    <Badge className="absolute left-1 top-1 bg-warning-text text-white text-caption py-0 px-1 border-none font-bold">
                       GỐC
                     </Badge>
                   </div>
@@ -302,7 +299,7 @@ export function StorageSidebar({
                   <div className="flex-1 min-w-0">
                     <div className="text-meta font-bold text-text truncate">{item.title}</div>
                     <div className="text-caption text-text-muted truncate mt-0.5">{item.subtitle}</div>
-                    <div className="mt-1 flex items-center gap-1 text-caption text-warning font-semibold">
+                    <div className="mt-1 flex items-center gap-1 text-caption text-warning-text font-semibold">
                       <span>• Chưa phân tích cấu phần</span>
                     </div>
                   </div>
@@ -315,7 +312,7 @@ export function StorageSidebar({
                     e.stopPropagation()
                     onSelectRawPhoto(rawAsset)
                   }}
-                  className="w-full text-caption h-7 gap-1 bg-primary hover:bg-primary/90 text-white font-bold"
+                  className="w-full text-caption h-7 gap-1 bg-primary hover:bg-primary/90 text-white font-bold after:absolute after:inset-0 after:rounded-2xl after:content-['']"
                 >
                   <Sparkles size={12} />
                   Kích hoạt phân tích AI (Nhận diện sản phẩm) →
@@ -329,10 +326,7 @@ export function StorageSidebar({
             const analysis = item.data as ApprovedAnalysisItem
             return (
               <div
-              role="button"
-              tabIndex={0}
                 key={`approved-${item.id}`}
-                onClick={() => onSelectApprovedAnalysis(analysis, "m01c")}
                 className={`group relative flex flex-col gap-2 rounded-2xl border p-2.5 cursor-pointer transition-all hover:shadow-md ${
                   isSelected
                     ? "border-primary bg-primary/[0.04] ring-1 ring-primary/40"
@@ -377,7 +371,7 @@ export function StorageSidebar({
                       e.stopPropagation()
                       onSelectApprovedAnalysis(analysis, "m01b")
                     }}
-                    className="text-caption h-7 gap-1 px-1 font-semibold hover:text-primary border-border"
+                    className="relative z-10 text-caption h-7 gap-1 px-1 font-semibold hover:text-primary border-border"
                     title="Sinh câu từ bán hàng Sinh dữ liệu bán hàng"
                   >
                     <Sparkles size={11} className="text-accent" />
@@ -389,7 +383,7 @@ export function StorageSidebar({
                       e.stopPropagation()
                       onSelectApprovedAnalysis(analysis, "m01c")
                     }}
-                    className="text-caption h-7 gap-1 px-1 bg-primary hover:bg-primary/90 text-white font-bold"
+                    className="text-caption h-7 gap-1 px-1 bg-primary hover:bg-primary/90 text-white font-bold after:absolute after:inset-0 after:rounded-2xl after:content-['']"
                     title="Tạo thẻ chào khách hàng Nghiên cứu thị trường"
                   >
                     <Tag size={11} />
@@ -407,10 +401,7 @@ export function StorageSidebar({
 
             return (
               <div
-                role="button"
-                tabIndex={0}
                 key={`finalized-${item.id}`}
-                onClick={() => onSelectFinalizedPitch(pitch)}
                 className={`group relative flex flex-col gap-2 rounded-2xl border-2 p-2.5 cursor-pointer transition-all hover:shadow-md ${
                   isSelected
                     ? "border-success bg-success/[0.06] ring-1 ring-success/50"
@@ -455,14 +446,14 @@ export function StorageSidebar({
                       e.stopPropagation()
                       onSelectFinalizedPitch(pitch)
                     }}
-                    className="text-caption h-7 gap-1 px-1 border-border font-semibold text-text"
+                    className="text-caption h-7 gap-1 px-1 border-border font-semibold text-text after:absolute after:inset-0 after:rounded-2xl after:content-['']"
                   >
                     Xem &amp; Sửa lại
                   </Button>
                   <Button variant="secondary"
                     size="sm"
                     onClick={(e) => handleCopyZaloQuick(pitch, e)}
-                    className={`text-caption h-7 gap-1 px-1 font-bold ${
+                    className={`relative z-10 text-caption h-7 gap-1 px-1 font-bold ${
                       isCopied ? "bg-success text-white" : "bg-primary hover:bg-primary/90 text-white"
                     }`}
                   >

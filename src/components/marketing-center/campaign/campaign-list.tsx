@@ -79,7 +79,7 @@ export function CampaignList({ onSelectCampaign, onCreateCampaign }: CampaignLis
           const isSelected = (tab.id === "ALL" && filter === undefined) || filter === tab.id
           const count = getStatusCount(tab.id)
           return (
-            <button
+            <Button variant="ghost"
               type="button"
               key={tab.id}
               aria-pressed={isSelected}
@@ -87,7 +87,7 @@ export function CampaignList({ onSelectCampaign, onCreateCampaign }: CampaignLis
                 setCampaigns(null)
                 setFilter(tab.id === "ALL" ? undefined : tab.id)
               }}
-              className={`flex h-9 cursor-pointer items-center gap-1.5 rounded-xl px-3.5 text-body-sm font-medium transition-colors ${
+              className={`text-[length:inherit] h-auto justify-start font-[inherit] gap-0 flex h-9 cursor-pointer items-center gap-1.5 rounded-xl px-3.5 text-body-sm font-medium transition-colors ${
                 isSelected
                   ? "bg-primary text-white"
                   : "border border-border bg-surface text-text hover:bg-surface-elevated"
@@ -103,7 +103,7 @@ export function CampaignList({ onSelectCampaign, onCreateCampaign }: CampaignLis
                   {count}
                 </span>
               )}
-            </button>
+            </Button>
           )
         })}
       </div>

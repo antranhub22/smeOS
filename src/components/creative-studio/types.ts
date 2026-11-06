@@ -129,8 +129,8 @@ export const FLOW_M04B: FlowStep[] = [
 // ============================================================
 
 export const FIELDS_M04A_DEFAULT: ResultField[] = [
-  { key: "enhancer", label: "Bộ tăng cường AI (Provider)", type: "readonly", editable: false, value: "Studio AI Pipeline (Chuẩn E-commerce)" },
-  { key: "resolution", label: "Độ phân giải đầu ra", type: "readonly", editable: false, value: "Chuẩn HD Master (2x Lanczos)" },
+  { key: "enhancer", label: "Cách xử lý ảnh", type: "readonly", editable: false, value: "Tách nền và phông có sẵn" },
+  { key: "resolution", label: "Độ phân giải đầu ra", type: "readonly", editable: false, value: "Chuẩn HD (phóng 2 lần)" },
   { key: "quality-score", label: "Điểm kiểm duyệt Identity Guard", type: "readonly", editable: false, value: "Đang chờ chấm..." },
   { key: "ratio-1", label: "Tỉ lệ 1:1 (Vuông)", type: "readonly", editable: false, value: "Sẵn sàng" },
   { key: "ratio-2", label: "Tỉ lệ 4:5 (Dọc nhẹ)", type: "readonly", editable: false, value: "Sẵn sàng" },
@@ -152,20 +152,21 @@ export const FIELDS_M04B_DEFAULT: ResultField[] = [
 // Helper functions
 // ============================================================
 
+/** Tên trung tính cho cửa hàng — không tên hãng/model (PO 06/11/2026), khớp `displayName` ở `provider-catalog.ts`. */
 const PROVIDER_DISPLAY_MAP: Record<string, string> = {
-  photoroom: "Photoroom AI (Chuẩn E-commerce Quốc tế)",
-  fal_flux: "Fal.ai Product Shot (Studio cao cấp)",
-  fal: "Fal.ai Product Shot (Studio cao cấp)",
-  imagen: "Google Gemini Image",
-  provider_chain: "Chuỗi nhà cung cấp",
-  studio: "Studio AI Pipeline (Chuẩn E-commerce)",
-  openai: "OpenAI Image AI (Cloud)",
-  gemini: "Google Gemini Imagen (Cloud)",
-  stability_ai: "Stability AI (Stable Image Core)",
-  replicate: "Replicate Real-ESRGAN (Cloud GPU)",
-  local: "Real-ESRGAN / PIL Lanczos (Local)",
-  realesrgan: "Real-ESRGAN (Local)",
-  passthrough: "PIL Lanczos 2x (Local)",
+  photoroom: "Tách nền và phông studio",
+  fal_flux: "Dựng ảnh sản phẩm",
+  fal: "Dựng cảnh giữ vị trí sản phẩm",
+  imagen: "Dựng phông theo mô tả",
+  provider_chain: "Theo thứ tự ưu tiên của tiệm",
+  studio: "Tách nền và phông có sẵn",
+  openai: "Chỉnh ảnh giữ nguyên sản phẩm",
+  gemini: "Dựng phông theo mô tả",
+  stability_ai: "Thay nền và chỉnh hướng sáng",
+  replicate: "Làm nét bằng dịch vụ AI",
+  local: "Làm nét trên hệ thống",
+  realesrgan: "Làm nét trên hệ thống",
+  passthrough: "Phóng ảnh trên hệ thống",
 }
 
 export function buildFieldsA(data: Record<string, unknown> | null, baseFields: ResultField[]): ResultField[] {
@@ -195,8 +196,8 @@ export function buildFieldsA(data: Record<string, unknown> | null, baseFields: R
   const displayProvider = PROVIDER_DISPLAY_MAP[rawProvider] || rawProvider
 
   return [
-    { key: "enhancer", label: "Bộ tăng cường AI (Provider)", type: "readonly", editable: false, value: displayProvider },
-    { key: "resolution", label: "Độ phân giải đầu ra", type: "readonly", editable: false, value: "Chuẩn HD Master (2x Lanczos)" },
+    { key: "enhancer", label: "Cách xử lý ảnh", type: "readonly", editable: false, value: displayProvider },
+    { key: "resolution", label: "Độ phân giải đầu ra", type: "readonly", editable: false, value: "Chuẩn HD (phóng 2 lần)" },
     { key: "quality-score", label: "Điểm kiểm duyệt Identity Guard", type: "readonly", editable: false, value: `${guardVerdict} (Điểm thấp nhất: ${diemThapNhatPercent})` },
     { key: "score-id", label: "1. Điểm Nhận dạng (dáng khối, vật chứa)", type: "readonly", editable: false, value: `${Math.round(idScore * 100)}%` },
     { key: "score-geo", label: "2. Điểm Hình học (hướng nhìn, tỉ lệ)", type: "readonly", editable: false, value: `${Math.round(geoScore * 100)}%` },
