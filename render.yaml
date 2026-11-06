@@ -28,7 +28,11 @@ services:
     runtime: node
     region: singapore
     plan: starter
-    buildCommand: npm ci --include=dev && npx prisma generate && npm run db:deploy && npm run db:seed && npm run build
+    # Build KHÔNG chạm CSDL (ADR-015 D-O4, bước O-4 — PO duyệt 05/11/2026). Migration + seed hệ thống chạy ở
+    # pre-deploy: sau build thành công, trước khi bản mới nhận traffic; lỗi thì bản cũ vẫn chạy.
+    # `db:seed` trên production chỉ nạp dữ liệu hệ thống (SEED_DEV_DATA=false — prisma/seed/dev-seed-policy.ts).
+    buildCommand: npm ci --include=dev && npx prisma generate && npm run build
+    preDeployCommand: npm run db:deploy && npm run db:seed
     startCommand: npm run start
     healthCheckPath: /api/health
     autoDeployTrigger: checksPass # tự deploy `main` NHƯNG chỉ khi CI xanh (PO 05/11/2026)

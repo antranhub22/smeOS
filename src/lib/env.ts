@@ -17,6 +17,9 @@ const optionalUrl = z.preprocess(
 
 const schema = z.object({
   DATABASE_URL: z.string().url(),
+  // Số kết nối tối đa của pool web (ADR-015 D-O5). Tổng mọi dịch vụ phải ≤ 70% giới hạn kết nối của gói
+  // CSDL — bảng ngân sách ở docs/kien-truc/VAN_HANH_SU_CO_VA_SAO_LUU.md. Thiếu = 10.
+  DATABASE_POOL_MAX: z.coerce.number().int().min(1).max(100).default(10),
   SESSION_SECRET: z.string().min(16),
   // P7 — khoá ký token máy gọi máy (YC-T8). Tách khỏi SESSION_SECRET: xoay
   // khoá của người dùng và của engine ngoài là hai việc vận hành độc lập,

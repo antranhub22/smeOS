@@ -94,10 +94,13 @@ enum user_approval_status {
 
 model users {
   id                   String               @id @default(uuid())
+  /// @pii contact
   email                String               @unique
   password_hash        String?
+  /// @pii identity
   name                 String?
   avatar_url           String?
+  /// @pii contact
   phone                String?
   locale               String               @default("vi")
   // Mặc định APPROVED: tài khoản có sẵn, nhân viên được mời, tài khoản tạo bằng script vận hành
@@ -280,6 +283,7 @@ model organizations {
   internal_chat_messages                           internal_chat_messages[]
   // Quan hệ ngược của khoá ngoại thêm 05/11/2026
   integration_connections_by_inherited_from_org_id integration_connections[]       @relation("fk_integration_connections_inherited_from_org_id")
+  reconciliation_findings                          reconciliation_findings[]
 }
 
 model workspaces {
@@ -308,6 +312,7 @@ model branches {
   organization_id String
   name            String
   code            String
+  /// @pii business
   address         String?
   is_active       Boolean  @default(true)
   created_at      DateTime @default(now()) @db.Timestamptz(3)
@@ -337,6 +342,7 @@ model chain_branches {
   organization_id      String
   branch_code          String
   name                 String
+  /// @pii business
   address              String?
   /// Khu vực hành chính (PO 22/10/2026) — sàng lọc theo phường/quận/tỉnh khi không có toạ độ
   ward                 String?
@@ -432,6 +438,7 @@ model capability_overrides {
 
   @@unique([organization_id, role_id, capability_code])
   @@index([organization_id])
+  @@index([role_id]) // khoá ngoại cần index (ADR-015 O-1)
 }
 
 model memberships {
@@ -459,6 +466,8 @@ model memberships {
   @@index([organization_id])
   @@index([user_id])
   @@index([organization_id, chain_branch_code])
+  @@index([branch_id]) // khoá ngoại cần index (ADR-015 O-1)
+  @@index([role_id]) // khoá ngoại cần index (ADR-015 O-1)
 }
 
 // ── Asset · Job · Usage · Audit — P3 ────────────────────────────────────────
@@ -573,6 +582,7 @@ model assets {
   @@index([parent_asset_id])
   @@index([output_sha256])
   @@index([organization_id, product_id, kind, approval_state])
+  @@index([product_id]) // khoá ngoại cần index (ADR-015 O-1)
 }
 
 /**
@@ -581,7 +591,7 @@ model assets {
  * `GeneratedLandingPackage`, `input` là yêu cầu đã gửi (dịp, sản phẩm, chỉ dẫn).
  */
 model landing_pages {
-  id              String   @id @default(uuid())
+  id              String    @id @default(uuid())
   organization_id String
   title           String
   page_type       String?
@@ -589,10 +599,10 @@ model landing_pages {
   input           Json
   content         Json
   created_by      String
-  created_at      DateTime @default(now()) @db.Timestamptz(3)
+  created_at      DateTime  @default(now()) @db.Timestamptz(3)
   // Thùng rác 30 ngày (Kho dữ liệu v2, L-4 — PO 05/11/2026): quá hạn thì cron xoá vĩnh viễn.
-  trashed_at  DateTime? @db.Timestamptz(3)
-  purge_after DateTime? @db.Timestamptz(3)
+  trashed_at      DateTime? @db.Timestamptz(3)
+  purge_after     DateTime? @db.Timestamptz(3)
 
   organization organizations @relation(fields: [organization_id], references: [id])
 
@@ -727,6 +737,9 @@ model generation_jobs {
   @@index([status, run_after]) // job hẹn thử lại (E5.1)
   @@index([organization_id, user_id])
   @@index([organization_id, job_group_id]) // gom màn tiến độ bộ, nợ #108
+  @@index([branch_id]) // khoá ngoại cần index (ADR-015 O-1)
+  @@index([product_id]) // khoá ngoại cần index (ADR-015 O-1)
+  @@index([workspace_id]) // khoá ngoại cần index (ADR-015 O-1)
 }
 
 /**
@@ -820,8 +833,8 @@ model subscriptions {
   price_vnd                Int
   included_credits_monthly Int                 @default(0)
   status                   subscription_status @default(ACTIVE)
-  current_period_start     DateTime @db.Timestamptz(3)
-  current_period_end       DateTime @db.Timestamptz(3)
+  current_period_start     DateTime            @db.Timestamptz(3)
+  current_period_end       DateTime            @db.Timestamptz(3)
   plan_credit_period       String?
   plan_credit_granted      Int                 @default(0)
   created_by               String?
@@ -841,12 +854,12 @@ model subscription_invoices {
   subscription_id   String
   /// Mã ghi trong nội dung chuyển khoản để SePay đối soát
   code              String                      @unique
-  period_start      DateTime @db.Timestamptz(3)
-  period_end        DateTime @db.Timestamptz(3)
+  period_start      DateTime                    @db.Timestamptz(3)
+  period_end        DateTime                    @db.Timestamptz(3)
   amount_vnd        Int
   status            subscription_invoice_status @default(PENDING)
-  due_at            DateTime @db.Timestamptz(3)
-  paid_at           DateTime? @db.Timestamptz(3)
+  due_at            DateTime                    @db.Timestamptz(3)
+  paid_at           DateTime?                   @db.Timestamptz(3)
   /// Mã giao dịch (SePay hoặc xác nhận tay) — chống ghi trùng
   payment_reference String?                     @unique
   reminded_7d       Boolean                     @default(false)
@@ -923,6 +936,7 @@ model usage {
 
   @@index([organization_id, created_at])
   @@index([job_id])
+  @@index([workspace_id]) // khoá ngoại cần index (ADR-015 O-1)
 }
 
 /**
@@ -962,23 +976,27 @@ model audit_logs {
 // module (Checklist P4).
 
 model business_profiles {
-  id              String   @id @default(uuid())
-  organization_id String
-  legal_name      String?
-  display_name    String
-  phone           String?
-  email           String?
-  address         String?
-  website         String?
-  social_links    Json?
-  tax_code        String?
-  description     String?
-  operating_hours Json?
+  id               String   @id @default(uuid())
+  organization_id  String
+  legal_name       String?
+  display_name     String
+  /// @pii business
+  phone            String?
+  /// @pii business
+  email            String?
+  /// @pii business
+  address          String?
+  website          String?
+  social_links     Json?
+  /// @pii business
+  tax_code         String?
+  description      String?
+  operating_hours  Json?
   /// Thông điệp thương hiệu và khách mục tiêu (checklist ALG 9.3) — đưa vào ngữ cảnh AI viết nội dung
   brand_message    String?
   target_customers Json? // danh sách nhóm khách, vd ["Văn phòng tặng sếp", "Cặp đôi"]
-  created_at      DateTime @default(now()) @db.Timestamptz(3)
-  updated_at      DateTime @updatedAt @db.Timestamptz(3)
+  created_at       DateTime @default(now()) @db.Timestamptz(3)
+  updated_at       DateTime @updatedAt @db.Timestamptz(3)
 
   organization organizations @relation(fields: [organization_id], references: [id])
 
@@ -1104,6 +1122,7 @@ model products {
   @@unique([id, organization_id]) // đích của khoá ghép tenant (05/11/2026)
   @@index([organization_id])
   @@index([organization_id, barcode])
+  @@index([branch_id]) // khoá ngoại cần index (ADR-015 O-1)
 }
 
 /// Đề xuất sửa một mẫu CHÍNH THỨC của người không có `H3` (quản trị danh mục, giai đoạn 3 —
@@ -1154,6 +1173,7 @@ model product_revisions {
   @@index([organization_id])
   @@index([organization_id, product_id, created_at])
   @@index([organization_id, import_batch_id])
+  @@index([import_batch_id]) // khoá ngoại cần index (ADR-015 O-1)
 }
 
 /// Một lần Điều hành nhập Excel — hoàn tác được trong 24 giờ (mẫu tạo ra vào thùng rác,
@@ -1242,6 +1262,7 @@ model product_inventory {
 
   @@unique([organization_id, product_id, branch_id])
   @@index([organization_id, branch_id])
+  @@index([branch_id]) // khoá ngoại cần index (ADR-015 O-1)
 }
 
 /**
@@ -1275,6 +1296,8 @@ model product_bookings {
   @@index([organization_id, product_id, check_in_date])
   @@index([organization_id, product_id, status])
   @@index([organization_id, order_id])
+  @@index([order_id]) // khoá ngoại cần index (ADR-015 O-1)
+  @@index([product_id]) // khoá ngoại cần index (ADR-015 O-1)
 }
 
 /**
@@ -1323,6 +1346,7 @@ model product_analyses {
   @@index([organization_id])
   @@index([organization_id, product_id])
   @@index([job_id])
+  @@index([product_id]) // khoá ngoại cần index (ADR-015 O-1)
 }
 
 /**
@@ -1347,6 +1371,7 @@ model pricing_rules {
   fk_branch branches? @relation("fk_pricing_rules_branch_id", fields: [branch_id], references: [id], onDelete: SetNull)
 
   @@index([organization_id, key])
+  @@index([branch_id]) // khoá ngoại cần index (ADR-015 O-1)
 }
 
 // ── Integration Layer — P7 ───────────────────────────────────────────────
@@ -1391,6 +1416,7 @@ model integration_tokens {
 
   @@index([organization_id])
   @@index([organization_id, client])
+  @@index([rotated_from_id]) // khoá ngoại cần index (ADR-015 O-1)
 }
 
 /// Số liệu hiệu quả nội dung — ghi từ engine ngoài (SocialFlow/LocalBudd) qua Integration API.
@@ -1483,6 +1509,7 @@ model ai_policies {
 
   @@unique([organization_id, capability_code])
   @@index([organization_id])
+  @@index([capability_code]) // khoá ngoại cần index (ADR-015 O-1)
 }
 
 /// Sổ chi phí và chất lượng mỗi LỜI GỌI mô hình. Chỉ ghi thêm. Không giữ
@@ -1633,8 +1660,8 @@ model catalog_links {
   created_by      String
   created_at      DateTime  @default(now()) @db.Timestamptz(3)
   // Thùng rác 30 ngày (Kho dữ liệu v2, L-4 — PO 05/11/2026): quá hạn thì cron xoá vĩnh viễn.
-  trashed_at  DateTime? @db.Timestamptz(3)
-  purge_after DateTime? @db.Timestamptz(3)
+  trashed_at      DateTime? @db.Timestamptz(3)
+  purge_after     DateTime? @db.Timestamptz(3)
   updated_at      DateTime  @updatedAt @db.Timestamptz(3)
 
   organization organizations @relation(fields: [organization_id], references: [id])
@@ -1757,6 +1784,7 @@ model product_copies {
   @@index([organization_id])
   @@index([organization_id, product_id])
   @@index([approval_state])
+  @@index([product_id]) // khoá ngoại cần index (ADR-015 O-1)
 }
 
 // ── M04c — AI Video Studio (Reel, TikTok, Story, Slideshow) ─────────────────
@@ -1824,11 +1852,11 @@ model video_jobs {
   cost_credits    Int     @default(0)
   error_message   String?
 
-  created_at DateTime @default(now()) @db.Timestamptz(3)
+  created_at  DateTime  @default(now()) @db.Timestamptz(3)
   // Thùng rác 30 ngày (Kho dữ liệu v2, L-4 — PO 05/11/2026): quá hạn thì cron xoá vĩnh viễn.
   trashed_at  DateTime? @db.Timestamptz(3)
   purge_after DateTime? @db.Timestamptz(3)
-  updated_at DateTime @updatedAt @db.Timestamptz(3)
+  updated_at  DateTime  @updatedAt @db.Timestamptz(3)
 
   organization organizations  @relation(fields: [organization_id], references: [id])
   scenes       video_scenes[]
@@ -1842,6 +1870,7 @@ model video_jobs {
   @@index([stage])
   @@index([script_approval])
   @@index([video_approval])
+  @@index([product_id]) // khoá ngoại cần index (ADR-015 O-1)
   @@index([purge_after])
 }
 
@@ -1923,6 +1952,7 @@ model orders {
   card_message     String? // lời nhắn thiệp, tách khỏi ghi chú nội bộ
   internal_note    String?
   delivery_window  Json? // ngày và khung giờ đã hẹn
+  /// @pii address
   delivery_address Json?
 
   /// Hoá đơn VAT (PO 15/10/2026). Bật VAT → total_vnd = giá trước thuế + vat_amount_vnd.
@@ -1930,9 +1960,13 @@ model orders {
   vat_enabled         Boolean @default(false)
   vat_rate            Int     @default(10)
   vat_amount_vnd      Decimal @default(0) @db.Decimal(14, 2)
+  /// @pii tax
   vat_company_name    String?
+  /// @pii tax
   vat_tax_code        String?
+  /// @pii tax
   vat_company_address String?
+  /// @pii tax
   vat_email           String?
 
   created_by String
@@ -1990,6 +2024,11 @@ model orders {
   @@index([organization_id, source])
   @@index([organization_id, owner_sale_id])
   @@index([organization_id, lead_id])
+  @@index([branch_id]) // khoá ngoại cần index (ADR-015 O-1)
+  @@index([customer_id]) // khoá ngoại cần index (ADR-015 O-1)
+  @@index([lead_id]) // khoá ngoại cần index (ADR-015 O-1)
+  @@index([source_session_id]) // khoá ngoại cần index (ADR-015 O-1)
+  @@index([voucher_id]) // khoá ngoại cần index (ADR-015 O-1)
 }
 
 model order_items {
@@ -2013,6 +2052,9 @@ model order_items {
   fk_variant product_variants? @relation("fk_order_items_variant_id", fields: [variant_id], references: [id], onDelete: SetNull)
 
   @@index([organization_id, order_id])
+  @@index([order_id]) // khoá ngoại cần index (ADR-015 O-1)
+  @@index([product_id]) // khoá ngoại cần index (ADR-015 O-1)
+  @@index([variant_id]) // khoá ngoại cần index (ADR-015 O-1)
 }
 
 model order_assignments {
@@ -2076,9 +2118,13 @@ model customers {
   id                String        @id @default(uuid())
   organization_id   String
   code              String // KH-0001, KH-0002
+  /// @pii identity
   name              String
+  /// @pii contact
   phone             String
+  /// @pii contact
   email             String?
+  /// @pii address
   address           String?
   tier              customer_tier @default(NEW)
   notes             String?
@@ -2121,6 +2167,7 @@ model customer_occasions {
   date                 String // MM-DD hoặc YYYY-MM-DD
   is_recurring         Boolean  @default(true)
   reminder_days_before Int      @default(7)
+  /// @pii identity
   recipient_name       String?
   notes                String?
   created_at           DateTime @default(now()) @db.Timestamptz(3)
@@ -2190,6 +2237,9 @@ model vouchers {
   @@unique([organization_id, code])
   @@index([organization_id, customer_id])
   @@index([organization_id, batch_id])
+  @@index([batch_id]) // khoá ngoại cần index (ADR-015 O-1)
+  @@index([customer_id]) // khoá ngoại cần index (ADR-015 O-1)
+  @@index([order_id]) // khoá ngoại cần index (ADR-015 O-1)
 }
 
 /// Một đợt phát hành mã giảm giá — cùng điều kiện cho mọi mã trong đợt.
@@ -2240,6 +2290,7 @@ model voucher_redemptions {
   @@unique([voucher_id, order_id])
   @@index([organization_id])
   @@index([organization_id, order_id])
+  @@index([customer_id]) // khoá ngoại cần index (ADR-015 O-1)
 }
 
 // ── M08 — AI Chat Assistant & Hội thoại (P23) ──────────────────────────────
@@ -2277,6 +2328,7 @@ model chat_conversations {
 
   @@index([organization_id, status])
   @@index([organization_id, customer_id])
+  @@index([customer_id]) // khoá ngoại cần index (ADR-015 O-1)
 }
 
 model chat_messages {
@@ -2293,6 +2345,7 @@ model chat_messages {
   conversation chat_conversations @relation(fields: [conversation_id], references: [id], onDelete: Cascade)
 
   @@index([organization_id, conversation_id, created_at])
+  @@index([conversation_id]) // khoá ngoại cần index (ADR-015 O-1)
 }
 
 model chat_channel_integrations {
@@ -2919,6 +2972,7 @@ model campaign_packages {
   @@index([organization_id, created_at])
   @@index([organization_id, master_asset_id])
   @@index([organization_id, status])
+  @@index([product_id]) // khoá ngoại cần index (ADR-015 O-1)
 }
 
 /// Bài đăng Khu vực B (Chặng 06a) TỰ LƯU theo ảnh + chủ đề + mode (24/09/2026) —
@@ -2987,11 +3041,11 @@ model content_generations {
   created_by      String
   approved_by     String?
 
-  created_at DateTime @default(now()) @db.Timestamptz(3)
+  created_at  DateTime  @default(now()) @db.Timestamptz(3)
   // Thùng rác 30 ngày (Kho dữ liệu v2, L-4 — PO 05/11/2026): quá hạn thì cron xoá vĩnh viễn.
   trashed_at  DateTime? @db.Timestamptz(3)
   purge_after DateTime? @db.Timestamptz(3)
-  updated_at DateTime @updatedAt @db.Timestamptz(3)
+  updated_at  DateTime  @updatedAt @db.Timestamptz(3)
 
   organization organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
 
@@ -3000,6 +3054,7 @@ model content_generations {
 
   @@index([organization_id, asset_id, topic_id, mode])
   @@index([organization_id, created_at])
+  @@index([product_id]) // khoá ngoại cần index (ADR-015 O-1)
   @@index([purge_after])
 }
 
@@ -3136,7 +3191,9 @@ model partners {
   organization_id String
   code            String
   name            String
+  /// @pii contact
   phone           String
+  /// @pii address
   address         String?
   district        String?
   province        String?
@@ -3178,11 +3235,13 @@ model order_coordinations {
   /// Ảnh mẫu tải lên lúc tiếp nhận (id `assets`), khi không lấy từ Product Master.
   sample_asset_id       String?
   shipper_name          String?
+  /// @pii contact
   shipper_phone         String?
   carrier               String?
   /// PICKED_UP · ON_THE_WAY · DELIVERED_SUCCESS · DELIVERY_FAILED (F12).
   delivery_state        String?
   pod_asset_id          String?
+  /// @pii identity
   pod_recipient_name    String?
   pod_captured_at       DateTime?               @db.Timestamptz(3)
   partner_payout_vnd    Decimal?                @db.Decimal(14, 2)
@@ -3262,6 +3321,7 @@ model order_coordinations {
   @@unique([order_id, organization_id]) // khoá ghép 1-1 về orders (05/11/2026)
   @@index([organization_id, stage])
   @@index([organization_id, risk_level])
+  @@index([partner_id]) // khoá ngoại cần index (ADR-015 O-1)
 }
 
 /// Sổ thu (ĐP-4a, 26/09/2026, PO D2). Mỗi lần thu/hoàn tiền là MỘT DÒNG.
@@ -3449,6 +3509,7 @@ model journey_runs {
 
   @@index([organization_id, manifest_id])
   @@index([organization_id, status])
+  @@index([workspace_id]) // khoá ngoại cần index (ADR-015 O-1)
 }
 
 /// Sổ đăng ký quyết định (Decision Registry - 19 dòng chuẩn D-*)
@@ -3467,20 +3528,20 @@ model decision_registry {
 
 /// Danh mục mẫu hoa dùng để tạo thẻ chào (Chuẩn hoặc Client Catalog)
 model greeting_catalogs {
-  id              String   @id @default(uuid())
+  id              String    @id @default(uuid())
   organization_id String
   code            String // 20-10, 8-3, sinh-nhat, cc
   name            String
-  type            String   @default("STANDARD") // STANDARD | CLIENT
+  type            String    @default("STANDARD") // STANDARD | CLIENT
   description     String?
   filters         Json? // Bộ lọc dịp, mức giá, màu sắc khi tạo Client Catalog
-  is_active       Boolean  @default(true)
+  is_active       Boolean   @default(true)
   created_by      String
-  created_at      DateTime @default(now()) @db.Timestamptz(3)
+  created_at      DateTime  @default(now()) @db.Timestamptz(3)
   // Thùng rác 30 ngày (Kho dữ liệu v2, L-4 — PO 05/11/2026): quá hạn thì cron xoá vĩnh viễn.
-  trashed_at  DateTime? @db.Timestamptz(3)
-  purge_after DateTime? @db.Timestamptz(3)
-  updated_at      DateTime @updatedAt @db.Timestamptz(3)
+  trashed_at      DateTime? @db.Timestamptz(3)
+  purge_after     DateTime? @db.Timestamptz(3)
+  updated_at      DateTime  @updatedAt @db.Timestamptz(3)
 
   organization organizations               @relation(fields: [organization_id], references: [id], onDelete: Cascade)
   items        greeting_catalog_products[]
@@ -3520,7 +3581,9 @@ model greeting_sessions {
   catalog_id                     String
   send_code                      String // T01-001, T01-002...
   sale_id                        String // Người tạo link chào khách
+  /// @pii identity
   customer_name                  String?
+  /// @pii contact
   customer_phone                 String?
   status                         String    @default("CREATED") // CREATED | OPENED | BROWSING | SELECTED | ORDER_SUBMITTED | PAYMENT_REPORTED | COMPLETED
   selected_product_id            String?
@@ -3556,6 +3619,9 @@ model greeting_sessions {
   @@index([organization_id, catalog_id])
   @@index([organization_id, sale_id])
   @@index([send_code])
+  @@index([catalog_id]) // khoá ngoại cần index (ADR-015 O-1)
+  @@index([order_id]) // khoá ngoại cần index (ADR-015 O-1)
+  @@index([selected_product_id]) // khoá ngoại cần index (ADR-015 O-1)
 }
 
 /// Tích hợp ngoài của Thẻ chào theo tiệm: webhook đối soát ngân hàng + kênh
@@ -3608,6 +3674,7 @@ model greeting_payment_events {
 
   @@unique([organization_id, provider, external_id])
   @@index([organization_id, status])
+  @@index([order_id]) // khoá ngoại cần index (ADR-015 O-1)
 }
 
 /// Nhật ký tin đã gửi cho khách (Zalo ZNS / SMS) theo từng mốc đơn. Unique
@@ -3658,6 +3725,7 @@ model staff_notifications {
 
   @@index([organization_id, event_key])
   @@index([organization_id, recipient_id])
+  @@index([order_id]) // khoá ngoại cần index (ADR-015 O-1)
 }
 
 /// Ghi nhật ký hành trình tương tác của khách trên Thẻ chào (Swipe, Select, Checkout...)
@@ -3684,6 +3752,7 @@ model greeting_share_links {
 
   @@index([organization_id, owner_id, created_at])
   @@index([organization_id, catalog_id])
+  @@index([catalog_id]) // khoá ngoại cần index (ADR-015 O-1)
 }
 
 /**
@@ -3722,6 +3791,9 @@ model greeting_messages {
   @@index([organization_id, session_id])
   @@index([organization_id, to_user_id, created_at])
   @@index([organization_id, to_role, created_at])
+  @@index([order_id]) // khoá ngoại cần index (ADR-015 O-1)
+  @@index([reply_to_id]) // khoá ngoại cần index (ADR-015 O-1)
+  @@index([session_id]) // khoá ngoại cần index (ADR-015 O-1)
 }
 
 /**
@@ -3762,6 +3834,9 @@ model greeting_catalog_events {
   @@index([organization_id, catalog_id, created_at])
   @@index([organization_id, channel])
   @@index([organization_id, catalog_id, product_id])
+  @@index([catalog_id]) // khoá ngoại cần index (ADR-015 O-1)
+  @@index([order_id]) // khoá ngoại cần index (ADR-015 O-1)
+  @@index([product_id]) // khoá ngoại cần index (ADR-015 O-1)
 }
 
 model greeting_journey_events {
@@ -3788,9 +3863,13 @@ model chain_partnerships {
   status           String   @default("ACTIVE") // PENDING | ACTIVE | SUSPENDED | TERMINATED
   capacity_daily   Int      @default(10)
   commission_rate  Decimal?
+  /// @pii identity
   contact_name     String?
+  /// @pii contact
   contact_phone    String?
+  /// @pii contact
   contact_email    String?
+  /// @pii business
   address          String?
   province         String?
   district         String?
@@ -3873,6 +3952,7 @@ model internal_chat_messages {
 
   @@index([conversation_id, created_at])
   @@index([organization_id])
+  @@index([sender_user_id]) // khoá ngoại cần index (ADR-015 O-1)
 }
 
 // ─── Notification System (Multi-Tier, Multi-Role) ──────────────────────────
@@ -4034,6 +4114,7 @@ model material_price_history {
 
   @@index([organization_id])
   @@index([organization_id, material_id, effective_at])
+  @@index([material_id]) // khoá ngoại cần index (ADR-015 O-1)
 }
 
 /// #31 — Công thức (định mức) của một sản phẩm tại cửa hàng; một công thức hiện hành mỗi sản phẩm.
@@ -4072,6 +4153,7 @@ model product_recipe_items {
 
   @@unique([recipe_id, material_id])
   @@index([organization_id])
+  @@index([material_id]) // khoá ngoại cần index (ADR-015 O-1)
 }
 
 // ─── Trung tâm Tích hợp (Integration Hub, GĐ1 — 30/10/2026) ─────────────────
@@ -4140,6 +4222,7 @@ model integration_connections {
   @@unique([organization_id, connector_key, external_account_id])
   @@index([organization_id])
   @@index([status, last_health_at])
+  @@index([inherited_from_org_id]) // khoá ngoại cần index (ADR-015 O-1)
 }
 
 /// Nhật ký sự kiện vào (webhook) / ra (lệnh gọi) của một kết nối. Chống trùng theo
@@ -4260,6 +4343,7 @@ model sales_channel_orders {
   @@unique([connection_id, external_order_id])
   @@index([organization_id])
   @@index([organization_id, created_at])
+  @@index([order_id]) // khoá ngoại cần index (ADR-015 O-1)
 }
 
 // ─── Thu hút khách hàng (Bước 4 — công cụ 12, 13, 21, 25) ─────────────────────
@@ -4269,7 +4353,9 @@ model leads {
   id                 String    @id @default(uuid())
   organization_id    String
   customer_id        String?
+  /// @pii identity
   name               String
+  /// @pii contact
   phone              String
   message            String?
   source             String // CATALOG_LINK | SHORT_LINK | LANDING | CHAT | MANUAL
@@ -4306,6 +4392,9 @@ model leads {
   @@index([organization_id, phone, created_at])
   @@index([organization_id, next_follow_up_at])
   @@index([organization_id, converted_order_id])
+  @@index([converted_order_id]) // khoá ngoại cần index (ADR-015 O-1)
+  @@index([customer_id]) // khoá ngoại cần index (ADR-015 O-1)
+  @@index([short_link_id]) // khoá ngoại cần index (ADR-015 O-1)
 }
 
 // Link/QR động: in một lần, đổi đích sau; mỗi điểm đặt (quầy, tờ rơi…) một mã để
@@ -4352,6 +4441,7 @@ model link_events {
 
   @@index([organization_id])
   @@index([organization_id, short_link_id, created_at])
+  @@index([short_link_id]) // khoá ngoại cần index (ADR-015 O-1)
 }
 
 /// Chợ đối tác (SaaS Mẹ) — hồ sơ khảo sát cửa hàng tiềm năng, CẤP NỀN TẢNG:
@@ -4363,6 +4453,7 @@ model partner_marketplace_stores {
   match_key        String   @unique
   shop_name        String
   tier             String
+  /// @pii business
   address          String   @default("")
   /// Toàn bộ hồ sơ khảo sát (PartnerStoreMarketplaceEntity, trừ id)
   profile          Json
@@ -4476,6 +4567,7 @@ model asset_usages {
   @@index([organization_id, source_type, source_id])
   @@index([organization_id, destination, status])
   @@index([campaign_id])
+  @@index([short_link_id]) // khoá ngoại cần index (ADR-015 O-1)
 }
 
 enum campaign_objective {
@@ -4564,6 +4656,8 @@ model quotations {
   @@index([organization_id, created_at])
   @@index([lead_id])
   @@index([customer_id])
+  @@index([asset_usage_id]) // khoá ngoại cần index (ADR-015 O-1)
+  @@index([converted_order_id]) // khoá ngoại cần index (ADR-015 O-1)
 }
 
 /// Chi tiết từng dòng sản phẩm trong báo giá (Quotation Items).
@@ -4708,4 +4802,33 @@ model print_renditions {
   @@index([organization_id, preset_code])
   @@index([organization_id, created_at])
   @@index([asset_usage_id])
+}
+
+// ── Đối soát số dư (ADR-013 D-I6, bước I-3) ────────────────────────────────
+// Một dòng cho mỗi đơn (hay đối tượng) đang lệch. Job đối soát mở dòng khi phát hiện lệch, đóng
+// (`resolved_at`) khi số liệu khớp lại, mở lại cùng dòng nếu lệch lần nữa. Không tự sửa số liệu.
+
+// ORDER_PAID_MISMATCH: orders.paid_vnd khác tổng sổ thu đã xác nhận (khoản hoàn tiền trừ ra).
+enum reconciliation_kind {
+  ORDER_PAID_MISMATCH
+}
+
+model reconciliation_findings {
+  id                String              @id @default(uuid())
+  organization_id   String
+  kind              reconciliation_kind
+  entity_id         String
+  expected_vnd      Decimal             @db.Decimal(14, 2)
+  actual_vnd        Decimal             @db.Decimal(14, 2)
+  first_detected_at DateTime            @default(now()) @db.Timestamptz(3)
+  last_detected_at  DateTime            @default(now()) @db.Timestamptz(3)
+  resolved_at       DateTime?           @db.Timestamptz(3)
+  created_at        DateTime            @default(now()) @db.Timestamptz(3)
+  updated_at        DateTime            @default(now()) @updatedAt @db.Timestamptz(3)
+
+  organization organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
+
+  @@unique([kind, entity_id])
+  @@index([organization_id])
+  @@index([organization_id, resolved_at])
 }

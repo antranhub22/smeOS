@@ -35,6 +35,8 @@
     "test:tenant": "DATABASE_URL=\"${DATABASE_URL_TEST:-postgresql://smeos:smeos@localhost:5433/smeos_test}\" vitest run tests/tenant",
     "test:platform": "DATABASE_URL=\"${DATABASE_URL_TEST:-postgresql://smeos:smeos@localhost:5433/smeos_test}\" vitest run tests/platform",
     "db:test:setup": "bash scripts/dung-db-test.sh",
+    "gen:tenant-registry": "node scripts/gen-tenant-table-registry.mjs",
+    "check:migrations": "node scripts/check-migrations.mjs",
     "test:e2e": "playwright test",
     "test:e2e:ux": "playwright test tests/e2e/ux",
     "ux:audit": "node scripts/ux-audit/run.mjs",
