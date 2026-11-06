@@ -64,6 +64,8 @@
 | D-57 | Trùng mã giữa `branches` và `chain_branches` khi gộp (06/11/2026) | **Gộp thành một dòng**: giữ tên/địa chỉ `branches`, cấu hình nhận đơn từ `chain_branches`, nhận đơn khi cả hai bật; migration báo số dòng trùng | ADR-012 D-T2, bước T-4 |
 | D-58 | Khách hàng theo chi nhánh (06/11/2026) | **Thêm `customers.branch_id`**: chi nhánh của người tạo hoặc của đơn đầu tiên có chi nhánh; null = khách dùng chung | ADR-012 D-T7, bước T-5 |
 | D-59 | Cách bật phạm vi chi nhánh đợt 1 (06/11/2026) | **Cờ theo tổ chức, mặc định tắt** — Admin SaaS bật sau khi báo khách (`settings.branch_scope.wave1`) | ADR-012 D-T7, bước T-5 |
+| D-60 | Chủ tổ chức xem nhật ký truy cập của nhân viên nền tảng (06/11/2026) | **Xem ngay trong ứng dụng** — màn hình chỉ đọc `platform_access_logs` cho chủ tổ chức; bù rủi ro R-2 (D-24) | ADR-013 D-I5 (duyệt ADR-013 cùng ngày) |
+| D-61 | Mốc bật RLS chặn thật (06/11/2026) | **Theo khách enterprise đầu tiên** (giữ D-30); trước đó đưa p95 trang danh sách ở chế độ `enforce` về dưới +10% (đo hiện +13%) | ADR-013 §6, bước I-6 |
 
 ## 2. Chấp nhận rủi ro (PO chọn khác đề xuất)
 
