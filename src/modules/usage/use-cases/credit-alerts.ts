@@ -34,3 +34,18 @@ export function queueCreditAlerts(organizationId: string, alerts: CreditAlerts):
     }
   })
 }
+
+/** Báo Điều hành khi tin nhắn khách đẩy số dư sang âm hoặc dùng hết mức thấu chi (PO 05/11/2026). */
+export function queueOverdraftAlert(organizationId: string, input: { balance: number; overdraft: number; crossedNegative: boolean; exhausted: boolean }): void {
+  if (!input.crossedNegative && !input.exhausted) return
+  runInBackground("credit-overdraft-alert", async () => {
+    await notifyOrganization({
+      organizationId,
+      eventKey: "CREDIT_OVERDRAFT",
+      title: input.exhausted ? "Đã dùng hết mức thấu chi tin nhắn" : "Credit đang âm do tin nhắn gửi khách",
+      message: input.exhausted
+        ? `Số dư ${formatNumber(input.balance)} credit, đã chạm mức âm tối đa ${formatNumber(input.overdraft)} credit. Tin nhắn gửi khách tạm dừng tới khi nạp thêm.`
+        : `Hết credit nên tin nhắn gửi khách đang trừ vào mức thấu chi (tối đa âm ${formatNumber(input.overdraft)} credit). Số dư hiện ${formatNumber(input.balance)} credit — nạp thêm để bù phần âm.`,
+    })
+  })
+}

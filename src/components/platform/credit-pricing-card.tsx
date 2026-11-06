@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 
-interface Pricing { smsCredit: number; znsCredit: number; usdToVnd: number; creditValueVnd: number; smsCostVnd: number; znsCostVnd: number; defaultMonthlyLimit: number | null }
+interface Pricing { smsCredit: number; znsCredit: number; usdToVnd: number; creditValueVnd: number; smsCostVnd: number; znsCostVnd: number; defaultMonthlyLimit: number | null; messageOverdraftCredit: number }
 const FIELDS: Array<{ key: keyof Pricing; label: string; hint: string }> = [
   { key: "smsCredit", label: "Credit mỗi tin SMS", hint: "0 = không thu" },
   { key: "znsCredit", label: "Credit mỗi tin Zalo ZNS", hint: "0 = không thu" },
@@ -15,6 +15,7 @@ const FIELDS: Array<{ key: keyof Pricing; label: string; hint: string }> = [
   { key: "smsCostVnd", label: "Giá vốn mỗi tin SMS (đ)", hint: "Chi phí tham chiếu" },
   { key: "znsCostVnd", label: "Giá vốn mỗi tin ZNS (đ)", hint: "Chi phí tham chiếu" },
   { key: "defaultMonthlyLimit", label: "Hạn mức credit/tháng mặc định", hint: "Bỏ trống = không giới hạn" },
+  { key: "messageOverdraftCredit", label: "Mức thấu chi tin nhắn (credit)", hint: "Hết credit vẫn gửi tin khách tới mức âm này; 0 = dừng gửi" },
 ]
 
 /** Console → Mức dùng → Quy đổi credit (PO Q10, checklist ALG 10.3, 10.4). Sửa cần `N3`. */

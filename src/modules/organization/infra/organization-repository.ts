@@ -11,7 +11,8 @@ import type {
 } from "../domain/repositories/organization-repository.interface"
 
 import type { DbClient } from "./db-client"
-import { claimLowBalanceAlert, consumeMonthlyCredit, lastTopupAmount, releaseMonthlyCredit } from "@/modules/usage/infra/usage-limit-repository"
+import { claimLowBalanceAlert, consumeMonthlyCredit, countMonthlyCreditUnchecked, lastTopupAmount, releaseMonthlyCredit } from "@/modules/usage/infra/usage-limit-repository"
+import { overdraftFloor } from "@/modules/usage/domain/message-overdraft"
 import { lowBalanceThreshold } from "@/modules/usage/domain/monthly-limit"
 import type { PrismaClient } from "@/generated/prisma/client"
 import { appendCreditEntry, type CreditEntryKind, type CreditEntryMeta } from "./credit-ledger"
@@ -140,6 +141,26 @@ export class OrganizationRepository implements IOrganizationRepository {
   }
 
 
+
+  /**
+   * Tin nhắn gửi khách khi đường trừ thường không qua được (hết credit hoặc chạm hạn mức tháng): trừ nếu số dư
+   * sau khi trừ không thấp hơn `-overdraft` (PO 05/11/2026). Ghi sổ cái và mức dùng kỳ như lần trừ thường.
+   * Trả số dư sau khi trừ, hoặc `null` khi đã hết mức thấu chi (tin không gửi).
+   */
+  async tryOverdraftCreditFor(organizationId: string, cost: number, overdraft: number, meta: CreditEntryMeta = {}): Promise<number | null> {
+    if (cost <= 0) return null
+    const run = async (db: DbClient) => {
+      const result = await db.organizations.updateMany({
+        where: { id: organizationId, credit_balance: { gte: cost + overdraftFloor(overdraft) } },
+        data: { credit_balance: { decrement: cost } },
+      })
+      if (result.count === 0) return null
+      const balance = await appendCreditEntry(db, organizationId, "USAGE", -cost, { ...meta, reason: `${meta.reason ?? "Tin nhắn"} (thấu chi)` })
+      await countMonthlyCreditUnchecked(db, organizationId, cost)
+      return balance
+    }
+    return "$transaction" in this.db ? (this.db as PrismaClient).$transaction(run) : run(this.db)
+  }
 
   /**
    * Nạp credit cho một tổ chức — thao tác của NGƯỜI VẬN HÀNH NỀN TẢNG, không

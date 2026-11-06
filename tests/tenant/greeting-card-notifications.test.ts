@@ -104,8 +104,9 @@ describe("greeting-card notifications", () => {
     expect(await notifyOrderEvent(b.organizationId, order.orderId, "DISPATCHED", repo, fakeFetch([], []))).toBe("DISABLED")
   })
 
-  it("SMS trừ credit theo quy đổi của nền tảng (PO Q10), ghi chi phí tham chiếu; gửi lỗi hoàn lại; hết credit thì không gửi", async () => {
-    await prisma.platform_settings.upsert({ where: { key: "credit_pricing" }, create: { key: "credit_pricing", value: { smsCredit: 2, smsCostVnd: 600 } }, update: { value: { smsCredit: 2, smsCostVnd: 600 } } })
+  it("SMS trừ credit theo quy đổi của nền tảng (PO Q10), ghi chi phí tham chiếu; gửi lỗi hoàn lại; hết credit vẫn gửi trong mức thấu chi, quá mức thì không gửi", async () => {
+    const pricing = { smsCredit: 2, smsCostVnd: 600, messageOverdraftCredit: 3 }
+    await prisma.platform_settings.upsert({ where: { key: "credit_pricing" }, create: { key: "credit_pricing", value: pricing }, update: { value: pricing } })
     try {
       const order = await orderFor(a)
       await updateNotifySettings(a.ctx, { enabled: true, channel: "ESMS", credentials: { apiKey: "k", secretKey: "s", brandname: "TIEM" } })
@@ -121,10 +122,18 @@ describe("greeting-card notifications", () => {
       expect(await prisma.provider_cost_entries.findMany({ where: { organization_id: a.organizationId } })).toMatchObject([{ service: "SMS", cost_vnd: 600 }])
       expect(await prisma.provider_cost_entries.count({ where: { organization_id: b.organizationId } })).toBe(0)
 
+      // Thấu chi (PO 05/11/2026): số dư 1, tin 2 credit → vẫn gửi, còn -1; tin kế → -3 (chạm mức âm 3); tin sau nữa bị bỏ
       await prisma.organizations.update({ where: { id: a.organizationId }, data: { credit_balance: 1 } })
+      expect(await notifyOrderEvent(a.organizationId, order.orderId, "DELIVERED", repo, fakeFetch([{ CodeResult: "100", SMSID: "s2" }], []))).toBe("SENT")
+      expect(await balance()).toBe(-1)
+      expect(await prisma.credit_transactions.findFirst({ where: { organization_id: a.organizationId, kind: "USAGE" }, orderBy: { created_at: "desc" } })).toMatchObject({ amount: -2, balance_after: -1, reason: expect.stringContaining("thấu chi") })
+      expect(await notifyOrderEvent(a.organizationId, order.orderId, "READY", repo, fakeFetch([{ CodeResult: "100", SMSID: "s3" }], []))).toBe("SENT")
+      expect(await balance()).toBe(-3)
       const calls: Call[] = []
-      expect(await notifyOrderEvent(a.organizationId, order.orderId, "DELIVERED", repo, fakeFetch([{ CodeResult: "100", SMSID: "s2" }], calls))).toBe("SKIPPED")
+      expect(await notifyOrderEvent(a.organizationId, order.orderId, "PAYMENT_COMPLETED", repo, fakeFetch([{ CodeResult: "100", SMSID: "s4" }], calls))).toBe("SKIPPED")
       expect(calls).toHaveLength(0)
+      expect(await balance()).toBe(-3)
+      expect((await prisma.organizations.findUniqueOrThrow({ where: { id: b.organizationId } })).credit_balance).toBeGreaterThanOrEqual(0)
     } finally {
       await prisma.platform_settings.deleteMany({ where: { key: "credit_pricing" } })
     }

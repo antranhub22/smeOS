@@ -1,4 +1,6 @@
 import { openSecret, sealSecret } from "@/core/security/secret-box"
+import { queueOverdraftAlert } from "@/modules/usage/use-cases/credit-alerts"
+import { overdraftSignals } from "@/modules/usage/domain/message-overdraft"
 import { runInBackground } from "@/core/runtime/background"
 import { log } from "@/core/observability/log"
 import { publicAppUrl } from "@/lib/public-url"
@@ -50,10 +52,17 @@ const defaultMessageCredits: MessageCredits = {
     const pricing = await readCreditPricing()
     return channel === "ZNS" ? pricing.znsCredit : pricing.smsCredit
   },
-  charge: (organizationId, cost, channel) =>
-    new OrganizationRepository()
-      .tryDeductCreditFor(organizationId, cost, { service: serviceOf(channel), reason: `Tin ${serviceOf(channel)} gửi khách` })
-      .catch(() => false),
+  async charge(organizationId, cost, channel) {
+    const repo = new OrganizationRepository()
+    const meta = { service: serviceOf(channel), reason: `Tin ${serviceOf(channel)} gửi khách` }
+    if (await repo.tryDeductCreditFor(organizationId, cost, meta).catch(() => false)) return true
+    // Hết credit hoặc chạm hạn mức tháng: tin vẫn gửi trong mức thấu chi Console đặt, báo Điều hành (PO 05/11/2026)
+    const overdraft = (await readCreditPricing()).messageOverdraftCredit
+    const balance = await repo.tryOverdraftCreditFor(organizationId, cost, overdraft, meta).catch(() => null)
+    if (balance === null) return false
+    queueOverdraftAlert(organizationId, { balance, overdraft, ...overdraftSignals(balance, cost, overdraft) })
+    return true
+  },
   refund: (organizationId, cost, channel) =>
     new OrganizationRepository().refundCreditFor(organizationId, cost, { service: serviceOf(channel), reason: "Tin gửi lỗi" }),
   async recordCost(organizationId, channel, reference) {
@@ -97,7 +106,7 @@ export async function notifyOrderEvent(
   // Quy đổi tin nhắn ra credit theo cấu hình nền tảng (PO Q10, checklist ALG 10.3); 0 = không thu
   const messageCost = await credits.costOf(channel)
   if (messageCost > 0 && !(await credits.charge(organizationId, messageCost, channel))) {
-    await repo.finish(claim.id, { status: "SKIPPED", error: "Hết credit hoặc đã chạm hạn mức credit tháng này" })
+    await repo.finish(claim.id, { status: "SKIPPED", error: "Hết credit và đã dùng hết mức thấu chi tin nhắn" })
     return "SKIPPED"
   }
 

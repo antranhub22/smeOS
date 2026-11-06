@@ -15,6 +15,7 @@ import type { BrochureQuote } from "../domain/brochure-pricing"
 import { BrochureCheckoutRepository, getBrochureCheckoutRepository } from "../infra/brochure-checkout-repository"
 import { quoteForProduct } from "./brochure-quote"
 import { resolveAppliedPolicies } from "../domain/store-policy"
+import { assertAcceptingPublicOrders } from "@/modules/subscription/use-cases/public-order-guard"
 import { applyDiscountVisibility, readPriceVisibility } from "../domain/price-visibility"
 import type { PolicyGovernanceUpper } from "@/modules/organization/domain/governance-decisions"
 import { promotionNote, resolveOrderPolicies } from "../domain/order-policies"
@@ -66,6 +67,8 @@ export async function placeBrochureOrder(
   checkout = getBrochureCheckoutRepository()
 ): Promise<BrochureOrderResult> {
   const { organizationId, session, product, input } = params
+  // Gói dịch vụ của tiệm quá hạn thanh toán → không nhận đơn qua link công khai (PO 05/11/2026)
+  await assertAcceptingPublicOrders(organizationId)
   const customerPhone = normalizePhone(input.customerPhone)
   await assertPhoneQuota(organizationId, customerPhone, checkout)
   // Ngày cửa hàng đã khoá cho mẫu này → không nhận đơn (checklist ALG 2.8)

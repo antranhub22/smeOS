@@ -15,7 +15,7 @@ Từ nay:
 
 | Việc | Lệnh |
 |---|---|
-| Deploy (Render, tự động) | `npm run db:deploy` → `scripts/db-deploy.mjs` → `prisma migrate deploy` |
+| Deploy (Render, tự động) | `preDeployCommand` (từ 05/11/2026, O-4): `npm run db:deploy` → `scripts/db-deploy.mjs` → `prisma migrate deploy`, rồi `npm run db:seed` (chỉ dữ liệu hệ thống). Build không chạm CSDL; pre-deploy lỗi thì bản cũ vẫn chạy |
 | Đổi schema (máy dev) | `npx prisma migrate dev --name <ten_thay_doi>` rồi commit migration cùng schema |
 | CI | Dựng CSDL bằng `npm run db:deploy`, rồi `prisma migrate diff ... --exit-code`: schema đổi mà thiếu migration là đỏ |
 | CSDL test (`*_test`) | vẫn `db push` qua `npm run db:test:setup` — CSDL đó bị xoá sạch trước mỗi ca thử |
@@ -42,7 +42,7 @@ production chạy `db push` nên chưa từng có nó, đưa vào nền sẽ là
 | Có bảng, chưa có nền (đang chạy bằng `db push`) | kiểm lệch → cất lịch sử cũ → đánh dấu nền đã áp → `migrate deploy` |
 
 - **Kiểm lệch:** `prisma migrate diff --from-config-datasource --to-schema prisma/schema.prisma --exit-code`.
-  Lệch là build dừng với thông báo `CSDL đang lệch schema.prisma`, không ghi gì vào CSDL.
+  Lệch là bước pre-deploy dừng (bản cũ vẫn chạy) với thông báo `CSDL đang lệch schema.prisma`, không ghi gì vào CSDL.
 - **Cất lịch sử cũ:** bảng `_prisma_migrations` thời floraos (nếu có) được **đổi tên** thành
   `_prisma_migrations_pre_baseline_<thời điểm>`, không xoá. Nhờ vậy dòng migration lỗi cũ không
   chặn `migrate deploy` (lỗi P3009).
@@ -128,4 +128,12 @@ cao điểm; có `lock_timeout = 30s` nên bảng đang bận làm migration d�
 
 Worker Python cũ (chưa deploy) ghi `job_events` không kèm `organization_id`: trigger
 `smeos_fill_org_from_parent` điền từ bảng cha, nên thứ tự deploy web/worker không quan trọng.
+
+## 8. Kiểm migration tự động (05/11/2026, O-5)
+
+`npm run check:migrations` (bước CI "Migration theo quy ước expand/contract") kiểm mọi migration có thời
+điểm sau `20261105235959`: chặn `DROP COLUMN`/`DROP TABLE` không có dòng `-- contract: <lý do>`, đổi kiểu
+cột không `USING`, thêm cột `NOT NULL` không `DEFAULT`, `SET NOT NULL` không kèm `UPDATE` hoặc dòng
+`-- backfill: <cách>`. Thiếu `SET LOCAL lock_timeout` chỉ cảnh báo. Dòng `-- contract:` chỉ thêm khi PO đã
+duyệt bước contract trong PR.
 
