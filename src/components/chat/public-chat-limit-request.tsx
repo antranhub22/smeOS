@@ -3,6 +3,7 @@
 import { Input } from "@/components/ui/input"
 import React, { useCallback, useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { formatDateTime } from "@/lib/i18n/formatters"
 import type { PublicChatLimits } from "@/modules/chat-assistant/domain/public-chat-policy"
 import {
@@ -86,18 +87,14 @@ export function PublicChatLimitRequest() {
       ) : (
         <fieldset className="space-y-2">
           <legend className="text-caption text-text-muted">Cần nhiều hơn? Chọn mức và gửi yêu cầu để được duyệt:</legend>
-          {options.map((t) => (
-            <label key={t.i} className="flex items-center gap-2 text-caption text-text">
-              <input
-                type="radio"
-                name="public-chat-limit-tier"
-                className="accent-primary"
-                checked={tierIndex === t.i}
-                onChange={() => setTierIndex(t.i)}
-              />
-              {t.perVisitor} tin/khách · {t.perIp} tin/địa chỉ mạng
-            </label>
-          ))}
+          <RadioGroup value={tierIndex === null ? "" : String(tierIndex)} onValueChange={(v) => setTierIndex(Number(v))} className="space-y-2">
+            {options.map((t) => (
+              <label key={t.i} className="flex items-center gap-2 text-caption text-text">
+                <RadioGroupItem value={String(t.i)} />
+                {t.perVisitor} tin/khách · {t.perIp} tin/địa chỉ mạng
+              </label>
+            ))}
+          </RadioGroup>
           <label className="block text-caption text-text-muted">
             Lý do (không bắt buộc)
             <Input

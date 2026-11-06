@@ -2,6 +2,7 @@
 
 import * as React from "react"
 import { Badge } from "@/components/ui/badge"
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Sparkles } from "@/components/ui/icon-set/sparkles"
 import { Cpu } from "@/components/ui/icon-set/cpu"
 import { Cloud } from "@/components/ui/icon-set/cloud"
@@ -28,56 +29,56 @@ export const ENHANCER_PROVIDERS: EnhancerProviderOption[] = [
   {
     id: "auto",
     name: "Theo thứ tự ưu tiên của tiệm",
-    desc: "Thử lần lượt các nhà cung cấp theo thứ tự trong Cài đặt → Nhà cung cấp AI; bên lỗi thì chuyển bên kế tiếp, hết bên mới dùng Studio cục bộ và hoàn phần chênh.",
+    desc: "Thử lần lượt theo thứ tự trong Cài đặt → Nhà cung cấp AI; lựa chọn nào lỗi thì chuyển sang lựa chọn kế tiếp, hết lựa chọn mới dùng phông có sẵn và hoàn phần chênh credit.",
     badge: "Khuyên dùng",
     tone: "success",
     icon: Sparkles,
   },
   {
     id: "photoroom",
-    name: "Photoroom AI (Chuẩn E-commerce Quốc tế)",
-    desc: "Photoroom tách nền, đặt lên phông studio trắng, đổ bóng và chỉnh sáng AI, tăng nét. Không xoá watermark — cần xoá thì dùng Studio AI Pipeline.",
+    name: "Tách nền và phông studio",
+    desc: "Tách nền, đặt lên phông studio trắng, đổ bóng, chỉnh sáng và làm nét. Không xoá logo chìm — cần xoá thì chọn \"Tách nền và phông có sẵn\".",
     badge: "Thương mại",
     tone: "success",
     icon: Sparkles,
   },
   {
     id: "fal_flux",
-    name: "Fal.ai Product Shot (Studio cao cấp)",
-    desc: "fal.ai tách nền (BiRefNet), dựng phông studio và hoà sáng (BRIA Product Shot), tăng nét 2x (Real-ESRGAN). Không xoá watermark.",
+    name: "Dựng ảnh sản phẩm",
+    desc: "Tách nền, dựng phông studio, hoà ánh sáng và làm nét gấp đôi. Không xoá logo chìm.",
     badge: "Cao cấp",
     tone: "accent",
     icon: Zap,
   },
   {
     id: "imagen",
-    name: "Google Gemini Image",
-    desc: "Gemini dựng phông studio và chỉnh sáng theo mô tả; sản phẩm được SME đo đạc lại độ nguyên vẹn. Không xoá watermark.",
-    badge: "Cloud AI",
+    name: "Dựng phông theo mô tả",
+    desc: "Dựng phông và chỉnh sáng theo mô tả; hệ thống kiểm lại để sản phẩm giữ nguyên. Không xoá logo chìm.",
+    badge: "Dịch vụ AI",
     tone: "accent",
     icon: Cloud,
   },
   {
     id: "studio",
-    name: "Studio cục bộ (dự phòng)",
-    desc: "Chạy trên máy chủ smeOS: tách nền, xoá watermark, ghép phông Studio. Chất lượng thấp hơn nhà cung cấp — dùng khi cần xoá watermark hoặc tiết kiệm.",
+    name: "Tách nền và phông có sẵn (dự phòng)",
+    desc: "Chạy trên hệ thống smeOS: tách nền, xoá logo chìm, ghép phông có sẵn. Chất lượng thấp hơn các lựa chọn trên — dùng khi cần xoá logo chìm hoặc tiết kiệm.",
     badge: "Dự phòng",
     tone: "accent",
     icon: Sparkles,
   },
   {
     id: "openai",
-    name: "OpenAI Image AI (Cloud)",
-    desc: "Thế hệ nền qua OpenAI DALL-E. Phù hợp tạo bối cảnh mở rộng nhưng có thể sinh mảng màu nhân tạo.",
-    badge: "Cloud AI",
+    name: "Chỉnh ảnh giữ nguyên sản phẩm",
+    desc: "Tạo nền mở rộng quanh sản phẩm; đôi khi sinh mảng màu không tự nhiên.",
+    badge: "Dịch vụ AI",
     tone: "neutral",
     icon: Cloud,
   },
   {
     id: "local",
-    name: "Real-ESRGAN / PIL Lanczos (Local)",
-    desc: "Xử lý trực tiếp trên máy chủ cục bộ, không gọi nhà cung cấp bên ngoài và không cần internet.",
-    badge: "Nội bộ 0đ",
+    name: "Làm nét trên hệ thống (miễn phí)",
+    desc: "Làm nét ngay trên hệ thống smeOS, không gửi ảnh ra ngoài.",
+    badge: "Miễn phí",
     tone: "neutral",
     icon: Cpu,
   },
@@ -99,14 +100,20 @@ export function EnhancerProviderSelector({
       <div className="flex items-center justify-between">
         <div className="text-caption font-bold text-text uppercase tracking-wider flex items-center gap-1.5">
           <Sparkles size={14} className="text-primary" />
-          <span>Phương thức & Nhà cung cấp AI (Provider)</span>
+          <span>Cách xử lý ảnh</span>
         </div>
         <span className="text-caption text-text-muted">
           Mặc định: <strong className="text-primary font-semibold">Theo thứ tự ưu tiên của tiệm</strong>
         </span>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+      <RadioGroup
+        aria-label="Cách xử lý ảnh"
+        value={value}
+        disabled={disabled}
+        onValueChange={(v) => onChange(String(v))}
+        className="grid grid-cols-1 sm:grid-cols-2 gap-2.5"
+      >
         {ENHANCER_PROVIDERS.map((provider) => {
           const isSelected = value === provider.id
           const Icon = provider.icon
@@ -114,7 +121,6 @@ export function EnhancerProviderSelector({
           return (
             <label
               key={provider.id}
-              onClick={() => !disabled && onChange(provider.id)}
               className={`relative flex flex-col justify-between p-3 rounded-xl border-2 transition cursor-pointer select-none ${
                 isSelected
                   ? "border-primary bg-primary/5 shadow-xs"
@@ -123,14 +129,7 @@ export function EnhancerProviderSelector({
             >
               <div className="flex items-start justify-between gap-2">
                 <div className="flex items-center gap-2 min-w-0">
-                  <input
-                    type="radio"
-                    name="enhancer-provider-radio"
-                    checked={isSelected}
-                    disabled={disabled}
-                    onChange={() => onChange(provider.id)}
-                    className="accent-primary h-3.5 w-3.5 flex-shrink-0"
-                  />
+                  <RadioGroupItem value={provider.id} className="flex-shrink-0" />
                   <Icon size={16} className={isSelected ? "text-primary flex-shrink-0" : "text-text-muted flex-shrink-0"} />
                   <span className="text-body-sm font-bold text-text truncate">
                     {provider.name}
@@ -152,7 +151,7 @@ export function EnhancerProviderSelector({
             </label>
           )
         })}
-      </div>
+      </RadioGroup>
     </div>
   )
 }

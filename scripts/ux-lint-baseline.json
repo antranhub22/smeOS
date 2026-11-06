@@ -10,9 +10,6 @@
     "components/catalog": {
       "R14": 3
     },
-    "components/chat": {
-      "R18": 1
-    },
     "components/dashboard": {
       "R18": 1
     },
@@ -22,20 +19,14 @@
       "R14": 6,
       "R20": 6
     },
-    "components/landing-page": {
-      "R18": 1
-    },
     "components/layout": {
       "R18": 3
     },
     "components/market-intelligence": {
-      "R18": 10
-    },
-    "components/profiles": {
-      "R18": 2
+      "R18": 4
     },
     "components/templates": {
-      "R18": 6,
+      "R18": 5,
       "R19": 2,
       "R16": 2
     },
@@ -43,6 +34,6 @@
       "R14": 1
     }
   },
-  "total": 60,
-  "updatedAt": "2026-11-06T03:59:13.698Z"
+  "total": 49,
+  "updatedAt": "2026-11-06T04:15:29.874Z"
 }

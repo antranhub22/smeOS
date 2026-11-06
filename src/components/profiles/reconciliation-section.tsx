@@ -2,6 +2,7 @@
 
 import React from "react"
 import { HelpCircle } from "@/components/ui/icon-set/help-circle"
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import type { StorePaymentMethodsConfig } from "@/modules/greeting-card/domain/store-payment-methods"
 
 interface ReconciliationSectionProps {
@@ -22,7 +23,12 @@ export function ReconciliationSection({ config, updateConfig }: ReconciliationSe
         </p>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+      <RadioGroup
+        aria-label="Cơ chế xác nhận giao dịch"
+        value={config.reconciliationMode}
+        onValueChange={(v) => updateConfig({ reconciliationMode: v as StorePaymentMethodsConfig["reconciliationMode"] })}
+        className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1"
+      >
         <label
           className={`p-4 rounded-xl border cursor-pointer flex flex-col justify-between transition-all ${
             config.reconciliationMode === "MANUAL_PROOF"
@@ -37,13 +43,7 @@ export function ReconciliationSection({ config, updateConfig }: ReconciliationSe
                 Khách chuyển khoản rồi tải ảnh bill hoặc bấm “Tôi đã chuyển”. Nhân viên đối soát sao kê app và bấm Duyệt tiền.
               </p>
             </div>
-            <input
-              type="radio"
-              name="reconMode"
-              checked={config.reconciliationMode === "MANUAL_PROOF"}
-              onChange={() => updateConfig({ reconciliationMode: "MANUAL_PROOF" })}
-              className="mt-1"
-            />
+            <RadioGroupItem value="MANUAL_PROOF" className="mt-1" />
           </div>
         </label>
 
@@ -58,7 +58,7 @@ export function ReconciliationSection({ config, updateConfig }: ReconciliationSe
             <div>
               <div className="flex items-center gap-1.5">
                 <p className="text-body-sm font-bold text-text">Tự động khớp lệnh tức thì (Webhook)</p>
-                <span className="text-caption font-bold px-1.5 py-0.5 rounded-full bg-success-bg text-success border border-success-border">
+                <span className="text-caption font-bold px-1.5 py-0.5 rounded-full bg-success-bg text-success-text border border-success-border">
                   Khuyên dùng
                 </span>
               </div>
@@ -66,16 +66,10 @@ export function ReconciliationSection({ config, updateConfig }: ReconciliationSe
                 Bắt biến động số dư qua Open Banking / SePay / PayOS. Đơn hàng tự động đổi sang “Đã thanh toán” trong 3 giây.
               </p>
             </div>
-            <input
-              type="radio"
-              name="reconMode"
-              checked={config.reconciliationMode === "AUTO_WEBHOOK"}
-              onChange={() => updateConfig({ reconciliationMode: "AUTO_WEBHOOK" })}
-              className="mt-1"
-            />
+            <RadioGroupItem value="AUTO_WEBHOOK" className="mt-1" />
           </div>
         </label>
-      </div>
+      </RadioGroup>
     </div>
   )
 }
