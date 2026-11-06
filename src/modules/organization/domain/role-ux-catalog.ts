@@ -427,9 +427,8 @@ export function resolveRoleUx(
     if (indAdmin && indAdmin.status === "AVAILABLE") return indAdmin
   }
 
-  // Khi là tổ chức Điện hoa / Mạng lưới (FLOWER_NETWORK hoặc CHAIN):
-  const isNetwork =
-    organizationType === "FLOWER_NETWORK" || organizationType === "CHAIN"
+  // Khi là tổ chức Điện hoa / Mạng lưới (loại CHAIN — ADR-012 T-8b):
+  const isNetwork = organizationType === "CHAIN"
   if (
     (isNetwork && (systemRoleKey === "dieu_hanh" || systemRoleKey === "flower_network_admin" || systemRoleKey === "chain_admin")) ||
     systemRoleKey === "flower_network_admin" ||

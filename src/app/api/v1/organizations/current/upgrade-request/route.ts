@@ -7,7 +7,7 @@ import { requestOrganizationUpgrade } from "@/modules/organization/use-cases/req
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 
 const postSchema = z.object({
-  requested_type: z.enum(["SINGLE", "STORE", "CHAIN", "FLOWER_NETWORK"]),
+  requested_type: z.enum(["SINGLE", "STORE", "CHAIN"]), // FLOWER_NETWORK gộp vào CHAIN (ADR-012 T-8b)
   note: z.string().trim().min(1).max(500).nullish(),
 })
 

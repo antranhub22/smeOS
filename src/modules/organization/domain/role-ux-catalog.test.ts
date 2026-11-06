@@ -89,8 +89,7 @@ describe("resolveRoleUx", () => {
     expect(resolveRoleUx("ke_toan")?.homepage).toBe("ACCOUNTING_WORKSPACE")
   })
 
-  it("tổ chức FLOWER_NETWORK hoặc CHAIN giải dieu_hanh sang flower_network_admin", () => {
-    expect(resolveRoleUx("dieu_hanh", "FLOWER_NETWORK")?.key).toBe("flower_network_admin")
+  it("tổ chức CHAIN giải dieu_hanh sang flower_network_admin (FLOWER_NETWORK đã gộp vào CHAIN — ADR-012 T-8b)", () => {
     expect(resolveRoleUx("dieu_hanh", "CHAIN")?.key).toBe("flower_network_admin")
   })
 

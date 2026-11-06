@@ -28,12 +28,12 @@ datasource db {
 // Bộ giá trị của P1. Các enum còn lại (job_status, asset_kind, …) thêm ở pha
 // sở hữu bảng tương ứng.
 
+/// `FLOWER_NETWORK` đã gộp vào `CHAIN` (ADR-012 D-T11 / D-55, bước T-8b) — chỉ khác nhãn.
 enum organization_type {
   EXPERIENCE
   SINGLE
   STORE
   CHAIN
-  FLOWER_NETWORK
 }
 
 enum workspace_kind {

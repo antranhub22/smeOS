@@ -94,7 +94,7 @@ cần test khoá hành vi trước.
 | [ ] | T-6c [SCHEMA] Contract: bỏ `settings.industry` và trigger đồng bộ | — | `check:migrations` |
 | [ ] | T-7 [SCHEMA] `governance_decisions` + backfill + chuyển `layered-resolver` + contract | — | Ma trận, thông báo, tích hợp không đổi kết quả |
 | [x] | T-8a Đổi dữ liệu `organization_type.FLOWER_NETWORK` → `CHAIN` (kể cả yêu cầu đổi mô hình đang chờ); mọi đường ghi lưu `CHAIN` (D-55) | — | Chuỗi cũ loại `FLOWER_NETWORK` vẫn vào đúng ChainOS |
-| [ ] | T-8b [SCHEMA] Contract: bỏ giá trị enum `FLOWER_NETWORK` và các nhánh so loại tổ chức này — sau khi T-8a chạy trên production | — | `check:migrations`; tier-of, điều hướng, ma trận không đổi kết quả |
+| [x] | T-8b [SCHEMA] Contract: bỏ giá trị enum `FLOWER_NETWORK` và các nhánh so loại tổ chức này (PO duyệt 06/11/2026) | — | `check:migrations`; tier-of, điều hướng, ma trận không đổi kết quả |
 | [ ] | `tests/tenant/tier-consistency.test.ts`: mỗi trục × Mẹ / Chuỗi / Cửa hàng | P2-A11 | Xanh trong CI |
 
 Ghi chú P2-A1 (Ngành chỉ là plugin, D-01): vẫn gỡ phần **mô phỏng** tầng Ngành đang không có dữ liệu; tầng Ngành quay

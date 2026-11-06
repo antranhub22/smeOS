@@ -147,7 +147,7 @@ export async function addStaffWithSession(
 
 /**
  * Chuyển tổ chức sang mô hình Chuỗi — như Admin SaaS duyệt yêu cầu đổi mô hình. Tính năng điều phối
- * chuỗi (mời chi nhánh, nhập chi nhánh) chỉ mở cho loại CHAIN / FLOWER_NETWORK (PO 22/10/2026).
+ * chuỗi (mời chi nhánh, nhập chi nhánh) chỉ mở cho loại CHAIN (PO 22/10/2026; FLOWER_NETWORK gộp vào — ADR-012 T-8b).
  */
 export async function makeChainOrganization(tenant: Tenant): Promise<void> {
   await prisma.organizations.update({ where: { id: tenant.organizationId }, data: { type: "CHAIN" } })

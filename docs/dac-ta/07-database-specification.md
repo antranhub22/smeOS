@@ -42,7 +42,7 @@ Một bảng tự nhận ngoại lệ mà không nêu được lý do ở trên 
 > **Đối chiếu 18/09 với `prisma/schema.prisma`.** Bốn enum từng lệch giá trị (`order_status`, `production_status`, `delivery_status`, `asset_kind`) đã sửa theo lược đồ; mười một enum có trong lược đồ mà thiếu ở đây đã bổ sung; hai enum chỉ tồn tại trên giấy (`consent_state`, `catalog_link_state`) đã bỏ.
 
 ```prisma
-enum organization_type { EXPERIENCE  SINGLE  STORE  CHAIN  FLOWER_NETWORK }
+enum organization_type { EXPERIENCE  SINGLE  STORE  CHAIN }  // FLOWER_NETWORK gộp vào CHAIN — ADR-012 T-8b (mục 42)
 enum workspace_kind    { EXPERIENCE  PRODUCTION }
 enum membership_status { INVITED  ACTIVE  SUSPENDED }
 enum capability_scope  { ORGANIZATION  BRANCH  STORE  FLOWER_NETWORK }
@@ -4047,10 +4047,12 @@ ADR-012 D-T11 (D-55), bước T-8. `organization_type.FLOWER_NETWORK` và `CHAIN
   (`settings.pending_model_change.requested_type`) → `CHAIN`. Mọi đường ghi loại tổ chức đi qua
   `toStoredOrganizationType` (`src/modules/organization/domain/organization-type.ts`): gửi yêu cầu đổi mô hình, Admin
   SaaS duyệt. API vẫn nhận `FLOWER_NETWORK` (yêu cầu cũ) và lưu `CHAIN`; đường đọc còn so cả hai giá trị.
-- **T-8b** (sau khi T-8a chạy trên production): bỏ giá trị enum, bỏ các nhánh so `FLOWER_NETWORK` của loại tổ chức
-  (`tier-of.ts`, điều hướng, ma trận, thông báo), API từ chối giá trị này.
+- **T-8b** — migration contract `20261106070000_organization_type_drop_flower_network`: đổi nốt dòng còn sót (NOTICE),
+  rồi dựng lại enum `organization_type` không có `FLOWER_NETWORK` (`EXPERIENCE · SINGLE · STORE · CHAIN`). Bỏ mọi nhánh
+  so loại tổ chức `FLOWER_NETWORK` (`tier-of.ts`, điều hướng, ma trận, thông báo, entitlement, duyệt đổi mô hình); API
+  `requested_type` / `target_type` từ chối giá trị này (400). Hàm chuyển `toStoredOrganizationType` (T-8a) đã bỏ.
 
-Ca thử: `tests/unit/organization/organization-type-flower-network.test.ts`.
+Ca thử: `tests/unit/organization/request-and-approve-model-change.test.ts`, `src/core/governance/tier-of.test.ts`.
 
 ## 43. Ngành — bảng `industries`, cột `organizations.industry_key` (06/11/2026)
 
