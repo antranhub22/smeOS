@@ -4069,9 +4069,23 @@ số dòng). Trigger `organizations_sync_industry_key` (`BEFORE INSERT OR UPDATE
 `PATCH /organizations/current`) thì `industry_key` theo trong cùng lệnh ghi; đổi cột khác không đụng.
 `resolveTierChain` đọc `industry_key`, dự phòng `settings.industry`.
 
-**T-6b**: các đường đọc ngành còn lại chuyển sang `industry_key` và khoá phạm vi về dạng D-T5
-(`platform · industry:<key> · org:<id> · branch:<id>`) cho `notification_hard_locks` / `integration_governance`.
-**T-6c** (contract): bỏ `settings.industry` và trigger.
+**T-6b** (06/11/2026, không đổi schema):
+
+- Ngành đọc từ cột: `withIndustryKey` (`src/modules/organization/domain/industry-key.ts`) đặt `settings.industry` =
+  `industry_key` ngay khi đọc dòng tổ chức ở `OrganizationRepository` (phiên đăng nhập → toàn bộ giao diện, tính giá,
+  lịch khả dụng, phân tích thị trường…) và `GreetingCardRepository.getShopProfile` (đặt đơn công khai, kiểm định ảnh
+  QC, xác nhận thanh toán). Mã phía sau đọc `settings.industry` như cũ mà nguồn đã là cột.
+- Còn đọc thẳng `settings.industry` từ `select` lồng (phải chuyển trước T-6c): `greeting-card-repository`
+  (`organization: { select: { settings } }` của phiên/catalog/đơn), `subcontract-order-repository`
+  (`findOrganizationSettings`), `availability-check-repository`, `shop-contact-repository`,
+  `craft-fee-facts-repository`, `sample-catalog-repository.findOrganization`, nguồn của `active-shop-promotions` và
+  `personalize-opportunities`. Trigger T-6a giữ hai giá trị khớp nên hành vi không đổi.
+- Khoá phạm vi dạng D-T5: migration `20261106080000_scope_keys_d_t5` đổi `scope_id` của `notification_hard_locks` và
+  `integration_governance` ("GLOBAL" → `platform`, id tổ chức → `org:<id>`; `industry:<key>` giữ nguyên).
+  `src/core/governance/scope-key.ts` đổi qua lại với dạng domain/API ("GLOBAL", id tổ chức) ở repository; đọc chấp
+  nhận cả dạng cũ. Ca thử: `tests/tenant/scope-keys.test.ts`, `src/core/governance/scope-key.test.ts`.
+
+**T-6c** (contract): chuyển nốt các `select` lồng ở trên, rồi bỏ `settings.industry` và trigger.
 
 Ca thử: `tests/tenant/industries.test.ts` (tự cài seed + trigger từ tệp migration khi CSDL test dựng bằng `db push`).
 
