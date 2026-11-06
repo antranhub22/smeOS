@@ -3988,3 +3988,28 @@ model organization_links {
   @@index([child_org_id, status])
 }
 ```
+
+## 41. Một bảng chi nhánh — gộp `chain_branches` vào `branches` (06/11/2026)
+
+ADR-012 D-T2, bước T-4. Chi nhánh là đơn vị con trong một tổ chức, ranh giới **phạm vi quyền** (`memberships.branch_id`
+→ `src/core/tenancy/branch-scope.ts`), không phải ranh giới tenant. `branches` nhận thêm các cột vận hành điều phối của
+`chain_branches` và cờ `accepts_dispatch` (chi nhánh nằm trong danh sách nhận đơn điều phối chuỗi, nhập Excel).
+`branches.code` là mã chi nhánh trên link gia công (`?branch=`) — trùng `chain_branches.branch_code`.
+
+**T-4a** (migration `20261106030000_branches_merge_chain_branches`, một giao dịch):
+
+- Chép mọi dòng `chain_branches` sang `branches`, khoá (tổ chức, mã); dòng mới giữ id cũ.
+- **D-57** trùng mã với một dòng `branches` có sẵn → gộp vào dòng đó: giữ tên/địa chỉ của `branches`, lấy cấu hình nhận
+  đơn từ `chain_branches`, `is_active` = cả hai cùng bật; NOTICE báo số dòng trùng.
+- **D-56** thành viên có `chain_branch_code` mà chưa có `branch_id` → `branch_id` = chi nhánh đó (từ đây bị giới hạn theo
+  chi nhánh trên mọi màn hình, trừ người có F7). Đã có `branch_id` khác → giữ, NOTICE.
+- Đơn gia công đã có chi nhánh nhận/chốt (`order_coordinations.metadata.subcontract_dispatch.claimedBranchId` là mã,
+  trạng thái `CLAIMED_GRACE`/`COMMITTED`) → `orders.branch_id`.
+- Ghi kép (`src/modules/greeting-card/infra/chain-branch-sync.ts`): nhập Excel, bật/tắt, trừ điểm, liên kết Zalo chép
+  sang `branches` trong cùng giao dịch; tên/địa chỉ/trạng thái chỉ chép khi người dùng đổi chúng (nhập Excel, bật/tắt).
+  Gắn chi nhánh cho thành viên ghi kèm `branch_id`; gỡ chỉ bỏ `branch_id` khi nó trỏ đúng chi nhánh vừa gỡ. Chi nhánh
+  nhận đơn theo mã → `orders.branch_id`. Đường đọc vẫn ở `chain_branches` tới **T-4b**; **T-4c** ghi thẳng `branches`,
+  xoá `chain_branches` và `memberships.chain_branch_code`.
+
+Ca thử: `tests/tenant/branches-merge.test.ts`.
+

@@ -60,6 +60,8 @@
 | D-53 | Báo cáo chuỗi (06/11/2026) | Cửa hàng nhượng quyền/gia công **không** xem báo cáo tổng của chuỗi; chỉ chuỗi và Mother xem | ADR-012 D-T8 |
 | D-54 | Tách chi nhánh (06/11/2026) | **Không** làm công cụ chuyển chi nhánh thành tổ chức riêng; chuyển sang nhượng quyền thì mở tổ chức mới, lịch sử ở lại chuỗi | ADR-012 D-T11 |
 | D-55 | Loại tổ chức chuỗi (06/11/2026) | `FLOWER_NETWORK` và `CHAIN` **chỉ khác nhãn** → gộp về `CHAIN` | ADR-012 D-T11, bước T-8 |
+| D-56 | Tài khoản cửa hàng gắn chi nhánh chuỗi (06/11/2026) | **Giới hạn theo chi nhánh** như nhân viên chi nhánh (`memberships.branch_id`, mọi màn hình; F7 không bị giới hạn); đơn chi nhánh nhận ghi `orders.branch_id` | ADR-012 D-T2, bước T-4 |
+| D-57 | Trùng mã giữa `branches` và `chain_branches` khi gộp (06/11/2026) | **Gộp thành một dòng**: giữ tên/địa chỉ `branches`, cấu hình nhận đơn từ `chain_branches`, nhận đơn khi cả hai bật; migration báo số dòng trùng | ADR-012 D-T2, bước T-4 |
 
 ## 2. Chấp nhận rủi ro (PO chọn khác đề xuất)
 

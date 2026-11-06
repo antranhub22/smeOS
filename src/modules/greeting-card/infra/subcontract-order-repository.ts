@@ -114,10 +114,17 @@ export class SubcontractOrderRepository implements ISubcontractClaimStore, IDeli
     )
   }
 
-  /** `orders.branch_id` theo chi nhánh đang giữ đơn, và tự xác nhận đơn khi chi nhánh chốt làm. */
+  /**
+   * `orders.branch_id` theo chi nhánh đang giữ đơn, và tự xác nhận đơn khi chi nhánh chốt làm. `claimedBranchId` là
+   * `branches.id` hoặc mã chi nhánh điều phối (`branches.code` có `accepts_dispatch`, ADR-012 T-4a).
+   */
   private async syncOrderWithDispatch(tx: Prisma.TransactionClient, ctx: TenantContext, state: SubcontractOrderState): Promise<boolean> {
-    const realBranch = state.claimedBranchId
-      ? await tx.branches.findFirst({ where: { id: state.claimedBranchId, organization_id: ctx.organizationId }, select: { id: true } })
+    const claimed = state.claimedBranchId
+    const realBranch = claimed
+      ? await tx.branches.findFirst({
+          where: { organization_id: ctx.organizationId, OR: [{ id: claimed }, { code: claimed, accepts_dispatch: true }] },
+          select: { id: true },
+        })
       : null
     if (realBranch && (state.dispatchStatus === "CLAIMED_GRACE" || state.dispatchStatus === "COMMITTED")) {
       await tx.orders.updateMany({ where: scopedWhere(ctx, { id: state.orderId }), data: { branch_id: realBranch.id } })
