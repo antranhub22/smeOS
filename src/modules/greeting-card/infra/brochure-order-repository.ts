@@ -1,4 +1,6 @@
 import { prisma } from "@/core/tenancy/infra/prisma"
+import { withOrganizationIndustry } from "@/modules/organization/domain/industry-key"
+import { ORG_SETTINGS_SELECT } from "@/modules/organization/infra/organization-industry"
 import { branchScopedWhere, scopedWhere, type TenantContext } from "@/core/tenancy"
 import { recordAuditLog } from "@/modules/audit/use-cases/record-audit-log"
 import { conflict } from "@/core/http/errors"
@@ -219,16 +221,14 @@ export class BrochureOrderRepository {
             catalog: { select: { filters: true } },
           },
         },
-        organization: {
-          select: { settings: true },
-        },
+        organization: { select: ORG_SETTINGS_SELECT }, // ngành theo cột (ADR-012 T-6c-1)
         coordination: {
           select: { metadata: true },
         },
       },
       take: 2,
     })
-    return matches.length === 1 ? matches[0] ?? null : null
+    return matches.length === 1 ? withOrganizationIndustry(matches[0] ?? null) : null
   }
 
   /** Đề xuất huỷ của một đơn (mới nhất trước) — trang theo dõi dựng thông báo huỷ cho khách. */

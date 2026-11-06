@@ -91,7 +91,8 @@ cần test khoá hành vi trước.
 | [x] | T-5b Phạm vi chi nhánh đợt 2 (sản phẩm/giá, kho, báo cáo) và đợt 3: vá đường ghi + tra theo id (sản phẩm, thùng rác, nhập Excel, quy tắc giá); đợt 3 không còn bảng mang `branch_id` chưa lọc | P2-A5 | `tests/tenant/branch-scope-products.test.ts` |
 | [x] | T-6a [SCHEMA nhỏ] `industries` (seed 7 ngành plugin) + `organizations.industry_key` (khoá ngoại), chép từ `settings.industry`, trigger đồng bộ; `resolveTierChain` đọc cột | P2-A1 (xem ghi chú) | `npm run check:industry`; `tests/tenant/industries.test.ts` |
 | [x] | T-6b Ngành đọc từ cột ở `OrganizationRepository` + `getShopProfile` (`withIndustryKey`); khoá phạm vi dạng `platform · industry: · org: · branch:` (`notification_hard_locks`, `integration_governance`) — các `select` lồng còn lại liệt kê ở đặc tả 07 §43 | P2-A1 | Ma trận thông báo, tích hợp không đổi kết quả; `tests/tenant/scope-keys.test.ts` |
-| [ ] | T-6c [SCHEMA] Chuyển nốt các `select` lồng còn đọc `settings.industry` (đặc tả 07 §43); contract: bỏ `settings.industry` và trigger đồng bộ | — | `check:migrations` |
+| [x] | T-6c-1 Đọc ngành từ cột ở mọi `select` lồng, ghi settings tách `industry` ra cột `industry_key` (đặc tả 07 §43) | — | `organization-industry-read.test.ts`, `industries.test.ts` |
+| [ ] | T-6c-2 [SCHEMA] Contract: xoá `settings.industry` còn lại, bỏ trigger đồng bộ và dự phòng đọc settings (sau khi T-6c-1 deploy) | — | `check:migrations` |
 | [ ] | T-7 [SCHEMA] `governance_decisions` + backfill + chuyển `layered-resolver` + contract | — | Ma trận, thông báo, tích hợp không đổi kết quả |
 | [x] | T-8a Đổi dữ liệu `organization_type.FLOWER_NETWORK` → `CHAIN` (kể cả yêu cầu đổi mô hình đang chờ); mọi đường ghi lưu `CHAIN` (D-55) | — | Chuỗi cũ loại `FLOWER_NETWORK` vẫn vào đúng ChainOS |
 | [x] | T-8b [SCHEMA] Contract: bỏ giá trị enum `FLOWER_NETWORK` và các nhánh so loại tổ chức này (PO duyệt 06/11/2026) | — | `check:migrations`; tier-of, điều hướng, ma trận không đổi kết quả |

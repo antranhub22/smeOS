@@ -1,4 +1,7 @@
 import { prisma } from "@/core/tenancy/infra/prisma"
+import { withIndustryKey } from "@/modules/organization/domain/industry-key"
+import { withOrganizationIndustry } from "@/modules/organization/domain/industry-key"
+import { ORG_SETTINGS_SELECT } from "@/modules/organization/infra/organization-industry"
 
 /**
  * Truy vấn của bộ quét nền — chạy KHÔNG có phiên người dùng, xuyên tổ chức; mọi thao tác ghi
@@ -29,21 +32,22 @@ export class BackgroundSweepRepository {
 
   /** Đơn Thẻ chào còn chờ chuyển khoản lần đầu (DRAFT, chưa thu, đã có giá) trong `since`. */
   async listUnpaidDrafts(since: Date, take = 500) {
-    return this.db.orders.findMany({
+    const rows = await this.db.orders.findMany({
       where: { source: "BROCHURE", status: "DRAFT", paid_vnd: 0, total_vnd: { gt: 0 }, created_at: { gte: since } },
       select: {
         id: true, organization_id: true, created_at: true, total_vnd: true, paid_vnd: true, status: true, pricing_rule_ref: true,
-        organization: { select: { settings: true } },
+        organization: { select: ORG_SETTINGS_SELECT },
         greeting_sessions: { take: 1, select: { status: true, catalog: { select: { filters: true } } } },
       },
       orderBy: { created_at: "asc" },
       take,
     })
+    return rows.map((r) => withOrganizationIndustry(r)) // ngành theo cột (ADR-012 T-6c-1)
   }
 
   /** Phiên Thẻ chào chưa có đơn, chưa thu hồi trong `since` để kiểm tra quá hạn mở link hoặc quá hạn chọn mẫu. */
   async listPendingSessions(since: Date, take = 500) {
-    return this.db.greeting_sessions.findMany({
+    const rows = await this.db.greeting_sessions.findMany({
       where: {
         order_id: null,
         revoked_at: null,
@@ -58,12 +62,13 @@ export class BackgroundSweepRepository {
         selected_at: true,
         last_active_at: true,
         created_at: true,
-        organization: { select: { settings: true } },
+        organization: { select: ORG_SETTINGS_SELECT },
         catalog: { select: { filters: true } },
       },
       orderBy: { created_at: "asc" },
       take,
     })
+    return rows.map((r) => withOrganizationIndustry(r))
   }
 
   /** Thu hồi / vô hiệu phiên quá hạn và ghi vết sự kiện hành trình. */
@@ -93,7 +98,7 @@ export class BackgroundSweepRepository {
    * kèm cài đặt tiệm và trạng thái đối soát AI của bill — bước quét chỉ tự duyệt khi tiệm bật.
    */
   async listPendingPaymentProofOrders(before: Date, take = 100) {
-    const orders = await this.db.orders.findMany({
+    const orders = (await this.db.orders.findMany({
       where: {
         source: "BROCHURE",
         // Gồm cả đơn Điều phối đã tiếp nhận nhưng chưa ghi sổ thu (PO 15/10/2026) — trước đây chỉ DRAFT
@@ -107,7 +112,7 @@ export class BackgroundSweepRepository {
       select: {
         id: true,
         organization_id: true,
-        organization: { select: { settings: true } },
+        organization: { select: ORG_SETTINGS_SELECT },
         greeting_sessions: {
           where: { status: "PAYMENT_REPORTED", payment_proof_asset_id: { not: null } },
           select: { payment_proof_asset_id: true, updated_at: true },
@@ -115,7 +120,7 @@ export class BackgroundSweepRepository {
         },
       },
       take,
-    })
+    })).map((o) => withOrganizationIndustry(o))
     const proofIds = orders.flatMap((o) => o.greeting_sessions.map((s) => s.payment_proof_asset_id ?? ""))
     const assets = proofIds.length
       ? await this.db.assets.findMany({ where: { id: { in: proofIds } }, select: { id: true, organization_id: true, metadata: true } })
@@ -173,9 +178,9 @@ export class BackgroundSweepRepository {
     const orgIds = [...new Set(activeCoords.map((c) => c.organization_id))]
     const orgs = await this.db.organizations.findMany({
       where: { id: { in: orgIds } },
-      select: { id: true, settings: true },
+      select: { id: true, ...ORG_SETTINGS_SELECT },
     })
-    const orgMap = new Map(orgs.map((o) => [o.id, o]))
+    const orgMap = new Map(orgs.map((o) => [o.id, withIndustryKey(o)]))
 
     const orderIds = activeCoords.map((c) => c.order_id)
     const orders = await this.db.orders.findMany({

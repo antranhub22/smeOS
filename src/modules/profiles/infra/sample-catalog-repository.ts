@@ -1,5 +1,7 @@
 import { prisma } from "@/core/tenancy/infra/prisma"
 import type { Prisma } from "@/generated/prisma/client"
+import { withIndustryKey } from "@/modules/organization/domain/industry-key"
+import { organizationSettingsData, ORG_SETTINGS_SELECT } from "@/modules/organization/infra/organization-industry"
 
 type Db = typeof prisma
 
@@ -21,17 +23,19 @@ export const SAMPLE_PRODUCT_CODE_PREFIX = "DEMO-"
 export class SampleCatalogRepository {
   constructor(private readonly db: Db = prisma) {}
 
+  /** Ngành trong `settings.industry` lấy từ cột `industry_key` (ADR-012 T-6c-1). */
   async findOrganization(organizationId: string) {
-    return this.db.organizations.findUnique({
+    const org = await this.db.organizations.findUnique({
       where: { id: organizationId },
-      select: { id: true, name: true, type: true, settings: true },
+      select: { id: true, name: true, type: true, ...ORG_SETTINGS_SELECT },
     })
+    return org ? withIndustryKey(org) : null
   }
 
   async updateOrganizationSettings(organizationId: string, settings: Record<string, unknown>): Promise<void> {
     await this.db.organizations.update({
       where: { id: organizationId },
-      data: { settings: settings as Prisma.InputJsonValue },
+      data: organizationSettingsData(settings),
     })
   }
 

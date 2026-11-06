@@ -203,7 +203,11 @@ def process_job(conn: psycopg.Connection, job: dict[str, Any], provider: Any = N
     if not industry and not hasattr(conn, "fetchone_queue"):
         try:
             with conn.cursor() as cur:
-                cur.execute("SELECT settings->>'industry' FROM organizations WHERE id = %s", (organization_id,))
+                # Ngành theo cột industry_key (ADR-012 T-6c-1); settings.industry chỉ dự phòng cho dòng cũ
+                cur.execute(
+                    "SELECT COALESCE(industry_key, settings->>'industry') FROM organizations WHERE id = %s",
+                    (organization_id,),
+                )
                 row = cur.fetchone()
                 if row and row[0]:
                     industry = row[0]
