@@ -50,6 +50,9 @@ describe("khoá ngành kiểm ở máy chủ", () => {
   it("người vận hành nền tảng có N12 đổi được ngành của tổ chức mình đang mở", async () => {
     await new PlatformOperatorRepository().grant(shop.userId, ["N12"], null)
     expect((await patch(shop.token, { industry: "FNB" })).status).toBe(200)
-    expect((await settingsOf(shop)).industry).toBe("FNB")
+    // T-6c-1: ngành ghi vào cột `industry_key`, không còn nằm trong settings
+    const org = await prisma.organizations.findUniqueOrThrow({ where: { id: shop.organizationId } })
+    expect(org.industry_key).toBe("FNB")
+    expect((org.settings as Record<string, unknown>).industry).toBeUndefined()
   })
 })

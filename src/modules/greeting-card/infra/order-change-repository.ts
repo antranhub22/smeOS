@@ -3,6 +3,8 @@ import { randomUUID } from "node:crypto"
 import type { Prisma } from "@/generated/prisma/client"
 import { conflict, notFound } from "@/core/http/errors"
 import { prisma } from "@/core/tenancy/infra/prisma"
+import { withOrganizationIndustry } from "@/modules/organization/domain/industry-key"
+import { ORG_SETTINGS_SELECT } from "@/modules/organization/infra/organization-industry"
 import { scopedData, scopedWhere, type TenantContext } from "@/core/tenancy"
 import { recordAuditLog } from "@/modules/audit/use-cases/record-audit-log"
 import type { ShippingConfig } from "../domain/brochure-pricing"
@@ -48,11 +50,11 @@ export class OrderChangeRepository {
         ...ORDER_SELECT,
         customer: { select: { phone: true } },
         greeting_sessions: { select: { send_code: true, sale_id: true, catalog: { select: { filters: true } } }, take: 5 },
-        organization: { select: { settings: true } },
+        organization: { select: ORG_SETTINGS_SELECT }, // ngành theo cột (ADR-012 T-6c-1)
       },
       take: 2,
     })
-    return matches.length === 1 ? matches[0] ?? null : null
+    return matches.length === 1 ? withOrganizationIndustry(matches[0] ?? null) : null
   }
 
   /** Các yêu cầu của một đơn, mới nhất trước — cho trang theo dõi của khách. */

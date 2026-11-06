@@ -8,6 +8,8 @@
 import { prisma } from "@/core/tenancy/infra/prisma"
 import { scopedWhere, type TenantContext } from "@/core/tenancy"
 import type { Prisma } from "@/generated/prisma/client"
+import { withIndustryKey, withOrganizationIndustry } from "@/modules/organization/domain/industry-key"
+import { ORG_SETTINGS_SELECT } from "@/modules/organization/infra/organization-industry"
 import type { SubcontractOrderState } from "../domain/subcontract-order"
 import type { ISubcontractClaimStore } from "../use-cases/dispatch-subcontract-order"
 import type { DeliveryGeoEntry, IDeliveryGeoStore } from "../use-cases/resolve-geo-location"
@@ -200,10 +202,8 @@ export class SubcontractOrderRepository implements ISubcontractClaimStore, IDeli
    * Tra cứu settings tổ chức cho màn hình Thẻ Gia Công công khai.
    */
   async findOrganizationSettings(orgId: string) {
-    return this.db.organizations.findUnique({
-      where: { id: orgId },
-      select: { id: true, settings: true },
-    })
+    const org = await this.db.organizations.findUnique({ where: { id: orgId }, select: { id: true, ...ORG_SETTINGS_SELECT } })
+    return org ? withIndustryKey(org) : null // ngành theo cột (ADR-012 T-6c-1)
   }
 
   /** Đơn kèm dữ liệu cần để sàng lọc và phát lệnh điều phối chuỗi (route chain-dispatch). */
@@ -227,14 +227,14 @@ export class SubcontractOrderRepository implements ISubcontractClaimStore, IDeli
 
   /** Dữ kiện khách duyệt ảnh thành phẩm của đơn (cùng nguồn với đơn 1 cửa hàng), hoặc `null`. */
   async loadPhotoApprovalFacts(organizationId: string, orderId: string) {
-    return this.db.orders.findFirst({
+    return withOrganizationIndustry(await this.db.orders.findFirst({
       where: { id: orderId, organization_id: organizationId },
       select: {
         qc_records: { select: { notes: true, created_at: true } },
         greeting_sessions: { select: { catalog: { select: { filters: true } } } },
-        organization: { select: { settings: true } },
+        organization: { select: ORG_SETTINGS_SELECT },
       },
-    })
+    }))
   }
 
   /** Ghi đè `orders.pricing_rule_ref` (người gọi tự trộn với bản cũ). */

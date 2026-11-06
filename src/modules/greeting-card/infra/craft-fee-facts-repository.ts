@@ -5,6 +5,8 @@
  */
 
 import { prisma } from "@/core/tenancy/infra/prisma"
+import { withIndustryKey } from "@/modules/organization/domain/industry-key"
+import { ORG_SETTINGS_SELECT } from "@/modules/organization/infra/organization-industry"
 import type { CraftFeeOrderFacts, ICraftFeeFactsStore } from "../use-cases/suggest-craft-fee"
 
 const num = (v: unknown): number => (v === null || v === undefined ? 0 : Number(v) || 0)
@@ -21,7 +23,7 @@ export class CraftFeeFactsRepository implements ICraftFeeFactsStore {
         pricing_rule_ref: true,
         delivery_window: true,
         items: { select: { product_id: true, quantity: true, unit_price_vnd: true, metadata: true } },
-        organization: { select: { settings: true } },
+        organization: { select: ORG_SETTINGS_SELECT }, // ngành theo cột (ADR-012 T-6c-1)
       },
     })
     if (!order) return null
@@ -40,7 +42,7 @@ export class CraftFeeFactsRepository implements ICraftFeeFactsStore {
       vatAmountVnd: num(order.vat_amount_vnd),
       pricingRef: (order.pricing_rule_ref as Record<string, unknown> | null) ?? {},
       deliveryWindow: (order.delivery_window as Record<string, unknown> | null) ?? {},
-      settings: (order.organization.settings as Record<string, unknown> | null) ?? {},
+      settings: (withIndustryKey(order.organization).settings as Record<string, unknown> | null) ?? {},
       items: order.items.map((i) => {
         const attrs = (i.product_id && attrsById.get(i.product_id)) || {}
         const meta = (i.metadata as Record<string, unknown> | null) ?? {}

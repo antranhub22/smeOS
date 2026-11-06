@@ -4086,7 +4086,26 @@ số dòng). Trigger `organizations_sync_industry_key` (`BEFORE INSERT OR UPDATE
   `src/core/governance/scope-key.ts` đổi qua lại với dạng domain/API ("GLOBAL", id tổ chức) ở repository; đọc chấp
   nhận cả dạng cũ. Ca thử: `tests/tenant/scope-keys.test.ts`, `src/core/governance/scope-key.test.ts`.
 
-**T-6c** (contract): chuyển nốt các `select` lồng ở trên, rồi bỏ `settings.industry` và trigger.
+**T-6c-1** (06/11/2026, không đổi schema, không migration):
+
+- Ghi: `OrganizationRepository` (`create`, `update`, `updateSettings`, `updateTypeAndSettings` — đăng ký, dùng thử,
+  Admin SaaS tạo tổ chức, `PATCH /organizations/current`, duyệt yêu cầu) và `SampleCatalogRepository`
+  (nạp dữ liệu mẫu) ghi settings qua `organizationSettingsData` (`src/modules/organization/infra/organization-industry.ts`):
+  khoá `industry` bị tách khỏi JSON, mã chuẩn hoá (`normalizeIndustryKey`, mã lạ → `null`) ghi vào `industry_key`.
+  Ghi settings không có khoá `industry` thì cột giữ nguyên. Trigger T-6a không còn việc gì (JSON mới không có khoá).
+- Đọc: các `select` lồng liệt kê ở T-6b, cùng `order-change-repository`, `brochure-order-repository` (trang theo dõi),
+  `background-sweep-repository`, `cancellation-follow-up-repository`, `greeting-notification-repository`,
+  `chain-dispatch-sweep-query`, `public-order-repository`, `approval-request-repository`, cài đặt chuỗi của
+  `findPrimaryChainLink`, chọn `ORG_SETTINGS_SELECT` và phủ ngành bằng `withIndustryKey` / `withOrganizationIndustry`.
+  Hai màn Admin SaaS (danh sách và hồ sơ tổ chức) đọc `industryKeyOf` thay cho `settings.industry_key` (khoá không tồn
+  tại, trước đây luôn hiện "Chưa phân loại"). Worker phân tích ảnh đọc `COALESCE(industry_key, settings->>'industry')`.
+- Chặn hồi quy: `tests/unit/architecture/organization-industry-read.test.ts` — chọn `settings: true` mà không kèm
+  `industry_key` chỉ được ở danh sách ghi lý do (chỉ đọc một khoá không phải ngành, hoặc đọc để ghi lại).
+- Ca thử: `tests/tenant/industries.test.ts` (ghi tách ngành ra cột; đọc lồng theo cột khi JSON không còn `industry`).
+
+**T-6c-2** (contract, sau khi T-6c-1 đã deploy): migration xoá `settings.industry` còn lại (NOTICE số dòng mã lạ) và bỏ
+trigger + hàm `smeos_organizations_sync_industry_key`; bỏ dự phòng `settings.industry` ở `industryKeyOf`,
+`withIndustryKey`, `resolveTierChain` và worker.
 
 Ca thử: `tests/tenant/industries.test.ts` (tự cài seed + trigger từ tệp migration khi CSDL test dựng bằng `db push`).
 

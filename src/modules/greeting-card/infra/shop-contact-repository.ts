@@ -1,4 +1,6 @@
 import { prisma } from "@/core/tenancy/infra/prisma"
+import { withIndustryKey } from "@/modules/organization/domain/industry-key"
+import { ORG_SETTINGS_SELECT } from "@/modules/organization/infra/organization-industry"
 import { zaloQrUrlFromBrandAssets } from "../domain/shop-contact"
 import { GreetingCatalogRepository } from "./greeting-catalog-repository"
 
@@ -10,16 +12,17 @@ export class ShopContactRepository {
   ) {}
 
   async findByOrganizationId(organizationId: string) {
-    const org = await this.db.organizations.findUnique({
+    const row = await this.db.organizations.findUnique({
       where: { id: organizationId },
       select: {
         name: true,
-        settings: true,
+        ...ORG_SETTINGS_SELECT, // ngành theo cột industry_key (ADR-012 T-6c-1)
         business_profile: { select: { display_name: true, phone: true, address: true, email: true, website: true, social_links: true } },
         brand_profile: { select: { logo_asset_id: true, brand_assets: true } },
       },
     })
-    if (!org) return null
+    if (!row) return null
+    const org = withIndustryKey(row)
     const logoId = org.brand_profile?.logo_asset_id ?? null
     const logoUrl = logoId ? await this.assets.getAssetStorageUrl(organizationId, logoId) : null
     const zaloQrUrl = zaloQrUrlFromBrandAssets(org.brand_profile?.brand_assets)

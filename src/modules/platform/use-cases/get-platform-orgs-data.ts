@@ -10,6 +10,7 @@
 import type { PlatformContext } from "@/core/platform/platform-context"
 import { requirePlatformCapability } from "@/core/platform/platform-capabilities"
 import { PlatformDataRepository, getPlatformDataRepository } from "../infra/platform-data-repository"
+import { industryKeyOf } from "@/modules/organization/domain/industry-key"
 
 export interface PlatformOrgDataSummary {
   readonly id: string
@@ -62,9 +63,7 @@ export async function getPlatformOrgsData(
     if ((productCountMap.get(org.id) ?? 0) > 0) score += 20
     if ((org._count.branches ?? 0) > 0) score += 15
 
-    const settings = org.settings as Record<string, unknown> | null
-    const industryKey =
-      typeof settings?.industry_key === "string" ? settings.industry_key : null
+    const industryKey = industryKeyOf(org) // cột organizations.industry_key (ADR-012 T-6c-1)
 
     return {
       id: org.id,

@@ -61,7 +61,7 @@ export function TrackingStepperView({
     <div className="w-full overflow-x-auto py-2">
       <div className="flex items-center min-w-[720px] relative">
         {steps.map((step, idx) => {
-          const isCompleted = step.status === "completed"
+          const isCompleted = step.status !== "pending" && step.status !== "current"
           const isCurrent = step.status === "current"
           const isLast = idx === steps.length - 1
 

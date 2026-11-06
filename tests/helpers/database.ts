@@ -5,6 +5,8 @@ import { env } from "@/lib/env"
 import { ensureSystemRoles } from "@/modules/organization/use-cases/ensure-system-roles"
 import { seedAiCapabilities, seedVisionModels } from "@/core/ai/infra/seed-ai-registry"
 
+import { ensureIndustries } from "./industries-seed"
+
 /**
  * Bảng dọn giữa các ca thử. Bảng có `organization_id` lấy từ sổ sinh tự động (ADR-016 S-1) —
  * thêm bảng tenant mới không phải sửa ở đây.
@@ -133,6 +135,8 @@ export async function resetDatabase(): Promise<void> {
   // Vai hệ thống là danh mục cài đặt, không phải dữ liệu thử: nạp lại đúng
   // như `npm run db:seed` làm sau khi đẩy lược đồ.
   await ensureSystemRoles()
+  // Danh mục ngành: `organizations.industry_key` là khoá ngoại (ADR-012 T-6a/T-6c-1)
+  await ensureIndustries()
   // Sổ đăng ký nền AI (ai_capabilities, ai_models) không bị truncate ở trên,
   // nhưng phải đảm bảo capabilities mới (như AIC-04) được upsert vào models.
   await seedAiCapabilities()

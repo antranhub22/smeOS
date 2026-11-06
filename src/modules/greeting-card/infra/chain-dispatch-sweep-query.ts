@@ -1,4 +1,6 @@
 import { prisma } from "@/core/tenancy/infra/prisma"
+import { withIndustryKey } from "@/modules/organization/domain/industry-key"
+import { ORG_SETTINGS_SELECT } from "@/modules/organization/infra/organization-industry"
 
 type Db = typeof prisma
 
@@ -51,10 +53,11 @@ export class ChainDispatchSweepQuery {
   }
 
   async listOrganizationSettings(organizationIds: string[]) {
-    return this.db.organizations.findMany({
+    const orgs = await this.db.organizations.findMany({
       where: { id: { in: organizationIds } },
-      select: { id: true, settings: true },
+      select: { id: true, ...ORG_SETTINGS_SELECT }, // ngành theo cột (ADR-012 T-6c-1)
     })
+    return orgs.map(withIndustryKey)
   }
 
   async listOrdersForReminders(orderIds: string[]) {

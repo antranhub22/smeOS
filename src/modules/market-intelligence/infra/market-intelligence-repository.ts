@@ -1,4 +1,6 @@
 import { prisma } from "@/core/tenancy/infra/prisma"
+import { withIndustryKey } from "@/modules/organization/domain/industry-key"
+import { ORG_SETTINGS_SELECT } from "@/modules/organization/infra/organization-industry"
 import type {
   Prisma,
   provider_health_status,
@@ -179,12 +181,12 @@ export class MarketIntelligenceRepository implements IMarketIntelligenceReposito
 
   // --- Personalization Data ---
   async getTenantsForPersonalization() {
-    return this.db.organizations.findMany({
+    const orgs = await this.db.organizations.findMany({
       select: {
         id: true,
         name: true,
         type: true,
-        settings: true,
+        ...ORG_SETTINGS_SELECT, // ngành theo cột (ADR-012 T-6c-1)
         brand_profile: {
           select: {
             tone_of_voice: true,
@@ -200,16 +202,11 @@ export class MarketIntelligenceRepository implements IMarketIntelligenceReposito
           },
           take: 20,
         },
-        pricing_rules: {
-          select: { key: true, value: true },
-          take: 5,
-        },
-        customers: {
-          select: { tier: true },
-          take: 100,
-        },
+        pricing_rules: { select: { key: true, value: true }, take: 5 },
+        customers: { select: { tier: true }, take: 100 },
       },
     })
+    return orgs.map(withIndustryKey)
   }
 
   async getScoredTopics(topicIds?: string[] | undefined) {
