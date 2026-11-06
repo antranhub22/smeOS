@@ -16,6 +16,18 @@ describe("UX Lint R13–R16 (03c §7)", () => {
     expect(run(checkR13, `window.confirm("x")`, "src/components/ui/confirm-dialog.tsx")).toHaveLength(0)
   })
 
+  it("R13 bắt cả alert() và prompt() của trình duyệt (tham số chuỗi hay biểu thức)", () => {
+    expect(run(checkR13, `alert("Lỗi")`)).toHaveLength(1)
+    expect(run(checkR13, `alert(err instanceof Error ? err.message : "Lỗi")`)).toHaveLength(1)
+    expect(run(checkR13, `window.alert(msg)`)).toHaveLength(1)
+    expect(run(checkR13, `const v = window.prompt("Tên view")?.trim()`)).toHaveLength(1)
+    expect(run(checkR13, `const reason = prompt("Lý do:")`)).toHaveLength(1)
+    expect(run(checkR13, `toast.error("Lỗi"); const [askText] = usePromptDialog()`)).toHaveLength(0)
+    expect(run(checkR13, `const [prompt, dialog] = usePromptDialog()\nawait prompt({})`)).toHaveLength(0)
+    expect(run(checkR13, `window.alert("x")`, "src/components/ui/toast.tsx")).toHaveLength(0)
+    expect(run(checkR13, `alert("x")`)[0]?.message).toContain("useToast")
+  })
+
   it("R14 bắt so sánh với trạng thái tác vụ tự đặt", () => {
     expect(run(checkR14, `if (s.status === "done") {}`)).toHaveLength(1)
     expect(run(checkR14, `if ("processing" !== step) {}`)).toHaveLength(1)

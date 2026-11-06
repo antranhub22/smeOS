@@ -16,7 +16,9 @@ describe("Toast component and LiveRegion integration", () => {
 
     expect(html).toContain("Ứng dụng chính")
     expect(html).toContain('aria-label="Thông báo nổi"')
-    expect(html).toContain("fixed top-4 right-4")
+    // Điện thoại: cách hai mép 16px (không tràn mép trái ở 360px); từ sm: góc phải trên.
+    expect(html).toContain("fixed inset-x-4 top-4")
+    expect(html).toContain("sm:inset-x-auto sm:right-4")
     expect(html).toContain('role="status"') // Live region
   })
 })
