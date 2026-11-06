@@ -1,4 +1,5 @@
 import { captureError } from "@/core/observability/error-tracker"
+import { dbContextForPath, runWithDbContext } from "@/core/tenancy/db-context"
 import { log } from "@/core/observability/log"
 import { requestIdOf, runWithRequestMeta } from "@/core/observability/request-context"
 
@@ -72,7 +73,9 @@ export function handle<Args extends unknown[]>(
     // Mã yêu cầu do `src/proxy.ts` gắn — `log` và job tạo trong handler tự nhận (E1.1). IP và thiết
     // bị đi cùng để `audit_logs` tự điền (checklist ALG 1.17).
     const meta = { requestId: requestIdOf(request) ?? undefined, ip: clientIp(request), userAgent: userAgentOf(request) }
-    return runWithRequestMeta(meta, async () => {
+    // Ngữ cảnh CSDL cho RLS (checklist ALG 1.18): `requireTenantContext` gắn tổ chức sau khi xác thực
+    const dbContext = dbContextForPath(new URL(request.url).pathname)
+    return runWithRequestMeta(meta, () => runWithDbContext(dbContext, async () => {
       try {
         const response = await fn(request, ...args)
         await auditMutation(request, response)
@@ -81,6 +84,6 @@ export function handle<Args extends unknown[]>(
         await auditDenied(request, error)
         return errorResponse(error, { method: request.method, path: new URL(request.url).pathname })
       }
-    })
+    }))
   }
 }
