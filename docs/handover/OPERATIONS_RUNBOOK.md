@@ -145,7 +145,7 @@ Không dán log có dữ liệu khách vào ticket; log đã lọc khoá nhạy 
 ## 12. Row Level Security theo tổ chức (ADR-013, checklist ALG 1.18)
 
 Mọi bảng có `organization_id` (117 bảng, danh sách sinh từ `src/core/tenancy/generated/tenant-table-registry.ts`) có chính
-sách `tenant_isolation` (migration `20261106010000_row_level_security`). Pool kết nối của web (`src/core/tenancy/infra/rls-pool.ts`)
+sách `tenant_isolation` (migration `20261106020000_row_level_security`). Pool kết nối của web (`src/core/tenancy/infra/rls-pool.ts`)
 và worker (`workers/shared/rls.py`) đặt `app.org_id` theo tổ chức của request/job; CSDL chỉ trả và chỉ cho ghi dòng của tổ chức đó.
 
 | Chế độ `DB_RLS_MODE` | CSDL | Ứng dụng |
