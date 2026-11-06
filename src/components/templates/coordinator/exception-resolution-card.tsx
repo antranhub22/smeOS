@@ -36,11 +36,11 @@ export function ExceptionResolutionCard({
   const tone = severity === "CRITICAL" ? "danger" : severity === "HIGH" ? "warning" : "neutral"
 
   return (
-    <Card className="rounded-2xl border border-alert-200 bg-alert-50/40 p-5 shadow-sm flex flex-col gap-4">
+    <Card className="rounded-2xl border border-danger-border bg-danger-bg/40 p-5 shadow-sm flex flex-col gap-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <AlertCircle size={16} className="text-alert-600" />
-          <span className="text-caption font-bold text-alert-900">SỰ CỐ #{exceptionCode} (ĐƠN #{orderCode})</span>
+          <AlertCircle size={16} className="text-danger-text" />
+          <span className="text-caption font-bold text-danger-text">SỰ CỐ #{exceptionCode} (ĐƠN #{orderCode})</span>
           <Badge tone={tone} className="text-caption font-extrabold">
             {severity}
           </Badge>
@@ -52,28 +52,28 @@ export function ExceptionResolutionCard({
       </div>
 
       <div className="text-caption">
-        <div className="font-bold text-text mb-0.5">Loại sự cố: <span className="text-alert-700">{type}</span></div>
+        <div className="font-bold text-text mb-0.5">Loại sự cố: <span className="text-danger-text">{type}</span></div>
         <p className="text-text-muted leading-relaxed bg-surface p-3 rounded-xl border border-border">
           {description}
         </p>
       </div>
 
       {resolutionPlan && (
-        <div className="p-3 rounded-xl bg-surface border border-mint-200 text-caption">
-          <div className="font-bold text-mint-950 flex items-center gap-1 mb-1">
-            <Wrench size={13} className="text-mint-600" />
+        <div className="p-3 rounded-xl bg-surface border border-success-border text-caption">
+          <div className="font-bold text-success-text flex items-center gap-1 mb-1">
+            <Wrench size={13} className="text-success-text" />
             <span>Phương án xử lý đề xuất:</span>
           </div>
           <p className="text-text-muted">{resolutionPlan}</p>
         </div>
       )}
 
-      <div className="flex items-center justify-between pt-2 border-t border-dashed border-alert-200">
+      <div className="flex items-center justify-between pt-2 border-t border-dashed border-danger-border">
         <Badge tone={isResolved ? "success" : "warning"} className="text-caption">
           {isResolved ? "ĐÃ XỬ LÝ XONG" : "ĐANG CHỜ ĐIỀU PHỐI XỬ LÝ"}
         </Badge>
         {!isResolved && onResolve && (
-          <Button size="sm" onClick={onResolve} className="bg-mint-600 hover:bg-mint-700 text-white gap-1 text-caption">
+          <Button size="sm" onClick={onResolve} className="bg-success hover:bg-success-text text-white gap-1 text-caption">
             <CheckCircle2 size={13} />
             <span>Chốt Xử Lý & Tiếp Tục Đơn</span>
           </Button>

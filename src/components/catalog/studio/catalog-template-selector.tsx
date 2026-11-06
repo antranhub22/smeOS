@@ -1,5 +1,6 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
 import React, { useState, useMemo } from "react"
 import { Check, Sparkles, BookOpen, Layers, Eye, Smartphone, FileText } from "@/components/ui/icons"
 import type {
@@ -101,24 +102,24 @@ export function CatalogTemplateSelector({
 
         {/* Tab switcher: Mẫu Prototype vs Phong cách Styles */}
         <div className="inline-flex p-1 rounded-xl bg-surface-alt border border-border">
-          <button
+          <Button variant="ghost"
             type="button"
             onClick={() => setActiveTab("templates")}
-            className={`px-3 py-1.5 rounded-lg text-caption font-bold transition-all ${
-              activeTab === "templates" ? "bg-surface text-primary shadow-xs" : "text-text-muted hover:text-text"
+            className={`h-auto gap-0 px-3 py-1.5 rounded-lg text-caption font-bold transition-all ${
+              activeTab === "templates" ? "bg-surface text-primary shadow-xs hover:bg-surface" : "text-text-muted hover:text-text"
             }`}
           >
             5 Template Bố Cục
-          </button>
-          <button
+          </Button>
+          <Button variant="ghost"
             type="button"
             onClick={() => setActiveTab("styles")}
-            className={`px-3 py-1.5 rounded-lg text-caption font-bold transition-all ${
-              activeTab === "styles" ? "bg-surface text-primary shadow-xs" : "text-text-muted hover:text-text"
+            className={`h-auto gap-0 px-3 py-1.5 rounded-lg text-caption font-bold transition-all ${
+              activeTab === "styles" ? "bg-surface text-primary shadow-xs hover:bg-surface" : "text-text-muted hover:text-text"
             }`}
           >
             12 Thư Viện Style 2026
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -131,13 +132,13 @@ export function CatalogTemplateSelector({
               {CATALOG_TEMPLATE_LIST.map((tpl) => {
                 const isSelected = selectedTemplateId === tpl.id
                 return (
-                  <button
+                  <Button variant="outline"
                     key={tpl.id}
                     type="button"
                     onClick={() => onSelectTemplate(tpl.id, tpl.defaultStyleId)}
-                    className={`w-full p-4 rounded-2xl border text-left transition-all flex flex-col justify-between gap-3 cursor-pointer ${
+                    className={`h-auto text-[length:inherit] font-[inherit] w-full p-4 rounded-2xl border text-left transition-all flex flex-col justify-between gap-3 cursor-pointer ${
                       isSelected
-                        ? "border-primary bg-primary-muted/20 ring-2 ring-primary shadow-xs"
+                        ? "border-primary bg-primary-muted/20 ring-2 ring-primary shadow-xs hover:bg-primary-muted/20"
                         : "border-border bg-surface hover:bg-surface-alt/60"
                     }`}
                   >
@@ -162,7 +163,7 @@ export function CatalogTemplateSelector({
                       <span>Gồm <strong>{tpl.structure.length} loại trang</strong></span>
                       <span className="italic text-primary font-medium">{tpl.recommendedFor.slice(0, 45)}...</span>
                     </div>
-                  </button>
+                  </Button>
                 )
               })}
             </div>
@@ -171,18 +172,18 @@ export function CatalogTemplateSelector({
               {/* Category Filter Chips */}
               <div className="flex items-center gap-1.5 flex-wrap">
                 {CATEGORY_TABS.map((cat) => (
-                  <button
+                  <Button variant="ghost"
                     key={cat.id}
                     type="button"
                     onClick={() => setStyleCategory(cat.id)}
-                    className={`px-2.5 py-1 rounded-lg text-caption font-bold transition-all cursor-pointer ${
+                    className={`h-auto gap-0 px-2.5 py-1 rounded-lg text-caption font-bold transition-all cursor-pointer ${
                       styleCategory === cat.id
-                        ? "bg-primary text-surface shadow-xs"
+                        ? "bg-primary text-surface shadow-xs hover:bg-primary"
                         : "bg-surface border border-border text-text-muted hover:text-text hover:bg-surface-alt"
                     }`}
                   >
                     {cat.label}
-                  </button>
+                  </Button>
                 ))}
               </div>
 
@@ -192,13 +193,13 @@ export function CatalogTemplateSelector({
                   .map((s) => {
                     const isSelected = selectedStyleId === s.id
                     return (
-                      <button
+                      <Button variant="outline"
                         key={s.id}
                         type="button"
                         onClick={() => onSelectStyle(s.id)}
-                        className={`p-3 rounded-xl border text-left transition-all flex flex-col justify-between cursor-pointer ${
+                        className={`h-auto text-[length:inherit] font-[inherit] gap-0 p-3 rounded-xl border text-left transition-all flex flex-col justify-between cursor-pointer ${
                           isSelected
-                            ? "border-primary bg-primary-muted/20 ring-1 ring-primary shadow-xs"
+                            ? "border-primary bg-primary-muted/20 ring-1 ring-primary shadow-xs hover:bg-primary-muted/20"
                             : "border-border bg-surface hover:bg-surface-alt/60"
                         }`}
                       >
@@ -217,7 +218,7 @@ export function CatalogTemplateSelector({
                           <span className="w-3.5 h-3.5 rounded-full border border-black/10" style={{ backgroundColor: s.tokens.textPrimary }} />
                           <span className="text-caption text-text-muted font-mono ml-auto">{s.typography.fontDisplay.replace("font-", "")}</span>
                         </div>
-                      </button>
+                      </Button>
                     )
                   })}
               </div>
@@ -255,17 +256,17 @@ export function CatalogTemplateSelector({
             {/* Page navigation dots */}
             <div className="flex items-center gap-1.5 mt-4">
               {resolved.pages.map((p, idx) => (
-                <button
+                <Button variant="ghost"
                   key={p.pageNumber}
                   type="button"
                   onClick={() => setPreviewPageIdx(idx)}
-                  className="flex h-6 min-w-6 cursor-pointer items-center justify-center"
+                  className="px-0 py-0 text-[length:inherit] font-[inherit] gap-0 flex h-6 min-w-6 cursor-pointer items-center justify-center"
                   aria-label={`Trang ${idx + 1}`}
                   aria-current={previewPageIdx === idx ? "page" : undefined}
                 >
                   {/* Vùng nhấn 24px (WCAG 2.5.8), chấm hiển thị giữ kích thước cũ */}
                   <span className={`h-2 rounded-full transition-all ${previewPageIdx === idx ? "w-6 bg-primary" : "w-2 bg-border"}`} />
-                </button>
+                </Button>
               ))}
             </div>
           </div>

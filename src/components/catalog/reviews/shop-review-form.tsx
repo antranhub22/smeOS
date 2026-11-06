@@ -1,5 +1,6 @@
 "use client"
 
+import { Textarea } from "@/components/ui/textarea"
 import React, { useState } from "react"
 import { Star } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
@@ -50,22 +51,22 @@ export function ShopReviewForm({ initial = EMPTY_REVIEW, submitLabel, busy, onSu
         <legend className="text-body-sm font-medium text-text">Số sao</legend>
         <div className="flex gap-1">
           {[1, 2, 3, 4, 5].map((n) => (
-            <button
+            <Button variant="ghost"
               key={n}
               type="button"
               aria-label={`${n} sao`}
               aria-pressed={draft.rating === n}
               onClick={() => set("rating", n)}
-              className="flex h-9 w-9 items-center justify-center rounded-lg hover:bg-surface-alt"
+              className="px-0 py-0 text-[length:inherit] font-[inherit] gap-0 flex h-9 w-9 items-center justify-center rounded-lg hover:bg-surface-alt"
             >
               <Star size={18} className={n <= draft.rating ? "text-warning-text" : "text-text-muted"} fill={n <= draft.rating ? "currentColor" : "none"} />
-            </button>
+            </Button>
           ))}
         </div>
       </fieldset>
       <label className="block space-y-1 text-body-sm font-medium text-text">
         <span>Lời nhận xét của khách</span>
-        <textarea
+        <Textarea
           value={draft.comment}
           maxLength={500}
           rows={3}

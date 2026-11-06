@@ -8,6 +8,7 @@ import { Sparkles, ArrowLeft, Wand2, FileText, Headphones, Film, Package, AlertT
 import { useSearchParams, useRouter } from "next/navigation"
 import { TabActionHeader, type TabItem, type TabOverflowAction } from "@/components/ui/tab-header"
 import { Button } from "@/components/ui/button"
+import { PageHeader } from "@/components/ui/page-header"
 import { CreativeGuidanceCard } from "@/components/templates/creative-studio/creative-guidance-card"
 import { ProductIntelligenceWorkspace } from "@/components/market-intelligence/product-intelligence-workspace"
 import { VariantWorkspace } from "@/components/creative-studio/variant-workspace"
@@ -400,12 +401,7 @@ export default function CreativeStudioPage() {
       <div className="flex h-full flex-col overflow-hidden bg-bg">
         {/* Top Header */}
         <div className="flex flex-shrink-0 items-center justify-between border-b border-border bg-surface px-4 py-3">
-          <div>
-            <div className="text-caption text-text-muted">
-              {context.mode} mode · Chặng 01–14 · Studio Sáng tạo Đa phương tiện
-            </div>
-            <div className="text-title font-extrabold text-primary">AI Creative Studio</div>
-          </div>
+          <PageHeader title="Studio sáng tạo" breadcrumbs="Chặng 01–14 · Studio sáng tạo đa phương tiện" />
           <TabActionHeader
             tabs={tabs}
             activeTab={activeTabId}

@@ -27,6 +27,7 @@ import psycopg
 from psycopg.rows import dict_row
 
 from shared.job_trace import log_job_claimed
+from shared.rls import job_db_context, set_db_context
 from shared.job_failure import ghi_job_loi
 from shared.log_json import cau_hinh_log, xoa_ngu_canh_job
 from shared.storage import dang_dung_kho_dung_chung, doc_bytes
@@ -471,7 +472,8 @@ def _vong_lap(conn: psycopg.Connection, co: "_CoDungLai", poll_interval_seconds:
     while not co.dung:
         job = claim_next(conn, FEATURE)
         if job is not None:
-            process_job(conn, job)
+            with job_db_context(conn, job):
+                process_job(conn, job)
             continue
 
         for _notify in conn.notifies(timeout=poll_interval_seconds):
@@ -494,6 +496,7 @@ def run_worker(database_url: str, poll_interval_seconds: float = 5.0) -> None:
     while not co.dung:
         try:
             with psycopg.connect(database_url, autocommit=True, application_name="smeos-worker:vision") as conn:
+                set_db_context(conn, None)  # nhận job đi qua mọi tổ chức — quyền hệ thống (RLS)
                 log.info("worker %s đã nối cơ sở dữ liệu, chờ việc", FEATURE)
                 backoff = BACKOFF_DAU_GIAY
                 _vong_lap(conn, co, poll_interval_seconds)

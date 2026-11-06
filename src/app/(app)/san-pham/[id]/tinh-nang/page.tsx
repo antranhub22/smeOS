@@ -10,7 +10,8 @@ import { AlertCircle } from "@/components/ui/icon-set/alert-circle"
 import { Info } from "@/components/ui/icon-set/info"
 import { RefreshCw } from "@/components/ui/icon-set/refresh-cw"
 ;
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/button"
+import { PageHeader } from "@/components/ui/page-header";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
@@ -30,6 +31,8 @@ interface ProductData {
   masterImageId?: string | undefined;
   creditBalance: number;
 }
+
+const STATUS_LABEL: Record<string, string> = { ACTIVE: "Đang bán", DRAFT: "Bản nháp", PAUSED: "Tạm ngưng", ARCHIVED: "Lưu trữ" }
 
 export default function ProductFeatureDashboardPage() {
   const { t } = useI18n()
@@ -203,28 +206,22 @@ const handleMonitorJobs = () => {
     <div className="flex h-full flex-col overflow-hidden">
       {/* Top Bar */}
       <div className="flex flex-shrink-0 items-center justify-between border-b border-border bg-surface px-[18px] py-4">
-        <div className="flex items-center gap-3">
-          <Button
-              aria-label="Quay lại" variant="ghost" size="icon" onClick={() => router.push((returnTo ?? "/san-pham") as Route)}>
-            <ArrowLeft size={20} strokeWidth={2} />
-          </Button>
-          <div>
-            <div className="flex items-center gap-2">
-              <div className="text-title font-extrabold text-primary">{product.name}</div>
-              <Badge tone={product.status === "ACTIVE" ? "success" : "neutral"} className="text-caption">
-                {product.status}
-              </Badge>
-            </div>
-            <div className="mt-0.5 flex items-center gap-2 text-meta text-text-muted">
+        <PageHeader
+          title={product.name}
+          backHref={returnTo ?? "/san-pham"}
+          backLabel="Quay lại"
+          badge={<Badge tone={product.status === "ACTIVE" ? "success" : "neutral"} className="text-caption">{STATUS_LABEL[product.status] ?? product.status}</Badge>}
+          description={
+            <span className="flex items-center gap-2 text-meta text-text-muted">
               <span>ID: <code className="font-mono">{product.id.slice(0, 8)}…</code></span>
               <Separator orientation="vertical" className="h-3" />
               <span className="flex items-center gap-1">
                 <Info size={12} strokeWidth={1.8} />
                 Credit: <strong>{product.creditBalance}</strong>
               </span>
-            </div>
-          </div>
-        </div>
+            </span>
+          }
+        />
         <div className="flex items-center gap-2">
           <Button
               aria-label="Làm mới" variant="ghost" size="icon" onClick={() => router.refresh()}>

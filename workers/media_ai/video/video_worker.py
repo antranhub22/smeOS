@@ -27,6 +27,7 @@ from psycopg.rows import dict_row
 from media_ai.video.providers import get_video_provider, VideoProviderError
 from shared.job_failure import phan_loai_loi
 from shared.job_trace import log_job_claimed
+from shared.rls import job_db_context, set_db_context
 from shared.log_json import cau_hinh_log, xoa_ngu_canh_job
 from shared.storage import dang_dung_kho_dung_chung, ghi_bytes
 
@@ -230,6 +231,7 @@ def run_worker(db_url: Optional[str] = None):
     while True:
         try:
             with psycopg.connect(dsn, autocommit=True, application_name="smeos-worker:video") as conn:
+                set_db_context(conn, None)  # nhận job đi qua mọi tổ chức — quyền hệ thống (RLS)
                 conn.execute(f"LISTEN {channel}")
                 print(f"📡 [VideoWorker] Đã kết nối Postgres và lắng nghe kênh {channel}", flush=True)
 
@@ -240,7 +242,8 @@ def run_worker(db_url: Optional[str] = None):
                         if not job:
                             break
                         try:
-                            process_video_job(conn, job)
+                            with job_db_context(conn, job):
+                                process_video_job(conn, job)
                         except Exception as e:
                             print(f"❌ [VideoWorker] Lỗi ngoài dự kiến xử lý job {job.get('id')}: {e}", flush=True)
 

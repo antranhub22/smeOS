@@ -1,5 +1,7 @@
 import { prisma } from "@/core/tenancy/infra/prisma"
 
+import { ACTIVE_CHAIN_LINK } from "./organization-link-sync"
+
 export interface OrganizationIdentityData {
   organization: {
     id: string
@@ -67,25 +69,27 @@ export async function getOrganizationIdentity(orgId: string): Promise<Organizati
   }
 
   // Lấy quan hệ chuỗi — tổ chức này là ĐỐI TÁC của chuỗi nào?
-  const asPartner = await prisma.chain_partnerships.findMany({
-    where: { partner_org_id: orgId, status: "ACTIVE" },
+  const asPartner = await prisma.organization_links.findMany({
+    where: { child_org_id: orgId, ...ACTIVE_CHAIN_LINK },
+    orderBy: [{ created_at: "asc" }, { id: "asc" }],
     select: {
       id: true,
       partner_code: true,
-      partnership_type: true,
-      chain_organization: { select: { id: true, name: true, slug: true } },
+      link_type: true,
+      parent_organization: { select: { id: true, name: true, slug: true } },
     },
     take: 20,
   })
 
   // Lấy quan hệ chuỗi — tổ chức này là CHUỖI đang quản lý ai?
-  const asChain = await prisma.chain_partnerships.findMany({
-    where: { chain_org_id: orgId, status: "ACTIVE" },
+  const asChain = await prisma.organization_links.findMany({
+    where: { parent_org_id: orgId, ...ACTIVE_CHAIN_LINK },
+    orderBy: [{ created_at: "asc" }, { id: "asc" }],
     select: {
       id: true,
       partner_code: true,
-      partnership_type: true,
-      partner_organization: { select: { id: true, name: true, slug: true } },
+      link_type: true,
+      child_organization: { select: { id: true, name: true, slug: true } },
     },
     take: 50,
   })
@@ -118,19 +122,19 @@ export async function getOrganizationIdentity(orgId: string): Promise<Organizati
       asPartnerOf: asPartner.map((r) => ({
         partnershipId: r.id,
         partnerCode: r.partner_code,
-        partnershipType: r.partnership_type,
-        chainOrgId: r.chain_organization.id,
-        chainName: r.chain_organization.name,
-        chainSlug: r.chain_organization.slug,
-        chainConnectCode: r.chain_organization.slug,
+        partnershipType: r.link_type,
+        chainOrgId: r.parent_organization.id,
+        chainName: r.parent_organization.name,
+        chainSlug: r.parent_organization.slug,
+        chainConnectCode: r.parent_organization.slug,
       })),
       asChainOf: asChain.map((r) => ({
         partnershipId: r.id,
         partnerCode: r.partner_code,
-        partnershipType: r.partnership_type,
-        partnerOrgId: r.partner_organization.id,
-        partnerName: r.partner_organization.name,
-        partnerSlug: r.partner_organization.slug,
+        partnershipType: r.link_type,
+        partnerOrgId: r.child_organization.id,
+        partnerName: r.child_organization.name,
+        partnerSlug: r.child_organization.slug,
       })),
     },
     members: members.map((m) => ({

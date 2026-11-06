@@ -5,6 +5,7 @@
 
 import { prisma } from "@/core/tenancy/infra/prisma"
 import type { GovernanceTier } from "@/core/governance/layered-resolver"
+import { ACTIVE_CHAIN_LINK } from "@/modules/organization/infra/organization-link-sync"
 import { resolveTierChain } from "@/modules/organization/infra/tier-chain-repository"
 import type { GovernanceMode, GovernanceRow, OrgGovernanceScope } from "../domain/integration-governance"
 
@@ -37,12 +38,12 @@ export class GovernanceRepository {
 
   /** Cửa hàng đối tác ACTIVE của một chuỗi — để báo khi chuỗi đổi khoá. */
   async partnerOrgIds(chainOrgId: string): Promise<string[]> {
-    const rows = await prisma.chain_partnerships.findMany({
-      where: { chain_org_id: chainOrgId, status: "ACTIVE" },
-      select: { partner_org_id: true },
+    const rows = await prisma.organization_links.findMany({
+      where: { parent_org_id: chainOrgId, ...ACTIVE_CHAIN_LINK },
+      select: { child_org_id: true },
       take: 500,
     })
-    return rows.map((r) => r.partner_org_id)
+    return rows.map((r) => r.child_org_id)
   }
 
   /** Kết nối đang dùng được của chuỗi cho một đầu nối — cửa hàng kế thừa (chỉ dùng, không đọc khoá). */

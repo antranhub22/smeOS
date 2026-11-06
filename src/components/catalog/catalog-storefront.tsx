@@ -76,16 +76,16 @@ export function CatalogStorefront({ initialData }: CatalogStorefrontProps) {
 
   if (initialData.status === "REVOKED") {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center p-4">
+      <div className="min-h-screen bg-bg flex items-center justify-center p-4">
         <div className="max-w-md w-full bg-surface rounded-3xl p-8 border border-border shadow-xl text-center flex flex-col items-center">
           <div className="w-16 h-16 rounded-2xl bg-warning-bg text-warning flex items-center justify-center mb-4">
             <AlertCircle size={32} />
           </div>
-          <h1 className="text-xl font-black text-text mb-2">Bộ sưu tập đã đóng</h1>
-          <p className="text-sm text-text-muted leading-relaxed mb-6">
+          <h1 className="text-title font-black text-text mb-2">Bộ sưu tập đã đóng</h1>
+          <p className="text-body-sm text-text-muted leading-relaxed mb-6">
             Bộ sưu tập <span className="font-semibold text-text">&quot;{initialData.catalogName}&quot;</span> đã tạm ngừng chia sẻ.
           </p>
-          <div className="p-4 rounded-2xl bg-surface-alt border border-border text-xs text-text-muted w-full">
+          <div className="p-4 rounded-2xl bg-surface-alt border border-border text-caption text-text-muted w-full">
             Vui lòng liên hệ trực tiếp với cửa hàng để được tư vấn danh mục mới nhất.
           </div>
         </div>
@@ -95,10 +95,10 @@ export function CatalogStorefront({ initialData }: CatalogStorefrontProps) {
 
   if (initialData.status === "NOT_FOUND") {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center p-4">
+      <div className="min-h-screen bg-bg flex items-center justify-center p-4">
         <div className="max-w-md w-full bg-surface rounded-3xl p-8 border border-border shadow-xl text-center">
-          <h1 className="text-xl font-black text-text mb-2">Không tìm thấy danh mục</h1>
-          <p className="text-sm text-text-muted">Đường dẫn catalog này không tồn tại hoặc đã bị gỡ bỏ.</p>
+          <h1 className="text-title font-black text-text mb-2">Không tìm thấy danh mục</h1>
+          <p className="text-body-sm text-text-muted">Đường dẫn catalog này không tồn tại hoặc đã bị gỡ bỏ.</p>
         </div>
       </div>
     )
@@ -255,7 +255,7 @@ export function CatalogStorefront({ initialData }: CatalogStorefrontProps) {
       )}
       <PublicStickyActions shopName={shop.name} phone={shop.phone} topic={catalog.name} style={currentStyle} entry={entry} productsAnchorId={PRODUCTS_ANCHOR_ID} />
       <footer
-        className="mt-12 text-center text-xs max-w-4xl mx-auto px-4"
+        className="mt-12 text-center text-caption max-w-4xl mx-auto px-4"
         style={{ color: currentStyle.tokens.textSecondary }}
       >
         <div className="border-t pt-6" style={{ borderColor: currentStyle.tokens.border }}>

@@ -1,4 +1,5 @@
 import { AppError, sessionSuperseded, unauthenticated } from "@/core/http/errors"
+import { asSystemDb, bindTenantDb } from "@/core/tenancy/db-context"
 import { readCookie, SESSION_COOKIE } from "@/core/http/cookies"
 import { bindRequestActor } from "@/core/observability/request-context"
 import type { TenantContext } from "@/core/tenancy"
@@ -33,7 +34,12 @@ export function sessionTokenFrom(request: Request): string | null {
  * (`YC-T2`). Không lớp nào bên dưới đi tìm lại `organization_id`, và không
  * đường nào nhận nó từ body, query hay header của client.
  */
+/** Tra phiên theo mã phiên — chưa biết tổ chức nên chạy quyền hệ thống (RLS, checklist ALG 1.18). */
 export async function resolveSession(request: Request): Promise<ResolvedSession> {
+  return asSystemDb("session", () => resolveSessionUnscoped(request))
+}
+
+async function resolveSessionUnscoped(request: Request): Promise<ResolvedSession> {
   const token = sessionTokenFrom(request)
   if (!token) throw unauthenticated()
 
@@ -134,6 +140,8 @@ export async function requireTenantContext(
   }
   // Người thao tác đã xác thực → nhật ký tầng HTTP biết ai làm (checklist ALG 1.15, 1.17)
   bindRequestActor({ organizationId: resolved.ctx.organizationId, userId: resolved.ctx.userId })
+  // Từ đây mọi truy vấn của request chạy trong tổ chức đã xác thực (RLS, checklist ALG 1.18)
+  bindTenantDb(resolved.ctx.organizationId)
   // Đang dùng mật khẩu tạm → chỉ được đổi mật khẩu (checklist ALG 1.4)
   if (resolved.user.must_change_password && new URL(request.url).pathname !== PASSWORD_CHANGE_PATH) {
     throw new AppError("PASSWORD_CHANGE_REQUIRED", "Tài khoản đang dùng mật khẩu tạm — đổi mật khẩu trước khi tiếp tục")

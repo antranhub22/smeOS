@@ -57,6 +57,9 @@
 | D-50 | Hạn lưu chứng từ — trả lời I-2 (05/11/2026) | **Mức thường dùng** (PO giao agent đề xuất): chứng từ ghi sổ 10 năm · tài liệu kế toán khác 5 năm · giao nhận 12 tháng · nhật ký kiểm toán 5 năm · log/hội thoại/lead 3 tháng (D-28) | ADR-014 D-P4; đổi mốc qua `retention_policies`; cần kế toán/pháp lý xác nhận trước khi cam kết với khách |
 | D-51 | Vùng dữ liệu (05/11/2026) | **B** — thêm vùng Việt Nam bằng triển khai riêng; triển khai chung giữ Singapore | ADR-014 D-P7, ADR-016 S-6; `data_region` mặc định `sg`; khách triển khai chung vẫn cần hồ sơ chuyển dữ liệu ra nước ngoài |
 | D-52 | Gói CSDL — trả lời I-7 (05/11/2026) | **Theo giai đoạn** (PO giao agent đề xuất): Basic lớn hơn + PITR 7 ngày + export ngoài ngay; Pro + HA khi ký chuỗi có SLA; hạ tầng riêng theo hợp đồng. Cảnh báo (I-5): email + nhóm Telegram người vận hành | ADR-015 D-O2; còn chờ PO duyệt con số chi phí và cho địa chỉ nhận cảnh báo |
+| D-53 | Báo cáo chuỗi (06/11/2026) | Cửa hàng nhượng quyền/gia công **không** xem báo cáo tổng của chuỗi; chỉ chuỗi và Mother xem | ADR-012 D-T8 |
+| D-54 | Tách chi nhánh (06/11/2026) | **Không** làm công cụ chuyển chi nhánh thành tổ chức riêng; chuyển sang nhượng quyền thì mở tổ chức mới, lịch sử ở lại chuỗi | ADR-012 D-T11 |
+| D-55 | Loại tổ chức chuỗi (06/11/2026) | `FLOWER_NETWORK` và `CHAIN` **chỉ khác nhãn** → gộp về `CHAIN` | ADR-012 D-T11, bước T-8 |
 
 ## 2. Chấp nhận rủi ro (PO chọn khác đề xuất)
 

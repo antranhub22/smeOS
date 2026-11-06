@@ -97,7 +97,7 @@ export function PartnerProductionCard({
         <div className={sampleImageUrl ? "md:col-span-2 flex flex-col gap-4" : "md:col-span-3 flex flex-col gap-4"}>
           <div>
             <div className="text-caption font-bold text-text-muted uppercase tracking-wider mb-2 flex items-center gap-1.5">
-              <Layers size={13} className="text-alert-600" />
+              <Layers size={13} className="text-danger-text" />
               <span>CÔNG THỨC & ĐỊNH LƯỢNG CHI TIẾT</span>
             </div>
             <div className="rounded-xl border border-border overflow-hidden">
@@ -117,12 +117,12 @@ export function PartnerProductionCard({
                         {f.flowerName}
                         {f.variety && <span className="text-caption font-medium text-text-muted"> · {f.variety}</span>}
                         {typeof f.budCount === "number" && f.budCount > 0 && (
-                          <span className="ml-1.5 px-1 py-0 rounded bg-sand-100 text-sand-700 text-caption font-bold align-middle">
+                          <span className="ml-1.5 px-1 py-0 rounded bg-warning-bg text-warning-text text-caption font-bold align-middle">
                             {f.budCount} nụ chưa nở
                           </span>
                         )}
                       </td>
-                      <td className="px-3 py-2 text-blush-700 font-extrabold">
+                      <td className="px-3 py-2 text-primary font-extrabold">
                         {f.quantity} {f.unit}
                         {typeof f.stemLengthCm === "number" && (
                           <span className="ml-1 text-caption font-medium text-text-muted">· dài {f.stemLengthCm}cm</span>
@@ -135,15 +135,15 @@ export function PartnerProductionCard({
                       <td className="px-3 py-2">
                         <span className={`inline-block px-1.5 py-0.5 rounded text-caption font-bold ${
                           f.role === "Chủ đạo"
-                            ? "bg-blush-100 text-blush-800"
+                            ? "bg-primary-muted text-primary"
                             : f.role === "Điểm xuyến"
-                            ? "bg-sand-100 text-sand-800"
-                            : "bg-cool-100 text-cool-800"
+                            ? "bg-warning-bg text-warning-text"
+                            : "bg-surface-alt text-text"
                         }`}>
                           {f.role}
                         </span>
                         {f.substitutionAllowed && (
-                          <span className="ml-1 inline-block px-1 py-0.5 rounded bg-azure-100 text-azure-800 text-caption font-bold">
+                          <span className="ml-1 inline-block px-1 py-0.5 rounded bg-info-bg text-info-text text-caption font-bold">
                             Được thay{typeof f.substitutionPriority === "number" ? ` #${f.substitutionPriority}` : ""}
                           </span>
                         )}
@@ -164,7 +164,7 @@ export function PartnerProductionCard({
                     {foliage.map((fol, i) => (
                       <div key={i}>
                         • {fol.name} ({fol.role})
-                        {fol.substitutionAllowed && <span className="text-azure-700"> · được thay thế</span>}
+                        {fol.substitutionAllowed && <span className="text-info-text"> · được thay thế</span>}
                       </div>
                     ))}
                   </div>
@@ -179,7 +179,7 @@ export function PartnerProductionCard({
                         • {w.layer}: {w.material} - {w.color}
                         {w.pattern && ` (${w.pattern})`}
                         {typeof w.quantity === "number" && ` · SL ${w.quantity}`}
-                        {w.substitutionAllowed && <span className="text-azure-700"> · được thay thế</span>}
+                        {w.substitutionAllowed && <span className="text-info-text"> · được thay thế</span>}
                       </div>
                     ))}
                   </div>
@@ -192,7 +192,7 @@ export function PartnerProductionCard({
                     {accessories.map((a, i) => (
                       <div key={i}>
                         • {a.name} ({a.material}, {a.color}){a.unit ? ` · ${a.quantity ?? ""}${a.unit}` : ""}{a.printedText ? ` — "${a.printedText}"` : ""}
-                        {a.substitutionAllowed && <span className="text-azure-700"> · được thay thế</span>}
+                        {a.substitutionAllowed && <span className="text-info-text"> · được thay thế</span>}
                       </div>
                     ))}
                   </div>
@@ -202,12 +202,12 @@ export function PartnerProductionCard({
           )}
 
           {cardMessage && (
-            <div className="p-3.5 rounded-xl bg-blush-50/70 border border-blush-200 text-caption">
-              <div className="font-bold text-blush-950 flex items-center gap-1.5 mb-1">
-                <MessageSquare size={13} className="text-blush-600" />
+            <div className="p-3.5 rounded-xl bg-primary-muted/70 border border-primary-border text-caption">
+              <div className="font-bold text-primary flex items-center gap-1.5 mb-1">
+                <MessageSquare size={13} className="text-primary" />
                 <span>Nội dung thiệp chúc mừng (In nguyên văn):</span>
               </div>
-              <p className="text-blush-900 font-medium italic">&ldquo;{cardMessage}&rdquo;</p>
+              <p className="text-primary font-medium italic">&ldquo;{cardMessage}&rdquo;</p>
             </div>
           )}
 
@@ -231,7 +231,7 @@ export function PartnerProductionCard({
           {partnerInstruction && <span>Lưu ý thợ: <strong>{partnerInstruction}</strong></span>}
         </div>
         {onMarkReady && (
-          <Button onClick={onMarkReady} className="bg-mint-600 hover:bg-mint-700 text-white gap-1.5">
+          <Button onClick={onMarkReady} className="bg-success hover:bg-success-text text-white gap-1.5">
             <CheckCircle2 size={15} />
             <span>Hoàn tất {ti.makerAction} & Chuyển QC</span>
           </Button>

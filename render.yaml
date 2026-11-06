@@ -42,6 +42,9 @@ services:
         fromDatabase:
           name: smeos-postgres
           property: connectionString
+      # RLS theo tổ chức (ADR-013, checklist ALG 1.18): ghi nhận trước; chuyển 'enforce' khi log sạch
+      - key: DB_RLS_MODE
+        value: audit
       - key: NODE_ENV
         value: production
       # Ghim runtime theo CI (`.github/workflows/ci.yml` dùng Node 22.x). Không ghim thì
@@ -179,6 +182,9 @@ services:
         fromDatabase:
           name: smeos-postgres
           property: connectionString
+      # RLS theo tổ chức (ADR-013, checklist ALG 1.18): ghi nhận trước; chuyển 'enforce' khi log sạch
+      - key: DB_RLS_MODE
+        value: audit
       - key: OPENAI_API_KEY
         sync: false
       - key: PHOTOROOM_API_KEY
@@ -229,6 +235,9 @@ services:
         fromDatabase:
           name: smeos-postgres
           property: connectionString
+      # RLS theo tổ chức (ADR-013, checklist ALG 1.18): ghi nhận trước; chuyển 'enforce' khi log sạch
+      - key: DB_RLS_MODE
+        value: audit
       - key: OPENAI_API_KEY
         sync: false
       - key: GEMINI_API_KEY
@@ -267,6 +276,9 @@ services:
         fromDatabase:
           name: smeos-postgres
           property: connectionString
+      # RLS theo tổ chức (ADR-013, checklist ALG 1.18): ghi nhận trước; chuyển 'enforce' khi log sạch
+      - key: DB_RLS_MODE
+        value: audit
       - key: OPENAI_API_KEY
         sync: false
       - key: GEMINI_API_KEY

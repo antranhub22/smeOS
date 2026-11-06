@@ -1,5 +1,6 @@
 "use client"
 
+import { Textarea } from "@/components/ui/textarea"
 import React from "react"
 import { Wand2, Check } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
@@ -65,7 +66,7 @@ export function CatalogWizardStep3Intro({
               <span>{isAiGenerating ? "AI đang viết..." : "✨ AI Viết Lời Chào"}</span>
             </Button>
           </div>
-          <textarea
+          <Textarea
             value={desc}
             onChange={(e) => setDesc(e.target.value)}
             rows={3}

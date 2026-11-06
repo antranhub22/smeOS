@@ -49,13 +49,13 @@ export function SmartInputStorePicker({
             {availableProducts.map((p) => {
               const isSelected = selectedProducts.some((sp) => sp.id === p.id)
               return (
-                <button
+                <Button variant="outline"
                   key={p.id}
                   type="button"
                   onClick={() => onToggleProduct(p)}
-                  className={`relative rounded-xl border text-left p-1.5 transition-all flex flex-col gap-1.5 group cursor-pointer ${
+                  className={`h-auto text-[length:inherit] justify-start font-[inherit] relative rounded-xl border text-left p-1.5 transition-all flex flex-col gap-1.5 group cursor-pointer ${
                     isSelected
-                      ? "border-primary bg-primary-muted/20 ring-2 ring-primary/30"
+                      ? "border-primary bg-primary-muted/20 ring-2 ring-primary/30 hover:bg-primary-muted/20"
                       : "border-border bg-surface hover:border-primary-border hover:bg-surface-alt/50"
                   }`}
                 >
@@ -86,28 +86,22 @@ export function SmartInputStorePicker({
                       {p.price ? `${p.price.toLocaleString("vi-VN")} đ` : p.code}
                     </p>
                   </div>
-                </button>
+                </Button>
               )
             })}
           </div>
         </div>
       ) : (
-        <div
-          role="button"
-          tabIndex={0}
+        <Button
+          type="button"
+          variant="ghost"
           onClick={onOpenLibrary}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" || e.key === " ") {
-              e.preventDefault()
-              onOpenLibrary()
-            }
-          }}
-          className="p-6 border border-dashed border-border rounded-lg text-center hover:bg-surface cursor-pointer transition-colors"
+          className="h-auto w-full whitespace-normal font-[inherit] text-[length:inherit] p-6 border border-dashed border-border rounded-lg text-center hover:bg-surface cursor-pointer transition-colors"
         >
           <p className="text-body-sm text-text-muted font-medium">
             Chưa có sản phẩm nào trong kho. Bấm để tìm kiếm hoặc chuyển sang tab &quot;Tải từ máy&quot;.
           </p>
-        </div>
+        </Button>
       )}
     </div>
   )

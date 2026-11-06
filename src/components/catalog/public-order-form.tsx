@@ -1,5 +1,7 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
 import { useState } from "react"
 import { TURNSTILE_SITE_KEY, TurnstileWidget } from "@/components/acquisition/turnstile-widget"
 import { formatCurrency } from "@/lib/i18n/formatters"
@@ -85,24 +87,24 @@ export function PublicOrderForm({ slug, productId, productName, onBack }: { slug
       }}
     >
       <p className="text-body-sm text-text">Đặt mẫu <span className="font-bold">{productName}</span></p>
-      <input aria-label="Họ tên" placeholder="Họ tên" required value={f.name} onChange={set("name")} className={field} />
-      <input aria-label="Số điện thoại" placeholder="Số điện thoại" inputMode="tel" required value={f.phone} onChange={set("phone")} className={field} />
-      <input aria-label="Địa chỉ nhận hàng" placeholder="Địa chỉ nhận hàng" required value={f.address} onChange={set("address")} className={field} />
+      <Input aria-label="Họ tên" placeholder="Họ tên" required value={f.name} onChange={set("name")} className={field} />
+      <Input aria-label="Số điện thoại" placeholder="Số điện thoại" inputMode="tel" required value={f.phone} onChange={set("phone")} className={field} />
+      <Input aria-label="Địa chỉ nhận hàng" placeholder="Địa chỉ nhận hàng" required value={f.address} onChange={set("address")} className={field} />
       <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-        <input aria-label="Số lượng" inputMode="numeric" value={f.quantity} onChange={set("quantity")} className={field} />
-        <input aria-label="Ngày giao" type="date" value={f.deliveryDate} onChange={set("deliveryDate")} className={field} />
-        <input aria-label="Giờ giao" placeholder="Giờ giao (vd. 9:00)" value={f.timeSlot} onChange={set("timeSlot")} className={`${field} col-span-2 sm:col-span-1`} />
+        <Input aria-label="Số lượng" inputMode="numeric" value={f.quantity} onChange={set("quantity")} className={field} />
+        <Input aria-label="Ngày giao" type="date" value={f.deliveryDate} onChange={set("deliveryDate")} className={field} />
+        <Input aria-label="Giờ giao" placeholder="Giờ giao (vd. 9:00)" value={f.timeSlot} onChange={set("timeSlot")} className={`${field} col-span-2 sm:col-span-1`} />
       </div>
-      <input aria-label="Ghi chú" placeholder="Ghi chú (không bắt buộc)" value={f.note} onChange={set("note")} className={field} />
+      <Input aria-label="Ghi chú" placeholder="Ghi chú (không bắt buộc)" value={f.note} onChange={set("note")} className={field} />
       {/* Ô bẫy máy — người thật không thấy */}
-      <input tabIndex={-1} autoComplete="off" aria-hidden="true" value={f.website} onChange={set("website")} className="hidden" />
+      <Input tabIndex={-1} autoComplete="off" aria-hidden="true" value={f.website} onChange={set("website")} className="hidden" />
       <TurnstileWidget onToken={setToken} />
       {error && <p role="alert" className="text-body-sm text-danger-text">{error}</p>}
       <div className="flex gap-2">
-        <button type="button" onClick={onBack} className="min-h-11 rounded-xl border border-border px-4 text-body-sm font-semibold text-text hover:bg-surface-alt">Quay lại</button>
-        <button type="submit" disabled={busy} className="min-h-11 flex-1 rounded-xl bg-primary px-4 text-body-sm font-bold text-white hover:bg-primary-dark disabled:opacity-40">
+        <Button variant="outline" type="button" onClick={onBack} className="py-0 gap-0 min-h-11 rounded-xl border border-border px-4 text-body-sm font-semibold text-text hover:bg-surface-alt">Quay lại</Button>
+        <Button variant="primary" type="submit" disabled={busy} className="py-0 gap-0 min-h-11 flex-1 rounded-xl bg-primary px-4 text-body-sm font-bold text-white hover:bg-primary-dark disabled:opacity-40">
           {busy ? "Đang gửi…" : "Đặt hàng"}
-        </button>
+        </Button>
       </div>
     </form>
   )

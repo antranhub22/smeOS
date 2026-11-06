@@ -17,17 +17,19 @@ export async function register(): Promise<void> {
     ])
     setErrorTracker(initSentryErrorTracker(dsn))
   }
+  // Bộ quét nền đi qua mọi tổ chức → quyền hệ thống; hẹn giờ giữ ngữ cảnh lúc tạo (RLS, checklist ALG 1.18)
+  const { asSystemDb } = await import("@/core/tenancy/db-context")
   const { startBackgroundSweep } = await import("@/modules/greeting-card/use-cases/background-sweep-scheduler")
-  startBackgroundSweep()
+  asSystemDb("sweep:greeting-card", startBackgroundSweep)
   // Đơn quá hạn thanh toán → lead cứu đơn (Đơn hàng đa nguồn, PO 31/10/2026) — chỉ đọc sự kiện huỷ.
   const { startLeadRecoverySweep } = await import("@/modules/acquisition/use-cases/lead-recovery-scheduler")
-  startLeadRecoverySweep()
+  asSystemDb("sweep:lead-recovery", startLeadRecoverySweep)
   // Chuyển khoản SePay còn "chưa khớp" sau bộ khớp Thẻ chào → khớp đơn ngoài Thẻ chào (P3b).
   const { startOrdersBankMatchSweep } = await import("@/modules/orders/use-cases/orders-sweep-scheduler")
-  startOrdersBankMatchSweep()
+  asSystemDb("sweep:orders-bank-match", startOrdersBankMatchSweep)
   // Đối soát số đã thu với sổ thu mỗi 6 giờ (ADR-013 D-I6) — chỉ ghi nhận lệch, không tự sửa.
   const { startPaymentReconciliation } = await import("@/modules/orders/use-cases/reconciliation-scheduler")
-  startPaymentReconciliation()
+  asSystemDb("sweep:payment-reconciliation", startPaymentReconciliation)
 }
 
 /** Lỗi máy chủ không ai bắt → log có cấu trúc (rà soát 21/10/2026, giai đoạn 3 — quan trắc). */

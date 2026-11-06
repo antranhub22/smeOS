@@ -86,12 +86,12 @@ export function AiQcInspectionModal({ isOpen, order, onClose, onSubmit }: AiQcIn
       className="max-w-3xl"
       title={
         <div className="flex items-center gap-2">
-          <div className="h-8 w-8 rounded-lg bg-mint-100 text-mint-800 flex items-center justify-center">
+          <div className="h-8 w-8 rounded-lg bg-success-bg text-success-text flex items-center justify-center">
             <ShieldCheck size={18} />
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <span className="px-2 py-0.5 rounded bg-cool-100 text-cool-700 text-caption font-black uppercase border border-cool-200">
+              <span className="px-2 py-0.5 rounded bg-surface-alt text-text text-caption font-black uppercase border border-border">
                 BƯỚC 5 • KIỂM ĐỊNH QC
               </span>
               <h3 className="text-body font-extrabold text-text">Kiểm Định Chất Lượng (T14)</h3>
@@ -105,7 +105,7 @@ export function AiQcInspectionModal({ isOpen, order, onClose, onSubmit }: AiQcIn
           <Button variant="outline" size="sm" onClick={onClose}>
             Đóng
           </Button>
-          <Button variant="outline" size="sm" disabled={busy || !finished} onClick={() => decide("REJECTED")} className="gap-1.5 text-alert-700 border-alert-300">
+          <Button variant="outline" size="sm" disabled={busy || !finished} onClick={() => decide("REJECTED")} className="gap-1.5 text-danger-text border-danger-border">
             <Ban size={14} /> Loại — mở sự cố
           </Button>
           <Button variant="outline" size="sm" disabled={busy || !finished} onClick={() => decide("REWORK_REQUESTED")} className="gap-1.5">
@@ -116,7 +116,7 @@ export function AiQcInspectionModal({ isOpen, order, onClose, onSubmit }: AiQcIn
             disabled={busy || !finished || !allChecked}
             onClick={() => decide("PASSED")}
             title={allChecked ? undefined : "Tích đủ danh mục kiểm trước khi duyệt đạt"}
-            className="bg-mint-600 hover:bg-mint-700 text-white font-bold gap-1.5"
+            className="bg-success hover:bg-success-text text-white font-bold gap-1.5"
           >
             <CheckCircle2 size={14} /> Đạt — chuyển giao hàng
           </Button>
@@ -129,7 +129,7 @@ export function AiQcInspectionModal({ isOpen, order, onClose, onSubmit }: AiQcIn
           {imageBox("🌸 Ảnh thành phẩm thợ gửi", finished, "Chưa có ảnh thành phẩm — không kiểm được")}
         </div>
 
-        <div className="p-3 rounded-xl border border-ocean-200 bg-ocean-50/60 text-ocean-900 flex items-start gap-2">
+        <div className="p-3 rounded-xl border border-info-border bg-info-bg/60 text-info-text flex items-start gap-2">
           <Info size={14} className="shrink-0 mt-0.5" />
           <span>
             Chấm điểm AI tự động chưa bật cho điều phối — kết luận dưới đây là của người kiểm và được ghi vào hồ sơ QC
@@ -157,12 +157,12 @@ export function AiQcInspectionModal({ isOpen, order, onClose, onSubmit }: AiQcIn
             onChange={(e) => setNotes(e.target.value)}
             rows={3}
             placeholder="Ví dụ: nơ lệch màu, thiếu 2 cành hồng chủ đạo…"
-            className="w-full px-3 py-2 rounded-xl border border-border bg-surface text-text focus:outline-none focus:border-alert-500"
+            className="w-full px-3 py-2 rounded-xl border border-border bg-surface text-text focus:outline-none focus:border-danger"
           />
         </div>
 
         {error && (
-          <div role="alert" className="p-3 rounded-xl border border-alert-300 bg-alert-50 text-alert-800 font-semibold">
+          <div role="alert" className="p-3 rounded-xl border border-danger-border bg-danger-bg text-danger-text font-semibold">
             {error}
           </div>
         )}

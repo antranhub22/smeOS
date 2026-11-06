@@ -21,7 +21,7 @@ export class LinkExistingStoreUseCase {
       throw new Error("Không thể tự liên kết chính tổ chức của Chuỗi làm đối tác")
     }
 
-    // 2. Tạo liên kết chain_partnerships
+    // 2. Tạo liên kết (chain_partnerships + organization_links — ADR-012 T-3a)
     const partnership = await this.partnershipRepo.linkExistingStore({
       chainOrgId: input.chainOrgId,
       partnerOrgId: store.orgId,

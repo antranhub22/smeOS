@@ -60,7 +60,7 @@
     "src/components/templates/coordinator/partner-product-card.tsx": 583,
     "src/components/templates/coordinator/sales-order-intake-modal.tsx": 1290,
     "src/components/templates/social-publishing/post-status-report-card.tsx": 527,
-    "src/components/upload/upload-wizard.tsx": 1458,
+    "src/components/upload/upload-wizard.tsx": 1382,
     "src/lib/feature-catalog.ts": 990,
     "src/modules/chain-partnership/infra/prisma-partnership-repository.ts": 371,
     "src/modules/content-engine/use-cases/generate-content.ts": 392,
