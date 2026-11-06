@@ -2,6 +2,7 @@ import { PrismaPg } from "@prisma/adapter-pg"
 
 import { PrismaClient } from "@/generated/prisma/client"
 import { env } from "@/lib/env"
+import { RlsPool } from "./rls-pool"
 
 /**
  * Thể hiện `PrismaClient` duy nhất của cả hệ thống.
@@ -29,12 +30,15 @@ if (globalForPrisma.schemaVersion !== CURRENT_SCHEMA_VERSION) {
 export const prisma: PrismaClient =
   globalForPrisma.smeosPrisma ??
   new PrismaClient({
-    adapter: new PrismaPg({
-      connectionString: env.DATABASE_URL,
-      // ADR-015 D-O5: pool có trần rõ ràng và tên ứng dụng để `pg_stat_activity` phân biệt dịch vụ.
-      max: env.DATABASE_POOL_MAX,
-      application_name: "smeos-web",
-    }),
+    adapter: new PrismaPg(
+      // RLS (ADR-013 D-I3, checklist ALG 1.18): pool tự đặt `app.org_id` theo ngữ cảnh của luồng đang chạy
+      new RlsPool({
+        connectionString: env.DATABASE_URL,
+        // ADR-015 D-O5: pool có trần rõ ràng và tên ứng dụng để `pg_stat_activity` phân biệt dịch vụ.
+        max: env.DATABASE_POOL_MAX,
+        application_name: "smeos-web",
+      }, env.DB_RLS_MODE),
+    ),
   })
 
 if (process.env.NODE_ENV !== "production") {

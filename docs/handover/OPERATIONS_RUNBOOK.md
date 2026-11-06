@@ -32,6 +32,7 @@ Bốn biến bắt buộc để app khởi động (`src/lib/env.ts`) do bluepri
 | Zalo OA nền tảng | `ZALO_OA_APP_ID`, `ZALO_OA_APP_SECRET`, `ZALO_OA_REFRESH_TOKEN`, `ZALO_OA_WEBHOOK_SECRET` | không mời/nhắc chi nhánh qua Zalo |
 | Theo dõi lỗi | `SENTRY_DSN`, `SENTRY_ENVIRONMENT` — đặt ở **cả** `smeos-web` và 3 worker | không gửi lỗi lên Sentry, chỉ còn log JSON |
 | Dữ liệu mẫu | `SEED_DEV_DATA` = `"false"` trên production | để `"true"` sẽ nạp tài khoản demo có mật khẩu cố định — **không bật trên production** |
+| Cách ly CSDL | `DB_RLS_MODE` = `off` · `audit` · `enforce` — đặt ở `smeos-web` và 3 worker (blueprint: `audit`) | thiếu = `off`: không đặt ngữ cảnh tổ chức, RLS không chặn; xem §12 |
 
 Zalo OA của **từng tiệm** (chat bán hàng) không dùng biến môi trường: tiệm nhập OA ID, App ID, Secret Key, Access Token trong *Hội thoại → Kênh tích hợp*.
 
@@ -140,4 +141,30 @@ Mọi phản hồi web có header `x-request-id` (sinh ở `src/proxy.ts`, giữ
 4. Log worker: lọc log `smeos-worker-*` theo cùng mã → `job.claimed` rồi các dòng xử lý.
 
 Không dán log có dữ liệu khách vào ticket; log đã lọc khoá nhạy cảm nhưng `message` của worker có thể chứa mô tả sản phẩm.
+
+## 12. Row Level Security theo tổ chức (ADR-013, checklist ALG 1.18)
+
+Mọi bảng có `organization_id` (117 bảng, danh sách sinh từ `src/core/tenancy/generated/tenant-table-registry.ts`) có chính
+sách `tenant_isolation` (migration `20261106010000_row_level_security`). Pool kết nối của web (`src/core/tenancy/infra/rls-pool.ts`)
+và worker (`workers/shared/rls.py`) đặt `app.org_id` theo tổ chức của request/job; CSDL chỉ trả và chỉ cho ghi dòng của tổ chức đó.
+
+| Chế độ `DB_RLS_MODE` | CSDL | Ứng dụng |
+|---|---|---|
+| `off` | Chính sách cho qua mọi dòng | Không đặt ngữ cảnh |
+| `audit` (mặc định của blueprint) | Chính sách cho qua mọi dòng | Đặt ngữ cảnh; ghi log `db.rls.unscoped_query` khi request chưa gắn tổ chức chạm bảng thuộc tổ chức (`kind=pending`) hoặc truy vấn chạy ngoài request (`kind=unclassified`), kèm bảng và đường dẫn |
+| `enforce` | Truy vấn sai tổ chức trả 0 dòng; ghi sai tổ chức bị từ chối | Như `audit` |
+
+**Chuyển sang `enforce`:** khi 14 ngày liền không có log `db.rls.unscoped_query` `kind=pending` trên production. Đặt
+`DB_RLS_MODE=enforce` ở `smeos-web` và 3 worker cùng lúc (Render → Environment), deploy lại. Theo dõi lỗi 404/rỗng dữ liệu 24 giờ đầu.
+
+**Tắt khẩn cấp:** đặt lại `audit` (hoặc `off`) và deploy — không cần migration, có hiệu lực ngay khi tiến trình khởi động lại.
+
+**Tài khoản CSDL theo vai (ADR-013 D-I1):** chạy `scripts/db/create-roles.sql` một lần bằng tài khoản chủ sở hữu, đặt mật khẩu
+từng vai (`ALTER ROLE … PASSWORD`), rồi thay `DATABASE_URL` của từng dịch vụ trên Render (khoá `sync: false`):
+`smeos-web` → `smeos_app`, 3 worker → `smeos_worker`, script vận hành và bộ quét ngoài app → `smeos_system` (bỏ qua RLS),
+báo cáo/điều tra → `smeos_readonly` (luôn chặn theo tổ chức). Bước migration (pre-deploy) giữ tài khoản chủ sở hữu. Trước khi thay
+cho web, kiểm trên bản khôi phục: `npm run test:tenant` với `DATABASE_URL` của `smeos_app`.
+
+Bảng mới có `organization_id`: chạy `node scripts/gen-rls-policies.mjs` để sinh SQL chính sách vào migration của bảng đó —
+test `tests/unit/architecture/rls-policies.test.ts` đỏ nếu thiếu.
 

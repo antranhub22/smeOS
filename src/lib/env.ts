@@ -20,6 +20,9 @@ const schema = z.object({
   // Số kết nối tối đa của pool web (ADR-015 D-O5). Tổng mọi dịch vụ phải ≤ 70% giới hạn kết nối của gói
   // CSDL — bảng ngân sách ở docs/kien-truc/VAN_HANH_SU_CO_VA_SAO_LUU.md. Thiếu = 10.
   DATABASE_POOL_MAX: z.coerce.number().int().min(1).max(100).default(10),
+  // Row Level Security theo tổ chức (ADR-013, checklist ALG 1.18): off = không đặt ngữ cảnh; audit = đặt
+  // `app.org_id` cho từng kết nối và ghi log truy vấn lẽ ra bị chặn; enforce = CSDL chặn truy vấn sai tổ chức.
+  DB_RLS_MODE: z.enum(["off", "audit", "enforce"]).default("off"),
   SESSION_SECRET: z.string().min(16),
   // P7 — khoá ký token máy gọi máy (YC-T8). Tách khỏi SESSION_SECRET: xoay
   // khoá của người dùng và của engine ngoài là hai việc vận hành độc lập,

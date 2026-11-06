@@ -139,7 +139,7 @@ Toàn bộ báo cáo dựng ở module mới `src/modules/reporting` (truy vấn
 
 | STT | Việc cần làm | Khu vực mã | Khoá | Nghiệm thu và test | Công |
 |---|---|---|---|---|---:|
-| 1.18 | Bật Row Level Security cho mọi bảng có `organization_id` theo Q13; chính sách `organization_id = current_setting('app.current_org')`; client Prisma đặt `set_config` trong transaction theo `TenantContext`; vai CSDL riêng cho nền tảng/worker; đo hiệu năng trước/sau | `prisma/migrations`, `src/core/tenancy/infra/prisma.ts`, các repository dùng transaction | DB | `tt/rls.test.ts`: truy vấn thô không đặt tổ chức → 0 dòng; đặt tổ chức A không đọc được B; toàn bộ `test:tenant` và `test:platform` xanh | 10 |
+| 1.18 | Bật Row Level Security cho mọi bảng có `organization_id` (danh sách sinh từ sổ bảng-thuộc-tenant); chính sách `organization_id = app.org_id` (ADR-013 D-I2); pool kết nối web và worker đặt `app.org_id` theo `TenantContext` / dòng job; ba chế độ `off` · `audit` · `enforce`; vai CSDL riêng cho web, worker, hệ thống, chỉ đọc; đo hiệu năng trước/sau | `prisma/migrations`, `src/core/tenancy/infra/`, `workers/shared/rls.py`, `scripts/db/create-roles.sql` | DB | `tt/rls.test.ts`: thiếu ngữ cảnh → 0 dòng; tổ chức A không đọc/ghi được dòng của B; toàn bộ `test:tenant` và `test:platform` xanh | 10 |
 
 ## 5. Rủi ro và biện pháp
 
@@ -180,8 +180,8 @@ Mọi bảng mới có `organization_id` + `@@index([organization_id])` (trừ b
 | 4 | 9 | 8 |
 | 5 | 6 | 6 |
 | 6 | 8 | 8 |
-| 7 | 1 | 0 |
-| **Tổng** | **54** | **52** |
+| 7 | 1 | 1 |
+| **Tổng** | **54** | **53** |
 
 Đợt 2 hoàn thiện đủ 11/11 chức năng. Phần mở rộng còn theo dõi: link giao riêng cho shipper thuê ngoài (4.5), đưa đơn Thẻ Chào vào hàng đợi của tài khoản thợ (4.13), giá vốn theo phiên bản (2.4), ẩn mẫu bị khoá khỏi danh sách trên link theo ngày khách chọn trước (2.8). Shipper nội bộ được gắn đơn theo số điện thoại Điều phối ghi khi điều xe; Điều hành nhập số điện thoại nhân viên ở màn Thành viên.
 
@@ -192,5 +192,7 @@ Mọi bảng mới có `organization_id` + `@@index([organization_id])` (trừ b
 Đợt 5 hoàn thiện đủ 6/6 chức năng: trang Báo cáo theo kỳ `/bao-cao` (mã năng lực `R20`, Điều hành và Kế toán) với báo cáo đơn hàng và tỷ lệ trễ (6.1), doanh thu dự kiến và thực thu kèm danh sách đơn theo kỳ (6.2), sản phẩm, màu và phong cách (6.3), hiệu suất Sale/thợ/shipper (6.5), dòng tiền và đối chiếu ngân hàng (6.6); mức dùng AI theo tháng so với hạn mức gói (6.9). Không đổi lược đồ. Trên production, `/bao-cao` nằm trong nhóm khoá cùng `/so-lieu` và `/muc-dung` tới khi PO mở.
 
 Đợt 6 hoàn thiện đủ 8/8 chức năng: tiêu chí bài viết đã duyệt và cảnh báo khi mở bán (7.3), thông điệp thương hiệu và khách mục tiêu trong hồ sơ kinh doanh và ngữ cảnh AI (9.3, migration `20261105230000_business_profile_brand_audience`), ảnh ghép 3–4 mẫu kèm mã QR (5.4), công tắc giá và thông tin giảm giá (5.5), lọc màu trên mẫu vuốt (5.9), đổi một thành phần phụ kèm ảnh và sự đồng ý của khách (5.14), mã cảm ơn dùng một lần và lưu thông tin người đặt theo đồng ý của khách (5.15), luồng "Từ 1 ảnh" tạo thẻ sản phẩm, nội dung bán hàng, giá vốn đề xuất, bài đăng Facebook/Zalo và thẻ A6 (7.2). Khi cửa hàng tắt thông tin giảm giá, báo giá và đơn qua Thẻ Chào không áp ưu đãi; mã giảm giá khách tự nhập vẫn theo công tắc ô nhập mã.
+
+Đợt 7 hoàn thiện 1/1 chức năng: Row Level Security theo tổ chức (1.18) trên 117 bảng (migration `20261106010000_row_level_security`), ngữ cảnh tổ chức đặt ở pool kết nối của web và worker, ba chế độ `off` · `audit` · `enforce` (`DB_RLS_MODE`), script tách vai CSDL. Production khởi đầu ở `audit`; chuyển `enforce` theo `docs/handover/OPERATIONS_RUNBOOK.md` §12 khi 14 ngày liền không còn truy vấn chưa gắn tổ chức. Đo trên Postgres 16 (vai thường, 20.000 dòng): `audit` không tăng thời gian truy vấn; `enforce` đọc một dòng không tăng, trang 50 dòng +7% p50, đếm 10.000 dòng +0,3 ms.
 
 Khi mọi đợt hoàn tất, báo cáo ánh xạ đạt 123/123 chức năng Hoàn thiện và checklist bàn giao ALG đủ điều kiện nghiệm thu.
