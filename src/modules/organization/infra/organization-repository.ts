@@ -16,8 +16,10 @@ import { overdraftFloor } from "@/modules/usage/domain/message-overdraft"
 import { lowBalanceThreshold } from "@/modules/usage/domain/monthly-limit"
 import type { PrismaClient } from "@/generated/prisma/client"
 import { appendCreditEntry, type CreditEntryKind, type CreditEntryMeta } from "./credit-ledger"
+import { withIndustryKey } from "../domain/industry-key"
 
-function mapOrganization(org: organizations): OrganizationEntity {
+function mapOrganization(row: organizations): OrganizationEntity {
+  const org = withIndustryKey(row) // ADR-012 T-6b: settings.industry lấy từ cột industry_key
   return {
     id: org.id,
     name: org.name,

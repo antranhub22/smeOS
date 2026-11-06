@@ -44,7 +44,7 @@ describe("cách ly tenant — khoá tích hợp theo tầng (Trung tâm Tích h�
 
     const rows = await prisma.integration_governance.findMany()
     expect(rows).toHaveLength(1)
-    expect(rows[0]).toMatchObject({ tier: "CHAIN", scope_id: chainA.organizationId, mode: "FORBID" })
+    expect(rows[0]).toMatchObject({ tier: "CHAIN", scope_id: `org:${chainA.organizationId}`, mode: "FORBID" }) // địa chỉ phạm vi D-T5 (ADR-012 T-6b)
 
     const itemsB = (await readJson(await getGovernance(withSession(`${BASE}/governance`, chainB.token)))) as {
       items: Array<{ connectorKey: string; mode: string }>
