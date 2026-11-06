@@ -6,25 +6,28 @@ export function CoordinatorProgressStrip(props: { status: string; productionStat
   const steps = coordinatorProgress(props)
   return (
     <ol className="grid grid-cols-4 gap-1" aria-label="Tiến độ xưởng">
-      {steps.map((s) => (
+      {steps.map((s) => {
+        const isFinished = s.state !== "pending" && s.state !== "current"
+        return (
         <li key={s.key} className="flex flex-col items-center gap-1 text-center">
           <span
             className={`flex h-6 w-6 items-center justify-center rounded-full border text-caption font-bold ${
-              s.state === "done"
+              isFinished
                 ? "border-success bg-success text-surface"
                 : s.state === "current"
                   ? "border-primary bg-primary/10 text-primary"
                   : "border-border text-text-muted"
             }`}
           >
-            {s.state === "done" ? <Check size={14} aria-hidden="true" /> : null}
+            {isFinished ? <Check size={14} aria-hidden="true" /> : null}
           </span>
           <span className={`text-caption ${s.state === "pending" ? "text-text-muted" : "font-semibold text-text"}`}>
             {s.label}
-            <span className="sr-only">{s.state === "done" ? " (đã xong)" : s.state === "current" ? " (đang làm)" : " (chưa tới)"}</span>
+            <span className="sr-only">{isFinished ? " (đã xong)" : s.state === "current" ? " (đang làm)" : " (chưa tới)"}</span>
           </span>
         </li>
-      ))}
+        )
+      })}
     </ol>
   )
 }
