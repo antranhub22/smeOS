@@ -178,15 +178,20 @@ describe("Product Use Cases with Clean Repository", () => {
       create: vi.fn(),
       update: vi.fn(),
     }
+    // Quy tắc toàn tổ chức: người không bị giới hạn theo chi nhánh (Điều hành có F7 — ADR-012 T-5b)
+    const orgWide = { ...mockTenant, capabilities: new Set([...mockTenant.capabilities, "L6", "F7"]) }
     const res = await putPricingRules(
-      mockTenant,
+      orgWide,
       { key: "optimal_price_ratio", value: 0.6 },
       mockPricingRepo,
       mockBranchRepo
     )
     expect(res).toBeDefined()
+    // Người bị giới hạn theo chi nhánh không ghi được quy tắc toàn tổ chức → 404
+    await expect(putPricingRules(mockTenant, { key: "optimal_price_ratio", value: 0.6 }, mockPricingRepo, mockBranchRepo)).rejects.toMatchObject({ code: "NOT_FOUND" })
+    expect(mockPricingRepo.create).toHaveBeenCalledTimes(1)
     expect(mockPricingRepo.create).toHaveBeenCalledWith(
-      mockTenant,
+      orgWide,
       expect.objectContaining({ key: "optimal_price_ratio", value: 0.6 })
     )
   })

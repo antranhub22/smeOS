@@ -1,4 +1,4 @@
-import { scopedWhere, type TenantContext } from "@/core/tenancy"
+import { branchScopedProductWhere, scopedWhere, type TenantContext } from "@/core/tenancy"
 import type { DbClient } from "./db-client"
 import type { InputJsonValue } from "./entities"
 import { assertOwnedAsset, upsertMainImage } from "./product-main-image"
@@ -28,7 +28,7 @@ export async function updateExistingProductFromBatch(
   item: BatchUpdateItemInput
 ): Promise<boolean> {
   const product = await db.products.findFirst({
-    where: scopedWhere(ctx, { code: item.code }),
+    where: scopedWhere(ctx, { code: item.code, ...branchScopedProductWhere(ctx, undefined) }), // chi nhánh khác: bỏ qua (T-5b)
     select: { id: true, attributes: true },
   })
   if (!product) return false

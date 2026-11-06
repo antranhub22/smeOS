@@ -1,8 +1,8 @@
 import { randomUUID } from "node:crypto"
 
-import { conflict } from "@/core/http/errors"
+import { conflict, notFound } from "@/core/http/errors"
 import { hasCapability } from "@/core/rbac/capabilities"
-import type { TenantContext } from "@/core/tenancy"
+import { canAssignBranch, type TenantContext } from "@/core/tenancy"
 import { draftProductCode } from "@/modules/products/domain/product-code"
 import { newProposal, PROPOSAL_KEY, stripProposal } from "@/modules/products/domain/product-proposal"
 import type { IProductRepository, CreateProductInput } from "@/modules/products/domain/repositories/product-repository.interface"
@@ -21,6 +21,9 @@ export async function createProduct(
   input: CreateProductInput,
   repo: IProductRepository = getProductRepository()
 ) {
+  // Nhân viên bị giới hạn theo chi nhánh chỉ tạo mẫu cho chi nhánh mình hoặc dùng chung (ALG 9.13, ADR-012 T-5b)
+  if (!canAssignBranch(ctx, "L2", input.branchId, { allowShared: true })) throw notFound()
+
   // Mã để trống → tự sinh theo quy ước `product-code.ts`, thử lại khi trùng (tối đa 5 lần, checklist ALG 2.1)
   let code = input.code.trim()
   if (!code) {

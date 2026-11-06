@@ -4133,3 +4133,21 @@ ADR-012 D-T7, bước T-5 (quyết định D-58, D-59).
 Ca thử: `tests/tenant/branch-scope-customers.test.ts` (tự cài trigger từ tệp migration khi CSDL test dựng bằng
 `db push`), `src/core/tenancy/branch-scope-grants.test.ts`, `tests/unit/platform/set-branch-scope-wave.test.ts`.
 
+**T-5b — đợt 2 và 3 (06/11/2026, không đổi schema).** Rà mọi bảng có `branch_id`: `products`, `product_inventory`
+(theo sản phẩm), `pricing_rules`, `generation_jobs`, `orders`, `customers`, `memberships`. Đọc đã lọc theo chi nhánh
+(ALG 9.13); đợt này vá các đường GHI và đường tra theo id còn lọt (luôn bật, không cần cờ — không thêm luật hiển thị mới):
+
+- `ProductRepository.findById` lọc theo chi nhánh (chi nhánh mình hoặc dùng chung) → sửa, đổi trạng thái hàng loạt,
+  phân tích ảnh, duyệt đề xuất… trên sản phẩm chi nhánh khác đều 404.
+- Thùng rác: liệt kê, chuyển vào, khôi phục, xoá vĩnh viễn sản phẩm chỉ trong phạm vi; nhập Excel cập nhật theo mã bỏ
+  qua sản phẩm chi nhánh khác.
+- `canAssignBranch(ctx, code, branchId, { allowShared })` (`branch-scope.ts`): tạo/sửa sản phẩm chỉ gán chi nhánh mình
+  hoặc dùng chung; ghi quy tắc giá chỉ cho chi nhánh mình (không ghi quy tắc toàn tổ chức).
+- `GET /pricing-rules`: người bị giới hạn luôn nhận cấu hình hiệu lực của chi nhánh mình (bỏ qua `branch_id` khác).
+- Báo cáo đã lọc theo chi nhánh (sổ giao dịch ngân hàng không có chi nhánh — dữ liệu cấp tổ chức). Kho dữ liệu lọc theo
+  chi nhánh của người tải lên (`creatorFilterForScope`). Job AI lọc theo người tạo (thiếu G5 chỉ thấy job của mình).
+- Đợt 3: không còn bảng mang `branch_id` nào chưa lọc; giới hạn thêm (vd. tệp/ảnh theo chi nhánh) cần cột mới — ngoài
+  phạm vi T-5b.
+
+Ca thử: `tests/tenant/branch-scope-products.test.ts`.
+
