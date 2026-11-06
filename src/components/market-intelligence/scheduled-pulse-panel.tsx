@@ -101,7 +101,7 @@ export function ScheduledPulsePanel({
               </div>
               <p className="text-caption text-text-muted mt-0.5">
                 {isSaaSAdmin
-                  ? "Điều phối cron job toàn hệ thống và thiết lập lịch quét riêng cho từng cửa hàng"
+                  ? "Điều phối lịch quét tự động toàn hệ thống và đặt lịch quét riêng cho từng cửa hàng"
                   : "Mỗi sáng AI tự động quét thị trường theo danh mục hoa của tiệm và gửi bản tin tóm tắt lúc mở cửa"}
               </p>
             </div>

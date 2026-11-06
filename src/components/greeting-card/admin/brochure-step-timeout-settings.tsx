@@ -93,6 +93,7 @@ export function BrochureStepTimeoutSettings() {
                 type="number"
                 min={1}
                 max={720}
+                aria-label="Số giờ chờ khách mở link"
                 disabled={!current.autoCancelUnopened}
                 value={current.unopenedExpiryHours}
                 onChange={(e) =>
@@ -131,6 +132,7 @@ export function BrochureStepTimeoutSettings() {
                 type="number"
                 min={1}
                 max={168}
+                aria-label="Số giờ chờ khách chọn mẫu"
                 disabled={!current.autoCancelBrowsing}
                 value={current.browsingExpiryHours}
                 onChange={(e) =>
@@ -169,6 +171,7 @@ export function BrochureStepTimeoutSettings() {
                 type="number"
                 min={5}
                 max={1440}
+                aria-label="Số phút chờ khách thanh toán"
                 disabled={!current.autoCancelUnpaid}
                 value={current.unpaidExpiryMinutes}
                 onChange={(e) =>
@@ -207,6 +210,7 @@ export function BrochureStepTimeoutSettings() {
                 type="number"
                 min={5}
                 max={120}
+                aria-label="Số phút chờ khách duyệt ảnh"
                 disabled={!current.autoApprovePhotoOnTimeout}
                 value={current.photoReviewTimeoutMinutes}
                 onChange={(e) =>

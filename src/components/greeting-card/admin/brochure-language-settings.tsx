@@ -119,8 +119,8 @@ export function BrochureLanguageSettings() {
               <CheckCircle2 size={13} /> Gói Quốc Tế: Đã Kích Hoạt
             </span>
           ) : (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-caption font-bold bg-warning-bg text-warning border border-warning/20">
-              <Lock size={13} /> Gói Quốc Tế: Cần Admin SaaS Mở Khóa
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-caption font-bold bg-warning-bg text-warning-text border border-warning/20">
+              <Lock size={13} /> Gói quốc tế: cần quản trị viên smeOS mở khóa
             </span>
           )}
         </div>
@@ -160,9 +160,9 @@ export function BrochureLanguageSettings() {
                   <span className="font-medium text-text">Mặc định</span>
                 </label>
                 <Checkbox
-                  checked={true}
+                  checked={true} aria-label="Tiếng Việt luôn bật"
                   disabled={true}
-                  className="h-4 w-4 rounded border-border text-primary cursor-not-allowed opacity-70"
+                  className="h-4 w-4 rounded border-border text-primary cursor-not-allowed"
                 />
               </div>
             </div>
@@ -174,7 +174,7 @@ export function BrochureLanguageSettings() {
                   ? policy.activeLocales.includes("en")
                     ? "border-primary/40 bg-primary/5"
                     : "border-border bg-bg"
-                  : "border-dashed border-border bg-surface-muted/50 opacity-80"
+                  : "border-dashed border-border bg-surface-alt"
               }`}
             >
               <div className="flex items-center gap-3">
@@ -183,13 +183,13 @@ export function BrochureLanguageSettings() {
                   <div className="flex items-center gap-2">
                     <span className="text-body-sm font-bold text-text">English (Tiếng Anh)</span>
                     {!isEnUnlocked && (
-                      <span className="inline-flex items-center gap-1 text-caption px-1.5 py-0.2 rounded font-semibold bg-surface-alt text-text-muted border border-border">
+                      <span className="inline-flex items-center gap-1 text-caption px-1.5 py-0.2 rounded font-semibold bg-surface text-text border border-border">
                         <Lock size={10} /> Khóa
                       </span>
                     )}
                   </div>
                   <p className="text-caption text-text-muted">
-                    {isEnUnlocked ? "Cho khách nước ngoài / kiều bào" : "Liên hệ Admin SaaS để kích hoạt"}
+                    {isEnUnlocked ? "Cho khách nước ngoài / kiều bào" : "Liên hệ quản trị viên smeOS để bật"}
                   </p>
                 </div>
               </div>
@@ -205,11 +205,11 @@ export function BrochureLanguageSettings() {
                 {isEnUnlocked ? (
                   <Checkbox
                     checked={policy.activeLocales.includes("en")}
-                    onCheckedChange={() => handleToggleLocale("en")}
+                    onCheckedChange={() => handleToggleLocale("en")} aria-label="Bật tiếng Anh"
                     className="h-4 w-4 rounded border-border text-primary focus:ring-primary/20 cursor-pointer"
                   />
                 ) : policy.pendingRequest ? (
-                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-caption font-bold bg-warning-bg text-warning border border-warning/20">
+                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-caption font-bold bg-warning-bg text-warning-text border border-warning/20">
                     <Clock size={12} /> Đang chờ Admin duyệt
                   </span>
                 ) : (
@@ -244,7 +244,7 @@ export function BrochureLanguageSettings() {
             </div>
             <Checkbox
               checked={policy.enableLanguageSwitcher}
-              onCheckedChange={(checked) => setDraft({ ...policy, enableLanguageSwitcher: (checked === true) })}
+              onCheckedChange={(checked) => setDraft({ ...policy, enableLanguageSwitcher: (checked === true) })} aria-label="Hiện nút chuyển ngôn ngữ trên Thẻ chào"
               className="h-4 w-4 rounded border-border text-primary focus:ring-primary/20 cursor-pointer mt-1"
             />
           </div>

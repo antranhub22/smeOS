@@ -110,7 +110,7 @@ export function BriefTopicsView({
             type="button"
             onClick={() => setActiveCategory("ALL")}
             className={`text-[length:inherit] h-auto font-[inherit] gap-0 px-2.5 py-1 rounded-lg transition ${
-              activeCategory === "ALL" ? "bg-warning text-white hover:bg-warning" : "text-text-muted hover:text-text"
+              activeCategory === "ALL" ? "bg-warning-text text-white hover:bg-warning-text" : "text-text-muted hover:text-text"
             }`}
           >
             Tất cả ({allEntries.length})
@@ -119,7 +119,7 @@ export function BriefTopicsView({
             type="button"
             onClick={() => setActiveCategory("VIRAL")}
             className={`text-[length:inherit] h-auto font-[inherit] gap-0 px-2.5 py-1 rounded-lg transition ${
-              activeCategory === "VIRAL" ? "bg-warning text-white hover:bg-warning" : "text-text-muted hover:text-text"
+              activeCategory === "VIRAL" ? "bg-warning-text text-white hover:bg-warning-text" : "text-text-muted hover:text-text"
             }`}
           >
             ⚡ Bắt trend
@@ -128,7 +128,7 @@ export function BriefTopicsView({
             type="button"
             onClick={() => setActiveCategory("TUTORIAL")}
             className={`text-[length:inherit] h-auto font-[inherit] gap-0 px-2.5 py-1 rounded-lg transition ${
-              activeCategory === "TUTORIAL" ? "bg-warning text-white hover:bg-warning" : "text-text-muted hover:text-text"
+              activeCategory === "TUTORIAL" ? "bg-warning-text text-white hover:bg-warning-text" : "text-text-muted hover:text-text"
             }`}
           >
             🎨 Hướng dẫn
@@ -137,7 +137,7 @@ export function BriefTopicsView({
             type="button"
             onClick={() => setActiveCategory("GIFTING")}
             className={`text-[length:inherit] h-auto font-[inherit] gap-0 px-2.5 py-1 rounded-lg transition ${
-              activeCategory === "GIFTING" ? "bg-warning text-white hover:bg-warning" : "text-text-muted hover:text-text"
+              activeCategory === "GIFTING" ? "bg-warning-text text-white hover:bg-warning-text" : "text-text-muted hover:text-text"
             }`}
           >
             🎁 Quà tặng
@@ -160,17 +160,12 @@ export function BriefTopicsView({
                 {/* Khung Chứa Cả 2 Thumbnail Video Thật: TikTok & YouTube */}
                 <div className="flex items-center gap-1.5 flex-shrink-0">
                   {/* Thumbnail TikTok */}
-                  <div
-              role="button"
-              tabIndex={0}
-                    onClick={(e) => {
-                      if (evidence.tiktok.videoUrl) {
-                        e.stopPropagation();
-                        window.open(evidence.tiktok.videoUrl, "_blank", "noopener,noreferrer");
-                      }
-                    }}
+                  <a
+              href={evidence.tiktok.videoUrl || undefined}
+              target="_blank"
+              rel="noopener noreferrer"
                     title={`Mở xem dẫn chứng video thật trên TikTok: ${evidence.tiktok.title}`}
-                    className="relative h-14 w-14 sm:w-16 rounded-xl overflow-hidden flex-shrink-0 bg-text group/tiktok shadow-xs border border-border/90 cursor-pointer hover:border-primary transition-all hover:scale-[1.03]"
+                    className="relative z-10 block h-14 w-14 sm:w-16 rounded-xl overflow-hidden flex-shrink-0 bg-text group/tiktok shadow-xs border border-border/90 cursor-pointer hover:border-primary transition-all hover:scale-[1.03]"
                   >
                     <img
                       src={evidence.tiktok.thumbnailUrl}
@@ -182,16 +177,16 @@ export function BriefTopicsView({
 
                     {/* Platform Badge TikTok */}
                     <div className="absolute top-1 left-1">
-                      <span className="inline-flex items-center gap-0.5 px-1 py-0.5 rounded bg-black/85 text-primary text-caption font-black uppercase tracking-wider backdrop-blur-xs border border-primary/30">
-                        <Video className="h-2 w-2 text-primary" />
+                      <span className="inline-flex items-center gap-0.5 px-1 py-0.5 rounded bg-black/85 text-white text-caption font-black uppercase tracking-wider backdrop-blur-xs border border-primary/30">
+                        <Video className="h-2 w-2 text-white" />
                         TikTok
                       </span>
                     </div>
 
                     {/* Play icon overlay */}
                     <div className="absolute inset-0 flex items-center justify-center opacity-70 group-hover/tiktok:opacity-100 transition-opacity">
-                      <div className="h-4.5 w-4.5 rounded-full bg-black/60 text-primary flex items-center justify-center border border-primary/40">
-                        <Play className="h-2 w-2 fill-current translate-x-0.2 text-primary" />
+                      <div className="h-4.5 w-4.5 rounded-full bg-black/60 text-white flex items-center justify-center border border-primary/40">
+                        <Play className="h-2 w-2 fill-current translate-x-0.2 text-white" />
                       </div>
                     </div>
 
@@ -201,20 +196,15 @@ export function BriefTopicsView({
                         {evidence.tiktok.author}
                       </span>
                     </div>
-                  </div>
+                  </a>
 
                   {/* Thumbnail YouTube */}
-                  <div
-              role="button"
-              tabIndex={0}
-                    onClick={(e) => {
-                      if (evidence.youtube.videoUrl) {
-                        e.stopPropagation();
-                        window.open(evidence.youtube.videoUrl, "_blank", "noopener,noreferrer");
-                      }
-                    }}
+                  <a
+              href={evidence.youtube.videoUrl || undefined}
+              target="_blank"
+              rel="noopener noreferrer"
                     title={`Mở xem dẫn chứng video thật trên YouTube: ${evidence.youtube.title}`}
-                    className="relative h-14 w-18 sm:w-20 rounded-xl overflow-hidden flex-shrink-0 bg-text group/yt shadow-xs border border-border/90 cursor-pointer hover:border-danger transition-all hover:scale-[1.03]"
+                    className="relative z-10 block h-14 w-18 sm:w-20 rounded-xl overflow-hidden flex-shrink-0 bg-text group/yt shadow-xs border border-border/90 cursor-pointer hover:border-danger transition-all hover:scale-[1.03]"
                   >
                     <img
                       src={evidence.youtube.thumbnailUrl}
@@ -245,7 +235,7 @@ export function BriefTopicsView({
                         {evidence.youtube.author}
                       </span>
                     </div>
-                  </div>
+                  </a>
                 </div>
 
                 <div className="space-y-1.5 min-w-0 flex-1">
