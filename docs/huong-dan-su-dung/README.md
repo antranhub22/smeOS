@@ -93,3 +93,8 @@ Mỗi hướng dẫn của chức năng thuộc các màn trên có ghi chú **S
 ## 6. Khi cần hỗ trợ
 
 Lỗi hiện kèm **mã yêu cầu**. Gửi mã đó cho bộ phận hỗ trợ để tra nhanh.
+
+## 7. Nghiệm thu
+
+Checklist chạy một vòng nghiệm thu theo bộ hướng dẫn này: `docs/nghiem-thu/CHECKLIST_NGHIEM_THU_123_CHUC_NANG.xlsx` — chuẩn bị dữ liệu,
+10 luồng đầu–cuối theo vai, ca kiểm tra quyền và bảo mật, bảng đối chiếu đủ 123 chức năng tự tính trạng thái Đạt / Không đạt.
