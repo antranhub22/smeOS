@@ -22,7 +22,7 @@ describe("khoá phạm vi dạng D-T5", () => {
     await disconnectDatabase()
   })
 
-  it("khoá thông báo: ghi dạng mới, đọc trả dạng domain; dòng dạng cũ vẫn đọc và xoá được", async () => {
+  it("khoá thông báo: ghi dạng mới, đọc trả dạng domain; dòng chỉ có ở bảng cũ không còn được đọc (T-7b) nhưng vẫn xoá được", async () => {
     const repo = new NotificationHardLockRepository()
     await repo.setHardLock({ eventKey: "order.created", channel: "EMAIL", tier: "MOTHER", scopeId: "GLOBAL", enabled: false, lockedBy: "u" })
     await repo.setHardLock({ eventKey: "order.created", channel: "EMAIL", tier: "CHAIN", scopeId: "org-a", enabled: false, lockedBy: "u" })
@@ -34,12 +34,13 @@ describe("khoá phạm vi dạng D-T5", () => {
     await prisma.notification_hard_locks.create({
       data: { event_key: "order.paid", channel: "EMAIL", tier: "STORE", scope_id: "org-b", enabled: false, locked_by: "u" },
     })
-    expect((await repo.getHardLocks({ scopeId: "org-b" })).map((l) => l.eventKey)).toEqual(["order.paid"])
+    // ADR-012 T-7b: đọc từ governance_decisions — dòng ghi thẳng vào bảng cũ (không qua ghi kép) không có tác dụng
+    expect(await repo.getHardLocks({ scopeId: "org-b" })).toEqual([])
     await repo.deleteHardLock("order.paid", "EMAIL", "STORE", "org-b")
     expect(await prisma.notification_hard_locks.count({ where: { scope_id: "org-b" } })).toBe(0)
   })
 
-  it("quản trị tích hợp: ghi dạng mới, đọc theo phạm vi domain; ALLOW_OWN xoá cả dòng dạng cũ", async () => {
+  it("quản trị tích hợp: ghi dạng mới, đọc theo phạm vi domain; dòng chỉ có ở bảng cũ không được đọc (T-7b); ALLOW_OWN xoá cả dòng dạng cũ", async () => {
     const repo = new GovernanceRepository()
     await repo.set({ connectorKey: "zalo", tier: "MOTHER", scopeId: "GLOBAL", mode: "FORBID", updatedBy: "u" })
     await repo.set({ connectorKey: "zalo", tier: "INDUSTRY", scopeId: "industry:FLORAL", mode: "FORBID", updatedBy: "u" })
@@ -50,7 +51,7 @@ describe("khoá phạm vi dạng D-T5", () => {
     expect(rows.map((r) => r.scopeId).sort()).toEqual(["GLOBAL", "chain-1", "industry:FLORAL"])
 
     await prisma.integration_governance.create({ data: { connector_key: "sms", tier: "CHAIN", scope_id: "chain-1", mode: "FORBID", updated_by: "u" } })
-    expect((await repo.listForScopes(["chain-1"])).map((r) => r.connectorKey).sort()).toEqual(["sms", "zalo"])
+    expect((await repo.listForScopes(["chain-1"])).map((r) => r.connectorKey).sort()).toEqual(["zalo"])
     await repo.set({ connectorKey: "sms", tier: "CHAIN", scopeId: "chain-1", mode: "ALLOW_OWN", updatedBy: "u" })
     expect(await prisma.integration_governance.count({ where: { connector_key: "sms" } })).toBe(0)
   })

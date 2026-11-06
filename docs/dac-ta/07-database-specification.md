@@ -4211,8 +4211,14 @@ model governance_decisions {
 - **Chép dữ liệu.** Migration `20261106100000_governance_decisions` chép mọi quyết định đang có, cùng bộ lọc với
   `parseDecisions` (6 hệ thống, khoá `^[A-Za-z0-9_.:-]{1,96}$`, giá trị boolean); dòng phạm vi dạng cũ trùng dạng mới
   gộp về dòng cập nhật sau cùng; chốt cuối so số dòng với nguồn, lệch thì cuộn lại.
-- **Chưa đường nào đọc bảng.** T-7b chuyển `layered-resolver` (ma trận, thông báo, tích hợp) sang đọc bảng; T-7c xoá
-  nơi lưu cũ (contract, PO duyệt riêng).
+- **T-7b — đọc từ bảng (không đổi schema).** Mọi đường đọc qua `currentDecisions` (`decision-log.ts`):
+  `getOrgGovernance`, `getMotherGovernance`, `getUpperLayers`, `getPolicyGovernanceUpper` (ma trận); `getHardLocks`,
+  `getEventVisibilityMap` (thông báo); `GovernanceRepository.listForScopes` (tích hợp). Luồng bán hàng (Thẻ chào) nhận
+  quyết định riêng của tiệm qua `PolicyGovernanceUpper.own` thay cho `settings.governance_matrix`
+  (`isGovernedItemEnabled(key, own, …)`); `decisionsFromSettings` bỏ. Nơi lưu cũ vẫn được ghi kép để quay lui được.
+  Dòng ghi thẳng vào nơi lưu cũ (không qua ghi kép) không còn tác dụng.
+- **T-7c (chưa làm).** Xoá nơi lưu cũ (contract, PO duyệt riêng), sau khi T-7b đã chạy trên production.
 
 Ca thử: `tests/tenant/governance-decisions.test.ts` (sau mỗi chuỗi thao tác qua route thật, quyết định hiện hành của
-bảng khớp nơi lưu cũ), `src/core/governance/decision-record.test.ts`, `tests/tenant/tier-consistency.test.ts`.
+bảng khớp nơi lưu cũ), `tests/tenant/governance-decisions-read.test.ts` (mỗi trục: chỉ bảng mới có tác dụng),
+`src/core/governance/decision-record.test.ts`, `tests/tenant/tier-consistency.test.ts`.
