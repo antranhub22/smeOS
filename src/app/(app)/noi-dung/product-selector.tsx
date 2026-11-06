@@ -10,6 +10,7 @@ import React from "react"
 import { Badge } from "@/components/ui/badge"
 import { Card } from "@/components/ui/card"
 import { SkeletonBlock } from "@/components/ui/skeleton"
+import { Button } from "@/components/ui/button"
 
 export interface ProductOption {
   id: string
@@ -68,19 +69,11 @@ export function ProductSelector({
           {products.map((prod) => {
             const isSelected = prod.id === selectedProductId
             return (
-              <div
+              <Button variant="ghost" type="button"
                 key={prod.id}
-                role="button"
-                tabIndex={0}
                 aria-pressed={isSelected}
                 onClick={() => onSelect(prod.id)}
-                onKeyDown={(e) => {
-                  if (e.key === " " || e.key === "Enter") {
-                    e.preventDefault()
-                    onSelect(prod.id)
-                  }
-                }}
-                className={`text-left rounded-xl border p-3 transition flex items-center gap-3 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
+                className={`text-[length:inherit] h-auto justify-start font-[inherit] gap-0 text-left rounded-xl border p-3 transition flex items-center gap-3 cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary ${
                   isSelected
                     ? "border-primary bg-primary/5 ring-2 ring-primary/20 shadow-sm"
                     : "border-border hover:border-text-muted bg-bg"
@@ -112,7 +105,7 @@ export function ProductSelector({
                     {prod.flowers || sampleProductLabel}
                   </div>
                 </div>
-              </div>
+              </Button>
             )
           })}
         </div>

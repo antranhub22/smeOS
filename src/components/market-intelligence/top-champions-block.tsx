@@ -18,6 +18,7 @@ import { determineTrendLifecycle, LIFECYCLE_SPECS } from "@/modules/market-intel
 import { getDualOpportunityEvidencePreview, getOpportunityHeadline } from "./opportunity-illustration";
 import type { OpportunityItem } from "./opportunity-card";
 import { VideoPreviewModal, type VideoPreviewModalData } from "./video-preview-modal";
+import { Button } from "@/components/ui/button"
 
 interface TopChampionsBlockProps {
   opportunities: OpportunityItem[];
@@ -183,11 +184,11 @@ export function TopChampionsBlock({
                 </div>
 
                 {/* Thumbnail Ảnh Video: Click hiển thị luôn video */}
-                <button
+                <Button variant="ghost"
                   type="button"
                   onClick={handlePlayVideo}
                   aria-label={`Xem video: ${headline}`}
-                  className="group/thumb relative z-10 block aspect-[16/10] w-full overflow-hidden rounded-lg bg-text mb-2.5 cursor-pointer"
+                  className="text-[length:inherit] h-auto justify-start font-[inherit] gap-0 p-0 group/thumb relative z-10 block aspect-[16/10] w-full overflow-hidden rounded-lg bg-text mb-2.5 cursor-pointer"
                 >
                   <img
                     src={evidence.thumbnailUrl}
@@ -221,19 +222,19 @@ export function TopChampionsBlock({
                     <Play size={10} className="fill-current text-primary" />
                     <span className="truncate max-w-[130px]">{item.topicName}</span>
                   </div>
-                </button>
+                </Button>
 
                 {/* Title & Headline */}
                 <div className="space-y-1 flex-1">
                   <h3 className="font-bold text-text text-caption leading-snug line-clamp-2 group-hover:text-primary transition-colors">
                     {/* Nút chính phủ cả thẻ (after:inset-0); ô xem video nằm trên lớp phủ */}
-                    <button
+                    <Button variant="ghost"
                       type="button"
                       onClick={() => onSelectOpportunity?.(item)}
-                      className="text-left after:absolute after:inset-0 after:rounded-xl after:content-[''] focus-visible:outline-none focus-visible:after:ring-2 focus-visible:after:ring-primary"
+                      className="text-[length:inherit] h-auto justify-start font-[inherit] gap-0 p-0 hover:bg-transparent inline-block text-left after:absolute after:inset-0 after:rounded-xl after:content-[''] focus-visible:outline-none focus-visible:after:ring-2 focus-visible:after:ring-primary"
                     >
                       {headline}
-                    </button>
+                    </Button>
                   </h3>
                 </div>
 

@@ -55,6 +55,12 @@ export async function login({ seedData = true, flags = [] } = {}) {
   assertTestDatabase(DB)
   const browser = await chromium.launch(process.env.PW_CHROMIUM_PATH ? { executablePath: process.env.PW_CHROMIUM_PATH } : {})
   const page = await (await browser.newContext({ viewport: { width: 1280, height: 900 } })).newPage()
+  // UI Studio chỉ có ở dev (`(app)/layout.tsx`: withUiStudio khi NODE_ENV !== "production", ADR-011 D-UI-01).
+  // Ẩn nút nổi của nó để audit đúng màn người dùng thật thấy (nó che nút góc phải dưới ở 1280px).
+  await page.addInitScript(() => {
+    const css = 'div.fixed:has(> button[aria-label="Mở bảng điều khiển giao diện"]){display:none!important}'
+    document.addEventListener("DOMContentLoaded", () => document.head.append(Object.assign(document.createElement("style"), { textContent: css })))
+  })
   const stamp = Date.now()
   const email = `ux-audit-${stamp}@floraos.test`, password = "MatKhau-Audit-2026!"
   const r = await page.request.post(BASE + "/api/v1/auth/signup", { data: { email, password, name: "Chủ tiệm", organization_name: `Tiệm Hoa Mẫu ${stamp}` } })
@@ -71,7 +77,11 @@ export async function login({ seedData = true, flags = [] } = {}) {
 }
 
 /** Mở một đường dẫn trong app và chờ tải xong. */
-export const open = (page, path) => page.goto(BASE + path, { waitUntil: "networkidle", timeout: 240000 })
+export async function open(page, path) {
+  await page.goto(BASE + path, { waitUntil: "load", timeout: 240000 })
+  // Trang có kết nối mở lâu (thông báo thời gian thực) không bao giờ "networkidle": chờ tối đa 15 giây rồi đo.
+  await page.waitForLoadState("networkidle", { timeout: 15000 }).catch(() => undefined)
+}
 
 /**
  * Chụp + axe + soát nội dung một trạng thái ở hai khổ. `prep(page)` đưa màn về trạng thái cần xem
@@ -84,6 +94,9 @@ export async function shot(page, name, prep) {
     await page.setViewportSize({ width: w, height: h })
     try { await prep(page) } catch (e) { out.push({ line: `${name} @${w}: KHÔNG DỰNG ĐƯỢC TRẠNG THÁI — ${String(e).slice(0, 160)}`, failed: true }); continue }
     await page.waitForTimeout(1200)
+    // Về đầu trang trước khi đo: nội dung đã cuộn nằm dưới thanh đầu trang dính, axe sẽ báo nhầm
+    // "bị che" (target-size) dù bố cục không lỗi. Ảnh chụp là toàn trang nên không mất phần nào.
+    await page.evaluate(() => window.scrollTo(0, 0))
     await page.screenshot({ path: `${OUT}/${name}-${w}.png`, fullPage: true })
     const scrollWidth = await page.evaluate(() => document.documentElement.scrollWidth)
     const { violations } = await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"]).analyze()

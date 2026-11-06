@@ -1,7 +1,7 @@
 {
   "summary": {
     "app/(app)": {
-      "R18": 7,
+      "R18": 3,
       "R20": 1
     },
     "app/subcontract": {
@@ -10,47 +10,23 @@
     "components/catalog": {
       "R14": 3
     },
-    "components/chat": {
-      "R18": 1
-    },
     "components/dashboard": {
-      "R18": 2
+      "R18": 1
     },
     "components/greeting-card": {
       "R15": 1,
-      "R18": 10,
-      "R14": 6,
+      "R18": 8,
+      "R14": 4,
       "R20": 6
-    },
-    "components/landing-page": {
-      "R18": 1
     },
     "components/layout": {
       "R18": 3
     },
     "components/market-intelligence": {
-      "R18": 11
-    },
-    "components/marketing-center": {
-      "R18": 7
-    },
-    "components/orders": {
-      "R18": 1
-    },
-    "components/platform": {
-      "R1": 9
-    },
-    "components/profiles": {
-      "R18": 2
-    },
-    "components/sales": {
-      "R18": 6
-    },
-    "components/storage": {
-      "R18": 3
+      "R18": 4
     },
     "components/templates": {
-      "R18": 9,
+      "R18": 5,
       "R19": 2,
       "R16": 2
     },
@@ -58,6 +34,6 @@
       "R14": 1
     }
   },
-  "total": 95,
-  "updatedAt": "2026-11-06T03:47:20.284Z"
+  "total": 45,
+  "updatedAt": "2026-11-06T05:55:19.796Z"
 }

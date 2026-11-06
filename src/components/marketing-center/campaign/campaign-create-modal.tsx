@@ -108,19 +108,19 @@ export function CampaignCreateModal({ isOpen, onClose, onSuccess }: CampaignCrea
           <label className="block text-caption font-medium text-text mb-1">Mục tiêu chiến dịch *</label>
           <div className="grid grid-cols-2 gap-2">
             {CAMPAIGN_OBJECTIVES.map((obj) => (
-              <button
+              <Button variant="ghost"
                 type="button"
                 key={obj}
                 aria-pressed={objective === obj}
                 onClick={() => setObjective(obj)}
-                className={`cursor-pointer rounded-xl border p-3 text-left transition-colors ${
+                className={`text-[length:inherit] h-auto justify-start font-[inherit] gap-0 inline-block cursor-pointer rounded-xl border p-3 text-left transition-colors ${
                   objective === obj
                     ? "border-primary bg-primary/10 text-primary font-medium"
                     : "border-border bg-surface text-text hover:bg-surface-elevated"
                 }`}
               >
                 <div className="text-body-sm font-semibold">{CAMPAIGN_OBJECTIVE_LABELS[obj]}</div>
-              </button>
+              </Button>
             ))}
           </div>
         </div>

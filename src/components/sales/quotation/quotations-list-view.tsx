@@ -85,18 +85,18 @@ export function QuotationsListView({ onSelectQuotation }: QuotationsListViewProp
             { id: "CONVERTED", label: "Đã tạo đơn" },
             { id: "EXPIRED", label: "Hết hạn" },
           ].map((tab) => (
-            <button
+            <Button variant="ghost"
               type="button"
               key={tab.id}
               onClick={() => setStatusFilter(tab.id)}
-              className={`px-3 py-1.5 rounded-lg text-caption font-medium transition-colors cursor-pointer ${
+              className={`text-[length:inherit] h-auto justify-start font-[inherit] gap-0 inline-block px-3 py-1.5 rounded-lg text-caption font-medium transition-colors cursor-pointer ${
                 statusFilter === tab.id
                   ? "bg-primary text-white font-semibold"
                   : "bg-surface border border-border text-text hover:bg-surface-alt"
               }`}
             >
               {tab.label}
-            </button>
+            </Button>
           ))}
         </div>
 

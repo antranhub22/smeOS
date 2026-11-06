@@ -4008,8 +4008,13 @@ ADR-012 D-T2, bước T-4. Chi nhánh là đơn vị con trong một tổ chức
 - Ghi kép (`src/modules/greeting-card/infra/chain-branch-sync.ts`): nhập Excel, bật/tắt, trừ điểm, liên kết Zalo chép
   sang `branches` trong cùng giao dịch; tên/địa chỉ/trạng thái chỉ chép khi người dùng đổi chúng (nhập Excel, bật/tắt).
   Gắn chi nhánh cho thành viên ghi kèm `branch_id`; gỡ chỉ bỏ `branch_id` khi nó trỏ đúng chi nhánh vừa gỡ. Chi nhánh
-  nhận đơn theo mã → `orders.branch_id`. Đường đọc vẫn ở `chain_branches` tới **T-4b**; **T-4c** ghi thẳng `branches`,
-  xoá `chain_branches` và `memberships.chain_branch_code`.
+  nhận đơn theo mã → `orders.branch_id`. **T-4c** ghi thẳng `branches`, xoá `chain_branches` và
+  `memberships.chain_branch_code`.
+
+**T-4b** (không đổi schema): mọi đường đọc lấy từ `branches` có `accepts_dispatch` — danh sách ứng viên và tra theo mã
+(`ChainBranchRepository`), danh sách mã liên kết Zalo và tra mã liên kết, trang cửa hàng (chi nhánh của tài khoản theo
+`memberships.branch_id`; `branch_id` trỏ chi nhánh thường thì dùng `chain_branch_code` tới T-4c), danh sách chi nhánh để
+gắn cho thành viên, Thẻ Gia Công công khai (`findBranchInOrganization`: `branches.id`, rồi mã). Ghi kép giữ nguyên.
 
 Ca thử: `tests/tenant/branches-merge.test.ts`.
 
@@ -4057,3 +4062,20 @@ model custom_domains {
   @@index([organization_id])
 }
 ```
+
+## 42. Loại tổ chức chuỗi — `FLOWER_NETWORK` gộp vào `CHAIN` (06/11/2026)
+
+ADR-012 D-T11 (D-55), bước T-8. `organization_type.FLOWER_NETWORK` và `CHAIN` chỉ khác nhãn: mọi tổ chức chuỗi lưu là
+`CHAIN`. Gói dịch vụ `FLOWER_NETWORK` (`credit_plan`/`plan`, `PLAN_FEATURES`), nhóm vai giao diện "Mạng lưới" và
+`capability_scope.FLOWER_NETWORK` là khái niệm khác, không đổi.
+
+- **T-8a** — migration `20261106040000_organization_type_flower_network_to_chain` (một giao dịch, chỉ đổi dữ liệu): tổ
+  chức `FLOWER_NETWORK` → `CHAIN` (NOTICE báo số dòng), yêu cầu đổi mô hình đang chờ
+  (`settings.pending_model_change.requested_type`) → `CHAIN`. Mọi đường ghi loại tổ chức đi qua
+  `toStoredOrganizationType` (`src/modules/organization/domain/organization-type.ts`): gửi yêu cầu đổi mô hình, Admin
+  SaaS duyệt. API vẫn nhận `FLOWER_NETWORK` (yêu cầu cũ) và lưu `CHAIN`; đường đọc còn so cả hai giá trị.
+- **T-8b** (sau khi T-8a chạy trên production): bỏ giá trị enum, bỏ các nhánh so `FLOWER_NETWORK` của loại tổ chức
+  (`tier-of.ts`, điều hướng, ma trận, thông báo), API từ chối giá trị này.
+
+Ca thử: `tests/unit/organization/organization-type-flower-network.test.ts`.
+

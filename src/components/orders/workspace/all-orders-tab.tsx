@@ -7,6 +7,7 @@ import { EmptyState } from "@/components/ui/empty-state"
 import { OrderGuidanceCard } from "@/components/templates/orders/order-guidance-card"
 import { OrderCard, type OrderItemCardProps } from "@/components/orders/order-card"
 import { useI18n } from "@/lib/i18n"
+import { Button } from "@/components/ui/button"
 
 type MobileFilter = "all" | "new" | "arranging" | "delivery" | "finished"
 
@@ -95,11 +96,11 @@ export function AllOrdersTab({
           { id: "delivery" as const, label: t("orders.filters.mobile.delivering"), count: colDelivery.length },
           { id: "finished" as const, label: t("orders.filters.mobile.completed"), count: colCompleted.length },
         ].map((tab) => (
-          <button
+          <Button variant="ghost"
             type="button"
             key={tab.id}
             onClick={() => setMobileTab(tab.id)}
-            className={`cursor-pointer shrink-0 flex min-h-10 items-center gap-1.5 rounded-full px-3.5 py-1 font-semibold whitespace-nowrap transition-colors ${
+            className={`text-[length:inherit] h-auto justify-start font-[inherit] gap-0 cursor-pointer shrink-0 flex min-h-10 items-center gap-1.5 rounded-full px-3.5 py-1 font-semibold whitespace-nowrap transition-colors ${
               mobileTab === tab.id
                 ? "bg-primary text-white"
                 : "bg-surface border border-border text-text-muted hover:bg-surface-alt"
@@ -113,7 +114,7 @@ export function AllOrdersTab({
             >
               {tab.count}
             </span>
-          </button>
+          </Button>
         ))}
       </div>
 

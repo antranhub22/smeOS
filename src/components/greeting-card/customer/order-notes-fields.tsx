@@ -1,5 +1,6 @@
 "use client"
 
+import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import React from "react"
 import { ORDER_FIELD_MAX } from "@/modules/greeting-card/domain/greeting-card-rules"
@@ -121,7 +122,7 @@ export function OrderNoteField({
   return (
     <div>
       {label}
-      <input
+      <Input
         type={config.type}
         {...(kind === "mapUrl" ? { inputMode: "url" as const } : {})}
         placeholder={config.placeholder}

@@ -78,11 +78,11 @@ export function PresetSelector({
           {presetsList.map((preset) => {
             const isSelected = selectedPresetCode === preset.code
             return (
-              <button
+              <Button variant="ghost"
                 type="button"
                 key={preset.code}
                 onClick={() => onSelectPreset(preset.code)}
-                className={`p-3 rounded-xl border text-left cursor-pointer transition-all relative flex flex-col justify-between ${
+                className={`text-[length:inherit] h-auto justify-start font-[inherit] gap-0 p-3 rounded-xl border text-left cursor-pointer transition-all relative flex flex-col justify-between ${
                   isSelected
                     ? "border-primary bg-selected/20 shadow-xs"
                     : "border-border bg-surface hover:border-primary/50"
@@ -99,9 +99,9 @@ export function PresetSelector({
                       </span>
                     )}
                   </div>
-                  <p className="text-caption text-text-muted line-clamp-2 leading-relaxed">
+                  <span className="block text-caption text-text-muted line-clamp-2 leading-relaxed">
                     {preset.description}
-                  </p>
+                  </span>
                 </div>
 
                 <div className="mt-3 pt-2 border-t border-border/60 flex items-center justify-between text-caption text-text-muted">
@@ -110,7 +110,7 @@ export function PresetSelector({
                     {preset.minDpi} DPI
                   </Badge>
                 </div>
-              </button>
+              </Button>
             )
           })}
         </div>
@@ -132,11 +132,11 @@ export function PresetSelector({
           {PRINT_MATERIALS.map((mat) => {
             const isSelected = selectedMaterial === mat.id
             return (
-              <button
+              <Button variant="ghost"
                 type="button"
                 key={mat.id}
                 onClick={() => onSelectMaterial(mat.id)}
-                className={`p-3 rounded-xl border text-left cursor-pointer transition-all ${
+                className={`text-[length:inherit] h-auto justify-start font-[inherit] gap-0 inline-block p-3 rounded-xl border text-left cursor-pointer transition-all ${
                   isSelected
                     ? "border-primary bg-selected/20"
                     : "border-border bg-surface hover:border-primary/50"
@@ -148,10 +148,10 @@ export function PresetSelector({
                   </span>
                   {isSelected && <Check className="w-4 h-4 text-primary" />}
                 </div>
-                <p className="text-caption text-text-muted mt-1 leading-snug">
+                <span className="block text-caption text-text-muted mt-1 leading-snug">
                   {mat.desc}
-                </p>
-              </button>
+                </span>
+              </Button>
             )
           })}
         </div>

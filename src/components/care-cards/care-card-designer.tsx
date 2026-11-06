@@ -123,10 +123,10 @@ export function CareCardDesigner({
         {/* Inputs */}
         <div className="space-y-4 pt-2 border-t border-border/60">
           <div>
-            <label className="block text-caption font-medium text-text-muted mb-1">
+            <label htmlFor="care-card-1" className="block text-caption font-medium text-text-muted mb-1">
               Người nhận
             </label>
-            <Input
+            <Input id="care-card-1"
               type="text"
               value={content.recipientName}
               onChange={(e) => setContent({ ...content, recipientName: e.target.value })}
@@ -135,10 +135,10 @@ export function CareCardDesigner({
           </div>
 
           <div>
-            <label className="block text-caption font-medium text-text-muted mb-1">
+            <label htmlFor="care-card-2" className="block text-caption font-medium text-text-muted mb-1">
               Tiêu đề thiệp
             </label>
-            <Input
+            <Input id="care-card-2"
               type="text"
               value={content.headline}
               onChange={(e) => setContent({ ...content, headline: e.target.value })}
@@ -146,10 +146,10 @@ export function CareCardDesigner({
           </div>
 
           <div>
-            <label className="block text-caption font-medium text-text-muted mb-1">
+            <label htmlFor="care-card-3" className="block text-caption font-medium text-text-muted mb-1">
               Nội dung lời nhắn
             </label>
-            <Textarea
+            <Textarea id="care-card-3"
               rows={4}
               value={content.messageBody}
               onChange={(e) => setContent({ ...content, messageBody: e.target.value })}
@@ -159,10 +159,10 @@ export function CareCardDesigner({
           {selectedCode === "52" && (
             <div className="grid grid-cols-2 gap-3 p-3 rounded-xl bg-surface-alt border border-border">
               <div>
-                <label className="block text-caption font-medium text-text-muted mb-1">
+                <label htmlFor="care-card-4" className="block text-caption font-medium text-text-muted mb-1">
                   Mã quà tặng
                 </label>
-                <Input
+                <Input id="care-card-4"
                   type="text"
                   value={content.voucherCode || ""}
                   onChange={(e) => setContent({ ...content, voucherCode: e.target.value })}
@@ -171,10 +171,10 @@ export function CareCardDesigner({
                 />
               </div>
               <div>
-                <label className="block text-caption font-medium text-text-muted mb-1">
+                <label htmlFor="care-card-5" className="block text-caption font-medium text-text-muted mb-1">
                   Trị giá ưu đãi
                 </label>
-                <Input
+                <Input id="care-card-5"
                   type="text"
                   value={content.voucherValue || ""}
                   onChange={(e) => setContent({ ...content, voucherValue: e.target.value })}
@@ -185,10 +185,10 @@ export function CareCardDesigner({
           )}
 
           <div>
-            <label className="block text-caption font-medium text-text-muted mb-1">
+            <label htmlFor="care-card-6" className="block text-caption font-medium text-text-muted mb-1">
               Chữ ký tiệm
             </label>
-            <Input
+            <Input id="care-card-6"
               type="text"
               value={content.signature}
               onChange={(e) => setContent({ ...content, signature: e.target.value })}

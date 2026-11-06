@@ -3,9 +3,9 @@
 import { useState } from "react"
 import { Check, ImageIcon, Loader2 } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
+import type { TaskUiState } from "@/lib/ui-system/task-state"
 import { driveThumbProxySrc } from "@/modules/greeting-card/domain/drive-thumb"
 
-type State = "idle" | "busy" | "done" | "failed"
 
 /** Ảnh bất kỳ (JPG/WEBP…) → PNG: clipboard trình duyệt chỉ nhận chắc chắn ảnh PNG. */
 async function toPngBlob(src: string): Promise<Blob> {
@@ -21,16 +21,16 @@ async function toPngBlob(src: string): Promise<Blob> {
 
 /** "Copy ảnh sản phẩm": chép ảnh gốc của mẫu để Sale dán gửi Điều phối (Zalo). Trình duyệt chặn → mở ảnh ở tab mới. */
 export function CopyProductImageButton({ imageUrl, driveLink }: { imageUrl?: string | null | undefined; driveLink?: string | null | undefined }) {
-  const [state, setState] = useState<State>("idle")
+  const [state, setState] = useState<Extract<TaskUiState, "idle" | "running" | "succeeded" | "failed">>("idle")
   const src = imageUrl || driveThumbProxySrc(driveLink)
 
   const handleCopy = async () => {
     if (!src) return
-    setState("busy")
+    setState("running")
     try {
       // ClipboardItem tạo ngay trong cú bấm (Safari yêu cầu), ảnh tải sau qua Promise
       await navigator.clipboard.write([new ClipboardItem({ "image/png": toPngBlob(src) })])
-      setState("done")
+      setState("succeeded")
       setTimeout(() => setState("idle"), 2500)
     } catch {
       setState("failed")
@@ -44,12 +44,12 @@ export function CopyProductImageButton({ imageUrl, driveLink }: { imageUrl?: str
       variant="outline"
       size="sm"
       onClick={() => void handleCopy()}
-      disabled={!src || state === "busy"}
+      disabled={!src || state === "running"}
       title={src ? (state === "failed" ? "Trình duyệt không cho chép ảnh — đã mở ảnh ở tab mới để bạn lưu/chép" : "Chép ảnh gốc của mẫu để dán gửi Điều phối") : "Mẫu này chưa có ảnh"}
       className="h-8 shrink-0 gap-1.5 whitespace-nowrap text-caption font-semibold text-text"
     >
-      {state === "busy" ? <Loader2 size={13} className="animate-spin motion-reduce:animate-none" /> : state === "done" ? <Check size={13} className="text-primary" /> : <ImageIcon size={13} />}
-      <span>{state === "done" ? "Đã chép ảnh" : "Copy ảnh sản phẩm"}</span>
+      {state === "running" ? <Loader2 size={13} className="animate-spin motion-reduce:animate-none" /> : state === "succeeded" ? <Check size={13} className="text-primary" /> : <ImageIcon size={13} />}
+      <span>{state === "succeeded" ? "Đã chép ảnh" : "Copy ảnh sản phẩm"}</span>
     </Button>
   )
 }

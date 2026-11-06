@@ -18,51 +18,6 @@ interface ProductUploadCardProps {
   isAnalyzing: boolean;
 }
 
-interface DemoItem {
-  name: string;
-  url: string;
-  style: string;
-}
-
-/** Ảnh minh hoạ mẫu theo ngành — 3 mục khớp với aiConfig.sampleProductNames */
-const DEMO_IMAGES_BY_INDUSTRY: Record<string, DemoItem[]> = {
-  FLORAL: [
-    { name: "", url: "https://images.unsplash.com/photo-1561181286-d3fee7d55364?auto=format&fit=crop&w=600&q=80", style: "Romantic & Tinh tế" },
-    { name: "", url: "https://images.unsplash.com/photo-1526047932273-341f2a7631f9?auto=format&fit=crop&w=600&q=80", style: "Vintage Cổ điển" },
-    { name: "", url: "https://images.unsplash.com/photo-1582794543139-8ac9cb0f7b11?auto=format&fit=crop&w=600&q=80", style: "Sang trọng & Quý phái" },
-  ],
-  HOMESTAY: [
-    { name: "", url: "https://images.unsplash.com/photo-1631049307264-da0ec9d70304?auto=format&fit=crop&w=600&q=80", style: "Phòng Deluxe hiện đại" },
-    { name: "", url: "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?auto=format&fit=crop&w=600&q=80", style: "Căn hộ ấm cúng gia đình" },
-    { name: "", url: "https://images.unsplash.com/photo-1416949929422-a1d9c8fe84af?auto=format&fit=crop&w=600&q=80", style: "Villa sân vườn BBQ" },
-  ],
-  FASHION: [
-    { name: "", url: "https://images.unsplash.com/photo-1558618666-fcd25c85cd64?auto=format&fit=crop&w=600&q=80", style: "Thời trang đường phố" },
-    { name: "", url: "https://images.unsplash.com/photo-1469334031218-e382a71b716b?auto=format&fit=crop&w=600&q=80", style: "Phong cách tối giản" },
-    { name: "", url: "https://images.unsplash.com/photo-1434389677669-e08b4cac3105?auto=format&fit=crop&w=600&q=80", style: "Vintage Retro" },
-  ],
-  FNB: [
-    { name: "", url: "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=600&q=80", style: "Món chính đặc sắc" },
-    { name: "", url: "https://images.unsplash.com/photo-1551024506-0bccd828d307?auto=format&fit=crop&w=600&q=80", style: "Tráng miệng tinh tế" },
-    { name: "", url: "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=600&q=80", style: "Đồ uống & Coffee" },
-  ],
-  CRAFT_GIFT: [
-    { name: "", url: "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?auto=format&fit=crop&w=600&q=80", style: "Quà tặng handmade" },
-    { name: "", url: "https://images.unsplash.com/photo-1549465220-1a8b9238cd48?auto=format&fit=crop&w=600&q=80", style: "Thủ công mỹ nghệ" },
-    { name: "", url: "https://images.unsplash.com/photo-1514228742587-6b1558fcca3d?auto=format&fit=crop&w=600&q=80", style: "Hộp quà cao cấp" },
-  ],
-  RETAIL_GENERAL: [
-    { name: "", url: "https://images.unsplash.com/photo-1607082348824-0a96f2a4b9da?auto=format&fit=crop&w=600&q=80", style: "Sản phẩm bán lẻ" },
-    { name: "", url: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=600&q=80", style: "Trưng bày cửa hàng" },
-    { name: "", url: "https://images.unsplash.com/photo-1560472355-536de3962603?auto=format&fit=crop&w=600&q=80", style: "Combo sản phẩm" },
-  ],
-  SERVICES: [
-    { name: "", url: "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=600&q=80", style: "Dịch vụ chuyên nghiệp" },
-    { name: "", url: "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?auto=format&fit=crop&w=600&q=80", style: "Hỗ trợ kỹ thuật" },
-    { name: "", url: "https://images.unsplash.com/photo-1543269865-cbf427effbad?auto=format&fit=crop&w=600&q=80", style: "Tư vấn & Giải pháp" },
-  ],
-};
-
 interface CatalogProductItem {
   id: string;
   title: string;
@@ -89,19 +44,12 @@ export function ProductUploadCard({
   onAnalyze,
   isAnalyzing,
 }: ProductUploadCardProps) {
-  const { ti, industry, industryKey } = useI18n();
+  const { ti, industry } = useI18n();
   const [isCatalogModalOpen, setIsCatalogModalOpen] = useState(false);
   const [catalogProducts, setCatalogProducts] = useState<CatalogProductItem[]>([]);
   const [loadingCatalog, setLoadingCatalog] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
-
-  const demoImagesArr: DemoItem[] = DEMO_IMAGES_BY_INDUSTRY[industryKey ?? "FLORAL"] ?? DEMO_IMAGES_BY_INDUSTRY.FLORAL ?? [];
-  const demoItems: DemoItem[] = ((industry?.aiConfig?.sampleProductNames) ?? []).map((name, i) => ({
-    name,
-    url: demoImagesArr[i]?.url ?? demoImagesArr[0]?.url ?? "",
-    style: demoImagesArr[i]?.style ?? "",
-  }));
 
   // 25/09/2026: kiểm TỪNG bước (xin URL → PUT kho → đăng ký asset). Bản trước
   // nuốt mọi lỗi và vẫn chọn ảnh — Chặng 02 rồi chạy trên một asset trỏ tới tệp
@@ -158,19 +106,6 @@ export function ProductUploadCard({
     }
   };
 
-  const handleSelectDemo = async (item: DemoItem) => {
-    onUpdateProductTitle(item.name);
-    try {
-      const res = await fetch(item.url);
-      if (!res.ok) throw new Error(`Không tải được ảnh mẫu (HTTP ${res.status})`);
-      const blob = await res.blob();
-      const file = new File([blob], "demo-product.jpg", { type: blob.type || "image/jpeg" });
-      await uploadFileAsset(file, item.url, item.name);
-    } catch (e) {
-      setUploadError(e instanceof Error ? e.message : `Không tải được ảnh mẫu — hãy tải ảnh ${ti("sampleProduct")} của tiệm.`);
-    }
-  };
-
   const handleOpenCatalog = async () => {
     setIsCatalogModalOpen(true);
     if (catalogProducts.length > 0) return;
@@ -218,7 +153,7 @@ export function ProductUploadCard({
           <div>
             <h2 className="text-body-sm font-bold text-text">1. Tải ảnh & Nhận diện {ti("sampleProduct")} (Chặng 01 & 02)</h2>
             <p className="text-caption text-text-muted">
-              Tải ảnh thực tế của tiệm, chọn mẫu từ Catalog hoặc thử nghiệm nhanh mẫu tiêu biểu
+              Tải ảnh thực tế của tiệm hoặc chọn mẫu từ Catalog
             </p>
           </div>
         </div>
@@ -243,7 +178,7 @@ export function ProductUploadCard({
             type="text"
             value={productTitle}
             onChange={(e) => onUpdateProductTitle(e.target.value)}
-            placeholder={`VD: ${demoItems[0]?.name ?? ti("sampleProduct")}...`}
+            placeholder={`VD: ${industry?.aiConfig?.sampleProductNames?.[0] ?? ti("sampleProduct")}...`}
             className="h-10 w-full rounded-xl border border-border bg-bg/50 px-3 text-caption text-text outline-none focus:border-primary focus:bg-white transition"
           />
 
@@ -253,6 +188,7 @@ export function ProductUploadCard({
               type="file"
               accept="image/*"
               disabled={isUploading}
+              aria-label="Chọn ảnh sản phẩm để phân tích xu hướng"
               className="absolute inset-0 opacity-0 cursor-pointer disabled:cursor-not-allowed"
               onChange={(e) => {
                 const file = e.target.files?.[0];
@@ -276,40 +212,6 @@ export function ProductUploadCard({
             </div>
           </div>
 
-          {/* Quick Demo Selector */}
-          <div>
-            <span className="text-caption font-bold text-text-muted block mb-1.5">
-              Hoặc thử nghiệm nhanh với mẫu {ti("sampleProduct")} tiêu biểu:
-            </span>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-              {demoItems.map((flower) => {
-                const isSelected = selectedImage === flower.url;
-                return (
-                  <Button variant="outline"
-                    key={flower.name}
-                    type="button"
-                    onClick={() => handleSelectDemo(flower)}
-                    className={`h-auto justify-start flex items-center gap-2 p-2 rounded-xl border text-left text-caption transition ${
-                      isSelected
-                        ? "border-primary bg-primary-muted/60 text-primary font-semibold hover:bg-primary-muted/60"
-                        : "border-border hover:bg-bg text-text"
-                    }`}
-                  >
-                    <img
-                      src={flower.url}
-                      alt={flower.name}
-                      className="h-10 w-10 rounded-lg object-cover flex-shrink-0"
-                    />
-                    <div className="min-w-0 flex-1">
-                      <p className="text-caption font-bold truncate leading-tight">{flower.name}</p>
-                      <p className="text-caption text-text-muted truncate mt-0.5">{flower.style}</p>
-                    </div>
-                    {isSelected && <Check size={14} className="text-primary shrink-0" />}
-                  </Button>
-                );
-              })}
-            </div>
-          </div>
         </div>
 
         {/* Selected Image Preview & Trigger Button */}
@@ -380,12 +282,10 @@ export function ProductUploadCard({
               ) : (
                 <div className="grid grid-cols-2 gap-3">
                   {catalogProducts.map((p) => (
-                    <div
-              role="button"
-              tabIndex={0}
+                    <Button variant="ghost" type="button"
                       key={p.id}
                       onClick={() => void handleSelectCatalogProduct(p)}
-                      className="flex items-center gap-2.5 p-2 rounded-xl border border-border hover:border-primary hover:bg-primary-muted/40 cursor-pointer transition text-left"
+                      className="h-auto justify-start gap-2.5 p-2 rounded-xl border border-border hover:border-primary hover:bg-primary-muted/40 cursor-pointer transition text-left font-normal"
                     >
                       {p.imageUrl ? (
                         <img src={p.imageUrl} alt={p.title} className="h-12 w-12 rounded-lg object-cover flex-shrink-0" />
@@ -395,14 +295,14 @@ export function ProductUploadCard({
                         </span>
                       )}
                       <div className="min-w-0 flex-1 text-caption">
-                        <p className="font-bold text-text truncate">{p.title}</p>
+                        <span className="block font-bold text-text truncate">{p.title}</span>
                         {p.price && (
-                          <p className="text-caption font-semibold text-primary mt-0.5">
+                          <span className="block text-caption font-semibold text-primary mt-0.5">
                             {p.price.toLocaleString("vi-VN")}đ
-                          </p>
+                          </span>
                         )}
                       </div>
-                    </div>
+                    </Button>
                   ))}
                 </div>
               )}

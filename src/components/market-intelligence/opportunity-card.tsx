@@ -7,6 +7,7 @@ import { Play } from "@/components/ui/icon-set/play"
 import { determineTrendLifecycle, LIFECYCLE_SPECS } from "@/modules/market-intelligence/domain/trend-lifecycle";
 import { getOpportunityTimeframeMeta } from "@/modules/market-intelligence/domain/trend-timeframe";
 import { getOpportunityHeadline } from "./opportunity-illustration";
+import { Button } from "@/components/ui/button"
 
 export interface EvidenceReference {
   title: string;
@@ -97,13 +98,13 @@ export function OpportunityCard({ item, onSelect }: OpportunityCardProps) {
       {/* Headline cơ hội (Chống tràn từ khóa thô) */}
       <h3 className="font-bold text-text text-body-sm sm:text-body leading-snug group-hover:text-primary transition-colors line-clamp-2">
         {/* Nút chính phủ cả thẻ (after:inset-0) */}
-        <button
+        <Button variant="ghost"
           type="button"
           onClick={() => onSelect?.(item)}
-          className="text-left after:absolute after:inset-0 after:rounded-2xl after:content-[''] focus-visible:outline-none focus-visible:after:ring-2 focus-visible:after:ring-primary"
+          className="text-[length:inherit] h-auto justify-start font-[inherit] gap-0 p-0 hover:bg-transparent inline-block text-left after:absolute after:inset-0 after:rounded-2xl after:content-[''] focus-visible:outline-none focus-visible:after:ring-2 focus-visible:after:ring-primary"
         >
           {headline}
-        </button>
+        </Button>
       </h3>
 
       {/* 3 Trục Điểm số Xu hướng Tinh gọn */}

@@ -177,8 +177,8 @@ export class SubcontractOrderRepository implements ISubcontractClaimStore, IDeli
   }
 
   /**
-   * Tra cứu chi nhánh trong phạm vi tổ chức cho màn hình Thẻ Gia Công công khai.
-   * Tìm trong bảng `branches` trước, rồi đến `chain_branches` (chi nhánh chuỗi nhập qua Excel).
+   * Tra cứu chi nhánh trong phạm vi tổ chức cho màn hình Thẻ Gia Công công khai. `branchId` là `branches.id`, hoặc
+   * mã chi nhánh điều phối (`branches.code` có `accepts_dispatch`, ADR-012 T-4b) — khi đó `id` trả về là mã, như trước.
    */
   async findBranchInOrganization(branchId: string, orgId: string) {
     const dbBranch = await this.db.branches.findFirst({
@@ -187,12 +187,11 @@ export class SubcontractOrderRepository implements ISubcontractClaimStore, IDeli
     })
     if (dbBranch) return dbBranch
 
-    // Không có trong bảng branches → chi nhánh điều phối chuỗi (bảng chain_branches, nhập Excel)
-    const chainBranch = await this.db.chain_branches.findUnique({
-      where: { organization_id_branch_code: { organization_id: orgId, branch_code: branchId } },
-      select: { branch_code: true, name: true, is_active: true },
+    const dispatchBranch = await this.db.branches.findFirst({
+      where: { organization_id: orgId, code: branchId, accepts_dispatch: true },
+      select: { code: true, name: true, is_active: true },
     })
-    if (chainBranch) return { id: chainBranch.branch_code, name: chainBranch.name, is_active: chainBranch.is_active }
+    if (dispatchBranch) return { id: dispatchBranch.code, name: dispatchBranch.name, is_active: dispatchBranch.is_active }
 
     return null
   }

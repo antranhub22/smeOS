@@ -34,7 +34,7 @@ describe("chi nhánh — khu vực hành chính", () => {
       ward: "Phường Bến Nghé", district: "Quận 1", city: "TP. Hồ Chí Minh", serviceWards: ["Phường Đa Kao"],
     }])
     expect(res.status).toBe(200)
-    const row = await prisma.chain_branches.findFirstOrThrow({ where: { organization_id: a.organizationId } })
+    const row = await prisma.branches.findFirstOrThrow({ where: { organization_id: a.organizationId, accepts_dispatch: true } })
     expect(row).toMatchObject({ ward: "Phường Bến Nghé", district: "Quận 1", province: "TP. Hồ Chí Minh", latitude: null, longitude: null })
     expect(row.service_wards).toEqual(["Phường Đa Kao"])
     expect((await new ChainBranchRepository().findByCode(a.organizationId, "Q1"))?.area?.serviceWards).toEqual(["Phường Đa Kao"])

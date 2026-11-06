@@ -7,13 +7,13 @@ import { GET as craftFee } from "@/app/api/v1/greeting-card/orders/[id]/craft-fe
 import { prisma } from "@/core/tenancy/infra/prisma"
 
 import { disconnectDatabase, resetDatabase } from "../helpers/database"
-import { createTenant, makeChainOrganization, withSession, type Tenant } from "../helpers/fixtures"
+import { createTenant, makeChainOrganization, seedChainBranch, withSession, type Tenant } from "../helpers/fixtures"
 
 const BRANCH = "CN1"
 const params = <T>(v: T) => ({ params: Promise.resolve(v) })
 
 async function seedOrder(t: Tenant, dispatch: Record<string, unknown> | null = null) {
-  await prisma.chain_branches.create({ data: { organization_id: t.organizationId, branch_code: BRANCH, name: "Chi nhánh 1" } })
+  await seedChainBranch(t, BRANCH, "Chi nhánh 1")
   const order = await prisma.orders.create({
     data: {
       organization_id: t.organizationId, code: "DH261022-0201", source: "BROCHURE", status: "CONFIRMED",

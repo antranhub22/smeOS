@@ -207,13 +207,13 @@ export function BriefOccasionsView({
                 <div className="p-4 flex flex-col justify-between flex-1 space-y-3">
                   <h5 className="font-bold text-text text-body-sm leading-snug group-hover:text-accent-text transition line-clamp-2">
                     {/* Nút chính phủ cả thẻ (after:inset-0); thumbnail video nằm trên lớp phủ */}
-                    <button
+                    <Button variant="ghost"
                       type="button"
                       onClick={() => onSelectOpportunity(item)}
-                      className="text-left after:absolute after:inset-0 after:rounded-2xl after:content-[''] focus-visible:outline-none focus-visible:after:ring-2 focus-visible:after:ring-primary"
+                      className="text-[length:inherit] h-auto justify-start font-[inherit] gap-0 p-0 hover:bg-transparent inline-block text-left after:absolute after:inset-0 after:rounded-2xl after:content-[''] focus-visible:outline-none focus-visible:after:ring-2 focus-visible:after:ring-primary"
                     >
                       {headline}
-                    </button>
+                    </Button>
                   </h5>
 
                   <div className="pt-2 border-t border-border flex items-center justify-between text-caption">

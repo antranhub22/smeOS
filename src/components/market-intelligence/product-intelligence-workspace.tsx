@@ -207,7 +207,7 @@ export function ProductIntelligenceWorkspace() {
     <div className="space-y-6">
       {/* Visual Pipeline Header Indicator — 5 Chặng tuần tự */}
       <div className="rounded-2xl border border-border bg-white p-3.5 shadow-xs">
-        <div className="flex items-center justify-between text-caption font-bold overflow-x-auto gap-2">
+        <div tabIndex={0} role="group" aria-label="Các bước quét theo ảnh" className="flex items-center justify-between text-caption font-bold overflow-x-auto gap-2 focus-visible:outline-2 focus-visible:outline-primary">
           <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl transition-all ${currentStep >= 1 ? "bg-primary-muted text-primary font-extrabold" : "text-text-muted"}`}>
             <span className={`flex h-5 w-5 items-center justify-center rounded-full text-caption ${currentStep >= 2 ? "bg-success text-white" : "bg-primary text-white"}`}>
               {currentStep >= 2 ? "✓" : "1"}

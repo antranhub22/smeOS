@@ -10,6 +10,7 @@ import { Play } from "@/components/ui/icon-set/play"
 import type { OpportunityItem } from "./opportunity-card";
 import { determineTrendLifecycle, LIFECYCLE_SPECS } from "@/modules/market-intelligence/domain/trend-lifecycle";
 import { getDualOpportunityEvidencePreview, getOpportunityHeadline } from "./opportunity-illustration";
+import { Button } from "@/components/ui/button"
 
 interface BriefRisingViewProps {
   opportunities: OpportunityItem[];
@@ -174,13 +175,13 @@ export function BriefRisingView({
 
                   <h4 className="font-bold text-text text-body-sm group-hover:text-success-text transition truncate">
                     {/* Nút chính phủ cả thẻ (after:inset-0); thumbnail video nằm trên lớp phủ */}
-                    <button
+                    <Button variant="ghost"
                       type="button"
                       onClick={() => onSelectOpportunity(item)}
-                      className="block w-full truncate text-left after:absolute after:inset-0 after:rounded-2xl after:content-[''] focus-visible:outline-none focus-visible:after:ring-2 focus-visible:after:ring-primary"
+                      className="text-[length:inherit] h-auto justify-start font-[inherit] gap-0 p-0 hover:bg-transparent block w-full truncate text-left after:absolute after:inset-0 after:rounded-2xl after:content-[''] focus-visible:outline-none focus-visible:after:ring-2 focus-visible:after:ring-primary"
                     >
                       {headline}
-                    </button>
+                    </Button>
                   </h4>
                 </div>
               </div>
