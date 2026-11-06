@@ -15,6 +15,9 @@ Tất cả các thay đổi đáng chú ý của SMEOS Design System sẽ đư�
   - `text-primary` trên nền `primary/10` (163 tệp: lựa chọn đang chọn, chip, nhãn): `modern-slate` `--color-primary` `#2563EB` → `#1554E0` (3,85–4,48 → ≥ 4,54:1; chữ trắng trên nút 5,17 → 6,22:1); `--color-selected-text` theo `--color-primary` như hai preset kia.
 - `moc-lan` không đổi (đã đạt).
 
+#### Đã đổi
+- 4 lời gọi `alert()` cuối cùng (PO duyệt 06/11/2026: Catalog `catalog-link-widgets.tsx`, công cụ ảnh sản phẩm `photo-upload-panel.tsx`, `product-photo-studio-client.tsx`, `product-image-set-client.tsx`) chuyển sang `useToast()`, giữ nguyên câu chữ và luồng. Lint R13 còn 0; baseline UX lint 32 → 28. Mốc khoá Catalog cập nhật trong `catalog-freeze.test.ts`.
+
 ## [1.3.0] - 2026-11-06
 
 ### Theme theo tầng có hiệu lực; bỏ hộp thoại của trình duyệt
