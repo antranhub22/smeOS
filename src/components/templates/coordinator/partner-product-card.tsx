@@ -273,7 +273,7 @@ export function PartnerProductCard(props: PartnerProductCardProps) {
       <Card
         ref={cardRef}
         data-testid="t07-png-export-region"
-        className="rounded-2xl border-2 border-alert-200 bg-white p-0 shadow-lg overflow-hidden"
+        className="rounded-2xl border-2 border-danger-border bg-white p-0 shadow-lg overflow-hidden"
       >
         {/* Header gradient */}
         <div className="bg-gradient-to-r from-primary via-primary to-primary-dark px-5 py-3.5 flex items-center justify-between">
@@ -329,7 +329,7 @@ export function PartnerProductCard(props: PartnerProductCardProps) {
                 </div>
               )}
               {/* Badge ảnh mẫu */}
-              <div className="absolute top-1.5 left-1.5 px-2 py-0.5 rounded-md bg-alert-600/90 text-white text-caption font-black uppercase backdrop-blur-sm">
+              <div className="absolute top-1.5 left-1.5 px-2 py-0.5 rounded-md bg-danger/90 text-white text-caption font-black uppercase backdrop-blur-sm">
                 Ảnh Mẫu
               </div>
             </div>
@@ -456,10 +456,10 @@ export function PartnerProductCard(props: PartnerProductCardProps) {
             {/* Địa chỉ giao */}
             <div className="p-3 rounded-xl bg-surface-alt border border-border flex flex-col gap-1.5">
               <div className="flex items-center gap-1.5">
-                <MapPin size={13} className="text-alert-600" />
+                <MapPin size={13} className="text-danger-text" />
                 <span className="text-caption font-bold text-text-muted uppercase">Địa chỉ giao hàng</span>
                 {typeof deliveryAddress === "object" && deliveryAddress !== null && (
-                  <span className="text-caption font-bold text-alert-700 bg-alert-50 px-1.5 py-0.5 rounded border border-alert-200">
+                  <span className="text-caption font-bold text-danger-text bg-danger-bg px-1.5 py-0.5 rounded border border-danger-border">
                     Chuẩn 5 tầng
                   </span>
                 )}
@@ -571,7 +571,7 @@ export function PartnerProductCard(props: PartnerProductCardProps) {
           <Button
             size="sm"
             onClick={onAdvanceStage}
-            className="bg-alert-600 hover:bg-alert-700 text-white gap-1.5 px-4 font-bold shadow-sm"
+            className="bg-danger hover:bg-danger-text text-white gap-1.5 px-4 font-bold shadow-sm"
           >
             <span>Chuyển bước</span>
             <ArrowRight size={14} />

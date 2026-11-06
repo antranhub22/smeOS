@@ -80,7 +80,7 @@ export function LandingTemplateProcess({
             </div>
 
             <div className="space-y-1">
-              <h4 className={`text-meta font-bold text-text group-hover:text-primary transition-colors ${isLuxury ? "font-display text-body" : ""}`}>
+              <h4 className={`text-caption font-bold text-text group-hover:text-primary transition-colors ${isLuxury ? "font-display text-body-sm" : ""}`}>
                 {st.title}
               </h4>
               <p className={`text-caption leading-relaxed ${isLuxury ? "font-display text-text" : "text-text-muted"}`}>

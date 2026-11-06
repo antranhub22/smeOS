@@ -3,7 +3,7 @@ import { afterAll, beforeEach, describe, expect, it } from "vitest"
 import { GET as getHub } from "@/app/api/v1/integrations/route"
 import { GET as getGovernance, PUT as putGovernance } from "@/app/api/v1/integrations/governance/route"
 import { disconnectDatabase, prisma, resetDatabase } from "../helpers/database"
-import { createTenant, makeChainOrganization, readJson, withSession, type Tenant } from "../helpers/fixtures"
+import { createTenant, linkPartner, makeChainOrganization, readJson, withSession, type Tenant } from "../helpers/fixtures"
 
 const BASE = "http://localhost/api/v1/integrations"
 
@@ -28,12 +28,8 @@ describe("cách ly tenant — khoá tích hợp theo tầng (Trung tâm Tích h�
     storeB = await createTenant("store-beta")
     await makeChainOrganization(chainA)
     await makeChainOrganization(chainB)
-    await prisma.chain_partnerships.createMany({
-      data: [
-        { chain_org_id: chainA.organizationId, partner_org_id: storeA.organizationId, partner_code: "A1" },
-        { chain_org_id: chainB.organizationId, partner_org_id: storeB.organizationId, partner_code: "B1" },
-      ],
-    })
+    await linkPartner(chainA, storeA, { code: "A1" })
+    await linkPartner(chainB, storeB, { code: "B1" })
   })
 
   afterAll(async () => {

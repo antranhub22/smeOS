@@ -2,13 +2,11 @@
 
 import React from "react"
 import { Loader2, CheckCircle2, Circle } from "@/components/ui/icons"
-import type { TaskUiState } from "@/lib/ui-system/task-state"
 
 export interface ProcessingStep {
   id: string
   label: string
-  /** Trạng thái chuẩn (03c UX-016): chưa chạy = idle, bỏ qua = canceled. */
-  status: Extract<TaskUiState, "idle" | "running" | "succeeded" | "canceled">
+  status: "pending" | "running" | "done" | "skipped"
 }
 
 interface JourneyProcessingStateProps {
@@ -20,8 +18,8 @@ export function JourneyProcessingState({
   title = "AI đang xử lý...",
   steps,
 }: JourneyProcessingStateProps) {
-  const doneCount = steps.filter((s) => s.status === "succeeded").length
-  const total = steps.filter((s) => s.status !== "canceled").length
+  const doneCount = steps.filter((s) => s.status === "done").length
+  const total = steps.filter((s) => s.status !== "skipped").length
   const progress = total > 0 ? Math.round((doneCount / total) * 100) : 0
 
   return (
@@ -57,25 +55,25 @@ export function JourneyProcessingState({
       <div className="space-y-2">
         {steps.map((step) => (
           <div key={step.id} className="flex items-center gap-3">
-            {step.status === "succeeded" && (
+            {step.status === "done" && (
               <CheckCircle2 className="h-4.5 w-4.5 text-success shrink-0" />
             )}
             {step.status === "running" && (
               <Loader2 className="h-4.5 w-4.5 text-primary animate-spin motion-reduce:animate-none shrink-0" />
             )}
-            {step.status === "idle" && (
+            {step.status === "pending" && (
               <Circle className="h-4.5 w-4.5 text-text-muted/40 shrink-0" />
             )}
-            {step.status === "canceled" && (
+            {step.status === "skipped" && (
               <Circle className="h-4.5 w-4.5 text-text-muted/20 shrink-0" />
             )}
             <span
               className={`text-body-sm ${
-                step.status === "succeeded"
+                step.status === "done"
                   ? "text-text font-semibold"
                   : step.status === "running"
                     ? "text-primary font-bold"
-                    : step.status === "canceled"
+                    : step.status === "skipped"
                       ? "text-text-muted/40 line-through"
                       : "text-text-muted"
               }`}

@@ -27,8 +27,8 @@ export function PublicStickyActions({ shopName, phone, topic, style, entry, prod
   const call = entry.contact ? shopCallUrl(phone) : null
   if (!entry.order && !zalo) return null
 
-  const primary = "inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-full text-body font-semibold"
-  const secondary = "inline-flex min-h-11 items-center justify-center gap-2 rounded-full border px-4 text-body font-semibold"
+  const primary = "inline-flex min-h-11 flex-1 items-center justify-center gap-2 rounded-full text-body-sm font-semibold"
+  const secondary = "inline-flex min-h-11 items-center justify-center gap-2 rounded-full border px-4 text-body-sm font-semibold"
   const primaryStyle = { backgroundColor: style.tokens.ctaBg, color: style.tokens.ctaText }
   const secondaryStyle = { borderColor: style.tokens.border, color: style.tokens.textPrimary }
 

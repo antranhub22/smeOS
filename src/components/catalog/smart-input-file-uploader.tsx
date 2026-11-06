@@ -1,5 +1,7 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
+import { Checkbox } from "@/components/ui/checkbox"
 import { safeImageSrc } from "@/lib/safe-image-src"
 import React, { useRef } from "react"
 import { UploadCloud, X } from "@/components/ui/icons"
@@ -37,28 +39,22 @@ export function SmartInputFileUploader({
 
   return (
     <div className="space-y-3">
-      <div
-        role="button"
-        tabIndex={0}
+      <input
+        type="file"
+        ref={fileInputRef}
+        onChange={handleFileChange}
+        accept="image/*"
+        multiple
+        className="hidden"
+      />
+      <Button
+        type="button"
+        variant="ghost"
         onDragOver={(e) => e.preventDefault()}
         onDrop={handleDrop}
         onClick={() => fileInputRef.current?.click()}
-        onKeyDown={(e) => {
-          if (e.key === "Enter" || e.key === " ") {
-            e.preventDefault()
-            fileInputRef.current?.click()
-          }
-        }}
-        className="border-2 border-dashed border-border hover:border-primary-border rounded-xl p-6 text-center bg-surface-alt/50 hover:bg-primary-muted/20 cursor-pointer transition-colors"
+        className="h-auto w-full flex-col gap-0 font-[inherit] text-[length:inherit] border-2 border-dashed border-border hover:border-primary-border rounded-xl p-6 text-center bg-surface-alt/50 hover:bg-primary-muted/20 cursor-pointer transition-colors"
       >
-        <input
-          type="file"
-          ref={fileInputRef}
-          onChange={handleFileChange}
-          accept="image/*"
-          multiple
-          className="hidden"
-        />
         <div className="flex flex-col items-center justify-center gap-2">
           <div className="h-10 w-10 rounded-full bg-primary-muted flex items-center justify-center text-primary">
             <UploadCloud className="h-5 w-5" />
@@ -71,13 +67,12 @@ export function SmartInputFileUploader({
             Hỗ trợ PNG, JPG, WEBP. AI tự động tối ưu và căn chỉnh khổ đẹp chuẩn 2026.
           </p>
         </div>
-      </div>
+      </Button>
 
       <label className="flex items-center gap-2 text-caption text-text-muted cursor-pointer hover:text-text">
-        <input
-          type="checkbox"
+        <Checkbox
           checked={saveToStore}
-          onChange={(e) => onToggleSaveToStore(e.target.checked)}
+          onCheckedChange={(checked) => onToggleSaveToStore((checked === true))}
           className="rounded border-border text-primary focus:ring-primary"
         />
         <span>Tự động lưu các ảnh mới này vào Kho sản phẩm tiệm để tái sử dụng</span>
@@ -95,17 +90,17 @@ export function SmartInputFileUploader({
                 alt={`Ảnh sản phẩm ${idx + 1}`}
                 className="h-full w-full object-cover"
               />
-              <button
+              <Button variant="ghost"
                 type="button"
                 onClick={(e) => {
                   e.stopPropagation()
                   onRemoveImage(idx)
                 }}
-                className="absolute top-1 right-1 h-5 w-5 rounded-full bg-danger text-surface flex items-center justify-center opacity-80 hover:opacity-100 transition-opacity"
+                className="px-0 py-0 text-[length:inherit] font-[inherit] gap-0 absolute top-1 right-1 h-5 w-5 rounded-full bg-danger text-surface flex items-center justify-center opacity-80 hover:opacity-100 transition-opacity hover:bg-danger"
                 aria-label="Xóa ảnh này"
               >
                 <X className="h-3 w-3" />
-              </button>
+              </Button>
             </div>
           ))}
         </div>

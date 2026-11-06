@@ -1,5 +1,6 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
 import React, { useState } from "react"
 import { HelpCircle, ChevronDown, ChevronUp } from "@/components/ui/icons"
 import type { LandingSectionFaq } from "@/modules/content-engine/domain/landing-content-generator"
@@ -75,18 +76,18 @@ export function LandingTemplateFaq({
                   : "border-border bg-surface hover:border-border-hover"
               }`}
             >
-              <button
+              <Button variant="ghost"
                 type="button"
                 onClick={() => toggleFaq(idx)}
-                className="w-full p-4 flex items-center justify-between text-left gap-3 focus:outline-none"
+                className="h-auto text-[length:inherit] font-[inherit] w-full p-4 flex items-center justify-between text-left gap-3 focus:outline-none"
               >
-                <span className={`text-meta font-bold text-text ${isLuxury ? "font-display text-body-sm" : ""}`}>
+                <span className={`text-caption font-bold text-text ${isLuxury ? "font-display text-body-sm" : ""}`}>
                   {item.question}
                 </span>
                 <span className={`${isLuxury ? "text-primary" : "text-text-muted"} shrink-0`}>
                   {isOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
                 </span>
-              </button>
+              </Button>
 
               {isOpen && (
                 <div className={`px-4 pb-4 pt-1 text-caption leading-relaxed border-t animate-in fade-in duration-150 ${

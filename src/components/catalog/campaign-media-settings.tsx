@@ -145,7 +145,7 @@ export function CampaignMediaSettings({
             <ImageIcon size={15} />
           </div>
           <div>
-            <h4 className="text-meta font-bold text-text">Tùy biến Ảnh Banner & Video Chiến Dịch</h4>
+            <h4 className="text-caption font-bold text-text">Tùy biến Ảnh Banner & Video Chiến Dịch</h4>
             <p className="text-caption text-text-muted">Tải ảnh banner đại diện riêng hoặc chèn video TikTok / YouTube giới thiệu hoa</p>
           </div>
         </div>
@@ -154,7 +154,7 @@ export function CampaignMediaSettings({
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Cột 1: Ảnh Banner Hero */}
         <div className="space-y-3">
-          <label className="block text-meta font-bold text-text flex items-center gap-1.5">
+          <label className="block text-caption font-bold text-text flex items-center gap-1.5">
             <ImageIcon size={13} className="text-primary" />
             <span>Ảnh đầu trang</span>
           </label>
@@ -187,19 +187,19 @@ export function CampaignMediaSettings({
               </div>
             </div>
           ) : (
-            <button
+            <Button variant="ghost"
               type="button"
               onClick={() => fileInputRef.current?.click()}
-              className="w-full relative aspect-16/9 rounded-xl border-2 border-dashed border-border hover:border-primary/60 bg-surface flex flex-col items-center justify-center gap-2 cursor-pointer p-4 text-center transition-colors"
+              className="h-auto text-[length:inherit] font-[inherit] w-full relative aspect-16/9 rounded-xl border-2 border-dashed border-border hover:border-primary/60 bg-surface flex flex-col items-center justify-center gap-2 cursor-pointer p-4 text-center transition-colors hover:bg-surface"
             >
               <div className="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center">
                 <UploadCloud size={20} />
               </div>
-              <div className="text-meta font-bold text-text">
+              <div className="text-caption font-bold text-text">
                 {isUploading ? "Đang tải ảnh..." : "Bấm để tải ảnh Banner Hero"}
               </div>
               <div className="text-caption text-text-muted">Hỗ trợ JPG, PNG, WEBP tỷ lệ 16:9</div>
-            </button>
+            </Button>
           )}
 
           <input
@@ -221,13 +221,13 @@ export function CampaignMediaSettings({
               </span>
               <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
                 {selectedProducts.map((p, idx) => (
-                  <button
+                  <Button variant="outline"
                     key={p.id}
                     type="button"
                     onClick={() => {
                       if (p.imageUrl) onCustomHeroImageChange(p.imageUrl)
                     }}
-                    className={`w-11 h-11 rounded-lg overflow-hidden border shrink-0 relative transition-all ${
+                    className={`px-0 py-0 text-[length:inherit] font-[inherit] gap-0 w-11 h-11 rounded-lg overflow-hidden border shrink-0 relative transition-all ${
                       customHeroImageUrl === p.imageUrl ? "border-primary ring-2 ring-primary/30" : "border-border hover:border-primary/50"
                     }`}
                     title={p.name}
@@ -242,7 +242,7 @@ export function CampaignMediaSettings({
                         <CheckCircle2 size={14} />
                       </div>
                     )}
-                  </button>
+                  </Button>
                 ))}
               </div>
             </div>
@@ -252,47 +252,47 @@ export function CampaignMediaSettings({
         {/* Cột 2: Video Chiến Dịch (Tải file hoặc Dán Link) */}
         <div className="space-y-3">
           <div className="flex items-center justify-between">
-            <label className="text-meta font-bold text-text flex items-center gap-1.5">
+            <label className="text-caption font-bold text-text flex items-center gap-1.5">
               <Film size={13} className="text-primary" />
               <span>Video Giới Thiệu (Tải Tệp hoặc Link)</span>
             </label>
             <div className="flex items-center bg-surface p-0.5 rounded-lg border border-border text-caption">
-              <button
+              <Button variant="ghost"
                 type="button"
                 onClick={() => setVideoMode("file")}
-                className={`px-2 py-0.5 rounded-md font-bold transition-colors ${
-                  videoMode === "file" ? "bg-primary text-white shadow-xs" : "text-text-muted hover:text-text"
+                className={`h-auto text-[length:inherit] gap-0 px-2 py-0.5 rounded-md font-bold transition-colors ${
+                  videoMode === "file" ? "bg-primary text-white shadow-xs hover:bg-primary" : "text-text-muted hover:text-text"
                 }`}
               >
                 Tải tệp MP4
-              </button>
-              <button
+              </Button>
+              <Button variant="ghost"
                 type="button"
                 onClick={() => setVideoMode("link")}
-                className={`px-2 py-0.5 rounded-md font-bold transition-colors ${
-                  videoMode === "link" ? "bg-primary text-white shadow-xs" : "text-text-muted hover:text-text"
+                className={`h-auto text-[length:inherit] gap-0 px-2 py-0.5 rounded-md font-bold transition-colors ${
+                  videoMode === "link" ? "bg-primary text-white shadow-xs hover:bg-primary" : "text-text-muted hover:text-text"
                 }`}
               >
                 Dán link TikTok/YT
-              </button>
+              </Button>
             </div>
           </div>
 
           {videoMode === "file" ? (
             <div>
-              <button
+              <Button variant="ghost"
                 type="button"
                 onClick={() => videoInputRef.current?.click()}
-                className="w-full relative aspect-16/9 rounded-xl border-2 border-dashed border-border hover:border-primary/60 bg-surface flex flex-col items-center justify-center gap-2 cursor-pointer p-4 text-center transition-colors"
+                className="h-auto text-[length:inherit] font-[inherit] w-full relative aspect-16/9 rounded-xl border-2 border-dashed border-border hover:border-primary/60 bg-surface flex flex-col items-center justify-center gap-2 cursor-pointer p-4 text-center transition-colors hover:bg-surface"
               >
                 <div className="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center">
                   <Video size={20} />
                 </div>
-                <div className="text-meta font-bold text-text">
+                <div className="text-caption font-bold text-text">
                   {isVideoUploading ? "Đang tải video lên..." : "Bấm để tải tệp video từ máy"}
                 </div>
                 <div className="text-caption text-text-muted">Hỗ trợ tệp MP4, MOV, WEBM (Tối đa 100MB)</div>
-              </button>
+              </Button>
               <input
                 ref={videoInputRef}
                 type="file"
@@ -310,7 +310,7 @@ export function CampaignMediaSettings({
                 value={videoUrl}
                 onChange={(e) => onVideoUrlChange(e.target.value)}
                 placeholder="Dán link YouTube hoặc TikTok (VD: https://youtube.com/watch?v=...)"
-                className="h-9 text-meta"
+                className="h-9 text-caption"
               />
               <span className="text-caption text-text-muted mt-1 block">
                 Video từ TikTok hoặc YouTube sẽ được nhúng phát trực tiếp.

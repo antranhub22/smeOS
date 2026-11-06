@@ -1,5 +1,6 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
 import React, { useState } from "react"
 import {
   Phone,
@@ -64,15 +65,15 @@ export function ProductDetailModal({ product, shop, customer, orderSlug, startOr
           {contactEnabled && shop.phone && (
             <a
               href={`tel:${shop.phone}`}
-              className="flex min-h-11 items-center gap-1.5 rounded-xl border border-border bg-surface px-4 py-2 text-meta font-bold text-text hover:bg-surface-alt transition-colors focus-visible:outline-2 focus-visible:outline-primary"
+              className="flex min-h-11 items-center gap-1.5 rounded-xl border border-border bg-surface px-4 py-2 text-caption font-bold text-text hover:bg-surface-alt transition-colors focus-visible:outline-2 focus-visible:outline-primary"
             >
               <Phone size={15} /> Gọi Hotline
             </a>
           )}
           {orderSlug && !ordering && (
-            <button type="button" onClick={() => setOrdering(true)} className="flex min-h-11 items-center justify-center rounded-xl bg-primary px-4 py-2 text-body font-extrabold text-white hover:bg-primary-dark focus-visible:outline-2 focus-visible:outline-primary">
+            <Button variant="primary" type="button" onClick={() => setOrdering(true)} className="gap-0 flex min-h-11 items-center justify-center rounded-xl bg-primary px-4 py-2 text-body-sm font-extrabold text-white hover:bg-primary-dark focus-visible:outline-2 focus-visible:outline-primary">
               Đặt hàng
-            </button>
+            </Button>
           )}
           {contactEnabled && (
           <a
@@ -80,8 +81,8 @@ export function ProductDetailModal({ product, shop, customer, orderSlug, startOr
             target="_blank"
             rel="noopener noreferrer"
             className={orderSlug
-              ? "flex min-h-11 flex-1 items-center justify-center gap-2 rounded-xl border border-border bg-surface px-4 py-2 text-body font-bold text-text hover:bg-surface-alt transition-colors focus-visible:outline-2 focus-visible:outline-primary"
-              : "flex min-h-11 flex-1 items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2 text-body font-extrabold text-white shadow-xs hover:bg-primary-dark transition-colors focus-visible:outline-2 focus-visible:outline-primary"}
+              ? "flex min-h-11 flex-1 items-center justify-center gap-2 rounded-xl border border-border bg-surface px-4 py-2 text-body-sm font-bold text-text hover:bg-surface-alt transition-colors focus-visible:outline-2 focus-visible:outline-primary"
+              : "flex min-h-11 flex-1 items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2 text-body-sm font-extrabold text-white shadow-xs hover:bg-primary-dark transition-colors focus-visible:outline-2 focus-visible:outline-primary"}
           >
             <MessageCircle size={18} /> {orderSlug ? "Nhắn Zalo" : "Nhắn tin Zalo đặt mẫu này"}
           </a>
@@ -109,13 +110,13 @@ export function ProductDetailModal({ product, shop, customer, orderSlug, startOr
         </div>
 
         {product.description && (
-          <p className="rounded-xl border border-border bg-surface-alt p-3.5 text-body text-text-muted leading-relaxed">
+          <p className="rounded-xl border border-border bg-surface-alt p-3.5 text-body-sm text-text-muted leading-relaxed">
             {product.description}
           </p>
         )}
 
         {/* Attributes */}
-        <div className="grid grid-cols-2 gap-2.5 text-meta">
+        <div className="grid grid-cols-2 gap-2.5 text-caption">
           {product.category && (
             <div className="flex items-center gap-2 rounded-xl border border-primary/20 bg-primary/5 p-3">
               <Tag size={15} className="text-primary" />

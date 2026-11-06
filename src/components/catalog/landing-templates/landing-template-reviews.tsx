@@ -37,7 +37,7 @@ export function LandingTemplateReviews({
   return (
     <section className="space-y-4">
       <div className="flex items-center justify-between px-1">
-        <div className="flex items-center gap-1.5 text-meta font-bold text-text uppercase tracking-wider">
+        <div className="flex items-center gap-1.5 text-caption font-bold text-text uppercase tracking-wider">
           <MessageSquareQuote size={14} className={isLuxury || isRomantic ? "text-primary" : isFestive ? "text-primary" : "text-warning"} />
           <span className={isLuxury ? "font-display" : ""}>
             {"Khách hàng nói gì"}

@@ -1,5 +1,6 @@
 "use client"
 
+import { Textarea } from "@/components/ui/textarea"
 import React, { useState } from "react"
 import {
   ExternalLink,
@@ -67,11 +68,11 @@ export function PublishedCatalogLinks({ catalogLinks, onRefresh }: PublishedCata
 
   return (
     <div className="border-t border-border pt-6">
-      <h3 className="text-body font-bold text-text mb-3">
+      <h3 className="text-body-sm font-bold text-text mb-3">
         Danh sách Catalog đã xuất bản ({catalogLinks.length})
       </h3>
       {catalogLinks.length === 0 ? (
-        <div className="p-8 text-center bg-surface rounded-2xl border border-dashed text-text-muted text-meta">
+        <div className="p-8 text-center bg-surface rounded-2xl border border-dashed text-text-muted text-caption">
           Chưa có catalog nào được xuất bản. Hãy chọn sản phẩm và bấm &quot;Xuất bản Catalog mới&quot; ở trên.
         </div>
       ) : (
@@ -86,7 +87,7 @@ export function PublishedCatalogLinks({ catalogLinks, onRefresh }: PublishedCata
               >
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
-                    <span className="text-body font-bold text-text truncate">{link.name}</span>
+                    <span className="text-body-sm font-bold text-text truncate">{link.name}</span>
                     {isRevoked ? (
                       <Badge tone="danger">Đã thu hồi</Badge>
                     ) : (
@@ -96,7 +97,7 @@ export function PublishedCatalogLinks({ catalogLinks, onRefresh }: PublishedCata
                       {style === "EDITORIAL_LOOKBOOK" ? "Tạp chí ảnh" : style === "COMPACT_LIST" ? "Danh sách đặt nhanh" : "Trưng bày"}
                     </span>
                   </div>
-                  <div className="text-meta text-text-muted mt-1 flex flex-wrap items-center gap-2">
+                  <div className="text-caption text-text-muted mt-1 flex flex-wrap items-center gap-2">
                     <span>Đường dẫn: <code>/c/{link.slug}</code></span>
                     <span>· Tạo: {formatDate(link.created_at)}</span>
                     {link.description && <span>· {link.description}</span>}
@@ -106,20 +107,20 @@ export function PublishedCatalogLinks({ catalogLinks, onRefresh }: PublishedCata
                 <div className="flex items-center gap-1.5 shrink-0">
                   {!isRevoked && (
                     <>
-                      <Button variant="ghost" size="sm" onClick={() => window.open(`/c/${link.slug}`, "_blank")} className="h-8 gap-1 text-meta">
+                      <Button variant="ghost" size="sm" onClick={() => window.open(`/c/${link.slug}`, "_blank")} className="h-8 gap-1 text-caption">
                         <ExternalLink size={13} /> Xem trước
                       </Button>
-                      <Button variant="ghost" size="sm" onClick={() => setSharingLink(link)} className="h-8 gap-1 text-meta text-primary font-bold hover:bg-primary/10">
+                      <Button variant="ghost" size="sm" onClick={() => setSharingLink(link)} className="h-8 gap-1 text-caption text-primary font-bold hover:bg-primary/10">
                         <Share2 size={13} /> Chia sẻ
                       </Button>
-                      <Button variant="ghost" size="sm" onClick={() => handleCopyLink(link.slug)} className="h-8 gap-1 text-meta">
+                      <Button variant="ghost" size="sm" onClick={() => handleCopyLink(link.slug)} className="h-8 gap-1 text-caption">
                         {copiedSlug === link.slug ? (
                           <><Check size={13} className="text-success" /><span className="text-success">Đã chép</span></>
                         ) : (
                           <><Copy size={13} /> Copy link</>
                         )}
                       </Button>
-                      <Button variant="ghost" size="sm" onClick={() => handleDownloadQR(link.slug)} disabled={downloadingQR === link.slug} className="h-8 gap-1 text-meta text-primary">
+                      <Button variant="ghost" size="sm" onClick={() => handleDownloadQR(link.slug)} disabled={downloadingQR === link.slug} className="h-8 gap-1 text-caption text-primary">
                         {downloadingQR === link.slug ? "Đang tạo..." : "Tải QR"}
                       </Button>
                     </>
@@ -242,59 +243,59 @@ export function CreateCatalogModal({ selectedIds, onClose, onCreated }: CreateCa
       <div className="space-y-4">
         {/* Style Variant Selector */}
         <div>
-          <label className="block text-meta font-bold text-text mb-1.5">Phong cách trưng bày</label>
+          <label className="block text-caption font-bold text-text mb-1.5">Phong cách trưng bày</label>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
             {CATALOG_STYLE_OPTIONS.map((st) => (
-              <button
+              <Button variant="outline"
                 key={st.id}
                 type="button"
                 onClick={() => setStyleVariant(st.id)}
-                className={`p-2.5 rounded-xl border text-left transition-all flex flex-col justify-between ${
+                className={`h-auto text-[length:inherit] gap-0 p-2.5 rounded-xl border text-left transition-all flex flex-col justify-between ${
                   styleVariant === st.id
-                    ? "border-primary bg-primary-bg/25 text-primary font-bold shadow-xs"
-                    : "border-border bg-surface text-text hover:border-border-hover"
+                    ? "border-primary bg-primary-bg/25 text-primary font-bold shadow-xs hover:bg-primary-bg/25"
+                    : "border-border bg-surface text-text hover:border-border-hover hover:bg-surface"
                 }`}
               >
                 <div className="flex items-center gap-1.5">
                   {st.id === "MODERN_SHOWROOM" && <LayoutGrid size={14} />}
                   {st.id === "EDITORIAL_LOOKBOOK" && <BookOpen size={14} />}
                   {st.id === "COMPACT_LIST" && <List size={14} />}
-                  <span className="text-meta">{st.name}</span>
+                  <span className="text-caption">{st.name}</span>
                 </div>
                 <div className="text-caption text-text-muted mt-1 font-normal line-clamp-2">{st.desc}</div>
-              </button>
+              </Button>
             ))}
           </div>
         </div>
 
         <div>
-          <label className="block text-meta font-semibold text-text mb-1.5">Tên Catalog / Bộ sưu tập *</label>
+          <label className="block text-caption font-semibold text-text mb-1.5">Tên Catalog / Bộ sưu tập *</label>
           <Input required placeholder={`VD: ${ti.sampleProduct} Tuyển Chọn 2026`} value={name} onChange={(e) => setName(e.target.value)} />
         </div>
 
         <div>
           <div className="flex items-center justify-between mb-1.5">
-            <label className="text-meta font-semibold text-text">Mô tả / Lời tựa giới thiệu</label>
-            <button
+            <label className="text-caption font-semibold text-text">Mô tả / Lời tựa giới thiệu</label>
+            <Button variant="ghost"
               type="button"
               onClick={handleAiWriteIntro}
               disabled={isAiGenerating || !name.trim()}
-              className="text-caption text-primary font-bold hover:underline flex items-center gap-1 disabled:opacity-50"
+              className="h-auto px-0 py-0 text-caption text-primary font-bold hover:underline flex items-center gap-1 disabled:opacity-50"
             >
               <Wand2 size={12} />
               <span>{isAiGenerating ? "Đang viết..." : "✨ AI viết tự động"}</span>
-            </button>
+            </Button>
           </div>
-          <textarea
+          <Textarea
             rows={3}
             placeholder={`Lời tựa mở đầu cho bộ sưu tập ${ti.sampleProduct}...`}
             value={desc}
             onChange={(e) => setDesc(e.target.value)}
-            className="w-full rounded-xl border border-border p-3 text-meta focus:outline-none focus:ring-1 focus:ring-primary"
+            className="w-full rounded-xl border border-border p-3 text-caption focus:outline-none focus:ring-1 focus:ring-primary"
           />
         </div>
 
-        <div className="p-3 rounded-xl bg-surface border text-meta text-text-muted">
+        <div className="p-3 rounded-xl bg-surface border text-caption text-text-muted">
           {selectedIds.length > 0
             ? <span>Đang chọn <strong>{selectedIds.length}</strong> {ti.sampleProduct} cho catalog này.</span>
             : <span>Tất cả {ti.sampleProduct} đang hoạt động sẽ tự động hiển thị.</span>}

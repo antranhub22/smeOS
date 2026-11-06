@@ -1,4 +1,5 @@
 import { AppError, unauthenticated } from "@/core/http/errors"
+import { asSystemDb, bindTenantDb } from "@/core/tenancy/db-context"
 import type { TenantContext } from "@/core/tenancy"
 import { withoutBoundaryCapabilities } from "@/modules/integration/domain/boundary-capabilities"
 import {
@@ -52,6 +53,13 @@ export async function requireIntegrationContext(
   request: Request,
   tokenRepo: IIntegrationTokenRepository = getIntegrationTokenRepository()
 ): Promise<IntegrationContext> {
+  // Tra khoá tích hợp chưa biết tổ chức → quyền hệ thống; xong thì gắn tổ chức của khoá (RLS, checklist ALG 1.18)
+  const resolved = await asSystemDb("integration-auth", () => resolveIntegration(request, tokenRepo))
+  bindTenantDb(resolved.organizationId)
+  return resolved
+}
+
+async function resolveIntegration(request: Request, tokenRepo: IIntegrationTokenRepository): Promise<IntegrationContext> {
   const credential = readIntegrationCredential(request.headers)
   if (!credential) throw unauthenticated()
 

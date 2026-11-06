@@ -1,5 +1,6 @@
 "use client"
 
+import { Checkbox } from "@/components/ui/checkbox"
 import React from "react"
 import { Gift, Camera, Clock, CheckCircle2, ArrowRight, Loader2 } from "@/components/ui/icons"
 import { Button } from "@/components/ui/button"
@@ -66,7 +67,7 @@ export function LandingTemplateLead({
     ? "bg-text text-surface hover:bg-text/90 rounded-lg font-bold px-5"
     : "bg-primary hover:bg-primary-dark text-primary-foreground font-semibold px-4"
 
-  const inputStyle = `h-10 text-meta bg-surface text-text border-border ${isLuxury ? "rounded-full px-4" : isModern ? "rounded-lg" : "rounded-xl"}`
+  const inputStyle = `h-10 text-caption bg-surface text-text border-border ${isLuxury ? "rounded-full px-4" : isModern ? "rounded-lg" : "rounded-xl"}`
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -90,7 +91,7 @@ export function LandingTemplateLead({
 
       {submitted ? (
         <div className="p-4 rounded-2xl bg-success/10 border border-success/30 text-success text-center space-y-1 animate-in fade-in">
-          <div className="flex items-center justify-center gap-1.5 text-meta font-bold">
+          <div className="flex items-center justify-center gap-1.5 text-caption font-bold">
             <CheckCircle2 size={16} />
             <span>Cửa hàng đã nhận thông tin của bạn!</span>
           </div>
@@ -125,7 +126,7 @@ export function LandingTemplateLead({
                 type="submit"
                 size="sm"
                 disabled={submitting}
-                className={`h-10 text-meta shrink-0 flex items-center justify-center gap-1.5 shadow-xs ${buttonStyle}`}
+                className={`h-10 text-caption shrink-0 flex items-center justify-center gap-1.5 shadow-xs ${buttonStyle}`}
               >
                 {submitting ? (
                   <Loader2 size={13} className="animate-spin motion-reduce:animate-none" />
@@ -138,7 +139,7 @@ export function LandingTemplateLead({
               </Button>
             </div>
             {/* Ô bẫy: ẩn với người thật, máy tự điền sẽ bị từ chối */}
-            <input
+            <Input
               type="text"
               name="website"
               tabIndex={-1}
@@ -149,11 +150,10 @@ export function LandingTemplateLead({
               onChange={(e) => update("website", e.target.value)}
             />
             <label className="flex items-start gap-2 text-left text-caption text-text-muted">
-              <input
-                type="checkbox"
+              <Checkbox
                 className="mt-0.5 accent-primary"
                 checked={fields.consent}
-                onChange={(e) => update("consent", e.target.checked)}
+                onCheckedChange={(checked) => update("consent", (checked === true))}
                 required
                 disabled={submitting}
               />

@@ -10,7 +10,7 @@ import { LinkExistingStoreUseCase } from "@/modules/chain-partnership/use-cases/
 const linkSchema = z.object({
   identifier: z.string().min(2, "Vui lòng nhập Email đại diện hoặc Mã/Slug của cửa hàng"),
   partnerCode: z.string().min(2, "Mã đối tác phải từ 2 ký tự"),
-  partnershipType: z.enum(["SUBCONTRACTOR", "FRANCHISE", "BRANCH"]).optional(),
+  partnershipType: z.enum(["SUBCONTRACTOR", "FRANCHISE"]).optional(), // BRANCH bỏ — ADR-012 D-T2
   commissionRate: z.number().optional(),
   capacityDaily: z.number().optional(),
 })

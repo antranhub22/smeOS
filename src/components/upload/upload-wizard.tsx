@@ -20,6 +20,7 @@
 // biến môi trường DATABASE_URL và OPENAI_API_KEY) — màn này chỉ tạo và theo
 // dõi đúng job thật, không tự giả lập kết quả.
 
+import { Input } from "@/components/ui/input"
 import { useEffect, useRef, useState } from "react"
 import { useRouter } from "next/navigation"
 import { Camera, X, Check, Pencil, Info, AlertTriangle, RotateCcw } from "@/components/ui/icons"
@@ -27,6 +28,7 @@ import { FlowTopBar } from "@/components/layout/flow-top-bar"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { useSession } from "@/lib/session"
+import { type AnalysisRow, asRecord, asArray, asText, asNumber, effectiveAnalysis, bomOf, SECTION_LABELS, rowLabel, rowColor, rowQuantity, rowConfidence, rowRawLabel, colorSwatch } from "./upload-wizard-helpers"
 import { cn } from "@/lib/utils"
 import { jobStorageKeyFor, legacyJobStorageKeyFor } from "./job-storage-key"
 
@@ -57,15 +59,6 @@ type UploadedPhoto = Photo & { assetId: string }
 type JobStatus = "PENDING" | "PROCESSING" | "COMPLETED" | "FAILED" | "CANCELLED"
 type JobState = { id: string; status: JobStatus; stage: string | null; result: string | null; error: string | null }
 
-type AnalysisRow = {
-  id: string
-  asset_id: string
-  job_id: string
-  raw: Record<string, unknown>
-  edited: Record<string, unknown> | null
-  approval_state: "PENDING" | "APPROVED" | "REJECTED"
-}
-
 type RunPhase = "uploading" | "queuing" | "waiting" | "processing"
 const RUN_PHASES: { key: RunPhase; label: string }[] = [
   { key: "uploading", label: "Tải ảnh lên" },
@@ -73,25 +66,6 @@ const RUN_PHASES: { key: RunPhase; label: string }[] = [
   { key: "waiting", label: "Xếp hàng chờ xử lý" },
   { key: "processing", label: "Phân tích ảnh (AI)" },
 ]
-
-function asRecord(value: unknown): Record<string, unknown> {
-  return typeof value === "object" && value !== null ? (value as Record<string, unknown>) : {}
-}
-function asArray(value: unknown): Record<string, unknown>[] {
-  return Array.isArray(value) ? value.map(asRecord) : []
-}
-function asText(value: unknown): string | null {
-  return typeof value === "string" && value.length > 0 ? value : null
-}
-function asNumber(value: unknown): number | null {
-  return typeof value === "number" ? value : null
-}
-function effectiveAnalysis(row: AnalysisRow): Record<string, unknown> {
-  return row.edited ?? row.raw
-}
-function bomOf(row: AnalysisRow): Record<string, unknown> {
-  return asRecord(effectiveAnalysis(row).bom)
-}
 
 async function extractError(res: Response, fallback: string): Promise<string> {
   const data = (await res.json().catch(() => null)) as { error?: { message?: string } } | null
@@ -632,19 +606,19 @@ function UploadStep({
             e.target.value = ""
           }}
         />
-        <button
+        <Button variant="ghost"
           type="button"
           onClick={onPick}
-          className="flex flex-col items-center gap-3 rounded-2xl border-2 border-dashed border-border bg-surface px-5 py-8"
+          className="h-auto text-[length:inherit] font-[inherit] flex flex-col items-center gap-3 rounded-2xl border-2 border-dashed border-border bg-surface px-5 py-8 hover:bg-surface"
         >
           <div className="flex h-14 w-14 items-center justify-center rounded-full bg-surface-alt">
             <Camera size={26} strokeWidth={1.8} className="text-primary" />
           </div>
           <div className="text-title-sm font-bold">Chụp ảnh hoặc chọn từ thư viện</div>
-          <div className="text-center text-xs text-text-muted">
+          <div className="text-center text-caption text-text-muted">
             Nhiều ảnh cùng lúc được — mỗi ảnh một lượt nhận diện. Tối đa {MAX_PHOTOS} ảnh, jpg/png/webp/gif.
           </div>
-        </button>
+        </Button>
 
         {note && (
           <div className="flex items-start gap-1.5 rounded-lg bg-warning-bg px-2.5 py-2 text-caption text-warning">
@@ -661,14 +635,14 @@ function UploadStep({
                 <div key={p.id} className="relative aspect-square overflow-hidden rounded-xl bg-surface-alt">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img src={p.previewUrl} alt={p.name} className="h-full w-full object-cover" />
-                  <button
+                  <Button variant="ghost"
                     type="button"
                     onClick={() => onRemove(p.id)}
-                    className="absolute right-0.5 top-0.5 flex h-9 w-9 items-center justify-center rounded-full bg-black/60"
+                    className="px-0 py-0 text-[length:inherit] font-[inherit] gap-0 absolute right-0.5 top-0.5 flex h-9 w-9 items-center justify-center rounded-full bg-black/60 hover:bg-black/60"
                     aria-label="Bỏ ảnh"
                   >
                     <X size={13} strokeWidth={2.6} color="white" />
-                  </button>
+                  </Button>
                 </div>
               ))}
             </div>
@@ -716,21 +690,21 @@ function ConfirmStep({
                 <img src={p.previewUrl} alt={p.name} className="h-full w-full object-cover" />
               </div>
               <div className="min-w-0 flex-1">
-                <input
+                <Input
                   value={p.name}
                   onChange={(e) => onRename(p.id, e.target.value)}
                   className="w-full border-none bg-transparent text-body font-semibold text-text outline-none"
                 />
                 <div className="mt-0.5 truncate text-caption text-text-muted">{p.file.name}</div>
               </div>
-              <button
+              <Button variant="ghost"
                 type="button"
                 onClick={() => onRemove(p.id)}
-                className="flex h-9 w-9 items-center justify-center rounded-full text-text-muted hover:bg-surface-alt"
+                className="px-0 py-0 text-[length:inherit] font-[inherit] gap-0 flex h-9 w-9 items-center justify-center rounded-full text-text-muted hover:bg-surface-alt"
                 aria-label="Bỏ ảnh"
               >
                 <X size={17} strokeWidth={2} />
-              </button>
+              </Button>
             </Card>
           ))}
           {photos.length === 0 && (
@@ -830,7 +804,7 @@ function RunningStep({
                 <div className={cn("min-h-[22px] w-0.5 flex-1", isDone ? "bg-secondary" : "bg-border")} />
               </div>
               <div className="pb-[22px]">
-                <div className={cn("text-sm", i > phaseIndex ? "text-text-muted" : "font-bold")}>{p.label}</div>
+                <div className={cn("text-body-sm", i > phaseIndex ? "text-text-muted" : "font-bold")}>{p.label}</div>
                 {isActive && p.key === "waiting" && job?.status === "PENDING" && (
                   <div className="mt-0.5 text-caption text-text-muted">Chờ tới lượt trong hàng đợi worker...</div>
                 )}
@@ -848,7 +822,7 @@ function RunningStep({
       {choLau && (
         <div className="flex items-start gap-2.5 rounded-xl bg-warning-bg p-3.5">
           <AlertTriangle size={16} strokeWidth={1.8} className="mt-0.5 flex-shrink-0 text-warning" />
-          <div className="text-xs leading-relaxed text-warning">
+          <div className="text-caption leading-relaxed text-warning">
             Lượt chạy đã xếp hàng hơn hai phút mà chưa có tiến trình nào nhận. Thường là tiến trình
             phân tích ảnh chưa được bật. Báo người vận hành, hoặc huỷ lượt này rồi chạy lại sau.
           </div>
@@ -857,7 +831,7 @@ function RunningStep({
 
       <div className="flex items-start gap-2.5 rounded-xl bg-surface-alt p-3.5">
         <Info size={16} strokeWidth={1.8} className="mt-0.5 flex-shrink-0 text-primary" />
-        <div className="text-xs leading-relaxed text-text-muted">
+        <div className="text-caption leading-relaxed text-text-muted">
           Job chạy ở máy chủ và không mất khi rời màn hình — mở lại ở mục Lượt chạy để xem kết quả.
         </div>
       </div>
@@ -869,39 +843,6 @@ function RunningStep({
       )}
     </div>
   )
-}
-
-const SECTION_LABELS: Record<string, string> = {
-  flowers: "Hoa",
-  foliage: "Lá",
-  accessories: "Phụ kiện",
-  wrapping: "Bao bì / Gói",
-}
-
-function rowLabel(section: string, row: Record<string, unknown>): string {
-  if (section === "wrapping") {
-    const layer = asText(row.layer) ?? "Lớp gói"
-    const material = asText(row.material)
-    return material ? `${layer} · ${material}` : layer
-  }
-  return asText(row.name) ?? asText(row.nhom_hoa) ?? "Chưa xác định"
-}
-function rowColor(row: Record<string, unknown>): string | null {
-  return asText(row.mau) ?? asText(row.color)
-}
-function rowQuantity(row: Record<string, unknown>): number | null {
-  return asNumber(row.quantity)
-}
-function rowConfidence(row: Record<string, unknown>): number | null {
-  return asNumber(row.confidence)
-}
-// Nhãn thô gốc tiếng Anh của mô hình — luôn có với hoa/lá (bộ `local_cv`,
-// 09/11), không có với các bộ máy khác hay các khoang khác. Hiển thị phụ,
-// mờ, dưới tên chính — hữu ích nhất khi tên chính là "Chưa xác định được
-// tên giống" (không khớp được danh mục), để người soát còn manh mối sửa
-// tay thay vì chỉ thấy một dòng "chưa biết".
-function rowRawLabel(row: Record<string, unknown>): string | null {
-  return asText(row.dau_hieu_nhan_dang)
 }
 
 function ResultStep({
@@ -1025,22 +966,22 @@ function ResultStep({
             Ảnh {index + 1}/{analyses.length}
           </span>
           <div className="flex gap-2">
-            <button
+            <Button variant="ghost"
               type="button"
               disabled={index === 0}
               onClick={() => setIndex(index - 1)}
-              className="rounded-full px-2.5 py-1 font-bold text-primary disabled:opacity-30"
+              className="h-auto text-[length:inherit] gap-0 rounded-full px-2.5 py-1 font-bold text-primary disabled:opacity-30"
             >
               ← Trước
-            </button>
-            <button
+            </Button>
+            <Button variant="ghost"
               type="button"
               disabled={index === analyses.length - 1}
               onClick={() => setIndex(index + 1)}
-              className="rounded-full px-2.5 py-1 font-bold text-primary disabled:opacity-30"
+              className="h-auto text-[length:inherit] gap-0 rounded-full px-2.5 py-1 font-bold text-primary disabled:opacity-30"
             >
               Sau →
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -1127,7 +1068,7 @@ function ResultStep({
                         <div className="text-body font-bold">× {qty}</div>
                       )}
                       {canEdit && !isEditingRow && (
-                        <button
+                        <Button variant="ghost"
                           type="button"
                           onClick={() => {
                             setEditing({ section, rowIndex })
@@ -1135,17 +1076,17 @@ function ResultStep({
                             setEditValue(qty != null ? String(qty) : "")
                             setRowError(null)
                           }}
-                          className="flex h-9 w-9 items-center justify-center rounded-full text-text-muted hover:bg-surface-alt"
+                          className="px-0 py-0 text-[length:inherit] font-[inherit] gap-0 flex h-9 w-9 items-center justify-center rounded-full text-text-muted hover:bg-surface-alt"
                           aria-label="Sửa cấu phần"
                         >
                           <Pencil size={16} strokeWidth={1.8} />
-                        </button>
+                        </Button>
                       )}
                     </div>
 
                     {isEditingRow && (
                       <div className="flex items-center gap-2 rounded-xl bg-surface-alt p-2.5">
-                        <input
+                        <Input
                           value={editName}
                           onChange={(e) => setEditName(e.target.value)}
                           placeholder="Tên cấu phần"
@@ -1153,7 +1094,7 @@ function ResultStep({
                           className="h-[34px] min-w-0 flex-1 rounded-lg border-[1.5px] border-primary bg-surface px-2 text-body outline-none"
                         />
                         {qty != null && (
-                          <input
+                          <Input
                             value={editValue}
                             onChange={(e) => setEditValue(e.target.value)}
                             inputMode="numeric"
@@ -1161,27 +1102,27 @@ function ResultStep({
                             className="h-[34px] w-14 flex-shrink-0 rounded-lg border-[1.5px] border-primary bg-surface text-center text-body font-bold outline-none"
                           />
                         )}
-                        <button
+                        <Button variant="ghost"
                           type="button"
                           disabled={busy}
                           onClick={() => handleSaveEdit(section)}
-                          className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full text-secondary-text hover:bg-surface disabled:opacity-40"
+                          className="px-0 py-0 text-[length:inherit] font-[inherit] gap-0 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full text-secondary-text hover:bg-surface disabled:opacity-40"
                           aria-label="Lưu"
                         >
                           <Check size={17} strokeWidth={2.4} />
-                        </button>
-                        <button
+                        </Button>
+                        <Button variant="ghost"
                           type="button"
                           disabled={busy}
                           onClick={() => {
                             setEditing(null)
                             setRowError(null)
                           }}
-                          className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full text-text-muted hover:bg-surface disabled:opacity-40"
+                          className="px-0 py-0 text-[length:inherit] font-[inherit] gap-0 flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-full text-text-muted hover:bg-surface disabled:opacity-40"
                           aria-label="Bỏ sửa"
                         >
                           <X size={17} strokeWidth={2.2} />
-                        </button>
+                        </Button>
                       </div>
                     )}
                   </div>
@@ -1315,19 +1256,19 @@ function XacNhanDialog({
       aria-modal="true"
       aria-label="Xác nhận kết quả phân tích"
     >
-      <button type="button" className="flex-1" aria-label="Đóng" onClick={onDong} />
+      <Button variant="ghost" type="button" className="h-auto px-0 py-0 text-[length:inherit] font-[inherit] gap-0 flex-1" aria-label="Đóng" onClick={onDong} />
 
       <div className="flex max-h-[86%] flex-col rounded-t-2xl bg-surface">
         <div className="flex items-center justify-between border-b border-border px-5 py-3.5">
           <div className="text-title-sm font-extrabold">Xác nhận trước khi ghi</div>
-          <button
+          <Button variant="ghost"
             type="button"
             onClick={onDong}
-            className="flex h-9 w-9 items-center justify-center rounded-full text-text-muted hover:bg-surface-alt"
+            className="px-0 py-0 text-[length:inherit] font-[inherit] gap-0 flex h-9 w-9 items-center justify-center rounded-full text-text-muted hover:bg-surface-alt"
             aria-label="Đóng"
           >
             <X size={18} strokeWidth={2} />
-          </button>
+          </Button>
         </div>
 
         <div className="flex flex-1 flex-col gap-3.5 overflow-y-auto p-5">
@@ -1390,7 +1331,7 @@ function XacNhanDialog({
               <label htmlFor="ly-do-tu-choi" className="text-meta font-bold">
                 Vì sao bỏ kết quả này
               </label>
-              <input
+              <Input
                 id="ly-do-tu-choi"
                 value={lyDo}
                 onChange={(e) => setLyDo(e.target.value)}
@@ -1439,20 +1380,3 @@ function XacNhanDialog({
 // Bảng màu tối thiểu cho khối màu bên cạnh mỗi cấu phần — chỉ để phân biệt
 // nhanh bằng mắt, không phải màu thật của ảnh (không đọc được từ hợp đồng
 // AI). Không khớp nhãn nào thì dùng lại nền trung tính.
-const COLOR_SWATCHES: Record<string, string> = {
-  Đỏ: "#C0392B",
-  Hồng: "#E48692",
-  Trắng: "#F4F1EA",
-  Vàng: "#E8B923",
-  Cam: "#E07B39",
-  Tím: "#8E6FB5",
-  Xanh: "#5F9670",
-  "Xanh lá": "#5F9670",
-  "Xanh dương": "#3B6FA0",
-  Nâu: "#B08D57",
-  Kem: "#EDE3D0",
-  Đen: "#2B2B2B",
-}
-function colorSwatch(label: string): string {
-  return COLOR_SWATCHES[label] ?? "#D9D2C7"
-}

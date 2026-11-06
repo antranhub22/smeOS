@@ -23,7 +23,7 @@ export function StorefrontPreviewFrame() {
   }, [])
 
   if (!data) {
-    return <div className="flex min-h-dvh items-center justify-center bg-bg text-body text-text-muted">Đang dựng bản xem trước…</div>
+    return <div className="flex min-h-dvh items-center justify-center bg-bg text-body-sm text-text-muted">Đang dựng bản xem trước…</div>
   }
   // key theo nội dung để trang vẽ lại trạng thái lọc/tìm khi dữ liệu đổi
   return <CatalogStorefront key={JSON.stringify(data).length} initialData={data} />

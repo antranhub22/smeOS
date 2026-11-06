@@ -43,7 +43,7 @@ export function QuoteSummaryCard({
     <Card className="rounded-2xl border border-border bg-surface p-5 shadow-sm flex flex-col gap-4">
       <div className="flex items-center justify-between">
         <div>
-          <div className="text-meta font-semibold text-text-muted">Catalog sản phẩm Smart Pricing</div>
+          <div className="text-caption font-semibold text-text-muted">Catalog sản phẩm Smart Pricing</div>
           <div className="text-title font-extrabold text-text">Bảng tính giá cấu phần: {productName}</div>
         </div>
         <Badge tone="success" className="gap-1">
@@ -53,7 +53,7 @@ export function QuoteSummaryCard({
       </div>
 
       <div className="overflow-x-auto rounded-xl border border-border">
-        <table className="w-full text-left text-meta">
+        <table className="w-full text-left text-caption">
           <thead className="bg-surface-alt text-text-muted font-bold">
             <tr>
               <th className="p-2.5">Thành phần</th>
@@ -85,15 +85,15 @@ export function QuoteSummaryCard({
 
       <div className="flex items-center justify-between border-t border-border pt-4">
         <div>
-          <div className="text-meta text-text-muted">Giá vốn trực tiếp: {subtotal}</div>
-          <div className="flex items-center gap-1.5 text-meta text-secondary-text font-medium mt-0.5">
+          <div className="text-caption text-text-muted">Giá vốn trực tiếp: {subtotal}</div>
+          <div className="flex items-center gap-1.5 text-caption text-secondary-text font-medium mt-0.5">
             <CheckCircle2 size={13} />
             Đã áp dụng công thức giá sàn & trần
           </div>
         </div>
         <div className="text-right">
-          <div className="text-meta text-text-muted">Giá bán đề xuất</div>
-          <div className="text-title font-black text-primary">{suggestedPrice}</div>
+          <div className="text-caption text-text-muted">Giá bán đề xuất</div>
+          <div className="text-title-sm font-black text-primary">{suggestedPrice}</div>
         </div>
       </div>
     </Card>

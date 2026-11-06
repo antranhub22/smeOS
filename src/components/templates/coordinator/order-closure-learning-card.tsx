@@ -44,10 +44,10 @@ export function OrderClosureLearningCard({
   }
 
   return (
-    <Card className="rounded-2xl border border-mint-200 bg-mint-50/40 p-6 shadow-sm flex flex-col gap-5">
-      <div className="flex items-center justify-between border-b border-dashed border-mint-200 pb-4">
+    <Card className="rounded-2xl border border-success-border bg-success-bg/40 p-6 shadow-sm flex flex-col gap-5">
+      <div className="flex items-center justify-between border-b border-dashed border-success-border pb-4">
         <div>
-          <div className="text-caption font-bold uppercase tracking-wider text-mint-900">
+          <div className="text-caption font-bold uppercase tracking-wider text-success-text">
             Nghiệm Thu Vận Hành & Học Máy Đơn Hàng (T25 / T26 / T27)
           </div>
           <h3 className="text-title-sm font-extrabold text-text">
@@ -70,18 +70,18 @@ export function OrderClosureLearningCard({
 
         <div className="p-3.5 rounded-xl bg-surface border border-border flex flex-col gap-1">
           <span className="text-text-muted font-medium flex items-center gap-1">
-            <CheckCircle2 size={12} className="text-mint-600" />
+            <CheckCircle2 size={12} className="text-success-text" />
             Thực tế giao hàng:
           </span>
-          <span className="font-extrabold text-mint-800">{actualDeliveryTime}</span>
+          <span className="font-extrabold text-success-text">{actualDeliveryTime}</span>
         </div>
 
         <div className="p-3.5 rounded-xl bg-surface border border-border flex flex-col gap-1">
           <span className="text-text-muted font-medium flex items-center gap-1">
-            <Award size={12} className="text-sand-500" />
+            <Award size={12} className="text-warning-text" />
             Điểm kiểm định AI QC:
           </span>
-          <span className="font-extrabold text-sand-700">{qcScore}/100 Điểm</span>
+          <span className="font-extrabold text-warning-text">{qcScore}/100 Điểm</span>
         </div>
       </div>
 
@@ -99,7 +99,7 @@ export function OrderClosureLearningCard({
               >
                 <Star
                   size={16}
-                  className={star <= rating ? "text-sand-500 fill-sand-500" : "text-cool-300"}
+                  className={star <= rating ? "text-warning-text fill-warning" : "text-text-muted"}
                 />
               </Button>
             ))}
@@ -115,14 +115,14 @@ export function OrderClosureLearningCard({
         />
       </div>
 
-      <div className="flex items-center justify-between pt-2 border-t border-dashed border-mint-200">
+      <div className="flex items-center justify-between pt-2 border-t border-dashed border-success-border">
         <div className="text-caption text-text-muted flex items-center gap-1">
-          <TrendingUp size={13} className="text-mint-600" />
+          <TrendingUp size={13} className="text-success-text" />
           <span>Tự động cập nhật CRM Khách hàng (Đơn hàng) & Hiệu suất thợ (Tín dụng AI)</span>
         </div>
 
         {onConfirmClosure && (
-          <Button onClick={handleComplete} className="bg-mint-600 hover:bg-mint-700 text-white font-bold gap-1.5 text-caption">
+          <Button onClick={handleComplete} className="bg-success hover:bg-success-text text-white font-bold gap-1.5 text-caption">
             <FileCheck size={14} />
             <span>Nghiệm Thu Hoàn Tất & Đóng Hồ Sơ</span>
           </Button>

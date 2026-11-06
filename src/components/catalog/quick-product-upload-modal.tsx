@@ -1,11 +1,11 @@
 "use client"
 
-import React, { useState, useRef } from "react"
-import { UploadCloud, Sparkles, Check, Image as ImageIcon } from "@/components/ui/icons"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Dialog } from "@/components/ui/dialog"
 import { NativeSelect } from "@/components/ui/select"
+import React, { useState, useRef } from "react"
+import { UploadCloud, Sparkles, Check, Image as ImageIcon, Flower2 } from "@/components/ui/icons"
+import { Button } from "@/components/ui/button"
+import { Dialog } from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
 import { readApiError } from "@/components/greeting-card/api-error"
 import type { CatalogProduct } from "./catalog-management-tab"
 import { uploadProductImage, type UploadedImage } from "./quick-product-media"
@@ -169,21 +169,16 @@ export function QuickProductUploadModal({
   }
 
   return (
-    <Dialog
-      open={true}
-      onOpenChange={(open) => {
-        if (!open) onClose()
-      }}
-      title="Thêm nhanh sản phẩm"
-      description="Chụp ảnh, điền thông tin — AI có thể giúp điền phần mô tả"
-      size="md"
-    >
+    <Dialog open onOpenChange={(o) => { if (!o && !isSubmitting) onClose() }} size="md"
+      title={<span className="flex items-center gap-2"><Flower2 size={16} className="text-primary" aria-hidden="true" />Thêm nhanh sản phẩm</span>}
+      description="Chụp ảnh, điền thông tin — AI có thể giúp điền phần mô tả">
+      <div className="flex flex-col">
         <form onSubmit={handleSubmit} className="space-y-4">
-          {errorMessage && <div role="alert" className="p-3 rounded-xl bg-danger-bg text-danger-text text-meta">{errorMessage}</div>}
-          {notice && <div role="status" className="p-3 rounded-xl bg-primary/5 text-primary text-meta">{notice}</div>}
+          {errorMessage && <div role="alert" className="p-3 rounded-xl bg-danger-bg text-danger text-caption">{errorMessage}</div>}
+          {notice && <div role="status" className="p-3 rounded-xl bg-primary/5 text-primary text-caption">{notice}</div>}
 
           <div>
-            <p className="text-meta font-bold text-text mb-1.5 flex items-center gap-1.5">
+            <p className="text-caption font-bold text-text mb-1.5 flex items-center gap-1.5">
               <ImageIcon size={13} className="text-primary" aria-hidden="true" />
               Ảnh chụp sản phẩm hoa
             </p>
@@ -198,22 +193,21 @@ export function QuickProductUploadModal({
                 </div>
               </div>
             ) : (
-              <Button
-                variant="ghost"
+              <Button variant="ghost"
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                className="h-auto w-full relative aspect-16/9 rounded-2xl border-2 border-dashed border-border hover:border-primary/60 bg-surface-alt flex flex-col items-center justify-center gap-2 cursor-pointer p-4 text-center font-normal transition-colors"
+                className="h-auto text-[length:inherit] font-[inherit] w-full relative aspect-16/9 rounded-2xl border-2 border-dashed border-border hover:border-primary/60 bg-surface-alt flex flex-col items-center justify-center gap-2 cursor-pointer p-4 text-center transition-colors hover:bg-surface-alt"
               >
                 <div className="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center">
                   <UploadCloud size={20} aria-hidden="true" />
                 </div>
-                <div className="text-meta font-bold text-text">Bấm vào đây để chọn ảnh chụp sản phẩm</div>
+                <div className="text-caption font-bold text-text">Bấm vào đây để chọn ảnh chụp sản phẩm</div>
                 <div className="text-caption text-text-muted">Hỗ trợ JPG, PNG, WEBP từ điện thoại hoặc máy tính</div>
               </Button>
             )}
             <input ref={fileInputRef} type="file" accept="image/jpeg,image/png,image/webp" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFileChange(f) }} />
             {previewUrl && (
-              <Button type="button" variant="outline" onClick={() => void handleVisionAnalyze()} disabled={isAnalyzing || isSubmitting} className="mt-2 h-9 w-full text-meta font-bold gap-1.5">
+              <Button type="button" variant="outline" onClick={() => void handleVisionAnalyze()} disabled={isAnalyzing || isSubmitting} className="mt-2 h-9 w-full text-caption font-bold gap-1.5">
                 <Sparkles size={14} className="text-primary" aria-hidden="true" />
                 {isAnalyzing ? "AI đang phân tích ảnh..." : analyzed ? "Phân tích lại (1 credit)" : "Phân tích ảnh bằng AI (1 credit)"}
               </Button>
@@ -225,49 +219,50 @@ export function QuickProductUploadModal({
 
           <div className="space-y-3">
             <div>
-              <label htmlFor="qp-name" className="block text-meta font-bold text-text mb-1">
+              <label htmlFor="qp-name" className="block text-caption font-bold text-text mb-1">
                 Tên sản phẩm *{aiFilled.has("name") && <span className="ml-1 text-caption font-medium text-primary">· AI gợi ý</span>}
               </label>
-              <Input id="qp-name" value={fields.name} onChange={(e) => setField("name", e.target.value)} placeholder="VD: Bó Hồng Đỏ Ecuador 15 Cành" className="h-9 text-meta" required />
+              <Input id="qp-name" value={fields.name} onChange={(e) => setField("name", e.target.value)} placeholder="VD: Bó Hồng Đỏ Ecuador 15 Cành" className="h-9 text-caption" required />
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label htmlFor="qp-code" className="block text-meta font-bold text-text mb-1">Mã sản phẩm</label>
-                <Input id="qp-code" value={code} onChange={(e) => setCode(e.target.value)} placeholder="VD: FL-2026" className="h-9 text-meta font-mono" />
+                <label htmlFor="qp-code" className="block text-caption font-bold text-text mb-1">Mã sản phẩm</label>
+                <Input id="qp-code" value={code} onChange={(e) => setCode(e.target.value)} placeholder="VD: FL-2026" className="h-9 text-caption font-mono" />
               </div>
               <div>
-                <label htmlFor="qp-price" className="block text-meta font-bold text-text mb-1">Giá bán (đồng)</label>
-                <Input id="qp-price" type="number" min={0} value={price} onChange={(e) => setPrice(e.target.value ? Number(e.target.value) : "")} placeholder="Để trống = Liên hệ" className="h-9 text-meta" />
+                <label htmlFor="qp-price" className="block text-caption font-bold text-text mb-1">Giá bán (đồng)</label>
+                <Input id="qp-price" type="number" min={0} value={price} onChange={(e) => setPrice(e.target.value ? Number(e.target.value) : "")} placeholder="Để trống = Liên hệ" className="h-9 text-caption" />
               </div>
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label htmlFor="qp-category" className="block text-meta font-bold text-text mb-1">
+                <label htmlFor="qp-category" className="block text-caption font-bold text-text mb-1">
                   Phân loại{aiFilled.has("category") && <span className="ml-1 text-caption font-medium text-primary">· AI gợi ý</span>}
                 </label>
-                <NativeSelect id="qp-category" value={fields.category} onChange={(e) => setField("category", e.target.value)} className="h-9 text-meta">
+                <NativeSelect id="qp-category" value={fields.category} onChange={(e) => setField("category", e.target.value)} className="w-full h-9 rounded-xl border border-border bg-surface px-3 text-caption text-text focus:outline-none focus:border-primary">
                   <option value="">Chọn phân loại</option>
                   {CATEGORY_OPTIONS.map((c) => <option key={c} value={c}>{c}</option>)}
                 </NativeSelect>
               </div>
               <div>
-                <label htmlFor="qp-occasion" className="block text-meta font-bold text-text mb-1">
+                <label htmlFor="qp-occasion" className="block text-caption font-bold text-text mb-1">
                   Dịp phù hợp{aiFilled.has("occasion") && <span className="ml-1 text-caption font-medium text-primary">· AI gợi ý</span>}
                 </label>
-                <Input id="qp-occasion" value={fields.occasion} onChange={(e) => setField("occasion", e.target.value)} placeholder="VD: 20-10, Sinh nhật..." className="h-9 text-meta" />
+                <Input id="qp-occasion" value={fields.occasion} onChange={(e) => setField("occasion", e.target.value)} placeholder="VD: 20-10, Sinh nhật..." className="h-9 text-caption" />
               </div>
             </div>
             <QuickProductAiFields values={fields} aiFilled={aiFilled} onChange={setField} />
           </div>
 
           <div className="pt-3 border-t border-border flex items-center justify-end gap-2">
-            <Button type="button" variant="ghost" onClick={onClose} className="h-9 text-meta">Hủy</Button>
-            <Button type="submit" disabled={isSubmitting || isAnalyzing || !fields.name.trim()} className="h-9 text-meta bg-primary text-white hover:bg-primary-dark font-bold gap-1.5">
+            <Button type="button" variant="ghost" onClick={onClose} className="h-9 text-caption">Hủy</Button>
+            <Button type="submit" disabled={isSubmitting || isAnalyzing || !fields.name.trim()} className="h-9 text-caption bg-primary text-white hover:bg-primary-dark font-bold gap-1.5">
               <Check size={14} aria-hidden="true" />
               <span>{isSubmitting ? "Đang lưu..." : "Thêm sản phẩm"}</span>
             </Button>
           </div>
         </form>
+      </div>
     </Dialog>
   )
 }

@@ -1,5 +1,6 @@
 "use client"
 
+import { Button } from "@/components/ui/button"
 import React from "react"
 import type { PublicCatalogProduct, PublicCatalogShop } from "@/modules/catalog-links/use-cases/get-public-catalog"
 import type { StyleDefinition } from "@/modules/catalog-studio/domain/entities/catalog-studio.types"
@@ -56,10 +57,10 @@ export function CatalogCardPaper({
         boxShadow: shadowCard,
       }}
     >
-      <button
+      <Button variant="ghost"
         type="button"
         onClick={() => onSelectProduct(product)}
-        className="block w-full text-left"
+        className="h-auto px-0 py-0 text-[length:inherit] justify-start font-[inherit] gap-0 block w-full text-left"
       >
         <div className={`relative ${aspectRatio === "4/5" ? "aspect-4/5" : "aspect-square"} w-full overflow-hidden`}>
           <SmartFlowerImage
@@ -107,21 +108,21 @@ export function CatalogCardPaper({
             </span>
           )}
           <h4
-            className={`text-body md:text-title font-bold leading-snug line-clamp-1 ${fontDisplay}`}
+            className={`text-body-sm md:text-body font-bold leading-snug line-clamp-1 ${fontDisplay}`}
             style={{ color: textPrimary }}
           >
             {product.name}
           </h4>
           {product.description && (
             <p
-              className="text-meta mt-1 line-clamp-2 leading-relaxed opacity-85"
+              className="text-caption mt-1 line-clamp-2 leading-relaxed opacity-85"
               style={{ color: textSecondary }}
             >
               {product.description}
             </p>
           )}
         </div>
-      </button>
+      </Button>
 
       {/* Footer / Price & Action */}
       <div
@@ -129,7 +130,7 @@ export function CatalogCardPaper({
         style={{ borderColor: border }}
       >
         <div>
-          <div className="text-body md:text-title font-extrabold tracking-tight whitespace-nowrap" style={{ color: priceColor }}>
+          <div className="text-body-sm md:text-body font-extrabold tracking-tight whitespace-nowrap" style={{ color: priceColor }}>
             {formatVnd(product.price)}
           </div>
         </div>

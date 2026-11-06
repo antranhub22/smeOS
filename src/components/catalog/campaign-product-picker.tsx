@@ -32,7 +32,7 @@ export function CampaignProductPicker({
   return (
     <div>
       <div className="flex flex-wrap items-center justify-between gap-2 mb-2">
-        <label className="text-meta font-bold text-text flex items-center gap-1.5">
+        <label className="text-caption font-bold text-text flex items-center gap-1.5">
           <Layers size={14} className="text-primary" />
           <span>Tuyển chọn {ti.sampleProduct} bán ({selectedProductIds.length}/{activeProducts.length})</span>
         </label>
@@ -67,13 +67,13 @@ export function CampaignProductPicker({
           {activeProducts.map((p) => {
             const isSelected = selectedProductIds.includes(p.id)
             return (
-              <button
+              <Button variant="outline"
                 key={p.id}
                 type="button"
                 onClick={() => onToggleProduct(p.id)}
-                className={`relative rounded-xl border text-left p-2 transition-all flex flex-col gap-1.5 group cursor-pointer ${
+                className={`h-auto text-[length:inherit] justify-start font-[inherit] relative rounded-xl border text-left p-2 transition-all flex flex-col gap-1.5 group cursor-pointer ${
                   isSelected
-                    ? "border-primary bg-primary-muted/20 ring-2 ring-primary/30"
+                    ? "border-primary bg-primary-muted/20 ring-2 ring-primary/30 hover:bg-primary-muted/20"
                     : "border-border bg-surface hover:border-primary-border hover:bg-surface-alt/50"
                 }`}
               >
@@ -105,7 +105,7 @@ export function CampaignProductPicker({
                     )}
                   </div>
                 </div>
-              </button>
+              </Button>
             )
           })}
         </div>

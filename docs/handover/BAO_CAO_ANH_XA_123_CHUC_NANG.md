@@ -24,7 +24,7 @@ Ký hiệu đường dẫn rút gọn: `org/` = `src/modules/organization/`, `gc
 
 | Nhóm | Nội dung | Số chức năng | Hoàn thiện | Dang dở | Chưa hoàn thành |
 |---|---|---:|---:|---:|---:|
-| 1 | Nền tảng chung & phân quyền | 19 | 18 | 1 | 0 |
+| 1 | Nền tảng chung & phân quyền | 19 | 19 | 0 | 0 |
 | 2 | Quản lý sản phẩm, mẫu hoa & hình ảnh | 9 | 9 | 0 | 0 |
 | 3 | Tạo & quản lý báo giá | 13 | 13 | 0 | 0 |
 | 4 | Tiếp nhận, quản lý & xử lý đơn hàng | 32 | 32 | 0 | 0 |
@@ -34,9 +34,9 @@ Ký hiệu đường dẫn rút gọn: `org/` = `src/modules/organization/`, `gc
 | 8 | Landing page bán hàng | 1 | 1 | 0 | 0 |
 | 9 | Chat nội bộ, đa chuỗi & phân quyền nâng cao | 14 | 14 | 0 | 0 |
 | 10 | Quản lý credit AI, hạn mức & thuê bao SaaS | 8 | 7 | 0 | 1 |
-| | **Tổng cộng** | **123** | **121** | **1** | **1** |
+| | **Tổng cộng** | **123** | **122** | **0** | **1** |
 
-Tỷ lệ: Hoàn thiện 98,4% · Dang dở 0,8% · Chưa hoàn thành 0,8%.
+Tỷ lệ: Hoàn thiện 99,2% · Dang dở 0% · Chưa hoàn thành 0,8%.
 
 ### Một chức năng chưa hoàn thành
 
@@ -67,7 +67,7 @@ Tỷ lệ: Hoàn thiện 98,4% · Dang dở 0,8% · Chưa hoàn thành 0,8%.
 | 1.15 | Chặn thao tác vượt quyền & ghi log vi phạm | Hoàn thiện | Chặn: `src/core/rbac/capabilities.ts`; ghi `security.access_denied` (người, đường dẫn, mã quyền, IP, thiết bị, tối đa một dòng/phút/đường dẫn) `src/core/http/request-audit.ts`, gắn ở `src/core/http/response.ts`; `tt/audit-trail.test.ts` | — |
 | 1.16 | Khóa cứng quyền nhạy cảm ở tầng server | Hoàn thiện | Trần cứng Điều hành: C10, R6, R10, R11 (`src/core/rbac/capability-catalog.ts`); sổ thu: Sale/Điều phối ghi thì chờ Điều hành xác nhận `src/modules/coordinator/use-cases/record-payment.ts`, `decide-pending-payment.ts`, `api/coordinator/orders/[id]/payments/[paymentId]/decision`, cột `order_payments.status`; Thẻ Chào mặc định chỉ Điều hành xác nhận tiền `gc/domain/brochure-payment-policy.ts`, `gc/domain/brochure-workflow-policy.ts`; `tt/payment-confirmation.test.ts`, `tt/greeting-card-transfer-confirm.test.ts` | — |
 | 1.17 | Nhật ký thao tác chi tiết IP/thiết bị | Hoàn thiện | Mọi thao tác ghi thành công → `api.mutation` `src/core/http/request-audit.ts`; IP/thiết bị tự điền từ ngữ cảnh yêu cầu `src/core/observability/request-context.ts`, `src/modules/audit/infra/audit-log-repository.ts`; lọc phía máy chủ theo loại thao tác, đối tượng, người, khoảng ngày `api/audit-logs/route.ts`; màn lọc `src/app/(app)/audit/page.tsx`; `tt/audit-trail.test.ts` | — |
-| 1.18 | Gắn dữ liệu với tổ chức ở tầng database (RLS) | Dang dở | Mọi bảng nghiệp vụ có `organization_id` + chỉ mục; lọc ở tầng ứng dụng `src/core/tenancy/tenant-context.ts:43` (`scopedWhere`) | Không có chính sách Row Level Security của Postgres (0 lệnh `ROW LEVEL SECURITY` trong `prisma/migrations`) |
+| 1.18 | Gắn dữ liệu với tổ chức ở tầng database (RLS) | Hoàn thiện | Chính sách `tenant_isolation` + `FORCE ROW LEVEL SECURITY` trên 117 bảng có `organization_id` (migration `20261106020000_row_level_security`, sinh bởi `scripts/gen-rls-policies.mjs` từ sổ bảng-thuộc-tenant); ngữ cảnh tổ chức theo luồng `src/core/tenancy/db-context.ts` (gắn tại `requireTenantContext`, ngữ cảnh tích hợp; quyền hệ thống cho tra phiên, trang công khai, Console, webhook, bộ quét nền); pool kết nối đặt `app.org_id` `src/core/tenancy/infra/rls-pool.ts`; worker `workers/shared/rls.py`; chế độ `DB_RLS_MODE` (`render.yaml`: `audit`), vai CSDL `scripts/db/create-roles.sql`, vận hành `docs/handover/OPERATIONS_RUNBOOK.md` §12; `tt/rls.test.ts` (vai thường: thiếu ngữ cảnh 0 dòng, chéo tổ chức không đọc/ghi được, giao dịch và kết nối dùng lại không rò), `tu/architecture/rls-policies.test.ts` (bảng mới thiếu chính sách → đỏ), `workers/tests/test_shared_rls.py` | — |
 | 1.19 | Chặn truy cập chéo (404 Not Found) | Hoàn thiện | `src/core/http/errors.ts:24,53`; 127 khẳng định `toBe(404)` trong 46 file `tt/`, ví dụ `tt/order-isolation.test.ts:63-196`, `tt/cach-ly-endpoint.test.ts:70-83` | — |
 
 ### Nhóm 2 — Quản lý sản phẩm, mẫu hoa & hình ảnh (9)

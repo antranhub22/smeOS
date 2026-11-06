@@ -1,7 +1,9 @@
 "use client"
 
+import { Dialog } from "@/components/ui/dialog"
+import { Button } from "@/components/ui/button"
 import React, { useState } from "react"
-import { Camera, Sparkles, Image as ImageIcon, ZoomIn, X } from "@/components/ui/icons"
+import { Camera, Sparkles, Image as ImageIcon, ZoomIn } from "@/components/ui/icons"
 import { SmartFlowerImage } from "../smart-flower-image"
 
 const GALLERY_SLOT_COUNT = 6
@@ -41,7 +43,7 @@ export function LandingTemplateGallery({
     <section className="space-y-4">
       {/* Header */}
       <div className="flex items-center justify-between px-1">
-        <div className="flex items-center gap-1.5 text-meta font-bold text-text uppercase tracking-wider">
+        <div className="flex items-center gap-1.5 text-caption font-bold text-text uppercase tracking-wider">
           <Camera size={14} className={isLuxury || isRomantic ? "text-primary" : isFestive ? "text-primary" : "text-warning"} />
           <span className={isLuxury ? "font-display" : ""}>
             {"Ảnh mẫu thật"}
@@ -52,16 +54,16 @@ export function LandingTemplateGallery({
       {/* Photo Grid */}
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
         {displayPhotos.map((photo, idx) => (
-          <button
+          <Button variant="outline"
             type="button"
             key={photo.src}
             onClick={() => setActivePhoto(photo)}
-            className={`group relative rounded-2xl overflow-hidden border shadow-xs transition-all text-left block w-full focus:outline-hidden focus:ring-2 focus:ring-primary/40 ${
+            className={`h-auto px-0 py-0 text-[length:inherit] justify-start font-[inherit] gap-0 group relative rounded-2xl overflow-hidden border shadow-xs transition-all text-left block w-full focus:outline-hidden focus:ring-2 focus:ring-primary/40 ${
               isLuxury
-                ? "border-primary/20 bg-surface-alt/40 hover:border-primary/60"
+                ? "border-primary/20 bg-surface-alt/40 hover:border-primary/60 hover:bg-surface-alt/40"
                 : isFestive
-                ? "border-primary/20 bg-surface hover:border-primary"
-                : "border-border bg-surface hover:border-primary/60"
+                ? "border-primary/20 bg-surface hover:border-primary hover:bg-surface"
+                : "border-border bg-surface hover:border-primary/60 hover:bg-surface"
             }`}
           >
             <div className="relative aspect-4/3 overflow-hidden bg-surface-alt">
@@ -86,49 +88,21 @@ export function LandingTemplateGallery({
                 {photo.caption}
               </p>
             </div>
-          </button>
+          </Button>
         ))}
       </div>
 
       {/* Lightbox Modal */}
       {activePhoto && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          className="fixed inset-0 z-50 flex items-center justify-center p-4"
-        >
-          {/* Backdrop Button */}
-          <button
-            type="button"
-            aria-label="Đóng ảnh xem chi tiết"
-            onClick={() => setActivePhoto(null)}
-            className="fixed inset-0 bg-black/80 backdrop-blur-xs w-full h-full cursor-default"
-          />
-
-          <div className="relative z-10 max-w-lg w-full bg-surface rounded-3xl overflow-hidden shadow-2xl border border-border pointer-events-auto">
-            <button
-              type="button"
-              onClick={() => setActivePhoto(null)}
-              className="absolute top-3 right-3 z-20 w-8 h-8 rounded-full bg-black/60 hover:bg-black text-white flex items-center justify-center transition-colors"
-              aria-label="Đóng"
-            >
-              <X size={16} />
-            </button>
-
-            <div className="aspect-4/3 w-full bg-black">
-              <SmartFlowerImage
-                src={activePhoto.src}
-                alt={activePhoto.title}
-                aspectRatio="4/3"
-              />
-            </div>
-
-            <div className="p-4 bg-surface space-y-1">
-              <h4 className="text-body font-bold text-text">{activePhoto.title}</h4>
-              <p className="text-meta text-text-muted">{activePhoto.caption}</p>
-            </div>
+        <Dialog open onOpenChange={(o) => { if (!o) setActivePhoto(null) }} size="md" title={activePhoto.title} description={activePhoto.caption}>
+          <div className="-m-5 sm:-m-6 aspect-4/3 bg-black">
+            <SmartFlowerImage
+              src={activePhoto.src}
+              alt={activePhoto.title}
+              aspectRatio="4/3"
+            />
           </div>
-        </div>
+        </Dialog>
       )}
     </section>
   )

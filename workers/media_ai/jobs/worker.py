@@ -50,6 +50,7 @@ import psycopg
 from psycopg.rows import dict_row
 
 from shared.job_trace import log_job_claimed
+from shared.rls import job_db_context, set_db_context
 from shared.job_failure import ghi_job_loi
 from shared.log_json import cau_hinh_log, xoa_ngu_canh_job
 from shared.storage import doc_bytes, ghi_bytes
@@ -490,6 +491,7 @@ def run_worker(database_url: str, poll_interval_seconds: float = 5.0) -> None:
     while not co.dung:
         try:
             with psycopg.connect(cleaned_url, autocommit=True, application_name="smeos-worker:media") as conn:
+                set_db_context(conn, None)  # nhận job đi qua mọi tổ chức — quyền hệ thống (RLS)
                 print(f"[media] Worker {FEATURE} đã kết nối CSDL, đang lắng nghe...", flush=True)
                 backoff = 1.0
                 with conn.cursor() as cur:
@@ -506,42 +508,48 @@ def run_worker(database_url: str, poll_interval_seconds: float = 5.0) -> None:
                     # 1. Xử lý tác vụ tối ưu ảnh M04a
                     job = claim_next(conn, FEATURE)
                     if job is not None:
-                        process_job(conn, job, verifier, enhancer, reframer)
+                        with job_db_context(conn, job):
+                            process_job(conn, job, verifier, enhancer, reframer)
                         continue
 
                     # 2. Xử lý tác vụ dựng biến thể marketing M04b
                     variant_job = claim_next(conn, variant_feature)
                     if variant_job is not None:
                         from media_ai.jobs.variant_worker import process_variant_job
-                        process_variant_job(conn, variant_job)
+                        with job_db_context(conn, variant_job):
+                            process_variant_job(conn, variant_job)
                         continue
 
                     # 2b. Biến thể M04b nhánh Cloud (hậu cảnh do nhà cung cấp sinh)
                     variant_cloud_job = claim_next(conn, variant_cloud_feature)
                     if variant_cloud_job is not None:
                         from media_ai.jobs.variant_worker import process_variant_job
-                        process_variant_job(conn, variant_cloud_job)
+                        with job_db_context(conn, variant_cloud_job):
+                            process_variant_job(conn, variant_cloud_job)
                         continue
 
                     # 2c. Audio Studio — voiceover + nhạc nền (Khu vực C)
                     audio_job = claim_next(conn, audio_feature)
                     if audio_job is not None:
                         from media_ai.audio.audio_worker import process_audio_generation_job
-                        process_audio_generation_job(conn, audio_job)
+                        with job_db_context(conn, audio_job):
+                            process_audio_generation_job(conn, audio_job)
                         continue
 
                     # 2d. Nhân bản giọng (Khu vực C — Voice Clone)
                     voice_clone_job = claim_next(conn, voice_clone_feature)
                     if voice_clone_job is not None:
                         from media_ai.audio.voice_clone_worker import process_voice_clone_job
-                        process_voice_clone_job(conn, voice_clone_job)
+                        with job_db_context(conn, voice_clone_job):
+                            process_voice_clone_job(conn, voice_clone_job)
                         continue
 
                     # 3. Xử lý tác vụ dựng video M04c
                     video_job = claim_next(conn, video_feature)
                     if video_job is not None:
                         from media_ai.video.video_worker import process_video_job
-                        process_video_job(conn, video_job)
+                        with job_db_context(conn, video_job):
+                            process_video_job(conn, video_job)
                         continue
 
                     for _notify in conn.notifies(timeout=poll_interval_seconds):

@@ -1,5 +1,6 @@
 "use client"
 
+import { PageHeader } from "@/components/ui/page-header"
 import { useEffect, useState } from "react"
 import { useParams } from "next/navigation"
 import { useI18n } from "@/lib/i18n"
@@ -111,6 +112,7 @@ export default function ChiTietToChucPage() {
 
   return (
     <div className="space-y-4 max-w-xl">
+      <PageHeader title={org.name} description="Chi tiết tổ chức" backHref="/van-hanh/to-chuc" backLabel="Danh sách tổ chức" />
       {thongBao && (
         <div className="p-3 bg-primary/10 border border-primary/30 rounded-xl text-body-sm font-semibold text-primary flex items-center gap-2">
           <CheckCircle2 size={16} />
