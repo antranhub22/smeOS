@@ -40,7 +40,6 @@ Xếp loại bằng đếm cấu trúc điều khiển (hàm, `if`, `return`, ho
 |---|---|---|
 | `src/app/(app)/tai-anh/page.tsx` | 1.949 | Tính năng tải ảnh — cần PO duyệt chặng (CLAUDE.md) |
 | `src/components/upload/upload-wizard.tsx` | 1.458 | Tính năng tải ảnh — cần PO duyệt |
-| `src/components/templates/coordinator/sales-order-intake-modal.tsx` | 1.281 | Nhận đơn — tách theo bước |
 | `src/components/creative-studio/use-creative-studio-data.ts` | 1.004 | Hook nạp dữ liệu nhiều khu |
 | `src/components/storage/account-storage-hub.tsx` | 847 | Kho lưu trữ — tách theo tab |
 | `src/components/sales/sales-pitch-card.tsx` | 832 | |
