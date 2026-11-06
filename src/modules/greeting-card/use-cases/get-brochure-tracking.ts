@@ -9,12 +9,14 @@ import { parseShippingConfig } from "../domain/brochure-pricing"
 import { snapshotFromOrder } from "../domain/order-change-request"
 import { customerChangeSection } from "./order-change"
 import { customerSubstituteSection } from "./substitute"
+import { customerFlowerSection } from "./flower-substitute"
 import { latestFailureForCustomer } from "../domain/delivery-failure"
 import { parsePaymentPolicy, resolveRequirePaymentProof } from "../domain/brochure-payment-policy"
 import { orderPaymentSummary } from "../domain/payment-summary"
 import { paymentInstructionsFor } from "./payment-instructions"
 import { customerVisiblePaidVnd } from "../domain/deposit-acknowledgement"
 import { customerCancellationNotice } from "../domain/customer-cancellation-notice"
+import { thankYouVoucherFor } from "./thank-you-voucher"
 import { ensureHomestayOrderBooking } from "@/modules/availability/use-cases/bind-order-booking"
 
 const ORDER_CODE_REGEX = /^[A-Z0-9-]{4,40}$/
@@ -207,8 +209,12 @@ export async function getBrochureTracking(
         : null,
       /** Chỉ người đặt đã xác minh: tiệm đề xuất mẫu thay thế (khách chọn mẫu / nhờ tiệm chọn / xin huỷ). */
       substitute: verified ? await customerSubstituteSection(order) : null,
+      /** Chỉ người đặt đã xác minh: tiệm đề xuất đổi một loại hoa phụ, kèm ảnh hoa thay thế (ALG 5.14). */
+      flowerSubstitute: verified ? await customerFlowerSection(order) : null,
       /** Đơn bị huỷ do tiệm không thực hiện được: hạn nhân viên liên hệ + số tiền hoàn (0 = không hoàn). */
       cancellationNotice,
+      /** Chỉ người đặt đã xác minh, đơn đã hoàn tất: mã giảm giá dùng một lần cho đơn sau (ALG 5.15). */
+      thankYouVoucher: verified ? await thankYouVoucherFor(order) : null,
     },
     // Huỷ vì hết hạn thanh toán: báo "không hoàn thành" thay cho "cửa hàng đã huỷ"
     trackingStep: payment.status === "PAYMENT_FAILED"

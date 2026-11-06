@@ -89,6 +89,8 @@ export interface GreetingCatalogProduct {
   peakPriceVnd?: number | null | undefined
   /** Thứ 7, Chủ nhật tính cao điểm */
   weekendIsPeak?: boolean | undefined
+  /** Tiệm tắt hiển thị giá (ALG 5.5): khách thấy "Liên hệ báo giá", đơn chờ cửa hàng báo giá */
+  priceHidden?: boolean | undefined
 }
 
 export interface GreetingCatalogRecord {

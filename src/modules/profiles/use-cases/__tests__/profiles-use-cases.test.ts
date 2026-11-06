@@ -137,6 +137,8 @@ describe("profiles: Business Profile use-cases with DI", () => {
       tax_code: null,
       description: null,
       operating_hours: null,
+      brand_message: null,
+      target_customers: null,
       created_at: new Date(),
       updated_at: new Date(),
     })

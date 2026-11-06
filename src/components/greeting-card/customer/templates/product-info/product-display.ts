@@ -19,7 +19,8 @@ export function formatVnd(value: number | null): string {
 }
 
 /** Giá hiển thị cho khách theo kiểu giá: "Liên hệ", "Từ … – …" (theo phiên bản/cao điểm) hoặc một giá. */
-export function productPriceText(p: Pick<GreetingCatalogProduct, "price" | "priceMode" | "priceMaxVnd">): string {
+export function productPriceText(p: Pick<GreetingCatalogProduct, "price" | "priceMode" | "priceMaxVnd" | "priceHidden">): string {
+  if (p.priceHidden) return "Liên hệ báo giá"
   if (p.priceMode === "CONTACT") return "Liên hệ"
   if (p.price !== null && p.price > 0 && p.priceMaxVnd != null && p.priceMaxVnd > p.price) {
     return `${formatVnd(p.price)} – ${formatVnd(p.priceMaxVnd)}`

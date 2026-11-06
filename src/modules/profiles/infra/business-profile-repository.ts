@@ -40,10 +40,15 @@ export class BusinessProfileRepository implements IBusinessProfileRepository {
       operating_hours: (input.operating_hours ?? null) as InputJsonValue,
     }
 
+    // Thông điệp & khách mục tiêu (9.3): form cũ không gửi hai trường này → giữ nguyên, không ghi null
+    const audience = {
+      ...(input.brand_message !== undefined ? { brand_message: input.brand_message?.trim() || null } : {}),
+      ...(input.target_customers !== undefined ? { target_customers: (input.target_customers ?? null) as InputJsonValue } : {}),
+    }
     return this.db.business_profiles.upsert({
       where: { organization_id: ctx.organizationId },
-      create: { organization_id: ctx.organizationId, ...fields },
-      update: fields,
+      create: { organization_id: ctx.organizationId, ...fields, ...audience },
+      update: { ...fields, ...audience },
     })
   }
 }

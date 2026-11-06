@@ -49,12 +49,12 @@ export function ProductBulkStatusBar({ selectedIds, canArchive, onClear, onDone 
         body: JSON.stringify({ ids: selectedIds, status }),
       })
       if (!res.ok) throw new Error(await readApiError(res, "Không đổi được trạng thái"))
-      const body = (await res.json()) as { updated: string[]; failed: Array<{ id: string; reason: string }> }
-      setMessage(
-        body.failed.length === 0
-          ? `Đã ${label.toLowerCase()} ${body.updated.length} sản phẩm.`
-          : `Đã ${label.toLowerCase()} ${body.updated.length} sản phẩm; ${body.failed.length} sản phẩm chưa đổi được (${body.failed[0]?.reason ?? ""}).`
-      )
+      const body = (await res.json()) as { updated: string[]; failed: Array<{ id: string; reason: string }>; warnings?: Array<{ code: string; missing: string[] }> }
+      const base = body.failed.length === 0
+        ? `Đã ${label.toLowerCase()} ${body.updated.length} sản phẩm.`
+        : `Đã ${label.toLowerCase()} ${body.updated.length} sản phẩm; ${body.failed.length} sản phẩm chưa đổi được (${body.failed[0]?.reason ?? ""}).`
+      const w = body.warnings ?? []
+      setMessage(w.length > 0 ? `${base} ${w.length} mẫu chưa đủ điều kiện bán (vd. ${w[0]!.code}: ${w[0]!.missing.join("; ").toLowerCase()}).` : base)
       onDone()
     } catch (e) {
       setMessage(e instanceof Error ? e.message : "Không đổi được trạng thái")

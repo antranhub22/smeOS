@@ -16,6 +16,7 @@ import { Sparkles } from "@/components/ui/icon-set/sparkles"
 
 import type { TabAction, TabItem, TabOverflowAction } from "@/components/ui/tab-header"
 import { LIBRARY_OPEN_HREF as OPEN_HREF, type LibraryType } from "@/modules/storage/domain/library"
+import type { TrashItemType } from "@/modules/storage/domain/trash-types"
 import { LIBRARY_CREATE_LABEL, LIBRARY_TAB_LABEL } from "./library/library-labels"
 
 /** Tab v1 + tab thư viện v2 (`lib:<type>`), Screen Contract `kho-du-lieu.md` §4. */
@@ -94,4 +95,19 @@ export function buildOverflowActions(tab: StorageTab, h: Handlers): TabOverflowA
   }
   if (tab === "approved") return [{ id: "go-approval-queue", label: "Đi tới Hàng chờ duyệt", icon: ExternalLink, onClick: () => h.go("/duyet") }]
   return [{ id: "refresh-finalized", label: "Tải lại danh sách", icon: RefreshCw, onClick: h.refreshApproved }]
+}
+
+/** Loại thùng rác của một mục thư viện; `null` = không vào thùng rác từ đây (âm thanh có nút xoá riêng). */
+export function trashTypeForLibrary(type: LibraryType): TrashItemType | null {
+  const map: Record<LibraryType, TrashItemType | null> = {
+    original: "RAW_ASSET",
+    ai_image: "RAW_ASSET",
+    video: "VIDEO",
+    audio: null,
+    content: "CONTENT",
+    catalog: "CATALOG",
+    greeting_catalog: "GREETING_CATALOG",
+    landing: "LANDING",
+  }
+  return map[type]
 }

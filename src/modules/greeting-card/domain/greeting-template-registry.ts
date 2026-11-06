@@ -12,6 +12,7 @@ import { GREETING_TEMPLATES } from "./greeting-template-catalog"
 import { enabledFieldsFor, readDisplaySettings, type OptionalDisplayField } from "./display-fields"
 
 import { resolveAppliedPolicies, type PublicAppliedPolicies } from "./store-policy"
+import { applyDiscountVisibility, readPriceVisibility } from "./price-visibility"
 import type { PolicyGovernanceUpper } from "@/modules/organization/domain/governance-decisions"
 import { parsePaymentPolicy, resolveRequirePaymentProof } from "./brochure-payment-policy"
 
@@ -62,7 +63,7 @@ export function toPublicCatalogFilters(
   const displayFields = enabledFieldsFor(readDisplaySettings(orgSettings), templateId)
   const settingsObj = orgSettings && typeof orgSettings === "object" ? (orgSettings as Record<string, unknown>) : {}
   const industry = industryKey || (typeof settingsObj.industry === "string" ? settingsObj.industry : null)
-  const appliedPolicies = resolveAppliedPolicies(raw, orgSettings, industry, governanceUpper)
+  const appliedPolicies = applyDiscountVisibility(resolveAppliedPolicies(raw, orgSettings, industry, governanceUpper), readPriceVisibility(orgSettings))
   const paymentPolicy = parsePaymentPolicy(orgSettings)
   const requirePaymentProof = resolveRequirePaymentProof(paymentPolicy, raw)
   if (typeof rawId !== "string" && orgSettings === undefined) return null

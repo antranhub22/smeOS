@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from "react"
 import { Trash2 } from "@/components/ui/icon-set/trash2"
+import { TRASH_TYPE_LABEL } from "@/modules/storage/domain/trash-types"
 import { RotateCcw } from "@/components/ui/icon-set/rotate-ccw"
 import { Clock } from "@/components/ui/icon-set/clock"
 import { AlertTriangle } from "@/components/ui/icon-set/alert-triangle"
@@ -216,11 +217,7 @@ export function StorageTrashTab({ onItemRestored }: StorageTrashTabProps) {
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-1.5 flex-wrap">
                       <span className="px-2 py-0.5 rounded-md bg-surface-alt text-caption text-text-muted font-bold">
-                        {item.type === "PRODUCT"
-                          ? "Sản phẩm"
-                          : item.type === "RAW_ASSET"
-                          ? "Ảnh gốc"
-                          : "Ảnh duyệt"}
+                        {TRASH_TYPE_LABEL[item.type]}
                       </span>
 
                       <span

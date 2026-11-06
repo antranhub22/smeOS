@@ -11,6 +11,7 @@ import { Check } from "@/components/ui/icon-set/check"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
+import { BrandAudienceFields, parseAudience } from "./brand-audience-fields"
 import type { BusinessProfileDetail } from "@/modules/profiles/use-cases/get-business-profile"
 import type { UpsertBusinessProfileInput } from "@/modules/profiles/domain/repositories/business-profile-repository.interface"
 import { useSession } from "@/lib/session"
@@ -38,6 +39,8 @@ export function BusinessProfileForm({ initialData, onSave, saving }: BusinessPro
   const [otherWebsites, setOtherWebsites] = useState("")
   const [taxCode, setTaxCode] = useState("")
   const [description, setDescription] = useState("")
+  const [brandMessage, setBrandMessage] = useState("")
+  const [audience, setAudience] = useState("")
   const [openTime, setOpenTime] = useState("08:00")
   const [closeTime, setCloseTime] = useState("21:00")
   const [facebookUrl, setFacebookUrl] = useState("")
@@ -58,6 +61,8 @@ export function BusinessProfileForm({ initialData, onSave, saving }: BusinessPro
       setWebsite(initialData.website || "")
       setTaxCode(initialData.tax_code || "")
       setDescription(initialData.description || "")
+      setBrandMessage(initialData.brand_message || "")
+      setAudience((initialData.target_customers ?? []).join(", "))
 
       const hours = initialData.operating_hours as { open?: string; close?: string } | null
       if (hours?.open) setOpenTime(hours.open)
@@ -96,6 +101,8 @@ export function BusinessProfileForm({ initialData, onSave, saving }: BusinessPro
       website: website.trim() || null,
       tax_code: taxCode.trim() || null,
       description: description.trim() || null,
+      brand_message: brandMessage.trim() || null,
+      target_customers: parseAudience(audience),
       operating_hours: {
         open: openTime,
         close: closeTime,
@@ -179,6 +186,7 @@ export function BusinessProfileForm({ initialData, onSave, saving }: BusinessPro
               helperText="Được AI sử dụng làm bối cảnh chính để giới thiệu cơ sở trên Landing Page và Catalog"
             />
           </div>
+          <BrandAudienceFields brandMessage={brandMessage} onBrandMessage={setBrandMessage} audience={audience} onAudience={setAudience} />
         </div>
       </div>
 

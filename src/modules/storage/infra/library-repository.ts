@@ -92,7 +92,7 @@ export async function listLibraryRows(ctx: TenantContext, type: LibraryType, que
     }
     case "video": {
       const rows = await prisma.video_jobs.findMany({
-        where: scopedWhere(ctx, base(query, "created_by", "title", "video_jobs")),
+        where: scopedWhere(ctx, { trashed_at: null, ...base(query, "created_by", "title", "video_jobs") }),
         ...page(query),
         select: { id: true, title: true, stage: true, created_at: true, created_by: true },
       })
@@ -122,7 +122,7 @@ export async function listLibraryRows(ctx: TenantContext, type: LibraryType, que
     }
     case "content": {
       const rows = await prisma.content_generations.findMany({
-        where: scopedWhere(ctx, base(query, "created_by")),
+        where: scopedWhere(ctx, { trashed_at: null, ...base(query, "created_by") }),
         ...page(query),
         select: { id: true, channels: true, status: true, created_at: true, created_by: true },
       })
@@ -135,7 +135,7 @@ export async function listLibraryRows(ctx: TenantContext, type: LibraryType, que
     }
     case "catalog": {
       const rows = await prisma.catalog_links.findMany({
-        where: scopedWhere(ctx, base(query, "created_by", "name")),
+        where: scopedWhere(ctx, { trashed_at: null, ...base(query, "created_by", "name") }),
         ...page(query),
         select: { id: true, name: true, is_revoked: true, created_at: true, created_by: true },
       })
@@ -143,7 +143,7 @@ export async function listLibraryRows(ctx: TenantContext, type: LibraryType, que
     }
     case "landing": {
       const rows = await prisma.landing_pages.findMany({
-        where: scopedWhere(ctx, base(query, "created_by", "title")),
+        where: scopedWhere(ctx, { trashed_at: null, ...base(query, "created_by", "title") }),
         ...page(query),
         select: { id: true, title: true, created_at: true, created_by: true },
       })
@@ -151,7 +151,7 @@ export async function listLibraryRows(ctx: TenantContext, type: LibraryType, que
     }
     case "greeting_catalog": {
       const rows = await prisma.greeting_catalogs.findMany({
-        where: scopedWhere(ctx, base(query, "created_by", "name")),
+        where: scopedWhere(ctx, { trashed_at: null, ...base(query, "created_by", "name") }),
         ...page(query),
         select: { id: true, name: true, type: true, created_at: true, created_by: true },
       })
@@ -167,7 +167,7 @@ export async function countLibraryRows(ctx: TenantContext, type: LibraryType, f:
     case "ai_image":
       return prisma.assets.count({ where: scopedWhere(ctx, assetWhere(type, f)) })
     case "video":
-      return prisma.video_jobs.count({ where: scopedWhere(ctx, base(f, "created_by", undefined, "video_jobs")) })
+      return prisma.video_jobs.count({ where: scopedWhere(ctx, { trashed_at: null, ...base(f, "created_by", undefined, "video_jobs") }) })
     case "audio": {
       const [tracks, voices] = await Promise.all([
         prisma.music_tracks.count({ where: scopedWhere(ctx, { deleted_at: null, ...base(f, "attested_by") }) }),
@@ -176,13 +176,13 @@ export async function countLibraryRows(ctx: TenantContext, type: LibraryType, f:
       return tracks + voices
     }
     case "content":
-      return prisma.content_generations.count({ where: scopedWhere(ctx, base(f, "created_by")) })
+      return prisma.content_generations.count({ where: scopedWhere(ctx, { trashed_at: null, ...base(f, "created_by") }) })
     case "catalog":
-      return prisma.catalog_links.count({ where: scopedWhere(ctx, base(f, "created_by")) })
+      return prisma.catalog_links.count({ where: scopedWhere(ctx, { trashed_at: null, ...base(f, "created_by") }) })
     case "landing":
-      return prisma.landing_pages.count({ where: scopedWhere(ctx, base(f, "created_by")) })
+      return prisma.landing_pages.count({ where: scopedWhere(ctx, { trashed_at: null, ...base(f, "created_by") }) })
     case "greeting_catalog":
-      return prisma.greeting_catalogs.count({ where: scopedWhere(ctx, base(f, "created_by")) })
+      return prisma.greeting_catalogs.count({ where: scopedWhere(ctx, { trashed_at: null, ...base(f, "created_by") }) })
   }
 }
 

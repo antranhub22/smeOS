@@ -94,6 +94,9 @@ export interface RawShopInput {
   readonly address?: string | null | undefined
   readonly website?: string | null | undefined
   readonly operatingHours?: string | null | undefined
+  /** Thông điệp thương hiệu và khách mục tiêu (checklist ALG 9.3) */
+  readonly brandMessage?: string | null | undefined
+  readonly targetCustomers?: readonly string[] | null | undefined
 }
 
 export interface BuildContentBriefInput {
@@ -167,6 +170,8 @@ export function buildContentBrief(input: BuildContentBriefInput): ContentBrief {
   facts.push(fact("shop", `Tiệm: ${shop.displayName}`))
   if (shop.toneOfVoice) facts.push(fact("shop", `Giọng văn: ${shop.toneOfVoice}`))
   if (shop.ctaPhrase) facts.push(fact("shop", `CTA mặc định của tiệm: ${shop.ctaPhrase}`))
+  if (shop.brandMessage) facts.push(fact("shop", `Thông điệp thương hiệu: ${shop.brandMessage}`))
+  if (shop.targetCustomers?.length) facts.push(fact("shop", `Khách mục tiêu: ${shop.targetCustomers.join(", ")}`))
 
   const freeGifts = shop.defaultOffers?.freeGifts ?? []
   const guarantees = shop.defaultOffers?.guarantees ?? []
@@ -256,6 +261,8 @@ export function buildContentBrief(input: BuildContentBriefInput): ContentBrief {
       address: shop.address ?? null,
       website: shop.website ?? null,
       operatingHours: shop.operatingHours ?? null,
+      brandMessage: shop.brandMessage ?? null,
+      targetCustomers: [...(shop.targetCustomers ?? [])],
     },
     channels: input.channels.map((ch) => {
       const spec = CHANNEL_SPECS[ch]

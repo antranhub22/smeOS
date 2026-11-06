@@ -33,6 +33,8 @@ interface CatalogStorefrontHeaderProps {
   style?: StyleDefinition
   templateId?: CatalogTemplateId
   styleId?: CatalogStyleId
+  /** Điều hành tắt "Liên hệ" cho nguồn này → ẩn nút gọi */
+  contactEnabled?: boolean
 }
 
 export function CatalogStorefrontHeader({
@@ -43,6 +45,7 @@ export function CatalogStorefrontHeader({
   style,
   templateId,
   styleId,
+  contactEnabled = true,
 }: CatalogStorefrontHeaderProps) {
   const studioProducts: CatalogProductItem[] = useMemo(() => {
     return products.map((p, idx) => ({
@@ -165,13 +168,14 @@ export function CatalogStorefrontHeader({
             <span className="hidden sm:inline">Chia sẻ</span>
           </Button>
 
-          {shop.phone && (
+          {contactEnabled && shop.phone && (
             <a
               href={`tel:${shop.phone}`}
               aria-label={`Gọi ${shop.phone}`}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-caption font-bold text-white shadow-sm transition-colors"
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-caption font-bold shadow-sm transition-colors"
               style={{
-                backgroundColor: style?.tokens.accent || "#9A3412",
+                backgroundColor: style?.tokens.ctaBg || "#9A3412",
+                color: style?.tokens.ctaText || "#FFFFFF",
               }}
             >
               <Phone size={13} />

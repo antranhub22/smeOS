@@ -7,7 +7,6 @@ import {
   MessageCircle,
   Tag,
   Layers,
-  Check,
   Flower2,
 } from "@/components/ui/icons"
 import { Dialog } from "@/components/ui/dialog"
@@ -22,6 +21,10 @@ interface ProductDetailModalProps {
   customer?: { name?: string | undefined; phone?: string | undefined } | undefined
   /** Slug catalog khi Điều hành bật nút Đặt hàng cho trang này (Đơn hàng đa nguồn §3.2). */
   orderSlug?: string | undefined
+  /** Mở thẳng form đặt hàng (khách bấm "Đặt hàng" trên thẻ sản phẩm) */
+  startOrdering?: boolean | undefined
+  /** Điều hành tắt "Liên hệ" cho nguồn này → ẩn Gọi / Nhắn Zalo */
+  contactEnabled?: boolean | undefined
   onClose: () => void
 }
 
@@ -46,8 +49,8 @@ function getZaloUrl(
 
 export { formatVnd, getZaloUrl }
 
-export function ProductDetailModal({ product, shop, customer, orderSlug, onClose }: ProductDetailModalProps) {
-  const [ordering, setOrdering] = useState(false)
+export function ProductDetailModal({ product, shop, customer, orderSlug, startOrdering = false, contactEnabled = true, onClose }: ProductDetailModalProps) {
+  const [ordering, setOrdering] = useState(startOrdering && !!orderSlug)
   return (
     <Dialog
       open={true}
@@ -59,7 +62,7 @@ export function ProductDetailModal({ product, shop, customer, orderSlug, onClose
       size="md"
       footer={
         <div className="flex w-full items-center gap-2.5">
-          {shop.phone && (
+          {contactEnabled && shop.phone && (
             <a
               href={`tel:${shop.phone}`}
               className="flex min-h-11 items-center gap-1.5 rounded-xl border border-border bg-surface px-4 py-2 text-caption font-bold text-text hover:bg-surface-alt transition-colors focus-visible:outline-2 focus-visible:outline-primary"
@@ -72,6 +75,7 @@ export function ProductDetailModal({ product, shop, customer, orderSlug, onClose
               Đặt hàng
             </Button>
           )}
+          {contactEnabled && (
           <a
             href={getZaloUrl(product, shop, customer)}
             target="_blank"
@@ -82,6 +86,7 @@ export function ProductDetailModal({ product, shop, customer, orderSlug, onClose
           >
             <MessageCircle size={18} /> {orderSlug ? "Nhắn Zalo" : "Nhắn tin Zalo đặt mẫu này"}
           </a>
+          )}
         </div>
       }
     >
@@ -102,7 +107,6 @@ export function ProductDetailModal({ product, shop, customer, orderSlug, onClose
         {/* Pricing */}
         <div className="flex items-baseline gap-2">
           <span className="text-display font-black text-primary">{formatVnd(product.price)}</span>
-          <span className="text-caption text-text-muted">Đã bao gồm thuế & thiệp chúc mừng</span>
         </div>
 
         {product.description && (
@@ -133,21 +137,6 @@ export function ProductDetailModal({ product, shop, customer, orderSlug, onClose
           )}
         </div>
 
-        {/* Guarantees */}
-        <div className="space-y-2 text-caption text-text-muted">
-          <div className="flex items-center gap-2">
-            <Check size={14} className="text-success shrink-0" />
-            Cam kết sản phẩm từ 3 – 5 ngày khi cắm xốp chuyên dụng
-          </div>
-          <div className="flex items-center gap-2">
-            <Check size={14} className="text-success shrink-0" />
-            Tặng kèm thiệp thiết kế & banner in màu cao cấp
-          </div>
-          <div className="flex items-center gap-2">
-            <Check size={14} className="text-success shrink-0" />
-            Chụp ảnh thành phẩm gửi khách duyệt trước khi giao
-          </div>
-        </div>
       </div>
       )}
     </Dialog>

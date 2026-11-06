@@ -590,11 +590,15 @@ model landing_pages {
   content         Json
   created_by      String
   created_at      DateTime @default(now()) @db.Timestamptz(3)
+  // Thùng rác 30 ngày (Kho dữ liệu v2, L-4 — PO 05/11/2026): quá hạn thì cron xoá vĩnh viễn.
+  trashed_at  DateTime? @db.Timestamptz(3)
+  purge_after DateTime? @db.Timestamptz(3)
 
   organization organizations @relation(fields: [organization_id], references: [id])
 
   @@index([organization_id])
   @@index([organization_id, created_at])
+  @@index([purge_after])
 }
 
 /**
@@ -970,6 +974,9 @@ model business_profiles {
   tax_code        String?
   description     String?
   operating_hours Json?
+  /// Thông điệp thương hiệu và khách mục tiêu (checklist ALG 9.3) — đưa vào ngữ cảnh AI viết nội dung
+  brand_message    String?
+  target_customers Json? // danh sách nhóm khách, vd ["Văn phòng tặng sếp", "Cặp đôi"]
   created_at      DateTime @default(now()) @db.Timestamptz(3)
   updated_at      DateTime @updatedAt @db.Timestamptz(3)
 
@@ -1625,12 +1632,16 @@ model catalog_links {
   revoked_by      String?
   created_by      String
   created_at      DateTime  @default(now()) @db.Timestamptz(3)
+  // Thùng rác 30 ngày (Kho dữ liệu v2, L-4 — PO 05/11/2026): quá hạn thì cron xoá vĩnh viễn.
+  trashed_at  DateTime? @db.Timestamptz(3)
+  purge_after DateTime? @db.Timestamptz(3)
   updated_at      DateTime  @updatedAt @db.Timestamptz(3)
 
   organization organizations @relation(fields: [organization_id], references: [id])
 
   @@index([organization_id])
   @@index([slug])
+  @@index([purge_after])
 }
 
 /// Công cụ 11 — link công khai của hồ sơ cửa hàng (/ch/<slug>). Mỗi tổ chức tối đa
@@ -1814,6 +1825,9 @@ model video_jobs {
   error_message   String?
 
   created_at DateTime @default(now()) @db.Timestamptz(3)
+  // Thùng rác 30 ngày (Kho dữ liệu v2, L-4 — PO 05/11/2026): quá hạn thì cron xoá vĩnh viễn.
+  trashed_at  DateTime? @db.Timestamptz(3)
+  purge_after DateTime? @db.Timestamptz(3)
   updated_at DateTime @updatedAt @db.Timestamptz(3)
 
   organization organizations  @relation(fields: [organization_id], references: [id])
@@ -1828,6 +1842,7 @@ model video_jobs {
   @@index([stage])
   @@index([script_approval])
   @@index([video_approval])
+  @@index([purge_after])
 }
 
 model video_scenes {
@@ -2973,6 +2988,9 @@ model content_generations {
   approved_by     String?
 
   created_at DateTime @default(now()) @db.Timestamptz(3)
+  // Thùng rác 30 ngày (Kho dữ liệu v2, L-4 — PO 05/11/2026): quá hạn thì cron xoá vĩnh viễn.
+  trashed_at  DateTime? @db.Timestamptz(3)
+  purge_after DateTime? @db.Timestamptz(3)
   updated_at DateTime @updatedAt @db.Timestamptz(3)
 
   organization organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
@@ -2982,6 +3000,7 @@ model content_generations {
 
   @@index([organization_id, asset_id, topic_id, mode])
   @@index([organization_id, created_at])
+  @@index([purge_after])
 }
 
 /// Giọng nhân bản của chủ tiệm (Khu vực C — Voice Clone, 24/09/2026). TENANT.
@@ -3458,6 +3477,9 @@ model greeting_catalogs {
   is_active       Boolean  @default(true)
   created_by      String
   created_at      DateTime @default(now()) @db.Timestamptz(3)
+  // Thùng rác 30 ngày (Kho dữ liệu v2, L-4 — PO 05/11/2026): quá hạn thì cron xoá vĩnh viễn.
+  trashed_at  DateTime? @db.Timestamptz(3)
+  purge_after DateTime? @db.Timestamptz(3)
   updated_at      DateTime @updatedAt @db.Timestamptz(3)
 
   organization organizations               @relation(fields: [organization_id], references: [id], onDelete: Cascade)
@@ -3469,6 +3491,7 @@ model greeting_catalogs {
 
   @@unique([organization_id, code])
   @@index([organization_id])
+  @@index([purge_after])
 }
 
 /// Sản phẩm gán vào Catalog Thẻ chào (tham chiếu Product Master SSOT)

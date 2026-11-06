@@ -25,6 +25,8 @@ const putSchema = z.object({
   social_links: jsonObject,
   tax_code: z.string().nullable().optional(),
   description: z.string().nullable().optional(),
+  brand_message: z.string().trim().max(500).nullable().optional(),
+  target_customers: z.array(z.string().trim().min(1).max(80)).max(10).nullable().optional(),
   operating_hours: jsonObject,
 })
 

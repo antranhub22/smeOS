@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest"
-import { computeProductReadiness, type ProductReadinessInput } from "../product-readiness"
+import { activationWarnings, computeProductReadiness, type ProductReadinessInput } from "../product-readiness"
 
 describe("computeProductReadiness (T6.1 / Role UX Product Manager)", () => {
   const completeProduct: ProductReadinessInput = {
@@ -16,9 +16,10 @@ describe("computeProductReadiness (T6.1 / Role UX Product Manager)", () => {
     bom: {
       flowers: [{ flowerName: "Hồng Ecuador", quantity: 10 }],
     },
+    hasApprovedCopy: true,
   }
 
-  it("sản phẩm hoàn thiện đủ 4 tiêu chí đạt điểm tối đa 100% và isReady = true", () => {
+  it("sản phẩm hoàn thiện đủ 5 tiêu chí đạt điểm tối đa 100% và isReady = true", () => {
     const res = computeProductReadiness(completeProduct)
     expect(res.isReady).toBe(true)
     expect(res.score).toBe(100)
@@ -32,21 +33,21 @@ describe("computeProductReadiness (T6.1 / Role UX Product Manager)", () => {
   it("phát hiện sản phẩm chưa kích hoạt (status DRAFT)", () => {
     const res = computeProductReadiness({ ...completeProduct, status: "DRAFT" })
     expect(res.isReady).toBe(false)
-    expect(res.score).toBe(75)
+    expect(res.score).toBe(80)
     expect(res.missingReasons).toContain("Sản phẩm chưa kích hoạt (đang ở trạng thái Nháp hoặc Lưu trữ)")
   })
 
   it("phát hiện sản phẩm thiếu ảnh đại diện chính thức", () => {
     const res = computeProductReadiness({ ...completeProduct, masterImageUrl: undefined })
     expect(res.isReady).toBe(false)
-    expect(res.score).toBe(75)
+    expect(res.score).toBe(80)
     expect(res.missingReasons).toContain("Thiếu ảnh sản phẩm chính thức")
   })
 
   it("phát hiện sản phẩm thiếu danh mục", () => {
     const res = computeProductReadiness({ ...completeProduct, category: null })
     expect(res.isReady).toBe(false)
-    expect(res.score).toBe(75)
+    expect(res.score).toBe(80)
     expect(res.missingReasons).toContain("Chưa phân loại danh mục (Sản phẩm, Giỏ hoa, Kệ khai trương...)")
   })
 
@@ -68,7 +69,7 @@ describe("computeProductReadiness (T6.1 / Role UX Product Manager)", () => {
       bom: { flowers: [] },
     })
     expect(res.isReady).toBe(false)
-    expect(res.score).toBe(75)
+    expect(res.score).toBe(80)
     expect(res.missingReasons).toContain("Chưa có giá niêm yết hoặc công thức thành phần (BOM)")
   })
 
@@ -81,6 +82,14 @@ describe("computeProductReadiness (T6.1 / Role UX Product Manager)", () => {
     })
     expect(res.isReady).toBe(false)
     expect(res.score).toBe(0)
-    expect(res.missingReasons).toHaveLength(4)
+    expect(res.missingReasons).toHaveLength(5)
+  })
+
+  it("thiếu bài viết đã duyệt → chưa sẵn sàng; cảnh báo mở bán bỏ tiêu chí trạng thái (checklist ALG 7.3)", () => {
+    const res = computeProductReadiness({ ...completeProduct, hasApprovedCopy: false })
+    expect(res.isReady).toBe(false)
+    expect(res.score).toBe(80)
+    expect(res.missingReasons).toEqual(["Chưa có bài viết bán hàng được duyệt"])
+    expect(activationWarnings({ ...completeProduct, status: "DRAFT", hasApprovedCopy: false })).toEqual(["Chưa có bài viết bán hàng được duyệt"])
   })
 })

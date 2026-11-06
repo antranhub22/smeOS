@@ -130,6 +130,22 @@ export async function productCostAndPrice(ctx: TenantContext, productId: string,
   return { product: { id: product.id, name: product.name, priceVnd: product.priceVnd }, hasRecipe: true, cost, scenarios }
 }
 
+/**
+ * Đề xuất giá vốn từ BOM của sản phẩm × đơn giá nguyên liệu của tiệm (checklist ALG 7.2): công thức
+ * nháp ghép theo tên, chưa lưu. Nguyên liệu chưa ghép được hoặc chưa có đơn giá liệt kê rõ, không đoán số.
+ */
+export async function suggestCostFromBom(ctx: TenantContext, productId: string) {
+  const { spec, config } = await requireSpec(ctx)
+  const repo = getCostingRepository()
+  const product = await repo.productForCosting(ctx, productId)
+  if (!product) throw notFound()
+  const materials = await repo.listMaterials(ctx)
+  const draft = draftRecipeFromBom(product.bom, spec, materials)
+  const lines = draft.flatMap((l) => (l.materialId ? [{ materialId: l.materialId, quantity: l.quantity }] : []))
+  const cost = computeProductCost({ productId, lines, wastePercent: null, laborMinutes: null }, materials, config, product.complexity)
+  return { draft, cost, unmatched: draft.filter((l) => !l.materialId).map((l) => l.name) }
+}
+
 /** #34 — áp một mức giá cho sản phẩm (người dùng đã xác nhận ở giao diện). Ghi nhật ký kèm giá vốn lúc áp. */
 export async function applyPrice(ctx: TenantContext, productId: string, priceVnd: number, scenarioKey: string) {
   if (!(priceVnd > 0) || !Number.isFinite(priceVnd)) throw validationFailed({ priceVnd: "Giá bán phải lớn hơn 0" })

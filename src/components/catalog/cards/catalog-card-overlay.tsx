@@ -2,11 +2,12 @@
 
 import { Button } from "@/components/ui/button"
 import React from "react"
-import { MessageCircle } from "@/components/ui/icons"
 import type { PublicCatalogProduct, PublicCatalogShop } from "@/modules/catalog-links/use-cases/get-public-catalog"
 import type { StyleDefinition } from "@/modules/catalog-studio/domain/entities/catalog-studio.types"
 import { SmartFlowerImage } from "../smart-flower-image"
-import { formatVnd, getZaloUrl } from "../product-detail-modal"
+import { formatVnd } from "../product-detail-modal"
+import { CardOrderAction } from "./card-order-action"
+import type { PublicEntry } from "../public/public-entry"
 
 interface CatalogCardOverlayProps {
   product: PublicCatalogProduct
@@ -14,6 +15,9 @@ interface CatalogCardOverlayProps {
   shop: PublicCatalogShop
   style?: StyleDefinition | undefined
   onSelectProduct: (product: PublicCatalogProduct) => void
+  /** Nút Đặt hàng / Liên hệ theo cài đặt Điều hành */
+  entry: PublicEntry
+  onOrderProduct: (product: PublicCatalogProduct) => void
 }
 
 export function CatalogCardOverlay({
@@ -22,6 +26,8 @@ export function CatalogCardOverlay({
   shop,
   style,
   onSelectProduct,
+  entry,
+  onOrderProduct,
 }: CatalogCardOverlayProps) {
   const fontDisplay = style?.typography.fontDisplay || ""
   const textPrimary = style?.tokens.textPrimary || "#FAFAFA"
@@ -121,17 +127,7 @@ export function CatalogCardOverlay({
                 {formatVnd(product.price)}
               </div>
             </div>
-            <a
-              href={getZaloUrl(product, shop)}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label="Đặt ngay qua Zalo"
-              className="pointer-events-auto inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-caption font-bold transition-all shadow-md active:scale-95"
-              style={{ backgroundColor: ctaBg, color: ctaText }}
-            >
-              <MessageCircle size={14} aria-hidden="true" />
-              <span className="hidden sm:inline">Đặt ngay</span>
-            </a>
+            <CardOrderAction product={product} shop={shop} entry={entry} onOrderProduct={onOrderProduct} ctaBg={ctaBg} ctaText={ctaText} />
           </div>
         </div>
       </div>

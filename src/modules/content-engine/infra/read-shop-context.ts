@@ -69,5 +69,7 @@ export async function readShopContext(ctx: TenantContext): Promise<RawShopInput>
     address: business?.address ?? null,
     website: business?.website ?? null,
     operatingHours: business ? extractOperatingHours(business.operating_hours) : null,
+    brandMessage: business?.brand_message?.trim() || null,
+    targetCustomers: business ? toStringArray(business.target_customers) : [],
   }
 }

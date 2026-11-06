@@ -16,6 +16,8 @@ import { useSavedState } from "../use-saved-state"
 import { JourneyIntro } from "./swipe/journey-intro"
 import { UnavailablePanel } from "./swipe/unavailable-panel"
 import { useCustomerJourney } from "../journey-context"
+import { filterSwipeDeck, findMood, moodsOf } from "./aux/catalog-filters"
+import { SwipeColorFilter } from "./swipe/swipe-color-filter"
 import { customDesignMessage, findPriceRange, inPriceRange, priceRangesOf, productInquiryMessage } from "@/modules/greeting-card/domain/collection-browse"
 
 interface SwipeBrochureEngineProps {
@@ -80,7 +82,14 @@ export function SwipeBrochureEngine({
   // Lọc theo khoảng giá (khách chưa ưng mẫu nào ở màn cuối)
   const [priceKey, setPriceKey] = useSavedState<string | null>(embedded ? "preview-price-filter" : "price-filter", null)
   const range = findPriceRange(priceKey)
-  const visible = useMemo(() => (range ? products.filter((p) => inPriceRange(p.price, range)) : products), [products, range])
+  // Lọc theo tông màu (ALG 5.9) — cùng dữ liệu màu với mẫu Bảng màu
+  const moods = useMemo(() => moodsOf(products), [products])
+  const [moodKey, setMoodKey] = useSavedState<string | null>(embedded ? "preview-color-filter" : "color-filter", null)
+  const mood = moods.some((m) => m.id === moodKey) ? findMood(moodKey) : null
+  const visible = useMemo(
+    () => filterSwipeDeck(products, { mood, inRange: range ? (p) => inPriceRange(p.price, range) : null }),
+    [products, mood, range],
+  )
   // Tim / mẫu đang xem nhớ trên máy khách: tải lại, Back hay mở lại link vẫn giữ nguyên
   const j = useSwipeJourney(visible, catalogName, embedded)
   const { index, current, liked } = j
@@ -152,6 +161,18 @@ export function SwipeBrochureEngine({
               Xem tất cả
             </Button>
           </p>
+        )}
+
+        {!j.prompt && (
+          <SwipeColorFilter
+            moods={moods}
+            activeId={mood?.id ?? null}
+            theme={theme}
+            onPick={(id) => {
+              setMoodKey(id)
+              j.restart()
+            }}
+          />
         )}
 
         {j.prompt && j.state ? (

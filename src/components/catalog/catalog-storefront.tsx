@@ -26,6 +26,7 @@ import { CatalogStorefrontToolbar } from "./catalog-storefront-toolbar"
 import { PublicHero } from "./public/public-hero"
 import { publicThemeVars } from "./public/public-theme-vars"
 import { PublicStickyActions } from "./public/public-sticky-actions"
+import { entryOf } from "./public/public-entry"
 
 const PRODUCTS_ANCHOR_ID = "bo-suu-tap"
 const EMPTY_PRODUCTS: PublicCatalogProduct[] = []
@@ -38,6 +39,9 @@ export function CatalogStorefront({ initialData }: CatalogStorefrontProps) {
   const [searchQuery, setSearchQuery] = useState("")
   const [selectedOccasion, setSelectedOccasion] = useState<string>("all")
   const [selectedProduct, setSelectedProduct] = useState<PublicCatalogProduct | null>(null)
+  // true: khách bấm "Đặt hàng" trên thẻ → mở thẳng form đặt hàng trong chi tiết mẫu
+  const [startOrdering, setStartOrdering] = useState(false)
+  const entry = entryOf(initialData)
   const [showShareModal, setShowShareModal] = useState(false)
 
   const templateId = (initialData.status === "ACTIVE" && initialData.templateId) || "T01_SIGNATURE_COLLECTION"
@@ -139,6 +143,7 @@ export function CatalogStorefront({ initialData }: CatalogStorefrontProps) {
         style={currentStyle}
         templateId={templateId}
         styleId={styleId}
+        contactEnabled={entry.contact}
       />
 
       {heroImageUrl && (
@@ -196,7 +201,9 @@ export function CatalogStorefront({ initialData }: CatalogStorefrontProps) {
           catalogStyle={catalogStyle}
           shop={shop}
           style={currentStyle}
-          onSelectProduct={(p) => setSelectedProduct(p)}
+          onSelectProduct={(p) => { setStartOrdering(false); setSelectedProduct(p) }}
+          entry={entry}
+          onOrderProduct={(p) => { setStartOrdering(true); setSelectedProduct(p) }}
           onResetFilter={() => { setSearchQuery(""); setSelectedOccasion("all") }}
         />
 
@@ -217,7 +224,7 @@ export function CatalogStorefront({ initialData }: CatalogStorefrontProps) {
           <LandingTemplateFaq faq={generatedPackage.faq} archetypeId={campaign.archetype} />
         )}
         {/* Nút "Liên hệ / Cần tư vấn" — Điều hành bật tắt theo nguồn (Đơn hàng › Cài đặt) */}
-        {campaign && enabledSections?.lead !== false && initialData.entryActions?.contact !== false && (
+        {campaign && enabledSections?.lead !== false && entry.contact && (
           <LandingTemplateLead
             archetypeId={campaign.archetype || "minimal-luxury"}
             occasionTitle={catalog.name}
@@ -232,7 +239,9 @@ export function CatalogStorefront({ initialData }: CatalogStorefrontProps) {
           product={selectedProduct}
           shop={shop}
           customer={initialData.customer}
-          orderSlug={initialData.entryActions?.order ? catalog.slug : undefined}
+          orderSlug={entry.order ? catalog.slug : undefined}
+          startOrdering={startOrdering}
+          contactEnabled={entry.contact}
           onClose={() => setSelectedProduct(null)}
         />
       )}
@@ -244,7 +253,7 @@ export function CatalogStorefront({ initialData }: CatalogStorefrontProps) {
           onClose={() => setShowShareModal(false)}
         />
       )}
-      <PublicStickyActions shopName={shop.name} phone={shop.phone} topic={catalog.name} style={currentStyle} />
+      <PublicStickyActions shopName={shop.name} phone={shop.phone} topic={catalog.name} style={currentStyle} entry={entry} productsAnchorId={PRODUCTS_ANCHOR_ID} />
       <footer
         className="mt-12 text-center text-caption max-w-4xl mx-auto px-4"
         style={{ color: currentStyle.tokens.textSecondary }}
