@@ -73,7 +73,7 @@ export function BriefImportantView({
           const evidence = getDualOpportunityEvidencePreview(item);
           const headline = getOpportunityHeadline(item);
           const rankColors = [
-            "bg-warning text-white shadow-xs", // #1
+            "bg-accent-text text-white shadow-xs", // #1
             "bg-text-muted text-white shadow-xs", // #2
             "bg-warning-text text-white shadow-xs", // #3
             "bg-border text-text",       // #4+
@@ -82,11 +82,8 @@ export function BriefImportantView({
 
           return (
             <div
-              role="button"
-              tabIndex={0}
               key={`${item.id}-${idx}`}
-              onClick={() => onSelectOpportunity(item)}
-              className="group rounded-2xl border border-border/90 bg-white p-4 shadow-2xs hover:border-primary hover:shadow-md transition-all duration-200 cursor-pointer flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+              className="group relative rounded-2xl border border-border/90 bg-white p-4 shadow-2xs hover:border-primary hover:shadow-md transition-all duration-200 cursor-pointer flex flex-col sm:flex-row sm:items-center justify-between gap-4"
             >
               {/* Cột trái: Rank, Khung Dual Thumbnail (TikTok & YouTube) & Tên cơ hội */}
               <div className="flex items-start sm:items-center gap-3.5 flex-1 min-w-0">
@@ -99,17 +96,12 @@ export function BriefImportantView({
                 {/* Khung Chứa Cả 2 Thumbnail: TikTok & YouTube */}
                 <div className="flex items-center gap-1.5 sm:gap-2 flex-shrink-0">
                   {/* Thumbnail TikTok */}
-                  <div
-                    role="button"
-                    tabIndex={0}
-                    onClick={(e) => {
-                      if (evidence.tiktok.videoUrl) {
-                        e.stopPropagation();
-                        window.open(evidence.tiktok.videoUrl, "_blank", "noopener,noreferrer");
-                      }
-                    }}
+                  <a
+                    href={evidence.tiktok.videoUrl || undefined}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     title={`Mở xem dẫn chứng video thật trên TikTok: ${evidence.tiktok.title}`}
-                    className="relative h-16 w-16 sm:w-20 rounded-xl overflow-hidden flex-shrink-0 bg-text group/tiktok shadow-xs border border-border/90 cursor-pointer hover:border-primary transition-all hover:scale-[1.03]"
+                    className="relative z-10 block h-16 w-16 sm:w-20 rounded-xl overflow-hidden flex-shrink-0 bg-text group/tiktok shadow-xs border border-border/90 cursor-pointer hover:border-primary transition-all hover:scale-[1.03]"
                   >
                     <img
                       src={evidence.tiktok.thumbnailUrl}
@@ -121,16 +113,16 @@ export function BriefImportantView({
 
                     {/* Platform Badge TikTok */}
                     <div className="absolute top-1 left-1">
-                      <span className="inline-flex items-center gap-0.5 px-1 py-0.5 rounded bg-black/85 text-primary text-caption font-black uppercase tracking-wider backdrop-blur-xs border border-primary/30">
-                        <Video className="h-2 w-2 text-primary" />
+                      <span className="inline-flex items-center gap-0.5 px-1 py-0.5 rounded bg-black/85 text-white text-caption font-black uppercase tracking-wider backdrop-blur-xs border border-primary/30">
+                        <Video className="h-2 w-2 text-white" />
                         TikTok
                       </span>
                     </div>
 
                     {/* Play icon overlay on hover */}
                     <div className="absolute inset-0 flex items-center justify-center opacity-70 group-hover/tiktok:opacity-100 transition-opacity">
-                      <div className="h-5 w-5 rounded-full bg-black/60 text-primary flex items-center justify-center border border-primary/40">
-                        <Play className="h-2.5 w-2.5 fill-current translate-x-0.2 text-primary" />
+                      <div className="h-5 w-5 rounded-full bg-black/60 text-white flex items-center justify-center border border-primary/40">
+                        <Play className="h-2.5 w-2.5 fill-current translate-x-0.2 text-white" />
                       </div>
                     </div>
 
@@ -140,20 +132,15 @@ export function BriefImportantView({
                         {evidence.tiktok.author}
                       </span>
                     </div>
-                  </div>
+                  </a>
 
                   {/* Thumbnail YouTube */}
-                  <div
-                    role="button"
-                    tabIndex={0}
-                    onClick={(e) => {
-                      if (evidence.youtube.videoUrl) {
-                        e.stopPropagation();
-                        window.open(evidence.youtube.videoUrl, "_blank", "noopener,noreferrer");
-                      }
-                    }}
+                  <a
+                    href={evidence.youtube.videoUrl || undefined}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     title={`Mở xem dẫn chứng video thật trên YouTube: ${evidence.youtube.title}`}
-                    className="relative h-16 w-20 sm:w-24 rounded-xl overflow-hidden flex-shrink-0 bg-text group/yt shadow-xs border border-border/90 cursor-pointer hover:border-danger transition-all hover:scale-[1.03]"
+                    className="relative z-10 block h-16 w-20 sm:w-24 rounded-xl overflow-hidden flex-shrink-0 bg-text group/yt shadow-xs border border-border/90 cursor-pointer hover:border-danger transition-all hover:scale-[1.03]"
                   >
                     <img
                       src={evidence.youtube.thumbnailUrl}
@@ -184,7 +171,7 @@ export function BriefImportantView({
                         {evidence.youtube.author}
                       </span>
                     </div>
-                  </div>
+                  </a>
                 </div>
 
                 <div className="space-y-1 min-w-0 flex-1">
@@ -198,7 +185,14 @@ export function BriefImportantView({
                   </div>
 
                   <h4 className="font-bold text-text text-body-sm group-hover:text-primary transition truncate">
-                    {headline}
+                    {/* Nút chính phủ cả thẻ (after:inset-0); thumbnail video nằm trên lớp phủ */}
+                    <button
+                      type="button"
+                      onClick={() => onSelectOpportunity(item)}
+                      className="block w-full truncate text-left after:absolute after:inset-0 after:rounded-2xl after:content-[''] focus-visible:outline-none focus-visible:after:ring-2 focus-visible:after:ring-primary"
+                    >
+                      {headline}
+                    </button>
                   </h4>
                 </div>
               </div>

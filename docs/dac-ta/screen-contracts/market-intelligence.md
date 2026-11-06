@@ -16,7 +16,7 @@ acceptance:
 
 # Screen Contract — Nghiên cứu thị trường (`/market-intelligence`)
 
-**Tuyến:** `/market-intelligence` · **Tệp chính:** `src/app/(app)/market-intelligence/page.tsx` · **Cập nhật:** 27/09/2026 · **Thẻ:** T5.C1
+**Tuyến:** `/market-intelligence` · **Tệp chính:** `src/app/(app)/market-intelligence/page.tsx` · **Cập nhật:** 06/11/2026 · **Thẻ:** T5.C1
 
 > **Trạng thái production (01/11/2026, P0-06, D-20b):** khoá "Sắp ra mắt" ở mọi bản build production (`UNAVAILABLE_ROUTE_PREFIXES`, `src/lib/feature-lock.ts`) — worker nghiên cứu thị trường chưa được triển khai trên Render. Trang chủ Marketing không gọi API cơ hội khi tuyến đang khoá.
 
@@ -67,6 +67,8 @@ acceptance:
 - Toàn bộ nút bấm và thẻ tương tác có `focus-visible:outline-2 focus-visible:outline-primary`.
 - Các biểu tượng trang trí có `aria-hidden="true"`.
 - Modal/Drawer quản lý focus trap và đóng bằng phím Escape.
+- Thẻ cơ hội (06/11/2026, `npm run ux:audit -- market-intelligence`, 9 trạng thái × 390/1280px): **không** dùng `div role="button"` lồng nhau. Mỗi thẻ có một nút chính phủ cả thẻ đặt trên tiêu đề (`after:absolute after:inset-0`, bấm được bằng bàn phím); thumbnail TikTok/YouTube là liên kết thật mở tab mới, ô xem video là nút riêng — cả hai nằm trên lớp phủ. Thẻ chủ đề dùng nút "Chọn chủ đề này" (`aria-pressed`).
+- Chữ trên nền đen/vàng: nhãn TikTok chữ trắng; nền nhấn dùng `bg-warning-text`/`bg-accent-text` (không dùng `bg-warning` + chữ trắng, 2,6:1). Bốn ô "Tổng quan hôm nay" xếp dọc (không ép chữ ở 390px).
 
 ## 7. QA Matrix (03a §34)
 | Chiều | Kết quả | Ghi chú |

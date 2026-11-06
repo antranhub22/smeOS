@@ -216,7 +216,21 @@ Trước: 12/21 trang lỗi axe (tương phản, ô không nhãn, vùng bấm nh
 | CD-05 | P2 | Mã kỹ thuật trên màn: "M0…M5", "NONE/AGGREGATED/MASKED/RAW", "S0/S1/S2", khoá trường, "SuperAdmin", "Admin SaaS", "Proposal Mode", "(SLA)", "Book ship", "POD", "(Heading Font)" | Tiếng Việt; mốc nhắc hiện số thứ tự |
 | CD-06 | P2 | Nút "Mở khóa đổi ngành (Có phí)" chỉ bật `alert` | Dòng hướng dẫn liên hệ quản trị viên |
 | CD-07 | P2 | Xem trước màu thương hiệu: chữ trắng cố định trên nền vàng (2,1:1) | Chọn trắng/đen theo tương phản (`calculateContrastRatio`) |
-| CD-08 | P1 | Tab "Luồng thẻ chào": ô số, checkbox không nhãn, chữ cảnh báo thiếu tương phản, tràn ngang 401px ở 390px (ô nhập `flex-1` thiếu `min-w-0` trong `telegram-dispatch-connector.tsx`) | **Chưa sửa — cần PO:** tệp thuộc `src/components/greeting-card` đang đóng băng (PO 31/10/2026) |
+| CD-08 | P1 | Tab "Luồng thẻ chào": ô số, checkbox không nhãn, chữ cảnh báo thiếu tương phản, tràn ngang 401px ở 390px | Đã sửa 06/11/2026 sau D-47 (tràn ngang đã được phiên khác sửa); test khoá hành vi B5 trước khi chạm |
 | CD-09 | P3 | `/cai-dat-ai` hiện tên model (GPT-4o, Gemini…) và từ nội bộ "bộ ảnh vàng", "chưa có khoá" | **Cần PO quyết:** tên model là nội dung chính của trang cấu hình — giữ hay đổi sang tên trung tính |
 
 Kiểm thêm: ảnh mốc `visual-journeys` `/cai-dat` khớp. `a11y-journeys` đỏ ở số đếm thanh điều hướng "06 · QUẢN TRỊ TIỆM" và phím ⌘K — **đỏ y hệt trên `main`** (khung giao diện, lane L3), không do đợt này. Chưa kiểm: bàn phím, zoom 200%, đọc màn hình thủ công.
+
+## #49 Xu hướng thị trường — `/market-intelligence` (06/11/2026)
+
+Kịch bản `scripts/ux-audit/scenarios/market-intelligence.mjs` (nạp 3 cơ hội mẫu; tất cả, 4 nhóm bản tin, xem video, chi tiết cơ hội, tab từ khoá, hộp cài đặt), 9 trạng thái × 390/1280px. Trước: 6/9 trạng thái lỗi tương phản; sau: 9/9 sạch, không cuộn ngang.
+
+| ID | Mức | Finding | Đã làm |
+|---|---|---|---|
+| MI-01 | P1 | Thẻ cơ hội là `div role="button"` lồng 2 `div role="button"` (thumbnail), không xử lý phím → bàn phím không mở được (7 tệp) | Nút chính phủ cả thẻ trên tiêu đề; thumbnail là `<a target="_blank">`, ô xem video là `<button>` nằm trên lớp phủ |
+| MI-02 | P1 | Nhãn TikTok chữ `text-primary` trên nền đen (1,9:1); hạng #1 và bộ lọc đang chọn chữ trắng trên `bg-warning` (2,6:1); thanh tác giả trong hộp xem video chữ xám trên nền tối | Chữ trắng; `bg-warning-text`/`bg-accent-text`; `text-surface` |
+| MI-03 | P2 | 390px: 4 ô "Tổng quan hôm nay" dồn 3 dòng thành một hàng (`Button` mặc định xếp ngang) | `flex-col items-stretch`; "Lọc xem →" không xuống dòng |
+| MI-04 | P2 | "Trend Fit", "cron job" trên màn; ô trượt ngưỡng phù hợp không có tên | Tiếng Việt; `htmlFor`/`id` |
+| MI-05 | P3 | 4 ô trượt `type="range"` còn là thẻ HTML thô (R18) | **Chưa sửa:** `src/components/ui` chưa có Slider — cần luồng component (L2) |
+
+Chưa kiểm: bàn phím thủ công, zoom 200%, đọc màn hình.

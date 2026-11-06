@@ -160,11 +160,8 @@ export function BriefOccasionsView({
 
             return (
               <div
-              role="button"
-              tabIndex={0}
                 key={item.id}
-                onClick={() => onSelectOpportunity(item)}
-                className="group rounded-2xl border border-border/90 bg-white shadow-2xs hover:border-accent hover:shadow-md transition-all duration-200 cursor-pointer flex flex-col overflow-hidden"
+                className="group relative rounded-2xl border border-border/90 bg-white shadow-2xs hover:border-accent hover:shadow-md transition-all duration-200 cursor-pointer flex flex-col overflow-hidden"
               >
                 <div className="relative aspect-[16/9] w-full overflow-hidden bg-text">
                   <img
@@ -184,9 +181,9 @@ export function BriefOccasionsView({
                       rel="noopener noreferrer"
                       onClick={(e) => e.stopPropagation()}
                       title={`Mở TikTok: ${dualEvidence.tiktok.title}`}
-                      className="inline-flex items-center gap-1 text-caption font-black px-2 py-0.5 rounded-full bg-black/80 text-primary border border-primary/30 backdrop-blur-xs shadow-xs hover:scale-105 transition"
+                      className="inline-flex items-center gap-1 text-caption font-black px-2 py-0.5 rounded-full bg-black/80 text-white border border-primary/30 backdrop-blur-xs shadow-xs hover:scale-105 transition"
                     >
-                      <Video className="h-2.5 w-2.5 text-primary" />
+                      <Video className="h-2.5 w-2.5 text-white" />
                       TikTok
                     </a>
                     <a
@@ -209,7 +206,14 @@ export function BriefOccasionsView({
 
                 <div className="p-4 flex flex-col justify-between flex-1 space-y-3">
                   <h5 className="font-bold text-text text-body-sm leading-snug group-hover:text-accent-text transition line-clamp-2">
-                    {headline}
+                    {/* Nút chính phủ cả thẻ (after:inset-0); thumbnail video nằm trên lớp phủ */}
+                    <button
+                      type="button"
+                      onClick={() => onSelectOpportunity(item)}
+                      className="text-left after:absolute after:inset-0 after:rounded-2xl after:content-[''] focus-visible:outline-none focus-visible:after:ring-2 focus-visible:after:ring-primary"
+                    >
+                      {headline}
+                    </button>
                   </h5>
 
                   <div className="pt-2 border-t border-border flex items-center justify-between text-caption">
