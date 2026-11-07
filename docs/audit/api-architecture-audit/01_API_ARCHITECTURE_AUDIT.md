@@ -235,3 +235,18 @@ PO chốt: phạm vi chỉ `/integration/*` · viết lược đồ phản hồi
 | Catalog đóng băng | 3 route `integration/catalog-links*` KHÔNG sửa; lược đồ chép sang hợp đồng | `tests/unit/integration/integration-catalog-contract.test.ts`: cùng bộ mẫu gửi tới route đóng băng và bản sao — kết luận phải trùng |
 
 Phát hiện ngoài phạm vi (không sửa): `GET /integration/catalog-links?include_revoked=false` vẫn tính là `true` (`z.coerce.boolean` coi mọi chuỗi khác rỗng là `true`) — route nằm trong vùng Catalog đóng băng, cần PO duyệt mới sửa được. Phản hồi Integration API trả nguyên bản ghi nội bộ (vd. `usage.user_id`, `generation_jobs.payload/output/error`) — cân nhắc thu gọn khi lên `/v2`.
+
+## 10. Nhật ký sửa — đợt 5 (07/11/2026)
+
+PO chốt: trần thân JSON 2 MB · khoá trùng mà thân khác → chỉ cảnh báo, vẫn trả job cũ · `POST /orders` để đợt sau (cần sửa schema).
+
+| Mã | Đã làm | Test |
+|---|---|---|
+| API-17 | `jsonResponse` đặt `Cache-Control: no-store` khi route chưa tự đặt | `tests/unit/core/http/handle-input-errors.test.ts` |
+| API-17 | `handle()` đọc thân JSON theo luồng, trần `MAX_JSON_BODY_BYTES` = 2 MB → 413 `PAYLOAD_TOO_LARGE` (mã lỗi mới, `details.max_bytes`); chặn sớm theo `content-length` khai báo; `formData` không bị ảnh hưởng | cùng tệp: khai vượt trần, luồng không khai độ dài vượt trần, dưới trần vẫn đọc |
+| API-17 | `platform/nav-matrix`, `platform/ux-rollout-flags`: ghi audit lỗi thì `log.error("platform.audit_write_failed")` thay vì nuốt im lặng | — |
+| API-11 | `enqueueJob`: khoá trùng mà `payload`/`product_id` khác (so theo dạng chuẩn JSON, không phụ thuộc thứ tự khoá `jsonb`) → `log.warn("jobs.idempotency_payload_mismatch", { feature, job_id })`, vẫn trả job cũ | `tests/unit/jobs/idempotency-payload.test.ts`, `tests/tenant/job-idempotency-mismatch.test.ts` |
+| OpenAPI | Operation có thân khai thêm 413; enum mã lỗi có `PAYLOAD_TOO_LARGE` | `tests/unit/integration/integration-openapi.test.ts` |
+| CodeQL | `scripts/gen-openapi.ts` bỏ mẫu `existsSync` rồi đọc/ghi (`js/file-system-race`) — cảnh báo high trên PR #172 | — |
+
+Còn lại cho đợt sau: chống bấm đúp `POST /orders` (cột `orders.idempotency_key` + migration — cần PO duyệt sửa schema); chặn 422 khi khoá trùng thân khác sau khi có số đo cảnh báo.

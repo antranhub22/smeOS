@@ -38,13 +38,16 @@ Endpoint duyệt luôn tách khỏi endpoint sinh kết quả: `POST /x/:id/appr
 | 403 | `CAPABILITY_DENIED` | Thiếu mã năng lực. Thân lỗi nêu mã còn thiếu |
 | 404 | `NOT_FOUND` | Không tìm thấy, **hoặc thuộc tổ chức khác** |
 | 409 | `CONFLICT` | Xung đột trạng thái, ví dụ duyệt một bản ghi đã duyệt |
+| 413 | `PAYLOAD_TOO_LARGE` | Thân JSON vượt 2 MB (`details.max_bytes`); `handle()` chặn theo `content-length` hoặc khi đọc luồng vượt trần — tải tệp đi `formData`/URL ký, không qua trần này (07/11/2026, audit API-17) |
 | 422 | `QUOTA_EXCEEDED` | Vượt hạn mức, job không được tạo |
 | 429 | `RATE_LIMITED` | Kèm `Retry-After` (giây tới cuối cửa sổ). Mọi phản hồi của route có giới hạn tần suất (qua `handle()`) kèm `RateLimit-Limit`, `RateLimit-Remaining`, `RateLimit-Reset` theo luật còn ít lượt nhất (07/11/2026, audit API-08; trước đó mã không đặt header nào) |
 | 500 | `INTERNAL` | Không lộ chi tiết |
 
 **Bản ghi của tổ chức khác trả 404, không trả 403.** Trả 403 là xác nhận bản ghi đó tồn tại — rò rỉ thông tin xuyên tổ chức bằng chính mã lỗi.
 
-**Chống trùng.** Mọi `POST` tạo job nhận `Idempotency-Key`. Cùng khoá trong 24 giờ trả lại job cũ thay vì tạo job mới. Người dùng bấm hai lần không bị trừ credit hai lần.
+**Chống trùng.** Mọi `POST` tạo job nhận `Idempotency-Key`. Cùng khoá trong 24 giờ trả lại job cũ thay vì tạo job mới. Người dùng bấm hai lần không bị trừ credit hai lần. Cùng khoá mà `payload`/sản phẩm khác: vẫn trả job cũ, máy chủ ghi cảnh báo `jobs.idempotency_payload_mismatch` (không ghi nội dung) để đo trước khi quyết chặn 422 (PO 07/11/2026).
+
+**Lưu đệm.** Phản hồi JSON mặc định `Cache-Control: no-store`; route tự đặt `cache-control` (ảnh công khai, tệp xuất) được giữ nguyên (07/11/2026, audit API-17).
 
 ## 3. Phiên và tổ chức
 

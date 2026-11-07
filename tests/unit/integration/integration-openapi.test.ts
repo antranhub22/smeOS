@@ -56,6 +56,8 @@ describe("OpenAPI — Integration API", () => {
     for (const op of INTEGRATION_OPERATIONS) {
       expect(op.errors, op.operationId).toEqual(expect.arrayContaining([401, 429]))
       if (op.body || op.query) expect(op.errors, op.operationId).toContain(400)
+      // Thân JSON qua `handle()` có trần 2 MB (audit API-17)
+      if (op.body) expect(op.errors, op.operationId).toContain(413)
     }
   })
 

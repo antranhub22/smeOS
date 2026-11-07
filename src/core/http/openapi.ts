@@ -48,6 +48,7 @@ const ERROR_DESCRIPTIONS: Record<number, string> = {
   403: "Thiếu mã năng lực hoặc token của app không được đọc tài nguyên này (`CAPABILITY_DENIED`)",
   404: "Không tìm thấy, hoặc thuộc tổ chức khác (`NOT_FOUND`)",
   409: "Xung đột trạng thái (`CONFLICT`)",
+  413: "Thân yêu cầu vượt 2 MB (`PAYLOAD_TOO_LARGE`, `details.max_bytes`)",
   422: "Vi phạm luật nghiệp vụ hoặc hết hạn mức (`UNPROCESSABLE_ENTITY`, `QUOTA_EXCEEDED`)",
   429: "Quá tần suất (`RATE_LIMITED`) — chờ theo `Retry-After`",
   500: "Lỗi hệ thống (`INTERNAL`) — không lộ chi tiết",

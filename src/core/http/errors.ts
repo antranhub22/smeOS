@@ -13,6 +13,7 @@ export type ErrorCode =
   | "SUBSCRIPTION_OVERDUE"
   | "NOT_FOUND"
   | "CONFLICT"
+  | "PAYLOAD_TOO_LARGE"
   | "QUOTA_EXCEEDED"
   | "UNPROCESSABLE_ENTITY"
   | "RATE_LIMITED"
@@ -28,6 +29,8 @@ const HTTP_STATUS: Record<ErrorCode, number> = {
   SUBSCRIPTION_OVERDUE: 402,
   NOT_FOUND: 404,
   CONFLICT: 409,
+  // Thân JSON vượt trần của `handle()` (audit API-17, PO 07/11/2026: 2 MB)
+  PAYLOAD_TOO_LARGE: 413,
   QUOTA_EXCEEDED: 422,
   UNPROCESSABLE_ENTITY: 422,
   RATE_LIMITED: 429,
@@ -96,4 +99,9 @@ export function conflict(message: string): AppError {
 /** Hạn mức chặn tại điểm tạo job, trước khi job vào bảng (`YC-U3`). */
 export function quotaExceeded(message: string, details?: Record<string, unknown>): AppError {
   return new AppError("QUOTA_EXCEEDED", message, details)
+}
+
+/** 413 — thân yêu cầu vượt trần (`handle()` chặn trước khi đọc hết vào bộ nhớ). */
+export function payloadTooLarge(maxBytes: number): AppError {
+  return new AppError("PAYLOAD_TOO_LARGE", "Dữ liệu gửi lên quá lớn", { max_bytes: maxBytes })
 }

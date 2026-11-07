@@ -5,7 +5,7 @@ import { dbContextForPath, runWithDbContext } from "@/core/tenancy/db-context"
 import { log } from "@/core/observability/log"
 import { currentRequestMeta, requestIdOf, runWithRequestMeta } from "@/core/observability/request-context"
 
-import { AppError, validationFailed } from "./errors"
+import { AppError, payloadTooLarge, validationFailed } from "./errors"
 import { clientIp } from "./rate-limit"
 import { auditDenied, auditMutation, userAgentOf } from "./request-audit"
 
@@ -24,6 +24,9 @@ export function jsonResponse(
       headers.append(key, value)
     }
   }
+  // Phản hồi API mang dữ liệu tổ chức → mặc định không lưu đệm (audit API-17, 07/11/2026); route nào
+  // muốn đệm (ảnh công khai, tệp xuất) tự đặt `cache-control` và được giữ nguyên.
+  if (!headers.has("cache-control")) headers.set("cache-control", "no-store")
   const status = init?.status ?? 200
   // 204/205/304 không được có body — `new Response("null", { status: 204 })` ném TypeError → 500 sau khi đã ghi xong.
   if (status === 204 || status === 205 || status === 304) {
@@ -44,17 +47,45 @@ function asAppError(error: unknown): AppError | null {
   return null
 }
 
+/** Trần thân JSON mặc định của `handle()` (audit API-17, PO 07/11/2026). Tải tệp đi `formData`/URL ký. */
+export const MAX_JSON_BODY_BYTES = 2 * 1024 * 1024
+
+/** Đọc thân theo luồng, dừng ngay khi vượt trần — không nạp cả thân khổng lồ vào bộ nhớ rồi mới chặn. */
+async function readCappedText(request: Request, maxBytes: number): Promise<string> {
+  if (request.bodyUsed) throw new TypeError("Body is unusable: Body has already been read")
+  const declared = Number(request.headers.get("content-length") ?? Number.NaN)
+  if (Number.isFinite(declared) && declared > maxBytes) throw payloadTooLarge(maxBytes)
+  if (!request.body) return ""
+  const reader = request.body.getReader()
+  const chunks: Uint8Array[] = []
+  let total = 0
+  for (;;) {
+    const { done, value } = await reader.read()
+    if (done) break
+    total += value.byteLength
+    if (total > maxBytes) {
+      await reader.cancel()
+      throw payloadTooLarge(maxBytes)
+    }
+    chunks.push(value)
+  }
+  return new TextDecoder().decode(Buffer.concat(chunks))
+}
+
 /**
- * Thân không phải JSON hợp lệ (rỗng, cắt cụt, sai cú pháp) → 400 thay vì 500 (audit API-01).
- * Chỉ bọc `request.json()` của chính request này, nên `JSON.parse` ở chỗ khác vẫn là lỗi máy chủ.
- * Route đang `.catch(() => null)` vẫn nhận `null` như cũ.
+ * `request.json()` của request trong `handle()`: thân vượt `MAX_JSON_BODY_BYTES` → 413; không phải JSON
+ * hợp lệ (rỗng, cắt cụt, sai cú pháp) → 400 thay vì 500 (audit API-01). Chỉ bọc request này, nên
+ * `JSON.parse` ở chỗ khác vẫn là lỗi máy chủ. Route đang `.catch(() => null)` vẫn nhận `null` như cũ.
  */
 function guardJsonBody(request: Request): void {
-  const read = request.json.bind(request)
-  request.json = () =>
-    read().catch((error: unknown) => {
+  request.json = async () => {
+    const text = await readCappedText(request, MAX_JSON_BODY_BYTES)
+    try {
+      return JSON.parse(text) as unknown
+    } catch (error) {
       throw error instanceof SyntaxError ? validationFailed({ body: "Thân yêu cầu không phải JSON hợp lệ" }) : error
-    })
+    }
+  }
 }
 
 /**

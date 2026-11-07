@@ -111,6 +111,8 @@ Lợi ích: (1) gác quyền khai báo được kiểm tĩnh thay vì dò regex 
 
 **Header mặc định** của `jsonResponse` cho route có phiên/token: `Cache-Control: no-store`; `x-request-id` (đã có). Trần thân mặc định 1 MB cho JSON (413), route tải tệp khai trần riêng.
 
+> **Đã làm 07/11/2026 (đợt 5):** `no-store` mặc định cho mọi `jsonResponse` (route tự đặt thì giữ); trần thân JSON **2 MB** (PO chọn, rộng hơn 1 MB đề xuất vì `products/batch-import` gửi 250 dòng/lượt). Idempotency gắn thân: PO chọn **chỉ cảnh báo** (`jobs.idempotency_payload_mismatch`), chưa chặn 422; `POST /orders` để đợt sau (cần cột + migration).
+
 ## 8. Version và deprecation
 
 - **Không phá vỡ** trong `/v1`: thêm trường tuỳ chọn, thêm endpoint, thêm giá trị enum ở *phản hồi* (client phải bỏ qua giá trị lạ), nới validation.

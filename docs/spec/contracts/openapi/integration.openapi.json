@@ -502,6 +502,9 @@
           "404": {
             "$ref": "#/components/responses/Error404"
           },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          },
           "429": {
             "$ref": "#/components/responses/Error429"
           },
@@ -966,6 +969,9 @@
           "401": {
             "$ref": "#/components/responses/Error401"
           },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          },
           "429": {
             "$ref": "#/components/responses/Error429"
           },
@@ -1305,6 +1311,9 @@
           "403": {
             "$ref": "#/components/responses/Error403"
           },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          },
           "429": {
             "$ref": "#/components/responses/Error429"
           },
@@ -1476,6 +1485,9 @@
           },
           "404": {
             "$ref": "#/components/responses/Error404"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
           },
           "429": {
             "$ref": "#/components/responses/Error429"
@@ -1816,6 +1828,9 @@
           },
           "401": {
             "$ref": "#/components/responses/Error401"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
           },
           "429": {
             "$ref": "#/components/responses/Error429"
@@ -2341,6 +2356,9 @@
           },
           "401": {
             "$ref": "#/components/responses/Error401"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
           },
           "422": {
             "$ref": "#/components/responses/Error422"
@@ -3070,6 +3088,9 @@
           "401": {
             "$ref": "#/components/responses/Error401"
           },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          },
           "429": {
             "$ref": "#/components/responses/Error429"
           },
@@ -3147,6 +3168,7 @@
                   "SUBSCRIPTION_OVERDUE",
                   "NOT_FOUND",
                   "CONFLICT",
+                  "PAYLOAD_TOO_LARGE",
                   "QUOTA_EXCEEDED",
                   "UNPROCESSABLE_ENTITY",
                   "RATE_LIMITED",
@@ -3202,6 +3224,17 @@
       },
       "Error404": {
         "description": "Không tìm thấy, hoặc thuộc tổ chức khác (`NOT_FOUND`)",
+        "headers": {},
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "Error413": {
+        "description": "Thân yêu cầu vượt 2 MB (`PAYLOAD_TOO_LARGE`, `details.max_bytes`)",
         "headers": {},
         "content": {
           "application/json": {

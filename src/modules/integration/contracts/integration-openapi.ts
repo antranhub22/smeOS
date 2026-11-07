@@ -54,7 +54,7 @@ export const INTEGRATION_OPERATIONS: OpenApiOperation[] = [
     description: "Người không thuộc tổ chức của token → mọi mã `false` (không rò rỉ). Mã không có trong catalog bị bỏ qua.",
     security: BOTH, body: req.checkCapabilitiesBody,
     responses: { 200: { description: "Kết quả theo từng mã", schema: res.capabilitiesCheckResponse } },
-    errors: [400, ...BASE_ERRORS],
+    errors: [400, 413, ...BASE_ERRORS],
   },
   {
     method: "post", path: "/integration/jobs", operationId: "integrationCreateJob", tags: tags("Job & mức dùng"),
@@ -65,14 +65,14 @@ export const INTEGRATION_OPERATIONS: OpenApiOperation[] = [
       201: { description: "Job mới", schema: res.createJobResponse },
       200: { description: "Job đã có với cùng `idempotency_key` (`deduped: true`)", schema: res.createJobResponse },
     },
-    errors: [400, 422, ...BASE_ERRORS],
+    errors: [400, 413, 422, ...BASE_ERRORS],
   },
   {
     method: "post", path: "/integration/usage", operationId: "integrationRecordUsage", tags: tags("Job & mức dùng"),
     summary: "Ghi mức dùng phát sinh ở engine ngoài", description: "Không trừ credit lần hai (`cost_credit` = 0).",
     security: BOTH, body: req.recordUsageBody,
     responses: { 201: { description: "Dòng usage đã ghi", schema: res.usageResponse } },
-    errors: [400, ...BASE_ERRORS],
+    errors: [400, 413, ...BASE_ERRORS],
   },
   {
     method: "post", path: "/integration/assets", operationId: "integrationRegisterAsset", tags: tags("Asset"),
@@ -80,7 +80,7 @@ export const INTEGRATION_OPERATIONS: OpenApiOperation[] = [
     description: "`parent_asset_id` phải là asset `APPROVED` cùng tổ chức; asset mới luôn `PENDING`; `storage_key` phải khớp tổ chức/sản phẩm/asset. `generated_flags` (`{ generative_fill_used, requires_reshoot_warning }`) bắt buộc với asset dẫn xuất (YC-A5) dù lược đồ ghi tuỳ chọn — thiếu → 400.",
     security: BOTH, body: req.registerAssetBody,
     responses: { 201: { description: "Asset đã đăng ký", schema: res.assetResponse } },
-    errors: [400, 404, ...BASE_ERRORS],
+    errors: [400, 413, 404, ...BASE_ERRORS],
   },
   {
     method: "post", path: "/integration/content-metrics", operationId: "integrationRecordContentMetrics", tags: tags("Số liệu"),
@@ -88,7 +88,7 @@ export const INTEGRATION_OPERATIONS: OpenApiOperation[] = [
     description: "Idempotent theo (`platform`, `content_id`, `metric_date`) trong tổ chức: gọi lại thì cập nhật dòng cũ.",
     security: BOTH, body: req.contentMetricsBody,
     responses: { 201: { description: "Dòng số liệu sau khi ghi", schema: res.contentMetricsResponse } },
-    errors: [400, ...BASE_ERRORS],
+    errors: [400, 413, ...BASE_ERRORS],
   },
   {
     method: "get", path: "/integration/catalog-links", operationId: "integrationListCatalogLinks", tags: tags("Catalog"),
@@ -102,14 +102,14 @@ export const INTEGRATION_OPERATIONS: OpenApiOperation[] = [
     summary: "Tạo liên kết catalog", description: "Cần `J1` — chỉ nhánh SSO.",
     security: BOTH, body: req.createCatalogLinkBody,
     responses: { 201: { description: "Liên kết mới (bản ghi đầy đủ)", schema: res.catalogLinkRecord } },
-    errors: [400, 403, ...BASE_ERRORS], extensions: { "x-capability": "J1" },
+    errors: [400, 413, 403, ...BASE_ERRORS], extensions: { "x-capability": "J1" },
   },
   {
     method: "patch", path: "/integration/catalog-links/{slug}", operationId: "integrationUpdateCatalogLink", tags: tags("Catalog"),
     summary: "Sửa liên kết catalog", description: "Cần `J1` — chỉ nhánh SSO.",
     security: BOTH, body: req.updateCatalogLinkBody,
     responses: { 200: { description: "Liên kết sau khi sửa", schema: res.catalogLinkView } },
-    errors: [400, 403, 404, ...BASE_ERRORS], extensions: { "x-capability": "J1" },
+    errors: [400, 413, 403, 404, ...BASE_ERRORS], extensions: { "x-capability": "J1" },
   },
   {
     method: "post", path: "/integration/catalog-links/{slug}/revoke", operationId: "integrationRevokeCatalogLink", tags: tags("Catalog"),
