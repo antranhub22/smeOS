@@ -67,7 +67,7 @@ export function OrderActionButtons({
     if (deliveryStatus === "SHIPPING") {
       return (
         <Button size="sm" variant="outline" disabled={actionLoading}
-          onClick={() => onUpdateStatus({ deliveryStatus: "DELIVERED", status: "COMPLETED" })}>
+          onClick={() => onUpdateStatus({ deliveryStatus: "DELIVERED" })}>
           <CheckCircle className="mr-1.5 h-4 w-4" /> {dict.orders.actions.deliverySuccess}
         </Button>
       )

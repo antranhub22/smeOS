@@ -16,6 +16,7 @@ import { OrderCancelDialog } from "./order-cancel-dialog"
 import { OrderActionButtons } from "./order-action-buttons"
 import { OrderInfoRequests } from "./order-info-requests"
 import { useI18n } from "@/lib/i18n"
+import { useToast } from "@/components/ui/toast"
 import type { OrderItemRecord, OrderRecord, OrderSlaCalculation } from "@/modules/orders/domain/order-types"
 
 /**
@@ -58,6 +59,14 @@ export function OrderDetailModal({ orderId, onClose, onUpdated }: OrderDetailMod
   const [activeTab, setActiveTab] = useState<"overview" | "florist" | "delivery">("overview")
   const [cancelOpen, setCancelOpen] = useState(false)
   const [actionLoading, setActionLoading] = useState(false)
+  const toast = useToast()
+
+  /** Lỗi 4xx/5xx không còn bị nuốt — người dùng thấy vì sao thao tác không đi (audit BL-11). */
+  async function settle(res: Response, fallback: string) {
+    if (res.ok) { onUpdated(); onClose(); return }
+    const body = (await res.json().catch(() => null)) as { error?: { message?: string } } | null
+    toast.error(body?.error?.message || fallback)
+  }
 
   React.useEffect(() => {
     if (!orderId) return
@@ -84,7 +93,7 @@ export function OrderDetailModal({ orderId, onClose, onUpdated }: OrderDetailMod
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(patch),
       })
-      if (res.ok) { onUpdated(); onClose() }
+      await settle(res, "Chưa cập nhật được đơn, vui lòng thử lại.")
     } finally {
       setActionLoading(false)
     }
@@ -98,7 +107,7 @@ export function OrderDetailModal({ orderId, onClose, onUpdated }: OrderDetailMod
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ reason }),
       })
-      if (res.ok) { onUpdated(); onClose() }
+      await settle(res, "Chưa huỷ được đơn, vui lòng thử lại.")
     } finally {
       setActionLoading(false)
     }
@@ -301,7 +310,7 @@ export function OrderDetailModal({ orderId, onClose, onUpdated }: OrderDetailMod
                   shippingFee="0 đ"
                   totalAmount={`${order.totalVnd.toLocaleString("vi-VN")} đ`}
                   onPrint={handlePrint}
-                  onDelivered={() => handleUpdateStatus({ deliveryStatus: "DELIVERED", status: "COMPLETED" })}
+                  onDelivered={() => handleUpdateStatus({ deliveryStatus: "DELIVERED" })}
                 />
               </div>
             )}
