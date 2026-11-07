@@ -96,6 +96,7 @@ export class CoordinatorRepository implements ICoordinatorRepository<Coordinator
       podCaptured: Boolean(c.pod_asset_id || c.pod_recipient_name),
       openExceptionCount: await this.countOpenExceptions(ctx, row.id),
       resumeStage: c.resume_stage ?? null,
+      balanceVnd: Number(row.balance_vnd),
     }
   }
 
