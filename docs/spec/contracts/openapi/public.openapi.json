@@ -6330,7 +6330,7 @@
     "/public/brochure/tracking/{code}/flower-substitute-response": {
       "post": {
         "operationId": "trackingFlowerSubstituteResponse",
-        "summary": "Khách trả lời đề xuất đổi một loại hoa",
+        "summary": "Khách trả lời đề xuất đổi một nguyên liệu trong mẫu",
         "description": "Người xem là chủ link (`?link=` + cookie chủ phiên) hoặc gửi `phoneLast4` (4 số cuối SĐT người đặt; 5 lần/15 phút/IP, 10 lần/ngày/mã). 10 lần/10 phút/IP.",
         "tags": [
           "Thẻ chào — theo dõi đơn"

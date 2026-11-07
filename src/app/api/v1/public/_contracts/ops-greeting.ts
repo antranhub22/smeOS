@@ -71,7 +71,7 @@ export const GREETING_OPERATIONS: OpenApiOperation[] = [
   op(TRACKING, { method: "post", path: T("/substitute-response"), operationId: "trackingSubstituteResponse", summary: "Khách trả lời đề xuất thay mẫu",
     description: `${ownerOrPhone} 10 lần/10 phút/IP.`, security: [], query: req.trackingLinkQuery, body: req.substituteAnswerBody,
     ok: [200, { description: "Đề xuất sau khi trả lời", schema: res.substituteResponseResponse }], errors: [400, 404, 409, 413, 429] }),
-  op(TRACKING, { method: "post", path: T("/flower-substitute-response"), operationId: "trackingFlowerSubstituteResponse", summary: "Khách trả lời đề xuất đổi một loại hoa",
+  op(TRACKING, { method: "post", path: T("/flower-substitute-response"), operationId: "trackingFlowerSubstituteResponse", summary: "Khách trả lời đề xuất đổi một nguyên liệu trong mẫu",
     description: `${ownerOrPhone} 10 lần/10 phút/IP.`, security: [], query: req.trackingLinkQuery, body: req.flowerSubstituteAnswerBody,
     ok: [200, { description: "Đề xuất sau khi trả lời", schema: res.flowerSubstituteResponseResponse }], errors: [400, 404, 409, 413, 429] }),
 
