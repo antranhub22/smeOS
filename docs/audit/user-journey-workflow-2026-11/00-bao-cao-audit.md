@@ -7,6 +7,7 @@
 | Phương pháp | Đọc tĩnh mã, `prisma/schema.prisma`, cấu hình cron (`render.yaml`, `vercel.json`, `src/instrumentation.ts`) và tài liệu hành trình. Hai lượt quét tự động: (1) mọi `href`/`deepLink`/`router.push` trong `src/` đối chiếu với các `page.tsx` thật; (2) các chuỗi trạng thái giao diện gửi lên/so sánh đối chiếu với enum Prisma và hằng số domain. |
 | Không làm | Không chạy DB, không chạy test, không bấm thử giao diện. Mức "Đã xác nhận" = thấy rõ trong mã; "Khả năng cao" = đường mã cho phép, chưa thử thực tế. |
 | Trạng thái | Chỉ báo cáo — không sửa mã. Đề xuất chuẩn hoá ở `01-de-xuat-chuan-hoa.md`. Một số đề xuất đụng schema/tenancy → cần PO duyệt trước (CLAUDE.md "Stop and ask"). |
+| Cập nhật 07/11/2026 | Đối chiếu lại trên `main` `ec801dc`: O1, O2, O3 đã sửa (kế hoạch BL); O4, O6, O7, U1 sửa một phần. Bảng chi tiết và kế hoạch xử lý: `02-ke-hoach-xu-ly.md`. |
 
 ## 1. Kết luận chính
 
