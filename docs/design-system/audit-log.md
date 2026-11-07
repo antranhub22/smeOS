@@ -290,10 +290,10 @@ tràn ngang ở 390px và 1280px. So với bản trước (audit `/audit` ở co
 | ID | Mức | Finding | Đã làm |
 |---|---|---|---|
 | AUD-01 | P1 | 390px: thanh tab hai nhãn `whitespace-nowrap` tràn ngang (393px) | Tab chia đôi chiều ngang, cho xuống dòng trên điện thoại |
-| AUD-02 | P1 | Tab đang chọn không có dấu hiệu nhìn thấy: Base UI đánh dấu `data-active`, còn `TabsTrigger` dùng chung tô `data-[selected]` (không bao giờ khớp) — chỉ có `aria-selected` | Trang này thêm kiểu `data-[active]` cho hai tab. **Ngoài phạm vi, chưa sửa:** `src/components/ui/tabs.tsx` dùng chung — mọi trang có tab đang thiếu dấu hiệu tab chọn; sửa ở component chung là đổi giao diện toàn hệ thống → cần PO |
+| AUD-02 | P1 | Tab đang chọn không có dấu hiệu nhìn thấy: Base UI đánh dấu `data-active`, còn `TabsTrigger` dùng chung tô `data-[selected]` (không bao giờ khớp) — chỉ có `aria-selected` | Sửa ở `src/components/ui/tabs.tsx` (PO duyệt 07/11/2026): bộ chọn `data-[active]`; test `navigation-tabs.test.tsx`. Ảnh hưởng 2 màn dùng `Tabs` chung: `/audit` và Thư viện giao diện của Console (`/van-hanh/thu-vien-giao-dien`); các thanh tab khác (`TabActionHeader`…) không dùng component này |
 | AUD-03 | P2 | axe `button-name`: ô chọn "Loại thao tác" không có tên truy cập (có từ trước) | `aria-label="Loại thao tác"` |
 | AUD-04 | P3 | Nút "Làm mới" trong tab mới xuống dòng ở 390px | `shrink-0 whitespace-nowrap` |
 | AUD-05 | — | Cảnh báo nội dung "đồng hồ đếm ngược" ở tab thứ nhất | Báo nhầm: biểu thức `HH:MM:SS` khớp thời điểm thật của bản ghi kiểm toán, không phải đồng hồ |
 
-**Ngoài phạm vi, chưa sửa:** ô "Loại thao tác" hiện giá trị `ALL` thay vì nhãn "Tất cả" khi chưa chọn (có từ trước).
+Thư viện giao diện của Console chưa audit lại (cần phiên người vận hành nền tảng). **Ngoài phạm vi, chưa sửa:** ô "Loại thao tác" hiện giá trị `ALL` thay vì nhãn "Tất cả" khi chưa chọn (có từ trước).
 Chưa kiểm thủ công: bàn phím (chuyển tab bằng phím mũi tên), zoom 200%, trình đọc màn hình.
