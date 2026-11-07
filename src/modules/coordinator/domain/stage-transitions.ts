@@ -9,13 +9,19 @@
  *   ASSIGNING → IN_PRODUCTION   cần đối tác đã phân công
  *   QUALITY_CHECK → DISPATCHING cần lượt QC gần nhất = PASSED
  *   DISPATCHING → DELIVERED     cần POD (ảnh hoặc tên người ký nhận)
- *   DELIVERED → COMPLETED       cần không còn sự cố mở
+ *   DELIVERED → COMPLETED       cần không còn sự cố mở và đã thu đủ (PO 04/11/2026, ALG 4.26)
  *   EXCEPTION → (bước cũ)       cần không còn sự cố mở, chỉ về đúng `resume_stage`
  */
 
 import type { DeliveryStatus, OrderStatus, ProductionStatus } from "@/modules/orders/domain/order-types"
 import type { CoordinatorStage } from "./coordinator-types"
 import { mapStageToOrderAxes, type MappedOrderAxes } from "./state-mapper"
+import { formatCurrency } from "@/lib/i18n/formatters"
+
+/** Lý do chặn hoàn tất khi còn nợ — một câu cho cả `/stage` lẫn `/close` (audit BL-02). */
+export function unpaidClosureReason(balanceVnd: number): string {
+  return `Đơn còn phải thu ${formatCurrency(balanceVnd)} — chỉ hoàn tất khi đã thu đủ.`
+}
 
 export const COORDINATOR_STAGES: readonly CoordinatorStage[] = [
   "INTAKE",
@@ -57,6 +63,8 @@ export interface StageTransitionFacts {
   podCaptured: boolean
   openExceptionCount: number
   resumeStage: CoordinatorStage | null
+  /** Số còn phải thu (`orders.balance_vnd`); > 0 thì chưa hoàn tất được — cùng luật với `checkClosure`. */
+  balanceVnd: number
 }
 
 export type TransitionCheck = { ok: true } | { ok: false; reason: string }
@@ -108,6 +116,9 @@ export function checkStageTransition(
   }
   if (to === "COMPLETED" && facts.openExceptionCount > 0) {
     return { ok: false, reason: `Còn ${facts.openExceptionCount} sự cố chưa xử lý — chưa đóng đơn được.` }
+  }
+  if (to === "COMPLETED" && facts.balanceVnd > 0) {
+    return { ok: false, reason: unpaidClosureReason(facts.balanceVnd) }
   }
   return { ok: true }
 }

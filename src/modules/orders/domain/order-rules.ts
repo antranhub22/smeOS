@@ -37,6 +37,22 @@ const VALID_DELIVERY_TRANSITIONS: Record<DeliveryStatus, readonly DeliveryStatus
   FAILED: ["DELIVERING", "PENDING"],
 }
 
+/**
+ * Trạng thái đơn KHÔNG được đặt tay qua sổ đơn (`PATCH /orders/:id`) — audit BL-01 (06/11/2026).
+ * Xác nhận là hệ quả của tiền về / duyệt giao trước; hoàn tất cần đã giao + thu đủ (ALG 4.26);
+ * huỷ cần quyền huỷ (R6) và lý do. Mỗi trạng thái có lối riêng mang đủ luật đó.
+ */
+const MANUAL_STATUS_BLOCKED: Partial<Record<OrderStatus, string>> = {
+  CONFIRMED: "Đơn tự được xác nhận khi ghi nhận tiền hoặc khi được duyệt giao trước, thu sau.",
+  COMPLETED: "Đơn chỉ hoàn tất ở màn Điều phối, sau khi đã giao và đã thu đủ tiền.",
+  CANCELLED: "Huỷ đơn bằng nút Huỷ đơn và nêu lý do.",
+}
+
+/** Lý do chặn khi người dùng tự đặt `next` cho trạng thái đơn ở sổ đơn, hoặc `null` nếu được phép. */
+export function manualStatusBlockReason(next: OrderStatus): string | null {
+  return MANUAL_STATUS_BLOCKED[next] ?? null
+}
+
 /** Kiểm tra luồng trạng thái đơn hàng */
 export function validateOrderStatusTransition(
   current: OrderStatus,
