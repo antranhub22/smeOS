@@ -49,3 +49,36 @@ describe("createOrder — trùng mã", () => {
     expect(create).toHaveBeenCalledTimes(1)
   })
 })
+
+describe("createOrder — giá sàn với đơn nhân viên nhập tay (audit BL-07)", () => {
+  const repo = () => ({ countTodayOrders: vi.fn().mockResolvedValue(0), create: vi.fn(async (_o: string, code: string) => ({ id: "o", code })) }) as unknown as IOrderRepository
+  const noForeign = vi.fn(async () => [])
+
+  it("đơn MANUAL: kiểm sàn trên các dòng có sản phẩm, theo tổng tiền của chính các dòng đó", async () => {
+    const floor = vi.fn(async () => undefined)
+    await createOrder(ctx, { source: "MANUAL", items: [
+      { productId: "p1", quantity: 2, unitPriceVnd: 100_000 },
+      { description: "Thiệp", quantity: 1, unitPriceVnd: 900_000 },
+    ] }, repo(), vi.fn(), noForeign, floor)
+    expect(floor).toHaveBeenCalledWith(ctx, [{ productId: "p1", quantity: 2 }], 200_000)
+  })
+
+  it("dưới sàn → lỗi của bộ kiểm sàn, không tạo đơn", async () => {
+    const r = repo()
+    const floor = vi.fn(async () => { throw Object.assign(new Error("Giá thấp hơn giá sàn"), { code: "UNPROCESSABLE_ENTITY" }) })
+    await expect(createOrder(ctx, { source: "MANUAL", items: [{ productId: "p1", quantity: 1, unitPriceVnd: 1 }] }, r, vi.fn(), noForeign, floor)).rejects.toThrow("giá sàn")
+    expect(r.create).not.toHaveBeenCalled()
+  })
+
+  it("đơn từ chat (giá báo sau) không kiểm sàn lúc tạo", async () => {
+    const floor = vi.fn(async () => undefined)
+    await createOrder(ctx, { source: "CHAT", items: [{ productId: "p1", quantity: 1, unitPriceVnd: 0 }] }, repo(), vi.fn(), noForeign, floor)
+    expect(floor).not.toHaveBeenCalled()
+  })
+
+  it("đơn MANUAL giá 0 (nháp chờ báo giá) không kiểm sàn lúc tạo", async () => {
+    const floor = vi.fn(async () => undefined)
+    await createOrder(ctx, { source: "MANUAL", items: [{ productId: "p1", quantity: 1, unitPriceVnd: 0 }] }, repo(), vi.fn(), noForeign, floor)
+    expect(floor).not.toHaveBeenCalled()
+  })
+})

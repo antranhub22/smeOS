@@ -6,6 +6,7 @@ import { PUT as putRecipe } from "@/app/api/v1/costing/recipes/[productId]/route
 import { POST as quoteRoute } from "@/app/api/v1/orders/[id]/quote/route"
 import { PUT as putPricingRules } from "@/app/api/v1/pricing-rules/route"
 import { POST as createQuotation } from "@/app/api/v1/quotations/route"
+import { POST as createOrderRoute } from "@/app/api/v1/orders/route"
 import { ingestOrder } from "@/modules/orders/use-cases/ingest-order"
 
 import { disconnectDatabase, prisma, resetDatabase } from "../helpers/database"
@@ -69,6 +70,18 @@ describe("chặn giá dưới sàn", () => {
     expect(Number((await prisma.orders.findUniqueOrThrow({ where: { id: orderId } })).total_vnd)).toBe(0)
 
     expect((await quote(sale.token, orderId, floorVnd)).status).toBe(200)
+  })
+
+  // Audit BL-07 (06/11/2026): báo giá bị chặn nhưng tạo đơn với cùng giá thì lọt.
+  it("Sale tạo đơn nhập tay dưới sàn → 422 BELOW_FLOOR; Điều hành tạo được; giá 0 (chờ báo giá) vẫn tạo được", async () => {
+    const post = (token: string, unitPriceVnd: number) =>
+      createOrderRoute(withSession(`${BASE}/orders`, token, { method: "POST", body: JSON.stringify({ items: [{ productId, description: "Bó hồng", quantity: 1, unitPriceVnd }] }) }))
+    const low = await post(sale.token, floorVnd - 1000)
+    expect(low.status).toBe(422)
+    expect(((await readJson(low)).error as { details: { reason: string } }).details.reason).toBe("BELOW_FLOOR")
+    expect((await post(sale.token, floorVnd)).status).toBe(201)
+    expect((await post(sale.token, 0)).status).toBe(201)
+    expect((await post(a.token, floorVnd - 1000)).status).toBe(201)
   })
 
   it("Điều hành (C10) báo giá dưới sàn được — chính thao tác đó là phê duyệt", async () => {
