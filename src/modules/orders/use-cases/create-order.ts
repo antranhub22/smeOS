@@ -34,7 +34,8 @@ export async function createOrder(
   // Khách / chi nhánh / sản phẩm của tổ chức khác → như không tồn tại (404, không 403)
   const foreign = await findForeign(ctx, {
     customerId: scopedInput.customerId,
-    branchId: scopedInput.branchId,
+    // Chi nhánh lấy từ phiên (nhân viên chi nhánh) là tin được; chỉ kiểm chi nhánh client gửi lên
+    branchId: scope ? undefined : input.branchId,
     productIds: scopedInput.items.map((it) => it.productId),
     variantIds: scopedInput.items.map((it) => it.variantId),
   })
