@@ -63,7 +63,7 @@ describe("P-5c — chốt rồi chép bản mã đè cột rõ", () => {
 
   it("còn dòng chưa mã hoá hoặc khách trùng số → dừng, không đổi gì; thông báo không chứa dữ liệu", async () => {
     await prisma.$executeRaw`INSERT INTO customers (id, organization_id, code, name, phone, updated_at) VALUES ('kh-cu', ${a.organizationId}, 'KH-CU', 'Khách cũ', '0988888888', now())`
-    const err = await replay(block("P5C-VERIFY")).catch((e: unknown) => e as Error)
+    const err = (await replay(block("P5C-VERIFY")).then(() => new Error("không dừng"), (e: unknown) => e as Error))
     expect(err.message).toMatch(/P-5c: dừng.*customers\.phone: 1 dòng/)
     expect(err.message).not.toContain("0988888888")
     await prisma.$executeRaw`DELETE FROM customers WHERE id = 'kh-cu'`
