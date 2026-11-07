@@ -23,6 +23,8 @@ Endpoint duyệt luôn tách khỏi endpoint sinh kết quả: `POST /x/:id/appr
 
 **Phân trang.** `?limit=` mặc định 25, tối đa 100; `?cursor=` là con trỏ mờ. Kết quả `{ data: [...], next_cursor: string|null }`.
 
+**Hợp đồng route mới (PO chốt 07/11/2026, chuẩn API Contract v1.1).** Route thêm từ ngày này khai bằng `defineRoute` (`src/core/http/define-route.ts`): xác thực + mã năng lực, giới hạn tần suất (bắt buộc với `/public/*`), `Idempotency-Key`, lược đồ zod của thân và query trong một khai báo. Tên trường thân/query/phản hồi là **snake_case**. Thành công trả `{ data }` (danh sách `{ data, next_cursor }`; tạo 201 + `Location`, việc bất đồng bộ 202, xoá 204); lỗi validation giữ `details.issues`. Route có trước giữ nguyên hình dạng trong `/v1`. Hai danh sách miễn trừ chỉ được co lại: `tests/unit/architecture/route-contract-legacy.txt`, `tests/unit/architecture/api-envelope-legacy.txt`.
+
 **Lỗi.** Một hình dạng duy nhất:
 
 ```json
