@@ -155,6 +155,8 @@ export interface CreateOrderInput {
   leadId?: string | null | undefined
   /** Sale phụ trách (thành viên đang hoạt động của tổ chức — `ingestOrder` kiểm). */
   ownerSaleId?: string | null | undefined
+  /** `Idempotency-Key` của client (`ingestOrderOnce`) — duy nhất trong tổ chức. */
+  idempotencyKey?: string | null | undefined
 }
 
 /** Đầu vào cổng nhận đơn chung (`use-cases/ingest-order.ts`) — nguồn bắt buộc. */

@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, useRef } from "react"
 import { Plus } from "@/components/ui/icon-set/plus"
 import { Trash2 } from "@/components/ui/icon-set/trash2"
 import { Loader2 } from "@/components/ui/icon-set/loader2"
@@ -62,6 +62,8 @@ function vnTodayIso(): string {
 
 export function CreateOrderModal({ isOpen, onClose, onSuccess, initialData }: CreateOrderModalProps) {
   const [loading, setLoading] = useState(false)
+  // Một khoá cho mỗi lần soạn đơn: thử lại sau lỗi mạng/hết giờ không tạo đơn thứ hai (audit API-11)
+  const idempotencyKey = useRef<string | null>(null)
   const [masterProducts, setMasterProducts] = useState<ProductMasterIndex[]>([])
   const [selectedProductId, setSelectedProductId] = useState<string>("")
   const [recipientName, setRecipientName] = useState("")
@@ -158,10 +160,11 @@ export function CreateOrderModal({ isOpen, onClose, onSuccess, initialData }: Cr
       return
     }
     setLoading(true)
+    idempotencyKey.current ??= crypto.randomUUID()
     try {
       const res = await fetch("/api/v1/orders", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", "Idempotency-Key": idempotencyKey.current },
         body: JSON.stringify({
           deliveryAddress: { recipientName, phone, street },
           deliveryWindow: { date: deliveryDate, timeSlot },
@@ -183,6 +186,7 @@ export function CreateOrderModal({ isOpen, onClose, onSuccess, initialData }: Cr
         const data = await res.json() as { message?: string }
         throw new Error(data.message ?? "Chưa tạo được đơn hàng do lỗi hệ thống. Vui lòng thử lại sau ít phút hoặc liên hệ hỗ trợ.")
       }
+      idempotencyKey.current = null
       onSuccess()
       onClose()
     } catch (err: unknown) {
