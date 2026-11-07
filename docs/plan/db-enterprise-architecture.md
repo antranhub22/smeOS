@@ -120,7 +120,7 @@ lại có chủ đích qua T-6 và ADR affiliate sau này (D-48).
 
 | ☐ | Mục | Thay | Gate thêm |
 |---|---|---|---|
-| [ ] | P-2 [SCHEMA] **B5** `customers.status PROSPECT`; `customer_id` trên `leads`, `greeting_sessions`; backfill | — | Tenant test lead/phiên Thẻ chào trỏ đúng khách |
+| [x] | P-2 [SCHEMA] **B5** `customers.status PROSPECT`; `customer_id` trên `leads` (đã có), `greeting_sessions`; backfill; ghi kép — PO duyệt 07/11/2026, phương án A: PROSPECT chỉ là người nhận link Thẻ chào có SĐT chưa đặt đơn, lead vẫn tạo khách thường (đặc tả 07 §48) | — | `tests/tenant/customer-prospects.test.ts`: link/lead/đơn trỏ đúng khách cùng tổ chức; PROSPECT không hiện ở danh sách/xuất; backfill |
 | [ ] | P-3 [SCHEMA] **B5** `order_recipients` thay JSON địa chỉ/VAT | — | Phiếu in, theo dõi đơn, xuất đơn không đổi |
 | [ ] | P-4 [SCHEMA] `shared_order_access`; gia công dùng chia sẻ | — | Hết hạn → đối tác 404 |
 | [ ] | P-5 [SCHEMA] Mã hoá cột + `phone_hash` + `phone_last4`; đổi 4 chỗ tìm kiếm | — | Dump không có số rõ |

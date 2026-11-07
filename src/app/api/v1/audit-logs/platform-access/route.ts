@@ -1,16 +1,13 @@
-import { validationFailed } from "@/core/http/errors"
-import { handle, jsonResponse } from "@/core/http/response"
-import { requireCapability } from "@/core/rbac/capabilities"
+import { z } from "zod"
+
+import { defineRoute } from "@/core/http/define-route"
+import { pageQuery } from "@/core/http/pagination"
+import { jsonResponse } from "@/core/http/response"
 import { listPlatformAccessLogs } from "@/modules/audit/use-cases/list-platform-access-logs"
-import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 
 /** Nhân viên nền tảng đã truy cập dữ liệu của tổ chức (ADR-013 D-I5, D-60) — cùng quyền với nhật ký kiểm toán (G9). */
-export const GET = handle(async (request) => {
-  const { ctx } = await requireTenantContext(request)
-  requireCapability(ctx, "G9")
-  const url = new URL(request.url)
-  const limitParam = url.searchParams.get("limit")
-  const limit = limitParam === null ? undefined : Number(limitParam)
-  if (limit !== undefined && !Number.isInteger(limit)) throw validationFailed({ limit: "Phải là số nguyên" })
-  return jsonResponse(await listPlatformAccessLogs(ctx, { limit, cursor: url.searchParams.get("cursor") }))
+export const GET = defineRoute({
+  auth: { kind: "tenant", capability: "G9" },
+  query: z.object(pageQuery),
+  handler: async ({ ctx, query }) => jsonResponse(await listPlatformAccessLogs(ctx, { limit: query.limit, cursor: query.cursor ?? null })),
 })
