@@ -10,6 +10,8 @@ import type { CreateOrderInput, OrderRecord } from "../domain/order-types"
 import type { IOrderRepository } from "../domain/repositories/order-repository.interface"
 import { getOrderRepository } from "../infra/order-repository"
 import { findForeignOrderReferences } from "../infra/order-reference-guard"
+import { assertNotBelowFloor } from "@/modules/costing/use-cases/price-floor-guard"
+import { recordAuditLog } from "@/modules/audit/use-cases/record-audit-log"
 import { notifyOrganization } from "@/modules/notification/use-cases/notify-organization"
 
 export async function createOrder(
@@ -17,7 +19,9 @@ export async function createOrder(
   input: CreateOrderInput,
   repo: IOrderRepository = getOrderRepository(),
   notify: typeof notifyOrganization = notifyOrganization,
-  findForeign: typeof findForeignOrderReferences = findForeignOrderReferences
+  findForeign: typeof findForeignOrderReferences = findForeignOrderReferences,
+  floorGuard: typeof assertNotBelowFloor = assertNotBelowFloor,
+  audit: typeof recordAuditLog = recordAuditLog
 ): Promise<OrderRecord> {
   if (!input.items || input.items.length === 0) {
     throw new AppError("VALIDATION_FAILED", "Đơn hàng phải có ít nhất một sản phẩm hoặc sản phẩm.")
@@ -40,8 +44,21 @@ export async function createOrder(
     variantIds: scopedInput.items.map((it) => it.variantId),
   })
   if (foreign.length > 0) throw new AppError("NOT_FOUND", "Không tìm thấy khách hàng, chi nhánh hoặc sản phẩm đã chọn.")
+  // Giá nhân viên tự gõ cũng phải qua sàn như báo giá (audit BL-07) — trước đây báo giá bị chặn mà tạo đơn cùng giá thì lọt
+  if (input.source === "MANUAL") {
+    const productLines = input.items.filter((it) => it.productId)
+    const productTotal = calculateOrderTotal(productLines)
+    // Giá 0 = nháp chờ báo giá; bước báo giá (`quote-order.ts`) kiểm sàn
+    if (productTotal > 0) await floorGuard(ctx, productLines.map((it) => ({ productId: it.productId, quantity: Math.max(1, Math.floor(it.quantity)) })), productTotal)
+  }
   const countToday = await repo.countTodayOrders(ctx.organizationId)
   const order = await createWithFreshCode(ctx, repo, countToday, scopedInput, totalVnd)
+  await audit(ctx, {
+    action: "order.create",
+    entityType: "orders",
+    entityId: order.id,
+    after: { code: order.code, totalVnd, source: input.source ?? "MANUAL" },
+  })
   // Không chờ: thông báo chậm/lỗi không được làm chậm hay hỏng việc tạo đơn
   void notify({
     organizationId: ctx.organizationId,

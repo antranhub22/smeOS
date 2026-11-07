@@ -60,9 +60,10 @@ export async function cancelOrder(
     if (!after) throw new AppError("NOT_FOUND", `Không tìm thấy đơn hàng với mã ID: ${orderId}`)
     updated = after
   } else {
-    // Ghi nhật ký sự kiện order_events
-    await repo.recordEvent(ctx.organizationId, orderId, "order", "CANCELLED", ctx.userId, existing.status, reason)
-    updated = await repo.update(ctx.organizationId, orderId, { status: "CANCELLED" })
+    // Sự kiện huỷ + đổi trạng thái: một giao dịch (audit BL-18)
+    updated = await repo.update(ctx.organizationId, orderId, { status: "CANCELLED" }, [
+      { axis: "order", fromValue: existing.status, toValue: "CANCELLED", actorId: ctx.userId, reason },
+    ])
   }
 
   // Ghi audit log

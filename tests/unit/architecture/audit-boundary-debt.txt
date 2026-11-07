@@ -28,7 +28,6 @@ chain/collection-profile/preview
 chain/partner-stores
 chat/channels
 chat/conversations
-chat/conversations/[id]/create-order
 chat/conversations/[id]/messages
 content-engine/catalog-generate
 content-engine/rewrite
@@ -87,7 +86,6 @@ notification/store-defaults
 notification/store-hard-locks
 occasions
 occasions/[id]
-orders
 orders/[id]
 orders/[id]/assign
 orders/[id]/deliver-before-pay
@@ -107,7 +105,6 @@ product-photo/[id]/retry
 products
 products/drive-thumbnails
 proxy/[...path]
-quotations/[id]/convert
 roles
 roles/[id]/capabilities
 shop-reviews

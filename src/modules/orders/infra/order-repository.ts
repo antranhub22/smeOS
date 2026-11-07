@@ -25,7 +25,7 @@ import type {
   OrderEventRecord,
   OrderEventAxis,
 } from "../domain/order-types"
-import type { IOrderRepository } from "../domain/repositories/order-repository.interface"
+import type { IOrderRepository, PendingOrderEvent } from "../domain/repositories/order-repository.interface"
 import { linkLeadToOrder } from "./order-lead-link"
 import { buildOrderListWhere } from "./order-list-where"
 
@@ -231,7 +231,8 @@ export class OrderRepository implements IOrderRepository {
   async update(
     organizationId: string,
     id: string,
-    input: UpdateOrderInput
+    input: UpdateOrderInput,
+    events: readonly PendingOrderEvent[] = []
   ): Promise<OrderRecord> {
     // Đảm bảo cô lập tenant: đơn phải thuộc tổ chức
     const existing = await prisma.orders.findFirst({
@@ -249,20 +250,26 @@ export class OrderRepository implements IOrderRepository {
     if (input.cardMessage !== undefined) data.card_message = input.cardMessage
     if (input.internalNote !== undefined) data.internal_note = input.internalNote
     if (input.deliveryWindow !== undefined) data.delivery_window = input.deliveryWindow as unknown as Prisma.InputJsonValue
-    if (input.deliveryAddress !== undefined) {
-      data.delivery_address = storedDeliveryAddress(input.deliveryAddress) // P-3c
-      await upsertOrderRecipient(prisma, organizationId, id, { deliveryAddress: input.deliveryAddress })
-    }
+    if (input.deliveryAddress !== undefined) data.delivery_address = storedDeliveryAddress(input.deliveryAddress) // P-3c
 
-    const row = await prisma.orders.update({
-      where: { id },
-      data,
-      include: {
-        items: true,
-        assignments: true,
-        events: { orderBy: { created_at: "asc" } },
-        recipient: RECIPIENT_VIEW_SELECT, // `update` không qua extension đọc — ghép tay
-      },
+    // Sự kiện + người nhận + đơn: một giao dịch (audit BL-18)
+    const row = await prisma.$transaction(async (tx) => {
+      if (events.length > 0) {
+        await tx.order_events.createMany({
+          data: events.map((e) => ({ organization_id: organizationId, order_id: id, axis: e.axis, from_value: e.fromValue, to_value: e.toValue, actor_id: e.actorId, reason: e.reason })),
+        })
+      }
+      if (input.deliveryAddress !== undefined) await upsertOrderRecipient(tx, organizationId, id, { deliveryAddress: input.deliveryAddress })
+      return tx.orders.update({
+        where: { id },
+        data,
+        include: {
+          items: true,
+          assignments: true,
+          events: { orderBy: { created_at: "asc" } },
+          recipient: RECIPIENT_VIEW_SELECT, // `update` không qua extension đọc — ghép tay
+        },
+      })
     })
     return mapPrismaOrder(withDeliveryView(row))
   }

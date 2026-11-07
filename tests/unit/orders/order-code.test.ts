@@ -31,7 +31,7 @@ describe("createOrder — trùng mã", () => {
 
   it("trùng mã → thử số kế tiếp", async () => {
     const create = vi.fn().mockRejectedValueOnce(unique()).mockImplementation(async (_o: string, code: string) => ({ id: "o", code }))
-    const order = await createOrder(ctx, { items }, repoWith(create), vi.fn())
+    const order = await createOrder(ctx, { items }, repoWith(create), vi.fn(), vi.fn(async () => []), vi.fn(async () => undefined), vi.fn())
     expect(create).toHaveBeenCalledTimes(2)
     expect((create.mock.calls[0] as unknown[])[1]).toMatch(/-0005$/)
     expect(order.code).toMatch(/-0006$/)
@@ -39,13 +39,46 @@ describe("createOrder — trùng mã", () => {
 
   it("trùng mãi → 409 sau số lần có giới hạn, không 500", async () => {
     const create = vi.fn().mockRejectedValue(unique())
-    await expect(createOrder(ctx, { items }, repoWith(create), vi.fn())).rejects.toMatchObject({ code: "CONFLICT" })
+    await expect(createOrder(ctx, { items }, repoWith(create), vi.fn(), vi.fn(async () => []), vi.fn(async () => undefined), vi.fn())).rejects.toMatchObject({ code: "CONFLICT" })
     expect(create).toHaveBeenCalledTimes(ORDER_CODE_ATTEMPTS)
   })
 
   it("lỗi khác không bị nuốt", async () => {
     const create = vi.fn().mockRejectedValue(new Error("db down"))
-    await expect(createOrder(ctx, { items }, repoWith(create), vi.fn())).rejects.toThrow("db down")
+    await expect(createOrder(ctx, { items }, repoWith(create), vi.fn(), vi.fn(async () => []), vi.fn(async () => undefined), vi.fn())).rejects.toThrow("db down")
     expect(create).toHaveBeenCalledTimes(1)
+  })
+})
+
+describe("createOrder — giá sàn với đơn nhân viên nhập tay (audit BL-07)", () => {
+  const repo = () => ({ countTodayOrders: vi.fn().mockResolvedValue(0), create: vi.fn(async (_o: string, code: string) => ({ id: "o", code })) }) as unknown as IOrderRepository
+  const noForeign = vi.fn(async () => [])
+
+  it("đơn MANUAL: kiểm sàn trên các dòng có sản phẩm, theo tổng tiền của chính các dòng đó", async () => {
+    const floor = vi.fn(async () => undefined)
+    await createOrder(ctx, { source: "MANUAL", items: [
+      { productId: "p1", quantity: 2, unitPriceVnd: 100_000 },
+      { description: "Thiệp", quantity: 1, unitPriceVnd: 900_000 },
+    ] }, repo(), vi.fn(), noForeign, floor, vi.fn())
+    expect(floor).toHaveBeenCalledWith(ctx, [{ productId: "p1", quantity: 2 }], 200_000)
+  })
+
+  it("dưới sàn → lỗi của bộ kiểm sàn, không tạo đơn", async () => {
+    const r = repo()
+    const floor = vi.fn(async () => { throw Object.assign(new Error("Giá thấp hơn giá sàn"), { code: "UNPROCESSABLE_ENTITY" }) })
+    await expect(createOrder(ctx, { source: "MANUAL", items: [{ productId: "p1", quantity: 1, unitPriceVnd: 1 }] }, r, vi.fn(), noForeign, floor, vi.fn())).rejects.toThrow("giá sàn")
+    expect(r.create).not.toHaveBeenCalled()
+  })
+
+  it("đơn từ chat (giá báo sau) không kiểm sàn lúc tạo", async () => {
+    const floor = vi.fn(async () => undefined)
+    await createOrder(ctx, { source: "CHAT", items: [{ productId: "p1", quantity: 1, unitPriceVnd: 0 }] }, repo(), vi.fn(), noForeign, floor, vi.fn())
+    expect(floor).not.toHaveBeenCalled()
+  })
+
+  it("đơn MANUAL giá 0 (nháp chờ báo giá) không kiểm sàn lúc tạo", async () => {
+    const floor = vi.fn(async () => undefined)
+    await createOrder(ctx, { source: "MANUAL", items: [{ productId: "p1", quantity: 1, unitPriceVnd: 0 }] }, repo(), vi.fn(), noForeign, floor, vi.fn())
+    expect(floor).not.toHaveBeenCalled()
   })
 })

@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { NativeSelect } from "@/components/ui/select"
 import { errorText } from "@/lib/error-text"
+import { vnCalendarDate } from "@/lib/vn-date"
 import type { ProductMasterIndex } from "@/modules/products/domain/product-master-index"
 
 export interface CreateOrderInitialData {
@@ -40,6 +41,8 @@ interface FlowerBomItemLite {
 }
 
 interface ItemRow {
+  /** Sản phẩm trong danh mục — gửi kèm để máy chủ kiểm giá sàn và quyền sở hữu (audit BL-07, BL-13). */
+  productId?: string | undefined
   description: string
   quantity: number
   unitPriceVnd: number
@@ -52,6 +55,11 @@ interface ItemRow {
   ribbon?: string | undefined
 }
 
+function vnTodayIso(): string {
+  const { year, month, day } = vnCalendarDate()
+  return `${year}-${String(month).padStart(2, "0")}-${String(day).padStart(2, "0")}`
+}
+
 export function CreateOrderModal({ isOpen, onClose, onSuccess, initialData }: CreateOrderModalProps) {
   const [loading, setLoading] = useState(false)
   // Một khoá cho mỗi lần soạn đơn: thử lại sau lỗi mạng/hết giờ không tạo đơn thứ hai (audit API-11)
@@ -61,13 +69,13 @@ export function CreateOrderModal({ isOpen, onClose, onSuccess, initialData }: Cr
   const [recipientName, setRecipientName] = useState("")
   const [phone, setPhone] = useState("")
   const [street, setStreet] = useState("")
-  const [deliveryDate, setDeliveryDate] = useState(new Date().toISOString().slice(0, 10))
+  // Hôm nay theo giờ Việt Nam — `toISOString()` là UTC, 00:00–07:00 sáng sẽ ra ngày hôm qua (audit BL-10)
+  const [deliveryDate, setDeliveryDate] = useState(vnTodayIso)
   const [timeSlot, setTimeSlot] = useState("08:00 - 10:00")
   const [cardMessage, setCardMessage] = useState("")
   const [internalNote, setInternalNote] = useState("")
-  const [items, setItems] = useState<ItemRow[]>([
-    { description: "Sản phẩm hồng đỏ 20 cành (Thiết kế tiêu chuẩn)", quantity: 1, unitPriceVnd: 650000 },
-  ])
+  // Dòng trống: không điền sẵn mẫu/giá của một ngành cụ thể (audit BL-13)
+  const [items, setItems] = useState<ItemRow[]>([{ description: "", quantity: 1, unitPriceVnd: 0 }])
   const [error, setError] = useState<string | null>(null)
 
   // Khởi tạo từ initialData khi modal mở hoặc dữ liệu thay đổi
@@ -108,6 +116,7 @@ export function CreateOrderModal({ isOpen, onClose, onSuccess, initialData }: Cr
     // Giá 0 nghĩa là Master Index chưa có giá bán lẻ thật — không bịa mặc định,
     // bắt buộc sales tự nhập (form chặn submit khi đơn giá <= 0).
     setItems([{
+      productId: product.id,
       description: `${product.name} [${product.code}]`,
       quantity: 1,
       unitPriceVnd: product.pricing.quotePriceVnd ?? 0,
@@ -162,6 +171,7 @@ export function CreateOrderModal({ isOpen, onClose, onSuccess, initialData }: Cr
           cardMessage,
           internalNote,
           items: items.map((it) => ({
+            productId: it.productId,
             description: it.description,
             quantity: Number(it.quantity),
             unitPriceVnd: Number(it.unitPriceVnd),
