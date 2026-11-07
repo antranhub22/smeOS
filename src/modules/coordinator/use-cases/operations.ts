@@ -36,7 +36,7 @@ import {
   ensureRule,
   ensureTransition,
   getOrderView,
-  loadOrderOrThrow,
+  loadEditableOrderOrThrow,
   runCoordinatorTx,
 } from "./shared"
 
@@ -95,7 +95,7 @@ export async function assignPartner(
 ): Promise<CoordinatorOrderView> {
   const orderId = await runCoordinatorTx(async (tx) => {
     const repo = getCoordinatorRepository(tx)
-    const row = await loadOrderOrThrow(ctx, repo, orderIdOrCode)
+    const row = await loadEditableOrderOrThrow(ctx, repo, orderIdOrCode)
     const partner = await repo.findPartner(ctx, input.partnerId)
     if (!partner) throw notFound()
     const stage = row.coordination!.stage
@@ -162,7 +162,7 @@ export async function recordProductionUpdate(
 ): Promise<CoordinatorOrderView> {
   const orderId = await runCoordinatorTx(async (tx) => {
     const repo = getCoordinatorRepository(tx)
-    const row = await loadOrderOrThrow(ctx, repo, orderIdOrCode)
+    const row = await loadEditableOrderOrThrow(ctx, repo, orderIdOrCode)
     const stage = row.coordination!.stage
 
     if (input.action === "REPORT_MATERIAL_ISSUE") {
@@ -210,7 +210,7 @@ export async function recordQcInspection(
 ): Promise<CoordinatorOrderView> {
   const orderId = await runCoordinatorTx(async (tx) => {
     const repo = getCoordinatorRepository(tx)
-    const row = await loadOrderOrThrow(ctx, repo, orderIdOrCode)
+    const row = await loadEditableOrderOrThrow(ctx, repo, orderIdOrCode)
     const c = row.coordination!
     const images = Array.isArray(c.finished_asset_ids)
       ? (c.finished_asset_ids as unknown[]).filter((v): v is string => typeof v === "string")
@@ -255,7 +255,7 @@ export async function closeCoordinatorOrder(
 ): Promise<CoordinatorOrderView> {
   const orderId = await runCoordinatorTx(async (tx) => {
     const repo = getCoordinatorRepository(tx)
-    const row = await loadOrderOrThrow(ctx, repo, orderIdOrCode)
+    const row = await loadEditableOrderOrThrow(ctx, repo, orderIdOrCode)
     const facts = await repo.facts(ctx, row)
     ensureRule(
       checkClosure({
@@ -292,7 +292,7 @@ export async function cancelCoordinatorOrder(
 ): Promise<CoordinatorOrderView> {
   const orderId = await runCoordinatorTx(async (tx) => {
     const repo = getCoordinatorRepository(tx)
-    const row = await loadOrderOrThrow(ctx, repo, orderIdOrCode)
+    const row = await loadEditableOrderOrThrow(ctx, repo, orderIdOrCode)
     const from = row.coordination!.stage
     ensureRule(checkCancellation({ stage: from, reason: input.reason }))
     await transition(ctx, repo, row, "CANCELLED", `Huỷ đơn: ${input.reason.trim()}`, {
