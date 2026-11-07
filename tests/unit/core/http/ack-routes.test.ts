@@ -9,7 +9,8 @@ import { handle, jsonResponse } from "@/core/http/response"
 /**
  * PR #172 e2e-ux treo 15 phút: `no-store` mặc định (audit API-17) khiến Chromium không hoàn tất các
  * `fetch` "bắn rồi quên" của trang Thẻ chào (không đọc thân) → trang không bao giờ `networkidle`.
- * Route chỉ xác nhận trong `ACK_ONLY_ROUTES` nhận `no-cache`; mọi route khác giữ `no-store`.
+ * Lỗi (≥ 400) và route chỉ xác nhận trong `ACK_ONLY_ROUTES` nhận `no-cache`; phản hồi có dữ liệu giữ
+ * `no-store`.
  */
 const ROOT = process.cwd()
 const at = (path: string) => `http://localhost${path}`
@@ -32,7 +33,14 @@ describe("route chỉ xác nhận — Cache-Control", () => {
     expect(res.headers.get("cache-control")).toBe("no-cache")
   })
 
-  it("route khác giữ no-store mặc định", async () => {
+  it("lỗi ở route thường — ném ra hay trả về — cũng → no-cache (client chỉ xem res.ok)", async () => {
+    const thrown = await fail(new Request(at("/api/v1/public/subcontract/KHONGTONTAI")))
+    expect(thrown.headers.get("cache-control")).toBe("no-cache")
+    const returned = handle(async () => jsonResponse({ error: { code: "NOT_FOUND", message: "x" } }, { status: 404 }))
+    expect((await returned(new Request(at("/api/v1/integrations/governance")))).headers.get("cache-control")).toBe("no-cache")
+  })
+
+  it("phản hồi thành công có dữ liệu giữ no-store mặc định", async () => {
     expect((await ok(post("/api/v1/public/brochure/T01-ABC/select"))).headers.get("cache-control")).toBe("no-store")
     expect((await ok(new Request(at("/api/v1/public/greeting-catalog/abc/event")))).headers.get("cache-control")).toBe("no-store")
   })

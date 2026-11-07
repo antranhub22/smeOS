@@ -111,7 +111,7 @@ Lợi ích: (1) gác quyền khai báo được kiểm tĩnh thay vì dò regex 
 
 **Header mặc định** của `jsonResponse` cho route có phiên/token: `Cache-Control: no-store`; `x-request-id` (đã có). Trần thân mặc định 1 MB cho JSON (413), route tải tệp khai trần riêng.
 
-> **Đã làm 07/11/2026 (đợt 5):** `no-store` mặc định cho mọi `jsonResponse` (route tự đặt thì giữ); trần thân JSON **2 MB** (PO chọn, rộng hơn 1 MB đề xuất vì `products/batch-import` gửi 250 dòng/lượt). Idempotency gắn thân: PO chọn **chỉ cảnh báo** (`jobs.idempotency_payload_mismatch`), chưa chặn 422; `POST /orders` để đợt sau (cần cột + migration). Ngoại lệ (đợt 6, sửa e2e treo trên PR #172): route chỉ xác nhận mà client không đọc thân khai ở `ACK_ONLY_ROUTES` (`src/core/http/ack-routes.ts`) → `no-cache`; test `ack-routes.test.ts` bắt buộc mọi `fetch` `keepalive` trong `src/components` trỏ tới route trong danh sách.
+> **Đã làm 07/11/2026 (đợt 5):** `no-store` mặc định cho mọi `jsonResponse` (route tự đặt thì giữ); trần thân JSON **2 MB** (PO chọn, rộng hơn 1 MB đề xuất vì `products/batch-import` gửi 250 dòng/lượt). Idempotency gắn thân: PO chọn **chỉ cảnh báo** (`jobs.idempotency_payload_mismatch`), chưa chặn 422; `POST /orders` để đợt sau (cần cột + migration). Ngoại lệ (đợt 6, sửa e2e treo trên PR #172): phản hồi lỗi (≥ 400) và route chỉ xác nhận mà client không đọc thân (`ACK_ONLY_ROUTES`, `src/core/http/ack-routes.ts`) → `no-cache`, vì Chromium không hoàn tất request `no-store` chưa đọc thân; test `ack-routes.test.ts` bắt buộc mọi `fetch` `keepalive` trong `src/components` trỏ tới route trong danh sách.
 
 ## 8. Version và deprecation
 

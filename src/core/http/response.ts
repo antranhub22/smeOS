@@ -6,7 +6,7 @@ import { log } from "@/core/observability/log"
 import { currentRequestMeta, requestIdOf, runWithRequestMeta } from "@/core/observability/request-context"
 
 import { AppError, payloadTooLarge, validationFailed } from "./errors"
-import { withAckCacheHeader } from "./ack-routes"
+import { withUnreadBodyCacheHeader } from "./ack-routes"
 import { withDeprecationHeaders } from "./deprecation"
 import { clientIp } from "./rate-limit"
 import { auditDenied, auditMutation, userAgentOf } from "./request-audit"
@@ -157,9 +157,9 @@ export function handle<Args extends unknown[]>(
     const pathname = new URL(request.url).pathname
     const dbContext = dbContextForPath(pathname)
     // Endpoint đang chờ gỡ (`deprecation.ts`) → header Deprecation/Sunset/Link trên mọi phản hồi
-    // Route chỉ xác nhận mà client không đọc thân (`ack-routes.ts`) → `no-cache` thay `no-store`
+    // Lỗi và route chỉ xác nhận — client có thể không đọc thân (`ack-routes.ts`) → `no-cache` thay `no-store`
     const finish = (response: Response) =>
-      withDeprecationHeaders(withAckCacheHeader(response, request.method, pathname), request.method, pathname)
+      withDeprecationHeaders(withUnreadBodyCacheHeader(response, request.method, pathname), request.method, pathname)
     return runWithRequestMeta(meta, () => runWithDbContext(dbContext, async () => {
       try {
         guardJsonBody(request)
