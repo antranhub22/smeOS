@@ -126,8 +126,8 @@ lại có chủ đích qua T-6 và ADR affiliate sau này (D-48).
 | [x] | P-3c [SCHEMA] contract: bỏ người nhận/địa chỉ khỏi `orders.delivery_address`, bỏ cột `orders.vat_*` — PO duyệt 07/11/2026; migration chốt khớp rồi mới xoá (đặc tả 07 §49) | — | `order-recipients.test.ts`: JSON chỉ còn khoá vận hành, màn hình đủ; lệch → dừng không xoá; bỏ PII đúng `stripRecipientPii` |
 | [x] | P-4 [SCHEMA] `shared_order_access`; gia công dùng chia sẻ — PO duyệt 07/11/2026 (D-64): 7 ngày sau khi đơn đóng, chi nhánh được mời mất quyền ngay, tin mời chỉ ghi khu vực (đặc tả 07 §50) | — | `tests/tenant/shared-order-access.test.ts`: thu hồi / hết hạn → 404 |
 | [x] | P-5a [SCHEMA] Mã hoá cột dữ liệu cá nhân khách cuối (expand): `tenant_data_keys`, cột `*_enc` + `phone_hash`/`phone_last4`, ghi kép qua extension Prisma, job mã hoá dữ liệu cũ — PO duyệt 07/11/2026 (D-65), đặc tả 07 §51 | — | `tests/tenant/pii-encryption.test.ts` |
-| [ ] | P-5b Đọc từ bản mã (giải mã ở extension), tra cứu theo `phone_hash`, tìm theo 4 số cuối/đủ số (D-49), sửa SQL thô; `PII_ENCRYPTION_KEY` bắt buộc | — | Màn hình không đổi; tìm theo phần giữa số không còn |
-| [ ] | P-5c [SCHEMA] contract: bỏ cột rõ, duy nhất theo `(organization_id, phone_hash)` | — | Dump không có số rõ |
+| [x] | P-5b Đọc từ bản mã (`result` extension, cả truy vấn lồng; chưa có bản mã → cột rõ), tra cứu theo `phone_hash` (`pii-lookup.ts`), tìm theo 4 số cuối/đủ số (D-49); SQL thô không đọc cột cá nhân — đặc tả 07 §51 | — | `tests/tenant/pii-read.test.ts`: cột rõ bị sửa vẫn đọc đúng; +84 khớp đúng khách; phần giữa số không ra |
+| [ ] | P-5c [SCHEMA] contract: bỏ cột rõ, duy nhất theo `(organization_id, phone_hash)`; `PII_ENCRYPTION_KEY` bắt buộc; chốt mọi dòng đã có bản mã trước khi xoá | — | Dump không có số rõ |
 | [ ] | P-6 [SCHEMA] `retention_policies` + job hạn lưu (cần I-2) | P2-F2 | Dòng quá hạn xử lý; legal hold giữ |
 | [ ] | P-7 [SCHEMA] `data_subject_requests` + xoá/xuất | P2-F1 | Xoá lan sang tổ chức được chia sẻ |
 | [ ] | P-8 [PO] Chọn vùng dữ liệu; đổi mặc định `data_region` theo quyết định | — | Ghi sổ quyết định |

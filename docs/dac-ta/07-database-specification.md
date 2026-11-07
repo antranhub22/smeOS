@@ -4184,6 +4184,17 @@ model tenant_data_keys {
 - Dữ liệu cũ: `encryptPendingPii` (`src/core/security/infra/pii-backfill.ts`) — lượt quét nền 5 phút
   (`/api/v1/internal/chain-dispatch-sweep`, trường `piiEncrypted`, 200 dòng mỗi bảng) và `npm run pii:backfill` (runbook §14).
 - Production chưa đặt khoá chủ → chưa mã hoá, log `pii.encryption_disabled`. Ở P-5a mọi chỗ đọc vẫn đọc cột rõ.
+- Đọc (P-5b, 07/11/2026): trường tính toán của client Prisma (`result` extension, `src/core/security/infra/pii-read.ts`)
+  trả giá trị giải từ `*_enc` cho mọi lệnh đọc kể cả truy vấn lồng (`include`, `select` lồng) — Prisma tự lấy thêm `*_enc`
+  và `organization_id`. Dòng chưa có bản mã → cột rõ (còn tới P-5c). Khoá dữ liệu phải ở bộ nhớ trước khi mã đọc trường:
+  `readWithPiiKeys` quét kết quả thô và nạp khoá còn thiếu bằng quyền hệ thống. Kết quả có thuộc tính symbol riêng từng
+  lần đọc (Prisma) — test so cả dòng dùng `toMatchObject` hoặc so JSON.
+- Tra cứu (P-5b): `src/core/security/pii-lookup.ts` — `phoneEquals` (đúng số, mọi cách viết, qua `*_hash`), `phoneIn`,
+  `phoneSearch` (ô tìm: đúng 4 chữ số → `*_last4`; từ 9 chữ số → đúng số; còn lại không tìm theo số — PO D-49). Dòng chưa
+  băm vẫn khớp theo cột rõ (bỏ ở P-5c). Áp ở: khách (tạo, trùng số, danh sách, xuất), đặt đơn Thẻ chào (gắn khách, chống
+  đơn rác, đơn trùng), link Thẻ chào → khách tiềm năng, tìm đơn Thẻ chào, lead (đếm, đơn công khai, phục hồi đơn hết hạn
+  thanh toán), hỏi giá sản phẩm, đơn của khách, giá theo hạng khách.
+- Chưa trong phạm vi A: SĐT khách lẻ lưu trong `order_coordinations.metadata.customerPhone` (đơn điều phối không gắn khách).
 
 Ca thử: `tests/tenant/pii-encryption.test.ts`, `src/core/security/__tests__/pii-cipher.test.ts`.
 
