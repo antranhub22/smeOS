@@ -9,7 +9,7 @@
  * so cùng nội dung này với tệp đã commit.
  */
 
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs"
+import { mkdirSync, readFileSync, writeFileSync } from "node:fs"
 import path from "node:path"
 
 import { serializeOpenApi } from "../src/core/http/openapi"
@@ -18,7 +18,16 @@ import { buildIntegrationOpenApi, INTEGRATION_OPENAPI_PATH } from "../src/module
 const check = process.argv.includes("--check")
 const target = path.resolve(__dirname, "..", INTEGRATION_OPENAPI_PATH)
 const text = serializeOpenApi(buildIntegrationOpenApi())
-const current = existsSync(target) ? readFileSync(target, "utf8") : null
+// Đọc thẳng, bắt ENOENT — không `existsSync` rồi mới đọc/ghi (CodeQL js/file-system-race).
+function readCurrent(): string | null {
+  try {
+    return readFileSync(target, "utf8")
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code === "ENOENT") return null
+    throw error
+  }
+}
+const current = readCurrent()
 
 if (check) {
   if (current !== text) {
