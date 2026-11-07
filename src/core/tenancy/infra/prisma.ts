@@ -2,6 +2,7 @@ import { PrismaPg } from "@prisma/adapter-pg"
 
 import { PrismaClient } from "@/generated/prisma/client"
 import { env } from "@/lib/env"
+import { applyRecipientView, planRecipientRead } from "@/modules/orders/infra/order-recipient-view"
 import { RlsPool } from "./rls-pool"
 
 /**
@@ -20,16 +21,15 @@ const globalForPrisma = globalThis as unknown as {
   schemaVersion?: string
 }
 
-const CURRENT_SCHEMA_VERSION = "2026-10-27-notification-matrix-v1"
+const CURRENT_SCHEMA_VERSION = "2026-11-07-order-recipient-view"
 if (globalForPrisma.schemaVersion !== CURRENT_SCHEMA_VERSION) {
   globalForPrisma.smeosPrisma?.$disconnect?.().catch(() => {})
   delete globalForPrisma.smeosPrisma
   globalForPrisma.schemaVersion = CURRENT_SCHEMA_VERSION
 }
 
-export const prisma: PrismaClient =
-  globalForPrisma.smeosPrisma ??
-  new PrismaClient({
+function createClient(): PrismaClient {
+  const base = new PrismaClient({
     adapter: new PrismaPg(
       // RLS (ADR-013 D-I3, checklist ALG 1.18): pool tự đặt `app.org_id` theo ngữ cảnh của luồng đang chạy
       new RlsPool({
@@ -40,6 +40,22 @@ export const prisma: PrismaClient =
       }, env.DB_RLS_MODE),
     ),
   })
+  // ADR-014 P-3b: đọc `orders.delivery_address` → người nhận/địa chỉ lấy từ `order_recipients` (order-recipient-view.ts).
+  // Kiểu kết quả không đổi (cùng cột, `recipient` chỉ còn khi người gọi xin) nên giữ kiểu `PrismaClient`.
+  return base.$extends({
+    query: {
+      orders: {
+        async $allOperations({ operation, args, query }) {
+          const plan = planRecipientRead(operation, args as Parameters<typeof planRecipientRead>[1])
+          if (!plan) return query(args)
+          return applyRecipientView(await query(plan.args as typeof args), plan.keepRecipient)
+        },
+      },
+    },
+  }) as unknown as PrismaClient
+}
+
+export const prisma: PrismaClient = globalForPrisma.smeosPrisma ?? createClient()
 
 if (process.env.NODE_ENV !== "production") {
   globalForPrisma.smeosPrisma = prisma

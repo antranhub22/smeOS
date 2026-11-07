@@ -4161,17 +4161,27 @@ model order_recipients {
 - Một dòng mỗi đơn (`order_id` là khoá chính); khoá ghép `(order_id, organization_id)` tới `orders`, xoá đơn → xoá
   dòng. Thuộc tổ chức: RLS `tenant_isolation` (`scripts/gen-rls-policies.mjs`).
 - Cột suy từ JSON `orders.delivery_address` bằng `recipientFromDeliveryAddress` (`src/modules/orders/domain/order-recipient.ts`):
-  tên `recipientName` → `name`; SĐT `phone` → `recipientPhone`; dòng địa chỉ `street` → `full_address` → `fullAddress`
-  → `address` → ghép từ `parts`; `address_parts` = `parts`, hoặc phường/quận/tỉnh của đơn nhập phẳng. JSON là chuỗi →
-  chỉ `address_line`. Khoá vận hành (`zone`, `notes`, `mapUrl`) ở lại JSON.
+  tên `recipientName` → `name`; SĐT `phone` → `recipientPhone`; `address_line` (dòng hiển thị) `street` → `full_address`
+  → `fullAddress` → `address` → `formattedAddress` → ghép từ `parts`; `address_parts` giữ NGUYÊN mọi khoá địa chỉ như
+  đã lưu (`houseNumber`, `street`, `ward`, `district`, `province`, `city`, `country`, `formattedAddress`, `full_address`,
+  `fullAddress`, `address`, `parts` — từ P-3b, migration `20261107150000_order_recipients_address` chép lại). JSON là
+  chuỗi → chỉ `address_line`. Khoá vận hành (`zone`, `notes`, `mapUrl`) ở lại JSON.
 - Ghi kép (`upsertOrderRecipient`, `src/modules/orders/infra/order-recipient-repository.ts`), cùng giao dịch với lệnh ghi
   đơn: tạo đơn nhập tay và sửa địa chỉ (`order-repository.ts`), đặt đơn Thẻ chào (`brochure-checkout-repository.ts`),
   duyệt đổi thông tin (`order-change-repository.ts`), tạo đơn điều phối (`coordinator-query-helper.ts`), hoá đơn VAT
-  (`order-vat-repository.ts` — chỉ phần `vat_*`). Ở P-3a mọi đường đọc vẫn đọc nơi cũ.
-- Backfill trong migration (khối `P3A-BACKFILL`): mọi đơn có người nhận/địa chỉ/VAT, `ON CONFLICT DO NOTHING`; làm
-  đúng như `recipientFromDeliveryAddress` (test so hai bên).
+  (`order-vat-repository.ts` — chỉ phần `vat_*`).
+- Đọc (P-3b, 07/11/2026): mọi lệnh `orders.find*` có trả `delivery_address` đi qua query extension của client Prisma
+  (`src/core/tenancy/infra/prisma.ts` → `src/modules/orders/infra/order-recipient-view.ts`): lấy kèm `recipient` và trả
+  về JSON ghép (`deliveryAddressView`: khoá vận hành của JSON + phần cá nhân từ bảng; đơn chưa có dòng → JSON như cũ).
+  Chọn đơn lồng trong bảng khác (`order: { select: { delivery_address } }`) dùng `RECIPIENT_VIEW_SELECT` +
+  `withDeliveryView` (`tests/unit/architecture/order-recipient-reads.test.ts` khoá). VAT đọc `order_recipients`, đơn
+  chưa có dòng → cột cũ. Dữ liệu cũ khoá `name`/`full_address` nay đọc ra thêm `recipientName`/`street`.
+- Backfill trong migration (khối `P3A-BACKFILL`, rồi `P3B-BACKFILL` chép lại phần địa chỉ, `ON CONFLICT DO UPDATE`):
+  làm đúng như `recipientFromDeliveryAddress` (test so hai bên).
+- P-3c (chưa làm): đường ghi thôi ghi phần cá nhân vào JSON và cột `vat_*`; bỏ phần đó khỏi dữ liệu cũ.
 
-Ca thử: `tests/tenant/order-recipients.test.ts` (mọi đường ghi, khoá ghép khác tổ chức, backfill 11 dạng địa chỉ).
+Ca thử: `tests/tenant/order-recipients.test.ts` (mọi đường ghi, khoá ghép khác tổ chức, backfill 13 dạng địa chỉ, xoá
+phần cá nhân khỏi nơi cũ mà màn hình vẫn đủ), `src/modules/orders/domain/__tests__/order-recipient.test.ts`.
 
 ## 48. Một hồ sơ khách — `customers.status`, `greeting_sessions.customer_id` (07/11/2026)
 

@@ -13,6 +13,7 @@ import { recordAuditLog } from "@/modules/audit/use-cases/record-audit-log"
 import { saleBranchOfSession } from "./sale-branch"
 import { activateProspect } from "./session-customer"
 import { upsertOrderRecipient } from "@/modules/orders/infra/order-recipient-repository"
+import { RECIPIENT_VIEW_SELECT, withDeliveryView } from "@/modules/orders/infra/order-recipient-view"
 
 export interface CreateBrochureOrderData {
   organizationId: string
@@ -135,18 +136,19 @@ export class BrochureCheckoutRepository {
 
   /** Đơn vừa đặt từ link bộ sưu tập chung có cùng SĐT + mẫu (để trả lại thay vì tạo đơn trùng). */
   async findRecentPublicOrders(input: { organizationId: string; catalogId: string; customerPhone: string; productId: string; since: Date }) {
-    return this.db.greeting_sessions.findMany({
+    const rows = await this.db.greeting_sessions.findMany({
       where: {
         organization_id: input.organizationId, catalog_id: input.catalogId, customer_phone: input.customerPhone,
         selected_product_id: input.productId, order_id: { not: null }, created_at: { gte: input.since },
       },
       select: {
         id: true, send_code: true, product_snapshot: true,
-        order: { select: { id: true, code: true, total_vnd: true, paid_vnd: true, created_at: true, status: true, delivery_address: true, delivery_window: true, pricing_rule_ref: true } },
+        order: { select: { id: true, code: true, total_vnd: true, paid_vnd: true, created_at: true, status: true, delivery_address: true, delivery_window: true, pricing_rule_ref: true, recipient: RECIPIENT_VIEW_SELECT } },
       },
       orderBy: { created_at: "desc" },
       take: 5,
     })
+    return rows.map((r) => ({ ...r, order: r.order && withDeliveryView(r.order) })) // P-3b
   }
 
   /**

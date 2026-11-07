@@ -9,10 +9,12 @@ import { Prisma } from "@/generated/prisma/client"
 import { GreetingCardRepository } from "@/modules/greeting-card/infra/greeting-card-repository"
 import { createSendLink } from "@/modules/greeting-card/use-cases/create-send-link"
 import { decideOrderChange, submitOrderChange } from "@/modules/greeting-card/use-cases/order-change"
-import { setOrderVat } from "@/modules/greeting-card/use-cases/order-vat"
+import { getOrderVat, setOrderVat } from "@/modules/greeting-card/use-cases/order-vat"
+import { getCoordinatorBoard } from "@/modules/greeting-card/use-cases/coordinator-board"
+import { getTrackingPipeline } from "@/modules/greeting-card/use-cases/get-tracking-pipeline"
 import { selectBrochureProduct } from "@/modules/greeting-card/use-cases/select-brochure-product"
 import { submitBrochureOrder } from "@/modules/greeting-card/use-cases/submit-brochure-order"
-import { recipientFromDeliveryAddress } from "@/modules/orders/domain/order-recipient"
+import { recipientFromDeliveryAddress, stripRecipientPii } from "@/modules/orders/domain/order-recipient"
 import { OrderRepository } from "@/modules/orders/infra/order-repository"
 import { createOrder } from "@/modules/orders/use-cases/create-order"
 import { ProductRepository } from "@/modules/products/infra/product-repository"
@@ -27,16 +29,18 @@ const BROCHURE_ORDER = {
   deliveryAddress: "1 Lê Lợi, Q1", cardMessage: "Chúc mừng",
 }
 
-/** Khối backfill của migration `*_order_recipients` (CSDL test dựng bằng `db push`, không chạy migration). */
-function backfillSql(): string[] {
+/** Khối backfill của một migration (CSDL test dựng bằng `db push`, không chạy migration). */
+function backfillSql(suffix: string, tag: string): string[] {
   const dir = path.join(process.cwd(), "prisma/migrations")
-  const migration = readdirSync(dir).find((d) => d.endsWith("_order_recipients"))
-  if (!migration) throw new Error("Không thấy migration order_recipients")
-  const block = readFileSync(path.join(dir, migration, "migration.sql"), "utf8").match(/-- P3A-BACKFILL-BEGIN[\s\S]*?-- P3A-BACKFILL-END/)?.[0]
-  if (!block) throw new Error("Migration order_recipients thiếu khối backfill")
+  const migration = readdirSync(dir).find((d) => d.endsWith(suffix))
+  if (!migration) throw new Error(`Không thấy migration ${suffix}`)
+  const block = readFileSync(path.join(dir, migration, "migration.sql"), "utf8").match(new RegExp(`-- ${tag}-BEGIN[\\s\\S]*?-- ${tag}-END`))?.[0]
+  if (!block) throw new Error(`Migration ${suffix} thiếu khối ${tag}`)
   // Tách lệnh theo `;` ở cuối dòng (thân hàm `$$ … $$` không có `;` cuối dòng)
   return block.replace(/^--.*$/gm, "").split(/;\s*$/m).map((s) => s.trim()).filter(Boolean)
 }
+/** P-3a rồi P-3b, như khi `migrate deploy` chạy lần lượt. */
+const BACKFILL = () => [...backfillSql("_order_recipients", "P3A-BACKFILL"), ...backfillSql("_order_recipients_address", "P3B-BACKFILL")]
 
 const recipientOf = (orderId: string) => prisma.order_recipients.findUnique({ where: { order_id: orderId } })
 
@@ -81,7 +85,10 @@ describe("order_recipients — ghi kép và backfill", () => {
     await decideOrderChange(staff, { requestId: sent.id, approve: true, note: "" })
     expect(await recipientOf(order.orderId)).toMatchObject({
       recipient_name: "Người Mới", recipient_phone: "0933333333", address_line: "9 Hai Bà Trưng, Phường Tân Định, TP. Hồ Chí Minh",
-      address_parts: { houseNumber: "9", street: "Hai Bà Trưng", ward: "Phường Tân Định", province: "TP. Hồ Chí Minh" },
+      address_parts: {
+        street: "9 Hai Bà Trưng, Phường Tân Định, TP. Hồ Chí Minh",
+        parts: { houseNumber: "9", street: "Hai Bà Trưng", ward: "Phường Tân Định", province: "TP. Hồ Chí Minh" },
+      },
     })
 
     await setOrderVat(a.ctx, order.orderId, { enabled: true, rate: 10, companyName: "Cty Đông Nam", taxCode: "0123456789", email: "kt@dn.vn" })
@@ -97,10 +104,10 @@ describe("order_recipients — ghi kép và backfill", () => {
     })
     expect(await recipientOf(manual.id)).toMatchObject({
       organization_id: a.organizationId, recipient_name: "Chị Hoa", address_line: "5 Nguyễn Huệ",
-      address_parts: { ward: "Bến Nghé", province: "TP. Hồ Chí Minh" },
+      address_parts: { street: "5 Nguyễn Huệ", ward: "Bến Nghé", province: "TP. Hồ Chí Minh" },
     })
     await new OrderRepository().update(a.organizationId, manual.id, { deliveryAddress: { recipientName: "Anh Nam", phone: "0922222222", street: "7 Lý Tự Trọng" } })
-    expect(await recipientOf(manual.id)).toMatchObject({ recipient_name: "Anh Nam", address_line: "7 Lý Tự Trọng", address_parts: null })
+    expect(await recipientOf(manual.id)).toMatchObject({ recipient_name: "Anh Nam", address_line: "7 Lý Tự Trọng", address_parts: { street: "7 Lý Tự Trọng" } })
 
     const res = await createCoordinatorOrder(withSession("http://localhost/api/v1/coordinator/orders", b.token, {
       method: "POST",
@@ -118,6 +125,35 @@ describe("order_recipients — ghi kép và backfill", () => {
       vat_company_name: null, vat_tax_code: null, vat_company_address: null, vat_email: null,
       created_at: expect.any(Date), updated_at: expect.any(Date),
     })
+  })
+
+  it("P-3b: chỗ đọc lấy người nhận/địa chỉ/VAT từ order_recipients — xoá phần cá nhân khỏi nơi cũ (như P-3c) vẫn hiện đủ", async () => {
+    const order = await brochureOrder(a, "A3")
+    await setOrderVat(a.ctx, order.orderId, { enabled: true, rate: 10, companyName: "Cty Đông Nam", taxCode: "0123456789", email: "kt@dn.vn" })
+    const manual = await createOrder(a.ctx, {
+      items: [{ description: "Bó hồng", quantity: 1, unitPriceVnd: 300_000 }],
+      deliveryAddress: { recipientName: "Chị Hoa", phone: "0911111111", street: "5 Nguyễn Huệ", ward: "Bến Nghé", province: "TP. Hồ Chí Minh" },
+    })
+    const reads = async () => ({
+      vat: await getOrderVat(a.ctx, order.orderId),
+      board: (await getCoordinatorBoard(a.ctx, {})).data.find((o) => o.id === order.orderId)?.delivery_address,
+      pipeline: (({ recipientName, recipientPhone, deliveryAddress, deliveryZone, customerName, customerPhone }) =>
+        ({ recipientName, recipientPhone, deliveryAddress, deliveryZone, customerName, customerPhone }))((await getTrackingPipeline(a.ctx)).find((i) => i.orderId === order.orderId)!),
+      manual: (await new OrderRepository().findById(a.organizationId, manual.id))?.deliveryAddress,
+    })
+    const before = await reads()
+    expect(before.board).toMatchObject({ recipientName: "Người Nhận", phone: "0912345678", street: "1 Lê Lợi, Q1" })
+
+    // Giả lập P-3c: nơi cũ chỉ còn khoá vận hành, cột VAT trên đơn trống
+    for (const o of await prisma.orders.findMany({ where: { organization_id: a.organizationId }, select: { id: true } })) {
+      const raw = (await prisma.$queryRaw<Array<{ a: unknown }>>`SELECT delivery_address AS a FROM orders WHERE id = ${o.id}`)[0]?.a
+      const rest = stripRecipientPii(raw)
+      await prisma.orders.update({
+        where: { id: o.id },
+        data: { delivery_address: rest ? (rest as Prisma.InputJsonValue) : Prisma.DbNull, vat_company_name: null, vat_tax_code: null, vat_company_address: null, vat_email: null },
+      })
+    }
+    expect(await reads()).toEqual(before)
   })
 
   it("khoá ghép: không gắn được dòng người nhận của tổ chức này vào đơn tổ chức khác", async () => {
@@ -138,6 +174,8 @@ describe("order_recipients — ghi kép và backfill", () => {
       { street: "", parts: { ward: "Bến Nghé" } },
       { notes: "chỉ ghi chú" },
       null,
+      { street: "123 Phố Huế", ward: "Ngô Thì Nhậm", district: "Hai Bà Trưng", city: "Hà Nội", country: "VN", formattedAddress: "123 Phố Huế, Hà Nội" },
+      { formattedAddress: "4 Đồng Khởi", city: null },
     ]
     const ids: string[] = []
     for (const [i, shape] of shapes.entries()) {
@@ -151,7 +189,7 @@ describe("order_recipients — ghi kép và backfill", () => {
       ids.push(row.id)
     }
 
-    const run = () => prisma.$transaction(async (tx) => { for (const stmt of backfillSql()) await tx.$executeRawUnsafe(stmt) }) // một kết nối (hàm pg_temp)
+    const run = () => prisma.$transaction(async (tx) => { for (const stmt of BACKFILL()) await tx.$executeRawUnsafe(stmt) }) // một kết nối (hàm pg_temp)
     await run()
     for (const [i, id] of ids.entries()) {
       const row = await recipientOf(id)
@@ -165,8 +203,9 @@ describe("order_recipients — ghi kép và backfill", () => {
     }
     expect(await recipientOf(ids[9]!)).toMatchObject({ vat_company_name: "Cty Chỉ VAT", vat_tax_code: "0101", recipient_name: null })
 
-    const before = await prisma.order_recipients.findMany({ orderBy: { order_id: "asc" } })
+    const rows = async () => (await prisma.order_recipients.findMany({ orderBy: { order_id: "asc" } })).map(({ updated_at: _u, ...r }) => r)
+    const before = await rows()
     await run()
-    expect(await prisma.order_recipients.findMany({ orderBy: { order_id: "asc" } })).toEqual(before)
+    expect(await rows()).toEqual(before)
   })
 })

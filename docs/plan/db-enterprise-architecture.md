@@ -114,7 +114,7 @@ lại có chủ đích qua T-6 và ADR affiliate sau này (D-48).
 | [x] | I-7 Test kiến trúc: route ghi có tenant phải ghi `audit_logs` hoặc có trong danh sách miễn — `tests/unit/architecture/audit-boundary.test.ts`; 123 route cũ chưa ghi vào tệp nợ chỉ co lại (nợ #204) | Test xanh |
 | [ ] | I-4 Client extension đặt `app.org_id` theo giao dịch; worker đặt ngữ cảnh job; đo p95 | p95 tăng ≤ 10% |
 | [ ] | I-5 [SCHEMA] RLS chế độ ghi nhận trên CSDL khôi phục; chạy toàn bộ test + e2e — **07/11/2026, phần test:** `DB_RLS_MODE=audit` + `DB_RLS_AUDIT_FILE` chạy toàn bộ `test:tenant` (195 tệp, 884 ca) + `test:platform` (14 tệp, 43 ca): lần đầu 54 sự kiện `pending` (52 URL giả trong test, 2 route Console `saas-policy` xếp nhầm) → sửa `db-context.ts` + test kiến trúc mọi route `requirePlatformContext` chạy quyền hệ thống; chạy lại **0 sự kiện**. Còn thiếu: CSDL khôi phục từ production + e2e | 0 vi phạm ghi nhận |
-| [ ] | Ghi dòng mới `AGENT_RULES.md` §14: bộ quét liên tenant phải chạy bằng `smeos_system` | — |
+| [x] | Ghi dòng mới `AGENT_RULES.md` §14: bộ quét liên tenant phải chạy bằng quyền hệ thống (`asSystemDb` trong ứng dụng, `smeos_system` cho script) — dòng 15 | — |
 
 ### GĐ4 — Dữ liệu cá nhân (ADR-014)
 
@@ -122,7 +122,7 @@ lại có chủ đích qua T-6 và ADR affiliate sau này (D-48).
 |---|---|---|---|
 | [x] | P-2 [SCHEMA] **B5** `customers.status PROSPECT`; `customer_id` trên `leads` (đã có), `greeting_sessions`; backfill; ghi kép — PO duyệt 07/11/2026, phương án A: PROSPECT chỉ là người nhận link Thẻ chào có SĐT chưa đặt đơn, lead vẫn tạo khách thường (đặc tả 07 §48) | — | `tests/tenant/customer-prospects.test.ts`: link/lead/đơn trỏ đúng khách cùng tổ chức; PROSPECT không hiện ở danh sách/xuất; backfill |
 | [x] | P-3a [SCHEMA] **B5** `order_recipients` (người nhận + VAT) + backfill + ghi kép ở 6 đường ghi; đọc chưa đổi — PO duyệt 07/11/2026 (D-63), đặc tả 07 §49 | — | `tests/tenant/order-recipients.test.ts`: mọi đường ghi; backfill khớp `recipientFromDeliveryAddress` |
-| [ ] | P-3b **B5** Chuyển đọc người nhận/địa chỉ/VAT (36 tệp: phiếu in, theo dõi, xuất, điều phối, shipper…) sang `order_recipients` | — | Phiếu in, theo dõi đơn, xuất đơn không đổi |
+| [x] | P-3b **B5** Chuyển đọc người nhận/địa chỉ/VAT sang `order_recipients`: query extension của client Prisma cho mọi `orders.find*` + 4 chỗ chọn đơn lồng; `address_parts` giữ nguyên khoá địa chỉ (chép lại từ JSON) — đặc tả 07 §49 | — | `order-recipients.test.ts`: xoá phần cá nhân khỏi nơi cũ, màn hình vẫn đủ; `order-recipient-reads.test.ts` |
 | [ ] | P-3c [SCHEMA] contract: bỏ người nhận/địa chỉ khỏi `orders.delivery_address`, bỏ cột `orders.vat_*` | — | Chốt khớp trước khi xoá (như T-7c) |
 | [ ] | P-4 [SCHEMA] `shared_order_access`; gia công dùng chia sẻ | — | Hết hạn → đối tác 404 |
 | [ ] | P-5 [SCHEMA] Mã hoá cột + `phone_hash` + `phone_last4`; đổi 4 chỗ tìm kiếm | — | Dump không có số rõ |
@@ -147,7 +147,7 @@ lại có chủ đích qua T-6 và ADR affiliate sau này (D-48).
 | [ ] | I-6 [SCHEMA] Bật RLS chặn thật trên production (mốc theo câu trả lời ADR-013 §6) | Test "bỏ `scopedWhere` → 0 dòng" chạy trên CSDL thật |
 | [ ] | O-9 [VẬN HÀNH] Thử tải quy mô mục tiêu trên CSDL khôi phục PITR | Biên bản p95 đạt SLO |
 | [ ] | O-10 Dọn `generation_jobs` cũ; bản sao đọc / phân vùng nếu chạm ngưỡng | Theo ngưỡng ADR-015 D-O6 |
-| [ ] | P3-03 ERD theo miền sinh từ schema, kiểm trong CI | Tệp sinh khớp schema |
+| [x] | P3-03 ERD theo miền sinh từ schema (`npm run gen:erd` → `docs/kien-truc/ERD_THEO_MIEN.md`, 10 miền), kiểm trong CI qua `npm test` | `tests/unit/architecture/erd.test.ts`: tệp sinh khớp schema, mỗi model đúng một miền |
 | [ ] | [PO] Quyết định lại kiểm thử bảo mật bên ngoài (D-26 hiện "không làm") cho khách enterprise | Ghi sổ quyết định |
 | [ ] | Gói bằng chứng: điền cột "Bằng chứng" của mục 1 cho DoD-1 → DoD-17 | PO ký nhận |
 
