@@ -198,3 +198,38 @@ export const paymentNotifyBody = z.object({ proofAssetId: z.string().optional() 
 export const paymentProofForm = z.object({ file: z.file(), purpose: z.enum(["DEPOSIT", "BALANCE"]).optional() })
 /** Trang theo dõi mở từ link riêng của đơn: `?link=<mã link>` + cookie chủ phiên → xem đủ thông tin. */
 export const trackingLinkQuery = z.object({ link: z.string().optional() })
+
+// ── Thẻ Gia Công — chuyển nguyên văn từ route (B5: `tests/tenant/public-contract-subcontract.test.ts`) ──
+const VIETNAM_PHONE_RE = /^(0|\+84)(3[2-9]|5[6-9]|7[0689]|8[1-9]|9[0-9])\d{7}$/
+
+// subcontract/[orderCode]/route.ts
+export const subcontractActionBody = z.object({
+  action: z.enum(["CLAIM", "CANCEL", "COMMIT", "DELETE_QC"]),
+  branchId: z.string().min(1),
+  photoUrl: z.string().optional(),
+})
+
+// subcontract/[orderCode]/request-bypass/route.ts
+export const subcontractBypassBody = z.object({
+  branchId: z.string().min(1),
+  step: z.enum(["QC", "SHIPPER", "POD"]),
+  reason: z.string().trim().min(5, "Lý do xin bỏ qua tối thiểu 5 ký tự").max(300),
+})
+
+// subcontract/[orderCode]/submit-shipper/route.ts
+export const subcontractShipperBody = z.object({
+  branchId: z.string().trim().min(1, "Thiếu mã chi nhánh"),
+  shipperName: z.string().trim().min(2, "Tên shipper tối thiểu 2 ký tự").max(80),
+  shipperPhone: z
+    .string()
+    .trim()
+    .regex(VIETNAM_PHONE_RE, "Số điện thoại không hợp lệ (vd: 0912345678)"),
+  shipperNote: z.string().trim().max(200).optional(),
+})
+
+/** `GET`: mã chi nhánh được mời + token ký (`t`, hoặc header `x-subcontract-token`). */
+export const subcontractViewQuery = z.object({ branch: z.string(), t: z.string().optional() })
+/** `upload-qc` (multipart): ảnh thành phẩm JPG/PNG/WebP ≤ 10 MB, AI đối chiếu với ảnh mẫu trước khi lưu. */
+export const subcontractQcForm = z.object({ file: z.file(), branchId: z.string() })
+/** `submit-delivery` (multipart): ảnh giao hàng ≤ 10 MB + ghi chú. */
+export const subcontractDeliveryForm = z.object({ file: z.file(), branchId: z.string(), note: z.string().optional() })

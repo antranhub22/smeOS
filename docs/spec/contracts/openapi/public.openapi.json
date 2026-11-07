@@ -9656,6 +9656,1388 @@
         }
       }
     },
+    "/public/subcontract/{orderCode}": {
+      "get": {
+        "operationId": "subcontractView",
+        "summary": "Chi nhánh xem Thẻ Gia Công",
+        "description": "SĐT người nhận che khi chưa nhận đơn; shipper và yêu cầu bỏ qua chỉ hiện cho chi nhánh đang làm. 120 lần/phút/IP.",
+        "tags": [
+          "Thẻ Gia Công"
+        ],
+        "security": [
+          {
+            "subcontractToken": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "orderCode",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "branch",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "t",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Thẻ Gia Công",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "orderId": {
+                          "type": "string"
+                        },
+                        "orderCode": {
+                          "type": "string"
+                        },
+                        "branchId": {
+                          "type": "string"
+                        },
+                        "branchName": {
+                          "type": "string"
+                        },
+                        "product": {
+                          "type": "object",
+                          "properties": {
+                            "name": {
+                              "type": "string"
+                            },
+                            "imageUrl": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "bomItems": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "name": {
+                                    "type": "string"
+                                  },
+                                  "quantity": {
+                                    "type": "number"
+                                  },
+                                  "unit": {
+                                    "type": "string"
+                                  }
+                                },
+                                "required": [
+                                  "name",
+                                  "quantity",
+                                  "unit"
+                                ],
+                                "additionalProperties": false
+                              }
+                            }
+                          },
+                          "required": [
+                            "name",
+                            "imageUrl",
+                            "bomItems"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "deliveryAddress": {
+                          "type": "string"
+                        },
+                        "deliveryTime": {
+                          "type": "string"
+                        },
+                        "deliveryTimestampMs": {
+                          "type": [
+                            "number",
+                            "null"
+                          ]
+                        },
+                        "stepDeadlines": {
+                          "type": "object",
+                          "properties": {
+                            "deliveryTimestampMs": {
+                              "type": [
+                                "number",
+                                "null"
+                              ]
+                            },
+                            "step1GraceExpiresAt": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "step2QcDeadlineMs": {
+                              "type": [
+                                "number",
+                                "null"
+                              ]
+                            },
+                            "step3ShipperDeadlineMs": {
+                              "type": [
+                                "number",
+                                "null"
+                              ]
+                            },
+                            "step4DeliveryDeadlineMs": {
+                              "type": [
+                                "number",
+                                "null"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "deliveryTimestampMs",
+                            "step1GraceExpiresAt",
+                            "step2QcDeadlineMs",
+                            "step3ShipperDeadlineMs",
+                            "step4DeliveryDeadlineMs"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "recipientName": {
+                          "type": "string"
+                        },
+                        "recipientPhone": {
+                          "type": "string"
+                        },
+                        "isPhoneMasked": {
+                          "type": "boolean"
+                        },
+                        "cardMessage": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "specialNotes": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "subcontractPriceVnd": {
+                          "type": "number"
+                        },
+                        "craftFeeDeductions": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "amountVnd": {
+                                "type": "number"
+                              },
+                              "reason": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "amountVnd",
+                              "reason"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "craftFeePayableVnd": {
+                          "type": "number"
+                        },
+                        "dispatchStatus": {
+                          "type": "string"
+                        },
+                        "claimedByBranchId": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "claimedBranchName": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "graceExpiresAt": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "productionStatus": {
+                          "type": "string"
+                        },
+                        "deliveryStatus": {
+                          "type": "string"
+                        },
+                        "orderStatus": {
+                          "type": "string"
+                        },
+                        "qcPhotos": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "lastAiVerification": {
+                          "anyOf": [
+                            {
+                              "type": "object",
+                              "properties": {
+                                "isMatch": {
+                                  "type": "boolean"
+                                },
+                                "confidenceScore": {
+                                  "type": "number"
+                                },
+                                "verdict": {
+                                  "type": "string",
+                                  "enum": [
+                                    "MATCH",
+                                    "MISMATCH",
+                                    "UNCERTAIN"
+                                  ]
+                                },
+                                "reason": {
+                                  "type": "string"
+                                }
+                              },
+                              "required": [
+                                "isMatch",
+                                "confidenceScore",
+                                "verdict",
+                                "reason"
+                              ],
+                              "additionalProperties": false
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "autoBypassedCoordinator": {
+                          "type": "boolean"
+                        },
+                        "bypassRequests": {
+                          "anyOf": [
+                            {
+                              "type": "object",
+                              "propertyNames": {
+                                "type": "string",
+                                "enum": [
+                                  "QC",
+                                  "SHIPPER",
+                                  "POD"
+                                ]
+                              },
+                              "additionalProperties": {
+                                "type": "object",
+                                "properties": {
+                                  "reason": {
+                                    "type": "string"
+                                  },
+                                  "status": {
+                                    "type": "string",
+                                    "enum": [
+                                      "PENDING",
+                                      "APPROVED",
+                                      "REJECTED"
+                                    ]
+                                  },
+                                  "requestedAt": {
+                                    "type": "string",
+                                    "format": "date-time",
+                                    "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                                  },
+                                  "requestedByBranchId": {
+                                    "type": "string"
+                                  },
+                                  "requestedByBranchName": {
+                                    "type": "string"
+                                  },
+                                  "decidedBy": {
+                                    "type": [
+                                      "string",
+                                      "null"
+                                    ]
+                                  },
+                                  "decisionAt": {
+                                    "anyOf": [
+                                      {
+                                        "type": "string",
+                                        "format": "date-time",
+                                        "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                                      },
+                                      {
+                                        "type": "null"
+                                      }
+                                    ]
+                                  },
+                                  "reviewNote": {
+                                    "type": "string"
+                                  }
+                                },
+                                "required": [
+                                  "reason",
+                                  "status",
+                                  "requestedAt",
+                                  "requestedByBranchId",
+                                  "requestedByBranchName",
+                                  "decidedBy",
+                                  "decisionAt"
+                                ],
+                                "additionalProperties": false
+                              }
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "shipperInfo": {
+                          "anyOf": [
+                            {
+                              "type": "object",
+                              "properties": {
+                                "shipperName": {
+                                  "type": "string"
+                                },
+                                "shipperPhone": {
+                                  "type": "string"
+                                },
+                                "shipperNote": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "submittedByBranchId": {
+                                  "type": "string"
+                                },
+                                "submittedAt": {
+                                  "type": "string",
+                                  "format": "date-time",
+                                  "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                                }
+                              },
+                              "required": [
+                                "shipperName",
+                                "shipperPhone",
+                                "shipperNote",
+                                "submittedByBranchId",
+                                "submittedAt"
+                              ],
+                              "additionalProperties": false
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "deliveryProof": {
+                          "anyOf": [
+                            {
+                              "type": "object",
+                              "properties": {
+                                "photoUrls": {
+                                  "type": "array",
+                                  "items": {
+                                    "type": "string"
+                                  }
+                                },
+                                "note": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "deliveredAt": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "deliveredByBranch": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                }
+                              },
+                              "required": [
+                                "photoUrls",
+                                "note",
+                                "deliveredAt",
+                                "deliveredByBranch"
+                              ],
+                              "additionalProperties": false
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        }
+                      },
+                      "required": [
+                        "orderId",
+                        "orderCode",
+                        "branchId",
+                        "branchName",
+                        "product",
+                        "deliveryAddress",
+                        "deliveryTime",
+                        "deliveryTimestampMs",
+                        "stepDeadlines",
+                        "recipientName",
+                        "recipientPhone",
+                        "isPhoneMasked",
+                        "cardMessage",
+                        "specialNotes",
+                        "subcontractPriceVnd",
+                        "craftFeeDeductions",
+                        "craftFeePayableVnd",
+                        "dispatchStatus",
+                        "claimedByBranchId",
+                        "claimedBranchName",
+                        "graceExpiresAt",
+                        "productionStatus",
+                        "deliveryStatus",
+                        "orderStatus",
+                        "qcPhotos",
+                        "lastAiVerification",
+                        "autoBypassedCoordinator",
+                        "bypassRequests",
+                        "shipperInfo",
+                        "deliveryProof"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          }
+        }
+      },
+      "post": {
+        "operationId": "subcontractAction",
+        "summary": "Nhận đơn / huỷ trong hạn / xác nhận làm / xoá ảnh thành phẩm",
+        "description": "`CLAIM` (người nhận trước thắng), `CANCEL` (trong hạn kiểm kho, trừ điểm chất lượng), `COMMIT`, `DELETE_QC` (ảnh đã duyệt → 409). 30 lần/phút/IP.",
+        "tags": [
+          "Thẻ Gia Công"
+        ],
+        "security": [
+          {
+            "subcontractToken": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "orderCode",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "action": {
+                    "type": "string",
+                    "enum": [
+                      "CLAIM",
+                      "CANCEL",
+                      "COMMIT",
+                      "DELETE_QC"
+                    ]
+                  },
+                  "branchId": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "photoUrl": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "action",
+                  "branchId"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Kết quả theo `action`",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "success": {
+                              "type": "boolean"
+                            },
+                            "orderId": {
+                              "type": "string"
+                            },
+                            "claimedBranchId": {
+                              "type": "string"
+                            },
+                            "graceMinutes": {
+                              "type": "number"
+                            },
+                            "graceExpiresAt": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "success",
+                            "orderId",
+                            "claimedBranchId",
+                            "graceMinutes",
+                            "graceExpiresAt"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "success": {
+                              "type": "boolean"
+                            },
+                            "reopened": {
+                              "type": "boolean"
+                            },
+                            "penalty": {
+                              "type": "object",
+                              "properties": {
+                                "penalized": {
+                                  "type": "boolean",
+                                  "const": true
+                                },
+                                "scoreDeducted": {
+                                  "type": "number"
+                                },
+                                "currentQualityScore": {
+                                  "type": "number"
+                                },
+                                "totalCancellations": {
+                                  "type": "number"
+                                }
+                              },
+                              "required": [
+                                "penalized",
+                                "scoreDeducted",
+                                "currentQualityScore",
+                                "totalCancellations"
+                              ],
+                              "additionalProperties": false
+                            }
+                          },
+                          "required": [
+                            "success",
+                            "reopened",
+                            "penalty"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "success": {
+                              "type": "boolean",
+                              "const": true
+                            },
+                            "dispatchStatus": {
+                              "type": "string",
+                              "const": "COMMITTED"
+                            },
+                            "alreadyCommitted": {
+                              "type": "boolean",
+                              "const": true
+                            }
+                          },
+                          "required": [
+                            "success",
+                            "dispatchStatus"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "success": {
+                              "type": "boolean",
+                              "const": true
+                            },
+                            "remainingCount": {
+                              "type": "number"
+                            }
+                          },
+                          "required": [
+                            "success",
+                            "remainingCount"
+                          ],
+                          "additionalProperties": false
+                        }
+                      ]
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          }
+        }
+      }
+    },
+    "/public/subcontract/{orderCode}/request-bypass": {
+      "post": {
+        "operationId": "subcontractRequestBypass",
+        "summary": "Xin Điều phối cho bỏ qua bằng chứng một công đoạn",
+        "description": "Chỉ chi nhánh đang làm; đang chờ / đã duyệt → 409. 20 lần/phút/IP.",
+        "tags": [
+          "Thẻ Gia Công"
+        ],
+        "security": [
+          {
+            "subcontractToken": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "orderCode",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "branchId": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "step": {
+                    "type": "string",
+                    "enum": [
+                      "QC",
+                      "SHIPPER",
+                      "POD"
+                    ]
+                  },
+                  "reason": {
+                    "type": "string",
+                    "minLength": 5,
+                    "maxLength": 300
+                  }
+                },
+                "required": [
+                  "branchId",
+                  "step",
+                  "reason"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Đã gửi yêu cầu",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "success": {
+                          "type": "boolean",
+                          "const": true
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "step": {
+                          "type": "string",
+                          "enum": [
+                            "QC",
+                            "SHIPPER",
+                            "POD"
+                          ]
+                        },
+                        "status": {
+                          "type": "string",
+                          "const": "PENDING"
+                        },
+                        "requestedAt": {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                        },
+                        "coordinatorNotified": {
+                          "type": "boolean"
+                        }
+                      },
+                      "required": [
+                        "success",
+                        "message",
+                        "step",
+                        "status",
+                        "requestedAt",
+                        "coordinatorNotified"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          }
+        }
+      }
+    },
+    "/public/subcontract/{orderCode}/submit-delivery": {
+      "post": {
+        "operationId": "subcontractSubmitDelivery",
+        "summary": "Báo đã giao kèm ảnh",
+        "description": "AI kiểm ảnh giao hàng: không đạt → 422. Chưa tới bước → 409. 30 lần/phút/IP.",
+        "tags": [
+          "Thẻ Gia Công"
+        ],
+        "security": [
+          {
+            "subcontractToken": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "orderCode",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary",
+                    "contentEncoding": "binary"
+                  },
+                  "branchId": {
+                    "type": "string"
+                  },
+                  "note": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "file",
+                  "branchId"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Đã giao",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "orderCode": {
+                          "type": "string"
+                        },
+                        "deliveryStatus": {
+                          "type": "string"
+                        },
+                        "orderStatus": {
+                          "type": "string"
+                        },
+                        "deliveredAt": {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                        },
+                        "photoUrl": {
+                          "type": "string"
+                        },
+                        "note": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "orderCode",
+                        "deliveryStatus",
+                        "orderStatus",
+                        "deliveredAt",
+                        "photoUrl",
+                        "note"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          }
+        }
+      }
+    },
+    "/public/subcontract/{orderCode}/submit-shipper": {
+      "post": {
+        "operationId": "subcontractSubmitShipper",
+        "summary": "Báo shipper",
+        "description": "Còn chờ khách duyệt ảnh thành phẩm → 409. Gửi lại khi đã có → trả bản đã lưu. 20 lần/phút/IP.",
+        "tags": [
+          "Thẻ Gia Công"
+        ],
+        "security": [
+          {
+            "subcontractToken": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "orderCode",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "branchId": {
+                    "type": "string",
+                    "minLength": 1
+                  },
+                  "shipperName": {
+                    "type": "string",
+                    "minLength": 2,
+                    "maxLength": 80
+                  },
+                  "shipperPhone": {
+                    "type": "string",
+                    "pattern": "^(0|\\+84)(3[2-9]|5[6-9]|7[0689]|8[1-9]|9[0-9])\\d{7}$"
+                  },
+                  "shipperNote": {
+                    "type": "string",
+                    "maxLength": 200
+                  }
+                },
+                "required": [
+                  "branchId",
+                  "shipperName",
+                  "shipperPhone"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Thông tin shipper",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "success": {
+                              "type": "boolean",
+                              "const": true
+                            },
+                            "message": {
+                              "type": "string"
+                            },
+                            "shipperInfo": {
+                              "type": "object",
+                              "properties": {
+                                "shipperName": {
+                                  "type": "string"
+                                },
+                                "shipperPhone": {
+                                  "type": "string"
+                                },
+                                "shipperNote": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "submittedByBranchId": {
+                                  "type": "string"
+                                },
+                                "submittedAt": {
+                                  "type": "string",
+                                  "format": "date-time",
+                                  "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                                }
+                              },
+                              "required": [
+                                "shipperName",
+                                "shipperPhone",
+                                "shipperNote",
+                                "submittedByBranchId",
+                                "submittedAt"
+                              ],
+                              "additionalProperties": false
+                            },
+                            "deliveryStatus": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "success",
+                            "message",
+                            "shipperInfo",
+                            "deliveryStatus"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "success": {
+                              "type": "boolean",
+                              "const": true
+                            },
+                            "alreadySubmitted": {
+                              "type": "boolean",
+                              "const": true
+                            },
+                            "message": {
+                              "type": "string"
+                            },
+                            "shipperInfo": {
+                              "type": "object",
+                              "properties": {
+                                "shipperName": {
+                                  "type": "string"
+                                },
+                                "shipperPhone": {
+                                  "type": "string"
+                                },
+                                "shipperNote": {
+                                  "type": [
+                                    "string",
+                                    "null"
+                                  ]
+                                },
+                                "submittedByBranchId": {
+                                  "type": "string"
+                                },
+                                "submittedAt": {
+                                  "type": "string",
+                                  "format": "date-time",
+                                  "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                                }
+                              },
+                              "required": [
+                                "shipperName",
+                                "shipperPhone",
+                                "shipperNote",
+                                "submittedByBranchId",
+                                "submittedAt"
+                              ],
+                              "additionalProperties": false
+                            }
+                          },
+                          "required": [
+                            "success",
+                            "alreadySubmitted",
+                            "message",
+                            "shipperInfo"
+                          ],
+                          "additionalProperties": false
+                        }
+                      ]
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          }
+        }
+      }
+    },
+    "/public/subcontract/{orderCode}/upload-qc": {
+      "post": {
+        "operationId": "subcontractUploadQc",
+        "summary": "Gửi ảnh thành phẩm",
+        "description": "AI đối chiếu với ảnh mẫu trước khi lưu: không khớp / không chắc → 422. Chưa tới bước → 409. 30 lần/phút/IP.",
+        "tags": [
+          "Thẻ Gia Công"
+        ],
+        "security": [
+          {
+            "subcontractToken": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "orderCode",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary",
+                    "contentEncoding": "binary"
+                  },
+                  "branchId": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "file",
+                  "branchId"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Ảnh đã lưu",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "success": {
+                          "type": "boolean",
+                          "const": true
+                        },
+                        "message": {
+                          "type": "string"
+                        },
+                        "photoUrl": {
+                          "type": "string"
+                        },
+                        "allQcPhotos": {
+                          "type": "array",
+                          "items": {
+                            "type": "string"
+                          }
+                        },
+                        "productionStatus": {
+                          "type": "string"
+                        },
+                        "aiVerification": {
+                          "type": "object",
+                          "properties": {
+                            "isMatch": {
+                              "type": "boolean"
+                            },
+                            "confidenceScore": {
+                              "type": "number"
+                            },
+                            "verdict": {
+                              "type": "string",
+                              "enum": [
+                                "MATCH",
+                                "MISMATCH",
+                                "UNCERTAIN"
+                              ]
+                            },
+                            "reason": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "isMatch",
+                            "confidenceScore",
+                            "verdict",
+                            "reason"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "autoBypassedCoordinator": {
+                          "type": "boolean"
+                        }
+                      },
+                      "required": [
+                        "success",
+                        "message",
+                        "photoUrl",
+                        "allQcPhotos",
+                        "productionStatus",
+                        "aiVerification",
+                        "autoBypassedCoordinator"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          }
+        }
+      }
+    },
     "/public/zalo-oa/webhook": {
       "post": {
         "operationId": "publicZaloOaWebhook",
@@ -9768,6 +11150,12 @@
         "in": "header",
         "name": "x-signature",
         "description": "Chữ ký HMAC theo từng đầu nối (tên header do đầu nối quy định, vd. `x-echo-signature`)"
+      },
+      "subcontractToken": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "x-subcontract-token",
+        "description": "Token ký HMAC cho (tổ chức, mã đơn, chi nhánh) — có thể gửi `?t=` trên link"
       },
       "sepayApiKey": {
         "type": "apiKey",

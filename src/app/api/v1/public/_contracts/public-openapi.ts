@@ -2,6 +2,7 @@ import { buildOpenApiDocument, type OpenApiOperation } from "@/core/http/openapi
 
 import { CATALOG_OPERATIONS } from "./ops-catalog"
 import { GREETING_OPERATIONS } from "./ops-greeting"
+import { SUBCONTRACT_OPERATIONS } from "./ops-subcontract"
 import { UTILITY_OPERATIONS } from "./ops-utility"
 
 /**
@@ -12,7 +13,7 @@ import { UTILITY_OPERATIONS } from "./ops-utility"
  */
 export const PUBLIC_OPENAPI_PATH = "docs/spec/contracts/openapi/public.openapi.json"
 
-export const PUBLIC_OPERATIONS: OpenApiOperation[] = [...CATALOG_OPERATIONS, ...GREETING_OPERATIONS, ...UTILITY_OPERATIONS]
+export const PUBLIC_OPERATIONS: OpenApiOperation[] = [...CATALOG_OPERATIONS, ...GREETING_OPERATIONS, ...SUBCONTRACT_OPERATIONS, ...UTILITY_OPERATIONS]
 
 export function buildPublicOpenApi(): Record<string, unknown> {
   return buildOpenApiDocument({
@@ -27,6 +28,7 @@ export function buildPublicOpenApi(): Record<string, unknown> {
     securitySchemes: {
       brochureOwner: { type: "apiKey", in: "cookie", name: "fl_b_{sendCode}", description: "Cookie chủ phiên Thẻ chào (ký HMAC), cấp ở `claim` / `unlock` / `reorder` / đặt đơn từ catalog" },
       connectorSignature: { type: "apiKey", in: "header", name: "x-signature", description: "Chữ ký HMAC theo từng đầu nối (tên header do đầu nối quy định, vd. `x-echo-signature`)" },
+      subcontractToken: { type: "apiKey", in: "header", name: "x-subcontract-token", description: "Token ký HMAC cho (tổ chức, mã đơn, chi nhánh) — có thể gửi `?t=` trên link" },
       sepayApiKey: { type: "apiKey", in: "header", name: "authorization", description: "`Apikey <khoá webhook của tiệm>`" },
       zaloSignature: { type: "apiKey", in: "header", name: "x-zevent-signature", description: "`mac=<sha256(app_id + thân + timestamp + secret)>`" },
     },
