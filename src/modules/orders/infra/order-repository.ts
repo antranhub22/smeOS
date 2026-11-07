@@ -5,7 +5,8 @@
  */
 
 import { prisma } from "@/core/tenancy/infra/prisma"
-import { upsertOrderRecipient } from "./order-recipient-repository"
+import { storedDeliveryAddress, upsertOrderRecipient } from "./order-recipient-repository"
+import { RECIPIENT_VIEW_SELECT, withDeliveryView } from "./order-recipient-view"
 import type {
   Prisma,
   order_assignments,
@@ -126,7 +127,7 @@ export class OrderRepository implements IOrderRepository {
           card_message: input.cardMessage ?? null,
           internal_note: input.internalNote ?? null,
           delivery_window: (input.deliveryWindow as unknown as Prisma.InputJsonValue) ?? null,
-          delivery_address: (input.deliveryAddress as unknown as Prisma.InputJsonValue) ?? null,
+          delivery_address: storedDeliveryAddress(input.deliveryAddress), // P-3c: người nhận chỉ ở order_recipients
           created_by: createdBy,
           ...(input.source ? { source: input.source } : {}),
           owner_sale_id: input.ownerSaleId ?? null,
@@ -143,7 +144,7 @@ export class OrderRepository implements IOrderRepository {
       })
 
       if (input.leadId) await linkLeadToOrder(tx, organizationId, input.leadId, ord.id)
-      await upsertOrderRecipient(tx, organizationId, ord.id, { deliveryAddress: input.deliveryAddress ?? null }) // P-3a ghi kép
+      await upsertOrderRecipient(tx, organizationId, ord.id, { deliveryAddress: input.deliveryAddress ?? null })
 
       if (input.items && input.items.length > 0) {
         await tx.order_items.createMany({
@@ -240,7 +241,10 @@ export class OrderRepository implements IOrderRepository {
     if (input.cardMessage !== undefined) data.card_message = input.cardMessage
     if (input.internalNote !== undefined) data.internal_note = input.internalNote
     if (input.deliveryWindow !== undefined) data.delivery_window = input.deliveryWindow as unknown as Prisma.InputJsonValue
-    if (input.deliveryAddress !== undefined) data.delivery_address = input.deliveryAddress as unknown as Prisma.InputJsonValue
+    if (input.deliveryAddress !== undefined) {
+      data.delivery_address = storedDeliveryAddress(input.deliveryAddress) // P-3c
+      await upsertOrderRecipient(prisma, organizationId, id, { deliveryAddress: input.deliveryAddress })
+    }
 
     const row = await prisma.orders.update({
       where: { id },
@@ -249,11 +253,10 @@ export class OrderRepository implements IOrderRepository {
         items: true,
         assignments: true,
         events: { orderBy: { created_at: "asc" } },
+        recipient: RECIPIENT_VIEW_SELECT, // `update` không qua extension đọc — ghép tay
       },
     })
-    if (input.deliveryAddress !== undefined) await upsertOrderRecipient(prisma, organizationId, id, { deliveryAddress: input.deliveryAddress }) // P-3a
-
-    return mapPrismaOrder(row)
+    return mapPrismaOrder(withDeliveryView(row))
   }
 
   async createAssignment(

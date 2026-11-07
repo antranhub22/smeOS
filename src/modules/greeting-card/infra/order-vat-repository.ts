@@ -22,7 +22,7 @@ type OrderRow = NonNullable<Awaited<ReturnType<typeof prisma.orders.findFirst<{ 
 function toView(o: OrderRow): OrderVatView {
   const totalVnd = Number(o.total_vnd)
   const vatAmountVnd = Number(o.vat_amount_vnd)
-  const buyer = o.recipient ?? o // P-3b: bên mua hoá đơn từ order_recipients; đơn chưa có dòng → cột cũ
+  const buyer = o.recipient ?? { vat_company_name: null, vat_tax_code: null, vat_company_address: null, vat_email: null } // P-3c
   return {
     orderId: o.id,
     vatEnabled: o.vat_enabled,
@@ -74,16 +74,12 @@ export class OrderVatRepository {
           vat_amount_vnd: next.vatAmountVnd,
           total_vnd: next.totalVnd,
           balance_vnd: next.balanceVnd,
-          vat_company_name: info.companyName,
-          vat_tax_code: info.taxCode,
-          vat_company_address: info.companyAddress,
-          vat_email: info.email,
         },
       })
       if (moved.count === 0) throw conflict("Đơn hàng vừa thay đổi, vui lòng tải lại")
       await upsertOrderRecipient(tx, ctx.organizationId, order.id, {
         vat: { vat_company_name: info.companyName, vat_tax_code: info.taxCode, vat_company_address: info.companyAddress, vat_email: info.email },
-      }) // P-3a ghi kép
+      }) // P-3c: bên mua hoá đơn chỉ ở order_recipients
       await recordAuditLog(
         ctx,
         {

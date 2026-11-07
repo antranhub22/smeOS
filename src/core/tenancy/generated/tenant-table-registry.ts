@@ -103,7 +103,7 @@ export const TABLE_REGISTRY: Readonly<Record<string, TableEntry>> = {
   order_payments: { scope: "TENANT", parents: ["orders", "organizations"] },
   order_qc_records: { scope: "TENANT", parents: ["orders", "organizations"] },
   order_recipients: { scope: "TENANT", parents: ["orders", "organizations"], pii: { address_line: "address", address_parts: "address", recipient_name: "identity", recipient_phone: "contact", vat_company_address: "tax", vat_company_name: "tax", vat_email: "tax", vat_tax_code: "tax" } },
-  orders: { scope: "TENANT", parents: ["branches", "customers", "greeting_sessions", "leads", "organizations", "vouchers"], pii: { delivery_address: "address", vat_company_address: "tax", vat_company_name: "tax", vat_email: "tax", vat_tax_code: "tax" } },
+  orders: { scope: "TENANT", parents: ["branches", "customers", "greeting_sessions", "leads", "organizations", "vouchers"], pii: { delivery_address: "address" } },
   organization_links: { scope: "GLOBAL", parents: ["organizations"], pii: { address: "business", contact_email: "contact", contact_name: "identity", contact_phone: "contact" } },
   organizations: { scope: "GLOBAL", parents: ["industries"] },
   partner_marketplace_share_links: { scope: "GLOBAL", parents: [] },

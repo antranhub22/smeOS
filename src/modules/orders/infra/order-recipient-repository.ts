@@ -1,14 +1,23 @@
 import { Prisma } from "@/generated/prisma/client"
 
-import { recipientFromDeliveryAddress, type OrderRecipientVat } from "../domain/order-recipient"
+import { recipientFromDeliveryAddress, stripRecipientPii, type OrderRecipientVat } from "../domain/order-recipient"
 
 /** Client hoặc giao dịch — chỉ cần bảng `order_recipients`. */
 type RecipientsDb = Pick<Prisma.TransactionClient, "order_recipients">
 
 /**
- * ADR-014 D-P2, bước P-3a (ghi kép): mỗi lần ghi `orders.delivery_address` hoặc các cột `orders.vat_*` thì ghi cùng
- * nội dung vào `order_recipients` của đơn đó. `deliveryAddress` có mặt → thay phần người nhận/địa chỉ; `vat` có mặt →
- * thay phần hoá đơn; phần không truyền giữ nguyên. Gọi ngay sau lệnh ghi đơn, trong cùng giao dịch nếu có.
+ * P-3c: giá trị ghi vào `orders.delivery_address` — chỉ khoá vận hành (`zone`, `notes`, `mapUrl`…); người nhận và địa chỉ
+ * ghi vào `order_recipients` bằng `upsertOrderRecipient` với JSON đầy đủ. Đọc ra vẫn đủ nhờ `deliveryAddressView`.
+ */
+export function storedDeliveryAddress(raw: unknown): Prisma.InputJsonValue | typeof Prisma.DbNull {
+  const rest = stripRecipientPii(raw)
+  return rest ? (rest as Prisma.InputJsonValue) : Prisma.DbNull
+}
+
+/**
+ * ADR-014 D-P2 (P-3a, P-3c): người nhận/địa chỉ và bên mua hoá đơn VAT của đơn — `order_recipients` là nơi lưu DUY NHẤT.
+ * `deliveryAddress` có mặt (JSON đầy đủ như trước P-3c) → thay phần người nhận/địa chỉ; `vat` có mặt → thay phần hoá
+ * đơn; phần không truyền giữ nguyên. Gọi cùng lệnh ghi đơn, trong cùng giao dịch nếu có.
  */
 export async function upsertOrderRecipient(
   db: RecipientsDb,

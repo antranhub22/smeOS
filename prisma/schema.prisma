@@ -1964,17 +1964,10 @@ model orders {
 
   /// Hoá đơn VAT (PO 15/10/2026). Bật VAT → total_vnd = giá trước thuế + vat_amount_vnd.
   /// Máy chủ tính, không ai sửa tay. vat_rate chỉ 8 hoặc 10 (%).
-  vat_enabled         Boolean @default(false)
-  vat_rate            Int     @default(10)
-  vat_amount_vnd      Decimal @default(0) @db.Decimal(14, 2)
-  /// @pii tax
-  vat_company_name    String?
-  /// @pii tax
-  vat_tax_code        String?
-  /// @pii tax
-  vat_company_address String?
-  /// @pii tax
-  vat_email           String?
+  vat_enabled    Boolean @default(false)
+  vat_rate       Int     @default(10)
+  vat_amount_vnd Decimal @default(0) @db.Decimal(14, 2)
+  // Bên mua hoá đơn (tên công ty, MST, địa chỉ, email) ở `order_recipients` (ADR-014 P-3c, 07/11/2026).
 
   created_by String
   created_at DateTime @default(now()) @db.Timestamptz(3)
