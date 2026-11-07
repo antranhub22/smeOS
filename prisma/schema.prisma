@@ -1990,6 +1990,8 @@ model orders {
   bookings          product_bookings[]
   source            String?                 @default("MANUAL") // mã ở src/modules/orders/domain/order-source.ts
   source_session_id String? // greeting_sessions.id
+  /// `Idempotency-Key` của `POST /api/v1/orders` (audit API-11, PO 07/11/2026): bấm đúp / gửi lại cùng khoá → trả đơn cũ.
+  idempotency_key   String?
   greeting_sessions greeting_sessions[]
 
   /// Đơn hàng đa nguồn (PO 31/10/2026, KIEN_TRUC_SSOT_DON_HANG_DA_NGUON.md §4.1). Chỉ THÊM —
@@ -2021,6 +2023,7 @@ model orders {
   greeting_notifications_by_order_id      greeting_notifications[]      @relation("fk_greeting_notifications_order_id")
 
   @@unique([organization_id, code])
+  @@unique([organization_id, idempotency_key]) // NULL không đụng nhau — đơn không gửi khoá không bị chặn
   @@unique([id, organization_id]) // đích của khoá ghép tenant (05/11/2026)
   @@index([organization_id, status])
   @@index([organization_id, production_status])

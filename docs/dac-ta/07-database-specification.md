@@ -4130,6 +4130,23 @@ Ca thử: `tests/tenant/branch-scope-customers.test.ts` (tự cài trigger từ 
 
 Ca thử: `tests/tenant/branch-scope-products.test.ts`.
 
+## 51. Chống bấm đúp khi tạo đơn — `orders.idempotency_key` (07/11/2026)
+
+Audit API-11, PO duyệt 07/11/2026. Migration `20261107210000_orders_idempotency_key` (expand, một giao dịch): thêm cột
+`orders.idempotency_key TEXT NULL` và chỉ mục duy nhất `(organization_id, idempotency_key)`. Cột chỉ thêm, không
+backfill; NULL không đụng nhau nên đơn cũ, đơn không gửi khoá và đơn từ nguồn khác không bị chặn.
+
+- **Ghi.** `POST /api/v1/orders` đọc header `Idempotency-Key` (≤ 255 ký tự, dài hơn → 400) và chuyển xuống
+  `ingestOrderOnce` (`src/modules/orders/use-cases/ingest-order-once.ts`), rồi `OrderRepository.create` ghi vào cột.
+- **Đọc.** Khoá đã có đơn trong tổ chức → trả đơn đó (201 + `Idempotent-Replayed: true`), không tạo đơn mới. Hai
+  request cùng khoá gửi đồng thời: người thua vỡ ở chỉ mục duy nhất, giao dịch cuộn lại, use-case đọc lại và trả đơn
+  của người thắng. Nhân viên chi nhánh gửi khoá trùng đơn của chi nhánh khác → 409, không lộ đơn.
+- **Không lưu thân yêu cầu** nên không phân biệt "cùng khoá, thân khác"; giao diện sinh một khoá cho mỗi lần soạn đơn
+  (`create-order-modal.tsx`), giữ khoá khi thử lại, bỏ khi đã tạo xong. Khoá không hết hạn.
+
+Ca thử: `tests/tenant/order-idempotency.test.ts` (gửi lại, đồng thời, khoá khác/không khoá, khác tổ chức, khoá quá dài),
+`src/modules/orders/use-cases/__tests__/ingest-order-once.test.ts`.
+
 ## 50. Quyền xem đơn của chi nhánh gia công — `shared_order_access` (07/11/2026)
 
 ADR-014 D-P6, bước **P-4**. PO duyệt 07/11/2026 (D-64): làm ngay; chi nhánh làm đơn còn quyền **7 ngày** sau khi đơn
