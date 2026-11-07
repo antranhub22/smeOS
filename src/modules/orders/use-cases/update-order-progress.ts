@@ -10,6 +10,7 @@ import {
   validateProductionStatusTransition,
   validateDeliveryStatusTransition,
   brochureLockReason,
+  manualStatusBlockReason,
 } from "../domain/order-rules"
 import type { OrderRecord, UpdateOrderInput } from "../domain/order-types"
 import type { IOrderRepository } from "../domain/repositories/order-repository.interface"
@@ -34,6 +35,8 @@ export async function updateOrderProgress(
 
   // Kiểm tra chuyển trạng thái order
   if (input.status && input.status !== existing.status) {
+    const blocked = manualStatusBlockReason(input.status)
+    if (blocked) throw new AppError("UNPROCESSABLE_ENTITY", blocked)
     const check = validateOrderStatusTransition(existing.status, input.status)
     if (!check.valid) {
       throw new AppError("UNPROCESSABLE_ENTITY", check.reason ?? "Chuyển trạng thái đơn không hợp lệ.")
