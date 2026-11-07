@@ -106,7 +106,7 @@ Kết luận: 3 phát hiện đã sửa, 4 sửa một phần, 29 còn nguyên. 
 - **Ước lượng:** 0,5 ngày.
 
 ### UJ-04 · Q2 (phần luật) — Báo giá khách đã đồng ý không tự hết hạn; chuyển đơn kiểm hạn
-- **Sửa:** `sales/domain/quotation.ts:isQuotationExpired` loại thêm `ACCEPTED`; bỏ `ACCEPTED → EXPIRED` khỏi `QUOTATION_TRANSITIONS`;
+- **Sửa:** `sales/domain/quotation.ts:isQuotationExpired` loại thêm `ACCEPTED`; **giữ** chuyển tay `ACCEPTED → EXPIRED` (hiệu chỉnh khi làm: bỏ đi thì báo giá khách đồng ý rồi rút lại thành ngõ cụt);
   `convert-quotation-to-order.use-case.ts` gọi `isQuotationExpired` trước `claimConversion` → 422 "Báo giá đã hết hiệu lực —
   gia hạn rồi tạo đơn". Thông điệp dùng `QUOTATION_STATUS_LABELS`, bỏ mã `"SENT"` (O6).
 - **Test:** `quotation.test.ts` (ACCEPTED quá hạn → không hết hạn), `quotation-safety.test.ts` (SENT quá hạn chưa mở → chuyển đơn 422).
@@ -197,7 +197,7 @@ Thứ tự: UJ-06 trước UJ-14; UJ-01 trước UJ-10; UJ-04 trước UJ-11; BL
 
 | Đợt | Gói | Trạng thái |
 |---|---|---|
-| P0 | UJ-01 · UJ-02 · UJ-03 · UJ-04 · UJ-05 | Chưa bắt đầu |
+| P0 | UJ-01 · UJ-02 · UJ-03 · UJ-04 · UJ-05 | Đã làm 07/11/2026 (nhánh `claude/beautiful-knuth-v2riw9`, mỗi gói một commit). Phát sinh khi làm: UJ-03 thêm hoàn bước khi đưa hàng đợi lỗi (video kẹt `RENDERING` không có job); UJ-05 test mới bắt thêm gợi ý "Theo dõi chiến dịch tiếp thị" → `/marketing` (404), trỏ lại `/quang-ba/chien-dich`; UJ-01 sửa giao diện đọc đúng `error.message`; **giữ** "liên kết lại = dùng lại dòng cũ, ACTIVE trở lại" vì là quyết định ADR-012 T-3b có test khoá (chỉ Chuỗi tự chấm dứt được nên không thêm rủi ro) — chặn hồi sinh một chiều chuyển sang UJ-10. Chưa làm trong P0: danh sách trang mồ côi dạng ratchet (UJ-05), liên kết "Xử lý ở Thẻ chào" trên thẻ đơn (UJ-02 — chỉ ẩn nút chuyển bước vì hai tệp giao diện sát 350 dòng) |
 | P1 (không PO) | UJ-06 · UJ-07 · UJ-11 (trừ ân hạn) | Chưa bắt đầu |
 | P1 [PO] | UJ-08 (UQ1) · UJ-09 (Q8) · UJ-10 (UQ2) · UJ-12 (UQ5) · UJ-13 (UQ4) · UJ-14 (UQ3) | Chờ PO |
 | P2 | UJ-15 … UJ-25 | Chờ PO / gỡ băng / [SCHEMA] |
