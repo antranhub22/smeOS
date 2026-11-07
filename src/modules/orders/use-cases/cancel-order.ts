@@ -13,13 +13,15 @@ import type { OrderRecord } from "../domain/order-types"
 import type { IOrderRepository } from "../domain/repositories/order-repository.interface"
 import { getOrderRepository } from "../infra/order-repository"
 import { notifyOrganization } from "@/modules/notification/use-cases/notify-organization"
+import { orderCoordinationPort, type OrderCoordinationPort } from "@/modules/coordinator/use-cases/order-coordination-port"
 
 export async function cancelOrder(
   ctx: TenantContext,
   orderId: string,
   reason: string,
   repo: IOrderRepository = getOrderRepository(),
-  notify: typeof notifyOrganization = notifyOrganization
+  notify: typeof notifyOrganization = notifyOrganization,
+  coordination: OrderCoordinationPort = orderCoordinationPort
 ): Promise<OrderRecord> {
   // Gác quyền R6 (Trần cứng)
   requireCapability(ctx, "R6")
@@ -45,20 +47,23 @@ export async function cancelOrder(
     throw new AppError("UNPROCESSABLE_ENTITY", "Không thể hủy đơn hàng đã hoàn tất giao dịch.")
   }
 
-  // Ghi nhật ký sự kiện order_events
-  await repo.recordEvent(
-    ctx.organizationId,
-    orderId,
-    "order",
-    "CANCELLED",
-    ctx.userId,
-    existing.status,
-    reason
-  )
+  // Một luật với máy trạng thái M10 và Điều phối (audit BL-04): hàng đã tới tay người nhận thì mở sự cố, không huỷ.
+  if (existing.status === "DELIVERED" || existing.deliveryStatus === "DELIVERED") {
+    throw new AppError("UNPROCESSABLE_ENTITY", "Đơn đã giao tới người nhận — không huỷ được, hãy mở sự cố ở màn Điều phối.")
+  }
 
-  const updated = await repo.update(ctx.organizationId, orderId, {
-    status: "CANCELLED",
-  })
+  let updated: OrderRecord
+  if (await coordination.isUnderCoordination(ctx, orderId)) {
+    // Đơn đang ở Điều phối: huỷ qua Điều phối để bước điều phối, ba trục và sự kiện đổi cùng một giao dịch
+    await coordination.cancel(ctx, orderId, reason)
+    const after = await repo.findById(ctx.organizationId, orderId)
+    if (!after) throw new AppError("NOT_FOUND", `Không tìm thấy đơn hàng với mã ID: ${orderId}`)
+    updated = after
+  } else {
+    // Ghi nhật ký sự kiện order_events
+    await repo.recordEvent(ctx.organizationId, orderId, "order", "CANCELLED", ctx.userId, existing.status, reason)
+    updated = await repo.update(ctx.organizationId, orderId, { status: "CANCELLED" })
+  }
 
   // Ghi audit log
   await recordAuditLog(ctx, {

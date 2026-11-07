@@ -5,13 +5,8 @@
 import { AppError } from "@/core/http/errors"
 import { inBranchScope } from "@/core/tenancy"
 import type { TenantContext } from "@/core/tenancy/tenant-context"
-import {
-  validateOrderStatusTransition,
-  validateProductionStatusTransition,
-  validateDeliveryStatusTransition,
-  brochureLockReason,
-  manualStatusBlockReason,
-} from "../domain/order-rules"
+import { brochureLockReason, manualStatusBlockReason } from "../domain/order-rules"
+import { checkLifecycleTransition } from "../domain/order-lifecycle"
 import type { OrderRecord, UpdateOrderInput } from "../domain/order-types"
 import type { IOrderRepository } from "../domain/repositories/order-repository.interface"
 import { getOrderRepository } from "../infra/order-repository"
@@ -33,31 +28,21 @@ export async function updateOrderProgress(
   const brochureLock = brochureLockReason(existing)
   if (brochureLock) throw new AppError("CONFLICT", brochureLock)
 
-  // Kiểm tra chuyển trạng thái order
   if (input.status && input.status !== existing.status) {
     const blocked = manualStatusBlockReason(input.status)
     if (blocked) throw new AppError("UNPROCESSABLE_ENTITY", blocked)
-    const check = validateOrderStatusTransition(existing.status, input.status)
-    if (!check.valid) {
-      throw new AppError("UNPROCESSABLE_ENTITY", check.reason ?? "Chuyển trạng thái đơn không hợp lệ.")
-    }
   }
 
-  // Kiểm tra chuyển trạng thái production
-  if (input.productionStatus && input.productionStatus !== existing.productionStatus) {
-    const check = validateProductionStatusTransition(existing.productionStatus, input.productionStatus)
-    if (!check.valid) {
-      throw new AppError("UNPROCESSABLE_ENTITY", check.reason ?? "Chuyển trạng thái chế tác không hợp lệ.")
+  // Một hàm kiểm cho bộ ba trục, chung với Điều phối (audit BL-03)
+  const check = checkLifecycleTransition(
+    { status: existing.status, productionStatus: existing.productionStatus, deliveryStatus: existing.deliveryStatus },
+    {
+      status: input.status ?? existing.status,
+      productionStatus: input.productionStatus ?? existing.productionStatus,
+      deliveryStatus: input.deliveryStatus ?? existing.deliveryStatus,
     }
-  }
-
-  // Kiểm tra chuyển trạng thái delivery
-  if (input.deliveryStatus && input.deliveryStatus !== existing.deliveryStatus) {
-    const check = validateDeliveryStatusTransition(existing.deliveryStatus, input.deliveryStatus)
-    if (!check.valid) {
-      throw new AppError("UNPROCESSABLE_ENTITY", check.reason ?? "Chuyển trạng thái giao hàng không hợp lệ.")
-    }
-  }
+  )
+  if (!check.valid) throw new AppError("UNPROCESSABLE_ENTITY", check.reason)
 
   // Ghi nhận sự kiện thay đổi
   if (input.status && input.status !== existing.status) {

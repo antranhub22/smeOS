@@ -37,7 +37,8 @@ export function OrderActionButtons({
   onUpdateStatus,
 }: OrderActionButtonsProps) {
   const { dict } = useI18n()
-  const canCancel = orderStatus !== "CANCELLED" && orderStatus !== "COMPLETED"
+  // Đã giao → mở sự cố ở Điều phối, không huỷ (audit BL-04)
+  const canCancel = orderStatus !== "CANCELLED" && orderStatus !== "COMPLETED" && orderStatus !== "DELIVERED" && deliveryStatus !== "DELIVERED"
 
   function renderPrimaryAction() {
     if (productionStatus === "PENDING") {

@@ -5,25 +5,13 @@
  */
 
 import type { CoordinatorStage, CoordinationRiskLevel } from "./coordinator-types"
+import { stageLabel } from "./stage-labels"
 import { unpaidClosureReason } from "./stage-transitions"
 
 export type RuleResult = { ok: true } | { ok: false; reason: string }
 
 // ── F04 · Nhãn và việc kế tiếp theo bước ──────────────────────────────────
 
-const STAGE_LABELS: Record<CoordinatorStage, string> = {
-  INTAKE: "Tiếp nhận đơn",
-  VALIDATING: "Đang thẩm định đơn",
-  PLANNING: "Lập kế hoạch",
-  ASSIGNING: "Chờ phân công xưởng",
-  IN_PRODUCTION: "Đang chế tác",
-  QUALITY_CHECK: "Chờ kiểm định QC",
-  DISPATCHING: "Đang giao hàng",
-  DELIVERED: "Đã giao (chờ đóng đơn)",
-  COMPLETED: "Hoàn tất",
-  EXCEPTION: "Sự cố cần xử lý",
-  CANCELLED: "Đã huỷ",
-}
 
 const NEXT_ACTIONS: Record<CoordinatorStage, string> = {
   INTAKE: "Kiểm tra thông tin đơn trước khi lập kế hoạch",
@@ -39,9 +27,7 @@ const NEXT_ACTIONS: Record<CoordinatorStage, string> = {
   CANCELLED: "Đơn đã huỷ",
 }
 
-export function stageLabel(stage: CoordinatorStage): string {
-  return STAGE_LABELS[stage] ?? stage
-}
+export { stageLabel }
 
 export function defaultNextAction(stage: CoordinatorStage): string {
   return NEXT_ACTIONS[stage] ?? "Tiếp tục tiến trình điều phối"
@@ -224,7 +210,7 @@ export type ExceptionSeverity = (typeof EXCEPTION_SEVERITIES)[number]
 
 export function checkOpenException(stage: CoordinatorStage): RuleResult {
   if (stage === "COMPLETED" || stage === "CANCELLED") {
-    return { ok: false, reason: `Đơn đã kết thúc (${stage}), không mở sự cố được.` }
+    return { ok: false, reason: `Đơn đã kết thúc (${stageLabel(stage)}), không mở sự cố được.` }
   }
   return { ok: true }
 }
@@ -263,10 +249,10 @@ export function checkClosure(params: {
 
 export function checkCancellation(params: { stage: CoordinatorStage; reason: string | null | undefined }): RuleResult {
   if (params.stage === "COMPLETED" || params.stage === "CANCELLED") {
-    return { ok: false, reason: `Đơn đã kết thúc (${params.stage}).` }
+    return { ok: false, reason: `Đơn đã kết thúc (${stageLabel(params.stage)}).` }
   }
   if (params.stage === "DELIVERED") {
-    return { ok: false, reason: "Đơn đã giao tới người nhận — không huỷ, hãy mở sự cố COMMERCIAL_ISSUE." }
+    return { ok: false, reason: "Đơn đã giao tới người nhận — không huỷ, hãy mở sự cố về thương mại." }
   }
   if (!params.reason?.trim()) return { ok: false, reason: "Huỷ đơn phải ghi lý do." }
   return { ok: true }
