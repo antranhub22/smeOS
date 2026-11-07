@@ -50,9 +50,9 @@ cần test khoá hành vi trước.
 
 ### GĐ0 — Quyết định (trước mọi PR)
 
-- [ ] PO duyệt ADR-012 (✓ 06/11/2026), ADR-013, ADR-014, ADR-015, ADR-016 (đổi trạng thái thành `ĐÃ CHỐT`)
+- [ ] PO duyệt ADR-012 (✓ 06/11/2026), ADR-013 (✓ 06/11/2026), ADR-014, ADR-015, ADR-016 (đổi trạng thái thành `ĐÃ CHỐT`)
 - [x] ADR-012 §6: (1) nhượng quyền không xem báo cáo chuỗi — D-53 · (2) không làm công cụ tách chi nhánh — D-54 · (3) `FLOWER_NETWORK` chỉ là nhãn, gộp về `CHAIN` — D-55
-- [ ] ADR-013 §6: chủ tổ chức xem nhật ký truy cập trong ứng dụng? mốc bật RLS chặn thật?
+- [x] ADR-013 §6: chủ tổ chức xem nhật ký truy cập trong ứng dụng — D-60 (có) · mốc bật RLS chặn thật — D-61 (theo khách enterprise đầu tiên)
 - [x] ADR-014 §6: tìm theo 4 số cuối (D-49) · hạn lưu mức thường dùng (D-50) · vùng dữ liệu B (D-51)
 - [ ] Kế toán/pháp lý xác nhận bảng hạn lưu D-50 trước khi cam kết với khách
 - [x] ADR-015 §6: gói CSDL theo giai đoạn + kênh cảnh báo (D-52)
@@ -109,8 +109,9 @@ lại có chủ đích qua T-6 và ADR affiliate sau này (D-48).
 |---|---|---|
 | [ ] | I-1 [VẬN HÀNH] 5 tài khoản CSDL; mỗi dịch vụ một chuỗi kết nối | Không dịch vụ nào dùng tài khoản chủ |
 | [ ] | O-8 [VẬN HÀNH] `statement_timeout`, `idle_in_transaction_session_timeout` theo tài khoản | Truy vấn 20 s bị huỷ ở `smeos_app` |
-| [ ] | I-2 [SCHEMA] Nhật ký bất biến + `app.purge_reason` + `platform_access_logs` | Test `UPDATE audit_logs` bị từ chối; xoá ngoài đường purge bị từ chối |
-| [ ] | I-7 Test kiến trúc: route ghi có tenant phải ghi `audit_logs` hoặc có trong danh sách miễn | Test xanh |
+| [x] | I-2a [SCHEMA] Nhật ký bất biến (trigger trên `audit_logs`, `platform_audit_logs`, `order_events`, `job_events`, `usage`) + đường xoá `app.purge_reason` (`setPurgeReason`); thu quyền UPDATE/DELETE ở `create-roles.sql` (đặc tả 07 §46) | `tests/tenant/append-only-logs.test.ts`: `UPDATE audit_logs` bị từ chối; xoá ngoài đường purge bị từ chối |
+| [ ] | I-2b [SCHEMA] `platform_access_logs` (D-I5) + ghi mỗi lần nhân viên nền tảng đọc dữ liệu một tổ chức + màn hình chỉ đọc cho chủ tổ chức (D-60) | Truy cập Console vào một tổ chức → một dòng; chủ tổ chức thấy, tổ chức khác không |
+| [x] | I-7 Test kiến trúc: route ghi có tenant phải ghi `audit_logs` hoặc có trong danh sách miễn — `tests/unit/architecture/audit-boundary.test.ts`; 123 route cũ chưa ghi vào tệp nợ chỉ co lại (nợ #204) | Test xanh |
 | [ ] | I-4 Client extension đặt `app.org_id` theo giao dịch; worker đặt ngữ cảnh job; đo p95 | p95 tăng ≤ 10% |
 | [ ] | I-5 [SCHEMA] RLS chế độ ghi nhận trên CSDL khôi phục; chạy toàn bộ test + e2e | 0 vi phạm ghi nhận |
 | [ ] | Ghi dòng mới `AGENT_RULES.md` §14: bộ quét liên tenant phải chạy bằng `smeos_system` | — |
