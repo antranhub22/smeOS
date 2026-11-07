@@ -5,7 +5,7 @@ Sinh từ `prisma/schema.prisma` bởi `scripts/gen-erd.mjs` (kế hoạch DB, b
 (PK, FK, `organization_id`) và khoá ngoại tới bảng cha; bảng của miền khác chỉ hiện tên. Cột đầy đủ, ý nghĩa và quy tắc
 ở đặc tả `docs/dac-ta/07-database-specification.md`. `tests/unit/architecture/erd.test.ts` đỏ khi tệp này lệch schema.
 
-Tổng: 149 bảng, 10 miền.
+Tổng: 150 bảng, 10 miền.
 
 ## Tổ chức, người dùng, phân quyền
 
@@ -169,6 +169,7 @@ erDiagram
   reconciliation_findings
   sales_channel_listings
   sales_channel_orders
+  shared_order_access
   shop_reviews
   short_links
   staff_notifications
@@ -296,6 +297,7 @@ erDiagram
   organizations ||--o{ reconciliation_findings : "organization_id"
   organizations ||--o{ sales_channel_listings : "organization_id"
   organizations ||--o{ sales_channel_orders : "organization_id"
+  organizations ||--o{ shared_order_access : "organization_id"
   organizations ||--o{ shop_reviews : "organization_id"
   organizations ||--o{ short_links : "organization_id"
   organizations ||--o{ staff_notifications : "organization_id"
@@ -521,7 +523,7 @@ erDiagram
 
 ## Đơn hàng và điều phối
 
-Bảng: `orders`, `order_items`, `order_recipients`, `order_events`, `order_payments`, `order_assignments`, `order_coordinations`, `order_exceptions`, `order_qc_records`, `order_info_requests`, `order_change_requests`, `order_approval_requests`, `partners`, `partner_marketplace_stores`, `partner_marketplace_share_links`, `product_bookings`, `staff_notifications`.
+Bảng: `orders`, `order_items`, `order_recipients`, `shared_order_access`, `order_events`, `order_payments`, `order_assignments`, `order_coordinations`, `order_exceptions`, `order_qc_records`, `order_info_requests`, `order_change_requests`, `order_approval_requests`, `partners`, `partner_marketplace_stores`, `partner_marketplace_share_links`, `product_bookings`, `staff_notifications`.
 
 ```mermaid
 erDiagram
@@ -544,6 +546,11 @@ erDiagram
   order_recipients {
     String organization_id FK
     String order_id PK,FK
+  }
+  shared_order_access {
+    String id PK
+    String organization_id FK
+    String order_id FK
   }
   order_events {
     String id PK
@@ -653,6 +660,7 @@ erDiagram
   orders ||--o{ order_items : "order_id"
   orders ||--o{ order_payments : "order_id, organization_id"
   orders ||--o{ order_qc_records : "order_id, organization_id"
+  orders ||--o{ shared_order_access : "order_id, organization_id"
   orders ||--o{ voucher_redemptions : "order_id, organization_id"
   orders ||--o| order_coordinations : "order_id, organization_id"
   orders ||--o| order_recipients : "order_id, organization_id"
@@ -670,6 +678,7 @@ erDiagram
   organizations ||--o{ orders : "organization_id"
   organizations ||--o{ partners : "organization_id"
   organizations ||--o{ product_bookings : "organization_id"
+  organizations ||--o{ shared_order_access : "organization_id"
   organizations ||--o{ staff_notifications : "organization_id"
   partners |o--o{ order_coordinations : "partner_id"
   product_variants |o--o{ order_items : "variant_id"

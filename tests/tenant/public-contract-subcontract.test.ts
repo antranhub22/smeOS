@@ -18,6 +18,7 @@ import { SUBCONTRACT_TOKEN_HEADER, signSubcontractBranchToken } from "@/modules/
 import { expectContract } from "../helpers/contract"
 import { disconnectDatabase, resetDatabase } from "../helpers/database"
 import { createTenant, type Tenant } from "../helpers/fixtures"
+import { syncSubcontractShares } from "../helpers/subcontract-shares"
 
 /**
  * Hợp đồng phản hồi — Thẻ Gia Công công khai `/public/subcontract/{orderCode}/*` (audit API đợt 6): chi nhánh
@@ -44,6 +45,7 @@ describe("hợp đồng — Thẻ Gia Công công khai", () => {
         graceExpiresAt: null, declinedBranchIds: [], invitedBranchIds: [branchId], roundExpiresAt: null,
       } } },
     })
+    await syncSubcontractShares(a.organizationId, order.id)
     return order
   }
   const token = (code: string) => signSubcontractBranchToken(a.organizationId, code, branchId)

@@ -1064,7 +1064,7 @@ Các route dưới đây được thêm từ mốc chuyển sang smeOS (`8c53b38
 
 ### 26.3 Thẻ Gia Công — Điều phối và link công khai cho chi nhánh
 
-Link gửi cho chi nhánh có dạng `/subcontract/:orderCode?branch=<id>&t=<token>`. Token có dạng `<organizationId>.<hạn>.<HMAC(SESSION_SECRET)>`, ký cho đúng (tổ chức, mã đơn, chi nhánh), hạn 14 ngày (`subcontract-link-token.ts`). Mọi route công khai dưới đây kiểm token qua `loadSubcontractOrderForBranch`: tra đơn theo `(organization_id, code)` và chỉ chấp nhận đơn đang có phiên điều phối gia công. Token thiếu, sai, hết hạn, hoặc đơn không có phiên điều phối đều trả cùng một 404. Trang gửi token bằng header `x-subcontract-token` (POST) hoặc `?t=` (GET).
+Link gửi cho chi nhánh có dạng `/subcontract/:orderCode?branch=<id>&t=<token>`. Token có dạng `<organizationId>.<hạn>.<HMAC(SESSION_SECRET)>`, ký cho đúng (tổ chức, mã đơn, chi nhánh), hạn chữ ký 120 ngày chỉ là trần an toàn (`subcontract-link-token.ts`). Mọi route công khai dưới đây kiểm token qua `loadSubcontractOrderForBranch`: tra đơn theo `(organization_id, code)`, chỉ chấp nhận đơn đang có phiên điều phối gia công, và chi nhánh phải còn quyền xem đơn ở `shared_order_access` (ADR-014 P-4, 07/11/2026: được mời ở vòng hiện tại, hoặc đang giữ/chốt đơn; chi nhánh khác nhận, hết vòng, huỷ nhận → mất quyền ngay; chi nhánh làm đơn còn 7 ngày sau khi đơn đóng). Token thiếu, sai, hết hạn, đơn không có phiên điều phối, hoặc chi nhánh không còn quyền đều trả cùng một 404. Trang gửi token bằng header `x-subcontract-token` (POST) hoặc `?t=` (GET).
 
 | Method | Path | Năng lực | Ghi chú |
 |---|---|---|---|
