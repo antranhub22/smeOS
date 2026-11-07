@@ -12,7 +12,7 @@ import { countBySlot, slotFullMessage } from "../domain/slot-capacity"
 import { recordAuditLog } from "@/modules/audit/use-cases/record-audit-log"
 import { saleBranchOfSession } from "./sale-branch"
 import { activateProspect } from "./session-customer"
-import { upsertOrderRecipient } from "@/modules/orders/infra/order-recipient-repository"
+import { storedDeliveryAddress, upsertOrderRecipient } from "@/modules/orders/infra/order-recipient-repository"
 import { RECIPIENT_VIEW_SELECT, withDeliveryView } from "@/modules/orders/infra/order-recipient-view"
 
 export interface CreateBrochureOrderData {
@@ -220,6 +220,12 @@ export class BrochureCheckoutRepository {
           throw validationFailed({ paymentCode: "Mã thanh toán đã hết lượt sử dụng" })
         }
       }
+      const deliveryAddress = {
+        recipientName: data.recipientName, phone: data.recipientPhone, street: data.deliveryAddress,
+        ...(data.addressParts ? { parts: { ...data.addressParts } } : {}),
+        ...(quote.shippingZone ? { zone: quote.shippingZone.name } : {}),
+        ...data.delivery,
+      }
       const order = await tx.orders.create({
         data: {
           organization_id: data.organizationId,
@@ -245,14 +251,7 @@ export class BrochureCheckoutRepository {
             timeSlot: data.deliveryTimeSlot,
             ...(data.checkOutDate ? { checkOutDate: data.checkOutDate } : {}),
           },
-          delivery_address: {
-            recipientName: data.recipientName,
-            phone: data.recipientPhone,
-            street: data.deliveryAddress,
-            ...(data.addressParts ? { parts: { ...data.addressParts } } : {}),
-            ...(quote.shippingZone ? { zone: quote.shippingZone.name } : {}),
-            ...data.delivery,
-          },
+          delivery_address: storedDeliveryAddress(deliveryAddress), // P-3c: người nhận chỉ ở order_recipients
           created_by: "customer-brochure",
           items: {
             create: {
@@ -267,7 +266,7 @@ export class BrochureCheckoutRepository {
         },
       })
 
-      await upsertOrderRecipient(tx, data.organizationId, order.id, { deliveryAddress: order.delivery_address }) // P-3a ghi kép
+      await upsertOrderRecipient(tx, data.organizationId, order.id, { deliveryAddress })
 
       if (data.voucherId) {
         const claimed = await getVoucherRedemptionRepository(tx).claim({

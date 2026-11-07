@@ -4178,7 +4178,11 @@ model order_recipients {
   chưa có dòng → cột cũ. Dữ liệu cũ khoá `name`/`full_address` nay đọc ra thêm `recipientName`/`street`.
 - Backfill trong migration (khối `P3A-BACKFILL`, rồi `P3B-BACKFILL` chép lại phần địa chỉ, `ON CONFLICT DO UPDATE`):
   làm đúng như `recipientFromDeliveryAddress` (test so hai bên).
-- P-3c (chưa làm): đường ghi thôi ghi phần cá nhân vào JSON và cột `vat_*`; bỏ phần đó khỏi dữ liệu cũ.
+- Nơi lưu DUY NHẤT (P-3c, 07/11/2026, migration `20261107180000_order_recipients_contract`): đường ghi chỉ ghi khoá vận
+  hành vào `orders.delivery_address` (`storedDeliveryAddress` = `stripRecipientPii`), người nhận/địa chỉ/VAT vào bảng này;
+  bỏ 4 cột `orders.vat_company_name`, `vat_tax_code`, `vat_company_address`, `vat_email`. Migration chốt khớp trước (khối
+  `P3C-VERIFY` + kiểm VAT; lệch → RAISE, không xoá gì), rồi bỏ phần cá nhân khỏi JSON đơn cũ (khối `P3C-STRIP`, chuỗi →
+  NULL). `OrderRepository.update` trả về qua `withDeliveryView` (lệnh `update` không qua extension đọc).
 
 Ca thử: `tests/tenant/order-recipients.test.ts` (mọi đường ghi, khoá ghép khác tổ chức, backfill 13 dạng địa chỉ, xoá
 phần cá nhân khỏi nơi cũ mà màn hình vẫn đủ), `src/modules/orders/domain/__tests__/order-recipient.test.ts`.

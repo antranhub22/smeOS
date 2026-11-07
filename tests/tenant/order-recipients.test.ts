@@ -36,11 +36,26 @@ function backfillSql(suffix: string, tag: string): string[] {
   if (!migration) throw new Error(`Không thấy migration ${suffix}`)
   const block = readFileSync(path.join(dir, migration, "migration.sql"), "utf8").match(new RegExp(`-- ${tag}-BEGIN[\\s\\S]*?-- ${tag}-END`))?.[0]
   if (!block) throw new Error(`Migration ${suffix} thiếu khối ${tag}`)
-  // Tách lệnh theo `;` ở cuối dòng (thân hàm `$$ … $$` không có `;` cuối dòng)
-  return block.replace(/^--.*$/gm, "").split(/;\s*$/m).map((s) => s.trim()).filter(Boolean)
+  // Tách lệnh theo `;` ở cuối dòng, trừ bên trong cặp `$$ … $$` (thân hàm, khối DO)
+  const stmts: string[] = []
+  let current = ""
+  let quoted = false
+  for (const line of block.replace(/^--.*$/gm, "").split("\n")) {
+    current += `${line}\n`
+    quoted = (line.match(/\$\$/g)?.length ?? 0) % 2 === 1 ? !quoted : quoted
+    if (!quoted && /;\s*$/.test(line)) {
+      stmts.push(current.trim().replace(/;$/, ""))
+      current = ""
+    }
+  }
+  return [...stmts, current.trim()].filter(Boolean)
 }
-/** P-3a rồi P-3b, như khi `migrate deploy` chạy lần lượt. */
-const BACKFILL = () => [...backfillSql("_order_recipients", "P3A-BACKFILL"), ...backfillSql("_order_recipients_address", "P3B-BACKFILL")]
+/** Khối P-3b (khối P-3a đọc các cột `orders.vat_*` đã bỏ ở P-3c nên không chạy lại được). */
+const BACKFILL = () => backfillSql("_order_recipients_address", "P3B-BACKFILL")
+const VERIFY = () => backfillSql("_order_recipients_contract", "P3C-VERIFY")
+const STRIP = () => backfillSql("_order_recipients_contract", "P3C-STRIP")
+const replay = (stmts: string[]) => prisma.$transaction(async (tx) => { for (const stmt of stmts) await tx.$executeRawUnsafe(stmt) }) // một kết nối (hàm, bảng tạm)
+const rawAddress = async (id: string) => (await prisma.$queryRaw<Array<{ a: unknown }>>`SELECT delivery_address AS a FROM orders WHERE id = ${id}`)[0]?.a
 
 const recipientOf = (orderId: string) => prisma.order_recipients.findUnique({ where: { order_id: orderId } })
 
@@ -127,33 +142,27 @@ describe("order_recipients — ghi kép và backfill", () => {
     })
   })
 
-  it("P-3b: chỗ đọc lấy người nhận/địa chỉ/VAT từ order_recipients — xoá phần cá nhân khỏi nơi cũ (như P-3c) vẫn hiện đủ", async () => {
+  it("P-3c: JSON của đơn chỉ còn khoá vận hành; màn hình vẫn đọc đủ người nhận/địa chỉ/VAT từ order_recipients", async () => {
     const order = await brochureOrder(a, "A3")
     await setOrderVat(a.ctx, order.orderId, { enabled: true, rate: 10, companyName: "Cty Đông Nam", taxCode: "0123456789", email: "kt@dn.vn" })
     const manual = await createOrder(a.ctx, {
       items: [{ description: "Bó hồng", quantity: 1, unitPriceVnd: 300_000 }],
-      deliveryAddress: { recipientName: "Chị Hoa", phone: "0911111111", street: "5 Nguyễn Huệ", ward: "Bến Nghé", province: "TP. Hồ Chí Minh" },
+      deliveryAddress: { recipientName: "Chị Hoa", phone: "0911111111", street: "5 Nguyễn Huệ", ward: "Bến Nghé", province: "TP. Hồ Chí Minh", notes: "Cổng sau" },
     })
-    const reads = async () => ({
-      vat: await getOrderVat(a.ctx, order.orderId),
-      board: (await getCoordinatorBoard(a.ctx, {})).data.find((o) => o.id === order.orderId)?.delivery_address,
-      pipeline: (({ recipientName, recipientPhone, deliveryAddress, deliveryZone, customerName, customerPhone }) =>
-        ({ recipientName, recipientPhone, deliveryAddress, deliveryZone, customerName, customerPhone }))((await getTrackingPipeline(a.ctx)).find((i) => i.orderId === order.orderId)!),
-      manual: (await new OrderRepository().findById(a.organizationId, manual.id))?.deliveryAddress,
-    })
-    const before = await reads()
-    expect(before.board).toMatchObject({ recipientName: "Người Nhận", phone: "0912345678", street: "1 Lê Lợi, Q1" })
+    expect(await rawAddress(order.orderId)).toBeNull()
+    expect(await rawAddress(manual.id)).toEqual({ notes: "Cổng sau" })
 
-    // Giả lập P-3c: nơi cũ chỉ còn khoá vận hành, cột VAT trên đơn trống
-    for (const o of await prisma.orders.findMany({ where: { organization_id: a.organizationId }, select: { id: true } })) {
-      const raw = (await prisma.$queryRaw<Array<{ a: unknown }>>`SELECT delivery_address AS a FROM orders WHERE id = ${o.id}`)[0]?.a
-      const rest = stripRecipientPii(raw)
-      await prisma.orders.update({
-        where: { id: o.id },
-        data: { delivery_address: rest ? (rest as Prisma.InputJsonValue) : Prisma.DbNull, vat_company_name: null, vat_tax_code: null, vat_company_address: null, vat_email: null },
-      })
-    }
-    expect(await reads()).toEqual(before)
+    expect(await getOrderVat(a.ctx, order.orderId)).toMatchObject({ companyName: "Cty Đông Nam", taxCode: "0123456789", email: "kt@dn.vn" })
+    expect((await getCoordinatorBoard(a.ctx, {})).data.find((o) => o.id === order.orderId)?.delivery_address)
+      .toMatchObject({ recipientName: "Người Nhận", phone: "0912345678", street: "1 Lê Lợi, Q1" })
+    expect((await getTrackingPipeline(a.ctx)).find((i) => i.orderId === order.orderId))
+      .toMatchObject({ recipientName: "Người Nhận", recipientPhone: "0912345678", deliveryAddress: "1 Lê Lợi, Q1" })
+    expect((await new OrderRepository().findById(a.organizationId, manual.id))?.deliveryAddress).toEqual({
+      recipientName: "Chị Hoa", phone: "0911111111", street: "5 Nguyễn Huệ", ward: "Bến Nghé", province: "TP. Hồ Chí Minh", notes: "Cổng sau",
+    })
+    const updated = await new OrderRepository().update(a.organizationId, manual.id, { deliveryAddress: { recipientName: "Anh Nam", phone: "0922222222", street: "7 Lý Tự Trọng" } })
+    expect(updated.deliveryAddress).toEqual({ recipientName: "Anh Nam", phone: "0922222222", street: "7 Lý Tự Trọng" })
+    expect(await rawAddress(manual.id)).toBeNull()
   })
 
   it("khoá ghép: không gắn được dòng người nhận của tổ chức này vào đơn tổ chức khác", async () => {
@@ -183,29 +192,35 @@ describe("order_recipients — ghi kép và backfill", () => {
         data: {
           organization_id: i % 2 ? b.organizationId : a.organizationId, code: `DH-BF-${i}`, total_vnd: 0, balance_vnd: 0, created_by: "test",
           delivery_address: shape === null ? Prisma.DbNull : (shape as Prisma.InputJsonValue),
-          ...(i === 9 ? { vat_company_name: "Cty Chỉ VAT", vat_tax_code: "0101" } : {}),
         },
       })
       ids.push(row.id)
     }
 
-    const run = () => prisma.$transaction(async (tx) => { for (const stmt of BACKFILL()) await tx.$executeRawUnsafe(stmt) }) // một kết nối (hàm pg_temp)
+    const run = () => replay(BACKFILL())
     await run()
     for (const [i, id] of ids.entries()) {
       const row = await recipientOf(id)
       const expected = recipientFromDeliveryAddress(shapes[i])
-      const empty = Object.values(expected).every((v) => v === null) && i !== 9
+      const empty = Object.values(expected).every((v) => v === null)
       if (empty) {
         expect(row, `dạng #${i}`).toBeNull()
         continue
       }
       expect(row, `dạng #${i}`).toMatchObject({ ...expected, organization_id: i % 2 ? b.organizationId : a.organizationId })
     }
-    expect(await recipientOf(ids[9]!)).toMatchObject({ vat_company_name: "Cty Chỉ VAT", vat_tax_code: "0101", recipient_name: null })
 
     const rows = async () => (await prisma.order_recipients.findMany({ orderBy: { order_id: "asc" } })).map(({ updated_at: _u, ...r }) => r)
     const before = await rows()
     await run()
     expect(await rows()).toEqual(before)
+
+    // P-3c: khớp → bỏ phần cá nhân đúng như `stripRecipientPii`; lệch → dừng, không xoá gì
+    await prisma.order_recipients.update({ where: { order_id: ids[2]! }, data: { recipient_phone: "0000" } })
+    await expect(replay([...VERIFY(), ...STRIP()])).rejects.toThrow(/P-3c: order_recipients lệch/)
+    expect(await rawAddress(ids[2]!)).toEqual(shapes[2])
+    await prisma.order_recipients.update({ where: { order_id: ids[2]! }, data: { recipient_phone: "0912345678" } })
+    await replay([...VERIFY(), ...STRIP()])
+    for (const [i, id] of ids.entries()) expect(await rawAddress(id), `dạng #${i}`).toEqual(stripRecipientPii(shapes[i]))
   })
 })
