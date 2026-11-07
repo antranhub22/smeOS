@@ -176,7 +176,7 @@ Không có OpenAPI (ARC-024). Đặc tả 06 (1.242 dòng markdown) mô tả th�
 |---|---|---|---|
 | 1 (ngay) — **đã làm 06/11/2026**, xem §6 | Map `ZodError`/`SyntaxError` → 400 trong `errorResponse` + test; chặn `limit` ở `GET /orders`; sửa `noi-bo/identity`; `jobs/batch` bắt buộc khoá + zod; rate limit + trừ credit cho `content-engine/rewrite` | 01, 02, 03, 04, 05 | Mã năng lực + credit cho rewrite (nợ #170) |
 | 2 — **đã làm 07/11/2026** trừ phần chờ PO, xem §7 | `Retry-After` + `RateLimit-*`; rate limit Integration API theo token; chốt 8 dòng năng lực lệch; `check:docs` kiểm cột năng lực | 08, 09, 12 | Chốt bên đúng cho 8 dòng |
-| 3 | Ban hành chuẩn API Contract v1.1 (tài liệu 02); helper `defineRoute` + `parseBody` + `paginate` dùng chung; ratchet test cho route mới | 06, 07, 10, 13, 16 | Duyệt chuẩn |
+| 3 — **đã làm 07/11/2026**, xem §8 | Ban hành chuẩn API Contract v1.1 (tài liệu 02); helper `defineRoute` + `parseBody` + `paginate` dùng chung; ratchet test cho route mới | 06, 07, 10, 13, 16 | Duyệt chuẩn — PO đã chốt 4 điểm |
 | 4 | OpenAPI 3.1 sinh từ zod: Integration API + `/public/*` trước, sau đó nội bộ; `check:openapi` trong CI | 14, 15 | Thêm gate CI |
 
 Không đổi tên/di chuyển route hiện có trong các đợt trên — gom họ tài nguyên (API-13) chỉ áp cho route mới hoặc khi lên `/v2` (tài liệu 02 §8).
@@ -208,3 +208,16 @@ Không đổi tên/di chuyển route hiện có trong các đợt trên — gom 
 | API-08 | `enforceRateLimit` ghi trạng thái (giới hạn, còn lại, mốc mở lại = cuối cửa sổ cố định) vào ngữ cảnh request (`src/core/observability/request-context.ts#recordRateLimit`); `handle()` gắn `RateLimit-Limit/Remaining/Reset` cho mọi phản hồi của route có giới hạn, thêm `Retry-After` khi 429. Nhiều luật → báo luật còn ít lượt nhất | `tests/unit/core/http/rate-limit-headers.test.ts` | Route không dùng `handle()` (`chat/public/widget`, webhook chat) chưa có header — gắn với API-06 |
 | API-09 | `requireIntegrationContext`: 600 lần/phút theo token (SSO: theo người dùng + tổ chức), đếm sau xác thực — phủ cả 12 route `/integration/*` | `tests/unit/integration/integration-rate-limit.test.ts` | Trần chưa đo trên tải thật của LocalBudd/SocialFlow — theo dõi 429 sau khi triển khai |
 | API-12 | `scripts/check-docs.mjs` đối chiếu thêm cột năng lực: mã trong `requireCapability(ctx, "…")` của từng handler phải có trong cột năng lực đặc tả 06 (khi cột có mã). 8 dòng lệch hiện có nằm trong `NANG_LUC_LECH_CHO_PO`, danh sách chỉ được co lại (mục đã khớp mà còn giữ → đỏ) | Đã thử: bỏ một mục khỏi danh sách → đỏ; thêm mục đã khớp → đỏ | **Chờ PO** chốt mã hay đặc tả đúng cho 8 dòng (§3 API-12), rồi xoá khỏi danh sách |
+
+## 8. Nhật ký sửa — đợt 3 (07/11/2026)
+
+PO chốt: `limit` mặc định 25 · route mới snake_case · giữ `details.issues` · bật cả hai ratchet.
+
+| Mã | Đã làm | Test |
+|---|---|---|
+| API-06/07/13/16 | `src/core/http/define-route.ts`: `defineRoute({ auth, rateLimit?, idempotency?, body?, query?, handler })` — `auth` theo kiểu (`tenant` + mã năng lực hoặc `capability: null` + lý do, `platform`, `integration`, `public` bắt buộc `rateLimit`, `cron`, `custom` + lý do); kiểm khoá snake_case của thân/query ngay lúc nạp module; bọc `handle()`. `src/core/http/contract-responses.ts`: `ok`/`created` (+`Location`)/`accepted` (202)/`noContent` (204)/`page` | `tests/unit/core/http/define-route.test.ts` (gồm kiểm lúc biên dịch: khớp chữ ký route handler Next 16) |
+| API-10 | `src/core/http/pagination.ts`: `pageQuery` (1–100, mặc định 25, câu lỗi tiếng Việt), `toPage` (lấy dư 1 dòng), con trỏ mờ base64url, con trỏ hỏng → 400 | `tests/unit/core/http/pagination.test.ts` |
+| Ratchet | `tests/unit/architecture/route-contract-ratchet.test.ts`: route mới phải dùng `defineRoute`; không tệp mới nào dưới `src/app/api` dùng `NextResponse.json`, `new Response(JSON.stringify`, `{ success }`, `{ ok }`, `{ error: "chuỗi" }`. Miễn trừ: `route-contract-legacy.txt` (501 route), `api-envelope-legacy.txt` (67 mục); cả hai chỉ được co lại | Đã thử: thêm route tạm vi phạm → đỏ cả hai phép |
+| Gác quyền | `route-capability-guard.test.ts` tính `defineRoute(` là có gác — khai `auth` thay cho một mục `NO_CAPABILITY_GUARD` | — |
+
+Chưa chuyển route cũ nào sang `defineRoute` (không đổi hợp đồng client đang chạy). Đặc tả 06 §2 và skill `api-development` đã cập nhật.
