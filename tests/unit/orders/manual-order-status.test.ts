@@ -73,4 +73,15 @@ describe("updateOrderProgress — không đặt tay trạng thái xác nhận / 
     const repo = repoFor(order({ status: "CONFIRMED" }))
     await expect(updateOrderProgress(coordinator, "ord-1", { status: "CONFIRMED", internalNote: "x" }, repo, vi.fn())).resolves.toBeDefined()
   })
+
+  // Audit BL-18: sự kiện từng được ghi riêng TRƯỚC khi cập nhật — cập nhật lỗi thì sự kiện vẫn còn.
+  it("sự kiện đi cùng lần cập nhật; cập nhật lỗi thì không có sự kiện nào được ghi riêng", async () => {
+    const repo = repoFor(order({ status: "CONFIRMED" }))
+    repo.update.mockRejectedValueOnce(new Error("db down"))
+    await expect(updateOrderProgress(coordinator, "ord-1", { status: "PROCESSING" }, repo, vi.fn())).rejects.toThrow("db down")
+    expect(repo.recordEvent).not.toHaveBeenCalled()
+    expect(repo.update).toHaveBeenCalledWith("org-1", "ord-1", { status: "PROCESSING" }, [
+      expect.objectContaining({ axis: "order", fromValue: "CONFIRMED", toValue: "PROCESSING" }),
+    ])
+  })
 })

@@ -3,6 +3,7 @@ import { afterAll, beforeEach, describe, expect, it } from "vitest"
 import { POST as postCancel } from "@/app/api/v1/orders/[id]/cancel/route"
 import { POST as postPayment } from "@/app/api/v1/orders/[id]/payments/route"
 import { ingestOrder } from "@/modules/orders/use-cases/ingest-order"
+import { OrderRepository } from "@/modules/orders/infra/order-repository"
 
 import { disconnectDatabase, prisma, resetDatabase } from "../helpers/database"
 import { createTenant, withSession, type Tenant } from "../helpers/fixtures"
@@ -61,4 +62,21 @@ describe("huỷ ở sổ đơn — đồng bộ Điều phối", () => {
     expect((await prisma.orders.findUniqueOrThrow({ where: { id: orderId } })).status).toBe("DELIVERED")
   })
 
+})
+
+/** Audit BL-18 (06/11/2026): sự kiện ghi trước, cập nhật đơn sau, không cùng giao dịch → lỗi giữa chừng để lại sự kiện mồ côi. */
+describe("sự kiện trục và cập nhật đơn — một giao dịch", () => {
+  it("cập nhật đơn lỗi → sự kiện đi kèm cũng không được ghi", async () => {
+    await resetDatabase()
+    const t = await createTenant("gamma")
+    const id = (await ingestOrder(t.ctx, { source: "MANUAL", items: [{ description: "Bó hoa", quantity: 1, unitPriceVnd: 200_000 }] })).id
+    const before = await prisma.order_events.count({ where: { order_id: id } })
+    const repo = new OrderRepository()
+    await expect(
+      repo.update(t.organizationId, id, { status: "NOT_A_STATUS" as never }, [
+        { axis: "order", fromValue: "DRAFT", toValue: "NOT_A_STATUS", actorId: t.userId, reason: "thử" },
+      ]),
+    ).rejects.toBeDefined()
+    expect(await prisma.order_events.count({ where: { order_id: id } })).toBe(before)
+  })
 })

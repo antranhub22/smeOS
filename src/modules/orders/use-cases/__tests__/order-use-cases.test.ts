@@ -52,6 +52,7 @@ describe("Order Use-cases with Mocked IOrderRepository (Clean Architecture)", ()
     }
 
     const notify = vi.fn().mockResolvedValue(1)
+    const audit = vi.fn(async (..._args: unknown[]) => ({}) as never)
     const order = await createOrder(
       mockTenant,
       {
@@ -60,9 +61,13 @@ describe("Order Use-cases with Mocked IOrderRepository (Clean Architecture)", ()
         ],
       },
       mockRepo,
-      notify
+      notify,
+      vi.fn(async () => []),
+      vi.fn(async () => undefined),
+      audit
     )
 
+    expect(audit).toHaveBeenCalledWith(mockTenant, expect.objectContaining({ action: "order.create", entityType: "orders" }))
     expect(notify).toHaveBeenCalledWith(expect.objectContaining({ organizationId: "org-1", eventKey: "ORDER_RECEIVED" }))
     expect(mockRepo.countTodayOrders).toHaveBeenCalledWith("org-1")
     expect(mockRepo.create).toHaveBeenCalled()
@@ -131,8 +136,12 @@ describe("Order Use-cases with Mocked IOrderRepository (Clean Architecture)", ()
     )
 
     expect(result.status).toBe("PROCESSING")
-    expect(mockRepo.recordEvent).toHaveBeenCalled()
-    expect(mockRepo.update).toHaveBeenCalled()
+    // Sự kiện đi cùng lần cập nhật (một giao dịch — audit BL-18), không ghi riêng trước
+    expect(mockRepo.recordEvent).not.toHaveBeenCalled()
+    expect(mockRepo.update).toHaveBeenCalledWith("org-1", "ord-123", expect.anything(), [
+      expect.objectContaining({ axis: "order", fromValue: "CONFIRMED", toValue: "PROCESSING" }),
+      expect.objectContaining({ axis: "production", fromValue: "WAITING", toValue: "ARRANGING" }),
+    ])
   })
 
   it("assignFlorist creates assignment record and updates productionStatus to ASSIGNED", async () => {
