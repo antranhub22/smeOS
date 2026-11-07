@@ -11,6 +11,7 @@ import type { IOrderRepository } from "../domain/repositories/order-repository.i
 import { getOrderRepository } from "../infra/order-repository"
 import { findForeignOrderReferences } from "../infra/order-reference-guard"
 import { assertNotBelowFloor } from "@/modules/costing/use-cases/price-floor-guard"
+import { recordAuditLog } from "@/modules/audit/use-cases/record-audit-log"
 import { notifyOrganization } from "@/modules/notification/use-cases/notify-organization"
 
 export async function createOrder(
@@ -19,7 +20,8 @@ export async function createOrder(
   repo: IOrderRepository = getOrderRepository(),
   notify: typeof notifyOrganization = notifyOrganization,
   findForeign: typeof findForeignOrderReferences = findForeignOrderReferences,
-  floorGuard: typeof assertNotBelowFloor = assertNotBelowFloor
+  floorGuard: typeof assertNotBelowFloor = assertNotBelowFloor,
+  audit: typeof recordAuditLog = recordAuditLog
 ): Promise<OrderRecord> {
   if (!input.items || input.items.length === 0) {
     throw new AppError("VALIDATION_FAILED", "Đơn hàng phải có ít nhất một sản phẩm hoặc sản phẩm.")
@@ -51,6 +53,12 @@ export async function createOrder(
   }
   const countToday = await repo.countTodayOrders(ctx.organizationId)
   const order = await createWithFreshCode(ctx, repo, countToday, scopedInput, totalVnd)
+  await audit(ctx, {
+    action: "order.create",
+    entityType: "orders",
+    entityId: order.id,
+    after: { code: order.code, totalVnd, source: input.source ?? "MANUAL" },
+  })
   // Không chờ: thông báo chậm/lỗi không được làm chậm hay hỏng việc tạo đơn
   void notify({
     organizationId: ctx.organizationId,
