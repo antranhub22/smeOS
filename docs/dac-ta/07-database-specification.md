@@ -4130,6 +4130,55 @@ Ca thử: `tests/tenant/branch-scope-customers.test.ts` (tự cài trigger từ 
 
 Ca thử: `tests/tenant/branch-scope-products.test.ts`.
 
+## 50. Quyền xem đơn của chi nhánh gia công — `shared_order_access` (07/11/2026)
+
+ADR-014 D-P6, bước **P-4**. PO duyệt 07/11/2026 (D-64): làm ngay; chi nhánh làm đơn còn quyền **7 ngày** sau khi đơn
+đóng; chi nhánh được mời **mất quyền ngay** khi hết vòng hoặc chi nhánh khác nhận; tin mời Telegram/Zalo **chỉ ghi khu
+vực**. Migration `20261107200000_shared_order_access`.
+
+```prisma
+model shared_order_access {
+  id              String                    @id @default(uuid())
+  organization_id String
+  order_id        String
+  branch_key      String
+  level           shared_order_access_level
+  granted_at      DateTime                  @default(now()) @db.Timestamptz(3)
+  revoked_at      DateTime?                 @db.Timestamptz(3)
+  updated_at      DateTime                  @updatedAt @db.Timestamptz(3)
+
+  organization organizations @relation(fields: [organization_id], references: [id])
+  order        orders        @relation(fields: [order_id, organization_id], references: [id, organization_id], onDelete: Cascade)
+
+  @@unique([order_id, branch_key])
+  @@index([organization_id, branch_key])
+}```
+
+```prisma
+enum shared_order_access_level {
+  INVITED
+  ASSIGNED
+}```
+
+- Một dòng mỗi (đơn, chi nhánh); `branch_key` là `branches.id` hoặc mã điều phối, đúng như trong phiên điều phối và link
+  ký. Khoá ghép `(order_id, organization_id)` tới `orders`, xoá đơn → xoá quyền. Thuộc tổ chức: RLS `tenant_isolation`.
+- Ghi: `SubcontractOrderRepository.updateSubcontractState` (mọi lần đổi phiên điều phối) gọi `syncOrderShares` cùng giao
+  dịch, theo `subcontractShares` (`src/modules/greeting-card/domain/subcontract-share.ts`): phiên `OPEN` → chi nhánh được
+  mời ở vòng hiện tại (trừ đã từ chối) mức `INVITED`; `CLAIMED_GRACE`/`COMMITTED` → chỉ chi nhánh giữ đơn, mức `ASSIGNED`;
+  `ESCALATED`/`CANCELLED` → không ai. Bên không còn trong tập → `revoked_at`; được mời lại → cấp lại.
+- Đọc: `loadSubcontractOrderForBranch` (cổng mọi route `/api/v1/public/subcontract/*`) → `hasActiveOrderShare`
+  (`src/modules/orders/infra/shared-order-access-repository.ts`, luật ở `src/modules/orders/domain/order-share.ts`): thu
+  hồi → 404; đơn đóng (hoàn tất, huỷ, hoặc đã giao) → `INVITED` hết ngay, `ASSIGNED` hết sau 7 ngày tính từ sự kiện đóng
+  đầu tiên trong `order_events` (đơn cũ không có sự kiện: `updated_at`).
+- Link ký vẫn định danh chi nhánh; hạn chữ ký nâng 14 → 120 ngày (trần an toàn), quyền do bảng này quyết.
+- Khác ADR: quyền gắn chi nhánh (`branch_key`) thay cho `grantee_org_id` vì gia công hiện chỉ giao cho chi nhánh cùng tổ
+  chức; "trường được xem" theo mức (`INVITED`: SĐT người nhận che; `ASSIGNED`: đủ); hạn tính khi đọc thay cho cột.
+- Tin mời (`inviteSubcontract`): biến `{{deliveryAddress}}` nay là khu vực (`subcontractAreaText`: phường, quận, tỉnh);
+  địa chỉ đầy đủ chỉ dùng để tìm chi nhánh gần và hiện trong Thẻ Gia Công.
+
+Ca thử: `tests/tenant/shared-order-access.test.ts` (được mời/không mời, chi nhánh khác nhận, huỷ nhận, vòng mới, đơn đóng
++ 7 ngày, xoá đơn, backfill), `src/modules/greeting-card/domain/__tests__/subcontract-share.test.ts`.
+
 ## 49. Người nhận và hoá đơn VAT của đơn — `order_recipients` (07/11/2026)
 
 ADR-014 D-P2, bước **P-3a** (expand). PO duyệt 07/11/2026: P-3 chia ba bước (P-3a bảng + backfill + ghi kép; P-3b

@@ -180,6 +180,7 @@ model organizations {
   audit_logs                                       audit_logs[]
   platform_access_logs                             platform_access_logs[]
   order_recipients                                 order_recipients[]
+  shared_order_access                              shared_order_access[]
   business_profile                                 business_profiles?
   brand_profile                                    brand_profiles?
   products                                         products[]
@@ -1985,6 +1986,7 @@ model orders {
   info_requests     order_info_requests[]
   change_requests   order_change_requests[]
   recipient         order_recipients?
+  shared_access     shared_order_access[]
   bookings          product_bookings[]
   source            String?                 @default("MANUAL") // mã ở src/modules/orders/domain/order-source.ts
   source_session_id String? // greeting_sessions.id
@@ -2065,6 +2067,35 @@ model order_recipients {
 
   @@unique([order_id, organization_id])
   @@index([organization_id])
+}
+
+/// ADR-014 D-P6, bước P-4 (PO duyệt 07/11/2026): quyền xem một đơn của bên nhận gia công — thay cho quyền ngầm của link
+/// ký (hạn cố định, không thu hồi được). Một dòng mỗi (đơn, chi nhánh); đồng bộ theo phiên điều phối gia công trong
+/// `SubcontractOrderRepository.updateSubcontractState`: được mời → `INVITED`, đang giữ/chốt đơn → `ASSIGNED`, còn lại
+/// → thu hồi (`revoked_at`). `INVITED` hết khi đơn đóng; `ASSIGNED` hết 7 ngày sau khi đơn hoàn tất/huỷ (giao xong).
+/// Thẻ Gia Công kiểm ở `loadSubcontractOrderForBranch`: không có quyền còn hiệu lực → 404.
+model shared_order_access {
+  id              String                    @id @default(uuid())
+  /// Tổ chức chủ đơn
+  organization_id String
+  order_id        String
+  /// Chi nhánh nhận gia công: `branches.id` hoặc mã điều phối, đúng như trong phiên điều phối và link ký
+  branch_key      String
+  level           shared_order_access_level
+  granted_at      DateTime                  @default(now()) @db.Timestamptz(3)
+  revoked_at      DateTime?                 @db.Timestamptz(3)
+  updated_at      DateTime                  @updatedAt @db.Timestamptz(3)
+
+  organization organizations @relation(fields: [organization_id], references: [id])
+  order        orders        @relation(fields: [order_id, organization_id], references: [id, organization_id], onDelete: Cascade)
+
+  @@unique([order_id, branch_key])
+  @@index([organization_id, branch_key])
+}
+
+enum shared_order_access_level {
+  INVITED
+  ASSIGNED
 }
 
 model order_items {

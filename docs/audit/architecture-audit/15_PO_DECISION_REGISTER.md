@@ -68,6 +68,7 @@
 | D-61 | Mốc bật RLS chặn thật (06/11/2026) | **Theo khách enterprise đầu tiên** (giữ D-30); trước đó đưa p95 trang danh sách ở chế độ `enforce` về dưới +10% (đo hiện +13%) | ADR-013 §6, bước I-6 |
 | D-62 | Khách tiềm năng `PROSPECT` (07/11/2026) | **Chỉ người nhận link Thẻ chào có SĐT mà chưa đặt đơn** — ẩn khỏi danh sách/xuất/phân khúc; đặt đơn, để lại lead hay được tạo tay thì thành khách thường (cùng hồ sơ). Lead vẫn tạo khách thường như trước; khách cũ giữ nguyên | ADR-014 D-P2, bước P-2 (duyệt schema cùng ngày) |
 | D-63 | Người nhận và VAT của đơn (07/11/2026) | **P-3 chia ba bước** (P-3a bảng + backfill + ghi kép, P-3b chuyển đọc, P-3c bỏ nơi cũ); **gồm cả thông tin hoá đơn VAT** — mọi dữ liệu cá nhân của đơn ở `order_recipients` | ADR-014 D-P2, bước P-3 (duyệt schema P-3a cùng ngày) |
+| D-64 | Chia sẻ đơn gia công (07/11/2026) | **Làm ngay** (P-4): quyền xem đơn của chi nhánh ở `shared_order_access`; chi nhánh làm đơn còn **7 ngày** sau khi đơn đóng; chi nhánh được mời **mất quyền ngay** khi hết vòng / chi nhánh khác nhận; tin mời Telegram/Zalo **chỉ ghi khu vực** | ADR-014 D-P6, bước P-4 |
 
 ## 2. Chấp nhận rủi ro (PO chọn khác đề xuất)
 
