@@ -122,7 +122,7 @@ lại có chủ đích qua T-6 và ADR affiliate sau này (D-48).
 |---|---|---|---|
 | [x] | P-2 [SCHEMA] **B5** `customers.status PROSPECT`; `customer_id` trên `leads` (đã có), `greeting_sessions`; backfill; ghi kép — PO duyệt 07/11/2026, phương án A: PROSPECT chỉ là người nhận link Thẻ chào có SĐT chưa đặt đơn, lead vẫn tạo khách thường (đặc tả 07 §48) | — | `tests/tenant/customer-prospects.test.ts`: link/lead/đơn trỏ đúng khách cùng tổ chức; PROSPECT không hiện ở danh sách/xuất; backfill |
 | [x] | P-3a [SCHEMA] **B5** `order_recipients` (người nhận + VAT) + backfill + ghi kép ở 6 đường ghi; đọc chưa đổi — PO duyệt 07/11/2026 (D-63), đặc tả 07 §49 | — | `tests/tenant/order-recipients.test.ts`: mọi đường ghi; backfill khớp `recipientFromDeliveryAddress` |
-| [ ] | P-3b **B5** Chuyển đọc người nhận/địa chỉ/VAT (36 tệp: phiếu in, theo dõi, xuất, điều phối, shipper…) sang `order_recipients` | — | Phiếu in, theo dõi đơn, xuất đơn không đổi |
+| [x] | P-3b **B5** Chuyển đọc người nhận/địa chỉ/VAT sang `order_recipients`: query extension của client Prisma cho mọi `orders.find*` + 4 chỗ chọn đơn lồng; `address_parts` giữ nguyên khoá địa chỉ (chép lại từ JSON) — đặc tả 07 §49 | — | `order-recipients.test.ts`: xoá phần cá nhân khỏi nơi cũ, màn hình vẫn đủ; `order-recipient-reads.test.ts` |
 | [ ] | P-3c [SCHEMA] contract: bỏ người nhận/địa chỉ khỏi `orders.delivery_address`, bỏ cột `orders.vat_*` | — | Chốt khớp trước khi xoá (như T-7c) |
 | [ ] | P-4 [SCHEMA] `shared_order_access`; gia công dùng chia sẻ | — | Hết hạn → đối tác 404 |
 | [ ] | P-5 [SCHEMA] Mã hoá cột + `phone_hash` + `phone_last4`; đổi 4 chỗ tìm kiếm | — | Dump không có số rõ |

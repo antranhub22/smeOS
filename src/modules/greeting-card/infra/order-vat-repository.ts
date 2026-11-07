@@ -16,11 +16,13 @@ export interface OrderVatView extends VatInvoiceInfo {
   balanceVnd: number
 }
 
-type OrderRow = NonNullable<Awaited<ReturnType<typeof prisma.orders.findFirst>>>
+const VAT_INCLUDE = { recipient: { select: { vat_company_name: true, vat_tax_code: true, vat_company_address: true, vat_email: true } } } as const
+type OrderRow = NonNullable<Awaited<ReturnType<typeof prisma.orders.findFirst<{ where: { id: string }; include: typeof VAT_INCLUDE }>>>>
 
 function toView(o: OrderRow): OrderVatView {
   const totalVnd = Number(o.total_vnd)
   const vatAmountVnd = Number(o.vat_amount_vnd)
+  const buyer = o.recipient ?? o // P-3b: bên mua hoá đơn từ order_recipients; đơn chưa có dòng → cột cũ
   return {
     orderId: o.id,
     vatEnabled: o.vat_enabled,
@@ -30,10 +32,10 @@ function toView(o: OrderRow): OrderVatView {
     totalVnd,
     paidVnd: Number(o.paid_vnd),
     balanceVnd: Number(o.balance_vnd),
-    companyName: o.vat_company_name,
-    taxCode: o.vat_tax_code,
-    companyAddress: o.vat_company_address,
-    email: o.vat_email,
+    companyName: buyer.vat_company_name,
+    taxCode: buyer.vat_tax_code,
+    companyAddress: buyer.vat_company_address,
+    email: buyer.vat_email,
   }
 }
 
@@ -42,7 +44,7 @@ export class OrderVatRepository {
   constructor(private readonly db = prisma) {}
 
   private async load(ctx: TenantContext, orderId: string) {
-    const order = await this.db.orders.findFirst({ where: scopedWhere(ctx, { id: orderId, source: "BROCHURE" }) })
+    const order = await this.db.orders.findFirst({ where: scopedWhere(ctx, { id: orderId, source: "BROCHURE" }), include: VAT_INCLUDE })
     if (!order) throw notFound()
     return order
   }
@@ -93,7 +95,7 @@ export class OrderVatRepository {
         },
         tx
       )
-      const updated = await tx.orders.findFirstOrThrow({ where: { id: order.id, organization_id: ctx.organizationId } })
+      const updated = await tx.orders.findFirstOrThrow({ where: { id: order.id, organization_id: ctx.organizationId }, include: VAT_INCLUDE })
       return toView(updated)
     })
   }
