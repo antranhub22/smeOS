@@ -166,6 +166,13 @@ từng vai (`ALTER ROLE … PASSWORD`), rồi thay `DATABASE_URL` của từng d
 báo cáo/điều tra → `smeos_readonly` (luôn chặn theo tổ chức). Bước migration (pre-deploy) giữ tài khoản chủ sở hữu. Trước khi thay
 cho web, kiểm trên bản khôi phục: `npm run test:tenant` với `DATABASE_URL` của `smeos_app`.
 
+**Nhật ký bất biến (ADR-013 D-I4, migration `20261106130000_append_only_logs`):** `audit_logs`, `platform_audit_logs`,
+`order_events`, `job_events`, `usage` không sửa được; xoá (kể cả xoá đơn hàng kéo theo `order_events`) chỉ được trong giao
+dịch đã đặt lý do purge — trong mã dùng `setPurgeReason(tx, …)` (`src/core/tenancy/infra/purge-reason.ts`), trong psql dùng
+`BEGIN; SELECT set_config('app.purge_reason', 'tenant_offboarding', true); …; COMMIT;`. `create-roles.sql` thu quyền
+UPDATE/DELETE của `smeos_app`/`smeos_worker` trên năm bảng này. Script dọn tenant (`handover-clean-tenant.ts`,
+`clean-siin-store-orders.ts`) đã đặt lý do; script mới xoá đơn hàng hay job phải làm như vậy.
+
 Bảng mới có `organization_id`: chạy `node scripts/gen-rls-policies.mjs` để sinh SQL chính sách vào migration của bảng đó —
 test `tests/unit/architecture/rls-policies.test.ts` đỏ nếu thiếu.
 
