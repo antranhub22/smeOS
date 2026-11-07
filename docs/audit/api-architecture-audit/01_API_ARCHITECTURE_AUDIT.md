@@ -175,7 +175,7 @@ Không có OpenAPI (ARC-024). Đặc tả 06 (1.242 dòng markdown) mô tả th�
 | Đợt | Việc | Phát hiện | Cần PO? |
 |---|---|---|---|
 | 1 (ngay) — **đã làm 06/11/2026**, xem §6 | Map `ZodError`/`SyntaxError` → 400 trong `errorResponse` + test; chặn `limit` ở `GET /orders`; sửa `noi-bo/identity`; `jobs/batch` bắt buộc khoá + zod; rate limit + trừ credit cho `content-engine/rewrite` | 01, 02, 03, 04, 05 | Mã năng lực + credit cho rewrite (nợ #170) |
-| 2 | `Retry-After` + `RateLimit-*`; rate limit Integration API theo token; chốt 8 dòng năng lực lệch; `check:docs` kiểm cột năng lực | 08, 09, 12 | Chốt bên đúng cho 8 dòng |
+| 2 — **đã làm 07/11/2026** trừ phần chờ PO, xem §7 | `Retry-After` + `RateLimit-*`; rate limit Integration API theo token; chốt 8 dòng năng lực lệch; `check:docs` kiểm cột năng lực | 08, 09, 12 | Chốt bên đúng cho 8 dòng |
 | 3 | Ban hành chuẩn API Contract v1.1 (tài liệu 02); helper `defineRoute` + `parseBody` + `paginate` dùng chung; ratchet test cho route mới | 06, 07, 10, 13, 16 | Duyệt chuẩn |
 | 4 | OpenAPI 3.1 sinh từ zod: Integration API + `/public/*` trước, sau đó nội bộ; `check:openapi` trong CI | 14, 15 | Thêm gate CI |
 
@@ -200,3 +200,11 @@ Không đổi tên/di chuyển route hiện có trong các đợt trên — gom 
 | API-05 | `jobs/batch/route.ts`: zod (`capabilities` 1–50), `Idempotency-Key` bắt buộc, `jsonResponse`; giữ mã 200 + hình dạng phản hồi mà `FeaturePicker` đọc | `tests/unit/jobs/batch-route.test.ts` | Đổi sang 202 khi chuẩn API-16 được duyệt |
 
 Đặc tả 06 cập nhật cùng commit (§2 bảng lỗi; dòng `GET /orders`, `POST /jobs/batch`, `POST /content-engine/rewrite`, `GET /noi-bo/identity`).
+
+## 7. Nhật ký sửa — đợt 2 (07/11/2026)
+
+| Mã | Đã sửa | Test | Còn lại |
+|---|---|---|---|
+| API-08 | `enforceRateLimit` ghi trạng thái (giới hạn, còn lại, mốc mở lại = cuối cửa sổ cố định) vào ngữ cảnh request (`src/core/observability/request-context.ts#recordRateLimit`); `handle()` gắn `RateLimit-Limit/Remaining/Reset` cho mọi phản hồi của route có giới hạn, thêm `Retry-After` khi 429. Nhiều luật → báo luật còn ít lượt nhất | `tests/unit/core/http/rate-limit-headers.test.ts` | Route không dùng `handle()` (`chat/public/widget`, webhook chat) chưa có header — gắn với API-06 |
+| API-09 | `requireIntegrationContext`: 600 lần/phút theo token (SSO: theo người dùng + tổ chức), đếm sau xác thực — phủ cả 12 route `/integration/*` | `tests/unit/integration/integration-rate-limit.test.ts` | Trần chưa đo trên tải thật của LocalBudd/SocialFlow — theo dõi 429 sau khi triển khai |
+| API-12 | `scripts/check-docs.mjs` đối chiếu thêm cột năng lực: mã trong `requireCapability(ctx, "…")` của từng handler phải có trong cột năng lực đặc tả 06 (khi cột có mã). 8 dòng lệch hiện có nằm trong `NANG_LUC_LECH_CHO_PO`, danh sách chỉ được co lại (mục đã khớp mà còn giữ → đỏ) | Đã thử: bỏ một mục khỏi danh sách → đỏ; thêm mục đã khớp → đỏ | **Chờ PO** chốt mã hay đặc tả đúng cho 8 dòng (§3 API-12), rồi xoá khỏi danh sách |

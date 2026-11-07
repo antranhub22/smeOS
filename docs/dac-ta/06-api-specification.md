@@ -37,7 +37,7 @@ Endpoint duyệt luôn tách khỏi endpoint sinh kết quả: `POST /x/:id/appr
 | 404 | `NOT_FOUND` | Không tìm thấy, **hoặc thuộc tổ chức khác** |
 | 409 | `CONFLICT` | Xung đột trạng thái, ví dụ duyệt một bản ghi đã duyệt |
 | 422 | `QUOTA_EXCEEDED` | Vượt hạn mức, job không được tạo |
-| 429 | `RATE_LIMITED` | Kèm `Retry-After` |
+| 429 | `RATE_LIMITED` | Kèm `Retry-After` (giây tới cuối cửa sổ). Mọi phản hồi của route có giới hạn tần suất (qua `handle()`) kèm `RateLimit-Limit`, `RateLimit-Remaining`, `RateLimit-Reset` theo luật còn ít lượt nhất (07/11/2026, audit API-08; trước đó mã không đặt header nào) |
 | 500 | `INTERNAL` | Không lộ chi tiết |
 
 **Bản ghi của tổ chức khác trả 404, không trả 403.** Trả 403 là xác nhận bản ghi đó tồn tại — rò rỉ thông tin xuyên tổ chức bằng chính mã lỗi.
@@ -346,6 +346,8 @@ Dành cho `LocalBudd` (M05, M06) và `SocialFlow` (M07). *(M04b đã chuyển v�
 ```
 Authorization: Bearer <token cấp theo tổ chức>
 ```
+
+**Giới hạn tần suất (07/11/2026, audit API-09).** Mọi đường `/integration/*`: 600 lần/phút cho mỗi token (nhánh SSO: mỗi người dùng trong một tổ chức) → 429 kèm `Retry-After`, sau khi xác thực xong — token sai vẫn 401.
 
 | Method | Path | Trả về |
 |---|---|---|

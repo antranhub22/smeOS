@@ -3,7 +3,7 @@ import { ZodError } from "zod"
 import { captureError } from "@/core/observability/error-tracker"
 import { dbContextForPath, runWithDbContext } from "@/core/tenancy/db-context"
 import { log } from "@/core/observability/log"
-import { requestIdOf, runWithRequestMeta } from "@/core/observability/request-context"
+import { currentRequestMeta, requestIdOf, runWithRequestMeta } from "@/core/observability/request-context"
 
 import { AppError, validationFailed } from "./errors"
 import { clientIp } from "./rate-limit"
@@ -57,6 +57,26 @@ function guardJsonBody(request: Request): void {
     })
 }
 
+/**
+ * `RateLimit-Limit/Remaining/Reset` (giây tới lúc mở lại) và `Retry-After` khi 429, theo luật chặt
+ * nhất mà `enforceRateLimit` đã đếm trong request (đặc tả 06 §2, audit API-08). Route không giới hạn
+ * tần suất thì không có header nào.
+ */
+function withRateLimitHeaders(response: Response, now = Date.now()): Response {
+  const state = currentRequestMeta()?.rateLimit
+  if (!state) return response
+  const resetSeconds = String(Math.max(1, Math.ceil((state.resetAt - now) / 1000)))
+  try {
+    response.headers.set("RateLimit-Limit", String(state.limit))
+    response.headers.set("RateLimit-Remaining", String(state.remaining))
+    response.headers.set("RateLimit-Reset", resetSeconds)
+    if (response.status === 429) response.headers.set("Retry-After", resetSeconds)
+  } catch {
+    // Header bất biến (vd. `Response.redirect`) — giữ nguyên phản hồi, chỉ thiếu header tần suất
+  }
+  return response
+}
+
 export function errorResponse(error: unknown, where?: { method: string; path: string }): Response {
   const known = asAppError(error)
   if (known) {
@@ -107,10 +127,10 @@ export function handle<Args extends unknown[]>(
         guardJsonBody(request)
         const response = await fn(request, ...args)
         await auditMutation(request, response)
-        return response
+        return withRateLimitHeaders(response)
       } catch (error) {
         await auditDenied(request, error)
-        return errorResponse(error, { method: request.method, path: new URL(request.url).pathname })
+        return withRateLimitHeaders(errorResponse(error, { method: request.method, path: new URL(request.url).pathname }))
       }
     }))
   }
