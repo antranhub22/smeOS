@@ -107,6 +107,13 @@ const GLOSSARY_BANNED: [RegExp, string][] = [
   [/\b[Rr]ender(?:ing)?\b/, '"dựng" (Đang dựng video, Đã dựng xong)'],
   [/\bjob\b/, '"tác vụ" hoặc bỏ mã'],
   [/\bP\d\b/, "tên bước nghiệp vụ (Duyệt kịch bản, Duyệt video)"],
+  [/\bBOM\b|\bBill of Materials\b/i, '"định lượng nguyên vật liệu" hoặc "công thức chế tác"'],
+  [/\bMaster Index\b/i, '"danh mục tổng hợp" hoặc "thư viện chuẩn"'],
+  [/\bPII\b/, '"thông tin cá nhân khách hàng"'],
+  [/\bControl Tower\b/i, '"tháp điều phối đơn"'],
+  [/\b[Pp]ayload\b|\bRequest body\b/i, '"dữ liệu gửi lên" hoặc "thông tin nhập liệu"'],
+  [/\b[Tt]enants?\b/, '"cửa hàng" hoặc "doanh nghiệp / tổ chức" theo tầng'],
+  [/\bM[0-5]\b/, '"tiến độ xử lý" kèm tên bước (Nhận đơn → Chế tác → Giao hàng)'],
 ]
 
 const VISIBLE_PROPS = new Set(["label", "title", "placeholder", "description", "aria-label"])
