@@ -109,6 +109,10 @@ export const MyRepository = {
 - Path alias `@/` (không relative). Dùng `import type` cho types.
 - Thứ tự: External → Core → Modules → Components → Lib.
 
+### 4b. Integration API & OpenAPI (07/11/2026)
+- Lược đồ thân/phản hồi của `/api/v1/integration/*` nằm ở `src/modules/integration/contracts/` (`http-requests.ts`, `http-responses.ts`); route import, không tự khai.
+- Thêm/sửa route `/integration/*` → thêm operation ở `integration-openapi.ts` → `npm run gen:openapi` → commit tệp `docs/spec/contracts/openapi/integration.openapi.json`. `tests/unit/integration/integration-openapi.test.ts` đỏ nếu quên.
+
 ### 5. Pagination (cursor-based)
 - Mọi list endpoint PHẢI có `cursor` + `limit` (1–100, **mặc định 25** — đặc tả 06 §2, PO chốt 07/11/2026). Route mới: `pageQuery` + `toPage` (`src/core/http/pagination.ts`), con trỏ mờ.
 - Dùng cursor-based (không offset) — ổn định khi data thêm/xóa.

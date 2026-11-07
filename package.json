@@ -76,6 +76,8 @@
     "check:schemas:coordinator": "tsx scripts/gen-coordinator-schemas.ts --check",
     "gen:schemas:content-engine": "tsx scripts/gen-content-engine-schemas.ts",
     "check:schemas:content-engine": "tsx scripts/gen-content-engine-schemas.ts --check",
+    "gen:openapi": "tsx scripts/gen-openapi.ts",
+    "check:openapi": "tsx scripts/gen-openapi.ts --check",
     "check:docs": "node scripts/check-docs.mjs",
     "seed:field-registry": "tsx --env-file-if-exists=.env scripts/nap-danh-muc-truong.ts",
     "check:field-registry": "tsx --env-file-if-exists=.env scripts/check-field-registry.ts",

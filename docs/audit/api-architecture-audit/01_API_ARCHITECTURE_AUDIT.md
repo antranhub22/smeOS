@@ -177,7 +177,7 @@ Không có OpenAPI (ARC-024). Đặc tả 06 (1.242 dòng markdown) mô tả th�
 | 1 (ngay) — **đã làm 06/11/2026**, xem §6 | Map `ZodError`/`SyntaxError` → 400 trong `errorResponse` + test; chặn `limit` ở `GET /orders`; sửa `noi-bo/identity`; `jobs/batch` bắt buộc khoá + zod; rate limit + trừ credit cho `content-engine/rewrite` | 01, 02, 03, 04, 05 | Mã năng lực + credit cho rewrite (nợ #170) |
 | 2 — **đã làm 07/11/2026** trừ phần chờ PO, xem §7 | `Retry-After` + `RateLimit-*`; rate limit Integration API theo token; chốt 8 dòng năng lực lệch; `check:docs` kiểm cột năng lực | 08, 09, 12 | Chốt bên đúng cho 8 dòng |
 | 3 — **đã làm 07/11/2026**, xem §8 | Ban hành chuẩn API Contract v1.1 (tài liệu 02); helper `defineRoute` + `parseBody` + `paginate` dùng chung; ratchet test cho route mới | 06, 07, 10, 13, 16 | Duyệt chuẩn — PO đã chốt 4 điểm |
-| 4 | OpenAPI 3.1 sinh từ zod: Integration API + `/public/*` trước, sau đó nội bộ; `check:openapi` trong CI | 14, 15 | Thêm gate CI |
+| 4 — **Integration API đã làm 07/11/2026**, xem §9 | OpenAPI 3.1 sinh từ zod: Integration API + `/public/*` trước, sau đó nội bộ; `check:openapi` trong CI | 14, 15 | PO chọn gác bằng `npm test`, không sửa CI |
 
 Không đổi tên/di chuyển route hiện có trong các đợt trên — gom họ tài nguyên (API-13) chỉ áp cho route mới hoặc khi lên `/v2` (tài liệu 02 §8).
 
@@ -221,3 +221,17 @@ PO chốt: `limit` mặc định 25 · route mới snake_case · giữ `details.
 | Gác quyền | `route-capability-guard.test.ts` tính `defineRoute(` là có gác — khai `auth` thay cho một mục `NO_CAPABILITY_GUARD` | — |
 
 Chưa chuyển route cũ nào sang `defineRoute` (không đổi hợp đồng client đang chạy). Đặc tả 06 §2 và skill `api-development` đã cập nhật.
+
+## 9. Nhật ký sửa — đợt 4 (07/11/2026)
+
+PO chốt: phạm vi chỉ `/integration/*` · viết lược đồ phản hồi + test hợp đồng · chặn lệch bằng `npm test` (không sửa CI).
+
+| Hạng mục | Đã làm | Test |
+|---|---|---|
+| Bộ dựng | `src/core/http/openapi.ts`: `buildOpenApiDocument` (OpenAPI 3.1, `z.toJSONSchema` 2020-12, không thêm dependency), envelope `Error` + 9 phản hồi lỗi dùng chung, header `RateLimit-*`/`Retry-After`; mã lỗi lấy từ `ERROR_CODES` (`src/core/http/errors.ts`) | — |
+| Hợp đồng | `src/modules/integration/contracts/http-requests.ts` (lược đồ thân — 5 route chuyển sang import, luật kiểm giữ nguyên văn), `http-responses.ts` (13 phản hồi, `strictObject`), `integration-openapi.ts` (13 operation). Trần tần suất chuyển về `domain/integration-rate-limit.ts` (thuần) | — |
+| Tệp sinh | `docs/spec/contracts/openapi/integration.openapi.json` — `npm run gen:openapi` / `npm run check:openapi` | `tests/unit/integration/integration-openapi.test.ts`: tệp khớp mã; route ↔ operation khớp hai chiều; route ngoài vùng đóng băng không tự khai lược đồ |
+| Phản hồi thật | Mọi operation gọi trên CSDL thật, phản hồi phải qua lược đồ strict | `tests/tenant/integration-contract.test.ts` (8 ca) — lần đầu chạy bắt được 3 chỗ lệch: catalog trả thêm `trashed_at`/`purge_after`; dạng đọc lại của catalog thiếu `organization_id`/`trashed_at`/`purge_after`; `generated_flags` bắt buộc ở use-case dù lược đồ thân ghi tuỳ chọn (đã ghi vào mô tả) |
+| Catalog đóng băng | 3 route `integration/catalog-links*` KHÔNG sửa; lược đồ chép sang hợp đồng | `tests/unit/integration/integration-catalog-contract.test.ts`: cùng bộ mẫu gửi tới route đóng băng và bản sao — kết luận phải trùng |
+
+Phát hiện ngoài phạm vi (không sửa): `GET /integration/catalog-links?include_revoked=false` vẫn tính là `true` (`z.coerce.boolean` coi mọi chuỗi khác rỗng là `true`) — route nằm trong vùng Catalog đóng băng, cần PO duyệt mới sửa được. Phản hồi Integration API trả nguyên bản ghi nội bộ (vd. `usage.user_id`, `generation_jobs.payload/output/error`) — cân nhắc thu gọn khi lên `/v2`.

@@ -120,6 +120,8 @@ Lợi ích: (1) gác quyền khai báo được kiểm tĩnh thay vì dò regex 
 
 ## 9. OpenAPI Specification
 
+> **Đã làm cho `/integration/*` (07/11/2026, đợt 4)** — `src/core/http/openapi.ts`, `src/modules/integration/contracts/`, tệp `docs/spec/contracts/openapi/integration.openapi.json`. Khác đề xuất dưới đây: registry khai riêng ở `integration-openapi.ts` (route Integration chưa chuyển sang `defineRoute`), gác bằng unit test trong `npm test` thay cho bước CI `check:openapi` (PO chọn). `/public/*` và nội bộ chưa làm.
+
 **Mục tiêu.** OpenAPI **3.1** (dùng JSON Schema 2020-12 — trùng `target: "draft-2020-12"` mà 3 bộ sinh hiện có đã dùng) được **sinh từ mã**, không viết tay; đặc tả 06 giữ phần nghiệp vụ, OpenAPI giữ phần máy đọc.
 
 **Cách sinh (không thêm dependency).**

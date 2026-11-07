@@ -349,6 +349,8 @@ Dành cho `LocalBudd` (M05, M06) và `SocialFlow` (M07). *(M04b đã chuyển v�
 Authorization: Bearer <token cấp theo tổ chức>
 ```
 
+**OpenAPI (07/11/2026, audit API đợt 4).** Bản máy đọc được của mục này: `docs/spec/contracts/openapi/integration.openapi.json` (OpenAPI 3.1), sinh từ lược đồ zod ở `src/modules/integration/contracts/` — route dùng chung lược đồ thân, nên tài liệu không lệch mã; phản hồi khai `strictObject` và được kiểm trên CSDL thật. Sửa route `/integration/*` → sửa hợp đồng → `npm run gen:openapi`.
+
 **Giới hạn tần suất (07/11/2026, audit API-09).** Mọi đường `/integration/*`: 600 lần/phút cho mỗi token (nhánh SSO: mỗi người dùng trong một tổ chức) → 429 kèm `Retry-After`, sau khi xác thực xong — token sai vẫn 401.
 
 | Method | Path | Trả về |

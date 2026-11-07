@@ -34,6 +34,9 @@ const HTTP_STATUS: Record<ErrorCode, number> = {
   INTERNAL: 500,
 }
 
+/** Mọi mã lỗi theo thứ tự khai — OpenAPI (`src/core/http/openapi.ts`) liệt kê từ đây, không chép tay. */
+export const ERROR_CODES = Object.keys(HTTP_STATUS) as ErrorCode[]
+
 export class AppError extends Error {
   readonly code: ErrorCode
   readonly details: Record<string, unknown> | undefined
