@@ -22,6 +22,9 @@ import { EmptyState } from "@/components/ui/empty-state"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { PlatformAccessTab } from "@/components/audit/platform-access-tab"
 
+// Base UI đánh dấu tab đang chọn bằng `data-active` (TabsTrigger dùng chung chỉ tô `data-selected` — ghi ở audit-log)
+const TAB = "flex-1 whitespace-normal text-center sm:flex-none data-[active]:bg-surface data-[active]:text-primary data-[active]:shadow-sm data-[active]:border data-[active]:border-border"
+
 /** Bộ lọc loại thao tác gửi lên máy chủ (khớp đầu mã hành động — checklist ALG 1.17). */
 const ACTION_FILTERS = [
   { value: "ALL", label: "Tất cả" },
@@ -164,8 +167,8 @@ export default function AuditLogsPage() {
 
       <Tabs value={tab} onValueChange={(v) => setTab(v === "platform" ? "platform" : "org")}>
         <TabsList aria-label="Loại nhật ký" className="flex w-full sm:inline-flex sm:w-auto">
-          <TabsTrigger value="org" className="flex-1 whitespace-normal text-center sm:flex-none">Thao tác trong tổ chức</TabsTrigger>
-          <TabsTrigger value="platform" className="flex-1 whitespace-normal text-center sm:flex-none">Truy cập của nền tảng</TabsTrigger>
+          <TabsTrigger value="org" className={TAB}>Thao tác trong tổ chức</TabsTrigger>
+          <TabsTrigger value="platform" className={TAB}>Truy cập của nền tảng</TabsTrigger>
         </TabsList>
         <TabsContent value="platform"><PlatformAccessTab /></TabsContent>
         <TabsContent value="org" className="flex flex-col gap-6">
