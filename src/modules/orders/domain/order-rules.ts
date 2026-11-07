@@ -12,6 +12,7 @@ import type {
   OrderSlaCalculation,
 } from "./order-types"
 import { vnCalendarDate } from "@/lib/vn-date"
+import { DELIVERY_STATUS_LABELS, ORDER_STATUS_LABELS, PRODUCTION_STATUS_LABELS } from "./order-status-labels"
 
 const VALID_ORDER_TRANSITIONS: Record<OrderStatus, readonly OrderStatus[]> = {
   DRAFT: ["CONFIRMED", "CANCELLED"],
@@ -32,7 +33,8 @@ const VALID_PRODUCTION_TRANSITIONS: Record<ProductionStatus, readonly Production
 
 const VALID_DELIVERY_TRANSITIONS: Record<DeliveryStatus, readonly DeliveryStatus[]> = {
   PENDING: ["DISPATCHED", "DELIVERING"],
-  DISPATCHED: ["DELIVERING", "PENDING"],
+  // DISPATCHED → DELIVERED: Điều phối ghi đã giao ngay khi có bằng chứng POD, không bắt qua DELIVERING (audit BL-03)
+  DISPATCHED: ["DELIVERING", "DELIVERED", "PENDING"],
   DELIVERING: ["DELIVERED", "FAILED"],
   DELIVERED: [],
   FAILED: ["DELIVERING", "PENDING"],
@@ -64,7 +66,7 @@ export function validateOrderStatusTransition(
   if (!allowed.includes(next)) {
     return {
       valid: false,
-      reason: `Không thể chuyển trạng thái đơn hàng từ "${current}" sang "${next}". Trạng thái cho phép: ${allowed.join(", ") || "Không (đã kết thúc)"}.`,
+      reason: `Không thể chuyển đơn từ "${ORDER_STATUS_LABELS[current] ?? current}" sang "${ORDER_STATUS_LABELS[next] ?? next}". Bước được phép: ${allowed.map((s) => ORDER_STATUS_LABELS[s]).join(", ") || "không còn (đơn đã kết thúc)"}.`,
     }
   }
   return { valid: true }
@@ -80,7 +82,7 @@ export function validateProductionStatusTransition(
   if (!allowed.includes(next)) {
     return {
       valid: false,
-      reason: `Không thể chuyển trạng thái chế tác từ "${current}" sang "${next}". Trạng thái cho phép: ${allowed.join(", ")}.`,
+      reason: `Không thể chuyển tiến độ làm hàng từ "${PRODUCTION_STATUS_LABELS[current] ?? current}" sang "${PRODUCTION_STATUS_LABELS[next] ?? next}". Bước được phép: ${allowed.map((s) => PRODUCTION_STATUS_LABELS[s]).join(", ")}.`,
     }
   }
   return { valid: true }
@@ -96,7 +98,7 @@ export function validateDeliveryStatusTransition(
   if (!allowed.includes(next)) {
     return {
       valid: false,
-      reason: `Không thể chuyển trạng thái giao hàng từ "${current}" sang "${next}". Trạng thái cho phép: ${allowed.join(", ")}.`,
+      reason: `Không thể chuyển tiến độ giao hàng từ "${DELIVERY_STATUS_LABELS[current] ?? current}" sang "${DELIVERY_STATUS_LABELS[next] ?? next}". Bước được phép: ${allowed.map((s) => DELIVERY_STATUS_LABELS[s]).join(", ") || "không còn"}.`,
     }
   }
   return { valid: true }

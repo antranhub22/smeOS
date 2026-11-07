@@ -17,6 +17,7 @@ import type { DeliveryStatus, OrderStatus, ProductionStatus } from "@/modules/or
 import type { CoordinatorStage } from "./coordinator-types"
 import { mapStageToOrderAxes, type MappedOrderAxes } from "./state-mapper"
 import { formatCurrency } from "@/lib/i18n/formatters"
+import { stageLabel } from "./stage-labels"
 
 /** Lý do chặn hoàn tất khi còn nợ — một câu cho cả `/stage` lẫn `/close` (audit BL-02). */
 export function unpaidClosureReason(balanceVnd: number): string {
@@ -40,7 +41,8 @@ export const COORDINATOR_STAGES: readonly CoordinatorStage[] = [
 /** Bước kết thúc — không chuyển đi đâu nữa. */
 export const TERMINAL_STAGES: readonly CoordinatorStage[] = ["COMPLETED", "CANCELLED"]
 
-const FORWARD: Record<CoordinatorStage, readonly CoordinatorStage[]> = {
+/** Bước kế tiếp hợp lệ của mỗi bước (xuất cho test bảng vòng đời — audit BL-03). */
+export const FORWARD: Record<CoordinatorStage, readonly CoordinatorStage[]> = {
   INTAKE: ["VALIDATING", "PLANNING"],
   VALIDATING: ["PLANNING", "INTAKE"],
   PLANNING: ["ASSIGNING"],
@@ -78,21 +80,21 @@ export function checkStageTransition(
   to: CoordinatorStage,
   facts: StageTransitionFacts
 ): TransitionCheck {
-  if (from === to) return { ok: false, reason: `Đơn đã ở bước ${to}.` }
+  if (from === to) return { ok: false, reason: `Đơn đã ở bước "${stageLabel(to)}".` }
   if (TERMINAL_STAGES.includes(from)) {
-    return { ok: false, reason: `Đơn đã kết thúc (${from}), không chuyển bước được nữa.` }
+    return { ok: false, reason: `Đơn đã kết thúc (${stageLabel(from)}), không chuyển bước được nữa.` }
   }
 
   // Huỷ và mở sự cố đi qua endpoint riêng (lý do bắt buộc), không qua đây.
-  if (to === "CANCELLED") return { ok: false, reason: "Huỷ đơn dùng POST /coordinator/orders/:id/cancel." }
-  if (to === "EXCEPTION") return { ok: false, reason: "Mở sự cố dùng POST /coordinator/orders/:id/exceptions." }
+  if (to === "CANCELLED") return { ok: false, reason: "Huỷ đơn bằng nút Huỷ đơn và nêu lý do." }
+  if (to === "EXCEPTION") return { ok: false, reason: "Mở sự cố bằng nút Báo sự cố và nêu lý do." }
 
   if (from === "EXCEPTION") {
     if (facts.openExceptionCount > 0) {
       return { ok: false, reason: `Còn ${facts.openExceptionCount} sự cố chưa xử lý.` }
     }
     if (facts.resumeStage && to !== facts.resumeStage) {
-      return { ok: false, reason: `Sau sự cố chỉ quay về được bước ${facts.resumeStage}.` }
+      return { ok: false, reason: `Sau sự cố chỉ quay về được bước "${stageLabel(facts.resumeStage)}".` }
     }
     return { ok: true }
   }
@@ -101,7 +103,7 @@ export function checkStageTransition(
   if (!allowed.includes(to)) {
     return {
       ok: false,
-      reason: `Không chuyển được từ ${from} sang ${to}. Bước kế tiếp hợp lệ: ${allowed.join(", ") || "không có"}.`,
+      reason: `Không chuyển được từ "${stageLabel(from)}" sang "${stageLabel(to)}". Bước kế tiếp hợp lệ: ${allowed.map(stageLabel).join(", ") || "không có"}.`,
     }
   }
 
@@ -131,6 +133,8 @@ export function checkStageTransition(
 export function axesAfterTransition(to: CoordinatorStage, current: MappedOrderAxes): MappedOrderAxes {
   if (to === "EXCEPTION") return current
   if (to === "CANCELLED") return { ...current, status: "CANCELLED" }
+  // Thẩm định trả về Tiếp nhận không hạ đơn đã xác nhận về nháp (audit BL-03 — M10 cấm CONFIRMED → DRAFT)
+  if (to === "INTAKE") return { ...mapStageToOrderAxes(to), status: current.status }
   return mapStageToOrderAxes(to)
 }
 
