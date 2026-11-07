@@ -17,8 +17,8 @@ const createOrderSchema = z.object({
       productId: z.string().optional(),
       variantId: z.string().optional(),
       description: z.string().optional(),
-      quantity: z.number().int().positive().default(1),
-      unitPriceVnd: z.number().nonnegative(),
+      quantity: z.number().int().positive().max(999).default(1),
+      unitPriceVnd: z.number().int().nonnegative(),
       metadata: z.record(z.string(), z.unknown()).optional(),
     })
   ).min(1, "Đơn hàng phải có ít nhất 1 sản phẩm"),
@@ -28,7 +28,7 @@ const createOrderSchema = z.object({
   internalNote: z.string().optional(),
   deliveryWindow: z
     .object({
-      date: z.string(),
+      date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Ngày giao dạng YYYY-MM-DD"),
       timeSlot: z.string().optional(),
     })
     .optional(),

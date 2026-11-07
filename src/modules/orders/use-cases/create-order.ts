@@ -9,13 +9,15 @@ import { calculateOrderTotal, generateOrderCode } from "../domain/order-rules"
 import type { CreateOrderInput, OrderRecord } from "../domain/order-types"
 import type { IOrderRepository } from "../domain/repositories/order-repository.interface"
 import { getOrderRepository } from "../infra/order-repository"
+import { findForeignOrderReferences } from "../infra/order-reference-guard"
 import { notifyOrganization } from "@/modules/notification/use-cases/notify-organization"
 
 export async function createOrder(
   ctx: TenantContext,
   input: CreateOrderInput,
   repo: IOrderRepository = getOrderRepository(),
-  notify: typeof notifyOrganization = notifyOrganization
+  notify: typeof notifyOrganization = notifyOrganization,
+  findForeign: typeof findForeignOrderReferences = findForeignOrderReferences
 ): Promise<OrderRecord> {
   if (!input.items || input.items.length === 0) {
     throw new AppError("VALIDATION_FAILED", "Đơn hàng phải có ít nhất một sản phẩm hoặc sản phẩm.")
@@ -29,6 +31,14 @@ export async function createOrder(
   // Nhân viên chi nhánh tạo đơn → đơn thuộc chi nhánh đó, không chọn chi nhánh khác (checklist ALG 9.13)
   const scope = branchScopeOf(ctx)
   const scopedInput = scope ? { ...input, branchId: scope } : input
+  // Khách / chi nhánh / sản phẩm của tổ chức khác → như không tồn tại (404, không 403)
+  const foreign = await findForeign(ctx, {
+    customerId: scopedInput.customerId,
+    branchId: scopedInput.branchId,
+    productIds: scopedInput.items.map((it) => it.productId),
+    variantIds: scopedInput.items.map((it) => it.variantId),
+  })
+  if (foreign.length > 0) throw new AppError("NOT_FOUND", "Không tìm thấy khách hàng, chi nhánh hoặc sản phẩm đã chọn.")
   const countToday = await repo.countTodayOrders(ctx.organizationId)
   const order = await createWithFreshCode(ctx, repo, countToday, scopedInput, totalVnd)
   // Không chờ: thông báo chậm/lỗi không được làm chậm hay hỏng việc tạo đơn
