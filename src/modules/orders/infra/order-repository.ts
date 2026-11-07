@@ -5,6 +5,7 @@
  */
 
 import { prisma } from "@/core/tenancy/infra/prisma"
+import { upsertOrderRecipient } from "./order-recipient-repository"
 import type {
   Prisma,
   order_assignments,
@@ -142,6 +143,7 @@ export class OrderRepository implements IOrderRepository {
       })
 
       if (input.leadId) await linkLeadToOrder(tx, organizationId, input.leadId, ord.id)
+      await upsertOrderRecipient(tx, organizationId, ord.id, { deliveryAddress: input.deliveryAddress ?? null }) // P-3a ghi kép
 
       if (input.items && input.items.length > 0) {
         await tx.order_items.createMany({
@@ -249,6 +251,7 @@ export class OrderRepository implements IOrderRepository {
         events: { orderBy: { created_at: "asc" } },
       },
     })
+    if (input.deliveryAddress !== undefined) await upsertOrderRecipient(prisma, organizationId, id, { deliveryAddress: input.deliveryAddress }) // P-3a
 
     return mapPrismaOrder(row)
   }

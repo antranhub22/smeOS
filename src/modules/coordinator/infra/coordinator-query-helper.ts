@@ -8,6 +8,7 @@ import type { Prisma } from "@/generated/prisma/client"
 import type { CoordinatorStage, CoordinationRiskLevel } from "../domain/coordinator-types"
 import type { MappedOrderAxes } from "../domain/state-mapper"
 import type { DbClient } from "./transaction"
+import { upsertOrderRecipient } from "@/modules/orders/infra/order-recipient-repository"
 
 export const ORDER_INCLUDE = {
   coordination: { include: { partner: true } },
@@ -76,6 +77,8 @@ export async function executeCreateOrder(
       created_by: ctx.userId,
     }),
   })
+
+  await upsertOrderRecipient(db, ctx.organizationId, order.id, { deliveryAddress: data.deliveryAddress }) // P-3a ghi kép
 
   if (data.items.length > 0) {
     await db.order_items.createMany({

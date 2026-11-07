@@ -121,7 +121,9 @@ lại có chủ đích qua T-6 và ADR affiliate sau này (D-48).
 | ☐ | Mục | Thay | Gate thêm |
 |---|---|---|---|
 | [x] | P-2 [SCHEMA] **B5** `customers.status PROSPECT`; `customer_id` trên `leads` (đã có), `greeting_sessions`; backfill; ghi kép — PO duyệt 07/11/2026, phương án A: PROSPECT chỉ là người nhận link Thẻ chào có SĐT chưa đặt đơn, lead vẫn tạo khách thường (đặc tả 07 §48) | — | `tests/tenant/customer-prospects.test.ts`: link/lead/đơn trỏ đúng khách cùng tổ chức; PROSPECT không hiện ở danh sách/xuất; backfill |
-| [ ] | P-3 [SCHEMA] **B5** `order_recipients` thay JSON địa chỉ/VAT | — | Phiếu in, theo dõi đơn, xuất đơn không đổi |
+| [x] | P-3a [SCHEMA] **B5** `order_recipients` (người nhận + VAT) + backfill + ghi kép ở 6 đường ghi; đọc chưa đổi — PO duyệt 07/11/2026 (D-63), đặc tả 07 §49 | — | `tests/tenant/order-recipients.test.ts`: mọi đường ghi; backfill khớp `recipientFromDeliveryAddress` |
+| [ ] | P-3b **B5** Chuyển đọc người nhận/địa chỉ/VAT (36 tệp: phiếu in, theo dõi, xuất, điều phối, shipper…) sang `order_recipients` | — | Phiếu in, theo dõi đơn, xuất đơn không đổi |
+| [ ] | P-3c [SCHEMA] contract: bỏ người nhận/địa chỉ khỏi `orders.delivery_address`, bỏ cột `orders.vat_*` | — | Chốt khớp trước khi xoá (như T-7c) |
 | [ ] | P-4 [SCHEMA] `shared_order_access`; gia công dùng chia sẻ | — | Hết hạn → đối tác 404 |
 | [ ] | P-5 [SCHEMA] Mã hoá cột + `phone_hash` + `phone_last4`; đổi 4 chỗ tìm kiếm | — | Dump không có số rõ |
 | [ ] | P-6 [SCHEMA] `retention_policies` + job hạn lưu (cần I-2) | P2-F2 | Dòng quá hạn xử lý; legal hold giữ |
