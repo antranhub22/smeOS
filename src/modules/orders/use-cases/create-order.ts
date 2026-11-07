@@ -26,12 +26,11 @@ export async function createOrder(
     throw new AppError("VALIDATION_FAILED", "Tổng tiền đơn hàng không thể là số âm.")
   }
 
-  const countToday = await repo.countTodayOrders(ctx.organizationId)
-  const code = generateOrderCode(countToday + 1)
-
   // Nhân viên chi nhánh tạo đơn → đơn thuộc chi nhánh đó, không chọn chi nhánh khác (checklist ALG 9.13)
   const scope = branchScopeOf(ctx)
-  const order = await repo.create(ctx.organizationId, code, scope ? { ...input, branchId: scope } : input, totalVnd, ctx.userId)
+  const scopedInput = scope ? { ...input, branchId: scope } : input
+  const countToday = await repo.countTodayOrders(ctx.organizationId)
+  const order = await createWithFreshCode(ctx, repo, countToday, scopedInput, totalVnd)
   // Không chờ: thông báo chậm/lỗi không được làm chậm hay hỏng việc tạo đơn
   void notify({
     organizationId: ctx.organizationId,
@@ -41,4 +40,34 @@ export async function createOrder(
     deepLink: "/don-hang",
   })
   return order
+}
+
+/** Số lần thử sinh mã khi trùng — vòng lặp có giới hạn. */
+export const ORDER_CODE_ATTEMPTS = 3
+
+/**
+ * Hai đơn tạo cùng lúc đọc cùng `countToday` → cùng mã → trùng khoá `(organization_id, code)`. Trước đây trả 500;
+ * nay thử số kế tiếp, tối đa `ORDER_CODE_ATTEMPTS` lần (audit BL-10, cùng cách với tạo đơn Điều phối).
+ */
+async function createWithFreshCode(
+  ctx: TenantContext,
+  repo: IOrderRepository,
+  countToday: number,
+  input: CreateOrderInput,
+  totalVnd: number
+): Promise<OrderRecord> {
+  for (let attempt = 0; ; attempt += 1) {
+    try {
+      return await repo.create(ctx.organizationId, generateOrderCode(countToday + 1 + attempt), input, totalVnd, ctx.userId)
+    } catch (error: unknown) {
+      if (!isUniqueViolation(error) || attempt + 1 >= ORDER_CODE_ATTEMPTS) {
+        if (isUniqueViolation(error)) throw new AppError("CONFLICT", "Đang có nhiều đơn tạo cùng lúc — vui lòng thử lại.")
+        throw error
+      }
+    }
+  }
+}
+
+function isUniqueViolation(error: unknown): boolean {
+  return typeof error === "object" && error !== null && (error as { code?: unknown }).code === "P2002"
 }

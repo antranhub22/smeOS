@@ -5,6 +5,7 @@
  */
 
 import { prisma } from "@/core/tenancy/infra/prisma"
+import { vnDayBounds } from "@/lib/vn-date"
 import { storedDeliveryAddress, upsertOrderRecipient } from "./order-recipient-repository"
 import { RECIPIENT_VIEW_SELECT, withDeliveryView } from "./order-recipient-view"
 import type {
@@ -93,15 +94,13 @@ function mapPrismaOrder(row: OrderRow): OrderRecord {
 
 export class OrderRepository implements IOrderRepository {
   async countTodayOrders(organizationId: string, date = new Date()): Promise<number> {
-    const startOfDay = new Date(date)
-    startOfDay.setHours(0, 0, 0, 0)
-    const endOfDay = new Date(date)
-    endOfDay.setHours(23, 59, 59, 999)
+    // Ngày Việt Nam, khớp ngày trong mã `generateOrderCode` (audit BL-10)
+    const { start, end } = vnDayBounds(date)
 
     return prisma.orders.count({
       where: {
         organization_id: organizationId,
-        created_at: { gte: startOfDay, lte: endOfDay },
+        created_at: { gte: start, lt: end },
       },
     })
   }

@@ -11,6 +11,7 @@ import type {
   OrderEventRecord,
   OrderSlaCalculation,
 } from "./order-types"
+import { vnCalendarDate } from "@/lib/vn-date"
 
 const VALID_ORDER_TRANSITIONS: Record<OrderStatus, readonly OrderStatus[]> = {
   DRAFT: ["CONFIRMED", "CANCELLED"],
@@ -172,12 +173,13 @@ export function calculateOrderSla(
 }
 
 /**
- * Sinh mã đơn hàng chuẩn FloraOS dạng `DH-YYMMDD-XXXX`
+ * Sinh mã đơn hàng chuẩn FloraOS dạng `DHYYMMDD-XXXX`, ngày theo giờ Việt Nam (audit BL-10).
  */
 export function generateOrderCode(seqNumber: number, date = new Date()): string {
-  const yy = String(date.getFullYear()).slice(-2)
-  const mm = String(date.getMonth() + 1).padStart(2, "0")
-  const dd = String(date.getDate()).padStart(2, "0")
+  const vn = vnCalendarDate(date)
+  const yy = String(vn.year).slice(-2)
+  const mm = String(vn.month).padStart(2, "0")
+  const dd = String(vn.day).padStart(2, "0")
   const suffix = String(seqNumber).padStart(4, "0")
   return `DH${yy}${mm}${dd}-${suffix}`
 }
