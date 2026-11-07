@@ -35,3 +35,14 @@ export function planPayment(order: { totalVnd: number; paidVnd: number; status: 
   const paidAfter = order.paidVnd + amountVnd
   return { kind: order.paidVnd > 0 ? "BALANCE" : "DEPOSIT", paidAfter, balanceAfter: order.totalVnd - paidAfter, firstPayment: order.paidVnd <= 0 }
 }
+
+/**
+ * Kiểm khoản hoàn và tính số đã thu/còn lại sau hoàn; trả lý do (tiếng Việt) nếu không hoàn được.
+ * Cùng tệp với `planPayment` để mọi đường ghi tiền (sổ đơn, Điều phối) dùng chung một luật (audit BL-05).
+ */
+export function planRefund(order: { totalVnd: number; paidVnd: number }, amountVnd: number): { paidAfter: number; balanceAfter: number } | string {
+  if (!Number.isInteger(amountVnd) || amountVnd <= 0) return "Số tiền phải là số nguyên dương"
+  if (amountVnd > order.paidVnd) return "Không thể hoàn quá số tiền đã thu"
+  const paidAfter = order.paidVnd - amountVnd
+  return { paidAfter, balanceAfter: order.totalVnd - paidAfter }
+}

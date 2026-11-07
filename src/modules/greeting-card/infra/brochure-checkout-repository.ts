@@ -11,6 +11,9 @@ import type { ProductSnapshot } from "../domain/greeting-card-types"
 import { countBySlot, slotFullMessage } from "../domain/slot-capacity"
 import { recordAuditLog } from "@/modules/audit/use-cases/record-audit-log"
 import { saleBranchOfSession } from "./sale-branch"
+import { activateProspect } from "./session-customer"
+import { storedDeliveryAddress, upsertOrderRecipient } from "@/modules/orders/infra/order-recipient-repository"
+import { RECIPIENT_VIEW_SELECT, withDeliveryView } from "@/modules/orders/infra/order-recipient-view"
 
 export interface CreateBrochureOrderData {
   organizationId: string
@@ -133,18 +136,19 @@ export class BrochureCheckoutRepository {
 
   /** Đơn vừa đặt từ link bộ sưu tập chung có cùng SĐT + mẫu (để trả lại thay vì tạo đơn trùng). */
   async findRecentPublicOrders(input: { organizationId: string; catalogId: string; customerPhone: string; productId: string; since: Date }) {
-    return this.db.greeting_sessions.findMany({
+    const rows = await this.db.greeting_sessions.findMany({
       where: {
         organization_id: input.organizationId, catalog_id: input.catalogId, customer_phone: input.customerPhone,
         selected_product_id: input.productId, order_id: { not: null }, created_at: { gte: input.since },
       },
       select: {
         id: true, send_code: true, product_snapshot: true,
-        order: { select: { id: true, code: true, total_vnd: true, paid_vnd: true, created_at: true, status: true, delivery_address: true, delivery_window: true, pricing_rule_ref: true } },
+        order: { select: { id: true, code: true, total_vnd: true, paid_vnd: true, created_at: true, status: true, delivery_address: true, delivery_window: true, pricing_rule_ref: true, recipient: RECIPIENT_VIEW_SELECT } },
       },
       orderBy: { created_at: "desc" },
       take: 5,
     })
+    return rows.map((r) => ({ ...r, order: r.order && withDeliveryView(r.order) })) // P-3b
   }
 
   /**
@@ -166,8 +170,10 @@ export class BrochureCheckoutRepository {
 
   async findOrCreateCustomer(data: Pick<CreateBrochureOrderData, "organizationId" | "customerPhone" | "customerName" | "deliveryAddress"> & { email?: string | undefined }) {
     const where = { organization_id: data.organizationId, phone: data.customerPhone }
-    const existing = await this.db.customers.findFirst({ where, select: { id: true, email: true } })
+    const existing = await this.db.customers.findFirst({ where, select: { id: true, email: true, status: true } })
     if (existing) {
+      // P-2: khách tiềm năng từ link Thẻ chào đặt đơn / để lại lead → khách thường
+      if (existing.status === "PROSPECT") await activateProspect(this.db, existing.id, { name: data.customerName, address: data.deliveryAddress })
       if (data.email && !existing.email) {
         await this.db.customers.update({ where: { id: existing.id }, data: { email: data.email } }).catch(() => null)
       }
@@ -214,6 +220,12 @@ export class BrochureCheckoutRepository {
           throw validationFailed({ paymentCode: "Mã thanh toán đã hết lượt sử dụng" })
         }
       }
+      const deliveryAddress = {
+        recipientName: data.recipientName, phone: data.recipientPhone, street: data.deliveryAddress,
+        ...(data.addressParts ? { parts: { ...data.addressParts } } : {}),
+        ...(quote.shippingZone ? { zone: quote.shippingZone.name } : {}),
+        ...data.delivery,
+      }
       const order = await tx.orders.create({
         data: {
           organization_id: data.organizationId,
@@ -239,14 +251,7 @@ export class BrochureCheckoutRepository {
             timeSlot: data.deliveryTimeSlot,
             ...(data.checkOutDate ? { checkOutDate: data.checkOutDate } : {}),
           },
-          delivery_address: {
-            recipientName: data.recipientName,
-            phone: data.recipientPhone,
-            street: data.deliveryAddress,
-            ...(data.addressParts ? { parts: { ...data.addressParts } } : {}),
-            ...(quote.shippingZone ? { zone: quote.shippingZone.name } : {}),
-            ...data.delivery,
-          },
+          delivery_address: storedDeliveryAddress(deliveryAddress), // P-3c: người nhận chỉ ở order_recipients
           created_by: "customer-brochure",
           items: {
             create: {
@@ -261,6 +266,8 @@ export class BrochureCheckoutRepository {
         },
       })
 
+      await upsertOrderRecipient(tx, data.organizationId, order.id, { deliveryAddress })
+
       if (data.voucherId) {
         const claimed = await getVoucherRedemptionRepository(tx).claim({
           organizationId: data.organizationId, voucherId: data.voucherId, orderId: order.id, customerId,
@@ -273,6 +280,7 @@ export class BrochureCheckoutRepository {
         data: {
           order_id: order.id,
           status: "ORDER_SUBMITTED",
+          customer_id: customerId, // P-2
           customer_name: data.customerName,
           customer_phone: data.customerPhone,
           product_snapshot: data.snapshot as unknown as Prisma.InputJsonValue,

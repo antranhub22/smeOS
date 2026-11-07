@@ -2,7 +2,7 @@ version: "1.0"
 governance:
   constitution: "docs/00-DOCUMENTATION-CONSTITUTION.md"
   updated_at: "2026-11-04T06:00:00+07:00"
-  total_documents: 91
+  total_documents: 92
 
 documents:
   # =========================================================================
@@ -339,6 +339,20 @@ documents:
     dependencies: ["docs/dac-ta/01-technical-requirements.md"]
     supersedes: []
 
+  - id: "DOC-03-ERD"
+    path: "docs/kien-truc/ERD_THEO_MIEN.md"
+    title: "ERD theo miền (sinh từ schema)"
+    domain: "Database"
+    layer: "Level 3"
+    purpose: "Sơ đồ quan hệ bảng theo 10 miền, sinh bởi scripts/gen-erd.mjs từ prisma/schema.prisma — không sửa tay"
+    status: "CANONICAL"
+    authority: "Level 3"
+    canonical: true
+    ssot: false
+    owner: "Data Architect"
+    dependencies: ["docs/dac-ta/07-database-specification.md"]
+    supersedes: []
+
   - id: "DOC-03-RBAC-CATALOG"
     path: "docs/dac-ta/02-function-catalog.md"
     title: "Function & Capability Catalog"
@@ -631,6 +645,20 @@ documents:
     ssot: false
     owner: "Product Owner"
     dependencies: ["docs/dac-ta/03a-ux-constitution.md", "docs/dac-ta/03c-ux-progressive-disclosure.md"]
+    supersedes: []
+
+  - id: "DOC-03-UX-WRITING"
+    path: "docs/dac-ta/SMEOS_UX_WRITING_GLOSSARY.md"
+    title: "UX Writing Standard — giọng điệu & mẫu câu thông báo"
+    domain: "UX/UI"
+    layer: "Level 3"
+    purpose: "Giọng điệu và mẫu câu cho thông báo thành công, lỗi, trạng thái rỗng, hộp thoại xác nhận. Không định nghĩa thuật ngữ — bảng thuật ngữ duy nhất là docs/dac-ta/ux-patterns/glossary.md (gộp 07/11/2026)"
+    status: "SUPPORTING"
+    authority: "Level 3"
+    canonical: false
+    ssot: false
+    owner: "Product Owner"
+    dependencies: ["docs/dac-ta/ux-patterns/glossary.md", "docs/dac-ta/03c-ux-progressive-disclosure.md"]
     supersedes: []
 
   - id: "DOC-03-ROLE-UX-CONTRACT"

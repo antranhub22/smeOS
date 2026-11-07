@@ -1,4 +1,5 @@
 import { z } from "zod"
+import { validationFailed } from "@/core/http/errors"
 import { handle, jsonResponse } from "@/core/http/response"
 import { requireCapability } from "@/core/rbac/capabilities"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
@@ -16,8 +17,8 @@ const createOrderSchema = z.object({
       productId: z.string().optional(),
       variantId: z.string().optional(),
       description: z.string().optional(),
-      quantity: z.number().int().positive().default(1),
-      unitPriceVnd: z.number().nonnegative(),
+      quantity: z.number().int().positive().max(999).default(1),
+      unitPriceVnd: z.number().int().nonnegative(),
       metadata: z.record(z.string(), z.unknown()).optional(),
     })
   ).min(1, "Đơn hàng phải có ít nhất 1 sản phẩm"),
@@ -27,7 +28,7 @@ const createOrderSchema = z.object({
   internalNote: z.string().optional(),
   deliveryWindow: z
     .object({
-      date: z.string(),
+      date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Ngày giao dạng YYYY-MM-DD"),
       timeSlot: z.string().optional(),
     })
     .optional(),
@@ -61,7 +62,11 @@ export const GET = handle(async (request) => {
   const deliveryTo = parseDeliveryDate(url.searchParams.get("delivery_to"))
   const saleId = url.searchParams.get("sale_id")?.trim().slice(0, 64) || undefined
   const limitParam = url.searchParams.get("limit")
-  const limit = limitParam ? parseInt(limitParam, 10) : 50
+  // Trần 100 (audit API-03): trước đây `?limit=` không chặn — số lớn tải hết đơn kèm quan hệ, chữ → NaN → 500
+  const limit = limitParam ? Number(limitParam) : 50
+  if (!Number.isInteger(limit) || limit < 1 || limit > 100) {
+    throw validationFailed({ limit: "Phải là số nguyên từ 1 đến 100" })
+  }
 
   const result = await listOrders(ctx, {
     status: status || undefined,

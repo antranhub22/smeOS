@@ -4130,6 +4130,194 @@ Ca thử: `tests/tenant/branch-scope-customers.test.ts` (tự cài trigger từ 
 
 Ca thử: `tests/tenant/branch-scope-products.test.ts`.
 
+## 50. Quyền xem đơn của chi nhánh gia công — `shared_order_access` (07/11/2026)
+
+ADR-014 D-P6, bước **P-4**. PO duyệt 07/11/2026 (D-64): làm ngay; chi nhánh làm đơn còn quyền **7 ngày** sau khi đơn
+đóng; chi nhánh được mời **mất quyền ngay** khi hết vòng hoặc chi nhánh khác nhận; tin mời Telegram/Zalo **chỉ ghi khu
+vực**. Migration `20261107200000_shared_order_access`.
+
+```prisma
+model shared_order_access {
+  id              String                    @id @default(uuid())
+  organization_id String
+  order_id        String
+  branch_key      String
+  level           shared_order_access_level
+  granted_at      DateTime                  @default(now()) @db.Timestamptz(3)
+  revoked_at      DateTime?                 @db.Timestamptz(3)
+  updated_at      DateTime                  @updatedAt @db.Timestamptz(3)
+
+  organization organizations @relation(fields: [organization_id], references: [id])
+  order        orders        @relation(fields: [order_id, organization_id], references: [id, organization_id], onDelete: Cascade)
+
+  @@unique([order_id, branch_key])
+  @@index([organization_id, branch_key])
+}```
+
+```prisma
+enum shared_order_access_level {
+  INVITED
+  ASSIGNED
+}```
+
+- Một dòng mỗi (đơn, chi nhánh); `branch_key` là `branches.id` hoặc mã điều phối, đúng như trong phiên điều phối và link
+  ký. Khoá ghép `(order_id, organization_id)` tới `orders`, xoá đơn → xoá quyền. Thuộc tổ chức: RLS `tenant_isolation`.
+- Ghi: `SubcontractOrderRepository.updateSubcontractState` (mọi lần đổi phiên điều phối) gọi `syncOrderShares` cùng giao
+  dịch, theo `subcontractShares` (`src/modules/greeting-card/domain/subcontract-share.ts`): phiên `OPEN` → chi nhánh được
+  mời ở vòng hiện tại (trừ đã từ chối) mức `INVITED`; `CLAIMED_GRACE`/`COMMITTED` → chỉ chi nhánh giữ đơn, mức `ASSIGNED`;
+  `ESCALATED`/`CANCELLED` → không ai. Bên không còn trong tập → `revoked_at`; được mời lại → cấp lại.
+- Đọc: `loadSubcontractOrderForBranch` (cổng mọi route `/api/v1/public/subcontract/*`) → `hasActiveOrderShare`
+  (`src/modules/orders/infra/shared-order-access-repository.ts`, luật ở `src/modules/orders/domain/order-share.ts`): thu
+  hồi → 404; đơn đóng (hoàn tất, huỷ, hoặc đã giao) → `INVITED` hết ngay, `ASSIGNED` hết sau 7 ngày tính từ sự kiện đóng
+  đầu tiên trong `order_events` (đơn cũ không có sự kiện: `updated_at`).
+- Link ký vẫn định danh chi nhánh; hạn chữ ký nâng 14 → 120 ngày (trần an toàn), quyền do bảng này quyết.
+- Khác ADR: quyền gắn chi nhánh (`branch_key`) thay cho `grantee_org_id` vì gia công hiện chỉ giao cho chi nhánh cùng tổ
+  chức; "trường được xem" theo mức (`INVITED`: SĐT người nhận che; `ASSIGNED`: đủ); hạn tính khi đọc thay cho cột.
+- Tin mời (`inviteSubcontract`): biến `{{deliveryAddress}}` nay là khu vực (`subcontractAreaText`: phường, quận, tỉnh);
+  địa chỉ đầy đủ chỉ dùng để tìm chi nhánh gần và hiện trong Thẻ Gia Công.
+
+Ca thử: `tests/tenant/shared-order-access.test.ts` (được mời/không mời, chi nhánh khác nhận, huỷ nhận, vòng mới, đơn đóng
++ 7 ngày, xoá đơn, backfill), `src/modules/greeting-card/domain/__tests__/subcontract-share.test.ts`.
+
+## 49. Người nhận và hoá đơn VAT của đơn — `order_recipients` (07/11/2026)
+
+ADR-014 D-P2, bước **P-3a** (expand). PO duyệt 07/11/2026: P-3 chia ba bước (P-3a bảng + backfill + ghi kép; P-3b
+chuyển đọc; P-3c bỏ dữ liệu cá nhân khỏi `orders.delivery_address` và các cột `orders.vat_*`), gồm cả VAT (D-63).
+Migration `20261107120000_order_recipients`.
+
+```prisma
+model order_recipients {
+  organization_id     String
+  order_id            String   @id // một dòng mỗi đơn
+  recipient_name      String?
+  recipient_phone     String?
+  address_line        String?
+  address_parts       Json?
+  vat_company_name    String?
+  vat_tax_code        String?
+  vat_company_address String?
+  vat_email           String?
+  created_at          DateTime @default(now()) @db.Timestamptz(3)
+  updated_at          DateTime @updatedAt @db.Timestamptz(3)
+
+  organization organizations @relation(fields: [organization_id], references: [id])
+  order        orders        @relation(fields: [order_id, organization_id], references: [id, organization_id], onDelete: Cascade)
+
+  @@unique([order_id, organization_id])
+  @@index([organization_id])
+}```
+
+- Một dòng mỗi đơn (`order_id` là khoá chính); khoá ghép `(order_id, organization_id)` tới `orders`, xoá đơn → xoá
+  dòng. Thuộc tổ chức: RLS `tenant_isolation` (`scripts/gen-rls-policies.mjs`).
+- Cột suy từ JSON `orders.delivery_address` bằng `recipientFromDeliveryAddress` (`src/modules/orders/domain/order-recipient.ts`):
+  tên `recipientName` → `name`; SĐT `phone` → `recipientPhone`; `address_line` (dòng hiển thị) `street` → `full_address`
+  → `fullAddress` → `address` → `formattedAddress` → ghép từ `parts`; `address_parts` giữ NGUYÊN mọi khoá địa chỉ như
+  đã lưu (`houseNumber`, `street`, `ward`, `district`, `province`, `city`, `country`, `formattedAddress`, `full_address`,
+  `fullAddress`, `address`, `parts` — từ P-3b, migration `20261107150000_order_recipients_address` chép lại). JSON là
+  chuỗi → chỉ `address_line`. Khoá vận hành (`zone`, `notes`, `mapUrl`) ở lại JSON.
+- Ghi kép (`upsertOrderRecipient`, `src/modules/orders/infra/order-recipient-repository.ts`), cùng giao dịch với lệnh ghi
+  đơn: tạo đơn nhập tay và sửa địa chỉ (`order-repository.ts`), đặt đơn Thẻ chào (`brochure-checkout-repository.ts`),
+  duyệt đổi thông tin (`order-change-repository.ts`), tạo đơn điều phối (`coordinator-query-helper.ts`), hoá đơn VAT
+  (`order-vat-repository.ts` — chỉ phần `vat_*`).
+- Đọc (P-3b, 07/11/2026): mọi lệnh `orders.find*` có trả `delivery_address` đi qua query extension của client Prisma
+  (`src/core/tenancy/infra/prisma.ts` → `src/modules/orders/infra/order-recipient-view.ts`): lấy kèm `recipient` và trả
+  về JSON ghép (`deliveryAddressView`: khoá vận hành của JSON + phần cá nhân từ bảng; đơn chưa có dòng → JSON như cũ).
+  Chọn đơn lồng trong bảng khác (`order: { select: { delivery_address } }`) dùng `RECIPIENT_VIEW_SELECT` +
+  `withDeliveryView` (`tests/unit/architecture/order-recipient-reads.test.ts` khoá). VAT đọc `order_recipients`, đơn
+  chưa có dòng → cột cũ. Dữ liệu cũ khoá `name`/`full_address` nay đọc ra thêm `recipientName`/`street`.
+- Backfill trong migration (khối `P3A-BACKFILL`, rồi `P3B-BACKFILL` chép lại phần địa chỉ, `ON CONFLICT DO UPDATE`):
+  làm đúng như `recipientFromDeliveryAddress` (test so hai bên).
+- Nơi lưu DUY NHẤT (P-3c, 07/11/2026, migration `20261107180000_order_recipients_contract`): đường ghi chỉ ghi khoá vận
+  hành vào `orders.delivery_address` (`storedDeliveryAddress` = `stripRecipientPii`), người nhận/địa chỉ/VAT vào bảng này;
+  bỏ 4 cột `orders.vat_company_name`, `vat_tax_code`, `vat_company_address`, `vat_email`. Migration chốt khớp trước (khối
+  `P3C-VERIFY` + kiểm VAT; lệch → RAISE, không xoá gì), rồi bỏ phần cá nhân khỏi JSON đơn cũ (khối `P3C-STRIP`, chuỗi →
+  NULL). `OrderRepository.update` trả về qua `withDeliveryView` (lệnh `update` không qua extension đọc).
+
+Ca thử: `tests/tenant/order-recipients.test.ts` (mọi đường ghi, khoá ghép khác tổ chức, backfill 13 dạng địa chỉ, xoá
+phần cá nhân khỏi nơi cũ mà màn hình vẫn đủ), `src/modules/orders/domain/__tests__/order-recipient.test.ts`.
+
+## 48. Một hồ sơ khách — `customers.status`, `greeting_sessions.customer_id` (07/11/2026)
+
+ADR-014 D-P2, bước **P-2** (expand). PO duyệt 07/11/2026, phương án A. Migration `20261107090000_customer_prospects`.
+
+```prisma
+enum customer_status {
+  ACTIVE
+  PROSPECT
+}
+```
+
+- `customers.status` (`customer_status`, mặc định `ACTIVE`, index `(organization_id, status)`). `PROSPECT` = người nhận
+  link Thẻ chào có SĐT mà chưa đặt đơn. Khách cũ và khách do lead tạo vẫn là `ACTIVE`.
+- Khách `PROSPECT` không hiện ở danh sách, tìm kiếm, chi tiết, xuất khách, đơn của khách, báo giá và gợi ý thị trường
+  (`status: "ACTIVE"` ở `customer-repository.ts`, `customer-export-query.ts`, `customer-orders-query.ts`,
+  `quotation-reference-guard.ts`, `market-intelligence-repository.ts`). Console (`platform-records-repository.ts`, xuất
+  dữ liệu tổ chức) vẫn thấy mọi hồ sơ.
+- Thành `ACTIVE` (cùng hồ sơ, cùng `id`): khi đặt đơn hoặc để lại lead (`findOrCreateCustomer` → `activateProspect`, lấy
+  tên/địa chỉ vừa nhập), hoặc khi nhân viên tạo khách cùng SĐT (`CustomerRepository.create` nâng thay vì báo trùng).
+- `greeting_sessions.customer_id` (`String?`, khoá ngoại tới `customers`, `ON DELETE SET NULL`, index): khách của đơn
+  (khi gắn đơn) hoặc hồ sơ theo SĐT trên link (`ensureProspectCustomer`, `src/modules/greeting-card/infra/session-customer.ts`)
+  — lúc tạo link, đặt thêm đơn, Sale ghi SĐT (link công khai: gắn lúc đơn tạo xong, đơn bị chặn thì không có hồ sơ). Link
+  chỉ có tên thì để trống. Khoá một cột như
+  `leads.customer_id`: khoá ghép với `SET NULL` sẽ xoá cả `organization_id`; cùng tổ chức do mã ghi bảo đảm.
+- Ghi kép: `customer_name`, `customer_phone` của link vẫn ghi và vẫn được đọc; bỏ ở bước contract sau.
+- Backfill trong migration (khối `P2-BACKFILL`): link có đơn → khách của đơn; link chưa có đơn → khách cùng tổ chức +
+  SĐT; chưa có → tạo `PROSPECT` (một dòng mỗi tổ chức + SĐT, tên ở link mới nhất, `ON CONFLICT DO NOTHING`).
+
+Ca thử: `tests/tenant/customer-prospects.test.ts` (gồm chạy lại khối backfill của migration).
+
+## 47. Truy cập của nhân viên nền tảng — `platform_access_logs` (06/11/2026)
+
+ADR-013 D-I5, bước **I-2b**; D-60 (PO 06/11/2026: chủ tổ chức xem ngay trong ứng dụng — tab "Truy cập của nền tảng"
+trong `/audit`, quyền `G9`; mục đích tự suy từ thao tác). Migration `20261106140000_platform_access_logs`.
+
+```prisma
+model platform_access_logs {
+  id              String   @id @default(uuid())
+  organization_id String
+  operator_id     String
+  purpose         String
+  method          String
+  route           String
+  created_at      DateTime @default(now()) @db.Timestamptz(3)
+
+  organization organizations @relation(fields: [organization_id], references: [id])
+
+  @@index([organization_id, created_at])
+}
+```
+
+- Thuộc tổ chức: RLS `tenant_isolation` như mọi bảng tenant (`scripts/gen-rls-policies.mjs`); đọc qua `scopedWhere`.
+- Chỉ thêm dòng: trigger `platform_access_logs_append_only` (hàm `smeos_append_only_guard`, §46).
+- Ghi: `recordPlatformAccess` (`src/modules/audit/use-cases/record-platform-access.ts`) ở mọi handler
+  `platform/organizations/[id]/*` và `platform/orgs-data/[orgId]/*`, ngay sau khi giải phiên Console (xuất dữ liệu: sau
+  khi kiểm `N1`), TRƯỚC khi đọc/ghi; ghi lỗi → yêu cầu lỗi (biện pháp bù R-2). `INSERT … SELECT … WHERE` tổ chức tồn
+  tại — id sai không ghi, route vẫn 404. `purpose` là mã (`org.profile.read`, `org.records.orders.export`…); nhãn tiếng
+  Việt ở `src/modules/audit/domain/platform-access.ts`, giao diện không hiện mã.
+- Chặn hồi quy: `tests/unit/architecture/platform-access-guard.test.ts` (mỗi handler gọi đúng một lần).
+
+Ca thử: `tests/tenant/platform-access-isolation.test.ts`, `src/modules/audit/domain/platform-access.test.ts`.
+
+## 46. Nhật ký bất biến — `audit_logs`, `platform_audit_logs`, `order_events`, `job_events`, `usage` (06/11/2026)
+
+ADR-013 D-I4, bước **I-2a** (PO duyệt ADR-013 06/11/2026; không đổi schema Prisma). Migration
+`20261106130000_append_only_logs`: hàm `smeos_append_only_guard()` + trigger `<bảng>_append_only` (`BEFORE UPDATE OR
+DELETE … FOR EACH ROW`) trên năm bảng:
+
+- `UPDATE` → luôn từ chối (mọi tài khoản, kể cả chủ sở hữu).
+- `DELETE` — kể cả xoá dây chuyền từ `orders` (→ `order_events`) và `generation_jobs` (→ `job_events`) — chỉ được khi
+  giao dịch đã đặt `app.purge_reason` (`setPurgeReason(tx, reason)`, `src/core/tenancy/infra/purge-reason.ts`; lý do:
+  `tenant_offboarding` · `test_data_cleanup` · `retention_policy`). `set_config(…, true)` chỉ sống trong giao dịch.
+- `TRUNCATE` không qua trigger theo dòng (chỉ dùng ở CSDL test, `resetDatabase`).
+- Rà mã 06/11/2026: ứng dụng, worker, test không sửa/xoá năm bảng này; chỉ `scripts/handover-clean-tenant.ts` và
+  `prisma/seed/clean-siin-store-orders.ts` xoá — cả hai đặt lý do purge đầu giao dịch.
+- Quyền: `scripts/db/create-roles.sql` thu `UPDATE, DELETE` của `smeos_app`/`smeos_worker` trên năm bảng.
+
+Ca thử: `tests/tenant/append-only-logs.test.ts` (tự cài hàm + trigger từ tệp migration và gỡ khi xong, vì CSDL test
+dựng bằng `db push`).
+
+Còn lại của I-2 (I-2b): bảng `platform_access_logs` (D-I5) và màn hình chỉ đọc cho chủ tổ chức (D-60).
+
 ## 45. Một bảng quyết định theo tầng — `governance_decisions` (06/11/2026)
 
 ADR-012 D-T10, bước **T-7a (expand)** — PO duyệt đổi schema 06/11/2026. Gộp ba nơi lưu "khoá / ghi đè theo tầng":

@@ -3,12 +3,14 @@ import { z } from "zod"
 import { validationFailed } from "@/core/http/errors"
 import { handle, jsonResponse } from "@/core/http/response"
 import { requirePlatformContext } from "@/modules/platform/use-cases/resolve-platform-session"
+import { recordPlatformAccess } from "@/modules/audit/use-cases/record-platform-access"
 import { setOrganizationMonthlyLimit } from "@/modules/platform/use-cases/manage-credits"
 
 const bodySchema = z.object({ monthlyLimit: z.number().int().nullable() })
 
 export const PUT = handle(async (request, context: { params: Promise<{ id: string }> }) => {
   const pctx = await requirePlatformContext(request)
+  await recordPlatformAccess(request, pctx) // D-60: ghi trước khi đọc/ghi dữ liệu tổ chức
   const { id } = await context.params
   const parsed = bodySchema.safeParse(await request.json().catch(() => null))
   if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })

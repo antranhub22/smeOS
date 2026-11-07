@@ -46,40 +46,44 @@ type CustomerRow = {
 
 export class CustomerRepository implements ICustomerRepository {
   async create(ctx: TenantContext, input: CreateCustomerInput): Promise<CustomerMasterIndex> {
+    const fields = {
+      branch_id: branchForNewCustomer(ctx), // D-58: chi nhánh của người tạo
+      name: input.name,
+      phone: input.phone,
+      email: input.email ?? null,
+      address: input.address ?? null,
+      notes: input.notes ?? null,
+      tags: input.tags ?? [],
+      preferred_flowers: input.preferredFlowers ?? [],
+      preferred_colors: input.preferredColors ?? [],
+    }
+    const include = {
+      occasions: true,
+      consents: true,
+      // MI-2 (ĐP-1.6, 26/09/2026): "khả dụng" = chưa dùng VÀ chưa hết hạn — trước bản này chỉ lọc is_used, voucher hết hạn vẫn hiện ra được.
+      vouchers: { where: { is_used: false, OR: [{ expires_at: null }, { expires_at: { gt: new Date() } }] } },
+    }
+    // P-2 (ADR-014 D-P2): SĐT đã có hồ sơ khách tiềm năng (link Thẻ chào) → nâng thành khách thường, giữ một hồ sơ
+    const prospect = await prisma.customers.findFirst({
+      where: { organization_id: ctx.organizationId, phone: input.phone, status: "PROSPECT" },
+      select: { id: true },
+    })
+    if (prospect) {
+      return this.mapToMasterIndex(await prisma.customers.update({ where: { id: prospect.id }, data: { ...fields, status: "ACTIVE" }, include }))
+    }
+
     const count = await prisma.customers.count({ where: { organization_id: ctx.organizationId } })
     const code = `KH-${String(count + 1).padStart(4, "0")}`
-
     const row = await prisma.customers.create({
-      data: {
-        organization_id: ctx.organizationId,
-        branch_id: branchForNewCustomer(ctx), // D-58: chi nhánh của người tạo
-        code,
-        name: input.name,
-        phone: input.phone,
-        email: input.email ?? null,
-        address: input.address ?? null,
-        notes: input.notes ?? null,
-        tags: input.tags ?? [],
-        preferred_flowers: input.preferredFlowers ?? [],
-        preferred_colors: input.preferredColors ?? [],
-        tier: "NEW",
-        total_spent: 0,
-        order_count: 0,
-      },
-      include: {
-        occasions: true,
-        consents: true,
-        // MI-2 (ĐP-1.6, 26/09/2026): "khả dụng" = chưa dùng VÀ chưa hết hạn — trước bản này chỉ lọc is_used, voucher hết hạn vẫn hiện ra được.
-        vouchers: { where: { is_used: false, OR: [{ expires_at: null }, { expires_at: { gt: new Date() } }] } },
-      },
+      data: { ...fields, organization_id: ctx.organizationId, code, tier: "NEW", total_spent: 0, order_count: 0 },
+      include,
     })
-
     return this.mapToMasterIndex(row)
   }
 
   async getById(ctx: TenantContext, id: string): Promise<CustomerMasterIndex | null> {
     const row = await prisma.customers.findFirst({
-      where: { id, organization_id: ctx.organizationId, ...(await customerBranchWhere(ctx)) },
+      where: { id, organization_id: ctx.organizationId, status: "ACTIVE", ...(await customerBranchWhere(ctx)) },
       include: {
         occasions: true,
         consents: true,
@@ -93,7 +97,7 @@ export class CustomerRepository implements ICustomerRepository {
 
   async findByPhone(ctx: TenantContext, phone: string): Promise<CustomerMasterIndex | null> {
     const row = await prisma.customers.findFirst({
-      where: { phone, organization_id: ctx.organizationId },
+      where: { phone, organization_id: ctx.organizationId, status: "ACTIVE" },
       include: {
         occasions: true,
         consents: true,
@@ -107,7 +111,7 @@ export class CustomerRepository implements ICustomerRepository {
 
   async update(ctx: TenantContext, id: string, input: UpdateCustomerInput): Promise<CustomerMasterIndex | null> {
     const existing = await prisma.customers.findFirst({
-      where: { id, organization_id: ctx.organizationId, ...(await customerBranchWhere(ctx)) },
+      where: { id, organization_id: ctx.organizationId, status: "ACTIVE", ...(await customerBranchWhere(ctx)) },
     })
     if (!existing) return null
 
@@ -135,7 +139,7 @@ export class CustomerRepository implements ICustomerRepository {
 
   async delete(ctx: TenantContext, id: string): Promise<boolean> {
     const existing = await prisma.customers.findFirst({
-      where: { id, organization_id: ctx.organizationId, ...(await customerBranchWhere(ctx)) },
+      where: { id, organization_id: ctx.organizationId, status: "ACTIVE", ...(await customerBranchWhere(ctx)) },
     })
     if (!existing) return false
 
@@ -150,6 +154,7 @@ export class CustomerRepository implements ICustomerRepository {
   ): Promise<{ items: CustomerMasterIndex[]; total: number }> {
     const where: Prisma.customersWhereInput = {
       organization_id: ctx.organizationId,
+      status: "ACTIVE", // P-2: khách tiềm năng (link Thẻ chào chưa đặt) không hiện ở danh sách
       AND: [await customerBranchWhere(ctx)], // phạm vi chi nhánh (T-5) — AND để không đè OR của ô tìm
       ...(filters?.tier ? { tier: filters.tier } : {}),
       ...(filters?.search

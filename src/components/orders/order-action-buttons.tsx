@@ -37,7 +37,8 @@ export function OrderActionButtons({
   onUpdateStatus,
 }: OrderActionButtonsProps) {
   const { dict } = useI18n()
-  const canCancel = orderStatus !== "CANCELLED" && orderStatus !== "COMPLETED"
+  // Đã giao → mở sự cố ở Điều phối, không huỷ (audit BL-04)
+  const canCancel = orderStatus !== "CANCELLED" && orderStatus !== "COMPLETED" && orderStatus !== "DELIVERED" && deliveryStatus !== "DELIVERED"
 
   function renderPrimaryAction() {
     if (productionStatus === "PENDING") {
@@ -67,7 +68,7 @@ export function OrderActionButtons({
     if (deliveryStatus === "SHIPPING") {
       return (
         <Button size="sm" variant="outline" disabled={actionLoading}
-          onClick={() => onUpdateStatus({ deliveryStatus: "DELIVERED", status: "COMPLETED" })}>
+          onClick={() => onUpdateStatus({ deliveryStatus: "DELIVERED" })}>
           <CheckCircle className="mr-1.5 h-4 w-4" /> {dict.orders.actions.deliverySuccess}
         </Button>
       )
