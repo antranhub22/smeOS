@@ -2,6 +2,7 @@ import { prisma } from "@/core/tenancy/infra/prisma"
 import { scopedWhere, type TenantContext } from "@/core/tenancy"
 import { conflict, notFound } from "@/core/http/errors"
 import { recordAuditLog } from "@/modules/audit/use-cases/record-audit-log"
+import { upsertOrderRecipient } from "@/modules/orders/infra/order-recipient-repository"
 import { applyVat, isVatRate, DEFAULT_VAT_RATE, subtotalOf, vatChangeBlocker, type VatChange, type VatInvoiceInfo } from "../domain/order-vat"
 
 export interface OrderVatView extends VatInvoiceInfo {
@@ -78,6 +79,9 @@ export class OrderVatRepository {
         },
       })
       if (moved.count === 0) throw conflict("Đơn hàng vừa thay đổi, vui lòng tải lại")
+      await upsertOrderRecipient(tx, ctx.organizationId, order.id, {
+        vat: { vat_company_name: info.companyName, vat_tax_code: info.taxCode, vat_company_address: info.companyAddress, vat_email: info.email },
+      }) // P-3a ghi kép
       await recordAuditLog(
         ctx,
         {

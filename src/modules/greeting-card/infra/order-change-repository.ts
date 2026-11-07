@@ -20,6 +20,7 @@ import {
   type OrderChangePayload,
 } from "../domain/order-change-request"
 import { CUSTOMER_SENDER_ID } from "../domain/internal-message"
+import { upsertOrderRecipient } from "@/modules/orders/infra/order-recipient-repository"
 
 export const CHANGE_REQUEST_KIND = "ORDER_CHANGE_REQUEST"
 export const CHANGE_DECISION_KIND = "ORDER_CHANGE_DECISION"
@@ -183,6 +184,7 @@ export class OrderChangeRepository {
           },
         })
         if (moved.count === 0) throw conflict("Đơn vừa thay đổi, vui lòng tải lại")
+        await upsertOrderRecipient(tx, ctx.organizationId, order.id, { deliveryAddress: cols.delivery_address }) // P-3a ghi kép
       }
 
       const decided: OrderChangePayload = {

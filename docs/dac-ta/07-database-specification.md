@@ -4130,6 +4130,49 @@ Ca thử: `tests/tenant/branch-scope-customers.test.ts` (tự cài trigger từ 
 
 Ca thử: `tests/tenant/branch-scope-products.test.ts`.
 
+## 49. Người nhận và hoá đơn VAT của đơn — `order_recipients` (07/11/2026)
+
+ADR-014 D-P2, bước **P-3a** (expand). PO duyệt 07/11/2026: P-3 chia ba bước (P-3a bảng + backfill + ghi kép; P-3b
+chuyển đọc; P-3c bỏ dữ liệu cá nhân khỏi `orders.delivery_address` và các cột `orders.vat_*`), gồm cả VAT (D-63).
+Migration `20261107120000_order_recipients`.
+
+```prisma
+model order_recipients {
+  organization_id     String
+  order_id            String   @id // một dòng mỗi đơn
+  recipient_name      String?
+  recipient_phone     String?
+  address_line        String?
+  address_parts       Json?
+  vat_company_name    String?
+  vat_tax_code        String?
+  vat_company_address String?
+  vat_email           String?
+  created_at          DateTime @default(now()) @db.Timestamptz(3)
+  updated_at          DateTime @updatedAt @db.Timestamptz(3)
+
+  organization organizations @relation(fields: [organization_id], references: [id])
+  order        orders        @relation(fields: [order_id, organization_id], references: [id, organization_id], onDelete: Cascade)
+
+  @@unique([order_id, organization_id])
+  @@index([organization_id])
+}```
+
+- Một dòng mỗi đơn (`order_id` là khoá chính); khoá ghép `(order_id, organization_id)` tới `orders`, xoá đơn → xoá
+  dòng. Thuộc tổ chức: RLS `tenant_isolation` (`scripts/gen-rls-policies.mjs`).
+- Cột suy từ JSON `orders.delivery_address` bằng `recipientFromDeliveryAddress` (`src/modules/orders/domain/order-recipient.ts`):
+  tên `recipientName` → `name`; SĐT `phone` → `recipientPhone`; dòng địa chỉ `street` → `full_address` → `fullAddress`
+  → `address` → ghép từ `parts`; `address_parts` = `parts`, hoặc phường/quận/tỉnh của đơn nhập phẳng. JSON là chuỗi →
+  chỉ `address_line`. Khoá vận hành (`zone`, `notes`, `mapUrl`) ở lại JSON.
+- Ghi kép (`upsertOrderRecipient`, `src/modules/orders/infra/order-recipient-repository.ts`), cùng giao dịch với lệnh ghi
+  đơn: tạo đơn nhập tay và sửa địa chỉ (`order-repository.ts`), đặt đơn Thẻ chào (`brochure-checkout-repository.ts`),
+  duyệt đổi thông tin (`order-change-repository.ts`), tạo đơn điều phối (`coordinator-query-helper.ts`), hoá đơn VAT
+  (`order-vat-repository.ts` — chỉ phần `vat_*`). Ở P-3a mọi đường đọc vẫn đọc nơi cũ.
+- Backfill trong migration (khối `P3A-BACKFILL`): mọi đơn có người nhận/địa chỉ/VAT, `ON CONFLICT DO NOTHING`; làm
+  đúng như `recipientFromDeliveryAddress` (test so hai bên).
+
+Ca thử: `tests/tenant/order-recipients.test.ts` (mọi đường ghi, khoá ghép khác tổ chức, backfill 11 dạng địa chỉ).
+
 ## 48. Một hồ sơ khách — `customers.status`, `greeting_sessions.customer_id` (07/11/2026)
 
 ADR-014 D-P2, bước **P-2** (expand). PO duyệt 07/11/2026, phương án A. Migration `20261107090000_customer_prospects`.

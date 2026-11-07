@@ -12,6 +12,7 @@ import { countBySlot, slotFullMessage } from "../domain/slot-capacity"
 import { recordAuditLog } from "@/modules/audit/use-cases/record-audit-log"
 import { saleBranchOfSession } from "./sale-branch"
 import { activateProspect } from "./session-customer"
+import { upsertOrderRecipient } from "@/modules/orders/infra/order-recipient-repository"
 
 export interface CreateBrochureOrderData {
   organizationId: string
@@ -263,6 +264,8 @@ export class BrochureCheckoutRepository {
           },
         },
       })
+
+      await upsertOrderRecipient(tx, data.organizationId, order.id, { deliveryAddress: order.delivery_address }) // P-3a ghi kép
 
       if (data.voucherId) {
         const claimed = await getVoucherRedemptionRepository(tx).claim({

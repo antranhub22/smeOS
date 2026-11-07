@@ -179,6 +179,7 @@ model organizations {
   usage                                            usage[]
   audit_logs                                       audit_logs[]
   platform_access_logs                             platform_access_logs[]
+  order_recipients                                 order_recipients[]
   business_profile                                 business_profiles?
   brand_profile                                    brand_profiles?
   products                                         products[]
@@ -1990,6 +1991,7 @@ model orders {
   payments          order_payments[]
   info_requests     order_info_requests[]
   change_requests   order_change_requests[]
+  recipient         order_recipients?
   bookings          product_bookings[]
   source            String?                 @default("MANUAL") // mã ở src/modules/orders/domain/order-source.ts
   source_session_id String? // greeting_sessions.id
@@ -2035,6 +2037,41 @@ model orders {
   @@index([lead_id]) // khoá ngoại cần index (ADR-015 O-1)
   @@index([source_session_id]) // khoá ngoại cần index (ADR-015 O-1)
   @@index([voucher_id]) // khoá ngoại cần index (ADR-015 O-1)
+}
+
+/// ADR-014 D-P2, bước P-3a (PO duyệt 07/11/2026): người nhận và bên mua hoá đơn VAT của một đơn — nơi lưu dữ liệu cá
+/// nhân của đơn (mã hoá ở P-5, xoá theo yêu cầu ở P-7). Giai đoạn ghi kép: `orders.delivery_address` (JSON) và các cột
+/// `orders.vat_*` vẫn ghi và vẫn được đọc; đọc chuyển sang bảng này ở P-3b, bỏ nơi cũ ở P-3c. Ghi qua
+/// `upsertOrderRecipient` (`src/modules/orders/infra/order-recipient-repository.ts`).
+model order_recipients {
+  organization_id     String
+  order_id            String   @id // một dòng mỗi đơn
+  /// @pii identity
+  recipient_name      String?
+  /// @pii contact
+  recipient_phone     String?
+  /// Dòng địa chỉ giao đầy đủ (như `formatDeliveryAddress`, null = chưa có / "Theo thỏa thuận").
+  /// @pii address
+  address_line        String?
+  /// 5 ô địa chỉ (`AddressParts`) hoặc phường/quận/tỉnh của đơn nhập phẳng.
+  /// @pii address
+  address_parts       Json?
+  /// @pii tax
+  vat_company_name    String?
+  /// @pii tax
+  vat_tax_code        String?
+  /// @pii tax
+  vat_company_address String?
+  /// @pii tax
+  vat_email           String?
+  created_at          DateTime @default(now()) @db.Timestamptz(3)
+  updated_at          DateTime @updatedAt @db.Timestamptz(3)
+
+  organization organizations @relation(fields: [organization_id], references: [id])
+  order        orders        @relation(fields: [order_id, organization_id], references: [id, organization_id], onDelete: Cascade)
+
+  @@unique([order_id, organization_id])
+  @@index([organization_id])
 }
 
 model order_items {

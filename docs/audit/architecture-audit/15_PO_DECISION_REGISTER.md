@@ -67,6 +67,7 @@
 | D-60 | Chủ tổ chức xem nhật ký truy cập của nhân viên nền tảng (06/11/2026) | **Xem ngay trong ứng dụng** — màn hình chỉ đọc `platform_access_logs` cho chủ tổ chức; bù rủi ro R-2 (D-24) | ADR-013 D-I5 (duyệt ADR-013 cùng ngày) |
 | D-61 | Mốc bật RLS chặn thật (06/11/2026) | **Theo khách enterprise đầu tiên** (giữ D-30); trước đó đưa p95 trang danh sách ở chế độ `enforce` về dưới +10% (đo hiện +13%) | ADR-013 §6, bước I-6 |
 | D-62 | Khách tiềm năng `PROSPECT` (07/11/2026) | **Chỉ người nhận link Thẻ chào có SĐT mà chưa đặt đơn** — ẩn khỏi danh sách/xuất/phân khúc; đặt đơn, để lại lead hay được tạo tay thì thành khách thường (cùng hồ sơ). Lead vẫn tạo khách thường như trước; khách cũ giữ nguyên | ADR-014 D-P2, bước P-2 (duyệt schema cùng ngày) |
+| D-63 | Người nhận và VAT của đơn (07/11/2026) | **P-3 chia ba bước** (P-3a bảng + backfill + ghi kép, P-3b chuyển đọc, P-3c bỏ nơi cũ); **gồm cả thông tin hoá đơn VAT** — mọi dữ liệu cá nhân của đơn ở `order_recipients` | ADR-014 D-P2, bước P-3 (duyệt schema P-3a cùng ngày) |
 
 ## 2. Chấp nhận rủi ro (PO chọn khác đề xuất)
 
