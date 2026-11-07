@@ -23,6 +23,7 @@ audio/music-tracks/system/[trackId]
 audio/voice-clones
 audio/voice-clones/[id]
 audit-logs
+audit-logs/platform-access
 auth/instant-trial
 auth/login
 auth/logout
