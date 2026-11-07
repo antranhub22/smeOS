@@ -6,6 +6,7 @@ import { log } from "@/core/observability/log"
 import { currentRequestMeta, requestIdOf, runWithRequestMeta } from "@/core/observability/request-context"
 
 import { AppError, payloadTooLarge, validationFailed } from "./errors"
+import { withDeprecationHeaders } from "./deprecation"
 import { clientIp } from "./rate-limit"
 import { auditDenied, auditMutation, userAgentOf } from "./request-audit"
 
@@ -152,16 +153,19 @@ export function handle<Args extends unknown[]>(
     // bị đi cùng để `audit_logs` tự điền (checklist ALG 1.17).
     const meta = { requestId: requestIdOf(request) ?? undefined, ip: clientIp(request), userAgent: userAgentOf(request) }
     // Ngữ cảnh CSDL cho RLS (checklist ALG 1.18): `requireTenantContext` gắn tổ chức sau khi xác thực
-    const dbContext = dbContextForPath(new URL(request.url).pathname)
+    const pathname = new URL(request.url).pathname
+    const dbContext = dbContextForPath(pathname)
+    // Endpoint đang chờ gỡ (`deprecation.ts`) → header Deprecation/Sunset/Link trên mọi phản hồi
+    const finish = (response: Response) => withDeprecationHeaders(response, request.method, pathname)
     return runWithRequestMeta(meta, () => runWithDbContext(dbContext, async () => {
       try {
         guardJsonBody(request)
         const response = await fn(request, ...args)
         await auditMutation(request, response)
-        return withRateLimitHeaders(response)
+        return finish(withRateLimitHeaders(response))
       } catch (error) {
         await auditDenied(request, error)
-        return withRateLimitHeaders(errorResponse(error, { method: request.method, path: new URL(request.url).pathname }))
+        return finish(withRateLimitHeaders(errorResponse(error, { method: request.method, path: pathname })))
       }
     }))
   }

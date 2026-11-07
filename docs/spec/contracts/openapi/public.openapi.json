@@ -1,0 +1,2018 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "SMEOS Public API",
+    "version": "1.0.0",
+    "description": "Endpoint không cần đăng nhập. Tổ chức luôn suy từ mã gửi / slug / token / khoá webhook phía máy chủ, không nhận từ thân yêu cầu. Mọi route có giới hạn tần suất (header `RateLimit-*`, 429 kèm `Retry-After`). Lỗi theo envelope `Error`, trừ vài webhook ghi rõ ở từng operation."
+  },
+  "servers": [
+    {
+      "url": "/api/v1"
+    }
+  ],
+  "paths": {
+    "/public/catalog/{slug}": {
+      "get": {
+        "operationId": "publicGetCatalog",
+        "summary": "Trang catalog công khai của tiệm",
+        "description": "Catalog đã thu hồi vẫn 200 với `status: REVOKED`. **Chưa có giới hạn tần suất** (audit API-09; route đóng băng, cần PO duyệt mới thêm).",
+        "tags": [
+          "Catalog công khai"
+        ],
+        "security": [],
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Catalog đang mở hoặc đã thu hồi",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "type": "object",
+                      "properties": {
+                        "status": {
+                          "type": "string",
+                          "const": "ACTIVE"
+                        },
+                        "catalog": {
+                          "type": "object",
+                          "properties": {
+                            "slug": {
+                              "type": "string"
+                            },
+                            "name": {
+                              "type": "string"
+                            },
+                            "description": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "createdAt": {
+                              "type": "string",
+                              "format": "date-time",
+                              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                            }
+                          },
+                          "required": [
+                            "slug",
+                            "name",
+                            "description",
+                            "createdAt"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "shop": {
+                          "type": "object",
+                          "properties": {
+                            "name": {
+                              "type": "string"
+                            },
+                            "legalName": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "phone": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "email": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "address": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "website": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "primaryColor": {
+                              "type": "string"
+                            },
+                            "logoUrl": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            }
+                          },
+                          "required": [
+                            "name",
+                            "legalName",
+                            "phone",
+                            "email",
+                            "address",
+                            "website",
+                            "primaryColor",
+                            "logoUrl"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "products": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "code": {
+                                "type": "string"
+                              },
+                              "name": {
+                                "type": "string"
+                              },
+                              "category": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "shape": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "container": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "price": {
+                                "type": [
+                                  "number",
+                                  "null"
+                                ]
+                              },
+                              "imageUrl": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "stemCount": {
+                                "type": [
+                                  "number",
+                                  "null"
+                                ]
+                              },
+                              "occasions": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                }
+                              },
+                              "description": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "code",
+                              "name",
+                              "category",
+                              "shape",
+                              "container",
+                              "price",
+                              "imageUrl",
+                              "stemCount",
+                              "occasions",
+                              "description"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "campaignConfig": {
+                          "type": "object",
+                          "properties": {
+                            "occasion": {
+                              "type": "string"
+                            },
+                            "archetype": {
+                              "type": "string"
+                            },
+                            "customHeroImageUrl": {
+                              "type": "string"
+                            },
+                            "videoUrl": {
+                              "type": "string"
+                            },
+                            "generatedPackage": {
+                              "type": "object",
+                              "propertyNames": {
+                                "type": "string"
+                              },
+                              "additionalProperties": {}
+                            },
+                            "enabledSections": {
+                              "type": "object",
+                              "propertyNames": {
+                                "type": "string"
+                              },
+                              "additionalProperties": {
+                                "type": "boolean"
+                              }
+                            },
+                            "styleVariant": {
+                              "type": "string"
+                            }
+                          },
+                          "additionalProperties": false
+                        },
+                        "customer": {
+                          "type": "object",
+                          "properties": {
+                            "name": {
+                              "type": "string"
+                            },
+                            "greeting": {
+                              "type": "string"
+                            }
+                          },
+                          "additionalProperties": false
+                        },
+                        "templateId": {
+                          "type": "string"
+                        },
+                        "styleId": {
+                          "type": "string"
+                        },
+                        "entryActions": {
+                          "type": "object",
+                          "properties": {
+                            "order": {
+                              "type": "boolean"
+                            },
+                            "contact": {
+                              "type": "boolean"
+                            }
+                          },
+                          "required": [
+                            "order",
+                            "contact"
+                          ],
+                          "additionalProperties": false
+                        },
+                        "reviews": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "author": {
+                                "type": "string"
+                              },
+                              "occasion": {
+                                "type": "string"
+                              },
+                              "rating": {
+                                "type": "number"
+                              },
+                              "comment": {
+                                "type": "string"
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "author",
+                              "occasion",
+                              "rating",
+                              "comment"
+                            ],
+                            "additionalProperties": false
+                          }
+                        }
+                      },
+                      "required": [
+                        "status",
+                        "catalog",
+                        "shop",
+                        "products"
+                      ],
+                      "additionalProperties": false
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "status": {
+                          "type": "string",
+                          "const": "REVOKED"
+                        },
+                        "catalogName": {
+                          "type": "string"
+                        }
+                      },
+                      "required": [
+                        "status",
+                        "catalogName"
+                      ],
+                      "additionalProperties": false
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          }
+        },
+        "x-rate-limit": "chưa có"
+      }
+    },
+    "/public/catalog/{slug}/lead": {
+      "post": {
+        "operationId": "publicCatalogLead",
+        "summary": "Khách để lại thông tin liên hệ",
+        "description": "Ghi `leads` + khách CRM + đồng ý liên hệ. Chặn máy: 10 lần/10 phút/IP, ô bẫy `website`, Turnstile khi bật; mỗi SĐT 3 lead/giờ/tiệm.",
+        "tags": [
+          "Catalog công khai"
+        ],
+        "security": [],
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "maxLength": 200
+                  },
+                  "phone": {
+                    "type": "string",
+                    "maxLength": 20
+                  },
+                  "message": {
+                    "type": "string",
+                    "maxLength": 1000
+                  },
+                  "consent": {
+                    "type": "boolean"
+                  },
+                  "ref": {
+                    "type": "string",
+                    "maxLength": 20
+                  },
+                  "utm": {
+                    "type": "object",
+                    "properties": {
+                      "source": {
+                        "type": "string",
+                        "maxLength": 100
+                      },
+                      "medium": {
+                        "type": "string",
+                        "maxLength": 100
+                      },
+                      "campaign": {
+                        "type": "string",
+                        "maxLength": 100
+                      }
+                    }
+                  },
+                  "verificationToken": {
+                    "type": "string",
+                    "maxLength": 4096
+                  },
+                  "website": {
+                    "type": "string",
+                    "maxLength": 200
+                  }
+                },
+                "required": [
+                  "name",
+                  "phone",
+                  "consent"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Đã ghi lead",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "leadId": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "leadId"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          }
+        }
+      }
+    },
+    "/public/catalog/{slug}/order": {
+      "post": {
+        "operationId": "publicCatalogOrder",
+        "summary": "Đặt hàng trên catalog công khai",
+        "description": "Đơn vào `orders` nguồn `CATALOG`. Tiệm tắt nút Đặt hàng hoặc gói quá hạn → từ chối. Giới hạn 10 lần/10 phút/IP.",
+        "tags": [
+          "Catalog công khai"
+        ],
+        "security": [],
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "productId": {
+                    "type": "string",
+                    "maxLength": 64
+                  },
+                  "quantity": {
+                    "type": "integer",
+                    "minimum": -9007199254740991,
+                    "maximum": 9007199254740991
+                  },
+                  "name": {
+                    "type": "string",
+                    "maxLength": 200
+                  },
+                  "phone": {
+                    "type": "string",
+                    "maxLength": 20
+                  },
+                  "address": {
+                    "type": "string",
+                    "maxLength": 600
+                  },
+                  "deliveryDate": {
+                    "type": "string",
+                    "maxLength": 10
+                  },
+                  "timeSlot": {
+                    "type": "string",
+                    "maxLength": 40
+                  },
+                  "note": {
+                    "type": "string",
+                    "maxLength": 1000
+                  },
+                  "verificationToken": {
+                    "type": "string",
+                    "maxLength": 4096
+                  },
+                  "website": {
+                    "type": "string",
+                    "maxLength": 200
+                  }
+                },
+                "required": [
+                  "productId",
+                  "quantity",
+                  "name",
+                  "phone",
+                  "address"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Đơn đã tạo",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "orderCode": {
+                      "type": "string"
+                    },
+                    "totalVnd": {
+                      "type": "number"
+                    },
+                    "needsQuote": {
+                      "type": "boolean"
+                    },
+                    "payment": {
+                      "anyOf": [
+                        {
+                          "type": "object",
+                          "properties": {
+                            "bankName": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "accountNo": {
+                              "type": "string"
+                            },
+                            "accountName": {
+                              "type": [
+                                "string",
+                                "null"
+                              ]
+                            },
+                            "transferContent": {
+                              "type": "string"
+                            }
+                          },
+                          "required": [
+                            "bankName",
+                            "accountNo",
+                            "accountName",
+                            "transferContent"
+                          ],
+                          "additionalProperties": false
+                        },
+                        {
+                          "type": "null"
+                        }
+                      ]
+                    }
+                  },
+                  "required": [
+                    "orderCode",
+                    "totalVnd",
+                    "needsQuote",
+                    "payment"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "402": {
+            "$ref": "#/components/responses/Error402"
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "409": {
+            "$ref": "#/components/responses/Error409"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          },
+          "422": {
+            "$ref": "#/components/responses/Error422"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          }
+        }
+      }
+    },
+    "/public/csp-report": {
+      "post": {
+        "operationId": "publicCspReport",
+        "summary": "Nhận báo cáo vi phạm CSP từ trình duyệt",
+        "description": "Chỉ ghi log vài trường (chỉ thị, URL bị chặn, trang). Giới hạn 60 lần/phút/IP.",
+        "tags": [
+          "Tiện ích"
+        ],
+        "security": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "csp-report": {
+                    "type": "object",
+                    "propertyNames": {
+                      "type": "string"
+                    },
+                    "additionalProperties": {}
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Đã nhận",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            }
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          }
+        }
+      }
+    },
+    "/public/drive-thumb-proxy": {
+      "get": {
+        "operationId": "publicDriveThumbProxy",
+        "summary": "Tải hộ ảnh thu nhỏ từ Google Drive",
+        "description": "Truyền `file_id`, hoặc `folder_id` để lấy ảnh đầu tiên. Đệm công khai 1 ngày. Giới hạn 120 lần/phút/IP.",
+        "tags": [
+          "Tiện ích"
+        ],
+        "security": [],
+        "parameters": [
+          {
+            "name": "folder_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "file_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Ảnh thu nhỏ",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "image/*": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "404": {
+            "description": "Không có ảnh — không thân",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            }
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          }
+        }
+      }
+    },
+    "/public/drive-thumbnail": {
+      "get": {
+        "operationId": "publicDriveThumbnail",
+        "summary": "Tìm ảnh đầu tiên trong một thư mục Google Drive công khai",
+        "description": "Giới hạn 120 lần/phút/IP. Nhập hàng loạt nên dùng `POST /products/drive-thumbnails`.",
+        "tags": [
+          "Tiện ích"
+        ],
+        "security": [],
+        "parameters": [
+          {
+            "name": "folder_id",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Tệp ảnh đầu tiên (hoặc `null`)",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "folder_id": {
+                      "type": "string"
+                    },
+                    "file_id": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                    "thumbnail_url": {
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "folder_id",
+                    "file_id",
+                    "thumbnail_url"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          }
+        }
+      }
+    },
+    "/public/integrations/{connector}/{ref}": {
+      "post": {
+        "operationId": "publicInboundWebhook",
+        "summary": "Cổng webhook chung của Trung tâm Tích hợp",
+        "description": "Thân thô ≤ 256 KB, ký theo đầu nối (vd. `x-echo-signature`). Sai chữ ký / sai `ref` / kết nối đã ngắt đều 401. Chống trùng theo mã sự kiện. Giới hạn 300/phút/IP và 600/phút/`ref`.",
+        "tags": [
+          "Webhook"
+        ],
+        "security": [
+          {
+            "connectorSignature": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "connector",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "ref",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Số sự kiện nhận mới / trùng",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "accepted": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    },
+                    "duplicates": {
+                      "type": "integer",
+                      "minimum": -9007199254740991,
+                      "maximum": 9007199254740991
+                    }
+                  },
+                  "required": [
+                    "accepted",
+                    "duplicates"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          }
+        }
+      }
+    },
+    "/public/marketplace-share/{token}": {
+      "get": {
+        "operationId": "publicMarketplaceShare",
+        "summary": "Xem marketplace đối tác qua link chia sẻ có hạn",
+        "description": "Thông tin liên hệ đã che. `noindex`. Giới hạn 60 lần/10 phút/IP.",
+        "tags": [
+          "Tiện ích"
+        ],
+        "security": [],
+        "parameters": [
+          {
+            "name": "token",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Danh sách cửa hàng",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "stores": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "audit": {
+                                "type": "object",
+                                "properties": {
+                                  "timestamp": {
+                                    "type": "string"
+                                  },
+                                  "specialist": {
+                                    "type": "string"
+                                  },
+                                  "surveyDate": {
+                                    "type": "string"
+                                  },
+                                  "surveyType": {
+                                    "type": "string"
+                                  },
+                                  "notes": {
+                                    "type": "string"
+                                  }
+                                },
+                                "required": [
+                                  "timestamp",
+                                  "specialist",
+                                  "surveyDate",
+                                  "surveyType"
+                                ],
+                                "additionalProperties": false
+                              },
+                              "identity": {
+                                "type": "object",
+                                "properties": {
+                                  "shopName": {
+                                    "type": "string"
+                                  },
+                                  "legalName": {
+                                    "type": "string"
+                                  },
+                                  "taxCode": {
+                                    "type": "string"
+                                  },
+                                  "ownerName": {
+                                    "type": "string"
+                                  },
+                                  "contactPerson": {
+                                    "type": "string"
+                                  },
+                                  "operatingYears": {
+                                    "type": "string"
+                                  },
+                                  "scale": {
+                                    "type": "string"
+                                  },
+                                  "legalCompliance": {
+                                    "type": "string"
+                                  }
+                                },
+                                "required": [
+                                  "shopName",
+                                  "ownerName",
+                                  "contactPerson",
+                                  "operatingYears",
+                                  "scale"
+                                ],
+                                "additionalProperties": false
+                              },
+                              "contact": {
+                                "type": "object",
+                                "properties": {
+                                  "phone": {
+                                    "type": "string"
+                                  },
+                                  "email": {
+                                    "type": "string"
+                                  },
+                                  "address": {
+                                    "type": "string"
+                                  },
+                                  "googleMaps": {
+                                    "type": "string"
+                                  }
+                                },
+                                "required": [
+                                  "phone",
+                                  "address"
+                                ],
+                                "additionalProperties": false
+                              },
+                              "digital": {
+                                "type": "object",
+                                "properties": {
+                                  "facebook": {
+                                    "type": "string"
+                                  },
+                                  "tiktok": {
+                                    "type": "string"
+                                  },
+                                  "website": {
+                                    "type": "string"
+                                  },
+                                  "googleReview": {
+                                    "type": "string"
+                                  },
+                                  "facebookFollowers": {
+                                    "type": "string"
+                                  },
+                                  "tiktokFollowers": {
+                                    "type": "string"
+                                  },
+                                  "postingFrequency": {
+                                    "type": "string"
+                                  },
+                                  "onlineOrderChannels": {
+                                    "type": "string"
+                                  },
+                                  "adsAndLivestream": {
+                                    "type": "string"
+                                  }
+                                },
+                                "additionalProperties": false
+                              },
+                              "business": {
+                                "type": "object",
+                                "properties": {
+                                  "monthlyRevenue": {
+                                    "type": "string"
+                                  },
+                                  "dailyOrdersNormal": {
+                                    "type": "string"
+                                  },
+                                  "dailyOrdersPeak": {
+                                    "type": "string"
+                                  },
+                                  "aov": {
+                                    "type": "string"
+                                  },
+                                  "targetCustomers": {
+                                    "type": "string"
+                                  },
+                                  "b2bShare": {
+                                    "type": "string"
+                                  },
+                                  "customerSources": {
+                                    "type": "string"
+                                  },
+                                  "paymentMethods": {
+                                    "type": "string"
+                                  },
+                                  "challenges": {
+                                    "type": "string"
+                                  },
+                                  "goals12m": {
+                                    "type": "string"
+                                  },
+                                  "algExpectations": {
+                                    "type": "string"
+                                  },
+                                  "cooperationWishes": {
+                                    "type": "string"
+                                  }
+                                },
+                                "additionalProperties": false
+                              },
+                              "production": {
+                                "type": "object",
+                                "properties": {
+                                  "productLines": {
+                                    "type": "array",
+                                    "items": {
+                                      "type": "string"
+                                    }
+                                  },
+                                  "mainProductLine": {
+                                    "type": "string"
+                                  },
+                                  "floristCount": {
+                                    "type": "string"
+                                  },
+                                  "leadFloristExperience": {
+                                    "type": "string"
+                                  },
+                                  "maxCapacityNormal": {
+                                    "type": "string"
+                                  },
+                                  "maxCapacityPeak": {
+                                    "type": "string"
+                                  },
+                                  "flowerSupply": {
+                                    "type": "string"
+                                  },
+                                  "mainFlowerSource": {
+                                    "type": "string"
+                                  },
+                                  "importFrequency": {
+                                    "type": "string"
+                                  },
+                                  "rareFlowerAbility": {
+                                    "type": "string"
+                                  },
+                                  "inboundProcess": {
+                                    "type": "string"
+                                  },
+                                  "freshnessDuration": {
+                                    "type": "string"
+                                  },
+                                  "lossRateEstimate": {
+                                    "type": "string"
+                                  },
+                                  "nearExpireHandling": {
+                                    "type": "string"
+                                  }
+                                },
+                                "required": [
+                                  "productLines"
+                                ],
+                                "additionalProperties": false
+                              },
+                              "facilityAndDelivery": {
+                                "type": "object",
+                                "properties": {
+                                  "coolers": {
+                                    "type": "string"
+                                  },
+                                  "coldStorage": {
+                                    "type": "string"
+                                  },
+                                  "premises": {
+                                    "type": "string"
+                                  },
+                                  "space": {
+                                    "type": "string"
+                                  },
+                                  "equipment": {
+                                    "type": "string"
+                                  },
+                                  "staffing": {
+                                    "type": "string"
+                                  },
+                                  "deliveryVehicles": {
+                                    "type": "string"
+                                  },
+                                  "deliveryRadius": {
+                                    "type": "string"
+                                  },
+                                  "deliveryCommitmentTime": {
+                                    "type": "string"
+                                  },
+                                  "coldDeliveryAbility": {
+                                    "type": "string"
+                                  },
+                                  "deliveryFeePolicy": {
+                                    "type": "string"
+                                  }
+                                },
+                                "additionalProperties": false
+                              },
+                              "media": {
+                                "type": "object",
+                                "properties": {
+                                  "requiredPhotoTypes": {
+                                    "type": "string"
+                                  },
+                                  "coverPhotoUrl": {
+                                    "type": "string"
+                                  },
+                                  "photoGalleryUrls": {
+                                    "type": "array",
+                                    "items": {
+                                      "type": "string"
+                                    }
+                                  },
+                                  "rawImageUrls": {
+                                    "type": "string"
+                                  },
+                                  "driveImageIds": {
+                                    "type": "array",
+                                    "items": {
+                                      "type": "string"
+                                    }
+                                  },
+                                  "requiredDocuments": {
+                                    "type": "string"
+                                  }
+                                },
+                                "required": [
+                                  "driveImageIds"
+                                ],
+                                "additionalProperties": false
+                              },
+                              "scoreAndTier": {
+                                "type": "object",
+                                "properties": {
+                                  "skillAndCraftScore": {
+                                    "type": "string"
+                                  },
+                                  "processFacilityScore": {
+                                    "type": "string"
+                                  },
+                                  "supplyStorageScore": {
+                                    "type": "string"
+                                  },
+                                  "productionDeliveryScore": {
+                                    "type": "string"
+                                  },
+                                  "legalDigitalScore": {
+                                    "type": "string"
+                                  },
+                                  "disciplineCooperationScore": {
+                                    "type": "string"
+                                  },
+                                  "totalScore": {
+                                    "type": "string"
+                                  },
+                                  "additionalNotes": {
+                                    "type": "string"
+                                  },
+                                  "suggestedTier": {
+                                    "type": "string"
+                                  }
+                                },
+                                "required": [
+                                  "suggestedTier"
+                                ],
+                                "additionalProperties": false
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "audit",
+                              "identity",
+                              "contact",
+                              "digital",
+                              "business",
+                              "production",
+                              "facilityAndDelivery",
+                              "media",
+                              "scoreAndTier"
+                            ],
+                            "additionalProperties": false
+                          }
+                        },
+                        "total": {
+                          "type": "integer",
+                          "minimum": -9007199254740991,
+                          "maximum": 9007199254740991
+                        },
+                        "expiresAt": {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                        }
+                      },
+                      "required": [
+                        "stores",
+                        "total",
+                        "expiresAt"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          }
+        }
+      }
+    },
+    "/public/payments/sepay": {
+      "post": {
+        "operationId": "publicSepayWebhook",
+        "summary": "Webhook SePay — tự ghi thu đơn Thẻ chào theo mã đơn trong nội dung chuyển khoản",
+        "description": "Khoá theo tiệm (`Authorization: Apikey <khoá>`). Chống trùng theo `id` giao dịch. Giới hạn 600/phút/IP.",
+        "tags": [
+          "Webhook"
+        ],
+        "security": [
+          {
+            "sepayApiKey": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "anyOf": [
+                      {
+                        "type": "integer",
+                        "minimum": -9007199254740991,
+                        "maximum": 9007199254740991
+                      },
+                      {
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 64
+                      }
+                    ]
+                  },
+                  "transferType": {
+                    "type": "string",
+                    "maxLength": 10
+                  },
+                  "transferAmount": {
+                    "type": "number",
+                    "minimum": 0,
+                    "maximum": 100000000000
+                  },
+                  "content": {
+                    "default": "",
+                    "type": "string",
+                    "maxLength": 2000
+                  },
+                  "accountNumber": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "maxLength": 40
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "transactionDate": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "maxLength": 40
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  },
+                  "referenceCode": {
+                    "anyOf": [
+                      {
+                        "type": "string",
+                        "maxLength": 100
+                      },
+                      {
+                        "type": "null"
+                      }
+                    ]
+                  }
+                },
+                "required": [
+                  "id",
+                  "transferType",
+                  "transferAmount"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Kết quả khớp giao dịch",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "success": {
+                      "type": "boolean",
+                      "const": true
+                    },
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "RECEIVED",
+                        "MATCHED",
+                        "UNMATCHED",
+                        "IGNORED"
+                      ]
+                    },
+                    "duplicate": {
+                      "type": "boolean"
+                    },
+                    "orderCode": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "success",
+                    "status",
+                    "duplicate"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/Error400"
+          },
+          "401": {
+            "$ref": "#/components/responses/Error401"
+          },
+          "413": {
+            "$ref": "#/components/responses/Error413"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          }
+        }
+      }
+    },
+    "/public/quotation/{token}": {
+      "get": {
+        "operationId": "publicQuotation",
+        "summary": "Xem báo giá đã gửi cho khách",
+        "description": "Không trả SĐT, ghi chú nội bộ, giá vốn. Báo giá nháp/không tồn tại → 404; quá hạn hiện `EXPIRED`.",
+        "tags": [
+          "Tiện ích"
+        ],
+        "security": [],
+        "parameters": [
+          {
+            "name": "token",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Báo giá",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "data": {
+                      "type": "object",
+                      "properties": {
+                        "code": {
+                          "type": "string"
+                        },
+                        "status": {
+                          "type": "string",
+                          "enum": [
+                            "DRAFT",
+                            "SENT",
+                            "ACCEPTED",
+                            "REJECTED",
+                            "EXPIRED",
+                            "CONVERTED"
+                          ]
+                        },
+                        "validUntil": {
+                          "anyOf": [
+                            {
+                              "type": "string",
+                              "format": "date-time",
+                              "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                            },
+                            {
+                              "type": "null"
+                            }
+                          ]
+                        },
+                        "subtotal": {
+                          "type": "number"
+                        },
+                        "discountAmount": {
+                          "type": "number"
+                        },
+                        "shippingFee": {
+                          "type": "number"
+                        },
+                        "totalAmount": {
+                          "type": "number"
+                        },
+                        "terms": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "createdAt": {
+                          "type": "string",
+                          "format": "date-time",
+                          "pattern": "^(?:(?:\\d\\d[2468][048]|\\d\\d[13579][26]|\\d\\d0[48]|[02468][048]00|[13579][26]00)-02-29|\\d{4}-(?:(?:0[13578]|1[02])-(?:0[1-9]|[12]\\d|3[01])|(?:0[469]|11)-(?:0[1-9]|[12]\\d|30)|(?:02)-(?:0[1-9]|1\\d|2[0-8])))T(?:(?:[01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d(?:\\.\\d+)?(?:Z))$"
+                        },
+                        "recipientName": {
+                          "type": [
+                            "string",
+                            "null"
+                          ]
+                        },
+                        "items": {
+                          "type": "array",
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "id": {
+                                "type": "string"
+                              },
+                              "name": {
+                                "type": "string"
+                              },
+                              "variantLabel": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "qty": {
+                                "type": "number"
+                              },
+                              "unitPrice": {
+                                "type": "number"
+                              },
+                              "totalPrice": {
+                                "type": "number"
+                              },
+                              "note": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "imageUrl": {
+                                "type": [
+                                  "string",
+                                  "null"
+                                ]
+                              },
+                              "composition": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                }
+                              }
+                            },
+                            "required": [
+                              "id",
+                              "name",
+                              "variantLabel",
+                              "qty",
+                              "unitPrice",
+                              "totalPrice",
+                              "note",
+                              "imageUrl",
+                              "composition"
+                            ],
+                            "additionalProperties": false
+                          }
+                        }
+                      },
+                      "required": [
+                        "code",
+                        "status",
+                        "validUntil",
+                        "subtotal",
+                        "discountAmount",
+                        "shippingFee",
+                        "totalAmount",
+                        "terms",
+                        "createdAt",
+                        "recipientName",
+                        "items"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "data"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "404": {
+            "$ref": "#/components/responses/Error404"
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          }
+        }
+      }
+    },
+    "/public/zalo-oa/webhook": {
+      "post": {
+        "operationId": "publicZaloOaWebhook",
+        "summary": "Webhook OA Zalo chung — liên kết chi nhánh bằng mã trong tin nhắn",
+        "description": "Ký `X-ZEvent-Signature` (App ID + thân + timestamp + secret), sự kiện cũ bị từ chối. Thân ≤ 64 KB. Lỗi 400/401/413 trả `{ error: \"chuỗi\" }` theo yêu cầu của nhà cung cấp (ngoại lệ envelope, ghi ở `api-envelope-legacy.txt`).",
+        "tags": [
+          "Webhook"
+        ],
+        "security": [
+          {
+            "zaloSignature": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "app_id": {
+                    "type": "string"
+                  },
+                  "event_name": {
+                    "type": "string"
+                  },
+                  "timestamp": {
+                    "type": "string"
+                  },
+                  "sender": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "id"
+                    ]
+                  },
+                  "message": {
+                    "type": "object",
+                    "properties": {
+                      "text": {
+                        "type": "string"
+                      }
+                    }
+                  }
+                },
+                "required": [
+                  "app_id",
+                  "event_name",
+                  "timestamp"
+                ],
+                "additionalProperties": {}
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Đã xử lý",
+            "headers": {
+              "RateLimit-Limit": {
+                "$ref": "#/components/headers/RateLimitLimit"
+              },
+              "RateLimit-Remaining": {
+                "$ref": "#/components/headers/RateLimitRemaining"
+              },
+              "RateLimit-Reset": {
+                "$ref": "#/components/headers/RateLimitReset"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ok": {
+                      "type": "boolean",
+                      "const": true
+                    }
+                  },
+                  "required": [
+                    "ok"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "429": {
+            "$ref": "#/components/responses/Error429"
+          }
+        },
+        "x-legacy-error-envelope": true
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "connectorSignature": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "x-signature",
+        "description": "Chữ ký HMAC theo từng đầu nối (tên header do đầu nối quy định, vd. `x-echo-signature`)"
+      },
+      "sepayApiKey": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "authorization",
+        "description": "`Apikey <khoá webhook của tiệm>`"
+      },
+      "zaloSignature": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "x-zevent-signature",
+        "description": "`mac=<sha256(app_id + thân + timestamp + secret)>`"
+      }
+    },
+    "headers": {
+      "RateLimitLimit": {
+        "description": "Số lượt tối đa trong cửa sổ của luật chặt nhất",
+        "schema": {
+          "type": "integer"
+        }
+      },
+      "RateLimitRemaining": {
+        "description": "Số lượt còn lại trong cửa sổ",
+        "schema": {
+          "type": "integer"
+        }
+      },
+      "RateLimitReset": {
+        "description": "Số giây tới khi cửa sổ mở lại",
+        "schema": {
+          "type": "integer"
+        }
+      },
+      "RetryAfter": {
+        "description": "Số giây nên chờ trước khi gọi lại (chỉ khi 429)",
+        "schema": {
+          "type": "integer"
+        }
+      }
+    },
+    "schemas": {
+      "Error": {
+        "type": "object",
+        "required": [
+          "error"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "error": {
+            "type": "object",
+            "required": [
+              "code",
+              "message"
+            ],
+            "additionalProperties": false,
+            "properties": {
+              "code": {
+                "type": "string",
+                "enum": [
+                  "VALIDATION_FAILED",
+                  "UNAUTHENTICATED",
+                  "CAPABILITY_DENIED",
+                  "ENTITLEMENT_REQUIRED",
+                  "PASSWORD_CHANGE_REQUIRED",
+                  "SUBSCRIPTION_OVERDUE",
+                  "NOT_FOUND",
+                  "CONFLICT",
+                  "PAYLOAD_TOO_LARGE",
+                  "QUOTA_EXCEEDED",
+                  "UNPROCESSABLE_ENTITY",
+                  "RATE_LIMITED",
+                  "INTERNAL"
+                ]
+              },
+              "message": {
+                "type": "string",
+                "description": "Câu tiếng Việt cho người dùng cuối"
+              },
+              "details": {
+                "type": "object",
+                "description": "Lỗi validation: `issues` (mảng issue của zod)"
+              }
+            }
+          }
+        }
+      }
+    },
+    "responses": {
+      "Error400": {
+        "description": "Sai lược đồ thân/query hoặc thân không phải JSON (`VALIDATION_FAILED`, `details.issues`)",
+        "headers": {},
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "Error401": {
+        "description": "Thiếu hoặc sai token / phiên SSO (`UNAUTHENTICATED`)",
+        "headers": {},
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "Error402": {
+        "description": "Gói thuê bao quá hạn — chỉ xem (`SUBSCRIPTION_OVERDUE`)",
+        "headers": {},
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "Error404": {
+        "description": "Không tìm thấy, hoặc thuộc tổ chức khác (`NOT_FOUND`)",
+        "headers": {},
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "Error409": {
+        "description": "Xung đột trạng thái (`CONFLICT`)",
+        "headers": {},
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "Error413": {
+        "description": "Thân yêu cầu vượt 2 MB (`PAYLOAD_TOO_LARGE`, `details.max_bytes`)",
+        "headers": {},
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "Error422": {
+        "description": "Vi phạm luật nghiệp vụ hoặc hết hạn mức (`UNPROCESSABLE_ENTITY`, `QUOTA_EXCEEDED`)",
+        "headers": {},
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "Error429": {
+        "description": "Quá tần suất (`RATE_LIMITED`) — chờ theo `Retry-After`",
+        "headers": {
+          "RateLimit-Limit": {
+            "$ref": "#/components/headers/RateLimitLimit"
+          },
+          "RateLimit-Remaining": {
+            "$ref": "#/components/headers/RateLimitRemaining"
+          },
+          "RateLimit-Reset": {
+            "$ref": "#/components/headers/RateLimitReset"
+          },
+          "Retry-After": {
+            "$ref": "#/components/headers/RetryAfter"
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      }
+    }
+  }
+}

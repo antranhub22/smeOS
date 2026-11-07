@@ -49,6 +49,8 @@ Endpoint duyệt luôn tách khỏi endpoint sinh kết quả: `POST /x/:id/appr
 
 **Lưu đệm.** Phản hồi JSON mặc định `Cache-Control: no-store`; route tự đặt `cache-control` (ảnh công khai, tệp xuất) được giữ nguyên (07/11/2026, audit API-17).
 
+**Version và gỡ endpoint (PO 07/11/2026, audit API-14).** Không thay đổi phá vỡ tại chỗ trong `/v1` (đổi/xoá trường, đổi kiểu, siết validation, đổi mã HTTP/lỗi, đổi ngữ nghĩa) — dựng endpoint mới song song. Thêm trường tuỳ chọn, thêm endpoint, thêm giá trị enum ở phản hồi, nới validation không phá vỡ; client phải bỏ qua trường/giá trị lạ. Endpoint cũ khai ở `DEPRECATIONS` (`src/core/http/deprecation.ts`): mọi phản hồi kèm `Deprecation: @<unix ngày báo>`, `Sunset: <ngày gỡ>`, `Link: <thay thế>; rel="successor-version"`; dòng của nó trong đặc tả này ghi **SẮP GỠ** kèm ngày gỡ. Báo trước tối thiểu **90 ngày** cho `/integration/*` và `/public/*`, **30 ngày** cho API chỉ giao diện SMEOS gọi; quá ngày gỡ mà route còn → test đỏ. Hiện chưa endpoint nào chờ gỡ.
+
 ## 3. Phiên và tổ chức
 
 | Method | Path | Năng lực | Ghi chú |

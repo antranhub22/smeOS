@@ -10,7 +10,13 @@ import { ERROR_CODES } from "./errors"
  */
 export type HttpMethod = "get" | "post" | "put" | "patch" | "delete"
 
-export type OpenApiResponse = { description: string; schema?: z.ZodType }
+export type OpenApiResponse = {
+  description: string
+  /** Thân JSON. */
+  schema?: z.ZodType
+  /** Thân không phải JSON (vd. `image/*`) — mô tả là chuỗi nhị phân. */
+  contentType?: string
+}
 
 export type OpenApiOperation = {
   method: HttpMethod
@@ -88,7 +94,11 @@ function operationObject(op: OpenApiOperation): Record<string, unknown> {
     responses[status] = {
       description: response.description,
       headers: RATE_LIMIT_HEADERS,
-      ...(response.schema ? { content: { "application/json": { schema: jsonSchema(response.schema, "output") } } } : {}),
+      ...(response.schema
+        ? { content: { "application/json": { schema: jsonSchema(response.schema, "output") } } }
+        : response.contentType
+          ? { content: { [response.contentType]: { schema: { type: "string", format: "binary" } } } }
+          : {}),
     }
   }
   for (const status of [...op.errors].sort((a, b) => a - b)) {
