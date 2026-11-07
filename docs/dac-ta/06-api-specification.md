@@ -31,7 +31,7 @@ Endpoint duyệt luôn tách khỏi endpoint sinh kết quả: `POST /x/:id/appr
 
 | HTTP | `code` | Khi nào |
 |---|---|---|
-| 400 | `VALIDATION_FAILED` | Thân yêu cầu sai lược đồ zod |
+| 400 | `VALIDATION_FAILED` | Thân yêu cầu sai lược đồ zod (`details.issues`), hoặc thân không phải JSON hợp lệ (`details.body`). `handle()` tự đổi `ZodError` và lỗi đọc JSON của thân thành mã này — trước 06/11/2026 hai lỗi đó ra 500 (audit API-01) |
 | 401 | `UNAUTHENTICATED` | Không có phiên hợp lệ |
 | 403 | `CAPABILITY_DENIED` | Thiếu mã năng lực. Thân lỗi nêu mã còn thiếu |
 | 404 | `NOT_FOUND` | Không tìm thấy, **hoặc thuộc tổ chức khác** |
@@ -555,7 +555,7 @@ Nội dung nhắc mua sinh từ dịp và sản phẩm. Không endpoint nào g�
 
 | Method | Path | Năng lực | Ghi chú |
 |---|---|---|---|
-| GET | `/orders` | `R1` | Lọc theo ngày, trạng thái, chi nhánh, người được phân công · `?delivery_from=&delivery_to=` (YYYY-MM-DD, theo `delivery_window.date` hoặc giờ hẹn đơn Điều phối, giờ Việt Nam; ngày sai định dạng bị bỏ qua) · `?sale_id=` (Sale phụ trách, hoặc người tạo khi đơn chưa gán Sale) |
+| GET | `/orders` | `R1` | Lọc theo ngày, trạng thái, chi nhánh, người được phân công · `?delivery_from=&delivery_to=` (YYYY-MM-DD, theo `delivery_window.date` hoặc giờ hẹn đơn Điều phối, giờ Việt Nam; ngày sai định dạng bị bỏ qua) · `?sale_id=` (Sale phụ trách, hoặc người tạo khi đơn chưa gán Sale) · `?limit=` 1–100, mặc định 50, ngoài khoảng/không phải số nguyên → 400 (audit API-03, 06/11/2026) |
 | POST | `/orders` | `R2` | |
 | GET · PATCH | `/orders/:id` | `R1` · `R3` | |
 | POST | `/orders/:id/assign` | `R4` | Người nhận việc phải là thành viên đang hoạt động của tổ chức (khác → 422); giao lại thu hồi phân công cũ |
@@ -744,7 +744,7 @@ Khuôn video là enum `video_format`: `REEL_15S` · `TIKTOK_30S` · `STORY_15S` 
 | GET | `/assets` | `G1` | Liệt kê asset, lọc theo sản phẩm và `kind` |
 | POST | `/assets/:id/approve` | `I2` | Duyệt asset dẫn xuất |
 | GET | `/media/optimizations` | `I1` | Liệt kê lượt tối ưu M04a |
-| POST | `/jobs/batch` | mã "run" theo `module` (`MODULE_RUN_CAPABILITY`, mặc định từ chối — RS-8) | Tạo job cho một module với danh sách mã `AIC` chọn sẵn. Sửa dòng này 05/10/2026: route đã gác từ RS-8 18/09, đặc tả ghi "chưa gác" là cũ |
+| POST | `/jobs/batch` | mã "run" theo `module` (`MODULE_RUN_CAPABILITY`, mặc định từ chối — RS-8) | Tạo job cho một module với danh sách mã `AIC` chọn sẵn. Sửa dòng này 05/10/2026: route đã gác từ RS-8 18/09, đặc tả ghi "chưa gác" là cũ · Thân kiểm bằng zod (`capabilities` 1–50 mã); `Idempotency-Key` **bắt buộc** — thiếu → 400, máy chủ không tự sinh khoá (audit API-05, 06/11/2026) |
 | POST | `/media/variants/batch` | `I4` | |
 | POST | `/media/background-removal` | — | **ĐÃ ĐÓNG ở P24**, luôn trả 409 kèm đường thay thế |
 | GET | `/ai-capabilities` | `U1` | |
@@ -988,7 +988,7 @@ Endpoint mang khoá nhà cung cấp riêng của tổ chức. Quyết định D2
 | POST | `/shop-reviews` | `J1` | Thêm đánh giá: `authorName` (1–60), `occasion?` (≤ 60), `rating` (1–5), `comment` (5–500), `isVisible?` |
 | PATCH | `/shop-reviews/:id` | `J1` | Sửa nội dung (gửi đủ tên, sao, nhận xét) hoặc chỉ `isVisible`; tổ chức khác → 404 |
 | DELETE | `/shop-reviews/:id` | `J1` | Xoá vĩnh viễn (giao diện hỏi xác nhận); tổ chức khác → 404 |
-| POST | `/content-engine/rewrite` | **chưa gác** (nợ #170) | Viết lại MỘT câu ≤ 500 ký tự theo `field_type`/`style`, trả 3 gợi ý; parse lỗi thì trả gợi ý dựng sẵn |
+| POST | `/content-engine/rewrite` | **chưa gác** (nợ #170) | Viết lại MỘT câu ≤ 500 ký tự theo `field_type`/`style`, trả 3 gợi ý; parse lỗi thì trả gợi ý dựng sẵn · Giới hạn 30 lần/10 phút mỗi người dùng và 200 lần/giờ mỗi tổ chức → 429 (audit API-02, 06/11/2026); chưa trừ credit — chờ PO cùng nợ #170 |
 
 ### 25.2–25.3 Thẻ chào (đã gộp)
 
@@ -1120,7 +1120,7 @@ Mã năng lực gác ở route (audit PR #63, 28/10/2026 — trước đó nằm
 | GET · POST | `/internal-chat/conversations` | *(thành viên)* | GET: hội thoại mình tham gia. POST: tạo/lấy hội thoại; `orderId` của tổ chức khác hoặc `targetUserId` ngoài tổ chức/đối tác liên kết → 404 |
 | GET · POST | `/internal-chat/conversations/:id/messages` | *(người tham gia)* | Không phải người tham gia → 404 |
 | POST | `/internal-chat/messages/:id/action` | *(người tham gia)* | Bấm nút trên thẻ hành động |
-| GET | `/noi-bo/identity` | *(phiên)* | Danh tính nội bộ của phiên; lỗi không trả chi tiết/stack |
+| GET | `/noi-bo/identity` | *(phiên)* | Danh tính nội bộ của phiên; lỗi không trả chi tiết/stack · Lỗi theo envelope chung: chưa đăng nhập/phiên bị thay → 401, không có tổ chức → 404 (trước 06/11/2026 mọi lỗi ra 500 `IDENTITY_ERROR` — audit API-04) |
 | POST | `/organizations/current/language-unlock-request` | `F2` | Xin mở thêm ngôn ngữ |
 | GET | `/platform/orgs-data` | `N1` | Trung tâm dữ liệu xuyên tổ chức |
 | GET | `/platform/orgs-data/:id` | `N1` | |

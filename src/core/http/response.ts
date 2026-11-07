@@ -1,9 +1,11 @@
+import { ZodError } from "zod"
+
 import { captureError } from "@/core/observability/error-tracker"
 import { dbContextForPath, runWithDbContext } from "@/core/tenancy/db-context"
 import { log } from "@/core/observability/log"
 import { requestIdOf, runWithRequestMeta } from "@/core/observability/request-context"
 
-import { AppError } from "./errors"
+import { AppError, validationFailed } from "./errors"
 import { clientIp } from "./rate-limit"
 import { auditDenied, auditMutation, userAgentOf } from "./request-audit"
 
@@ -31,17 +33,42 @@ export function jsonResponse(
   return new Response(JSON.stringify(body), { status, headers })
 }
 
+/**
+ * Lỗi dữ liệu đầu vào lọt khỏi route thành `AppError` 400 (audit API-01): `schema.parse` ở route
+ * hoặc use-case ném `ZodError` — mọi chỗ gọi đều parse dữ liệu người dùng gửi — từng thành 500.
+ * `details.issues` cùng dạng các route dùng `safeParse`.
+ */
+function asAppError(error: unknown): AppError | null {
+  if (error instanceof AppError) return error
+  if (error instanceof ZodError) return validationFailed({ issues: error.issues })
+  return null
+}
+
+/**
+ * Thân không phải JSON hợp lệ (rỗng, cắt cụt, sai cú pháp) → 400 thay vì 500 (audit API-01).
+ * Chỉ bọc `request.json()` của chính request này, nên `JSON.parse` ở chỗ khác vẫn là lỗi máy chủ.
+ * Route đang `.catch(() => null)` vẫn nhận `null` như cũ.
+ */
+function guardJsonBody(request: Request): void {
+  const read = request.json.bind(request)
+  request.json = () =>
+    read().catch((error: unknown) => {
+      throw error instanceof SyntaxError ? validationFailed({ body: "Thân yêu cầu không phải JSON hợp lệ" }) : error
+    })
+}
+
 export function errorResponse(error: unknown, where?: { method: string; path: string }): Response {
-  if (error instanceof AppError) {
+  const known = asAppError(error)
+  if (known) {
     return jsonResponse(
       {
         error: {
-          code: error.code,
-          message: error.message,
-          ...(error.details ? { details: error.details } : {}),
+          code: known.code,
+          message: known.message,
+          ...(known.details ? { details: known.details } : {}),
         },
       },
-      { status: error.status }
+      { status: known.status }
     )
   }
 
@@ -77,6 +104,7 @@ export function handle<Args extends unknown[]>(
     const dbContext = dbContextForPath(new URL(request.url).pathname)
     return runWithRequestMeta(meta, () => runWithDbContext(dbContext, async () => {
       try {
+        guardJsonBody(request)
         const response = await fn(request, ...args)
         await auditMutation(request, response)
         return response

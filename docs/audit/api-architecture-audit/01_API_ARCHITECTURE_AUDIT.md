@@ -174,7 +174,7 @@ Không có OpenAPI (ARC-024). Đặc tả 06 (1.242 dòng markdown) mô tả th�
 
 | Đợt | Việc | Phát hiện | Cần PO? |
 |---|---|---|---|
-| 1 (ngay) | Map `ZodError`/`SyntaxError` → 400 trong `errorResponse` + test; chặn `limit` ở `GET /orders`; sửa `noi-bo/identity`; `jobs/batch` bắt buộc khoá + zod; rate limit + trừ credit cho `content-engine/rewrite` | 01, 02, 03, 04, 05 | Mã năng lực cho rewrite (nợ #170) |
+| 1 (ngay) — **đã làm 06/11/2026**, xem §6 | Map `ZodError`/`SyntaxError` → 400 trong `errorResponse` + test; chặn `limit` ở `GET /orders`; sửa `noi-bo/identity`; `jobs/batch` bắt buộc khoá + zod; rate limit + trừ credit cho `content-engine/rewrite` | 01, 02, 03, 04, 05 | Mã năng lực + credit cho rewrite (nợ #170) |
 | 2 | `Retry-After` + `RateLimit-*`; rate limit Integration API theo token; chốt 8 dòng năng lực lệch; `check:docs` kiểm cột năng lực | 08, 09, 12 | Chốt bên đúng cho 8 dòng |
 | 3 | Ban hành chuẩn API Contract v1.1 (tài liệu 02); helper `defineRoute` + `parseBody` + `paginate` dùng chung; ratchet test cho route mới | 06, 07, 10, 13, 16 | Duyệt chuẩn |
 | 4 | OpenAPI 3.1 sinh từ zod: Integration API + `/public/*` trước, sau đó nội bộ; `check:openapi` trong CI | 14, 15 | Thêm gate CI |
@@ -188,3 +188,15 @@ Không đổi tên/di chuyển route hiện có trong các đợt trên — gom 
 3. Chốt mặc định `limit`: 25 (đặc tả) hay 20 (skill)?
 4. Casing chuẩn cho route **mới**: snake_case theo đặc tả 06 (khuyến nghị) hay camelCase theo đa số mã hiện tại?
 5. Thêm gate CI `check:openapi` (thay đổi CI cần PO duyệt theo CLAUDE.md)?
+
+## 6. Nhật ký sửa — đợt 1 (06/11/2026)
+
+| Mã | Đã sửa | Test | Còn lại |
+|---|---|---|---|
+| API-01 | `src/core/http/response.ts`: `errorResponse` đổi `ZodError` → 400 `details.issues`; `handle()` bọc `request.json()` của request — chỉ `SyntaxError` khi đọc thân mới thành 400 `details.body`, `JSON.parse` chỗ khác vẫn 500; route `.catch(() => null)` giữ nguyên hành vi. Phủ luôn 4 use-case CRM/in ấn gọi `schema.parse(rawInput)` | `tests/unit/core/http/handle-input-errors.test.ts` | Thống nhất dạng `details` (API-07) chờ chuẩn ở tài liệu 02 |
+| API-02 | `content-engine/rewrite/route.ts`: 30 lần/10 phút/người dùng + 200 lần/giờ/tổ chức, kiểm trước khi gọi AI | `tests/unit/content-engine/rewrite-rate-limit-route.test.ts` | Mã năng lực và trừ credit — **chờ PO** (nợ #170) |
+| API-03 | `orders/route.ts`: `?limit=` 1–100 (giữ mặc định 50), sai → 400 | `tests/unit/orders/list-orders-limit-route.test.ts` | Cursor + `{ data, next_cursor }` (API-10) |
+| API-04 | `noi-bo/identity/route.ts`: bỏ `try/catch`, `notFound()`; giữ `{ success, data }` cho trang Kết nối | `tests/unit/organization/noi-bo-identity-route.test.ts` | — |
+| API-05 | `jobs/batch/route.ts`: zod (`capabilities` 1–50), `Idempotency-Key` bắt buộc, `jsonResponse`; giữ mã 200 + hình dạng phản hồi mà `FeaturePicker` đọc | `tests/unit/jobs/batch-route.test.ts` | Đổi sang 202 khi chuẩn API-16 được duyệt |
+
+Đặc tả 06 cập nhật cùng commit (§2 bảng lỗi; dòng `GET /orders`, `POST /jobs/batch`, `POST /content-engine/rewrite`, `GET /noi-bo/identity`).
