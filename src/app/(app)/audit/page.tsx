@@ -173,7 +173,7 @@ export default function AuditLogsPage() {
         <div className="flex flex-col gap-1 text-caption text-text-muted">
           Loại thao tác
           <Select value={actionFilter || "ALL"} onValueChange={(v: string) => setActionFilter(v === "ALL" ? "" : v)}>
-            <SelectTrigger className="w-56"><SelectValue /></SelectTrigger>
+            <SelectTrigger className="w-56" aria-label="Loại thao tác"><SelectValue /></SelectTrigger>
             <SelectContent>
               {ACTION_FILTERS.map((f) => <SelectItem key={f.value} value={f.value}>{f.label}</SelectItem>)}
             </SelectContent>
