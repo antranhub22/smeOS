@@ -163,9 +163,9 @@ export default function AuditLogsPage() {
       </div>
 
       <Tabs value={tab} onValueChange={(v) => setTab(v === "platform" ? "platform" : "org")}>
-        <TabsList aria-label="Loại nhật ký">
-          <TabsTrigger value="org">Thao tác trong tổ chức</TabsTrigger>
-          <TabsTrigger value="platform">Truy cập của nền tảng</TabsTrigger>
+        <TabsList aria-label="Loại nhật ký" className="flex w-full sm:inline-flex sm:w-auto">
+          <TabsTrigger value="org" className="flex-1 whitespace-normal text-center sm:flex-none">Thao tác trong tổ chức</TabsTrigger>
+          <TabsTrigger value="platform" className="flex-1 whitespace-normal text-center sm:flex-none">Truy cập của nền tảng</TabsTrigger>
         </TabsList>
         <TabsContent value="platform"><PlatformAccessTab /></TabsContent>
         <TabsContent value="org" className="flex flex-col gap-6">

@@ -35,7 +35,7 @@ export function PlatformAccessTab() {
             Mỗi lần nhân viên vận hành nền tảng mở dữ liệu của tổ chức đều được ghi lại tại đây.
           </p>
         </div>
-        <Button variant="outline" size="sm" onClick={() => void list.refresh()} disabled={loading} className="text-caption flex items-center gap-1.5">
+        <Button variant="outline" size="sm" onClick={() => void list.refresh()} disabled={loading} className="shrink-0 whitespace-nowrap text-caption flex items-center gap-1.5">
           <RefreshCw size={13} className={loading ? "animate-spin motion-reduce:animate-none" : ""} aria-hidden="true" />
           Làm mới
         </Button>
