@@ -44,7 +44,8 @@ export function noticeDays(entry: Deprecation): number {
   return Math.round((dayStart(entry.sunset) - dayStart(entry.announced)) / DAY_MS)
 }
 
-function pathPattern(path: string): RegExp {
+/** Đường dẫn kiểu thư mục route (`/a/[id]/b`, `[...rest]`) → RegExp khớp pathname thật. */
+export function pathPattern(path: string): RegExp {
   const escaped = path
     .split("/")
     .map((segment) => (/^\[\.\.\.\w+\]$/.test(segment) ? ".+" : /^\[\w+\]$/.test(segment) ? "[^/]+" : segment.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")))
