@@ -577,7 +577,7 @@ Nội dung nhắc mua sinh từ dịp và sản phẩm. Không endpoint nào g�
 |---|---|---|---|
 | GET | `/orders` | `R1` | Lọc theo ngày, trạng thái, chi nhánh, người được phân công · `?delivery_from=&delivery_to=` (YYYY-MM-DD, theo `delivery_window.date` hoặc giờ hẹn đơn Điều phối, giờ Việt Nam; ngày sai định dạng bị bỏ qua) · `?sale_id=` (Sale phụ trách, hoặc người tạo khi đơn chưa gán Sale) · `?limit=` 1–100, mặc định 50, ngoài khoảng/không phải số nguyên → 400 (audit API-03, 06/11/2026) |
 | POST | `/orders` | `R2` | |
-| GET · PATCH | `/orders/:id` | `R1` · `R3` | |
+| GET · PATCH | `/orders/:id` | `R1` · `R3` | PATCH không đặt được `status` = `CONFIRMED`/`COMPLETED`/`CANCELLED` → 422 (audit BL-01): xác nhận đi qua thu tiền/duyệt giao trước, hoàn tất qua Điều phối, huỷ qua `POST /orders/:id/cancel` |
 | POST | `/orders/:id/assign` | `R4` | Người nhận việc phải là thành viên đang hoạt động của tổ chức (khác → 422); giao lại thu hồi phân công cũ |
 | GET | `/orders/my-work` | `R17` (`?scope=team`: `R4`) | Việc chế tác đang giao cho người đăng nhập, sắp theo giờ giao; công thức và ảnh mẫu, không có giá · `scope=team`: mọi việc trong phạm vi chi nhánh, kèm tên thợ |
 | POST | `/orders/:id/my-work` | `R17` | `{ action: START \| FINISH }` — nhận việc / báo xong; việc không giao cho mình → 404; sai bước → 422 |
@@ -606,10 +606,10 @@ Mọi route nhận `:id` là id HOẶC mã đơn (`FLR-YYMMDD-NNNN`); tổ chứ
 | GET | `/coordinator/orders` | `R1` | `?stage=` `?limit=` (≤200). Rủi ro trễ tính lại lúc đọc (F09/F12) |
 | POST | `/coordinator/orders` | `R2` | Mã đơn do máy chủ cấp, tuần tự theo ngày; `sampleImageUrl` cấm `data:` — ảnh tải lên dùng `sampleAssetId` |
 | GET | `/coordinator/orders/:id` | `R1` | |
-| PATCH | `/coordinator/orders/:id/stage` | `R3` | Kiểm luồng + bằng chứng (đối tác / QC đạt / POD / hết sự cố) |
+| PATCH | `/coordinator/orders/:id/stage` | `R3` | Kiểm luồng + bằng chứng (đối tác / QC đạt / POD / hết sự cố); `→ COMPLETED` cần đã thu đủ như `/close` (audit BL-02) |
 | PATCH | `/coordinator/orders/:id/custom-fields` | `R3` | ĐP-3.16 — sửa giá trị trường tự tạo (entity ORDER); trộn vào giá trị cũ, không thay nguyên khối |
 | GET | `/coordinator/orders/:id/payments` | `R1` | ĐP-4a (PO D2) — sổ thu của một đơn |
-| POST | `/coordinator/orders/:id/payments` | `R9`/`R10` | ĐP-4a (PO D2) — ghi một dòng sổ thu. `kind=DEPOSIT`/`BALANCE` đòi `R9`; `kind=REFUND` đòi `R10` (trần cứng điều hành). Người có `R11` ghi thì `orders.paid_vnd`/`balance_vnd` cập nhật cùng giao dịch; người không có `R11` ghi thì dòng ở trạng thái `PENDING`, chưa cộng vào số đã thu (checklist ALG 1.16) |
+| POST | `/coordinator/orders/:id/payments` | `R9`/`R10` | ĐP-4a (PO D2) — ghi một dòng sổ thu. `kind=DEPOSIT`/`BALANCE` đòi `R9`; `kind=REFUND` đòi `R10` (trần cứng điều hành). Người có `R11` ghi thì `orders.paid_vnd`/`balance_vnd` cập nhật cùng giao dịch; người không có `R11` ghi thì dòng ở trạng thái `PENDING`, chưa cộng vào số đã thu (checklist ALG 1.16). Chung luật `planPayment`/`planRefund` với sổ đơn: thu vượt phần còn phải thu, thu vào đơn đã huỷ, hoàn quá số đã thu → 422; `paid_vnd` đổi giữa lúc đọc và ghi → 409 (audit BL-05) |
 | POST | `/coordinator/orders/:id/payments/:paymentId/decision` | `R11` | Checklist ALG 1.16 — Điều hành xác nhận (`approve: true`, cộng vào số đã thu) hoặc từ chối (`approve: false`, bắt buộc `note`) dòng sổ thu `PENDING`. Người tạo dòng không tự duyệt khi công tắc tự duyệt tắt |
 | POST | `/coordinator/orders/:id/assign-partner` | `R4` | Đối tác cùng tổ chức, đang hoạt động, chưa vượt `capacity_daily` (trừ `overrideCapacity`) |
 | POST | `/coordinator/orders/:id/production` | `R3` | `MARK_READY` bắt buộc ảnh thành phẩm (`assets` cùng tổ chức); `REPORT_MATERIAL_ISSUE` mở sự cố |

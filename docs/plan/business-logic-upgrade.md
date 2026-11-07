@@ -146,7 +146,7 @@ Thứ tự: WP-06 trước WP-07, WP-05b; WP-11 trước WP-09 (bộ sinh mã ch
 
 | Đợt | WP | Trạng thái |
 |---|---|---|
-| P0 | WP-01 · WP-02 · WP-03 · WP-04 · WP-05a | Chưa bắt đầu |
+| P0 | WP-01 · WP-02 · WP-03 · WP-04 · WP-05a | Đã làm — PR đợt P0. Còn lại của WP-03: sửa comment CHECK ở `schema.prisma` (cần PO duyệt, gộp WP-15) và đối soát `balance_vnd` (chuyển sang WP-15) |
 | P1 | WP-06 · WP-07 · WP-11 · WP-12 · WP-13 | Chưa bắt đầu |
 | P1 [PO] | WP-05b · WP-08 · WP-09 · WP-10 (C9) · WP-14 | Chờ Q1–Q4, Q8 |
 | P2 | WP-15 … WP-21 | Chờ PO / [SCHEMA] |
