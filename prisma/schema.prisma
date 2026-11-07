@@ -178,6 +178,7 @@ model organizations {
   idempotency_keys                                 idempotency_keys[]
   usage                                            usage[]
   audit_logs                                       audit_logs[]
+  platform_access_logs                             platform_access_logs[]
   business_profile                                 business_profiles?
   brand_profile                                    brand_profiles?
   products                                         products[]
@@ -2498,6 +2499,26 @@ model platform_secrets {
 /// credit, duyệt nâng cấp) vẫn ghi vào `audit_logs` hiện có với
 /// `organization_id` của tổ chức đó — bảng này không thay thế `audit_logs`.
 /// Tách riêng vì `audit_logs.organization_id` là `NOT NULL` (D-N3).
+/// Nhân viên nền tảng truy cập dữ liệu của một tổ chức (ADR-013 D-I5, D-60): mỗi yêu cầu Console vào
+/// `platform/organizations/:id/*` hoặc `platform/orgs-data/:orgId/*` ghi một dòng, TRƯỚC khi trả dữ liệu. Thuộc tổ chức:
+/// chủ tổ chức xem ở `/audit` (tab "Truy cập của nền tảng", quyền G9). Chỉ thêm dòng (trigger `smeos_append_only_guard`).
+model platform_access_logs {
+  id              String   @id @default(uuid())
+  organization_id String
+  /// `users.id` của người vận hành nền tảng
+  operator_id     String
+  /// Mã mục đích suy từ thao tác (`describePlatformAccess`), vd. `org.profile.read`, `org.records.orders.export`
+  purpose         String
+  method          String
+  /// Đường dẫn API (không kèm query)
+  route           String
+  created_at      DateTime @default(now()) @db.Timestamptz(3)
+
+  organization organizations @relation(fields: [organization_id], references: [id])
+
+  @@index([organization_id, created_at])
+}
+
 model platform_audit_logs {
   id          String   @id @default(uuid())
   user_id     String

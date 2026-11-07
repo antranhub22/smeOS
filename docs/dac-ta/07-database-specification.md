@@ -4130,6 +4130,38 @@ Ca thử: `tests/tenant/branch-scope-customers.test.ts` (tự cài trigger từ 
 
 Ca thử: `tests/tenant/branch-scope-products.test.ts`.
 
+## 47. Truy cập của nhân viên nền tảng — `platform_access_logs` (06/11/2026)
+
+ADR-013 D-I5, bước **I-2b**; D-60 (PO 06/11/2026: chủ tổ chức xem ngay trong ứng dụng — tab "Truy cập của nền tảng"
+trong `/audit`, quyền `G9`; mục đích tự suy từ thao tác). Migration `20261106140000_platform_access_logs`.
+
+```prisma
+model platform_access_logs {
+  id              String   @id @default(uuid())
+  organization_id String
+  operator_id     String
+  purpose         String
+  method          String
+  route           String
+  created_at      DateTime @default(now()) @db.Timestamptz(3)
+
+  organization organizations @relation(fields: [organization_id], references: [id])
+
+  @@index([organization_id, created_at])
+}
+```
+
+- Thuộc tổ chức: RLS `tenant_isolation` như mọi bảng tenant (`scripts/gen-rls-policies.mjs`); đọc qua `scopedWhere`.
+- Chỉ thêm dòng: trigger `platform_access_logs_append_only` (hàm `smeos_append_only_guard`, §46).
+- Ghi: `recordPlatformAccess` (`src/modules/audit/use-cases/record-platform-access.ts`) ở mọi handler
+  `platform/organizations/[id]/*` và `platform/orgs-data/[orgId]/*`, ngay sau khi giải phiên Console (xuất dữ liệu: sau
+  khi kiểm `N1`), TRƯỚC khi đọc/ghi; ghi lỗi → yêu cầu lỗi (biện pháp bù R-2). `INSERT … SELECT … WHERE` tổ chức tồn
+  tại — id sai không ghi, route vẫn 404. `purpose` là mã (`org.profile.read`, `org.records.orders.export`…); nhãn tiếng
+  Việt ở `src/modules/audit/domain/platform-access.ts`, giao diện không hiện mã.
+- Chặn hồi quy: `tests/unit/architecture/platform-access-guard.test.ts` (mỗi handler gọi đúng một lần).
+
+Ca thử: `tests/tenant/platform-access-isolation.test.ts`, `src/modules/audit/domain/platform-access.test.ts`.
+
 ## 46. Nhật ký bất biến — `audit_logs`, `platform_audit_logs`, `order_events`, `job_events`, `usage` (06/11/2026)
 
 ADR-013 D-I4, bước **I-2a** (PO duyệt ADR-013 06/11/2026; không đổi schema Prisma). Migration

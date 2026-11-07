@@ -2,6 +2,7 @@ import { z } from "zod"
 import { validationFailed } from "@/core/http/errors"
 import { handle, jsonResponse } from "@/core/http/response"
 import { requirePlatformContext } from "@/modules/platform/use-cases/resolve-platform-session"
+import { recordPlatformAccess } from "@/modules/audit/use-cases/record-platform-access"
 import { getOrganization } from "@/modules/platform/use-cases/get-organization"
 import { approveOrganizationModelChange } from "@/modules/platform/use-cases/approve-organization-model-change"
 import { decidePublicChatLimits } from "@/modules/platform/use-cases/decide-public-chat-limits"
@@ -10,6 +11,7 @@ import { getOrganizationRepository } from "@/modules/organization/infra/organiza
 
 export const GET = handle(async (request, context: { params: Promise<{ id: string }> }) => {
   const pctx = await requirePlatformContext(request)
+  await recordPlatformAccess(request, pctx) // D-60: ghi trước khi đọc/ghi dữ liệu tổ chức
   const { id } = await context.params
   return jsonResponse({ data: await getOrganization(pctx, id) })
 })
@@ -30,6 +32,7 @@ const patchSchema = z.object({
 
 export const PATCH = handle(async (request, context: { params: Promise<{ id: string }> }) => {
   const pctx = await requirePlatformContext(request)
+  await recordPlatformAccess(request, pctx) // D-60: ghi trước khi đọc/ghi dữ liệu tổ chức
   const { id } = await context.params
 
   const parsed = patchSchema.safeParse(await request.json().catch(() => null))
