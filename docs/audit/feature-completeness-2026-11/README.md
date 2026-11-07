@@ -45,8 +45,8 @@ Cả 123 chức năng đều có mã thật. Phần chưa xong không nằm ở 
 |---|---|
 | `npm run typecheck` | ✅ 0 lỗi (cần `NODE_OPTIONS=--max-old-space-size=6144`; heap mặc định hết bộ nhớ trên máy kiểm toán) |
 | `npm test` (unit) | ✅ 4.138/4.138 ca, 687 tệp — khi có CSDL `floraos` đã migrate + seed như CI (không có CSDL thì 27 ca chạm DB hỏng — lỗi môi trường) |
-| `npm run test:tenant` | _xem mục 6_ |
-| `npm run test:platform` | _xem mục 6_ |
+| `npm run test:tenant` | ✅ 876/876 ca, 193 tệp (CSDL cục bộ `floraos_test`, `prisma db push` như CI) |
+| `npm run test:platform` | ✅ 43/43 ca, 14 tệp |
 | Lint, `lint:ux`, build, E2E | Không chạy — kiểm toán không đổi mã |
 
 Môi trường: `npm ci` bị chặn tải `xlsx` từ `cdn.sheetjs.com` (chính sách mạng của máy kiểm toán); test chạy với `xlsx@0.18.5` từ npm, đã khôi phục `package.json`/`package-lock.json`, không commit.
@@ -72,7 +72,3 @@ Môi trường: `npm ci` bị chặn tải `xlsx` từ `cdn.sheetjs.com` (chính
 - Không chạy build, lint, `lint:ux`, E2E.
 - Các ngưỡng thời gian trong AC (làm mới ≤ 15 giây, Kanban trong 30 giây, duyệt ảnh 10 phút) được đối chiếu bằng hằng số trong mã, không đo thực tế.
 - Repo `LocalBudd`, `SocialFlow` không nằm trong phạm vi.
-
-## 6. Kết quả cổng cách ly
-
-_Điền sau khi chạy xong._
