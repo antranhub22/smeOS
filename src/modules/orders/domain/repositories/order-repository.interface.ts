@@ -14,6 +14,15 @@ import type {
   OrderEventAxis,
 } from "../order-types"
 
+/** Sự kiện trục chờ ghi cùng một lần cập nhật đơn. */
+export interface PendingOrderEvent {
+  axis: OrderEventAxis
+  fromValue: string | null
+  toValue: string
+  actorId: string | null
+  reason: string | null
+}
+
 export interface IOrderRepository {
   /** Đếm số đơn hàng tạo trong ngày của tenant để sinh mã đơn (Code sequence). */
   countTodayOrders(organizationId: string, date?: Date): Promise<number>
@@ -36,11 +45,15 @@ export interface IOrderRepository {
   /** Danh sách đơn hàng theo bộ lọc phân trang. */
   list(organizationId: string, filter?: OrderFilter): Promise<{ orders: OrderRecord[]; total: number }>
 
-  /** Cập nhật thông tin / trạng thái đơn hàng. */
+  /**
+   * Cập nhật thông tin / trạng thái đơn hàng. `events` (nếu có) được ghi CÙNG giao dịch với cập nhật — lỗi giữa
+   * chừng không để lại sự kiện không có thay đổi tương ứng (SLA đo từ chuỗi sự kiện; audit BL-18).
+   */
   update(
     organizationId: string,
     id: string,
-    input: UpdateOrderInput
+    input: UpdateOrderInput,
+    events?: readonly PendingOrderEvent[]
   ): Promise<OrderRecord>
 
   /** Phân công nhân sự thực hiện đơn (thợ chế tác, thợ may, đầu bếp...). */

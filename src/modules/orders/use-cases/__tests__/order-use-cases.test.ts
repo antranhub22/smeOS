@@ -131,8 +131,12 @@ describe("Order Use-cases with Mocked IOrderRepository (Clean Architecture)", ()
     )
 
     expect(result.status).toBe("PROCESSING")
-    expect(mockRepo.recordEvent).toHaveBeenCalled()
-    expect(mockRepo.update).toHaveBeenCalled()
+    // Sự kiện đi cùng lần cập nhật (một giao dịch — audit BL-18), không ghi riêng trước
+    expect(mockRepo.recordEvent).not.toHaveBeenCalled()
+    expect(mockRepo.update).toHaveBeenCalledWith("org-1", "ord-123", expect.anything(), [
+      expect.objectContaining({ axis: "order", fromValue: "CONFIRMED", toValue: "PROCESSING" }),
+      expect.objectContaining({ axis: "production", fromValue: "WAITING", toValue: "ARRANGING" }),
+    ])
   })
 
   it("assignFlorist creates assignment record and updates productionStatus to ASSIGNED", async () => {
