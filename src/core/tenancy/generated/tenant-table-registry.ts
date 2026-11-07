@@ -65,7 +65,7 @@ export const TABLE_REGISTRY: Readonly<Record<string, TableEntry>> = {
   greeting_messages: { scope: "TENANT", parents: ["greeting_sessions", "orders", "organizations"] },
   greeting_notifications: { scope: "TENANT", parents: ["orders", "organizations"] },
   greeting_payment_events: { scope: "TENANT", parents: ["orders", "organizations"] },
-  greeting_sessions: { scope: "TENANT", parents: ["greeting_catalogs", "orders", "organizations", "products"], pii: { customer_name: "identity", customer_phone: "contact" } },
+  greeting_sessions: { scope: "TENANT", parents: ["customers", "greeting_catalogs", "orders", "organizations", "products"], pii: { customer_name: "identity", customer_phone: "contact" } },
   greeting_share_links: { scope: "TENANT", parents: ["greeting_catalogs", "organizations"] },
   idempotency_keys: { scope: "TENANT", parents: ["organizations"] },
   industries: { scope: "GLOBAL", parents: [] },

@@ -4130,6 +4130,35 @@ Ca thử: `tests/tenant/branch-scope-customers.test.ts` (tự cài trigger từ 
 
 Ca thử: `tests/tenant/branch-scope-products.test.ts`.
 
+## 48. Một hồ sơ khách — `customers.status`, `greeting_sessions.customer_id` (07/11/2026)
+
+ADR-014 D-P2, bước **P-2** (expand). PO duyệt 07/11/2026, phương án A. Migration `20261107090000_customer_prospects`.
+
+```prisma
+enum customer_status {
+  ACTIVE
+  PROSPECT
+}
+```
+
+- `customers.status` (`customer_status`, mặc định `ACTIVE`, index `(organization_id, status)`). `PROSPECT` = người nhận
+  link Thẻ chào có SĐT mà chưa đặt đơn. Khách cũ và khách do lead tạo vẫn là `ACTIVE`.
+- Khách `PROSPECT` không hiện ở danh sách, tìm kiếm, chi tiết, xuất khách, đơn của khách, báo giá và gợi ý thị trường
+  (`status: "ACTIVE"` ở `customer-repository.ts`, `customer-export-query.ts`, `customer-orders-query.ts`,
+  `quotation-reference-guard.ts`, `market-intelligence-repository.ts`). Console (`platform-records-repository.ts`, xuất
+  dữ liệu tổ chức) vẫn thấy mọi hồ sơ.
+- Thành `ACTIVE` (cùng hồ sơ, cùng `id`): khi đặt đơn hoặc để lại lead (`findOrCreateCustomer` → `activateProspect`, lấy
+  tên/địa chỉ vừa nhập), hoặc khi nhân viên tạo khách cùng SĐT (`CustomerRepository.create` nâng thay vì báo trùng).
+- `greeting_sessions.customer_id` (`String?`, khoá ngoại tới `customers`, `ON DELETE SET NULL`, index): khách của đơn
+  (khi gắn đơn) hoặc hồ sơ theo SĐT trên link (`ensureProspectCustomer`, `src/modules/greeting-card/infra/session-customer.ts`)
+  — lúc tạo link, đặt thêm đơn, link công khai, Sale ghi SĐT. Link chỉ có tên thì để trống. Khoá một cột như
+  `leads.customer_id`: khoá ghép với `SET NULL` sẽ xoá cả `organization_id`; cùng tổ chức do mã ghi bảo đảm.
+- Ghi kép: `customer_name`, `customer_phone` của link vẫn ghi và vẫn được đọc; bỏ ở bước contract sau.
+- Backfill trong migration (khối `P2-BACKFILL`): link có đơn → khách của đơn; link chưa có đơn → khách cùng tổ chức +
+  SĐT; chưa có → tạo `PROSPECT` (một dòng mỗi tổ chức + SĐT, tên ở link mới nhất, `ON CONFLICT DO NOTHING`).
+
+Ca thử: `tests/tenant/customer-prospects.test.ts` (gồm chạy lại khối backfill của migration).
+
 ## 47. Truy cập của nhân viên nền tảng — `platform_access_logs` (06/11/2026)
 
 ADR-013 D-I5, bước **I-2b**; D-60 (PO 06/11/2026: chủ tổ chức xem ngay trong ứng dụng — tab "Truy cập của nền tảng"

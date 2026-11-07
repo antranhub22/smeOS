@@ -17,6 +17,7 @@ export interface CustomerExportFilter {
 export async function queryCustomersForExport(ctx: TenantContext, filter: CustomerExportFilter = {}) {
   const where = {
     organization_id: ctx.organizationId,
+    status: "ACTIVE" as const, // P-2: không xuất khách tiềm năng
     AND: [await customerBranchWhere(ctx)], // phạm vi chi nhánh (ADR-012 T-5)
     ...(filter.tier ? { tier: filter.tier as never } : {}),
     ...(filter.search

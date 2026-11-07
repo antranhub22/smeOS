@@ -452,14 +452,14 @@ model capability_overrides {
 }
 
 model memberships {
-  id                String            @id @default(uuid())
-  organization_id   String
-  user_id           String
-  role_id           String
-  branch_id         String? // null = phạm vi toàn tổ chức
-  status            membership_status @default(INVITED)
-  invited_at        DateTime          @default(now()) @db.Timestamptz(3)
-  joined_at         DateTime?         @db.Timestamptz(3)
+  id              String            @id @default(uuid())
+  organization_id String
+  user_id         String
+  role_id         String
+  branch_id       String? // null = phạm vi toàn tổ chức
+  status          membership_status @default(INVITED)
+  invited_at      DateTime          @default(now()) @db.Timestamptz(3)
+  joined_at       DateTime?         @db.Timestamptz(3)
 
   updated_at   DateTime      @default(now()) @updatedAt @db.Timestamptz(3)
   user         users         @relation(fields: [user_id], references: [id], onDelete: Cascade)
@@ -2100,6 +2100,11 @@ model order_events {
 
 // ── M09 — CRM & Khách hàng ngành hoa (P21) ──────────────────────────────────
 
+enum customer_status {
+  ACTIVE
+  PROSPECT
+}
+
 enum customer_tier {
   NEW
   BRONZE
@@ -2121,7 +2126,7 @@ enum voucher_discount_type {
 }
 
 model customers {
-  id                String        @id @default(uuid())
+  id                String          @id @default(uuid())
   organization_id   String
   code              String // KH-0001, KH-0002
   /// @pii identity
@@ -2132,15 +2137,18 @@ model customers {
   email             String?
   /// @pii address
   address           String?
-  tier              customer_tier @default(NEW)
+  tier              customer_tier   @default(NEW)
+  /// ADR-014 D-P2, P-2 (PO 07/11/2026): PROSPECT = người nhận link Thẻ chào có SĐT mà chưa đặt đơn — không hiện ở
+  /// danh sách khách, xuất, phân khúc; đặt đơn, để lại lead hay được tạo tay thì thành ACTIVE.
+  status            customer_status @default(ACTIVE)
   /// Chi nhánh của khách (D-58, ADR-012 T-5): chi nhánh của người tạo hoặc của đơn đầu tiên có chi nhánh; null = khách
   /// dùng chung toàn tổ chức. Tổ chức bật `settings.branch_scope.wave1` thì nhân viên chi nhánh chỉ thấy khách của
   /// chi nhánh mình và khách dùng chung.
   branch_id         String?
   notes             String?
-  tags              String[]      @default([])
-  preferred_flowers String[]      @default([])
-  preferred_colors  String[]      @default([])
+  tags              String[]        @default([])
+  preferred_flowers String[]        @default([])
+  preferred_colors  String[]        @default([])
 
   total_spent   Decimal   @default(0) @db.Decimal(14, 2)
   order_count   Int       @default(0)
@@ -2149,16 +2157,17 @@ model customers {
   created_at DateTime @default(now()) @db.Timestamptz(3)
   updated_at DateTime @updatedAt @db.Timestamptz(3)
 
-  organization  organizations           @relation(fields: [organization_id], references: [id])
-  fk_branch     branches?               @relation("fk_customers_branch_id", fields: [branch_id], references: [id], onDelete: SetNull)
-  orders        orders[]
-  occasions     customer_occasions[]
-  consents      customer_consents[]
-  vouchers      vouchers[]
-  conversations chat_conversations[]
-  leads         leads[]
-  quotations    quotations[]
-  interactions  customer_interactions[]
+  organization      organizations           @relation(fields: [organization_id], references: [id])
+  fk_branch         branches?               @relation("fk_customers_branch_id", fields: [branch_id], references: [id], onDelete: SetNull)
+  orders            orders[]
+  occasions         customer_occasions[]
+  consents          customer_consents[]
+  vouchers          vouchers[]
+  conversations     chat_conversations[]
+  leads             leads[]
+  quotations        quotations[]
+  interactions      customer_interactions[]
+  greeting_sessions greeting_sessions[]
 
   // Quan hệ ngược của khoá ngoại thêm 05/11/2026
   voucher_redemptions_by_customer_id voucher_redemptions[] @relation("fk_voucher_redemptions_customer_id")
@@ -2168,6 +2177,7 @@ model customers {
   @@unique([id, organization_id]) // đích của khoá ghép tenant (05/11/2026)
   @@index([organization_id, tier])
   @@index([organization_id, name])
+  @@index([organization_id, status])
   @@index([organization_id, branch_id])
   @@index([branch_id]) // khoá ngoại cần index (ADR-015 O-1)
 }
@@ -3618,6 +3628,9 @@ model greeting_sessions {
   customer_name                  String?
   /// @pii contact
   customer_phone                 String?
+  /// ADR-014 D-P2, P-2: hồ sơ khách cùng tổ chức (khách của đơn, hoặc khách PROSPECT theo SĐT trên link). Giai đoạn ghi
+  /// kép: `customer_name`/`customer_phone` vẫn ghi; link chỉ có tên (không SĐT) thì để trống.
+  customer_id                    String?
   status                         String    @default("CREATED") // CREATED | OPENED | BROWSING | SELECTED | ORDER_SUBMITTED | PAYMENT_REPORTED | COMPLETED
   selected_product_id            String?
   product_snapshot               Json? // Đóng băng ảnh, tên, giá mẫu hoa lúc khách chốt
@@ -3639,6 +3652,7 @@ model greeting_sessions {
   organization organizations             @relation(fields: [organization_id], references: [id], onDelete: Cascade)
   catalog      greeting_catalogs         @relation(fields: [catalog_id], references: [id], onDelete: Cascade)
   order        orders?                   @relation(fields: [order_id], references: [id], onDelete: SetNull)
+  customer     customers?                @relation(fields: [customer_id], references: [id], onDelete: SetNull)
   events       greeting_journey_events[]
 
   // Khoá ngoại thêm ở đợt hoàn thiện CSDL 05/11/2026
@@ -3655,6 +3669,7 @@ model greeting_sessions {
   @@index([catalog_id]) // khoá ngoại cần index (ADR-015 O-1)
   @@index([order_id]) // khoá ngoại cần index (ADR-015 O-1)
   @@index([selected_product_id]) // khoá ngoại cần index (ADR-015 O-1)
+  @@index([customer_id]) // khoá ngoại cần index (ADR-015 O-1)
 }
 
 /// Tích hợp ngoài của Thẻ chào theo tiệm: webhook đối soát ngân hàng + kênh
@@ -4880,18 +4895,18 @@ enum custom_domain_certificate_status {
 }
 
 model custom_domains {
-  id                 String                          @id @default(uuid())
+  id                 String                           @id @default(uuid())
   organization_id    String
-  hostname           String                          @unique
+  hostname           String                           @unique
   verification_token String
-  status             custom_domain_status            @default(PENDING)
-  verified_at        DateTime?                       @db.Timestamptz(3)
-  last_checked_at    DateTime?                       @db.Timestamptz(3)
+  status             custom_domain_status             @default(PENDING)
+  verified_at        DateTime?                        @db.Timestamptz(3)
+  last_checked_at    DateTime?                        @db.Timestamptz(3)
   certificate_status custom_domain_certificate_status @default(NOT_REQUESTED)
   locked_reason      String?
   created_by         String?
-  created_at         DateTime                        @default(now()) @db.Timestamptz(3)
-  updated_at         DateTime                        @default(now()) @updatedAt @db.Timestamptz(3)
+  created_at         DateTime                         @default(now()) @db.Timestamptz(3)
+  updated_at         DateTime                         @default(now()) @updatedAt @db.Timestamptz(3)
 
   organization organizations @relation(fields: [organization_id], references: [id], onDelete: Cascade)
 

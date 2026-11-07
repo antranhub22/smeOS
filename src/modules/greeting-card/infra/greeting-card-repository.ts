@@ -8,6 +8,7 @@ import { CATALOG_ITEMS_INCLUDE, GreetingCatalogRepository } from "./greeting-cat
 import type { GreetingSessionStatus, ProductSnapshot } from "../domain/greeting-card-types"
 import { withIndustryKey, withOrganizationIndustry } from "@/modules/organization/domain/industry-key"
 import { ORG_SETTINGS_SELECT } from "@/modules/organization/infra/organization-industry"
+import { withSessionCustomer } from "./session-customer"
 
 const SEND_CODE_ATTEMPTS = 5
 
@@ -30,7 +31,7 @@ export class GreetingCardRepository extends GreetingCatalogRepository {
       })
       if (taken) continue
       try {
-        return await this.db.greeting_sessions.create({ data: build(sendCode) })
+        return await this.db.greeting_sessions.create({ data: await withSessionCustomer(this.db, build(sendCode)) }) // P-2
       } catch (error) {
         if (!isUniqueViolation(error)) throw error
       }
@@ -60,8 +61,7 @@ export class GreetingCardRepository extends GreetingCatalogRepository {
       catalog_id: catalog.id,
       send_code: sendCode,
       sale_id: input.saleId,
-      customer_name: input.customerName ?? null,
-      customer_phone: input.customerPhone ?? null,
+      customer_name: input.customerName ?? null, customer_phone: input.customerPhone ?? null,
       expires_at: input.expiresAt ?? null,
       status: "CREATED",
     }))
