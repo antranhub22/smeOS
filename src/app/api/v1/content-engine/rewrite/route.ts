@@ -1,5 +1,6 @@
 import { z } from "zod"
 import { validationFailed } from "@/core/http/errors"
+import { enforceRateLimit } from "@/core/http/rate-limit"
 import { handle, jsonResponse } from "@/core/http/response"
 import { requireTenantContext } from "@/modules/organization/use-cases/resolve-session"
 import { callCapability, type AdapterOutcome } from "@/core/ai/gateway"
@@ -36,6 +37,10 @@ export interface RewriteResultOutput {
 
 export const POST = handle(async (request) => {
   const { ctx } = await requireTenantContext(request)
+  // Audit API-02: mỗi lượt gọi LLM đồng bộ mà chưa gác mã năng lực/chưa trừ credit (nợ #170, chờ PO) —
+  // trần tần suất chặn một phiên hay một tổ chức gọi vô hạn. Kiểm trước khi đọc thân/gọi AI.
+  await enforceRateLimit(request, { scope: "content-rewrite-user", limit: 30, windowMs: 10 * 60_000, subject: ctx.userId })
+  await enforceRateLimit(request, { scope: "content-rewrite-org", limit: 200, windowMs: 60 * 60_000, subject: ctx.organizationId })
 
   const body = await request.json().catch(() => null)
   const parsed = requestSchema.safeParse(body)

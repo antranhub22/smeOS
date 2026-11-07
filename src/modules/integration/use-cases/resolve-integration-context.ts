@@ -1,4 +1,5 @@
 import { AppError, unauthenticated } from "@/core/http/errors"
+import { enforceRateLimit } from "@/core/http/rate-limit"
 import { asSystemDb, bindTenantDb } from "@/core/tenancy/db-context"
 import type { TenantContext } from "@/core/tenancy"
 import { withoutBoundaryCapabilities } from "@/modules/integration/domain/boundary-capabilities"
@@ -56,7 +57,21 @@ export async function requireIntegrationContext(
   // Tra khoá tích hợp chưa biết tổ chức → quyền hệ thống; xong thì gắn tổ chức của khoá (RLS, checklist ALG 1.18)
   const resolved = await asSystemDb("integration-auth", () => resolveIntegration(request, tokenRepo))
   bindTenantDb(resolved.organizationId)
+  await enforceRateLimit(request, integrationRateLimit(resolved))
   return resolved
+}
+
+/**
+ * Trần chung của mọi route `/integration/*` (audit API-09): bề mặt máy gọi máy từng không giới hạn
+ * tần suất. Đếm theo danh tính ĐÃ xác thực — token (một app của một tổ chức) hoặc người dùng SSO —
+ * không theo IP, vì app chị em gọi từ vài máy chủ dùng chung IP. 600/phút (10/giây) đủ rộng cho
+ * luồng ghi usage/job hiện tại, chỉ chặn vòng lặp chạy vô hạn hay token bị lộ.
+ */
+export const INTEGRATION_RATE_LIMIT = { limit: 600, windowMs: 60_000 } as const
+
+function integrationRateLimit(ic: IntegrationContext) {
+  const subject = ic.source === "token" ? `token:${ic.tokenId}` : `sso:${ic.organizationId}:${ic.userId}`
+  return { scope: "integration-api", ...INTEGRATION_RATE_LIMIT, subject }
 }
 
 async function resolveIntegration(request: Request, tokenRepo: IIntegrationTokenRepository): Promise<IntegrationContext> {
