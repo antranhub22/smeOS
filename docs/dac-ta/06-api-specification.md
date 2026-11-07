@@ -328,6 +328,13 @@ Trả về chỉ những mục người gọi có năng lực duyệt. Nếu cô
 | GET | `/subscription` | `D1` |
 | POST | `/billing/sepay` | — (khoá `SEPAY_PLATFORM_API_KEY`) |
 | GET | `/audit-logs` | `G9` |
+| GET | `/audit-logs/platform-access` | `G9` |
+
+`/audit-logs/platform-access` (ADR-013 D-I5, D-60, 06/11/2026): nhân viên nền tảng đã truy cập dữ liệu của tổ chức trong
+phiên khi nào, để làm gì — `{ data: [{ id, created_at, operator_name, purpose, purpose_label }], next_cursor }`, mới nhất
+trước, `?limit=1..100` (mặc định 25), `?cursor=`. Chỉ đọc. Mỗi handler Console vào `/platform/organizations/:id/*` và
+`/platform/orgs-data/:orgId/*` ghi một dòng (`recordPlatformAccess`) trước khi đọc/ghi dữ liệu; mục đích suy từ thao tác
+(`describePlatformAccess`), không bắt người vận hành nhập lý do. Tổ chức không tồn tại → không ghi, route vẫn 404.
 
 `/usage/summary` trả số lượt theo `feature`, credit đã dùng, credit còn lại, chia theo chi nhánh nếu tổ chức là Chuỗi.
 

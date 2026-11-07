@@ -6,12 +6,14 @@ import { z } from "zod"
 import { validationFailed } from "@/core/http/errors"
 import { handle, jsonResponse } from "@/core/http/response"
 import { requirePlatformContext } from "@/modules/platform/use-cases/resolve-platform-session"
+import { recordPlatformAccess } from "@/modules/audit/use-cases/record-platform-access"
 import { assignSubscription, cancelSubscription, getOrganizationSubscription } from "@/modules/subscription/use-cases/manage-subscription"
 
 type Ctx = { params: Promise<{ id: string }> }
 
 export const GET = handle(async (request, context: Ctx) => {
   const pctx = await requirePlatformContext(request)
+  await recordPlatformAccess(request, pctx) // D-60: ghi trước khi đọc/ghi dữ liệu tổ chức
   const { id } = await context.params
   return jsonResponse({ data: await getOrganizationSubscription(pctx, id) })
 })
@@ -26,6 +28,7 @@ const bodySchema = z.object({
 
 export const PUT = handle(async (request, context: Ctx) => {
   const pctx = await requirePlatformContext(request)
+  await recordPlatformAccess(request, pctx) // D-60: ghi trước khi đọc/ghi dữ liệu tổ chức
   const { id } = await context.params
   const parsed = bodySchema.safeParse(await request.json().catch(() => null))
   if (!parsed.success) throw validationFailed({ issues: parsed.error.issues })
@@ -34,6 +37,7 @@ export const PUT = handle(async (request, context: Ctx) => {
 
 export const DELETE = handle(async (request, context: Ctx) => {
   const pctx = await requirePlatformContext(request)
+  await recordPlatformAccess(request, pctx) // D-60: ghi trước khi đọc/ghi dữ liệu tổ chức
   const { id } = await context.params
   await cancelSubscription(pctx, id)
   return jsonResponse({ data: { cancelled: true } })
