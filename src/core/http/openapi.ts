@@ -30,6 +30,8 @@ export type OpenApiOperation = {
   security: string[]
   query?: z.ZodObject
   body?: z.ZodType
+  /** Thân `multipart/form-data` (tải tệp) — trường tệp khai `z.file()`. */
+  multipart?: z.ZodType
   /** Mã thành công → mô tả + lược đồ thân. */
   responses: Record<number, OpenApiResponse>
   /** Mã lỗi có thể gặp — thân luôn là envelope `Error` chung. */
@@ -113,6 +115,7 @@ function operationObject(op: OpenApiOperation): Record<string, unknown> {
     security: op.security.map((name) => ({ [name]: [] })),
     ...(params.length ? { parameters: params } : {}),
     ...(op.body ? { requestBody: { required: true, content: { "application/json": { schema: jsonSchema(op.body, "input") } } } } : {}),
+    ...(op.multipart ? { requestBody: { required: true, content: { "multipart/form-data": { schema: jsonSchema(op.multipart, "input") } } } } : {}),
     responses,
     ...op.extensions,
   }

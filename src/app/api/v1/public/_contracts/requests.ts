@@ -190,3 +190,11 @@ export const greetingCatalogOrderBody = publicOrderBodySchema.extend({
 
 // greeting-catalog/[id]/quote/route.ts
 export const greetingCatalogQuoteBody = publicQuoteBodySchema.extend({ productId: z.string().min(1).max(64) })
+
+// ── Thẻ chào — thân không kiểm bằng zod ở route (chỉ mô tả cho OpenAPI) ─────────────────────────────
+/** `payment-notify`: route đọc `proofAssetId` nếu có, không kiểm lược đồ. */
+export const paymentNotifyBody = z.object({ proofAssetId: z.string().optional() })
+/** `payment-proof` (multipart): `file` là ảnh chuyển khoản; `purpose` khác `BALANCE` tính là cọc. */
+export const paymentProofForm = z.object({ file: z.file(), purpose: z.enum(["DEPOSIT", "BALANCE"]).optional() })
+/** Trang theo dõi mở từ link riêng của đơn: `?link=<mã link>` + cookie chủ phiên → xem đủ thông tin. */
+export const trackingLinkQuery = z.object({ link: z.string().optional() })
