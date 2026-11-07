@@ -1,5 +1,6 @@
 import { z } from "zod"
 import { handle, jsonResponse } from "@/core/http/response"
+import { log } from "@/core/observability/log"
 import { requirePlatformContext } from "@/modules/platform/use-cases/resolve-platform-session"
 import { requirePlatformCapability } from "@/core/platform/platform-capabilities"
 import { listAllIndustryPlugins } from "@/modules/organization/domain/industry-profile"
@@ -78,8 +79,13 @@ export const PUT = handle(async (request) => {
       before: previousOverrides,
       after: savedOverrides,
     })
-  } catch {
-    // Không làm gián đoạn việc lưu nếu audit log ghi lỗi
+  } catch (error) {
+    // Không làm gián đoạn việc lưu nếu audit log ghi lỗi — nhưng phải để lại dấu vết: thay đổi cấu hình
+    // toàn sàn không có dòng audit là lỗ hổng truy vết (audit API-17, 07/11/2026).
+    log.error("platform.audit_write_failed", {
+      action: "platform.industry_nav_matrix.update",
+      error: error instanceof Error ? error.message : String(error),
+    })
   }
 
   return jsonResponse({

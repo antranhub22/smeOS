@@ -3,6 +3,7 @@ import { enforceRateLimit } from "@/core/http/rate-limit"
 import { asSystemDb, bindTenantDb } from "@/core/tenancy/db-context"
 import type { TenantContext } from "@/core/tenancy"
 import { withoutBoundaryCapabilities } from "@/modules/integration/domain/boundary-capabilities"
+import { INTEGRATION_RATE_LIMIT } from "@/modules/integration/domain/integration-rate-limit"
 import {
   readIntegrationCredential,
   SSO_HEADER,
@@ -61,13 +62,8 @@ export async function requireIntegrationContext(
   return resolved
 }
 
-/**
- * Trần chung của mọi route `/integration/*` (audit API-09): bề mặt máy gọi máy từng không giới hạn
- * tần suất. Đếm theo danh tính ĐÃ xác thực — token (một app của một tổ chức) hoặc người dùng SSO —
- * không theo IP, vì app chị em gọi từ vài máy chủ dùng chung IP. 600/phút (10/giây) đủ rộng cho
- * luồng ghi usage/job hiện tại, chỉ chặn vòng lặp chạy vô hạn hay token bị lộ.
- */
-export const INTEGRATION_RATE_LIMIT = { limit: 600, windowMs: 60_000 } as const
+/** Trần chung của mọi route `/integration/*` — xem `domain/integration-rate-limit.ts`. */
+export { INTEGRATION_RATE_LIMIT }
 
 function integrationRateLimit(ic: IntegrationContext) {
   const subject = ic.source === "token" ? `token:${ic.tokenId}` : `sso:${ic.organizationId}:${ic.userId}`

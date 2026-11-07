@@ -38,13 +38,20 @@ Endpoint duyệt luôn tách khỏi endpoint sinh kết quả: `POST /x/:id/appr
 | 403 | `CAPABILITY_DENIED` | Thiếu mã năng lực. Thân lỗi nêu mã còn thiếu |
 | 404 | `NOT_FOUND` | Không tìm thấy, **hoặc thuộc tổ chức khác** |
 | 409 | `CONFLICT` | Xung đột trạng thái, ví dụ duyệt một bản ghi đã duyệt |
+| 413 | `PAYLOAD_TOO_LARGE` | Thân JSON vượt 2 MB (`details.max_bytes`); `handle()` chặn theo `content-length` hoặc khi đọc luồng vượt trần — tải tệp đi `formData`/URL ký, không qua trần này (07/11/2026, audit API-17) |
 | 422 | `QUOTA_EXCEEDED` | Vượt hạn mức, job không được tạo |
 | 429 | `RATE_LIMITED` | Kèm `Retry-After` (giây tới cuối cửa sổ). Mọi phản hồi của route có giới hạn tần suất (qua `handle()`) kèm `RateLimit-Limit`, `RateLimit-Remaining`, `RateLimit-Reset` theo luật còn ít lượt nhất (07/11/2026, audit API-08; trước đó mã không đặt header nào) |
 | 500 | `INTERNAL` | Không lộ chi tiết |
 
 **Bản ghi của tổ chức khác trả 404, không trả 403.** Trả 403 là xác nhận bản ghi đó tồn tại — rò rỉ thông tin xuyên tổ chức bằng chính mã lỗi.
 
-**Chống trùng.** Mọi `POST` tạo job nhận `Idempotency-Key`. Cùng khoá trong 24 giờ trả lại job cũ thay vì tạo job mới. Người dùng bấm hai lần không bị trừ credit hai lần.
+**Chống trùng.** Mọi `POST` tạo job nhận `Idempotency-Key`. Cùng khoá trong 24 giờ trả lại job cũ thay vì tạo job mới. Người dùng bấm hai lần không bị trừ credit hai lần. Cùng khoá mà `payload`/sản phẩm khác: vẫn trả job cũ, máy chủ ghi cảnh báo `jobs.idempotency_payload_mismatch` (không ghi nội dung) để đo trước khi quyết chặn 422 (PO 07/11/2026).
+
+**Lưu đệm.** Phản hồi JSON mặc định `Cache-Control: no-store`; route tự đặt `cache-control` (ảnh công khai, tệp xuất) được giữ nguyên (07/11/2026, audit API-17). Ngoại lệ trả `no-cache` (`src/core/http/ack-routes.ts`): mọi phản hồi lỗi (≥ 400, chỉ có envelope `{ error }`) và route chỉ trả xác nhận mà trang khách gọi không đọc thân (`ACK_ONLY_ROUTES` — sự kiện catalog/brochure Thẻ chào, nhận chủ phiên brochure): với `no-store`, Chromium không hoàn tất request chưa đọc thân, giữ kết nối và trang không bao giờ rảnh mạng.
+
+**Version và gỡ endpoint (PO 07/11/2026, audit API-14).** Không thay đổi phá vỡ tại chỗ trong `/v1` (đổi/xoá trường, đổi kiểu, siết validation, đổi mã HTTP/lỗi, đổi ngữ nghĩa) — dựng endpoint mới song song. Thêm trường tuỳ chọn, thêm endpoint, thêm giá trị enum ở phản hồi, nới validation không phá vỡ; client phải bỏ qua trường/giá trị lạ. Endpoint cũ khai ở `DEPRECATIONS` (`src/core/http/deprecation.ts`): mọi phản hồi kèm `Deprecation: @<unix ngày báo>`, `Sunset: <ngày gỡ>`, `Link: <thay thế>; rel="successor-version"`; dòng của nó trong đặc tả này ghi **SẮP GỠ** kèm ngày gỡ. Báo trước tối thiểu **90 ngày** cho `/integration/*` và `/public/*`, **30 ngày** cho API chỉ giao diện SMEOS gọi; quá ngày gỡ mà route còn → test đỏ. Hiện chưa endpoint nào chờ gỡ.
+
+**OpenAPI `/public/*` (07/11/2026, audit API đợt 6).** Bản máy đọc được của mọi route công khai (42 operation): `docs/spec/contracts/openapi/public.openapi.json` (OpenAPI 3.1, tệp sinh ra — `npm run gen:openapi`). Nguồn là lược đồ zod ở `src/app/api/v1/public/_contracts/`: route dùng chung lược đồ thân/query ở `requests.ts`; phản hồi khai `strictObject` và kiểm trên CSDL thật (`tests/tenant/public-contract-*.test.ts`). Route Catalog đóng băng giữ lược đồ riêng — bản sao trong `requests.ts` được test đối chiếu (`tests/unit/public/public-catalog-contract.test.ts`). Bản `public` không công bố cho đối tác; chỉ dùng để rà và kiểm hợp đồng.
 
 ## 3. Phiên và tổ chức
 
@@ -355,6 +362,8 @@ Dành cho `LocalBudd` (M05, M06) và `SocialFlow` (M07). *(M04b đã chuyển v�
 ```
 Authorization: Bearer <token cấp theo tổ chức>
 ```
+
+**OpenAPI (07/11/2026, audit API đợt 4).** Bản máy đọc được của mục này: `docs/spec/contracts/openapi/integration.openapi.json` (OpenAPI 3.1), sinh từ lược đồ zod ở `src/modules/integration/contracts/` — route dùng chung lược đồ thân, nên tài liệu không lệch mã; phản hồi khai `strictObject` và được kiểm trên CSDL thật. Sửa route `/integration/*` → sửa hợp đồng → `npm run gen:openapi`.
 
 **Giới hạn tần suất (07/11/2026, audit API-09).** Mọi đường `/integration/*`: 600 lần/phút cho mỗi token (nhánh SSO: mỗi người dùng trong một tổ chức) → 429 kèm `Retry-After`, sau khi xác thực xong — token sai vẫn 401.
 

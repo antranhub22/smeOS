@@ -111,7 +111,11 @@ Lợi ích: (1) gác quyền khai báo được kiểm tĩnh thay vì dò regex 
 
 **Header mặc định** của `jsonResponse` cho route có phiên/token: `Cache-Control: no-store`; `x-request-id` (đã có). Trần thân mặc định 1 MB cho JSON (413), route tải tệp khai trần riêng.
 
+> **Đã làm 07/11/2026 (đợt 5):** `no-store` mặc định cho mọi `jsonResponse` (route tự đặt thì giữ); trần thân JSON **2 MB** (PO chọn, rộng hơn 1 MB đề xuất vì `products/batch-import` gửi 250 dòng/lượt). Idempotency gắn thân: PO chọn **chỉ cảnh báo** (`jobs.idempotency_payload_mismatch`), chưa chặn 422; `POST /orders` để đợt sau (cần cột + migration). Ngoại lệ (đợt 6, sửa e2e treo trên PR #172): phản hồi lỗi (≥ 400) và route chỉ xác nhận mà client không đọc thân (`ACK_ONLY_ROUTES`, `src/core/http/ack-routes.ts`) → `no-cache`, vì Chromium không hoàn tất request `no-store` chưa đọc thân; test `ack-routes.test.ts` bắt buộc mọi `fetch` `keepalive` trong `src/components` trỏ tới route trong danh sách.
+
 ## 8. Version và deprecation
+
+> **Đã làm (07/11/2026, đợt 6)** — PO chốt 90 ngày cho `/integration/*` và `/public/*`, 30 ngày cho API nội bộ. Sổ `DEPRECATIONS` + header ở `src/core/http/deprecation.ts` (`handle()` tự gắn); `tests/unit/core/http/deprecation.test.ts` đỏ khi báo trước thiếu ngày, quá ngày gỡ mà route còn, hoặc đặc tả 06 thiếu dòng **SẮP GỠ**. Changelog OpenAPI chưa có (chưa endpoint nào chờ gỡ).
 
 - **Không phá vỡ** trong `/v1`: thêm trường tuỳ chọn, thêm endpoint, thêm giá trị enum ở *phản hồi* (client phải bỏ qua giá trị lạ), nới validation.
 - **Phá vỡ** (đổi/xoá trường, đổi kiểu, siết validation, đổi mã trạng thái/lỗi, đổi ngữ nghĩa) → endpoint mới song song hoặc `/v2` theo họ tài nguyên.
@@ -119,6 +123,10 @@ Lợi ích: (1) gác quyền khai báo được kiểm tĩnh thay vì dò regex 
 - Giao diện SMEOS và API phát hành cùng nhau nên route nội bộ được đổi nhanh hơn, nhưng vẫn qua ratchet để không vỡ tab đang mở (phiên dài, `session-status` 15 giây).
 
 ## 9. OpenAPI Specification
+
+> **Đã làm cho `/integration/*` (07/11/2026, đợt 4)** — `src/core/http/openapi.ts`, `src/modules/integration/contracts/`, tệp `docs/spec/contracts/openapi/integration.openapi.json`. Khác đề xuất dưới đây: registry khai riêng ở `integration-openapi.ts` (route Integration chưa chuyển sang `defineRoute`), gác bằng unit test trong `npm test` thay cho bước CI `check:openapi` (PO chọn). `/public/*` làm ở đợt 6 (dưới); nội bộ chưa làm.
+>
+> **Đã làm cho `/public/*` (07/11/2026, đợt 6)** — 42 operation (40 route), `src/app/api/v1/public/_contracts/` (thư mục `_` không định tuyến), tệp `docs/spec/contracts/openapi/public.openapi.json`. Lược đồ thân/query dùng chung với route (trừ 3 route Catalog đóng băng: bản sao + test đối chiếu); phản hồi kiểm trên CSDL thật; `tests/unit/public/public-openapi.test.ts` đỏ khi có route `public/*` chưa khai operation.
 
 **Mục tiêu.** OpenAPI **3.1** (dùng JSON Schema 2020-12 — trùng `target: "draft-2020-12"` mà 3 bộ sinh hiện có đã dùng) được **sinh từ mã**, không viết tay; đặc tả 06 giữ phần nghiệp vụ, OpenAPI giữ phần máy đọc.
 

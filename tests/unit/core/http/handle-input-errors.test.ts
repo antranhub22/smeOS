@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest"
 import { NextRequest } from "next/server"
 import { z } from "zod"
 
-import { handle } from "@/core/http/response"
+import { handle, jsonResponse, MAX_JSON_BODY_BYTES } from "@/core/http/response"
 
 /**
  * Audit API-01 (06/11/2026): dữ liệu gửi sai từng thành 500 "Lỗi hệ thống" — `errorResponse` chỉ
@@ -64,4 +64,46 @@ describe("handle() — lỗi dữ liệu đầu vào", () => {
     expect(res.status).toBe(200)
     expect(await res.json()).toEqual({ name: "Lan" })
   })
+
+  it("thân vượt 2 MB → 413 PAYLOAD_TOO_LARGE, kể cả khi không khai content-length", async () => {
+    const big = JSON.stringify({ name: "x".repeat(MAX_JSON_BODY_BYTES) })
+    const declared = await strict(post(big))
+    expect(declared.status).toBe(413)
+    expect((await declared.json()).error).toMatchObject({ code: "PAYLOAD_TOO_LARGE", details: { max_bytes: MAX_JSON_BODY_BYTES } })
+
+    const chunk = new TextEncoder().encode(big)
+    const stream = new ReadableStream<Uint8Array>({
+      start(controller) {
+        controller.enqueue(chunk)
+        controller.close()
+      },
+    })
+    const streamed = new Request("http://localhost/api/v1/thu", { method: "POST", body: stream, duplex: "half" } as RequestInit)
+    expect(streamed.headers.get("content-length")).toBeNull()
+    expect((await strict(streamed)).status).toBe(413)
+  })
+
+  it("content-length khai vượt trần → 413 theo header, không chờ đọc thân", async () => {
+    // Thân thật chỉ vài byte: nếu phải đọc hết mới chặn thì đã qua (200) — 413 nghĩa là chặn theo header
+    const request = new Request("http://localhost/api/v1/thu", {
+      method: "POST",
+      headers: { "content-type": "application/json", "content-length": String(MAX_JSON_BODY_BYTES + 1) },
+      body: JSON.stringify({ name: "Lan" }),
+    })
+    expect((await strict(request)).status).toBe(413)
+  })
+
+  it("thân dưới trần vẫn đọc bình thường", async () => {
+    const echo = handle(async (request) => Response.json(schema.parse(await request.json())))
+    const res = await echo(post(JSON.stringify({ name: "x".repeat(MAX_JSON_BODY_BYTES - 100) })))
+    expect(res.status).toBe(200)
+  })
 })
+
+describe("jsonResponse — cache-control", () => {
+  it("mặc định no-store; route tự đặt thì giữ nguyên (audit API-17)", () => {
+    expect(jsonResponse({ data: 1 }).headers.get("cache-control")).toBe("no-store")
+    expect(jsonResponse({ data: 1 }, { headers: { "cache-control": "public, max-age=60" } }).headers.get("cache-control")).toBe("public, max-age=60")
+  })
+})
+
