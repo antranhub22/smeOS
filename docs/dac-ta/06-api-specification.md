@@ -51,6 +51,8 @@ Endpoint duyệt luôn tách khỏi endpoint sinh kết quả: `POST /x/:id/appr
 
 **Version và gỡ endpoint (PO 07/11/2026, audit API-14).** Không thay đổi phá vỡ tại chỗ trong `/v1` (đổi/xoá trường, đổi kiểu, siết validation, đổi mã HTTP/lỗi, đổi ngữ nghĩa) — dựng endpoint mới song song. Thêm trường tuỳ chọn, thêm endpoint, thêm giá trị enum ở phản hồi, nới validation không phá vỡ; client phải bỏ qua trường/giá trị lạ. Endpoint cũ khai ở `DEPRECATIONS` (`src/core/http/deprecation.ts`): mọi phản hồi kèm `Deprecation: @<unix ngày báo>`, `Sunset: <ngày gỡ>`, `Link: <thay thế>; rel="successor-version"`; dòng của nó trong đặc tả này ghi **SẮP GỠ** kèm ngày gỡ. Báo trước tối thiểu **90 ngày** cho `/integration/*` và `/public/*`, **30 ngày** cho API chỉ giao diện SMEOS gọi; quá ngày gỡ mà route còn → test đỏ. Hiện chưa endpoint nào chờ gỡ.
 
+**OpenAPI `/public/*` (07/11/2026, audit API đợt 6).** Bản máy đọc được của mọi route công khai (42 operation): `docs/spec/contracts/openapi/public.openapi.json` (OpenAPI 3.1, tệp sinh ra — `npm run gen:openapi`). Nguồn là lược đồ zod ở `src/app/api/v1/public/_contracts/`: route dùng chung lược đồ thân/query ở `requests.ts`; phản hồi khai `strictObject` và kiểm trên CSDL thật (`tests/tenant/public-contract-*.test.ts`). Route Catalog đóng băng giữ lược đồ riêng — bản sao trong `requests.ts` được test đối chiếu (`tests/unit/public/public-catalog-contract.test.ts`). Bản `public` không công bố cho đối tác; chỉ dùng để rà và kiểm hợp đồng.
+
 ## 3. Phiên và tổ chức
 
 | Method | Path | Năng lực | Ghi chú |

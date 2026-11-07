@@ -115,6 +115,8 @@ Lợi ích: (1) gác quyền khai báo được kiểm tĩnh thay vì dò regex 
 
 ## 8. Version và deprecation
 
+> **Đã làm (07/11/2026, đợt 6)** — PO chốt 90 ngày cho `/integration/*` và `/public/*`, 30 ngày cho API nội bộ. Sổ `DEPRECATIONS` + header ở `src/core/http/deprecation.ts` (`handle()` tự gắn); `tests/unit/core/http/deprecation.test.ts` đỏ khi báo trước thiếu ngày, quá ngày gỡ mà route còn, hoặc đặc tả 06 thiếu dòng **SẮP GỠ**. Changelog OpenAPI chưa có (chưa endpoint nào chờ gỡ).
+
 - **Không phá vỡ** trong `/v1`: thêm trường tuỳ chọn, thêm endpoint, thêm giá trị enum ở *phản hồi* (client phải bỏ qua giá trị lạ), nới validation.
 - **Phá vỡ** (đổi/xoá trường, đổi kiểu, siết validation, đổi mã trạng thái/lỗi, đổi ngữ nghĩa) → endpoint mới song song hoặc `/v2` theo họ tài nguyên.
 - Endpoint sắp gỡ: header `Deprecation: @<unix-time>` + `Sunset: <HTTP-date>` + `Link: <…>; rel="successor-version"`; tối thiểu **90 ngày** cho `/integration/*` và webhook ra ngoài, 30 ngày cho API nội bộ chỉ giao diện SMEOS gọi. Ghi lịch gỡ trong đặc tả 06 và changelog OpenAPI.
@@ -122,7 +124,9 @@ Lợi ích: (1) gác quyền khai báo được kiểm tĩnh thay vì dò regex 
 
 ## 9. OpenAPI Specification
 
-> **Đã làm cho `/integration/*` (07/11/2026, đợt 4)** — `src/core/http/openapi.ts`, `src/modules/integration/contracts/`, tệp `docs/spec/contracts/openapi/integration.openapi.json`. Khác đề xuất dưới đây: registry khai riêng ở `integration-openapi.ts` (route Integration chưa chuyển sang `defineRoute`), gác bằng unit test trong `npm test` thay cho bước CI `check:openapi` (PO chọn). `/public/*` và nội bộ chưa làm.
+> **Đã làm cho `/integration/*` (07/11/2026, đợt 4)** — `src/core/http/openapi.ts`, `src/modules/integration/contracts/`, tệp `docs/spec/contracts/openapi/integration.openapi.json`. Khác đề xuất dưới đây: registry khai riêng ở `integration-openapi.ts` (route Integration chưa chuyển sang `defineRoute`), gác bằng unit test trong `npm test` thay cho bước CI `check:openapi` (PO chọn). `/public/*` làm ở đợt 6 (dưới); nội bộ chưa làm.
+>
+> **Đã làm cho `/public/*` (07/11/2026, đợt 6)** — 42 operation (40 route), `src/app/api/v1/public/_contracts/` (thư mục `_` không định tuyến), tệp `docs/spec/contracts/openapi/public.openapi.json`. Lược đồ thân/query dùng chung với route (trừ 3 route Catalog đóng băng: bản sao + test đối chiếu); phản hồi kiểm trên CSDL thật; `tests/unit/public/public-openapi.test.ts` đỏ khi có route `public/*` chưa khai operation.
 
 **Mục tiêu.** OpenAPI **3.1** (dùng JSON Schema 2020-12 — trùng `target: "draft-2020-12"` mà 3 bộ sinh hiện có đã dùng) được **sinh từ mã**, không viết tay; đặc tả 06 giữ phần nghiệp vụ, OpenAPI giữ phần máy đọc.
 

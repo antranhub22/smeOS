@@ -2,4 +2,5 @@
 Nguồn sự thật cho định dạng trao đổi giữa các hệ thống. Mọi thay đổi theo SemVer (REQ-VER-001, REQ-VER-004).
 - `event-envelope.schema.json` — phong bì sự kiện chuẩn (REQ-CON-015).
 - `openapi/integration.openapi.json` — OpenAPI 3.1 của Integration API `/api/v1/integration/*` (07/11/2026). **Tệp sinh ra, không sửa tay**: nguồn là lược đồ zod ở `src/modules/integration/contracts/` (`npm run gen:openapi`); `tests/unit/integration/integration-openapi.test.ts` đỏ khi tệp cũ, `tests/tenant/integration-contract.test.ts` kiểm phản hồi thật khớp lược đồ.
+- `openapi/public.openapi.json` — OpenAPI 3.1 của 42 operation công khai `/api/v1/public/*` (07/11/2026). **Tệp sinh ra, không sửa tay**: nguồn ở `src/app/api/v1/public/_contracts/` (`npm run gen:openapi`); `tests/unit/public/public-openapi.test.ts` đỏ khi tệp cũ hoặc có route chưa khai, `tests/tenant/public-contract-*.test.ts` kiểm phản hồi thật. Không công bố cho đối tác.
 - TODO (giai đoạn 3–4, do agent soạn rồi con người duyệt): schema payload theo từng `event_type` (đặc biệt `order.*`), OpenAPI của Ingestion API, schema Connector Profile.

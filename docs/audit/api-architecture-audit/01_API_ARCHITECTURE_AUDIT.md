@@ -177,7 +177,7 @@ Không có OpenAPI (ARC-024). Đặc tả 06 (1.242 dòng markdown) mô tả th�
 | 1 (ngay) — **đã làm 06/11/2026**, xem §6 | Map `ZodError`/`SyntaxError` → 400 trong `errorResponse` + test; chặn `limit` ở `GET /orders`; sửa `noi-bo/identity`; `jobs/batch` bắt buộc khoá + zod; rate limit + trừ credit cho `content-engine/rewrite` | 01, 02, 03, 04, 05 | Mã năng lực + credit cho rewrite (nợ #170) |
 | 2 — **đã làm 07/11/2026** trừ phần chờ PO, xem §7 | `Retry-After` + `RateLimit-*`; rate limit Integration API theo token; chốt 8 dòng năng lực lệch; `check:docs` kiểm cột năng lực | 08, 09, 12 | Chốt bên đúng cho 8 dòng |
 | 3 — **đã làm 07/11/2026**, xem §8 | Ban hành chuẩn API Contract v1.1 (tài liệu 02); helper `defineRoute` + `parseBody` + `paginate` dùng chung; ratchet test cho route mới | 06, 07, 10, 13, 16 | Duyệt chuẩn — PO đã chốt 4 điểm |
-| 4 — **Integration API đã làm 07/11/2026**, xem §9 | OpenAPI 3.1 sinh từ zod: Integration API + `/public/*` trước, sau đó nội bộ; `check:openapi` trong CI | 14, 15 | PO chọn gác bằng `npm test`, không sửa CI |
+| 4 — **Integration API đã làm 07/11/2026** (§9), **`/public/*` và chính sách deprecation đã làm** (§11) | OpenAPI 3.1 sinh từ zod: Integration API + `/public/*` trước, sau đó nội bộ; `check:openapi` trong CI | 14, 15 | PO chọn gác bằng `npm test`, không sửa CI |
 
 Không đổi tên/di chuyển route hiện có trong các đợt trên — gom họ tài nguyên (API-13) chỉ áp cho route mới hoặc khi lên `/v2` (tài liệu 02 §8).
 
@@ -250,3 +250,20 @@ PO chốt: trần thân JSON 2 MB · khoá trùng mà thân khác → chỉ cả
 | CodeQL | `scripts/gen-openapi.ts` bỏ mẫu `existsSync` rồi đọc/ghi (`js/file-system-race`) — cảnh báo high trên PR #172 | — |
 
 Còn lại cho đợt sau: chống bấm đúp `POST /orders` (cột `orders.idempotency_key` + migration — cần PO duyệt sửa schema); chặn 422 khi khoá trùng thân khác sau khi có số đo cảnh báo.
+
+## 11. Nhật ký sửa — đợt 6 (07/11/2026)
+
+PO chốt: báo trước 90 ngày cho `/integration/*` và `/public/*`, 30 ngày cho API nội bộ · OpenAPI cho cả 40 route `/public/*`, đủ hợp đồng thân và phản hồi.
+
+| Mã | Đã làm | Test |
+|---|---|---|
+| API-14 | `src/core/http/deprecation.ts`: sổ `DEPRECATIONS`, `NOTICE_DAYS` (ngoài 90 / nội bộ 30), header `Deprecation` / `Sunset` / `Link: rel="successor-version"`; `handle()` tự gắn cho route có trong sổ. Đặc tả 06 §2 ghi luật thay đổi phá vỡ và nhãn **SẮP GỠ**. Hiện sổ rỗng | `tests/unit/core/http/deprecation.test.ts` (báo trước thiếu ngày, quá ngày gỡ, route không tồn tại, đặc tả thiếu dòng) |
+| API-15 | OpenAPI 3.1 cho 42 operation `/public/*` (40 route): `src/app/api/v1/public/_contracts/` (thư mục `_` không định tuyến), tệp `docs/spec/contracts/openapi/public.openapi.json`, `npm run gen:openapi` sinh cả hai bề mặt | `tests/unit/public/public-openapi.test.ts` (route ↔ operation, tệp khớp mã, route có rate limit) |
+| API-15 | Lược đồ thân/query của 18 route chuyển sang `_contracts/requests.ts` nguyên văn (Thẻ chào, SePay, subcontract) — route import lại, hành vi không đổi. 3 route Catalog đóng băng giữ lược đồ riêng; bản sao đối chiếu bằng test | `tests/unit/public/public-catalog-contract.test.ts`; test Thẻ chào cũ chạy xanh không sửa (B5) |
+| API-15 | Phản hồi khai `strictObject`, kiểm trên CSDL thật — bắt được 5 chỗ tài liệu/kiểu lệch mã (trường thùng rác catalog, danh sách thiếu trường, `generated_flags` bắt buộc, ảnh chụp mẫu trang theo dõi có `variant`/`flowers`, nhánh `alreadySubmitted` của shipper) | `tests/tenant/public-contract-{utility,catalog,greeting-session,greeting-tracking,subcontract}.test.ts`, `tests/helpers/contract.ts` |
+
+Ghi nhận ngoài phạm vi (chưa sửa):
+- `GET /public/catalog/{slug}` không có rate limit — route Catalog đóng băng; OpenAPI ghi `x-rate-limit: chưa có`.
+- `POST /public/subcontract/{orderCode}` `CLAIM` trả 500 khi `metadata` điều phối thiếu `declinedBranchIds` (đơn cũ hoặc dữ liệu tay) — nên mặc định mảng rỗng.
+- Webhook Zalo OA vẫn trả envelope lỗi cũ (`x-legacy-error-envelope`); đổi cần thống nhất với Zalo.
+- Còn từ đợt trước: `include_revoked=false` của Integration catalog bị hiểu là `true` (đóng băng); chống bấm đúp `POST /orders` cần sửa schema; 8 lệch năng lực và năng lực/credit của `content-engine/rewrite` chờ PO.
