@@ -8,6 +8,7 @@ import { GET as listRequests } from "@/app/api/v1/orders/approval-requests/route
 import { POST as postDecision } from "@/app/api/v1/orders/approval-requests/[requestId]/decision/route"
 import { ingestOrder } from "@/modules/orders/use-cases/ingest-order"
 import { remindCollectDue } from "@/modules/orders/use-cases/remind-collect-due"
+import { CollectDueRepository } from "@/modules/orders/infra/collect-due-repository"
 import { GET as getCoordinationQueue } from "@/app/api/v1/orders/coordination-queue/route"
 
 /**
@@ -99,5 +100,22 @@ describe("cách ly tenant — yêu cầu duyệt giao trước thu sau, báo gi�
     expect((await remindCollectDue(new Date(), undefined, notify as never)).reminded).toBe(0)
     expect(sent.map((x) => x.organizationId)).toEqual([a.organizationId])
     expect(await prisma.order_events.count({ where: { organization_id: b.organizationId } })).toBe(0)
+  })
+
+  // Audit BL-09 (06/11/2026): lọc "đã nhắc" sau `take` → khi trang đầu toàn đơn đã nhắc, đơn mới không bao giờ lọt vào.
+  it("quá hạn thu: đơn đã nhắc không chiếm chỗ trang — đơn quá hạn mới vẫn được lấy", async () => {
+    const second = (await ingestOrder(a.ctx, { source: "MANUAL", items: [{ description: "Bó hoa", quantity: 1, unitPriceVnd: 500_000 }] })).id
+    for (const [id, minutesAgo] of [[orderId, 120], [second, 60]] as const) {
+      await prisma.order_approval_requests.create({
+        data: {
+          organization_id: a.organizationId, order_id: id, kind: "DELIVER_BEFORE_PAY", status: "APPROVED", reason: "Khách quen",
+          requested_by: a.userId, collect_due_at: new Date(Date.now() - minutesAgo * 60_000),
+        },
+      })
+    }
+    const repo = new CollectDueRepository()
+    await repo.markReminded(a.organizationId, orderId, "DRAFT")
+    const page = await repo.listOverdue(new Date(), 1)
+    expect(page.map((r) => r.order.id)).toEqual([second])
   })
 })
