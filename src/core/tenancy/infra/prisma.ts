@@ -2,6 +2,7 @@ import { PrismaPg } from "@prisma/adapter-pg"
 
 import { PrismaClient } from "@/generated/prisma/client"
 import { env } from "@/lib/env"
+import { piiResultExtension, readWithPiiKeys } from "@/core/security/infra/pii-read"
 import { encryptPiiWriteArgs, type PiiBaseClient } from "@/core/security/infra/pii-write"
 import { applyRecipientView, planRecipientRead } from "@/modules/orders/infra/order-recipient-view"
 import { RlsPool } from "./rls-pool"
@@ -22,7 +23,7 @@ const globalForPrisma = globalThis as unknown as {
   schemaVersion?: string
 }
 
-const CURRENT_SCHEMA_VERSION = "2026-11-07-pii-write"
+const CURRENT_SCHEMA_VERSION = "2026-11-07-pii-read"
 if (globalForPrisma.schemaVersion !== CURRENT_SCHEMA_VERSION) {
   globalForPrisma.smeosPrisma?.$disconnect?.().catch(() => {})
   delete globalForPrisma.smeosPrisma
@@ -44,12 +45,15 @@ function createClient(): PrismaClient {
   // ADR-014 P-3b: đọc `orders.delivery_address` → người nhận/địa chỉ lấy từ `order_recipients` (order-recipient-view.ts).
   // Kiểu kết quả không đổi (cùng cột, `recipient` chỉ còn khi người gọi xin) nên giữ kiểu `PrismaClient`.
   return base
-    // ADR-014 P-5a: ghi cột cá nhân → ghi kèm bản mã/băm (pii-write.ts); khoá dữ liệu tra bằng client gốc
+    // ADR-014 P-5a/P-5b: ghi cột cá nhân → ghi kèm bản mã/băm (pii-write.ts); đọc → giải mã (pii-read.ts, cả truy vấn
+    // lồng); khoá dữ liệu tra bằng client gốc
     .$extends({
+      result: piiResultExtension() as never,
       query: {
         $allModels: {
           async $allOperations({ model, operation, args, query }) {
-            return query((await encryptPiiWriteArgs(base as unknown as PiiBaseClient, model, operation, args as never)) as typeof args)
+            const next = (await encryptPiiWriteArgs(base as unknown as PiiBaseClient, model, operation, args as never)) as typeof args
+            return readWithPiiKeys(base, () => query(next))
           },
         },
       },

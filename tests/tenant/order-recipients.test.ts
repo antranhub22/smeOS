@@ -210,7 +210,8 @@ describe("order_recipients — ghi kép và backfill", () => {
       expect(row, `dạng #${i}`).toMatchObject({ ...expected, organization_id: i % 2 ? b.organizationId : a.organizationId })
     }
 
-    const rows = async () => (await prisma.order_recipients.findMany({ orderBy: { order_id: "asc" } })).map(({ updated_at: _u, ...r }) => r)
+    // JSON: kết quả có trường tính toán (giải mã, P-5b) kèm thuộc tính symbol riêng từng lần đọc
+    const rows = async () => JSON.parse(JSON.stringify((await prisma.order_recipients.findMany({ orderBy: { order_id: "asc" } })).map(({ updated_at: _u, ...r }) => r)))
     const before = await rows()
     await run()
     expect(await rows()).toEqual(before)

@@ -9,6 +9,7 @@ import type {
   CreateCustomerInput,
   UpdateCustomerInput,
 } from "../domain/repositories/customer-repository.interface"
+import { phoneEquals, phoneSearch } from "@/core/security/pii-lookup"
 
 export type { CreateCustomerInput, UpdateCustomerInput }
 
@@ -65,7 +66,7 @@ export class CustomerRepository implements ICustomerRepository {
     }
     // P-2 (ADR-014 D-P2): SĐT đã có hồ sơ khách tiềm năng (link Thẻ chào) → nâng thành khách thường, giữ một hồ sơ
     const prospect = await prisma.customers.findFirst({
-      where: { organization_id: ctx.organizationId, phone: input.phone, status: "PROSPECT" },
+      where: { organization_id: ctx.organizationId, status: "PROSPECT", AND: [phoneEquals(ctx.organizationId, input.phone)] }, // P-5b
       select: { id: true },
     })
     if (prospect) {
@@ -97,7 +98,7 @@ export class CustomerRepository implements ICustomerRepository {
 
   async findByPhone(ctx: TenantContext, phone: string): Promise<CustomerMasterIndex | null> {
     const row = await prisma.customers.findFirst({
-      where: { phone, organization_id: ctx.organizationId, status: "ACTIVE" },
+      where: { organization_id: ctx.organizationId, status: "ACTIVE", AND: [phoneEquals(ctx.organizationId, phone)] }, // P-5b
       include: {
         occasions: true,
         consents: true,
@@ -161,7 +162,7 @@ export class CustomerRepository implements ICustomerRepository {
         ? {
             OR: [
               { name: { contains: filters.search, mode: "insensitive" } },
-              { phone: { contains: filters.search } },
+              ...[phoneSearch(ctx.organizationId, filters.search)].filter((w) => w !== null), // P-5b: 4 số cuối / đủ số (D-49)
               { code: { contains: filters.search, mode: "insensitive" } },
             ],
           }
