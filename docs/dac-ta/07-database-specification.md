@@ -4151,7 +4151,8 @@ enum customer_status {
   tên/địa chỉ vừa nhập), hoặc khi nhân viên tạo khách cùng SĐT (`CustomerRepository.create` nâng thay vì báo trùng).
 - `greeting_sessions.customer_id` (`String?`, khoá ngoại tới `customers`, `ON DELETE SET NULL`, index): khách của đơn
   (khi gắn đơn) hoặc hồ sơ theo SĐT trên link (`ensureProspectCustomer`, `src/modules/greeting-card/infra/session-customer.ts`)
-  — lúc tạo link, đặt thêm đơn, link công khai, Sale ghi SĐT. Link chỉ có tên thì để trống. Khoá một cột như
+  — lúc tạo link, đặt thêm đơn, Sale ghi SĐT (link công khai: gắn lúc đơn tạo xong, đơn bị chặn thì không có hồ sơ). Link
+  chỉ có tên thì để trống. Khoá một cột như
   `leads.customer_id`: khoá ghép với `SET NULL` sẽ xoá cả `organization_id`; cùng tổ chức do mã ghi bảo đảm.
 - Ghi kép: `customer_name`, `customer_phone` của link vẫn ghi và vẫn được đọc; bỏ ở bước contract sau.
 - Backfill trong migration (khối `P2-BACKFILL`): link có đơn → khách của đơn; link chưa có đơn → khách cùng tổ chức +

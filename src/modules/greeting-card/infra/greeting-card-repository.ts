@@ -21,7 +21,7 @@ export class GreetingCardRepository extends GreetingCatalogRepository {
    */
   private async createSessionWithFreshCode(
     prefix: string | undefined,
-    build: (sendCode: string) => Prisma.greeting_sessionsUncheckedCreateInput
+    build: (sendCode: string) => Prisma.greeting_sessionsUncheckedCreateInput, linkCustomer = true // P-2: false = gắn khách lúc đặt đơn
   ) {
     for (let attempt = 0; attempt < SEND_CODE_ATTEMPTS; attempt++) {
       const sendCode = generateSendCode(prefix)
@@ -31,7 +31,7 @@ export class GreetingCardRepository extends GreetingCatalogRepository {
       })
       if (taken) continue
       try {
-        return await this.db.greeting_sessions.create({ data: await withSessionCustomer(this.db, build(sendCode)) }) // P-2
+        return await this.db.greeting_sessions.create({ data: linkCustomer ? await withSessionCustomer(this.db, build(sendCode)) : build(sendCode) })
       } catch (error) {
         if (!isUniqueViolation(error)) throw error
       }
@@ -122,7 +122,7 @@ export class GreetingCardRepository extends GreetingCatalogRepository {
       selected_product_id: input.productId,
       product_snapshot: input.snapshot as unknown as Prisma.InputJsonValue,
       selected_at: new Date(),
-    }))
+    }), false) // link công khai: phiên tạo ngay trước đơn; đơn bị chặn thì không để lại hồ sơ khách
   }
 
   /**
