@@ -8,7 +8,7 @@ import { customerBranchWhere } from "@/modules/crm/infra/customer-branch-scope"
 export const CUSTOMER_ORDERS_MAX = 50
 
 export async function findCustomerForOrders(ctx: TenantContext, customerId: string) {
-  return prisma.customers.findFirst({ where: scopedWhere(ctx, { id: customerId, ...(await customerBranchWhere(ctx)) }), select: { id: true, phone: true } })
+  return prisma.customers.findFirst({ where: scopedWhere(ctx, { id: customerId, status: "ACTIVE" as const, ...(await customerBranchWhere(ctx)) }), select: { id: true, phone: true } })
 }
 
 export async function listOrdersOfCustomer(ctx: TenantContext, customer: { id: string; phone: string | null }) {
